@@ -1,0 +1,26 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ReflectionDayReviewSections } from "@/components/reflection/reflection-day-review-sections";
+import type { ReflectionDayReview } from "@/lib/reflection-day-review";
+
+type TodaySummaryCardProps = {
+  review: ReflectionDayReview | null;
+  loading?: boolean;
+};
+
+export function TodaySummaryCard({ review, loading }: TodaySummaryCardProps) {
+  return (
+    <Card className="border-neutral-200/80 bg-neutral-50/80 ring-neutral-200/80">
+      <CardHeader>
+        <CardTitle>Daily review</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ReflectionDayReviewSections
+          review={review}
+          loading={loading}
+          dayLabel="Today"
+          compactSummary
+        />
+      </CardContent>
+    </Card>
+  );
+}
