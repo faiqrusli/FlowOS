@@ -17,6 +17,12 @@ FlowOS is a single Next.js 16 / React 19 app. Its only backend is Supabase (Post
 
 ### Database schema (gotcha)
 - The repo's SQL schema is a set of loose files in `supabase/` (NOT Supabase CLI migrations), and they must be applied in dependency order: `tasks.sql`, `tasks_priority.sql`, `habits.sql`, `habit_completions.sql`, `focus_sessions.sql`, `reflections.sql`, `reflection_entries.sql`, `notes.sql`, then `auth_migration.sql` last (it drops the legacy public policies and adds per-user RLS). Apply them against a freshly started local Supabase, e.g. via `docker exec -i supabase_db_<project> psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/<file>` (a fresh `supabase start` has an empty DB, so re-apply after recreating it).
+- GOTCHA: After applying the schema to local Supabase, the `anon`/`authenticated` roles only get a partial grant (`Dxtm`), so the app shows `permission denied for table <name>` even though RLS is correct. Fix by granting table/sequence privileges (RLS still enforces per-user access):
+  ```sql
+  grant usage on schema public to anon, authenticated, service_role;
+  grant select, insert, update, delete on all tables in schema public to anon, authenticated, service_role;
+  grant usage, select on all sequences in schema public to anon, authenticated, service_role;
+  ```
 - Auth email confirmation is disabled in `supabase/config.toml` (`enable_confirmations = false`), so `signUp` returns a session immediately and registration redirects straight to the dashboard — no email step needed for local testing.
 
 ### Lint
