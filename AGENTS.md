@@ -23,6 +23,7 @@ FlowOS is a single Next.js 16 / React 19 app. Its only backend is Supabase (Post
   grant select, insert, update, delete on all tables in schema public to anon, authenticated, service_role;
   grant usage, select on all sequences in schema public to anon, authenticated, service_role;
   ```
+- GOTCHA: PostgREST (the Supabase REST API the app talks to) caches the schema. After applying any DDL (new tables/columns) to a running local Supabase, the app shows errors like `column <table>.<col> does not exist` until the cache reloads. Fix without restarting: `docker exec -i supabase_db_<project> psql -U postgres -d postgres -c "NOTIFY pgrst, 'reload schema';"`.
 - Auth email confirmation is disabled in `supabase/config.toml` (`enable_confirmations = false`), so `signUp` returns a session immediately and registration redirects straight to the dashboard — no email step needed for local testing.
 
 ### Lint
