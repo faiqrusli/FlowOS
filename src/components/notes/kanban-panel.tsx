@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
+import { GripVertical, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
 import { KanbanBoardDialog } from "@/components/notes/kanban-board-dialog";
 import { KanbanBoardView } from "@/components/notes/kanban-board-view";
 import { Button } from "@/components/ui/button";
@@ -16,9 +16,16 @@ import {
   createKanbanBoard,
   createKanbanColumn,
   deleteKanbanBoard,
+  reorderKanbanBoards,
   reorderKanbanColumns,
   updateKanbanBoard,
 } from "@/lib/kanban";
+import {
+  initialDropBeforeId,
+  reorderByDropBeforeId,
+  resolveDropBeforeId,
+  type DropBeforeId,
+} from "@/lib/list-drag-utils";
 import { cn } from "@/lib/utils";
 import type {
   KanbanBoard,
@@ -52,6 +59,92 @@ export function KanbanPanel({
   const [editingBoardId, setEditingBoardId] = useState<string | null>(null);
   const [boardTitleDraft, setBoardTitleDraft] = useState("");
   const [focusColumnId, setFocusColumnId] = useState<string | null>(null);
+  const tabListRef = useRef<HTMLDivElement>(null);
+  const [dragBoardId, setDragBoardId] = useState<string | null>(null);
+  const [dropBeforeId, setDropBeforeId] = useState<DropBeforeId>(null);
+  const dragBoardIdRef = useRef<string | null>(null);
+  const dropBeforeIdRef = useRef<DropBeforeId>(null);
+  const boardsRef = useRef(boards);
+
+  useEffect(() => {
+    boardsRef.current = boards;
+  }, [boards]);
+
+  function resetBoardDrag() {
+    dragBoardIdRef.current = null;
+    dropBeforeIdRef.current = null;
+    setDragBoardId(null);
+    setDropBeforeId(null);
+  }
+
+  function setDropBeforeIfChanged(next: DropBeforeId) {
+    if (dropBeforeIdRef.current === next) return;
+    dropBeforeIdRef.current = next;
+    setDropBeforeId(next);
+  }
+
+  function handleBoardDragStart(boardId: string, event: DragEvent<HTMLButtonElement>) {
+    event.stopPropagation();
+    dragBoardIdRef.current = boardId;
+    setDragBoardId(boardId);
+
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", boardId);
+
+    const orderedIds = boardsRef.current.map((board) => board.id);
+    const initial = initialDropBeforeId(orderedIds, boardId);
+    dropBeforeIdRef.current = initial;
+    setDropBeforeId(initial);
+  }
+
+  function handleTabListDragOver(event: DragEvent<HTMLDivElement>) {
+    if (!dragBoardIdRef.current || !tabListRef.current) return;
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+
+    const orderedIds = boardsRef.current.map((board) => board.id);
+    const beforeId = resolveDropBeforeId(
+      orderedIds,
+      tabListRef.current,
+      "data-board-id",
+      event.clientX,
+      "x",
+      dragBoardIdRef.current
+    );
+    setDropBeforeIfChanged(beforeId);
+  }
+
+  async function handleBoardDragEnd() {
+    const activeId = dragBoardIdRef.current;
+    const beforeId = dropBeforeIdRef.current;
+
+    if (activeId !== null) {
+      const reordered = reorderByDropBeforeId(
+        boardsRef.current,
+        activeId,
+        beforeId
+      );
+      if (reordered !== boardsRef.current) {
+        const next = reordered.map((board, index) => ({
+          ...board,
+          sort_order: index,
+        }));
+        const previous = boardsRef.current;
+        onBoardsChange(next);
+        try {
+          await reorderKanbanBoards(
+            growthAreaId,
+            next.map((board) => board.id)
+          );
+        } catch {
+          onBoardsChange(previous);
+        }
+      }
+    }
+
+    resetBoardDrag();
+  }
 
   async function handleCreateBoard(title: string) {
     const board = await createKanbanBoard(growthAreaId, title);
@@ -146,13 +239,45 @@ export function KanbanPanel({
   }
 
   return (
-    <div className={cn("space-y-3", embedded ? "border-t border-border/30 p-4" : "")}>
-      <div className="flex items-center gap-2">
-        <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div
+      className={cn(
+        "flex h-full min-h-0 flex-col overflow-hidden",
+        embedded ? "p-4" : ""
+      )}
+    >
+      <div className="flex shrink-0 items-center gap-2">
+        <div
+          ref={tabListRef}
+          onDragOver={handleTabListDragOver}
+          className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
           {boards.map((board) => {
             const isActive = activeBoard?.id === board.id;
+            const isDragging = dragBoardId === board.id;
             return (
               <div key={board.id} className="flex shrink-0 items-center">
+                {dropBeforeId === board.id && <BoardDropLine />}
+                <div
+                  data-board-id={board.id}
+                  className={cn(
+                    "group/tab flex shrink-0 items-center",
+                    isDragging && "opacity-40"
+                  )}
+                >
+                  <button
+                    type="button"
+                    draggable
+                    onDragStart={(event) => handleBoardDragStart(board.id, event)}
+                    onDragEnd={() => void handleBoardDragEnd()}
+                    onMouseDown={(event) => event.stopPropagation()}
+                    className={cn(
+                      "flex size-6 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted active:cursor-grabbing group-hover/tab:opacity-100",
+                      isDragging && "opacity-100"
+                    )}
+                    aria-label={`Reorder ${board.title}`}
+                  >
+                    <GripVertical className="size-3.5" />
+                  </button>
                 {editingBoardId === board.id ? (
                   <input
                     value={boardTitleDraft}
@@ -207,25 +332,40 @@ export function KanbanPanel({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
+                </div>
               </div>
             );
           })}
+          {dragBoardId !== null && dropBeforeId === null && <BoardDropLine />}
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="h-8 shrink-0 gap-1.5 rounded-lg border-border/50 px-3 text-sm"
-          onClick={() => setBoardDialogOpen(true)}
-        >
-          <Plus className="size-3.5" />
-          New board
-        </Button>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-8 shrink-0 gap-1.5 rounded-lg px-3 text-sm"
+            disabled={!activeBoard}
+            onClick={() => void handleAddList()}
+          >
+            <Plus className="size-3.5" />
+            New list
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            className="h-8 shrink-0 gap-1.5 rounded-lg px-3 text-sm"
+            onClick={() => setBoardDialogOpen(true)}
+          >
+            <Plus className="size-3.5" />
+            New board
+          </Button>
+        </div>
       </div>
 
+      <div className="min-h-0 flex-1 overflow-hidden pt-3">
       {!activeBoard ? (
-        <div className="flex min-h-[360px] items-center justify-center rounded-xl border border-dashed border-border/50 bg-muted/10 p-8 text-center text-sm text-muted-foreground">
+        <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-border/50 bg-muted/10 p-8 text-center text-sm text-muted-foreground">
           {boards.length === 0
             ? "Create a board to track your growth journey."
             : "Select a board to view your journey."}
@@ -233,13 +373,13 @@ export function KanbanPanel({
       ) : (
         <KanbanBoardView
           board={activeBoard}
-          growthAreaId={growthAreaId}
           onBoardChange={onActiveBoardChange}
           onAreasRefresh={onAreasRefresh}
           focusColumnId={focusColumnId}
           onFocusColumnHandled={() => setFocusColumnId(null)}
         />
       )}
+      </div>
 
       <KanbanBoardDialog
         open={boardDialogOpen}
@@ -247,5 +387,14 @@ export function KanbanPanel({
         onCreate={handleCreateBoard}
       />
     </div>
+  );
+}
+
+function BoardDropLine() {
+  return (
+    <div
+      className="mx-0.5 h-6 w-0.5 shrink-0 rounded-full bg-foreground/75"
+      aria-hidden
+    />
   );
 }

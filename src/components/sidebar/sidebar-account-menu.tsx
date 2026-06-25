@@ -49,8 +49,9 @@ export function SidebarAccountMenu({
     <div className={cn("shrink-0 pt-2 pb-3", compact ? "px-2" : "px-3")}>
       <DropdownMenu>
         <DropdownMenuTrigger
+          aria-label={compact ? displayName : undefined}
           className={cn(
-            "group flex items-center rounded-lg border border-border/70 bg-background text-left shadow-sm transition-colors",
+            "group/account relative flex items-center rounded-lg border border-border/70 bg-background text-left shadow-sm transition-colors",
             "hover:bg-muted/40 aria-expanded:border-border aria-expanded:bg-muted/30",
             compact
               ? "mx-auto size-9 justify-center border-transparent bg-transparent p-0 shadow-none hover:bg-muted/60"
@@ -78,6 +79,14 @@ export function SidebarAccountMenu({
                 strokeWidth={2}
               />
             </>
+          )}
+          {compact && (
+            <span
+              role="tooltip"
+              className="pointer-events-none absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-border/60 bg-popover px-2 py-1 text-xs font-medium text-popover-foreground shadow-md group-hover/account:block"
+            >
+              {displayName}
+            </span>
           )}
         </DropdownMenuTrigger>
 

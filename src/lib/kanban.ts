@@ -42,7 +42,7 @@ export async function fetchBoardsByArea(
     .select("*")
     .eq("user_id", userId)
     .eq("growth_area_id", growthAreaId)
-    .order("created_at", { ascending: true });
+    .order("sort_order", { ascending: true });
 
   if (error) throw new KanbanError(error.message);
   return data ?? [];
@@ -103,9 +103,27 @@ export async function createKanbanBoard(
 ): Promise<KanbanBoardWithColumns> {
   const userId = await requireUserId();
 
+  const { data: lastBoard, error: orderError } = await supabase
+    .from("kanban_boards")
+    .select("sort_order")
+    .eq("user_id", userId)
+    .eq("growth_area_id", growthAreaId)
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (orderError) throw new KanbanError(orderError.message);
+
+  const sort_order = lastBoard ? lastBoard.sort_order + 1 : 0;
+
   const { data: board, error: boardError } = await supabase
     .from("kanban_boards")
-    .insert({ growth_area_id: growthAreaId, title, user_id: userId })
+    .insert({
+      growth_area_id: growthAreaId,
+      title,
+      user_id: userId,
+      sort_order,
+    })
     .select()
     .single();
 
@@ -146,7 +164,7 @@ export async function deleteKanbanBoard(boardId: string): Promise<void> {
 
 export async function updateKanbanBoard(
   boardId: string,
-  input: Partial<{ title: string }>
+  input: Partial<{ title: string; sort_order: number }>
 ): Promise<KanbanBoard> {
   const userId = await requireUserId();
 
@@ -160,6 +178,24 @@ export async function updateKanbanBoard(
 
   if (error) throw new KanbanError(error.message);
   return data;
+}
+
+export async function reorderKanbanBoards(
+  growthAreaId: string,
+  orderedBoardIds: string[]
+): Promise<void> {
+  const userId = await requireUserId();
+
+  await Promise.all(
+    orderedBoardIds.map((id, index) =>
+      supabase
+        .from("kanban_boards")
+        .update({ sort_order: index })
+        .eq("id", id)
+        .eq("growth_area_id", growthAreaId)
+        .eq("user_id", userId)
+    )
+  );
 }
 
 export async function createKanbanCard(input: {
@@ -181,6 +217,7 @@ export async function createKanbanCard(input: {
       description: input.description ?? "",
       color_label: input.colorLabel ?? "slate",
       sort_order: input.sortOrder ?? 0,
+      is_archived: false,
       user_id: userId,
     })
     .select()
@@ -198,6 +235,7 @@ export async function updateKanbanCard(
     color_label: string;
     column_id: string;
     sort_order: number;
+    is_archived: boolean;
   }>
 ): Promise<KanbanCard> {
   const userId = await requireUserId();
@@ -369,13 +407,20 @@ export async function persistKanbanLayout(
     board.columns.map((c) => c.id)
   );
 
-  const updates: { id: string; column_id: string; sort_order: number }[] = [];
+  const updates: {
+    id: string;
+    column_id: string;
+    sort_order: number;
+    is_archived: boolean;
+  }[] = [];
+
   for (const column of board.columns) {
     column.cards.forEach((card, index) => {
       updates.push({
         id: card.id,
         column_id: column.id,
         sort_order: index,
+        is_archived: card.is_archived,
       });
     });
   }
@@ -384,7 +429,11 @@ export async function persistKanbanLayout(
     updates.map((item) =>
       supabase
         .from("kanban_cards")
-        .update({ column_id: item.column_id, sort_order: item.sort_order })
+        .update({
+          column_id: item.column_id,
+          sort_order: item.sort_order,
+          is_archived: item.is_archived,
+        })
         .eq("id", item.id)
         .eq("user_id", userId)
     )

@@ -1,3 +1,27 @@
+import type { Note } from "@/types/notes";
+
+export const MINDSET_GROWTH_AREA_NAME = "Mindset";
+
+export function resolveNewNoteTitle(
+  existingTitles: string[],
+  areaName: string,
+  baseTitle = "Untitled"
+): string {
+  if (areaName !== MINDSET_GROWTH_AREA_NAME) {
+    return baseTitle;
+  }
+
+  const titles = new Set(existingTitles.map((title) => title.trim()));
+  if (!titles.has(baseTitle)) return baseTitle;
+
+  let index = 1;
+  while (titles.has(`${baseTitle} ${index}`)) {
+    index += 1;
+  }
+
+  return `${baseTitle} ${index}`;
+}
+
 export const CARD_COLOR_CLASSES: Record<
   string,
   { dot: string; bg: string; border: string }
@@ -56,9 +80,15 @@ export function formatRelativeTime(iso: string): string {
   });
 }
 
-export function formatLastUpdatedLabel(iso: string): string {
+export function formatNoteListTime(iso: string): string {
   const date = new Date(iso);
   const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60_000);
+
+  if (diffMins < 1) return "now";
+  if (diffMins < 60) return `${diffMins}m`;
+
   const startOfToday = new Date(
     now.getFullYear(),
     now.getMonth(),
@@ -73,9 +103,37 @@ export function formatLastUpdatedLabel(iso: string): string {
     (startOfToday.getTime() - startOfDate.getTime()) / 86_400_000
   );
 
-  if (dayDiff === 0) return "Last updated today";
-  if (dayDiff === 1) return "Last updated yesterday";
-  return `Last updated ${formatRelativeTime(iso)}`;
+  if (dayDiff === 0) {
+    return `${Math.floor(diffMins / 60)}h`;
+  }
+
+  if (dayDiff === 1) return "Yesterday";
+
+  if (date.getFullYear() === now.getFullYear()) {
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+export function sortNotesForList(notes: Note[]): Note[] {
+  return [...notes].sort((a, b) => {
+    if (a.is_pinned !== b.is_pinned) return a.is_pinned ? -1 : 1;
+    return b.updated_at.localeCompare(a.updated_at);
+  });
+}
+
+export function insertNewNoteInList(notes: Note[], created: Note): Note[] {
+  const pinned = notes.filter((note) => note.is_pinned);
+  const unpinned = notes.filter((note) => !note.is_pinned);
+  return sortNotesForList([...pinned, created, ...unpinned]);
 }
 
 export function getLatestTimestamp(timestamps: string[]): string | null {

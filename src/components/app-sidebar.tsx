@@ -130,8 +130,8 @@ function SidebarNav({
   return (
     <nav
       className={cn(
-        "min-h-0 flex-1 overflow-y-auto py-3",
-        collapsed ? "px-2" : "px-3"
+        "min-h-0 flex-1 py-3",
+        collapsed ? "overflow-visible px-2" : "overflow-y-auto px-3"
       )}
     >
       {sidebarSections.map((section, sectionIndex) => (
@@ -154,9 +154,9 @@ function SidebarNav({
                   <Link
                     href={item.href}
                     onClick={onNavigate}
-                    title={collapsed ? item.label : undefined}
+                    aria-label={collapsed ? item.label : undefined}
                     className={cn(
-                      "group relative flex h-9 items-center rounded-lg text-[14px] font-normal transition-colors",
+                      "group/nav relative flex h-9 items-center rounded-lg text-[14px] font-normal transition-colors",
                       collapsed ? "justify-center px-0" : "gap-2.5 px-2.5",
                       isActive
                         ? "text-foreground"
@@ -174,9 +174,17 @@ function SidebarNav({
                         )}
                       />
                     )}
-                    <Icon className="size-[18px] shrink-0 stroke-[1.75] text-foreground/45 group-hover:text-foreground/65" />
+                    <Icon className="size-[18px] shrink-0 stroke-[1.75] text-foreground/45 group-hover/nav:text-foreground/65" />
                     {!collapsed && (
                       <span className="truncate">{item.label}</span>
+                    )}
+                    {collapsed && (
+                      <span
+                        role="tooltip"
+                        className="pointer-events-none absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-border/60 bg-popover px-2 py-1 text-xs font-medium text-popover-foreground shadow-md group-hover/nav:block"
+                      >
+                        {item.label}
+                      </span>
                     )}
                   </Link>
                 </li>
@@ -219,7 +227,12 @@ function SidebarPanel({
         onToggleCollapse={onToggleCollapse}
       />
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div
+        className={cn(
+          "flex min-h-0 flex-1 flex-col",
+          collapsed ? "overflow-visible" : "overflow-hidden"
+        )}
+      >
         <SidebarNav
           pathname={pathname}
           collapsed={collapsed}
