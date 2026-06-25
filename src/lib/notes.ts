@@ -9,6 +9,10 @@ export class NotesError extends Error {
   }
 }
 
+function normalizeNote(note: Note): Note {
+  return { ...note, is_pinned: note.is_pinned ?? false };
+}
+
 export async function fetchNotesByArea(growthAreaId: string): Promise<Note[]> {
   const userId = await requireUserId();
 
@@ -17,10 +21,11 @@ export async function fetchNotesByArea(growthAreaId: string): Promise<Note[]> {
     .select("*")
     .eq("user_id", userId)
     .eq("growth_area_id", growthAreaId)
+    .order("is_pinned", { ascending: false })
     .order("updated_at", { ascending: false });
 
   if (error) throw new NotesError(error.message);
-  return data ?? [];
+  return (data ?? []).map(normalizeNote);
 }
 
 export async function createNote(input: NoteInsert): Promise<Note> {
@@ -32,13 +37,14 @@ export async function createNote(input: NoteInsert): Promise<Note> {
       growth_area_id: input.growth_area_id,
       title: input.title ?? "Untitled",
       content: input.content ?? "",
+      is_pinned: input.is_pinned ?? false,
       user_id: userId,
     })
     .select()
     .single();
 
   if (error) throw new NotesError(error.message);
-  return data;
+  return normalizeNote(data);
 }
 
 export async function updateNote(id: string, input: NoteUpdate): Promise<Note> {
@@ -53,9 +59,8 @@ export async function updateNote(id: string, input: NoteUpdate): Promise<Note> {
     .single();
 
   if (error) throw new NotesError(error.message);
-  return data;
+  return normalizeNote(data);
 }
-
 export async function deleteNote(id: string): Promise<void> {
   const userId = await requireUserId();
 
@@ -66,6 +71,20 @@ export async function deleteNote(id: string): Promise<void> {
     .eq("user_id", userId);
 
   if (error) throw new NotesError(error.message);
+}
+
+export async function moveNote(
+  noteId: string,
+  growthAreaId: string
+): Promise<Note> {
+  return updateNote(noteId, { growth_area_id: growthAreaId, is_pinned: false });
+}
+
+export async function setNotePinned(
+  noteId: string,
+  isPinned: boolean
+): Promise<Note> {
+  return updateNote(noteId, { is_pinned: isPinned });
 }
 
 export async function getNote(id: string): Promise<Note | null> {
@@ -79,5 +98,6 @@ export async function getNote(id: string): Promise<Note | null> {
     .maybeSingle();
 
   if (error) throw new NotesError(error.message);
-  return data;
+  if (!data) return null;
+  return normalizeNote(data);
 }

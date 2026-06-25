@@ -1,7 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, MoreHorizontal, Plus, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  GripVertical,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +20,24 @@ import {
   getGrowthAreaSidebarExpanded,
   setGrowthAreaSidebarExpanded,
 } from "@/lib/growth-area-sidebar-preference";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import {
+  initialDropBeforeId,
+  reorderByDropBeforeId,
+  resolveDropBeforeId,
+  type DropBeforeId,
+} from "@/lib/list-drag-utils";
 import { cn } from "@/lib/utils";
 import type { GrowthAreaWithCounts } from "@/types/notes";
 
 const WIDTH_COLLAPSED = 56;
 const WIDTH_EXPANDED = 208;
+const NARROW_LAYOUT_MEDIA_QUERY = "(max-width: 1279px)";
+
+function growthAreaHoverTitle(area: GrowthAreaWithCounts) {
+  const description = area.description?.trim();
+  return description || area.name;
+}
 
 type GrowthAreaSidebarProps = {
   areas: GrowthAreaWithCounts[];
@@ -25,6 +46,7 @@ type GrowthAreaSidebarProps = {
   onCreate: () => void;
   onEdit: (area: GrowthAreaWithCounts) => void;
   onDelete: (area: GrowthAreaWithCounts) => void;
+  onReorder: (areas: GrowthAreaWithCounts[]) => void;
 };
 
 export function GrowthAreaSidebar({
@@ -34,28 +56,114 @@ export function GrowthAreaSidebar({
   onCreate,
   onEdit,
   onDelete,
+  onReorder,
 }: GrowthAreaSidebarProps) {
-  const [expanded, setExpanded] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  const [dragAreaId, setDragAreaId] = useState<string | null>(null);
+  const [dropBeforeId, setDropBeforeId] = useState<DropBeforeId>(null);
+  const dragAreaIdRef = useRef<string | null>(null);
+  const dropBeforeIdRef = useRef<DropBeforeId>(null);
+  const areasRef = useRef(areas);
+
+  const [userExpanded, setUserExpanded] = useState(false);
   const [animateWidth, setAnimateWidth] = useState(false);
+  const isNarrowLayout = useMediaQuery(NARROW_LAYOUT_MEDIA_QUERY);
+  const expanded = userExpanded;
+  const wasNarrowLayoutRef = useRef(isNarrowLayout);
 
   useEffect(() => {
-    setExpanded(getGrowthAreaSidebarExpanded());
+    setUserExpanded(getGrowthAreaSidebarExpanded());
     const frame = requestAnimationFrame(() => setAnimateWidth(true));
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  useEffect(() => {
+    if (isNarrowLayout && !wasNarrowLayoutRef.current) {
+      setUserExpanded(false);
+      setGrowthAreaSidebarExpanded(false);
+    }
+    wasNarrowLayoutRef.current = isNarrowLayout;
+  }, [isNarrowLayout]);
+
   function expandSidebar() {
-    setExpanded(true);
+    setUserExpanded(true);
     setGrowthAreaSidebarExpanded(true);
   }
 
   function collapseSidebar() {
-    setExpanded(false);
+    setUserExpanded(false);
     setGrowthAreaSidebarExpanded(false);
   }
 
   function handleSelectArea(id: string) {
     onSelect(id);
+  }
+
+  useEffect(() => {
+    areasRef.current = areas;
+  }, [areas]);
+
+  function resetDrag() {
+    dragAreaIdRef.current = null;
+    dropBeforeIdRef.current = null;
+    setDragAreaId(null);
+    setDropBeforeId(null);
+  }
+
+  function setDropBeforeIfChanged(next: DropBeforeId) {
+    if (dropBeforeIdRef.current === next) return;
+    dropBeforeIdRef.current = next;
+    setDropBeforeId(next);
+  }
+
+  function handleAreaDragStart(areaId: string, event: DragEvent<HTMLButtonElement>) {
+    event.stopPropagation();
+    dragAreaIdRef.current = areaId;
+    setDragAreaId(areaId);
+
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", areaId);
+
+    const orderedIds = areasRef.current.map((area) => area.id);
+    const initial = initialDropBeforeId(orderedIds, areaId);
+    dropBeforeIdRef.current = initial;
+    setDropBeforeId(initial);
+  }
+
+  function handleNavDragOver(event: DragEvent<HTMLElement>) {
+    if (!dragAreaIdRef.current || !navRef.current) return;
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+
+    const orderedIds = areasRef.current.map((area) => area.id);
+    const beforeId = resolveDropBeforeId(
+      orderedIds,
+      navRef.current,
+      "data-growth-area-row",
+      event.clientY,
+      "y",
+      dragAreaIdRef.current
+    );
+    setDropBeforeIfChanged(beforeId);
+  }
+
+  function handleAreaDragEnd() {
+    const activeId = dragAreaIdRef.current;
+    const beforeId = dropBeforeIdRef.current;
+
+    if (activeId !== null) {
+      const next = reorderByDropBeforeId(
+        areasRef.current,
+        activeId,
+        beforeId
+      );
+      if (next !== areasRef.current) {
+        onReorder(next);
+      }
+    }
+
+    resetDrag();
   }
 
   const width = expanded ? WIDTH_EXPANDED : WIDTH_COLLAPSED;
@@ -64,8 +172,9 @@ export function GrowthAreaSidebar({
     <aside
       style={{ width }}
       className={cn(
-        "flex shrink-0 flex-col overflow-hidden rounded-2xl border border-border/40 bg-card shadow-sm",
-        animateWidth && "transition-[width] duration-200 ease-out"
+        "flex max-h-full shrink-0 flex-col self-start overflow-visible rounded-2xl border border-border/40 bg-card shadow-sm",
+        animateWidth && "transition-[width] duration-200 ease-out",
+        isNarrowLayout && expanded && "absolute top-0 left-0 z-30 h-full max-h-full shadow-lg"
       )}
     >
       <div
@@ -89,7 +198,8 @@ export function GrowthAreaSidebar({
                 type="button"
                 onClick={onCreate}
                 className="flex size-8 items-center justify-center rounded-lg bg-foreground text-background transition-colors hover:bg-foreground/90"
-                aria-label="Create growth area"
+                aria-label="Add growth area"
+                title="Add growth area"
               >
                 <Plus className="size-4" />
               </button>
@@ -116,13 +226,16 @@ export function GrowthAreaSidebar({
       </div>
 
       <nav
+        ref={navRef}
+        onDragOver={expanded ? handleNavDragOver : undefined}
         className={cn(
-          "min-h-0 flex-1 overflow-y-auto overflow-x-hidden",
+          "max-h-[calc(100dvh-10rem)] overflow-x-hidden overflow-y-auto",
           expanded ? "space-y-0.5 p-1.5" : "flex flex-col items-center gap-1 py-2"
         )}
       >
         {areas.map((area) => {
           const active = area.id === selectedId;
+          const isDragging = dragAreaId === area.id;
 
           if (!expanded) {
             return (
@@ -130,14 +243,14 @@ export function GrowthAreaSidebar({
                 key={area.id}
                 type="button"
                 onClick={() => handleSelectArea(area.id)}
-                title={area.name}
-                aria-label={`${area.name}, ${area.note_count} notes`}
+                title={growthAreaHoverTitle(area)}
+                aria-label={`${area.name} (${area.note_count})`}
                 aria-current={active ? "true" : undefined}
                 className={cn(
-                  "flex size-10 shrink-0 items-center justify-center rounded-xl text-lg leading-none transition-colors",
+                  "flex size-10 shrink-0 items-center justify-center rounded-xl text-lg leading-none transition-[background-color,box-shadow]",
                   active
-                    ? "bg-foreground text-background shadow-sm"
-                    : "hover:bg-muted/60"
+                    ? "bg-zinc-200 shadow-sm dark:bg-zinc-700"
+                    : "hover:bg-zinc-100 dark:hover:bg-zinc-800/70"
                 )}
               >
                 {area.emoji}
@@ -146,59 +259,93 @@ export function GrowthAreaSidebar({
           }
 
           return (
-            <div key={area.id} className="group relative">
-              <button
-                type="button"
-                onClick={() => handleSelectArea(area.id)}
-                aria-current={active ? "true" : undefined}
+            <div key={area.id}>
+              {dropBeforeId === area.id && <AreaDropLine />}
+              <div
+                data-growth-area-row={area.id}
                 className={cn(
-                  "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors",
-                  active
-                    ? "bg-foreground text-background shadow-sm"
-                    : "hover:bg-muted/60"
+                  "group relative flex items-center",
+                  isDragging && "opacity-40"
                 )}
               >
-                <span className="text-lg leading-none">{area.emoji}</span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{area.name}</p>
-                  <p
-                    className={cn(
-                      "text-[11px]",
-                      active ? "text-background/70" : "text-muted-foreground"
-                    )}
-                  >
-                    {area.note_count} notes
-                  </p>
-                </div>
-              </button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger
+                <button
+                  type="button"
+                  draggable
+                  onDragStart={(event) => handleAreaDragStart(area.id, event)}
+                  onDragEnd={handleAreaDragEnd}
+                  onMouseDown={(event) => event.stopPropagation()}
                   className={cn(
-                    "absolute top-1/2 right-2 flex size-7 -translate-y-1/2 items-center justify-center rounded-md opacity-0 transition-opacity group-hover:opacity-100",
+                    "flex size-6 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted active:cursor-grabbing group-hover:opacity-100",
+                    isDragging && "opacity-100"
+                  )}
+                  aria-label={`Reorder ${area.name}`}
+                >
+                  <GripVertical className="size-3.5" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSelectArea(area.id)}
+                  title={growthAreaHoverTitle(area)}
+                  aria-current={active ? "true" : undefined}
+                  className={cn(
+                    "flex min-w-0 flex-1 items-center gap-2 rounded-xl py-2 pr-8 pl-1 text-left transition-[background-color,box-shadow]",
                     active
-                      ? "text-background hover:bg-background/15"
-                      : "text-muted-foreground hover:bg-muted"
+                      ? "bg-zinc-100 shadow-sm dark:bg-zinc-800/90"
+                      : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
                   )}
                 >
-                  <MoreHorizontal className="size-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="rounded-xl">
-                  <DropdownMenuItem onClick={() => onEdit(area)}>
-                    Rename
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="text-destructive"
-                    onClick={() => onDelete(area)}
+                  <span className="flex w-6 shrink-0 items-center justify-center text-lg leading-none">
+                    {area.emoji || "\u00A0"}
+                  </span>
+                  <p
+                    className={cn(
+                      "min-w-0 flex-1 truncate text-sm",
+                      active ? "font-semibold text-foreground" : "font-normal"
+                    )}
                   >
-                    <Trash2 className="size-3.5" /> Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    {area.name}{" "}
+                    <span className="font-normal tabular-nums text-muted-foreground">
+                      ({area.note_count})
+                    </span>
+                  </p>
+                </button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    className="absolute top-1/2 right-1.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted group-hover:opacity-100"
+                  >
+                    <MoreHorizontal className="size-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="rounded-xl">
+                    <DropdownMenuItem onClick={() => onEdit(area)}>
+                      <Pencil className="size-3.5" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-destructive"
+                      onClick={() => onDelete(area)}
+                    >
+                      <Trash2 className="size-3.5" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           );
         })}
+        {dragAreaId !== null && dropBeforeId === null && <AreaDropLine />}
       </nav>
     </aside>
+  );
+}
+
+function AreaDropLine() {
+  return (
+    <div
+      className="mx-1.5 my-0.5 h-0.5 rounded-full bg-foreground/75"
+      aria-hidden
+    />
   );
 }

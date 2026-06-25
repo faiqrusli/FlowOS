@@ -24,6 +24,7 @@ export type Note = {
   growth_area_id: string;
   title: string;
   content: string;
+  is_pinned: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -32,15 +33,17 @@ export type NoteInsert = {
   growth_area_id: string;
   title?: string;
   content?: string;
+  is_pinned?: boolean;
 };
 
-export type NoteUpdate = Partial<Omit<NoteInsert, "growth_area_id">>;
+export type NoteUpdate = Partial<NoteInsert>;
 
 export type KanbanBoard = {
   id: string;
   user_id: string;
   growth_area_id: string;
   title: string;
+  sort_order: number;
   created_at: string;
   updated_at: string;
 };
@@ -64,6 +67,7 @@ export type KanbanCard = {
   description: string;
   color_label: string;
   sort_order: number;
+  is_archived: boolean;
   created_at: string;
   updated_at: string;
 };

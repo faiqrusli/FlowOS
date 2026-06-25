@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GrowthAreaDialog } from "@/components/notes/growth-area-dialog";
 import { GrowthAreaHeader } from "@/components/notes/growth-area-header";
 import { GrowthAreaSidebar } from "@/components/notes/growth-area-sidebar";
@@ -13,6 +13,7 @@ import {
   deleteGrowthArea,
   fetchGrowthAreas,
   GrowthAreasError,
+  reorderGrowthAreas,
   updateGrowthArea,
 } from "@/lib/growth-areas";
 import {
@@ -21,11 +22,6 @@ import {
   KanbanError,
 } from "@/lib/kanban";
 import { fetchNotesByArea, NotesError } from "@/lib/notes";
-import {
-  formatLastUpdatedLabel,
-  getLatestTimestamp,
-} from "@/lib/notes-utils";
-import { type } from "@/lib/typography";
 import type {
   GrowthArea,
   GrowthAreaWithCounts,
@@ -56,24 +52,6 @@ export function NotesPageContent() {
   const [editingArea, setEditingArea] = useState<GrowthArea | null>(null);
 
   const selectedArea = areas.find((a) => a.id === selectedAreaId) ?? null;
-
-  const areaLastUpdatedLabel = useMemo(() => {
-    const timestamps = [
-      ...notes.map((note) => note.updated_at),
-      ...boards.map((board) => board.updated_at),
-    ];
-
-    if (activeBoard) {
-      for (const column of activeBoard.columns) {
-        for (const card of column.cards) {
-          timestamps.push(card.updated_at);
-        }
-      }
-    }
-
-    const latest = getLatestTimestamp(timestamps);
-    return latest ? formatLastUpdatedLabel(latest) : null;
-  }, [notes, boards, activeBoard]);
 
   function handleTabChange(next: ContentTab) {
     if (next === tab) return;
@@ -167,19 +145,26 @@ export function NotesPageContent() {
     setSelectedAreaId(areasData[0]?.id ?? null);
   }
 
-  return (
-    <div className="space-y-5">
-      <div className="space-y-1">
-        <h1 className={type.pageTitle}>Notes</h1>
-      </div>
+  async function handleReorderAreas(next: GrowthAreaWithCounts[]) {
+    const previous = areas;
+    setAreas(next);
+    try {
+      await reorderGrowthAreas(next.map((area) => area.id));
+    } catch {
+      setAreas(previous);
+      setError("Failed to reorder growth areas.");
+    }
+  }
 
+  return (
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
       {error && <ErrorBanner message={error} />}
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+      <div className="relative flex min-h-0 flex-1 flex-row gap-3 overflow-hidden sm:gap-4">
         {loading ? (
           <aside
             style={{ width: 56 }}
-            className="hidden shrink-0 animate-pulse rounded-2xl bg-muted/30 lg:block"
+            className="shrink-0 self-start animate-pulse rounded-2xl bg-muted/30"
             aria-hidden
           />
         ) : (
@@ -198,21 +183,19 @@ export function NotesPageContent() {
               setAreaDialogOpen(true);
             }}
             onDelete={handleDeleteArea}
+            onReorder={(next) => void handleReorderAreas(next)}
           />
         )}
 
-        <div className="min-w-0 flex-1">
+        <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col self-stretch overflow-hidden">
           {loading ? (
-            <div className="h-[520px] animate-pulse rounded-2xl bg-muted/30" />
+            <div className="h-full min-h-0 animate-pulse rounded-2xl bg-muted/30" />
           ) : (
             selectedArea && (
-              <div className="overflow-hidden rounded-2xl border border-border/40 bg-card shadow-sm">
+              <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-border/40 bg-card shadow-sm">
                 <GrowthAreaHeader
                   area={selectedArea}
                   tab={tab}
-                  noteCount={notes.length}
-                  boardCount={boards.length}
-                  lastUpdatedLabel={areaLastUpdatedLabel}
                   onTabChange={handleTabChange}
                 />
 
@@ -224,6 +207,8 @@ export function NotesPageContent() {
                     <NotesPanel
                       embedded
                       growthAreaId={selectedArea.id}
+                      growthAreaName={selectedArea.name}
+                      areas={areas}
                       notes={notes}
                       onNotesChange={setNotes}
                       onAreasRefresh={() => void refreshAreas()}

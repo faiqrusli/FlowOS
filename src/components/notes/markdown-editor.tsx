@@ -58,7 +58,7 @@ export function MarkdownEditor({
 
   return (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
-      <div className="flex flex-wrap items-center gap-1 border-b border-border/40 px-2 py-1.5">
+      <div className="flex shrink-0 flex-wrap items-center gap-1 border-b border-border/40 px-2 py-1.5">
         <ToolbarButton
           label="Heading"
           onClick={() =>
@@ -127,13 +127,18 @@ export function MarkdownEditor({
         </ToolbarButton>
 
         {onPreviewChange && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="ml-auto h-7 gap-1.5 px-2 text-xs"
-            onClick={() => onPreviewChange(!preview)}
-          >
+          <>
+            <span
+              aria-hidden
+              className="mx-0.5 h-4 w-px shrink-0 bg-border/60"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1.5 px-2 text-xs"
+              onClick={() => onPreviewChange(!preview)}
+            >
             {preview ? (
               <>
                 <EyeOff className="size-3.5" /> Edit
@@ -144,6 +149,7 @@ export function MarkdownEditor({
               </>
             )}
           </Button>
+          </>
         )}
       </div>
 
@@ -157,7 +163,7 @@ export function MarkdownEditor({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="min-h-[320px] flex-1 resize-none bg-transparent px-5 py-4 text-[15px] leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/60"
+          className="min-h-0 flex-1 resize-none overflow-y-auto bg-transparent px-5 py-4 text-[15px] leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/60"
         />
       )}
     </div>

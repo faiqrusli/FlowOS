@@ -1,23 +1,50 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Plus, Search, Trash2 } from "lucide-react";
-import { ConvertActions } from "@/components/notes/convert-actions";
+import {
+  ExternalLink,
+  FolderInput,
+  MoreHorizontal,
+  Pencil,
+  Pin,
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
 import { MarkdownEditor } from "@/components/notes/markdown-editor";
+import { NoteFloatingCard } from "@/components/notes/note-floating-card";
+import { NoteMoveDialog } from "@/components/notes/note-move-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   createNote,
   deleteNote,
+  moveNote,
   NotesError,
+  setNotePinned,
   updateNote,
 } from "@/lib/notes";
-import { formatRelativeTime } from "@/lib/notes-utils";
+import {
+  formatNoteListTime,
+  formatRelativeTime,
+  insertNewNoteInList,
+  resolveNewNoteTitle,
+  sortNotesForList,
+} from "@/lib/notes-utils";
 import { cn } from "@/lib/utils";
-import type { Note } from "@/types/notes";
+import type { GrowthAreaWithCounts, Note } from "@/types/notes";
 
 type NotesPanelProps = {
   growthAreaId: string;
+  growthAreaName: string;
+  areas: GrowthAreaWithCounts[];
   notes: Note[];
   onNotesChange: (notes: Note[]) => void;
   onAreasRefresh: () => void;
@@ -26,6 +53,8 @@ type NotesPanelProps = {
 
 export function NotesPanel({
   growthAreaId,
+  growthAreaName,
+  areas,
   notes,
   onNotesChange,
   onAreasRefresh,
@@ -39,35 +68,83 @@ export function NotesPanel({
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">(
     "idle"
   );
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState("");
+  const [moveNoteId, setMoveNoteId] = useState<string | null>(null);
+  const [openMenuNoteId, setOpenMenuNoteId] = useState<string | null>(null);
+  const [floatingNoteIds, setFloatingNoteIds] = useState<string[]>([]);
+  const [focusTitleNoteId, setFocusTitleNoteId] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
-  const selected = notes.find((n) => n.id === selectedId) ?? null;
+  const sortedNotes = useMemo(() => sortNotesForList(notes), [notes]);
+  const selected = notes.find((note) => note.id === selectedId) ?? null;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return notes;
-    return notes.filter(
-      (n) =>
-        n.title.toLowerCase().includes(q) ||
-        n.content.toLowerCase().includes(q)
+    if (!q) return sortedNotes;
+    return sortedNotes.filter(
+      (note) =>
+        note.title.toLowerCase().includes(q) ||
+        note.content.toLowerCase().includes(q)
     );
-  }, [notes, search]);
+  }, [sortedNotes, search]);
+
+  const floatingNotes = useMemo(
+    () =>
+      floatingNoteIds
+        .map((id) => notes.find((note) => note.id === id))
+        .filter((note): note is Note => Boolean(note)),
+    [floatingNoteIds, notes]
+  );
 
   useEffect(() => {
-    if (!selectedId && notes[0]) setSelectedId(notes[0].id);
-    if (selectedId && !notes.find((n) => n.id === selectedId) && notes[0]) {
-      setSelectedId(notes[0].id);
+    if (!selectedId && sortedNotes[0]) setSelectedId(sortedNotes[0].id);
+    if (
+      selectedId &&
+      !notes.find((note) => note.id === selectedId) &&
+      sortedNotes[0]
+    ) {
+      setSelectedId(sortedNotes[0].id);
     }
-  }, [notes, selectedId]);
+  }, [notes, selectedId, sortedNotes]);
+
+  useEffect(() => {
+    if (!focusTitleNoteId || selectedId !== focusTitleNoteId) return;
+
+    requestAnimationFrame(() => {
+      const input = titleInputRef.current;
+      if (!input) return;
+      input.focus();
+      input.select();
+      setFocusTitleNoteId(null);
+    });
+  }, [focusTitleNoteId, selectedId]);
+
+  useEffect(() => {
+    return () => {
+      if (noticeTimer.current) clearTimeout(noticeTimer.current);
+    };
+  }, []);
 
   const persistNote = useCallback(
-    async (id: string, patch: { title?: string; content?: string }) => {
+    async (
+      id: string,
+      patch: { title?: string; content?: string; is_pinned?: boolean }
+    ) => {
       setSaveState("saving");
       try {
         const updated = await updateNote(id, patch);
-        onNotesChange(
-          notes.map((n) => (n.id === updated.id ? updated : n))
+        const next = sortNotesForList(
+          notes.map((note) =>
+            note.id === updated.id
+              ? { ...updated, is_pinned: updated.is_pinned ?? false }
+              : note
+          )
         );
+        onNotesChange(next);
         setSaveState("saved");
         setTimeout(() => setSaveState("idle"), 1500);
       } catch {
@@ -77,38 +154,108 @@ export function NotesPanel({
     [notes, onNotesChange]
   );
 
-  function scheduleSave(id: string, patch: { title?: string; content?: string }) {
+  function scheduleSave(
+    id: string,
+    patch: { title?: string; content?: string }
+  ) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       void persistNote(id, patch);
     }, 800);
   }
 
+  function showNotice(message: string) {
+    setNotice(message);
+    if (noticeTimer.current) clearTimeout(noticeTimer.current);
+    noticeTimer.current = setTimeout(() => setNotice(null), 3200);
+  }
+
   async function handleCreate() {
     try {
-      const created = await createNote({ growth_area_id: growthAreaId });
-      onNotesChange([created, ...notes]);
-      setSelectedId(created.id);
+      const title = resolveNewNoteTitle(
+        notes.map((note) => note.title),
+        growthAreaName
+      );
+      const created = await createNote({
+        growth_area_id: growthAreaId,
+        title,
+      });
+      const normalized = { ...created, is_pinned: created.is_pinned ?? false };
+      onNotesChange(insertNewNoteInList(notes, normalized));
+      setSelectedId(normalized.id);
+      setFocusTitleNoteId(normalized.id);
       onAreasRefresh();
     } catch {
       // parent shows errors
     }
   }
 
-  async function handleDelete(id: string) {
+  async function handleDelete(note: Note) {
+    const deletedTitle = note.title.trim() || "Untitled";
+
     try {
-      await deleteNote(id);
-      const next = notes.filter((n) => n.id !== id);
+      await deleteNote(note.id);
+      const next = notes.filter((item) => item.id !== note.id);
       onNotesChange(next);
-      setSelectedId(next[0]?.id ?? null);
+      setSelectedId((current) =>
+        current === note.id ? next[0]?.id ?? null : current
+      );
+      setFloatingNoteIds((prev) => prev.filter((noteId) => noteId !== note.id));
+      showNotice(`"${deletedTitle}" deleted`);
       onAreasRefresh();
     } catch (err) {
       throw err instanceof NotesError ? err : new NotesError("Delete failed.");
     }
   }
 
+  async function handleTogglePin(note: Note) {
+    const updated = await setNotePinned(note.id, !note.is_pinned);
+    onNotesChange(
+      sortNotesForList(
+        notes.map((item) =>
+          item.id === updated.id
+            ? { ...updated, is_pinned: updated.is_pinned ?? false }
+            : item
+        )
+      )
+    );
+  }
+
+  function startRename(note: Note) {
+    setRenamingId(note.id);
+    setRenameDraft(note.title);
+  }
+
+  async function saveRename(noteId: string) {
+    const title = renameDraft.trim() || "Untitled";
+    setRenamingId(null);
+    onNotesChange(
+      notes.map((note) => (note.id === noteId ? { ...note, title } : note))
+    );
+    await persistNote(noteId, { title });
+  }
+
+  async function handleMove(noteId: string, targetAreaId: string) {
+    await moveNote(noteId, targetAreaId);
+    const next = notes.filter((note) => note.id !== noteId);
+    onNotesChange(next);
+    setSelectedId((current) =>
+      current === noteId ? next[0]?.id ?? null : current
+    );
+    setFloatingNoteIds((prev) => prev.filter((id) => id !== noteId));
+    onAreasRefresh();
+  }
+
+  function openFloatingCard(noteId: string) {
+    setFloatingNoteIds((prev) =>
+      prev.includes(noteId) ? prev : [...prev, noteId]
+    );
+  }
+
   function updateLocal(id: string, patch: Partial<Note>) {
-    onNotesChange(notes.map((n) => (n.id === id ? { ...n, ...patch } : n)));
+    onNotesChange(
+      notes.map((note) => (note.id === id ? { ...note, ...patch } : note))
+    );
     scheduleSave(id, {
       title: patch.title,
       content: patch.content,
@@ -116,114 +263,215 @@ export function NotesPanel({
   }
 
   return (
-    <div
-      className={cn(
-        "flex min-h-[520px] flex-col overflow-hidden lg:flex-row",
-        embedded
-          ? "border-t border-border/30"
-          : "rounded-2xl border border-border/40 bg-card shadow-sm"
-      )}
-    >
-      <div className="flex w-full shrink-0 flex-col border-b border-border/30 lg:w-56 lg:border-r lg:border-b-0 xl:w-64">
-        <div className="space-y-2 border-b border-border/30 p-3">
-          <div className="relative">
-            <Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search notes..."
-              className="h-8 pl-8 text-sm"
-            />
+    <>
+      <div
+        className={cn(
+          "flex h-full min-h-0 flex-row overflow-hidden",
+          embedded ? "" : "rounded-2xl border border-border/40 bg-card shadow-sm"
+        )}
+      >
+        <div className="flex h-full min-h-0 w-[min(200px,34vw)] shrink-0 flex-col border-r border-border/30 xl:w-[216px]">
+          <div className="shrink-0 border-b border-border/30 p-2.5">
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                className="size-8 shrink-0 rounded-lg px-0"
+                onClick={handleCreate}
+                aria-label="Add a new note"
+                title="Add a new note"
+              >
+                <Plus className="size-3.5" />
+              </Button>
+              <div className="relative min-w-0 flex-1">
+                <Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search notes..."
+                  className="h-8 pl-8 text-sm"
+                />
+              </div>
+            </div>
           </div>
-          <Button
-            size="sm"
-            className="h-8 w-full gap-1.5 rounded-lg"
-            onClick={handleCreate}
-          >
-            <Plus className="size-3.5" /> New note
-          </Button>
+
+          <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto p-2">
+            {filtered.length === 0 && (
+              <li className="px-2 py-6 text-center text-sm text-muted-foreground">
+                No notes yet
+              </li>
+            )}
+            {filtered.map((note) => (
+              <li key={note.id}>
+                <div
+                  className={cn(
+                    "group relative flex items-center rounded-xl transition-colors",
+                    selectedId === note.id
+                      ? "bg-muted"
+                      : "hover:bg-muted/50"
+                  )}
+                  onContextMenu={(event) => {
+                    if (renamingId === note.id) return;
+                    event.preventDefault();
+                    setOpenMenuNoteId(note.id);
+                  }}
+                >
+                  {renamingId === note.id ? (
+                    <div className="min-w-0 flex-1 px-2 py-2">
+                      <input
+                        value={renameDraft}
+                        onChange={(e) => setRenameDraft(e.target.value)}
+                        onBlur={() => void saveRename(note.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") void saveRename(note.id);
+                          if (e.key === "Escape") setRenamingId(null);
+                        }}
+                        className="w-full rounded-md border border-border/50 bg-background px-2 py-1 text-sm outline-none"
+                        autoFocus
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedId(note.id)}
+                      className="min-w-0 flex-1 px-2.5 py-2 pr-8 text-left"
+                    >
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        {note.is_pinned && (
+                          <Pin className="size-3 shrink-0 text-muted-foreground" />
+                        )}
+                        <p className="truncate text-sm font-medium leading-snug">
+                          {note.title}
+                        </p>
+                      </div>
+                      <p className="mt-0.5 text-[10px] leading-none text-muted-foreground/65">
+                        {formatNoteListTime(note.updated_at)}
+                      </p>
+                    </button>
+                  )}
+
+                  {renamingId !== note.id && (
+                    <DropdownMenu
+                      open={openMenuNoteId === note.id}
+                      onOpenChange={(open) =>
+                        setOpenMenuNoteId(open ? note.id : null)
+                      }
+                    >
+                      <DropdownMenuTrigger
+                        className={cn(
+                          "absolute top-1/2 right-1.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted",
+                          (selectedId === note.id || openMenuNoteId === note.id) &&
+                            "opacity-100"
+                        )}
+                        aria-label={`${note.title} options`}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <MoreHorizontal className="size-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="rounded-xl">
+                        <DropdownMenuItem
+                          onClick={() => void handleTogglePin(note)}
+                        >
+                          <Pin className="size-3.5" />
+                          {note.is_pinned ? "Unpin" : "Pin"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => startRename(note)}>
+                          <Pencil className="size-3.5" />
+                          Rename
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setMoveNoteId(note.id)}>
+                          <FolderInput className="size-3.5" />
+                          Move to
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => openFloatingCard(note.id)}
+                        >
+                          <ExternalLink className="size-3.5" />
+                          Open on small card
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => void handleDelete(note)}
+                        >
+                          <Trash2 className="size-3.5" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto p-2">
-          {filtered.length === 0 && (
-            <li className="px-2 py-6 text-center text-sm text-muted-foreground">
-              No notes yet
-            </li>
-          )}
-          {filtered.map((note) => (
-            <li key={note.id}>
-              <button
-                type="button"
-                onClick={() => setSelectedId(note.id)}
-                className={cn(
-                  "w-full rounded-xl px-3 py-2.5 text-left transition-colors",
-                  selectedId === note.id
-                    ? "bg-muted"
-                    : "hover:bg-muted/50"
-                )}
-              >
-                <p className="truncate text-sm font-medium">{note.title}</p>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  {formatRelativeTime(note.updated_at)}
-                </p>
-              </button>
-            </li>
-          ))}
-        </ul>
+        {selected ? (
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <div className="flex shrink-0 items-center gap-3 border-b border-border/30 px-4 py-2.5">
+              <input
+                ref={titleInputRef}
+                value={selected.title}
+                onChange={(e) =>
+                  updateLocal(selected.id, { title: e.target.value })
+                }
+                className="min-w-0 flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-muted-foreground"
+                placeholder="Note title"
+              />
+              <span className="shrink-0 text-xs text-muted-foreground">
+                {saveState === "saving"
+                  ? "Saving..."
+                  : saveState === "saved"
+                    ? "Saved"
+                    : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
+              </span>
+            </div>
+
+            <MarkdownEditor
+              value={selected.content}
+              onChange={(content) => updateLocal(selected.id, { content })}
+              preview={preview}
+              onPreviewChange={setPreview}
+              className="min-h-0 flex-1"
+            />
+          </div>
+        ) : (
+          <div className="flex min-h-0 flex-1 items-center justify-center p-8 text-center text-sm text-muted-foreground">
+            Select a note or create one to start writing.
+          </div>
+        )}
       </div>
 
-      {selected ? (
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <div className="flex items-center gap-3 border-b border-border/30 px-4 py-3">
-            <input
-              value={selected.title}
-              onChange={(e) =>
-                updateLocal(selected.id, { title: e.target.value })
-              }
-              className="min-w-0 flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-muted-foreground"
-              placeholder="Note title"
-            />
-            <span className="hidden shrink-0 text-[11px] text-muted-foreground sm:inline">
-              {saveState === "saving"
-                ? "Saving..."
-                : saveState === "saved"
-                  ? "Saved"
-                  : `Edited ${formatRelativeTime(selected.updated_at)}`}
-            </span>
-            <button
-              type="button"
-              onClick={() => void handleDelete(selected.id)}
-              className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-              aria-label="Delete note"
-            >
-              <Trash2 className="size-4" />
-            </button>
-          </div>
-
-          <MarkdownEditor
-            value={selected.content}
-            onChange={(content) => updateLocal(selected.id, { content })}
-            preview={preview}
-            onPreviewChange={setPreview}
-            className="min-h-[360px] flex-1"
-          />
-
-          <div className="border-t border-border/30 px-4 py-3">
-            <ConvertActions
-              growthAreaId={growthAreaId}
-              sourceType="note"
-              sourceId={selected.id}
-              title={selected.title}
-              description={selected.content}
-              onConverted={onAreasRefresh}
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="flex flex-1 items-center justify-center p-8 text-center text-sm text-muted-foreground">
-          Select a note or create one to start writing.
+      {notice && (
+        <div
+          role="status"
+          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-border/50 bg-foreground px-4 py-2 text-sm text-background shadow-lg"
+        >
+          {notice}
         </div>
       )}
-    </div>
+
+      <NoteMoveDialog
+        open={moveNoteId !== null}
+        onOpenChange={(open) => {
+          if (!open) setMoveNoteId(null);
+        }}
+        areas={areas}
+        currentAreaId={growthAreaId}
+        onMove={(areaId) => {
+          if (moveNoteId) void handleMove(moveNoteId, areaId);
+        }}
+      />
+
+      {floatingNotes.map((note, index) => (
+        <NoteFloatingCard
+          key={note.id}
+          note={note}
+          offsetIndex={index}
+          onClose={() =>
+            setFloatingNoteIds((prev) => prev.filter((id) => id !== note.id))
+          }
+        />
+      ))}
+    </>
   );
 }

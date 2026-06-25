@@ -148,3 +148,17 @@ export async function deleteGrowthArea(id: string): Promise<void> {
 
   if (error) throw new GrowthAreasError(error.message);
 }
+
+export async function reorderGrowthAreas(orderedIds: string[]): Promise<void> {
+  const userId = await requireUserId();
+
+  await Promise.all(
+    orderedIds.map((id, index) =>
+      supabase
+        .from("growth_areas")
+        .update({ sort_order: index })
+        .eq("id", id)
+        .eq("user_id", userId)
+    )
+  );
+}

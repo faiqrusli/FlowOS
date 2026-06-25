@@ -109,8 +109,9 @@ export type Database = {
           growth_area_id: string;
           title: string;
           user_id: string;
+          sort_order?: number;
         };
-        Update: { title?: string };
+        Update: { title?: string; sort_order?: number };
         Relationships: [];
       };
       kanban_columns: {
@@ -130,11 +131,17 @@ export type Database = {
           id?: string;
           created_at?: string;
           updated_at?: string;
+          is_archived?: boolean;
         };
         Update: Partial<
           Pick<
             KanbanCard,
-            "title" | "description" | "color_label" | "column_id" | "sort_order"
+            | "title"
+            | "description"
+            | "color_label"
+            | "column_id"
+            | "sort_order"
+            | "is_archived"
           >
         >;
         Relationships: [];

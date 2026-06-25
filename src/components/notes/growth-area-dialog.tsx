@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { GrowthAreaIconChooser } from "@/components/notes/growth-area-icon-chooser";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,6 +39,7 @@ export function GrowthAreaDialog({
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [iconChooserOpen, setIconChooserOpen] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -45,6 +47,7 @@ export function GrowthAreaDialog({
     setEmoji(area?.emoji ?? "📝");
     setDescription(area?.description ?? "");
     setError(null);
+    setIconChooserOpen(false);
   }, [open, area]);
 
   async function handleSubmit(event: React.FormEvent) {
@@ -84,13 +87,15 @@ export function GrowthAreaDialog({
             <div className="flex gap-3">
               <div className="space-y-2">
                 <Label htmlFor="area-emoji">Icon</Label>
-                <Input
+                <button
                   id="area-emoji"
-                  value={emoji}
-                  onChange={(e) => setEmoji(e.target.value)}
-                  className="w-16 text-center text-lg"
-                  maxLength={4}
-                />
+                  type="button"
+                  onClick={() => setIconChooserOpen(true)}
+                  className="flex h-10 w-16 items-center justify-center rounded-xl border border-border/50 bg-background text-xl transition-colors hover:bg-muted/40"
+                  aria-label="Choose icon"
+                >
+                  {emoji}
+                </button>
               </div>
               <div className="min-w-0 flex-1 space-y-2">
                 <Label htmlFor="area-name">Name</Label>
@@ -102,6 +107,16 @@ export function GrowthAreaDialog({
                 />
               </div>
             </div>
+
+            <GrowthAreaIconChooser
+              open={iconChooserOpen}
+              onOpenChange={setIconChooserOpen}
+              value={emoji}
+              onSelect={(nextEmoji, label) => {
+                setEmoji(nextEmoji);
+                if (!name.trim()) setName(label);
+              }}
+            />
             <div className="space-y-2">
               <Label htmlFor="area-desc">Description</Label>
               <Textarea

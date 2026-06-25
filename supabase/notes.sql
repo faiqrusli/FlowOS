@@ -27,6 +27,7 @@ create table if not exists notes (
   growth_area_id uuid not null references growth_areas(id) on delete cascade,
   title text not null default 'Untitled',
   content text not null default '',
+  is_pinned boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -42,11 +43,13 @@ create table if not exists kanban_boards (
   user_id uuid not null references auth.users(id) on delete cascade,
   growth_area_id uuid not null references growth_areas(id) on delete cascade,
   title text not null,
+  sort_order integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 create index if not exists kanban_boards_growth_area_idx on kanban_boards (growth_area_id);
+create index if not exists kanban_boards_area_sort_idx on kanban_boards (growth_area_id, sort_order);
 
 -- ---------------------------------------------------------------------------
 -- Kanban columns
@@ -75,11 +78,13 @@ create table if not exists kanban_cards (
   description text not null default '',
   color_label text not null default 'sky',
   sort_order integer not null default 0,
+  is_archived boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 create index if not exists kanban_cards_column_idx on kanban_cards (column_id, sort_order);
+create index if not exists kanban_cards_column_archived_idx on kanban_cards (column_id, is_archived, sort_order);
 create index if not exists kanban_cards_board_idx on kanban_cards (board_id);
 
 -- ---------------------------------------------------------------------------
