@@ -199,7 +199,7 @@ export function ScheduleTaskSidebar({
   const filteredUnscheduled = inbox.unscheduledTasks.filter((task) =>
     matchesSearch(task.title)
   );
-  const filteredBacklog = inbox.backlogTasks.filter((task) =>
+  const filteredLater = inbox.laterTasks.filter((task) =>
     matchesSearch(task.title)
   );
   const filteredHabits = inbox.unscheduledHabits.filter((habit) =>
@@ -209,14 +209,14 @@ export function ScheduleTaskSidebar({
   const showTasks = filter === "all" || filter === "tasks";
   const showHabits = filter === "all" || filter === "habits";
   const totalInbox =
-    filteredUnscheduled.length + filteredBacklog.length + filteredHabits.length;
+    filteredUnscheduled.length + filteredLater.length + filteredHabits.length;
 
   return (
     <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-2xl border border-border/40 bg-card shadow-sm xl:sticky xl:top-6 xl:max-h-[calc(100vh-8rem)] xl:basis-[24%] xl:max-w-[300px]">
       <div className="space-y-3 border-b border-border/30 bg-muted/20 px-3 py-3">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="text-sm font-semibold text-foreground">Backlog</h2>
+            <h2 className="text-sm font-semibold text-foreground">Later</h2>
             <p className="text-[11px] text-muted-foreground">
               Drag onto calendar to timebox
             </p>
@@ -262,7 +262,7 @@ export function ScheduleTaskSidebar({
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-3">
         {totalInbox === 0 && (
           <div className="rounded-xl border border-dashed border-border/60 px-3 py-6 text-center">
-            <p className="text-sm text-muted-foreground">Your backlog is clear.</p>
+            <p className="text-sm text-muted-foreground">Nothing waiting in Later.</p>
             <Link
               href="/tasks"
               className="mt-2 inline-block text-sm font-medium text-foreground underline-offset-2 hover:underline"
@@ -284,9 +284,9 @@ export function ScheduleTaskSidebar({
           </SidebarSection>
         )}
 
-        {showTasks && filteredBacklog.length > 0 && (
-          <SidebarSection title="Later" count={filteredBacklog.length}>
-            {filteredBacklog.map((task) => (
+        {showTasks && filteredLater.length > 0 && (
+          <SidebarSection title="Later" count={filteredLater.length}>
+            {filteredLater.map((task) => (
               <DraggableTaskRow
                 key={task.id}
                 task={task}

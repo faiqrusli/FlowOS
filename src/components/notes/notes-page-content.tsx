@@ -160,7 +160,7 @@ export function NotesPageContent() {
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
       {error && <ErrorBanner message={error} />}
 
-      <div className="relative flex min-h-0 flex-1 flex-row gap-3 overflow-hidden sm:gap-4">
+      <div className="relative flex min-h-0 flex-1 flex-row gap-2 overflow-hidden sm:gap-3">
         {loading ? (
           <aside
             style={{ width: 56 }}

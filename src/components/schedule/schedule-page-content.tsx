@@ -1,389 +1,504 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { ScheduleCapacityBar } from "@/components/schedule/schedule-capacity-bar";
-import { ScheduleHeader } from "@/components/schedule/schedule-header";
-import { ScheduleSkeleton } from "@/components/schedule/schedule-skeleton";
-import { ScheduleTaskSidebar } from "@/components/schedule/schedule-task-sidebar";
-import { ScheduleTimeGrid } from "@/components/schedule/schedule-time-grid";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  TaskDetailPanel,
+  DETAIL_PANEL_COLLAPSED_WIDTH_PX,
+  DETAIL_PANEL_WIDTH_PX,
+} from "@/components/tasks/task-detail-panel";
+import { TimelinePlanner } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { getTodayDateString } from "@/lib/date-utils";
-import { toggleHabitComplete, updateHabit } from "@/lib/habits";
 import {
-  findNextAvailableSlot,
-  planAutoscheduleSlots,
-} from "@/lib/schedule-autoschedule";
-import { computeScheduleCapacity } from "@/lib/schedule-capacity";
+  deleteHabit,
+  fetchHabitsWithCompletions,
+  HabitsError,
+  toggleHabitComplete,
+  updateHabit,
+} from "@/lib/habits";
 import {
-  getHabitDurationMinutes,
-  getTaskDurationMinutes,
-  setItemDurationMinutes,
-} from "@/lib/schedule-durations";
-import { buildScheduleInbox } from "@/lib/schedule-inbox";
+  addTaskToBoard,
+  fetchTaskBoard,
+  isLaterGroup,
+  isTodayGroup,
+  persistTaskBoardLayout,
+  rebuildTodayColumn,
+  removeTaskFromBoard,
+  replaceTaskOnBoard,
+  syncTaskOnBoard,
+  TaskGroupsError,
+} from "@/lib/task-groups";
+import { moveTaskInBoard } from "@/lib/task-drag-utils";
+import { normalizePlanningState } from "@/lib/task-planning";
 import {
-  buildScheduleItems,
-  fetchScheduleData,
-  ScheduleError,
-} from "@/lib/schedule";
-import { minutesToTimeString } from "@/lib/schedule-layout";
-import {
-  getScheduleNotificationEnabled,
-  scheduleNotificationKey,
-  setScheduleNotificationEnabled,
-} from "@/lib/schedule-notifications";
-import { toggleTaskComplete, updateTask } from "@/lib/tasks";
-import type { TaskBuckets } from "@/lib/tasks";
+  deleteTask,
+  duplicateTask,
+  TasksError,
+  toggleTaskComplete,
+  updateTask,
+} from "@/lib/tasks";
 import type { Habit } from "@/types/habit";
-import type { ScheduleItem } from "@/types/schedule";
-import type { Task } from "@/types/task";
+import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
 export function SchedulePageContent() {
-  const [items, setItems] = useState<ScheduleItem[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [groups, setGroups] = useState<TaskGroupWithTasks[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [buckets, setBuckets] = useState<TaskBuckets | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pendingId, setPendingId] = useState<string | null>(null);
-  const [autoscheduling, setAutoscheduling] = useState(false);
-  const [showProjections, setShowProjections] = useState(true);
-  const [notificationRevision, setNotificationRevision] = useState(0);
-  const [durationRevision, setDurationRevision] = useState(0);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [todayViewDate, setTodayViewDate] = useState(getTodayDateString);
+  const updateTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
+    new Map()
+  );
 
-  const loadSchedule = useCallback(async () => {
+  const selectedTask = useMemo(() => {
+    if (!selectedTaskId) return null;
+    for (const group of groups) {
+      const match = group.tasks.find((task) => task.id === selectedTaskId);
+      if (match) return match;
+    }
+    return null;
+  }, [groups, selectedTaskId]);
+
+  const loadBoard = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const data = await fetchScheduleData();
-      setItems(data.items);
-      setTasks(data.tasks);
-      setHabits(data.habits);
-      setBuckets(data.buckets);
+      const [board, nextHabits] = await Promise.all([
+        fetchTaskBoard(),
+        fetchHabitsWithCompletions(),
+      ]);
+      setGroups(board);
+      setHabits(nextHabits);
     } catch (err) {
       setError(
-        err instanceof ScheduleError ? err.message : "Failed to load schedule."
+        err instanceof TaskGroupsError ||
+          err instanceof TasksError ||
+          err instanceof HabitsError
+          ? err.message
+          : "Failed to load schedule."
       );
-      setItems([]);
-      setTasks([]);
+      setGroups([]);
       setHabits([]);
-      setBuckets(null);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadSchedule();
-  }, [loadSchedule]);
+    void loadBoard();
+  }, [loadBoard]);
 
-  const capacity = useMemo(
-    () => computeScheduleCapacity(items),
-    [items, durationRevision]
-  );
+  useEffect(() => {
+    setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
+  }, [todayViewDate]);
 
-  const unscheduledItems = useMemo((): ScheduleItem[] => {
-    if (!buckets) return [];
-    const inbox = buildScheduleInbox(tasks, habits, buckets);
-    return [
-      ...inbox.unscheduledTasks.map((task) => ({
-        id: `proj-task-${task.id}`,
-        entityId: task.id,
-        title: task.title,
-        type: "task" as const,
-        time: null,
-        timeSort: Number.MAX_SAFE_INTEGER,
-        durationMinutes: getTaskDurationMinutes(task.id, task.priority),
-        priority: task.priority,
-        completed: task.completed,
-        href: "/tasks",
-      })),
-      ...inbox.unscheduledHabits.map((habit) => ({
-        id: `proj-habit-${habit.id}`,
-        entityId: habit.id,
-        title: habit.name,
-        type: "habit" as const,
-        time: null,
-        timeSort: Number.MAX_SAFE_INTEGER,
-        durationMinutes: getHabitDurationMinutes(habit.id),
-        completed: habit.completed,
-        href: "/habits",
-      })),
-    ];
-  }, [tasks, habits, buckets, durationRevision]);
-
-  function refreshItems(nextTasks: Task[], nextHabits: Habit[]) {
-    setItems(buildScheduleItems(nextTasks, nextHabits));
-    setDurationRevision((value) => value + 1);
-  }
-
-  function bumpNotifications() {
-    setNotificationRevision((value) => value + 1);
-  }
-
-  function handleToggleNotificationFromItem(item: ScheduleItem) {
-    if (item.type === "focus") return;
-    const key = scheduleNotificationKey(item.type, item.entityId);
-    const next = !getScheduleNotificationEnabled(key);
-    setScheduleNotificationEnabled(key, next);
-    bumpNotifications();
-  }
-
-  async function handleToggle(item: ScheduleItem) {
-    if (item.type === "focus") return;
-
-    setPendingId(item.entityId);
-    setError(null);
-
-    try {
-      if (item.type === "task") {
-        const task = tasks.find((t) => t.id === item.entityId);
-        if (!task) return;
-
-        const updated = await toggleTaskComplete(task);
-        const nextTasks = tasks.map((t) =>
-          t.id === updated.id ? updated : t
-        );
-        setTasks(nextTasks);
-        refreshItems(nextTasks, habits);
-      } else {
-        const habit = habits.find((h) => h.id === item.entityId);
-        if (!habit) return;
-
-        const updated = await toggleHabitComplete(habit);
-        const nextHabits = habits.map((h) =>
-          h.id === updated.id ? updated : h
-        );
-        setHabits(nextHabits);
-        refreshItems(tasks, nextHabits);
+  useEffect(() => {
+    return () => {
+      for (const timer of updateTimers.current.values()) {
+        clearTimeout(timer);
       }
-    } catch {
-      setError(`Failed to update ${item.type}.`);
-    } finally {
-      setPendingId(null);
-    }
+    };
+  }, []);
+
+  function scheduleTaskPersist(taskId: string, updates: Partial<Task>) {
+    setGroups((prev) =>
+      replaceTaskOnBoard(
+        prev,
+        taskId,
+        (task) => ({ ...task, ...updates }),
+        todayViewDate
+      )
+    );
+
+    const existing = updateTimers.current.get(taskId);
+    if (existing) clearTimeout(existing);
+
+    updateTimers.current.set(
+      taskId,
+      setTimeout(async () => {
+        updateTimers.current.delete(taskId);
+        try {
+          const updated = await updateTask(taskId, updates);
+          setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+        } catch (err) {
+          setError(
+            err instanceof TasksError ? err.message : "Failed to save task."
+          );
+          void loadBoard();
+        }
+      }, 350)
+    );
   }
 
-  function mergeScheduledTask(updated: Task) {
-    const exists = tasks.some((task) => task.id === updated.id);
-    const nextTasks = exists
-      ? tasks.map((task) => (task.id === updated.id ? updated : task))
-      : [...tasks, updated];
-
-    setTasks(nextTasks);
-
-    if (buckets) {
-      const today = [
-        ...buckets.today.filter((task) => task.id !== updated.id),
-        updated,
-      ];
-      setBuckets({
-        ...buckets,
-        today,
-        todayIncomplete: today.filter((task) => !task.completed),
-        todayCompleted: today.filter((task) => task.completed),
-        upcoming: buckets.upcoming.filter((task) => task.id !== updated.id),
-        missed: buckets.missed.filter((task) => task.id !== updated.id),
-      });
+  async function handleScheduleTask(
+    taskId: string,
+    updates: {
+      scheduled_date: string;
+      scheduled_time: string | null;
     }
-
-    refreshItems(nextTasks, habits);
-  }
-
-  async function handleScheduleTask(taskId: string, minutes: number) {
-    setPendingId(taskId);
+  ) {
     setError(null);
+    setGroups((prev) =>
+      replaceTaskOnBoard(
+        prev,
+        taskId,
+        (task) => ({ ...task, ...updates }),
+        todayViewDate
+      )
+    );
 
     try {
-      const updated = await updateTask(taskId, {
-        scheduled_date: getTodayDateString(),
-        scheduled_time: minutesToTimeString(minutes),
-      });
-      mergeScheduledTask(updated);
-    } catch {
-      setError("Failed to schedule task.");
-    } finally {
-      setPendingId(null);
-    }
-  }
-
-  async function handleScheduleHabit(habitId: string, minutes: number) {
-    setPendingId(habitId);
-    setError(null);
-
-    try {
-      const updated = await updateHabit(habitId, {
-        scheduled_time: minutesToTimeString(minutes),
-      });
-      const nextHabits = habits.map((habit) =>
-        habit.id === updated.id ? updated : habit
+      const updated = await updateTask(taskId, updates);
+      setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+    } catch (err) {
+      setError(
+        err instanceof TasksError ? err.message : "Failed to schedule task."
       );
-      setHabits(nextHabits);
-      refreshItems(tasks, nextHabits);
-    } catch {
-      setError("Failed to schedule habit.");
-    } finally {
-      setPendingId(null);
+      void loadBoard();
     }
   }
 
-  async function handleRescheduleItem(
-    type: "task" | "habit",
-    entityId: string,
-    minutes: number
+  async function handleScheduleHabit(
+    habitId: string,
+    updates: { scheduled_time: string | null }
   ) {
-    setPendingId(entityId);
     setError(null);
+    setHabits((prev) =>
+      prev.map((habit) =>
+        habit.id === habitId ? { ...habit, ...updates } : habit
+      )
+    );
 
     try {
-      const time = minutesToTimeString(minutes);
-
-      if (type === "task") {
-        const updated = await updateTask(entityId, { scheduled_time: time });
-        mergeScheduledTask(updated);
-      } else {
-        const updated = await updateHabit(entityId, { scheduled_time: time });
-        const nextHabits = habits.map((habit) =>
-          habit.id === updated.id ? updated : habit
-        );
-        setHabits(nextHabits);
-        refreshItems(tasks, nextHabits);
-      }
-    } catch {
-      setError("Failed to reschedule item.");
-    } finally {
-      setPendingId(null);
+      const updated = await updateHabit(habitId, updates);
+      setHabits((prev) =>
+        prev.map((habit) => (habit.id === updated.id ? updated : habit))
+      );
+    } catch (err) {
+      setError(
+        err instanceof HabitsError ? err.message : "Failed to schedule habit."
+      );
+      void loadBoard();
     }
   }
 
-  function handleResizeItem(
-    type: "task" | "habit",
-    entityId: string,
-    durationMinutes: number
-  ) {
-    setItemDurationMinutes(type, entityId, durationMinutes);
-    refreshItems(tasks, habits);
+  async function handleUpdateTask(taskId: string, updates: Partial<Task>) {
+    if (
+      "title" in updates ||
+      "description" in updates ||
+      updates.scheduled_time !== undefined
+    ) {
+      scheduleTaskPersist(taskId, updates);
+      return;
+    }
+
+    setGroups((prev) =>
+      replaceTaskOnBoard(
+        prev,
+        taskId,
+        (task) => ({ ...task, ...updates }),
+        todayViewDate
+      )
+    );
+
+    try {
+      const updated = await updateTask(taskId, updates);
+      setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+    } catch (err) {
+      setError(
+        err instanceof TasksError ? err.message : "Failed to update task."
+      );
+      void loadBoard();
+    }
   }
 
-  async function handleAutoscheduleTask(taskId: string) {
-    const task = tasks.find((entry) => entry.id === taskId)
-      ?? buckets?.upcoming.find((entry) => entry.id === taskId)
-      ?? buckets?.missed.find((entry) => entry.id === taskId);
+  async function handleMoveTask(taskId: string, targetGroupId: string) {
+    setError(null);
+    const todayGroup = groups.find(isTodayGroup);
+    const laterGroup = groups.find(isLaterGroup);
+    const next = moveTaskInBoard(
+      groups,
+      taskId,
+      {
+        groupId: targetGroupId,
+        beforeTaskId: null,
+        zone: "active",
+      },
+      {
+        todayGroupId: todayGroup?.id,
+        laterGroupId: laterGroup?.id,
+        todayViewDate,
+      }
+    );
 
+    setGroups(next);
+
+    try {
+      await persistTaskBoardLayout(next, { todayViewDate });
+    } catch (err) {
+      setError(
+        err instanceof TaskGroupsError
+          ? err.message
+          : "Failed to move task."
+      );
+      void loadBoard();
+    }
+  }
+
+  async function handleSetPlanningState(
+    taskId: string,
+    planningState: PlanningState
+  ) {
+    const task = groups
+      .flatMap((group) => group.tasks)
+      .find((item) => item.id === taskId);
     if (!task) return;
 
-    const duration = getTaskDurationMinutes(taskId, task.priority);
-    const slot = findNextAvailableSlot(items, duration);
-    if (slot === null) {
-      setError("No open slot left on today's calendar.");
+    const current = normalizePlanningState(task.planning_state);
+    if (current === planningState) return;
+
+    if (planningState === "later") {
+      await handleMoveToLater(taskId);
       return;
     }
 
-    await handleScheduleTask(taskId, slot);
+    await handleClearPlanningState(taskId);
   }
 
-  async function handleAutoscheduleHabit(habitId: string) {
-    const habit = habits.find((entry) => entry.id === habitId);
-    if (!habit) return;
-
-    const duration = getHabitDurationMinutes(habitId);
-    const slot = findNextAvailableSlot(items, duration);
-    if (slot === null) {
-      setError("No open slot left on today's calendar.");
-      return;
-    }
-
-    await handleScheduleHabit(habitId, slot);
-  }
-
-  async function handleAutoscheduleAll() {
-    if (!buckets) return;
-
-    setAutoscheduling(true);
+  async function handleMoveToLater(taskId: string) {
     setError(null);
+    const laterGroup = groups.find(isLaterGroup);
+    if (!laterGroup) return;
+
+    let nextBoard = groups;
+    setGroups((prev) => {
+      const todayGroup = prev.find(isTodayGroup);
+      nextBoard = moveTaskInBoard(
+        prev,
+        taskId,
+        {
+          groupId: laterGroup.id,
+          beforeTaskId: null,
+          zone: "active",
+        },
+        {
+          todayGroupId: todayGroup?.id,
+          laterGroupId: laterGroup.id,
+          todayViewDate,
+        }
+      );
+      return nextBoard;
+    });
 
     try {
-      const inbox = buildScheduleInbox(tasks, habits, buckets);
-      const candidates = [
-        ...inbox.unscheduledTasks.map((task) => ({
-          type: "task" as const,
-          entityId: task.id,
-          durationMinutes: getTaskDurationMinutes(task.id, task.priority),
-        })),
-        ...inbox.unscheduledHabits.map((habit) => ({
-          type: "habit" as const,
-          entityId: habit.id,
-          durationMinutes: getHabitDurationMinutes(habit.id),
-        })),
-        ...inbox.backlogTasks.slice(0, 5).map((task) => ({
-          type: "task" as const,
-          entityId: task.id,
-          durationMinutes: getTaskDurationMinutes(task.id, task.priority),
-        })),
-      ];
-
-      const plan = planAutoscheduleSlots(items, candidates);
-
-      for (const entry of plan) {
-        if (entry.type === "task") {
-          await handleScheduleTask(entry.entityId, entry.minutes);
-        } else {
-          await handleScheduleHabit(entry.entityId, entry.minutes);
-        }
-      }
-    } catch {
-      setError("Failed to autoschedule your day.");
-    } finally {
-      setAutoscheduling(false);
+      await persistTaskBoardLayout(nextBoard, { todayViewDate });
+    } catch (err) {
+      setError(
+        err instanceof TaskGroupsError
+          ? err.message
+          : "Failed to move task to Later."
+      );
+      void loadBoard();
     }
+  }
+
+  async function handleClearPlanningState(taskId: string) {
+    setError(null);
+    setGroups((prev) =>
+      replaceTaskOnBoard(
+        prev,
+        taskId,
+        (task) => ({ ...task, planning_state: "none" }),
+        todayViewDate
+      )
+    );
+
+    try {
+      const updated = await updateTask(taskId, { planning_state: "none" });
+      setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+    } catch (err) {
+      setError(
+        err instanceof TasksError ? err.message : "Failed to update task."
+      );
+      void loadBoard();
+    }
+  }
+
+  async function handleToggleComplete(task: Task) {
+    setError(null);
+    setGroups((prev) =>
+      replaceTaskOnBoard(
+        prev,
+        task.id,
+        (item) => ({
+          ...item,
+          completed: !item.completed,
+        }),
+        todayViewDate
+      )
+    );
+
+    try {
+      const updated = await toggleTaskComplete(task);
+      setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+    } catch (err) {
+      setError(
+        err instanceof TasksError ? err.message : "Failed to update task."
+      );
+      void loadBoard();
+    }
+  }
+
+  async function handleToggleHabitComplete(habit: Habit) {
+    setError(null);
+    setHabits((prev) =>
+      prev.map((item) =>
+        item.id === habit.id ? { ...item, completed: !item.completed } : item
+      )
+    );
+
+    try {
+      const updated = await toggleHabitComplete(habit);
+      setHabits((prev) =>
+        prev.map((item) => (item.id === updated.id ? updated : item))
+      );
+    } catch (err) {
+      setError(
+        err instanceof HabitsError ? err.message : "Failed to update habit."
+      );
+      void loadBoard();
+    }
+  }
+
+  async function handleDuplicateTask(task: Task) {
+    if (!task.group_id) return;
+    setError(null);
+
+    const orgGroup = groups.find((item) => item.id === task.group_id);
+    const sortOrder = orgGroup?.tasks.length ?? 0;
+
+    try {
+      const duplicated = await duplicateTask(task, task.group_id, sortOrder);
+      setGroups((prev) => addTaskToBoard(prev, duplicated, todayViewDate));
+    } catch (err) {
+      setError(
+        err instanceof TasksError ? err.message : "Failed to duplicate task."
+      );
+    }
+  }
+
+  async function handleDeleteTask(taskId: string) {
+    setError(null);
+    setGroups((prev) => removeTaskFromBoard(prev, taskId));
+    if (selectedTaskId === taskId) {
+      setSelectedTaskId(null);
+      setDetailOpen(false);
+    }
+
+    try {
+      await deleteTask(taskId);
+    } catch (err) {
+      setError(
+        err instanceof TasksError ? err.message : "Failed to delete task."
+      );
+      void loadBoard();
+    }
+  }
+
+  async function handleDeleteHabit(habitId: string) {
+    setError(null);
+    setHabits((prev) => prev.filter((habit) => habit.id !== habitId));
+    if (selectedHabitId === habitId) {
+      setSelectedHabitId(null);
+    }
+
+    try {
+      await deleteHabit(habitId);
+    } catch (err) {
+      setError(
+        err instanceof HabitsError ? err.message : "Failed to delete habit."
+      );
+      void loadBoard();
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+        Loading schedule…
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-5">
-      <ScheduleHeader
-        onAutoscheduleAll={handleAutoscheduleAll}
-        autoscheduling={autoscheduling}
-      />
-
-      {error && <ErrorBanner message={error} />}
-
-      {loading || !buckets ? (
-        <ScheduleSkeleton />
-      ) : (
-        <>
-          <ScheduleCapacityBar
-            capacity={capacity}
-            showProjections={showProjections}
-            onToggleProjections={() => setShowProjections((value) => !value)}
-          />
-
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-start">
-            <ScheduleTimeGrid
-              items={items}
-              unscheduledItems={unscheduledItems}
-              pendingId={pendingId}
-              interactive
-              showProjections={showProjections}
-              notificationRevision={notificationRevision}
-              durationRevision={durationRevision}
-              onToggle={handleToggle}
-              onToggleNotification={handleToggleNotificationFromItem}
-              onScheduleTask={handleScheduleTask}
-              onScheduleHabit={handleScheduleHabit}
-              onRescheduleItem={handleRescheduleItem}
-              onResizeItem={handleResizeItem}
-            />
-            <ScheduleTaskSidebar
-              tasks={tasks}
-              habits={habits}
-              buckets={buckets}
-              onAutoscheduleTask={handleAutoscheduleTask}
-              onAutoscheduleHabit={handleAutoscheduleHabit}
-              onAutoscheduleAll={handleAutoscheduleAll}
-            />
+    <div className="relative flex h-full min-h-0">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        {error && (
+          <div className="shrink-0 px-4 pt-3">
+            <ErrorBanner message={error} />
           </div>
-        </>
-      )}
+        )}
+
+        <TimelinePlanner
+          variant="fullscreen"
+          viewDate={todayViewDate}
+          onViewDateChange={setTodayViewDate}
+          groups={groups}
+          habits={habits}
+          selectedTaskId={selectedTaskId}
+          selectedHabitId={selectedHabitId}
+          onSelectTask={(taskId) => {
+            setSelectedTaskId(taskId);
+            if (taskId) setSelectedHabitId(null);
+          }}
+          onSelectHabit={(habitId) => {
+            setSelectedHabitId(habitId);
+            if (habitId) {
+              setSelectedTaskId(null);
+              setDetailOpen(false);
+            }
+          }}
+          onOpenDetail={(taskId) => {
+            setSelectedTaskId(taskId);
+            setSelectedHabitId(null);
+            setDetailOpen(true);
+          }}
+          onScheduleTask={handleScheduleTask}
+          onScheduleHabit={handleScheduleHabit}
+          onToggleComplete={handleToggleComplete}
+          onUpdateTask={handleUpdateTask}
+          onToggleHabitComplete={handleToggleHabitComplete}
+          onDeleteTask={handleDeleteTask}
+          onDeleteHabit={handleDeleteHabit}
+          onDuplicateTask={handleDuplicateTask}
+          onSetPlanningState={handleSetPlanningState}
+        />
+      </div>
+
+      {selectedTask ? (
+        <div
+          className="relative h-full shrink-0"
+          style={{
+            width: `min(100%, ${detailOpen ? DETAIL_PANEL_WIDTH_PX : DETAIL_PANEL_COLLAPSED_WIDTH_PX}px)`,
+          }}
+        >
+          <TaskDetailPanel
+            task={selectedTask}
+            groups={groups}
+            todayViewDate={todayViewDate}
+            expanded={detailOpen}
+            onToggleExpanded={() => setDetailOpen((value) => !value)}
+            onChange={(updates) => handleUpdateTask(selectedTask.id, updates)}
+            onMoveToGroup={(groupId) =>
+              void handleMoveTask(selectedTask.id, groupId)
+            }
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

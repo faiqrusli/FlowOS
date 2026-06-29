@@ -5,7 +5,7 @@ import type { Task } from "@/types/task";
 
 export type ScheduleInbox = {
   unscheduledTasks: Task[];
-  backlogTasks: Task[];
+  laterTasks: Task[];
   unscheduledHabits: Habit[];
 };
 
@@ -16,22 +16,19 @@ export function buildScheduleInbox(
   todayKey = getTodayDateString()
 ): ScheduleInbox {
   const unscheduledTasks = tasks.filter(
-    (task) => !task.scheduled_time && !task.completed
+    (task) =>
+      !task.scheduled_date &&
+      !task.completed &&
+      task.planning_state !== "later"
   );
 
-  const backlogTasks = [
-    ...buckets.missed,
-    ...buckets.upcoming.filter(
-      (task) => task.scheduled_date !== todayKey || !task.scheduled_time
-    ),
-  ].filter(
-    (task, index, list) =>
-      list.findIndex((entry) => entry.id === task.id) === index
+  const laterTasks = tasks.filter(
+    (task) => !task.completed && task.planning_state === "later"
   );
 
   const unscheduledHabits = habits.filter(
     (habit) => !habit.scheduled_time && !habit.completed
   );
 
-  return { unscheduledTasks, backlogTasks, unscheduledHabits };
+  return { unscheduledTasks, laterTasks, unscheduledHabits };
 }

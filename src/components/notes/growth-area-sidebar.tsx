@@ -230,7 +230,7 @@ export function GrowthAreaSidebar({
         onDragOver={expanded ? handleNavDragOver : undefined}
         className={cn(
           "max-h-[calc(100dvh-10rem)] overflow-x-hidden overflow-y-auto",
-          expanded ? "space-y-0.5 p-1.5" : "flex flex-col items-center gap-1 py-2"
+          expanded ? "space-y-0.5 p-1.5" : "flex flex-col items-center gap-0.5 py-2"
         )}
       >
         {areas.map((area) => {

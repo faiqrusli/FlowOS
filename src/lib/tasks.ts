@@ -1,11 +1,20 @@
+import type { ManualOrderUpdate } from "@/lib/manual-order";
+import {
+  applyManualOrderUpdates,
+  computeManualOrderRepairs,
+  MANUAL_ORDER_INITIAL,
+  normalizeTaskManualOrder,
+  resolveManualOrderForCreate,
+} from "@/lib/manual-order";
 import { supabase } from "@/lib/supabase";
 import { requireUserId } from "@/lib/auth";
-import { formatTimeShort, getTodayDateString } from "@/lib/date-utils";
+import { formatTimeShort, formatRelativeDateLabel, getTodayDateString } from "@/lib/date-utils";
 import {
   normalizeTaskPriority,
   TASK_PRIORITY_CONFIG,
   type TaskPriority,
 } from "@/lib/task-priority";
+import { normalizePlanningState } from "@/lib/task-planning";
 import type { Task, TaskInsert, TaskUpdate } from "@/types/task";
 
 export class TasksError extends Error {
@@ -139,7 +148,7 @@ export async function fetchTodayTasks(dateKey = getTodayDateString()): Promise<T
     throw new TasksError(error.message);
   }
 
-  return data ?? [];
+  return (data ?? []).map((task) => normalizeTaskFromDb(task));
 }
 
 export async function fetchTasks(): Promise<Task[]> {
@@ -154,18 +163,50 @@ export async function fetchTasks(): Promise<Task[]> {
     throw new TasksError(error.message);
   }
 
-  return data ?? [];
+  return (data ?? []).map((task) => normalizeTaskFromDb(task));
+}
+
+function normalizeTaskFromDb(task: Task): Task {
+  return normalizeTaskManualOrder({
+    ...task,
+    planning_state: normalizePlanningState(task.planning_state),
+    updated_at: task.updated_at ?? task.created_at,
+    completed_at: task.completed_at ?? null,
+  });
+}
+
+/** Repair and persist tasks missing a valid manualOrder. Returns normalized tasks. */
+export async function repairMissingManualOrders(tasks: Task[]): Promise<Task[]> {
+  const normalized = tasks.map((task) =>
+    normalizeTaskManualOrder({
+      ...task,
+      planning_state: normalizePlanningState(task.planning_state),
+    })
+  );
+  const repairs = computeManualOrderRepairs(normalized);
+  if (repairs.length === 0) return normalized;
+
+  await batchUpdateManualOrders(repairs);
+  return applyManualOrderUpdates(normalized, repairs);
 }
 
 export async function createTask(input: TaskInsert): Promise<Task> {
   const userId = await requireUserId();
+  const sort_order = resolveManualOrderForCreate(
+    input.sort_order,
+    MANUAL_ORDER_INITIAL
+  );
 
   const { data, error } = await supabase
     .from("tasks")
     .insert({
       ...input,
-      priority: input.priority ?? "medium",
+      priority: input.priority ?? "low",
       user_id: userId,
+      sort_order,
+      notification_enabled: input.notification_enabled ?? true,
+      scheduled_date: input.scheduled_date ?? null,
+      planning_state: input.planning_state ?? "none",
     })
     .select()
     .single();
@@ -174,14 +215,19 @@ export async function createTask(input: TaskInsert): Promise<Task> {
     throw new TasksError(error.message);
   }
 
-  return data;
+  return normalizeTaskFromDb(data);
 }
 
 export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
   const userId = await requireUserId();
+  const payload: TaskUpdate = { ...input };
+  if (payload.sort_order !== undefined) {
+    payload.sort_order = resolveManualOrderForCreate(payload.sort_order);
+  }
+
   const { data, error } = await supabase
     .from("tasks")
-    .update(input)
+    .update(payload)
     .eq("id", id)
     .eq("user_id", userId)
     .select()
@@ -191,14 +237,35 @@ export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
     throw new TasksError(error.message);
   }
 
-  return data;
+  return normalizeTaskFromDb(data);
+}
+
+/** Single RPC round-trip to persist manual order changes after drop. */
+export async function batchUpdateManualOrders(
+  updates: ManualOrderUpdate[]
+): Promise<void> {
+  if (updates.length === 0) return;
+
+  const userId = await requireUserId();
+  const { error } = await supabase.rpc("batch_update_task_manual_orders", {
+    p_user_id: userId,
+    p_updates: updates,
+  });
+
+  if (error) {
+    throw new TasksError(error.message);
+  }
 }
 
 export async function toggleTaskComplete(task: Task): Promise<Task> {
   const userId = await requireUserId();
+  const nextCompleted = !task.completed;
   const { data, error } = await supabase
     .from("tasks")
-    .update({ completed: !task.completed })
+    .update({
+      completed: nextCompleted,
+      completed_at: nextCompleted ? new Date().toISOString() : null,
+    })
     .eq("id", task.id)
     .eq("user_id", userId)
     .select()
@@ -208,7 +275,7 @@ export async function toggleTaskComplete(task: Task): Promise<Task> {
     throw new TasksError(error.message);
   }
 
-  return data;
+  return normalizeTaskFromDb(data);
 }
 
 export async function deleteTask(id: string): Promise<void> {
@@ -222,6 +289,25 @@ export async function deleteTask(id: string): Promise<void> {
   if (error) {
     throw new TasksError(error.message);
   }
+}
+
+export async function duplicateTask(
+  task: Task,
+  groupId: string,
+  sortOrder: number
+): Promise<Task> {
+  return createTask({
+    title: task.title,
+    description: task.description,
+    scheduled_date: task.scheduled_date,
+    scheduled_time: task.scheduled_time,
+    priority: task.priority,
+    group_id: groupId,
+    sort_order: sortOrder,
+    duration_minutes: task.duration_minutes,
+    notification_enabled: task.notification_enabled,
+    planning_state: task.planning_state,
+  });
 }
 
 export function getTaskPriority(task: Task): TaskPriority {
@@ -267,19 +353,32 @@ function formatTaskDateLabel(date: string | null): string | null {
 }
 
 export function formatTaskSchedule(task: Task): string | null {
+  return formatTaskScheduleParts(task, { includeYear: true });
+}
+
+export function formatTaskScheduleCompact(task: Task): string | null {
+  return formatTaskScheduleParts(task, { includeYear: false });
+}
+
+function formatTaskScheduleParts(
+  task: Task,
+  { includeYear }: { includeYear: boolean }
+): string | null {
   const parts: string[] = [];
 
   if (task.scheduled_date) {
     parts.push(
-      new Date(`${task.scheduled_date}T12:00:00+08:00`).toLocaleDateString(
-        "en-SG",
-        {
-          timeZone: "Asia/Singapore",
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }
-      )
+      includeYear
+        ? new Date(`${task.scheduled_date}T12:00:00+08:00`).toLocaleDateString(
+            "en-SG",
+            {
+              timeZone: "Asia/Singapore",
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            }
+          )
+        : formatRelativeDateLabel(task.scheduled_date)
     );
   }
 

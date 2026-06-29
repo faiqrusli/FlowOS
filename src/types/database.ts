@@ -1,7 +1,7 @@
 import type { FocusSession, FocusSessionInsert } from "@/types/focus";
 import type { ReflectionEntry } from "@/types/reflection";
 import type { Habit, HabitInsert, HabitUpdate } from "@/types/habit";
-import type { Task, TaskInsert } from "@/types/task";
+import type { Task, TaskGroup, TaskGroupInsert, TaskInsert } from "@/types/task";
 import type {
   GrowthArea,
   GrowthAreaInsert,
@@ -36,7 +36,16 @@ export type Database = {
       tasks: {
         Row: Task;
         Insert: TaskInsert;
-        Update: Partial<TaskInsert> & { completed?: boolean };
+        Update: Partial<TaskInsert> & {
+          completed?: boolean;
+          completed_at?: string | null;
+        };
+        Relationships: [];
+      };
+      task_groups: {
+        Row: TaskGroup;
+        Insert: TaskGroupInsert & { user_id: string };
+        Update: Partial<TaskGroupInsert>;
         Relationships: [];
       };
       habits: {
@@ -166,7 +175,12 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      batch_update_task_manual_orders: {
+        Args: { p_user_id: string; p_updates: { id: string; sort_order: number }[] };
+        Returns: undefined;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

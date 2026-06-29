@@ -92,15 +92,45 @@ export function getTodayDateString(timeZone: string = APP_TIMEZONE): string {
 }
 
 export function getYesterdayDateString(timeZone: string = APP_TIMEZONE): string {
-  const todayKey = getTodayDateString(timeZone);
-  const [year, month, day] = todayKey.split("-").map(Number);
+  return shiftDateKey(getTodayDateString(timeZone), -1);
+}
+
+export function getTomorrowDateString(timeZone: string = APP_TIMEZONE): string {
+  return shiftDateKey(getTodayDateString(timeZone), 1);
+}
+
+export function shiftDateKey(dateKey: string, days: number): string {
+  const [year, month, day] = dateKey.split("-").map(Number);
   const date = new Date(Date.UTC(year, month - 1, day));
-  date.setUTCDate(date.getUTCDate() - 1);
+  date.setUTCDate(date.getUTCDate() + days);
 
   const y = date.getUTCFullYear();
   const m = String(date.getUTCMonth() + 1).padStart(2, "0");
   const d = String(date.getUTCDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
+}
+
+export function formatShortDateLabel(
+  dateKey: string,
+  timeZone: string = APP_TIMEZONE
+): string {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  return new Intl.DateTimeFormat(APP_LOCALE, {
+    timeZone,
+    day: "numeric",
+    month: "short",
+  }).format(date);
+}
+
+export function formatRelativeDateLabel(
+  dateKey: string,
+  todayKey = getTodayDateString()
+): string {
+  if (dateKey === todayKey) return "Today";
+  if (dateKey === getYesterdayDateString()) return "Yesterday";
+  if (dateKey === getTomorrowDateString()) return "Tomorrow";
+  return formatShortDateLabel(dateKey);
 }
 
 export function getTodayDayAbbrev(timeZone: string = APP_TIMEZONE): string {
@@ -147,22 +177,52 @@ export function compareHistoryDateKeys(
   return b.localeCompare(a);
 }
 
+export function parseWallClockTime(
+  time: string | null | undefined
+): { hours: number; minutes: number } | null {
+  if (!time) return null;
+
+  const match = time.match(/(?:T|^)(\d{1,2}):(\d{2})/);
+  if (!match) return null;
+
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (
+    Number.isNaN(hours) ||
+    Number.isNaN(minutes) ||
+    hours < 0 ||
+    hours > 23 ||
+    minutes < 0 ||
+    minutes > 59
+  ) {
+    return null;
+  }
+
+  return { hours, minutes };
+}
+
+export function toTimeInputValue(time: string | null | undefined): string {
+  const parsed = parseWallClockTime(time);
+  if (!parsed) return "";
+  return `${String(parsed.hours).padStart(2, "0")}:${String(parsed.minutes).padStart(2, "0")}`;
+}
+
 export function parseTimeToMinutes(time: string | null): number {
-  if (!time) return Number.MAX_SAFE_INTEGER;
-  const [hours, minutes] = time.split(":");
-  return Number(hours) * 60 + Number(minutes);
+  const parsed = parseWallClockTime(time);
+  if (!parsed) return Number.MAX_SAFE_INTEGER;
+  return parsed.hours * 60 + parsed.minutes;
 }
 
 export function formatTimeShort(time: string | null): string | null {
-  if (!time) return null;
+  const parsed = parseWallClockTime(time);
+  if (!parsed) return null;
 
-  const [hours, minutes] = time.split(":");
   const date = new Date(
-    `1970-01-01T${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:00+08:00`
+    Date.UTC(1970, 0, 1, parsed.hours, parsed.minutes)
   );
 
   return new Intl.DateTimeFormat(APP_LOCALE, {
-    timeZone: APP_TIMEZONE,
+    timeZone: "UTC",
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
