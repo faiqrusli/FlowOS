@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TaskDetailPanel, DETAIL_PANEL_COLLAPSED_WIDTH_PX, DETAIL_PANEL_WIDTH_PX } from "@/components/tasks/task-detail-panel";
+import { WORKSPACE_GUTTER_CLASS } from "@/lib/workspace-layout";
+import { cn } from "@/lib/utils";
 import { TimelineDrawer, TimelineDrawerToggle } from "@/components/tasks/timeline-drawer";
 import { TasksBoardView } from "@/components/tasks/tasks-board-view";
+import { TaskDndContext } from "@/lib/dnd";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
@@ -77,11 +80,14 @@ export function TasksPageContent() {
 
   const selectedTask = useMemo(() => {
     if (!selectedTaskId) return null;
+    let fallback: Task | null = null;
     for (const group of groups) {
       const match = group.tasks.find((task) => task.id === selectedTaskId);
-      if (match) return match;
+      if (!match) continue;
+      if (isLaterGroup(group) || isTodayGroup(group)) return match;
+      fallback = match;
     }
-    return null;
+    return fallback;
   }, [groups, selectedTaskId]);
 
   const loadBoard = useCallback(async () => {
@@ -601,34 +607,31 @@ export function TasksPageContent() {
 
   async function handleMoveToLater(taskId: string) {
     setError(null);
-    const laterGroup = groups.find(isLaterGroup);
-    if (!laterGroup) return;
 
     let nextBoard = groups;
     setGroups((prev) => {
-      const todayGroup = prev.find(isTodayGroup);
-      nextBoard = moveTaskInBoard(
+      nextBoard = replaceTaskOnBoard(
         prev,
         taskId,
-        {
-          groupId: laterGroup.id,
-          beforeTaskId: null,
-          zone: "active",
-        },
-        {
-          todayGroupId: todayGroup?.id,
-          laterGroupId: laterGroup.id,
-          todayViewDate,
-        }
+        (task) => ({
+          ...task,
+          planning_state: "later",
+          scheduled_time: null,
+        }),
+        todayViewDate
       );
       return nextBoard;
     });
 
     try {
-      await persistTaskBoardLayout(nextBoard, { todayViewDate });
+      const updated = await updateTask(taskId, {
+        planning_state: "later",
+        scheduled_time: null,
+      });
+      setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TaskGroupsError
+        err instanceof TasksError
           ? err.message
           : "Failed to move task to Later."
       );
@@ -700,15 +703,15 @@ export function TasksPageContent() {
     );
   }
 
-  const detailPanelOffsetPx = selectedTask
-    ? detailOpen
-      ? DETAIL_PANEL_WIDTH_PX
-      : DETAIL_PANEL_COLLAPSED_WIDTH_PX
-    : 0;
 
   return (
     <div className="relative flex h-full min-h-0">
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col px-1 pb-3 pt-2 sm:px-2">
+      <div
+        className={cn(
+          "flex min-h-0 min-w-0 flex-1 flex-col pb-3 pt-2",
+          WORKSPACE_GUTTER_CLASS
+        )}
+      >
         {error && (
           <div className="mb-3 shrink-0">
             <ErrorBanner message={error} />
@@ -726,33 +729,35 @@ export function TasksPageContent() {
           </div>
         )}
 
-        <TasksBoardView
-          groups={groups}
-          selectedTaskId={selectedTaskId}
-          todayViewDate={todayViewDate}
-          plannerActive={timelineOpen}
-          onToggleQuickPlanner={() => setTimelineOpen((value) => !value)}
-          onTodayViewDateChange={setTodayViewDate}
-          onGroupsChange={setGroups}
-          onSelectTask={handleSelectTask}
-          onCreateTask={handleCreateTask}
-          onUpdateTask={handleUpdateTask}
-          onToggleComplete={handleToggleComplete}
-          onDuplicateTask={handleDuplicateTask}
-          onMoveTask={handleMoveTask}
-          onDeleteTask={handleDeleteTask}
-          onCreateGroup={handleCreateGroup}
-          onCreateGroupAndMoveTask={handleCreateGroupAndMoveTask}
-          onRenameGroup={handleRenameGroup}
-          onUpdateGroupIcon={handleUpdateGroupIcon}
-          onUpdateGroupColor={handleUpdateGroupColor}
-          onUpdateGroupSortMode={handleUpdateGroupSortMode}
-          onDeleteGroup={handleDeleteGroup}
-          onPersistLayout={handlePersistLayout}
-          onPersistManualOrder={handlePersistManualOrder}
-          onShowHint={setHint}
-          onSetPlanningState={handleSetPlanningState}
-        />
+        <TaskDndContext>
+          <TasksBoardView
+            groups={groups}
+            selectedTaskId={selectedTaskId}
+            todayViewDate={todayViewDate}
+            plannerActive={timelineOpen}
+            onToggleQuickPlanner={() => setTimelineOpen((value) => !value)}
+            onTodayViewDateChange={setTodayViewDate}
+            onGroupsChange={setGroups}
+            onSelectTask={handleSelectTask}
+            onCreateTask={handleCreateTask}
+            onUpdateTask={handleUpdateTask}
+            onToggleComplete={handleToggleComplete}
+            onDuplicateTask={handleDuplicateTask}
+            onMoveTask={handleMoveTask}
+            onDeleteTask={handleDeleteTask}
+            onCreateGroup={handleCreateGroup}
+            onCreateGroupAndMoveTask={handleCreateGroupAndMoveTask}
+            onRenameGroup={handleRenameGroup}
+            onUpdateGroupIcon={handleUpdateGroupIcon}
+            onUpdateGroupColor={handleUpdateGroupColor}
+            onUpdateGroupSortMode={handleUpdateGroupSortMode}
+            onDeleteGroup={handleDeleteGroup}
+            onPersistLayout={handlePersistLayout}
+            onPersistManualOrder={handlePersistManualOrder}
+            onShowHint={setHint}
+            onSetPlanningState={handleSetPlanningState}
+          />
+        </TaskDndContext>
       </div>
 
       <TimelineDrawer
@@ -775,35 +780,40 @@ export function TasksPageContent() {
         onSetPlanningState={handleSetPlanningState}
       />
 
+      <div
+        className="relative h-full shrink-0"
+        style={{
+          width: `min(100%, ${detailOpen ? DETAIL_PANEL_WIDTH_PX : DETAIL_PANEL_COLLAPSED_WIDTH_PX}px)`,
+        }}
+      >
+        <TaskDetailPanel
+          task={selectedTask}
+          groups={groups}
+          todayViewDate={todayViewDate}
+          expanded={detailOpen}
+          onToggleExpanded={() => setDetailOpen((value) => !value)}
+          onChange={(updates) => {
+            if (!selectedTask) return;
+            void handleUpdateTask(selectedTask.id, updates);
+          }}
+          onMoveToGroup={(groupId) => {
+            if (!selectedTask) return;
+            void handleMoveTask(selectedTask.id, groupId);
+          }}
+          onPlanningStateChange={(planningState) => {
+            if (!selectedTask) return;
+            void handleSetPlanningState(selectedTask.id, planningState);
+          }}
+        />
+      </div>
+
       <TimelineDrawerToggle
         open={timelineOpen}
-        detailPanelOffsetPx={detailPanelOffsetPx}
+        detailPanelOffsetPx={
+          detailOpen ? DETAIL_PANEL_WIDTH_PX : DETAIL_PANEL_COLLAPSED_WIDTH_PX
+        }
         onToggle={() => setTimelineOpen((value) => !value)}
       />
-
-      {selectedTask ? (
-        <div
-          className="relative h-full shrink-0"
-          style={{
-            width: `min(100%, ${detailOpen ? DETAIL_PANEL_WIDTH_PX : DETAIL_PANEL_COLLAPSED_WIDTH_PX}px)`,
-          }}
-        >
-          <TaskDetailPanel
-            task={selectedTask}
-            groups={groups}
-            todayViewDate={todayViewDate}
-            expanded={detailOpen}
-            onToggleExpanded={() => setDetailOpen((value) => !value)}
-            onChange={(updates) => handleUpdateTask(selectedTask.id, updates)}
-            onMoveToGroup={(groupId) =>
-              void handleMoveTask(selectedTask.id, groupId)
-            }
-            onPlanningStateChange={(planningState) =>
-              void handleSetPlanningState(selectedTask.id, planningState)
-            }
-          />
-        </div>
-      ) : null}
     </div>
   );
 }

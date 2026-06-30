@@ -20,7 +20,7 @@ export const DEFAULT_TASK_DURATION = 30;
 export const DEFAULT_HABIT_DURATION = 15;
 export const MIN_BLOCK_HEIGHT_PX = 34;
 
-export type TimelineZoom = "15" | "30" | "60";
+export type TimelineZoom = "5" | "15" | "30" | "60";
 export type TimelineEntryKind = "task" | "habit";
 
 export type ScheduledTimelineSlot = {
@@ -30,6 +30,7 @@ export type ScheduledTimelineSlot = {
 };
 
 const ZOOM_HOUR_HEIGHT_PX: Record<TimelineZoom, number> = {
+  "5": 288,
   "15": 96,
   "30": 64,
   "60": 40,
@@ -39,6 +40,7 @@ export const TIMELINE_ZOOM_OPTIONS: {
   value: TimelineZoom;
   label: string;
 }[] = [
+  { value: "5", label: "5 min" },
   { value: "15", label: "15 min" },
   { value: "30", label: "30 min" },
   { value: "60", label: "1 hour" },

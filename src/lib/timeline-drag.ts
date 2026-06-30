@@ -1,7 +1,7 @@
 export const TIMELINE_DRAG_ID_MIME = "application/x-flowos-schedule-id";
 export const TIMELINE_DRAG_KIND_MIME = "application/x-flowos-schedule-kind";
 
-export const TIMELINE_DRAWER_WIDTH_PX = 360;
+export { QUICK_SCHEDULE_DRAWER_WIDTH_PX as TIMELINE_DRAWER_WIDTH_PX } from "./quick-schedule-task-list-width";
 
 let timelineDropConsumed = false;
 

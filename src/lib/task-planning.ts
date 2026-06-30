@@ -22,7 +22,7 @@ export const PLANNING_STATE_CONFIG: Record<
   later: {
     label: "Later",
     description:
-      "Set the task aside until you're ready to schedule it. Moving a task to Later removes its scheduled date and time.",
+      "Set the task aside until you're ready to schedule it. Moving a task to Later clears its scheduled time but keeps its date and duration.",
   },
 };
 

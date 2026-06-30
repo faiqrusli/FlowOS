@@ -152,39 +152,6 @@ function insertTaskIntoGroup(
   };
 }
 
-function stripTaskFromPlanningColumns(
-  board: TaskGroupWithTasks[],
-  taskId: string
-): TaskGroupWithTasks[] {
-  return board.map((group) => {
-    if (isTodayGroup(group) || isLaterGroup(group)) {
-      return {
-        ...group,
-        tasks: group.tasks.filter((task) => task.id !== taskId),
-      };
-    }
-    return group;
-  });
-}
-
-function updateTaskEverywhere(
-  board: TaskGroupWithTasks[],
-  taskId: string,
-  updatedTask: Task
-): TaskGroupWithTasks[] {
-  return board.map((group) => {
-    if (!group.tasks.some((task) => task.id === taskId)) return group;
-    const nextTasks = group.tasks.map((task) =>
-      task.id === taskId ? updatedTask : task
-    );
-    const { active, completed } = sortActiveAndCompletedForContext(
-      nextTasks,
-      getSortContextForGroup(group)
-    );
-    return { ...group, tasks: [...active, ...completed] };
-  });
-}
-
 function isManualActiveInsertTarget(
   board: TaskGroupWithTasks[],
   target: TaskDragTarget
@@ -300,15 +267,16 @@ export function moveTaskInBoard(
     const laterTask: Task = {
       ...movingTask,
       planning_state: "later",
-      scheduled_date: null,
       scheduled_time: null,
       completed: target.zone === "completed",
     };
 
-    const withoutPlanning = stripTaskFromPlanningColumns(board, taskId);
-    const synced = updateTaskEverywhere(withoutPlanning, taskId, laterTask);
+    const stripped = board.map((group) => ({
+      ...group,
+      tasks: group.tasks.filter((task) => task.id !== taskId),
+    }));
 
-    return synced.map((group) => {
+    return stripped.map((group) => {
       if (group.id !== target.groupId) return group;
       return insertTaskIntoGroup(group, laterTask, target, insertOptions);
     });
@@ -322,10 +290,12 @@ export function moveTaskInBoard(
       completed: target.zone === "completed",
     };
 
-    const withoutPlanning = stripTaskFromPlanningColumns(board, taskId);
-    const synced = updateTaskEverywhere(withoutPlanning, taskId, scheduledTask);
+    const stripped = board.map((group) => ({
+      ...group,
+      tasks: group.tasks.filter((task) => task.id !== taskId),
+    }));
 
-    return synced.map((group) => {
+    return stripped.map((group) => {
       if (group.id !== target.groupId) return group;
       return insertTaskIntoGroup(group, scheduledTask, target, insertOptions);
     });

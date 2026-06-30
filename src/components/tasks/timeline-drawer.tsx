@@ -3,9 +3,13 @@
 import { Clock, PanelRightClose, PanelRightOpen } from "lucide-react";
 import {
   TimelinePlanner,
-  type TimelinePlannerFocusRequest,
   type TimelinePlannerProps,
 } from "@/components/tasks/timeline-planner";
+import {
+  panelToggleHoverIconClass,
+  panelTogglePrimaryIconClass,
+  panelToggleTabClass,
+} from "@/lib/panel-toggle-styles";
 import { TIMELINE_DRAWER_WIDTH_PX } from "@/lib/timeline-drag";
 import { cn } from "@/lib/utils";
 
@@ -30,22 +34,14 @@ function TimelineTabButton({
       type="button"
       onClick={onClick}
       style={style}
-        className={cn(
-        "group/timeline-tab relative z-30 flex size-8 items-center justify-center rounded-l-lg border border-r-0 border-border/35 bg-card/95 text-muted-foreground shadow-[0_1px_3px_rgba(15,23,42,0.06)] backdrop-blur-sm transition-colors hover:border-sky-400/30 hover:text-foreground",
-        className
-      )}
+      className={cn(panelToggleTabClass(), className)}
       aria-label={active ? "Collapse Quick Schedule" : "Open Quick Schedule"}
     >
-      <Clock
-        className={cn(
-          "size-4 transition-opacity duration-150 group-hover/timeline-tab:opacity-0",
-          active && "text-sky-600"
-        )}
-      />
+      <Clock className={panelTogglePrimaryIconClass()} />
       {active ? (
-        <PanelRightClose className="absolute size-4 opacity-0 transition-opacity duration-150 group-hover/timeline-tab:opacity-100" />
+        <PanelRightClose className={panelToggleHoverIconClass()} />
       ) : (
-        <PanelRightOpen className="absolute size-4 opacity-0 transition-opacity duration-150 group-hover/timeline-tab:opacity-100" />
+        <PanelRightOpen className={panelToggleHoverIconClass()} />
       )}
     </button>
   );

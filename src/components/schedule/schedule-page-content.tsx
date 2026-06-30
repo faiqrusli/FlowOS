@@ -8,6 +8,8 @@ import {
 } from "@/components/tasks/task-detail-panel";
 import { TimelinePlanner } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";
+import { WORKSPACE_GUTTER_CLASS } from "@/lib/workspace-layout";
+import { cn } from "@/lib/utils";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
   deleteHabit,
@@ -436,9 +438,14 @@ export function SchedulePageContent() {
 
   return (
     <div className="relative flex h-full min-h-0">
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div
+        className={cn(
+          "flex min-h-0 min-w-0 flex-1 flex-col",
+          WORKSPACE_GUTTER_CLASS
+        )}
+      >
         {error && (
-          <div className="shrink-0 px-4 pt-3">
+          <div className="shrink-0 pt-3">
             <ErrorBanner message={error} />
           </div>
         )}
@@ -479,26 +486,28 @@ export function SchedulePageContent() {
         />
       </div>
 
-      {selectedTask ? (
-        <div
-          className="relative h-full shrink-0"
-          style={{
-            width: `min(100%, ${detailOpen ? DETAIL_PANEL_WIDTH_PX : DETAIL_PANEL_COLLAPSED_WIDTH_PX}px)`,
+      <div
+        className="relative h-full shrink-0"
+        style={{
+          width: `min(100%, ${detailOpen ? DETAIL_PANEL_WIDTH_PX : DETAIL_PANEL_COLLAPSED_WIDTH_PX}px)`,
+        }}
+      >
+        <TaskDetailPanel
+          task={selectedTask}
+          groups={groups}
+          todayViewDate={todayViewDate}
+          expanded={detailOpen}
+          onToggleExpanded={() => setDetailOpen((value) => !value)}
+          onChange={(updates) => {
+            if (!selectedTask) return;
+            void handleUpdateTask(selectedTask.id, updates);
           }}
-        >
-          <TaskDetailPanel
-            task={selectedTask}
-            groups={groups}
-            todayViewDate={todayViewDate}
-            expanded={detailOpen}
-            onToggleExpanded={() => setDetailOpen((value) => !value)}
-            onChange={(updates) => handleUpdateTask(selectedTask.id, updates)}
-            onMoveToGroup={(groupId) =>
-              void handleMoveTask(selectedTask.id, groupId)
-            }
-          />
-        </div>
-      ) : null}
+          onMoveToGroup={(groupId) => {
+            if (!selectedTask) return;
+            void handleMoveTask(selectedTask.id, groupId);
+          }}
+        />
+      </div>
     </div>
   );
 }

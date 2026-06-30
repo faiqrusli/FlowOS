@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
   type MouseEvent,
+  type PointerEvent,
   type ReactNode,
   type RefObject,
 } from "react";
@@ -47,11 +48,12 @@ import {
   type TaskPriority,
 } from "@/lib/task-priority";
 import { formatTaskScheduleCompact } from "@/lib/tasks";
-import { useTaskRowPointerGesture } from "@/lib/task-row-pointer-gesture";
+import type { TaskDragData } from "@/lib/dnd/drag-types";
+import { getTaskDndMetadata } from "@/lib/dnd/group-metadata";
 import { cn } from "@/lib/utils";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
-
-const TASK_DRAG_THRESHOLD_PX = 6;
 
 function isTaskDragInteractiveTarget(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) return false;
@@ -60,14 +62,14 @@ function isTaskDragInteractiveTarget(target: EventTarget | null): boolean {
 
 type TaskRowProps = {
   task: Task;
+  groupId: string;
+  zone?: "active" | "completed";
   groups: TaskGroupWithTasks[];
   todayViewDate: string;
   isSelected?: boolean;
   dragEnabled?: boolean;
   reorderEnabled?: boolean;
   reorderDisabledTooltip?: string;
-  onPointerDragStart: (coords: { clientX: number; clientY: number }) => void;
-  onPointerDragEnd: () => void;
   onToggleComplete: () => void;
   onOpenDetail: () => void;
   onDuplicate: () => void;
@@ -76,6 +78,7 @@ type TaskRowProps = {
   onUpdate: (updates: Partial<Task>) => void;
   onSetPlanningState?: (planningState: PlanningState) => void;
   onRequestCreateGroup?: () => void;
+  overlay?: boolean;
 };
 
 function PriorityFlagIcon({
@@ -859,14 +862,14 @@ function TaskNotificationPopover({
 
 export const TaskRow = memo(function TaskRow({
   task,
+  groupId,
+  zone,
   groups,
   todayViewDate,
   isSelected = false,
   dragEnabled = true,
   reorderEnabled = true,
   reorderDisabledTooltip = "Switch to Manual sorting to reorder tasks.",
-  onPointerDragStart,
-  onPointerDragEnd,
   onToggleComplete,
   onOpenDetail,
   onDuplicate,
@@ -875,6 +878,7 @@ export const TaskRow = memo(function TaskRow({
   onUpdate,
   onSetPlanningState,
   onRequestCreateGroup,
+  overlay = false,
 }: TaskRowProps) {
   const [detailMenuOpen, setDetailMenuOpen] = useState(false);
   const [flagMenuOpen, setFlagMenuOpen] = useState(false);
@@ -929,14 +933,63 @@ export const TaskRow = memo(function TaskRow({
     return () => cancelAnimationFrame(frame);
   }, [isRenaming]);
 
-  const rowPointerGesture = useTaskRowPointerGesture({
-    dragEnabled,
-    gestureEnabled: !isRenaming,
-    isInteractiveTarget: isTaskDragInteractiveTarget,
-    onOpenDetail,
-    onPointerDragStart,
-    onPointerDragEnd,
+  const taskZone = zone ?? (task.completed ? "completed" : "active");
+  const sourceGroup = useMemo(
+    () => groups.find((group) => group.id === groupId) ?? null,
+    [groupId, groups]
+  );
+
+  const sortableData: TaskDragData = useMemo(() => {
+    if (!sourceGroup) {
+      return {
+        type: "task",
+        taskId: task.id,
+        groupId,
+        zone: taskZone,
+        planningState: normalizePlanningState(task.planning_state),
+        sortMode: "manual",
+      };
+    }
+    return getTaskDndMetadata(task, sourceGroup, taskZone);
+  }, [groupId, sourceGroup, task, taskZone]);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: task.id,
+    disabled: overlay || !dragEnabled || isRenaming,
+    data: sortableData,
+    // Layout animation fights sortable transforms during drag — transforms only.
+    animateLayoutChanges: () => false,
+    transition: null,
   });
+
+  const sortableListeners = useMemo(() => {
+    if (overlay || !listeners) return undefined;
+
+    const { onPointerDown, ...rest } = listeners;
+    return {
+      ...rest,
+      onPointerDown: (event: PointerEvent<HTMLDivElement>) => {
+        if (isTaskDragInteractiveTarget(event.target)) return;
+        // dnd-kit aborts when defaultPrevented is already true — never preventDefault here.
+        onPointerDown?.(event);
+      },
+    };
+  }, [listeners, overlay]);
+
+  const setRowRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      rowRef.current = node;
+      setNodeRef(node);
+    },
+    [setNodeRef]
+  );
 
   const commitRename = useCallback(() => {
     setIsRenaming(false);
@@ -957,6 +1010,11 @@ export const TaskRow = memo(function TaskRow({
     event.stopPropagation();
     setTitleDraft(task.title);
     setIsRenaming(true);
+  }
+
+  function handleRowClick(event: MouseEvent<HTMLDivElement>) {
+    if (isTaskDragInteractiveTarget(event.target)) return;
+    onOpenDetail();
   }
 
   useEffect(() => {
@@ -1025,25 +1083,50 @@ export const TaskRow = memo(function TaskRow({
 
   return (
     <div
-      ref={rowRef}
+      ref={setRowRef}
       data-task-row={task.id}
-      onPointerDown={rowPointerGesture.onPointerDown}
-      onPointerMove={rowPointerGesture.onPointerMove}
-      onPointerUp={rowPointerGesture.onPointerUp}
-      onPointerCancel={rowPointerGesture.onPointerCancel}
-      onContextMenu={handleContextMenu}
+      style={{
+        transform:
+          isDragging && !overlay
+            ? undefined
+            : CSS.Transform.toString(transform),
+        transition: isDragging ? undefined : transition,
+        touchAction: overlay ? undefined : "none",
+        ...(isDragging && !overlay
+          ? {
+              height: 0,
+              minHeight: 0,
+              marginTop: 0,
+              marginBottom: 0,
+              paddingTop: 0,
+              paddingBottom: 0,
+              borderWidth: 0,
+              opacity: 0,
+            }
+          : null),
+      }}
+      {...(overlay ? {} : attributes)}
+      {...(overlay ? {} : sortableListeners)}
+      onClick={overlay ? undefined : handleRowClick}
+      onContextMenu={overlay ? undefined : handleContextMenu}
       title={
         dragEnabled && !reorderEnabled ? reorderDisabledTooltip : undefined
       }
       className={cn(
-        "group relative mx-0.5 flex min-w-0 select-none items-center gap-0 rounded-md border border-transparent py-1 pl-0.5 pr-0.5 transition-[background-color,box-shadow,transform,border-color] duration-150",
-        dragEnabled && "cursor-grab hover:-translate-y-px hover:border-border/40 hover:bg-muted/40 hover:shadow-sm",
-        notifyOpen && "z-20",
-        detailMenuOpen && "z-20",
-        flagMenuOpen && "z-20",
+        "group relative mx-0.5 flex min-w-0 select-none items-center gap-0 rounded-md border border-transparent py-1 pl-0.5 pr-0.5 transition-[background-color,border-color,opacity] duration-150",
+        !overlay &&
+          dragEnabled &&
+          !isDragging &&
+          "cursor-grab hover:border-border/40 hover:bg-muted/40",
+        isDragging && !overlay && "pointer-events-none overflow-hidden",
+        overlay && "pointer-events-none",
+        !overlay && notifyOpen && "z-20",
+        !overlay && detailMenuOpen && "z-20",
+        !overlay && flagMenuOpen && "z-20",
         isSelected &&
+          !overlay &&
           "bg-sky-50/55 shadow-[inset_0_0_0_1px_rgba(14,165,233,0.18)] dark:bg-sky-500/10",
-        isCompleted && "opacity-[0.45] transition-opacity hover:opacity-[0.62]"
+        isCompleted && !isDragging && !overlay && "opacity-[0.45] transition-opacity hover:opacity-[0.62]"
       )}
     >
       <button
@@ -1222,7 +1305,7 @@ export const TaskRow = memo(function TaskRow({
         )}
       </div>
 
-      {detailMenuOpen && (
+      {detailMenuOpen && !overlay && (
         <TaskDetailMenuPopover
           task={task}
           todayViewDate={todayViewDate}

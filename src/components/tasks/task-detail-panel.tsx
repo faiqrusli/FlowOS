@@ -9,10 +9,14 @@ import {
   Clock,
   Flag,
   Folder,
-  PanelRightClose,
-  PanelRightOpen,
 } from "lucide-react";
+import {
+  GlobalAccessPanel,
+  GLOBAL_ACCESS_PANEL_COLLAPSED_WIDTH_PX,
+  GLOBAL_ACCESS_PANEL_WIDTH_PX,
+} from "@/components/layout/global-access-panel";
 import { Input } from "@/components/ui/input";
+import { NativePickerInput } from "@/components/ui/native-picker-input";
 import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
@@ -34,13 +38,13 @@ import {
 import { cn } from "@/lib/utils";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
-const DETAIL_PANEL_WIDTH_PX = 320;
-const DETAIL_PANEL_COLLAPSED_WIDTH_PX = 40;
+const DETAIL_PANEL_WIDTH_PX = GLOBAL_ACCESS_PANEL_WIDTH_PX;
+const DETAIL_PANEL_COLLAPSED_WIDTH_PX = GLOBAL_ACCESS_PANEL_COLLAPSED_WIDTH_PX;
 
 export { DETAIL_PANEL_WIDTH_PX, DETAIL_PANEL_COLLAPSED_WIDTH_PX };
 
 type TaskDetailPanelProps = {
-  task: Task;
+  task: Task | null;
   groups: TaskGroupWithTasks[];
   todayViewDate: string;
   expanded: boolean;
@@ -101,6 +105,198 @@ function PlanningInfoMenu() {
   );
 }
 
+function TaskDetailEmptyState() {
+  return (
+    <div className="flex h-full min-h-[12rem] flex-col items-center justify-center px-4 py-8 text-center">
+      <ClipboardList
+        className="mb-3 size-8 text-muted-foreground/35"
+        aria-hidden
+      />
+      <p className="text-sm font-medium text-foreground/85">No task selected</p>
+      <p className="mt-1.5 max-w-[14rem] text-xs leading-relaxed text-muted-foreground">
+        Click a task on the board to view and edit its details here.
+      </p>
+    </div>
+  );
+}
+
+function TaskDetailFields({
+  task,
+  groups,
+  todayViewDate,
+  onChange,
+  onMoveToGroup,
+  onPlanningStateChange,
+}: {
+  task: Task;
+  groups: TaskGroupWithTasks[];
+  todayViewDate: string;
+  onChange: (updates: Partial<Task>) => void;
+  onMoveToGroup: (groupId: string) => void;
+  onPlanningStateChange?: (planningState: PlanningState) => void;
+}) {
+  const planningState = normalizePlanningState(task.planning_state);
+
+  return (
+    <div className="space-y-3 p-3">
+      <div className="space-y-1.5">
+        <Label htmlFor="task-detail-title" className="text-xs text-muted-foreground">
+          Title
+        </Label>
+        <Input
+          id="task-detail-title"
+          value={task.title}
+          onChange={(event) => onChange({ title: event.target.value })}
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label
+          htmlFor="task-detail-description"
+          className="text-xs text-muted-foreground"
+        >
+          Description
+        </Label>
+        <Textarea
+          id="task-detail-description"
+          value={task.description ?? ""}
+          rows={4}
+          className="field-sizing-fixed resize-none overflow-y-auto"
+          onChange={(event) => onChange({ description: event.target.value })}
+          placeholder="Add notes..."
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-2.5">
+        <div className="min-w-0 space-y-1.5">
+          <PropertyLabel icon={Folder}>Group</PropertyLabel>
+          <TaskGroupPicker
+            groups={groups}
+            currentGroupId={task.group_id}
+            todayViewDate={todayViewDate}
+            onSelect={onMoveToGroup}
+          />
+        </div>
+
+        <div className="min-w-0 space-y-1.5">
+          <PropertyLabel icon={Flag}>Priority</PropertyLabel>
+          <TaskPriorityPicker
+            priority={task.priority}
+            onSelect={(priority) => onChange({ priority })}
+          />
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <div className="flex items-center gap-1">
+          <PropertyLabel icon={CalendarClock}>Planning</PropertyLabel>
+          <PlanningInfoMenu />
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {PLANNING_STATES.map((state) => {
+            const config = PLANNING_STATE_CONFIG[state];
+            const active = planningState === state;
+            return (
+              <button
+                key={state}
+                type="button"
+                onClick={() => onPlanningStateChange?.(state)}
+                className={cn(
+                  "inline-flex items-center rounded-lg border px-2 py-0.5 text-xs font-medium transition-colors",
+                  active
+                    ? "border-foreground/20 bg-muted"
+                    : "border-border/50 hover:bg-muted/50"
+                )}
+                title={config.description}
+              >
+                {config.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2.5">
+        <div className="space-y-1.5">
+          <PropertyLabel icon={CalendarDays} htmlFor="task-detail-date">
+            Date
+          </PropertyLabel>
+          <NativePickerInput
+            id="task-detail-date"
+            type="date"
+            value={task.scheduled_date ?? ""}
+            onChange={(event) =>
+              onChange({ scheduled_date: event.target.value || null })
+            }
+          />
+        </div>
+        <div className="space-y-1.5">
+          <PropertyLabel icon={Clock} htmlFor="task-detail-time">
+            Time
+          </PropertyLabel>
+          <NativePickerInput
+            id="task-detail-time"
+            type="time"
+            value={toTimeInputValue(task.scheduled_time)}
+            onChange={(event) =>
+              onChange({
+                scheduled_time: event.target.value
+                  ? `${event.target.value}:00`
+                  : null,
+              })
+            }
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2.5">
+        <div className="space-y-1.5">
+          <PropertyLabel icon={Clock} htmlFor="task-detail-duration">
+            Duration
+          </PropertyLabel>
+          <select
+            id="task-detail-duration"
+            value={task.duration_minutes ?? ""}
+            onChange={(event) =>
+              onChange({
+                duration_minutes: event.target.value
+                  ? Number(event.target.value)
+                  : null,
+              })
+            }
+            className="h-9 w-full rounded-lg border border-border/50 bg-background px-2 text-sm outline-none"
+          >
+            <option value="">No duration</option>
+            {TASK_DURATION_OPTIONS.map((option) => (
+              <option key={option.minutes} value={option.minutes}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-1.5">
+          <PropertyLabel icon={Bell} htmlFor="task-detail-notification">
+            Notification
+          </PropertyLabel>
+          <div className="flex h-9 items-center justify-between rounded-lg border border-border/50 bg-background px-2">
+            <span className="text-xs text-muted-foreground">
+              {task.notification_enabled ? "On" : "Off"}
+            </span>
+            <Switch
+              id="task-detail-notification"
+              checked={task.notification_enabled}
+              onCheckedChange={(checked) =>
+                onChange({ notification_enabled: checked })
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function TaskDetailPanel({
   task,
   groups,
@@ -111,205 +307,24 @@ export function TaskDetailPanel({
   onMoveToGroup,
   onPlanningStateChange,
 }: TaskDetailPanelProps) {
-  const planningState = normalizePlanningState(task.planning_state);
-
   return (
-    <aside
-      className={cn(
-        "flex h-full w-full flex-col border-l border-border/40 bg-card shadow-sm",
-        expanded && "animate-in slide-in-from-right-4 duration-200"
-      )}
+    <GlobalAccessPanel
+      icon={ClipboardList}
+      title="Task details"
+      expanded={expanded}
+      onToggleExpanded={onToggleExpanded}
+      emptyState={<TaskDetailEmptyState />}
     >
-      <div
-        className={cn(
-          "flex shrink-0 items-center border-b border-border/30",
-          expanded ? "gap-1.5 px-3 py-3" : "justify-center px-1.5 py-3"
-        )}
-      >
-        <button
-          type="button"
-          onClick={onToggleExpanded}
-          className="group/detail-watch relative flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-          aria-label={expanded ? "Collapse task details" : "Expand task details"}
-          aria-expanded={expanded}
-        >
-          <ClipboardList
-            className="size-4 transition-opacity duration-150 group-hover/detail-watch:opacity-0"
-            aria-hidden
-          />
-          {expanded ? (
-            <PanelRightClose className="absolute size-4 opacity-0 transition-opacity duration-150 group-hover/detail-watch:opacity-100" />
-          ) : (
-            <PanelRightOpen className="absolute size-4 opacity-0 transition-opacity duration-150 group-hover/detail-watch:opacity-100" />
-          )}
-        </button>
-        {expanded ? (
-          <h2 className="min-w-0 truncate text-sm font-semibold leading-none tracking-tight">
-            Task details
-          </h2>
-        ) : null}
-      </div>
-
-      {expanded ? (
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="task-detail-title" className="text-xs text-muted-foreground">
-                Title
-              </Label>
-              <Input
-                id="task-detail-title"
-                value={task.title}
-                onChange={(event) => onChange({ title: event.target.value })}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="task-detail-description"
-                className="text-xs text-muted-foreground"
-              >
-                Description
-              </Label>
-              <Textarea
-                id="task-detail-description"
-                value={task.description ?? ""}
-                rows={5}
-                className="field-sizing-fixed resize-none overflow-y-auto"
-                onChange={(event) => onChange({ description: event.target.value })}
-                placeholder="Add notes..."
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="min-w-0 space-y-1.5">
-                <PropertyLabel icon={Folder}>Group</PropertyLabel>
-                <TaskGroupPicker
-                  groups={groups}
-                  currentGroupId={task.group_id}
-                  todayViewDate={todayViewDate}
-                  onSelect={onMoveToGroup}
-                />
-              </div>
-
-              <div className="min-w-0 space-y-1.5">
-                <PropertyLabel icon={Flag}>Priority</PropertyLabel>
-                <TaskPriorityPicker
-                  priority={task.priority}
-                  onSelect={(priority) => onChange({ priority })}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-1">
-                <PropertyLabel icon={CalendarClock}>Planning</PropertyLabel>
-                <PlanningInfoMenu />
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {PLANNING_STATES.map((state) => {
-                  const config = PLANNING_STATE_CONFIG[state];
-                  const active = planningState === state;
-                  return (
-                    <button
-                      key={state}
-                      type="button"
-                      onClick={() => onPlanningStateChange?.(state)}
-                      className={cn(
-                        "inline-flex items-center rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors",
-                        active
-                          ? "border-foreground/20 bg-muted"
-                          : "border-border/50 hover:bg-muted/50"
-                      )}
-                      title={config.description}
-                    >
-                      {config.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <PropertyLabel icon={CalendarDays} htmlFor="task-detail-date">
-                  Date
-                </PropertyLabel>
-                <Input
-                  id="task-detail-date"
-                  type="date"
-                  value={task.scheduled_date ?? ""}
-                  onChange={(event) =>
-                    onChange({ scheduled_date: event.target.value || null })
-                  }
-                />
-              </div>
-              <div className="space-y-1.5">
-                <PropertyLabel icon={Clock} htmlFor="task-detail-time">
-                  Time
-                </PropertyLabel>
-                <Input
-                  id="task-detail-time"
-                  type="time"
-                  value={toTimeInputValue(task.scheduled_time)}
-                  onChange={(event) =>
-                    onChange({
-                      scheduled_time: event.target.value
-                        ? `${event.target.value}:00`
-                        : null,
-                    })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <PropertyLabel icon={Clock} htmlFor="task-detail-duration">
-                  Duration
-                </PropertyLabel>
-                <select
-                  id="task-detail-duration"
-                  value={task.duration_minutes ?? ""}
-                  onChange={(event) =>
-                    onChange({
-                      duration_minutes: event.target.value
-                        ? Number(event.target.value)
-                        : null,
-                    })
-                  }
-                  className="h-9 w-full rounded-lg border border-border/50 bg-background px-3 text-sm outline-none"
-                >
-                  <option value="">No duration</option>
-                  {TASK_DURATION_OPTIONS.map((option) => (
-                    <option key={option.minutes} value={option.minutes}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <PropertyLabel icon={Bell} htmlFor="task-detail-notification">
-                  Notification
-                </PropertyLabel>
-                <div className="flex h-9 items-center justify-between rounded-lg border border-border/50 bg-background px-3">
-                  <span className="text-sm text-muted-foreground">
-                    {task.notification_enabled ? "On" : "Off"}
-                  </span>
-                  <Switch
-                    id="task-detail-notification"
-                    checked={task.notification_enabled}
-                    onCheckedChange={(checked) =>
-                      onChange({ notification_enabled: checked })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {task ? (
+        <TaskDetailFields
+          task={task}
+          groups={groups}
+          todayViewDate={todayViewDate}
+          onChange={onChange}
+          onMoveToGroup={onMoveToGroup}
+          onPlanningStateChange={onPlanningStateChange}
+        />
       ) : null}
-    </aside>
+    </GlobalAccessPanel>
   );
 }

@@ -27,6 +27,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
+import { QuickScheduleResizeHandle } from "@/components/tasks/quick-schedule-resize-handle";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import { Button } from "@/components/ui/button";
@@ -45,7 +46,19 @@ import {
   parseTimeToMinutes,
   shiftDateKey,
 } from "@/lib/date-utils";
-import { setDragImageFromElement } from "@/lib/list-drag-utils";
+import {
+  panelToggleHoverIconClass,
+  panelTogglePrimaryIconClass,
+  panelToggleSquareClass,
+} from "@/lib/panel-toggle-styles";
+import {
+  clampQuickScheduleTaskListWidth,
+  getQuickScheduleTaskListWidth,
+  QUICK_SCHEDULE_TASK_LIST_WIDTH_DEFAULT,
+  QUICK_SCHEDULE_TASK_LIST_WIDTH_MIN,
+  getQuickScheduleTaskListEffectiveMax,
+  setQuickScheduleTaskListWidth,
+} from "@/lib/quick-schedule-task-list-width";
 import { formatTodayColumnTitle, isInboxGroup, isTodayGroup, taskBelongsInLaterView } from "@/lib/task-groups";
 import { getTaskGroupAppearance, TASK_GROUP_ACCENT_BORDER_CLASS } from "@/lib/task-group-appearance";
 import { normalizeTaskPriority } from "@/lib/task-priority";
@@ -78,6 +91,10 @@ import {
 } from "@/lib/timeline-layout";
 import { formatDurationLabel } from "@/lib/schedule-layout";
 import { QUICK_SCHEDULE_HELP } from "@/lib/schedule-help";
+import {
+  timelineGridGutterClass,
+  TIMELINE_TIME_COLUMN_CLASS,
+} from "@/lib/workspace-layout";
 import {
   getActiveTaskDragId,
   markTimelineDropConsumed,
@@ -238,6 +255,29 @@ export function TimelinePlanner({
     | null
   >(null);
   const [inboxTab, setInboxTab] = useState<InboxTab>("unscheduled");
+  const [taskListWidth, setTaskListWidth] = useState(
+    QUICK_SCHEDULE_TASK_LIST_WIDTH_DEFAULT
+  );
+  const taskListMaxWidth = getQuickScheduleTaskListEffectiveMax();
+  const compactTaskListTabs = taskListWidth < 240;
+
+  useEffect(() => {
+    setTaskListWidth(getQuickScheduleTaskListWidth());
+  }, []);
+
+  const taskListWidthRef = useRef(taskListWidth);
+
+  useEffect(() => {
+    taskListWidthRef.current = taskListWidth;
+  }, [taskListWidth]);
+
+  const handleTaskListResizeDelta = useCallback((deltaX: number) => {
+    setTaskListWidth((prev) => clampQuickScheduleTaskListWidth(prev + deltaX));
+  }, []);
+
+  const handleTaskListResizeEnd = useCallback(() => {
+    setQuickScheduleTaskListWidth(taskListWidthRef.current);
+  }, []);
 
   const isViewingToday = viewDate === getTodayDateString();
   const hourHeightPx = getHourHeightPx(zoom);
@@ -384,6 +424,21 @@ export function TimelinePlanner({
       endMinutes: dropPreviewMinutes + durationMinutes,
     };
   }, [dropPreviewMinutes, draggingItem, taskById, zoom, hourHeightPx]);
+
+  const suppressedHourLabels = useMemo(() => {
+    if (!dropPreviewLayout) return new Set<number>();
+    const hidden = new Set<number>();
+    if (dropPreviewLayout.startMinutes % 60 === 0) {
+      hidden.add(Math.floor(dropPreviewLayout.startMinutes / 60));
+    }
+    if (
+      dropPreviewLayout.heightPx >= 28 &&
+      dropPreviewLayout.endMinutes % 60 === 0
+    ) {
+      hidden.add(Math.floor(dropPreviewLayout.endMinutes / 60));
+    }
+    return hidden;
+  }, [dropPreviewLayout]);
 
   useEffect(() => {
     scheduledSlotsRef.current = scheduledSlots;
@@ -855,12 +910,12 @@ export function TimelinePlanner({
         type="button"
         variant="ghost"
         size="icon-sm"
-        className={cn(isDrawer ? "size-6" : "size-7")}
+        className={cn(isDrawer ? "size-5" : "size-7")}
         onClick={() => onViewDateChange(shiftDateKey(viewDate, -1))}
         aria-label="Previous day"
       >
         <ChevronRight
-          className={cn("rotate-180", isDrawer ? "size-3.5" : "size-4")}
+          className={cn("rotate-180", isDrawer ? "size-3" : "size-4")}
         />
       </Button>
       <DropdownMenu open={dayPickerOpen} onOpenChange={setDayPickerOpen}>
@@ -868,7 +923,7 @@ export function TimelinePlanner({
           className={cn(
             "inline-flex items-center rounded-md font-medium outline-none hover:bg-muted/60",
             isDrawer
-              ? "h-6 gap-0.5 px-1.5 text-xs"
+              ? "h-5 gap-0.5 px-1 text-[11px]"
               : "h-7 gap-1 px-2 text-xs"
           )}
           aria-label={`Selected day: ${viewDateLabel}`}
@@ -877,7 +932,7 @@ export function TimelinePlanner({
           <ChevronDown
             className={cn(
               "text-muted-foreground",
-              isDrawer ? "size-3" : "size-3.5"
+              isDrawer ? "size-2.5" : "size-3.5"
             )}
           />
         </DropdownMenuTrigger>
@@ -903,11 +958,11 @@ export function TimelinePlanner({
         type="button"
         variant="ghost"
         size="icon-sm"
-        className={cn(isDrawer ? "size-6" : "size-7")}
+        className={cn(isDrawer ? "size-5" : "size-7")}
         onClick={() => onViewDateChange(shiftDateKey(viewDate, 1))}
         aria-label="Next day"
       >
-        <ChevronRight className={cn(isDrawer ? "size-3.5" : "size-4")} />
+        <ChevronRight className={cn(isDrawer ? "size-3" : "size-4")} />
       </Button>
     </div>
   );
@@ -918,13 +973,182 @@ export function TimelinePlanner({
       variant="outline"
       size="sm"
       className={cn(
-        "shrink-0 rounded-full border-border/50 font-normal text-muted-foreground/85 shadow-sm hover:border-sky-400/35 hover:bg-background hover:text-foreground",
-        isDrawer ? "h-6 px-2 text-xs" : "h-6 px-2.5 text-[11px]"
+        "shrink-0 rounded-md border-border/50 bg-background font-normal text-muted-foreground/85 shadow-sm hover:border-sky-400/35 hover:bg-background hover:text-foreground",
+        isDrawer ? "h-5 px-1.5 text-[10px]" : "h-6 px-2 text-[11px]"
       )}
       onClick={handleNowClick}
     >
       Now
     </Button>
+  );
+
+  const timelinePanel = (
+    <div
+      ref={scrollRef}
+      className={cn(
+        "relative min-h-0 flex-1 overflow-y-auto bg-background",
+        !isDrawer && "border-t border-border/40"
+      )}
+      onDragOver={handleTimelineDragOver}
+      onDrop={(event) => void handleTimelineDrop(event)}
+      onDragLeave={handleTimelineDragLeave}
+    >
+      <div
+        ref={timelineBodyRef}
+        className="relative"
+        style={{ height: timelineHeightPx }}
+      >
+        <div
+          className={cn(
+            "absolute inset-0 flex",
+            timelineGridGutterClass(isDrawer)
+          )}
+        >
+          <div
+            className={cn(
+              "relative shrink-0 border-r",
+              TIMELINE_TIME_COLUMN_CLASS,
+              isDrawer ? "border-border/30 bg-muted/10" : "border-border/20"
+            )}
+          >
+            {hourLabels.map(({ hour, label }) => (
+              <div
+                key={hour}
+                className={cn(
+                  "border-b pr-2 text-right text-[10px] tabular-nums text-muted-foreground/70",
+                  hourGridBorderClass
+                )}
+                style={{ height: hourHeightPx }}
+              >
+                {!suppressedHourLabels.has(hour) ? (
+                  <span className="relative -top-2">{label}</span>
+                ) : null}
+              </div>
+            ))}
+            {dropPreviewLayout && isTimelineDragActive() && (
+              <>
+                <TimelineDropTimeMarker
+                  topPx={dropPreviewLayout.topPx}
+                  minutes={dropPreviewLayout.startMinutes}
+                />
+                {dropPreviewLayout.heightPx >= 28 && (
+                  <TimelineDropTimeMarker
+                    topPx={dropPreviewLayout.topPx + dropPreviewLayout.heightPx}
+                    minutes={dropPreviewLayout.endMinutes}
+                    subdued
+                  />
+                )}
+              </>
+            )}
+          </div>
+
+          <div className="relative min-w-0 flex-1">
+            {hourLabels.map(({ hour }) => (
+              <div
+                key={hour}
+                className={cn("border-b", hourGridBorderClass)}
+                style={{ height: hourHeightPx }}
+              />
+            ))}
+
+            {dropPreviewLayout && isTimelineDragActive() && (
+              <div
+                className="pointer-events-none absolute inset-x-1 z-30"
+                style={{
+                  top: dropPreviewLayout.topPx,
+                  height: dropPreviewLayout.heightPx,
+                }}
+              >
+                {dropPreviewLayout.startMinutes % 60 === 0 ? (
+                  <div
+                    className="absolute right-0 left-0 top-0 z-10 h-0.5 bg-sky-500/85"
+                    aria-hidden
+                  />
+                ) : null}
+                <div className={cn("h-full", TIMELINE_DROP_PREVIEW)} />
+              </div>
+            )}
+
+            {nowLineTopPx !== null && (
+              <div
+                className="pointer-events-none absolute inset-x-1 z-30 flex items-center gap-2"
+                style={{ top: nowLineTopPx }}
+              >
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-red-400/85 to-transparent" />
+                <span className="shrink-0 rounded-full bg-red-500/90 px-2 py-0.5 text-[10px] font-medium tabular-nums text-white shadow-sm">
+                  {formatNowTimeInAppTimezone()}
+                </span>
+              </div>
+            )}
+
+            {timelineBlocks.map((block) => (
+              <TimelineScheduledBlock
+                key={`${block.kind}-${block.id}`}
+                block={block}
+                groups={groups}
+                viewDate={viewDate}
+                drawerMode={isDrawer}
+                selected={
+                  block.kind === "task"
+                    ? selectedTaskId === block.id
+                    : selectedHabitId === block.id
+                }
+                overlapping={overlappingIds.has(block.id)}
+                onSelect={() => {
+                  if (block.kind === "task") {
+                    onSelectTask(block.id);
+                    onSelectHabit?.(null);
+                  } else {
+                    onSelectHabit?.(block.id);
+                    onSelectTask(null);
+                  }
+                }}
+                onOpenDetail={() => {
+                  if (block.kind === "task") onOpenDetail(block.id);
+                }}
+                onToggleComplete={() => {
+                  if (block.kind === "task" && block.task) {
+                    void onToggleComplete(block.task);
+                  } else if (block.kind === "habit" && block.habit) {
+                    void onToggleHabitComplete?.(block.habit);
+                  }
+                }}
+                onUpdateDuration={(minutes) => {
+                  if (block.kind === "task") {
+                    void onUpdateTask(block.id, { duration_minutes: minutes });
+                  }
+                }}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  if (block.kind === "task" && block.task) {
+                    setContextMenu({
+                      kind: "task",
+                      task: block.task,
+                      x: event.clientX,
+                      y: event.clientY,
+                    });
+                  } else if (block.kind === "habit" && block.habit) {
+                    setContextMenu({
+                      kind: "habit",
+                      habit: block.habit,
+                      x: event.clientX,
+                      y: event.clientY,
+                    });
+                  }
+                }}
+                onDragStart={(event) =>
+                  beginDrag(block.kind, block.id, event, "timeline")
+                }
+                onDragEnd={endDrag}
+                onTimelineDragOver={handleTimelineDragOver}
+                onTimelineDrop={(event) => void handleTimelineDrop(event)}
+                isDragging={isDraggingItem(block.kind, block.id)}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 
   return (
@@ -941,39 +1165,35 @@ export function TimelinePlanner({
         className={cn(
           "relative shrink-0 border-b",
           isFullscreen
-            ? "flex items-center gap-2 border-border/30 px-4 py-3"
-            : "border-border/50 bg-background/70 px-3 py-2"
+            ? "flex items-center gap-2 border-border/30 py-3"
+            : "border-border/50 bg-background/70 px-2 py-1.5"
         )}
       >
         {isDrawer ? (
-          <div className="flex w-full flex-col gap-1">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-1.5">
-                {onClose ? (
+          <div className="flex w-full items-center gap-1">
+            <div className="flex min-w-0 shrink-0 items-center gap-1">
+              {onClose ? (
                   <button
                     type="button"
                     onClick={onClose}
-                    className="group/qs-watch relative flex size-8 shrink-0 items-center justify-center rounded-lg text-sky-500 hover:bg-sky-500/8"
+                    className={panelToggleSquareClass("sm")}
                     aria-label="Collapse Quick Schedule"
                   >
-                    <Clock className="size-4 transition-opacity duration-150 group-hover/qs-watch:opacity-0" />
-                    <PanelRightClose className="absolute size-4 opacity-0 transition-opacity duration-150 group-hover/qs-watch:opacity-100" />
+                    <Clock className={panelTogglePrimaryIconClass("sm")} />
+                    <PanelRightClose className={panelToggleHoverIconClass("sm")} />
                   </button>
                 ) : (
-                  <Clock className="size-4 shrink-0 text-sky-600" />
+                  <Clock className="size-3.5 shrink-0 text-sky-600" />
                 )}
-                <h2 className="shrink-0 text-sm font-semibold leading-none tracking-tight text-foreground">
-                  Quick Schedule
-                </h2>
-                <QuickScheduleInfoMenu />
-              </div>
-              {zoomControl}
+              <h2 className="shrink-0 text-sm font-semibold leading-none tracking-tight text-foreground">
+                Quick Schedule
+              </h2>
+              <QuickScheduleInfoMenu />
             </div>
-            <div className="relative flex min-h-6 items-center justify-end">
-              <div className="absolute left-1/2 -translate-x-1/2">
-                {dayNavControl}
-              </div>
+            <div className="ml-auto flex shrink-0 items-center gap-1">
+              {dayNavControl}
               {nowButton}
+              {zoomControl}
             </div>
           </div>
         ) : (
@@ -989,11 +1209,8 @@ export function TimelinePlanner({
               </div>
             </div>
 
-            <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="pointer-events-auto">{dayNavControl}</div>
-            </div>
-
-            <div className="ml-auto flex shrink-0 items-center gap-2">
+            <div className="ml-auto flex shrink-0 items-center gap-1">
+              {dayNavControl}
               {nowButton}
               {zoomControl}
 
@@ -1016,17 +1233,30 @@ export function TimelinePlanner({
       <div className="flex min-h-0 flex-1">
         <div
           className={cn(
-            "flex min-w-0 flex-col",
-            showTaskPool ? "flex-[7] border-r border-border/30" : "flex-1"
+            "flex min-h-0 flex-col",
+            isDrawer
+              ? "shrink-0 overflow-hidden border-r border-border/30 bg-gradient-to-b from-muted/25 to-muted/10"
+              : showTaskPool
+                ? "min-w-0 flex-[7] border-r border-border/30"
+                : "min-w-0 flex-1"
           )}
+            style={
+            isDrawer
+              ? {
+                  width: taskListWidth,
+                  minWidth: QUICK_SCHEDULE_TASK_LIST_WIDTH_MIN,
+                  maxWidth: taskListMaxWidth,
+                }
+              : undefined
+          }
         >
           <section
             ref={unscheduledSectionRef}
             className={cn(
-              "shrink-0 px-3",
+              isDrawer ? "px-1.5" : "px-0",
               isDrawer
-                ? "border-b border-border/50 bg-gradient-to-b from-muted/25 to-muted/10 py-2"
-                : "border-b border-border/30 py-2.5"
+                ? "flex min-h-0 flex-1 flex-col overflow-hidden py-1.5"
+                : "shrink-0 border-b border-border/30 py-2"
             )}
             onDragOver={(event) => {
               event.preventDefault();
@@ -1036,27 +1266,31 @@ export function TimelinePlanner({
           >
             <div
               className={cn(
-                "mb-0.5 flex min-w-0 flex-1 items-center gap-1 rounded-lg bg-muted/35 p-0.5",
-                !isDrawer && "mb-1.5"
+                "inline-flex max-w-full items-center gap-0.5 rounded-md bg-muted/35 p-0.5",
+                "mb-1"
               )}
             >
                 <button
                   type="button"
                   onClick={() => setInboxTab("unscheduled")}
                   className={cn(
-                    "min-w-0 flex-1 truncate rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
+                    "shrink-0 rounded px-1.5 py-0.5 font-medium whitespace-nowrap transition-colors",
+                    compactTaskListTabs ? "text-[9px]" : "text-[10px]",
                     inboxTab === "unscheduled"
                       ? "bg-background text-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  Unscheduled ({unscheduledTasks.length})
+                  {compactTaskListTabs
+                    ? `Unsched. (${unscheduledTasks.length})`
+                    : `Unscheduled (${unscheduledTasks.length})`}
                 </button>
                 <button
                   type="button"
                   onClick={() => setInboxTab("later")}
                   className={cn(
-                    "min-w-0 flex-1 truncate rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
+                    "shrink-0 rounded px-1.5 py-0.5 font-medium whitespace-nowrap transition-colors",
+                    compactTaskListTabs ? "text-[9px]" : "text-[10px]",
                     inboxTab === "later"
                       ? "bg-background text-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
@@ -1068,7 +1302,9 @@ export function TimelinePlanner({
             <div
               className={cn(
                 "flex gap-1.5",
-                isDrawer ? "min-h-0 flex-col gap-0.5" : "min-h-[3rem] flex-wrap"
+                isDrawer
+                  ? "min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto"
+                  : "min-h-[3rem] flex-wrap"
               )}
             >
               {inboxTab === "unscheduled" &&
@@ -1170,169 +1406,19 @@ export function TimelinePlanner({
               )}
             </div>
           </section>
-
-          <div
-            ref={scrollRef}
-            className={cn(
-              "min-h-0 flex-1 overflow-y-auto",
-              isDrawer && "border-t border-border/40 bg-background"
-            )}
-            onDragOver={handleTimelineDragOver}
-            onDrop={(event) => void handleTimelineDrop(event)}
-            onDragLeave={handleTimelineDragLeave}
-          >
-            <div
-              ref={timelineBodyRef}
-              className="relative"
-              style={{ height: timelineHeightPx }}
-            >
-              <div className="absolute inset-0 flex">
-                <div className={cn("relative w-14 shrink-0 border-r", isDrawer ? "border-border/30 bg-muted/10" : "border-border/20")}>
-                  {hourLabels.map(({ hour, label }) => (
-                    <div
-                      key={hour}
-                      className={cn(
-                        "border-b pr-2 text-right text-[10px] tabular-nums text-muted-foreground/70",
-                        hourGridBorderClass
-                      )}
-                      style={{ height: hourHeightPx }}
-                    >
-                      <span className="relative -top-2">{label}</span>
-                    </div>
-                  ))}
-                  {dropPreviewLayout && isTimelineDragActive() && (
-                    <>
-                      <div
-                        className="pointer-events-none absolute right-0 left-0 z-20 pr-2 text-right text-[10px] font-medium tabular-nums text-sky-700/90"
-                        style={{ top: dropPreviewLayout.topPx }}
-                      >
-                        <span className="relative -top-2">
-                          {formatTimelineMinutesLabel(dropPreviewLayout.startMinutes)}
-                        </span>
-                      </div>
-                      {dropPreviewLayout.heightPx >= 28 &&
-                        dropPreviewLayout.endMinutes % 60 !== 0 && (
-                        <div
-                          className="pointer-events-none absolute right-0 left-0 z-20 pr-2 text-right text-[10px] font-medium tabular-nums text-sky-700/75"
-                          style={{
-                            top:
-                              dropPreviewLayout.topPx +
-                              dropPreviewLayout.heightPx,
-                          }}
-                        >
-                          <span className="relative -top-2">
-                            {formatTimelineMinutesLabel(
-                              dropPreviewLayout.endMinutes
-                            )}
-                          </span>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-
-                <div className="relative min-w-0 flex-1">
-                  {hourLabels.map(({ hour }) => (
-                    <div
-                      key={hour}
-                      className={cn("border-b", hourGridBorderClass)}
-                      style={{ height: hourHeightPx }}
-                    />
-                  ))}
-
-                  {dropPreviewLayout && isTimelineDragActive() && (
-                    <div
-                      className="pointer-events-none absolute right-2 left-1 z-20"
-                      style={{
-                        top: dropPreviewLayout.topPx,
-                        height: dropPreviewLayout.heightPx,
-                      }}
-                    >
-                      <div className={cn("h-full", TIMELINE_DROP_PREVIEW)} />
-                    </div>
-                  )}
-
-                  {nowLineTopPx !== null && (
-                    <div
-                      className="pointer-events-none absolute right-2 left-0 z-30 flex items-center gap-2"
-                      style={{ top: nowLineTopPx }}
-                    >
-                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-red-400/85 to-transparent" />
-                      <span className="shrink-0 rounded-full bg-red-500/90 px-2 py-0.5 text-[10px] font-medium tabular-nums text-white shadow-sm">
-                        {formatNowTimeInAppTimezone()}
-                      </span>
-                    </div>
-                  )}
-
-                  {timelineBlocks.map((block) => (
-                    <TimelineScheduledBlock
-                      key={`${block.kind}-${block.id}`}
-                      block={block}
-                      groups={groups}
-                      viewDate={viewDate}
-                      drawerMode={isDrawer}
-                      selected={
-                        block.kind === "task"
-                          ? selectedTaskId === block.id
-                          : selectedHabitId === block.id
-                      }
-                      overlapping={overlappingIds.has(block.id)}
-                      onSelect={() => {
-                        if (block.kind === "task") {
-                          onSelectTask(block.id);
-                          onSelectHabit?.(null);
-                        } else {
-                          onSelectHabit?.(block.id);
-                          onSelectTask(null);
-                        }
-                      }}
-                      onOpenDetail={() => {
-                        if (block.kind === "task") onOpenDetail(block.id);
-                      }}
-                      onToggleComplete={() => {
-                        if (block.kind === "task" && block.task) {
-                          void onToggleComplete(block.task);
-                        } else if (block.kind === "habit" && block.habit) {
-                          void onToggleHabitComplete?.(block.habit);
-                        }
-                      }}
-                      onUpdateDuration={(minutes) => {
-                        if (block.kind === "task") {
-                          void onUpdateTask(block.id, { duration_minutes: minutes });
-                        }
-                      }}
-                      onContextMenu={(event) => {
-                        event.preventDefault();
-                        if (block.kind === "task" && block.task) {
-                          setContextMenu({
-                            kind: "task",
-                            task: block.task,
-                            x: event.clientX,
-                            y: event.clientY,
-                          });
-                        } else if (block.kind === "habit" && block.habit) {
-                          setContextMenu({
-                            kind: "habit",
-                            habit: block.habit,
-                            x: event.clientX,
-                            y: event.clientY,
-                          });
-                        }
-                      }}
-                      onDragStart={(event) =>
-                        beginDrag(block.kind, block.id, event, "timeline")
-                      }
-                      onDragEnd={endDrag}
-                      onTimelineDragOver={handleTimelineDragOver}
-                      onTimelineDrop={(event) => void handleTimelineDrop(event)}
-                      isDragging={isDraggingItem(block.kind, block.id)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          {!isDrawer ? timelinePanel : null}
         </div>
+        {isDrawer ? (
+          <>
+            <QuickScheduleResizeHandle
+              onResizeDelta={handleTaskListResizeDelta}
+              onResizeEnd={handleTaskListResizeEnd}
+            />
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+              {timelinePanel}
+            </div>
+          </>
+        ) : null}
 
         {showTaskPool ? (
         <aside className="flex min-w-0 flex-[3] flex-col">
@@ -1588,6 +1674,43 @@ function formatTimelineMinutesLabel(minutes: number): string {
   );
 }
 
+function TimelineDropTimeMarker({
+  topPx,
+  minutes,
+  subdued = false,
+}: {
+  topPx: number;
+  minutes: number;
+  subdued?: boolean;
+}) {
+  return (
+    <div
+      className="pointer-events-none absolute right-0 left-0 z-40"
+      style={{ top: topPx }}
+    >
+      <div
+        className={cn(
+          "absolute right-0 left-0 h-px",
+          subdued ? "bg-sky-500/55" : "bg-sky-500/85"
+        )}
+        aria-hidden
+      />
+      <div className="relative -top-2 pr-2 text-right">
+        <span
+          className={cn(
+            "inline-block rounded-sm bg-background px-0.5 text-[10px] font-medium tabular-nums shadow-sm ring-1",
+            subdued
+              ? "text-sky-700/75 ring-sky-400/20"
+              : "text-sky-600 ring-sky-400/35"
+          )}
+        >
+          {formatTimelineMinutesLabel(minutes)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function resolveTimelineTaskGroup(
   task: Task,
   groups: TaskGroupWithTasks[]
@@ -1813,7 +1936,7 @@ function TimelineScheduledBlock({
         }
       }}
       className={cn(
-        "group absolute right-2 left-1 z-10 flex cursor-grab overflow-hidden rounded-lg border transition-[border-color,box-shadow,background-color] active:cursor-grabbing",
+        "group absolute inset-x-1 z-10 flex cursor-grab overflow-hidden rounded-lg border transition-[border-color,box-shadow,background-color] active:cursor-grabbing",
         TIMELINE_TASK_ELEVATION,
         groupAccentClass && "border-l-[3px]",
         groupAccentClass,

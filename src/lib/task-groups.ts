@@ -205,7 +205,9 @@ export function filterTasksForGroup(
         !taskBelongsInLaterView(task)
     );
   }
-  return tasks.filter((task) => task.group_id === group.id);
+  return tasks.filter((task) =>
+    taskBelongsInOrgGroupView(task, group.id, todayViewDate)
+  );
 }
 
 export function taskBelongsInTodayView(
@@ -213,6 +215,19 @@ export function taskBelongsInTodayView(
   todayViewDate: string
 ): boolean {
   return task.scheduled_date === todayViewDate;
+}
+
+/** Org columns show tasks that belong to the group and are not in a planning queue. */
+export function taskBelongsInOrgGroupView(
+  task: Pick<Task, "group_id" | "planning_state" | "scheduled_date">,
+  groupId: string,
+  todayViewDate: string
+): boolean {
+  return (
+    task.group_id === groupId &&
+    !taskBelongsInLaterView(task) &&
+    !taskBelongsInTodayView(task, todayViewDate)
+  );
 }
 
 export function isOrganizationGroup(
@@ -253,7 +268,9 @@ export function buildBoardFromTasks(
           !taskBelongsInLaterView(task)
       );
     } else {
-      filteredTasks = tasks.filter((task) => task.group_id === group.id);
+      filteredTasks = tasks.filter((task) =>
+        taskBelongsInOrgGroupView(task, group.id, todayViewDate)
+      );
     }
 
     const { active, completed } = sortActiveAndCompletedForContext(
@@ -302,6 +319,13 @@ export function syncTaskOnBoard(
     }
 
     if (group.id !== updated.group_id) {
+      return group;
+    }
+
+    if (
+      taskBelongsInLaterView(updated) ||
+      taskBelongsInTodayView(updated, todayViewDate)
+    ) {
       return group;
     }
 
@@ -374,6 +398,13 @@ export function addTaskToBoard(
       return group;
     }
 
+    if (
+      taskBelongsInLaterView(task) ||
+      taskBelongsInTodayView(task, todayViewDate)
+    ) {
+      return group;
+    }
+
     const { active, completed } = sortActiveAndCompletedForContext(
       [...group.tasks, task],
       context
@@ -389,7 +420,6 @@ export function rebuildPlanningColumns(
   const tasksById = new Map<string, Task>();
 
   for (const group of groups) {
-    if (isTodayGroup(group) || isLaterGroup(group)) continue;
     for (const task of group.tasks) {
       tasksById.set(task.id, task);
     }
@@ -398,35 +428,18 @@ export function rebuildPlanningColumns(
   const allTasks = [...tasksById.values()];
 
   return groups.map((group) => {
-    const context = getSortContextForGroup(group);
-
-    if (isLaterGroup(group)) {
-      return {
-        ...group,
-        tasks: (() => {
-          const { active, completed } = sortActiveAndCompletedForContext(
-            allTasks.filter((task) => taskBelongsInLaterView(task)),
-            context
-          );
-          return [...active, ...completed];
-        })(),
-      };
-    }
     if (!isTodayGroup(group)) return group;
-    return {
-      ...group,
-      tasks: (() => {
-        const { active, completed } = sortActiveAndCompletedForContext(
-          allTasks.filter(
-            (task) =>
-              taskBelongsInTodayView(task, todayViewDate) &&
-              !taskBelongsInLaterView(task)
-          ),
-          context
-        );
-        return [...active, ...completed];
-      })(),
-    };
+
+    const context = getSortContextForGroup(group);
+    const { active, completed } = sortActiveAndCompletedForContext(
+      allTasks.filter(
+        (task) =>
+          taskBelongsInTodayView(task, todayViewDate) &&
+          !taskBelongsInLaterView(task)
+      ),
+      context
+    );
+    return { ...group, tasks: [...active, ...completed] };
   });
 }
 
@@ -930,6 +943,9 @@ export async function persistTaskBoardLayout(
     const manualSort = isManualTaskSortMode(getTaskGroupSortMode(group));
 
     group.tasks.forEach((task, index) => {
+      if (taskBelongsInLaterView(task)) return;
+      if (taskBelongsInTodayView(task, todayViewDate)) return;
+
       const scheduledDate =
         dateByTaskId.get(task.id) ?? task.scheduled_date ?? null;
       const existing = updates.get(task.id);
@@ -959,7 +975,7 @@ export async function persistTaskBoardLayout(
           ? task.sort_order
           : (existing?.sort_order ?? task.sort_order ?? index),
         completed: task.completed,
-        scheduled_date: null,
+        scheduled_date: task.scheduled_date ?? null,
         scheduled_time: null,
         planning_state: "later",
       });

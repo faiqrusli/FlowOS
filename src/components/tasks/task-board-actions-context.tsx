@@ -18,12 +18,6 @@ export type TaskBoardActions = {
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
   onSetPlanningState?: (taskId: string, planningState: PlanningState) => void;
   onRequestCreateGroup: (taskId: string) => void;
-  onTaskPointerDragStart: (
-    taskId: string,
-    groupId: string,
-    coords: { clientX: number; clientY: number }
-  ) => void;
-  onTaskPointerDragEnd: () => void;
 };
 
 const TaskBoardActionsContext = createContext<TaskBoardActions | null>(null);
@@ -64,9 +58,6 @@ export function TaskBoardActionsProvider({
         : undefined,
       onRequestCreateGroup: (taskId) =>
         actionsRef.current.onRequestCreateGroup(taskId),
-      onTaskPointerDragStart: (taskId, groupId, coords) =>
-        actionsRef.current.onTaskPointerDragStart(taskId, groupId, coords),
-      onTaskPointerDragEnd: () => actionsRef.current.onTaskPointerDragEnd(),
     }),
     []
   );
