@@ -8,6 +8,7 @@ import { KanbanPanel } from "@/components/notes/kanban-panel";
 import { NotesPanel } from "@/components/notes/notes-panel";
 import { NotesTabTransition } from "@/components/notes/notes-tab-transition";
 import { ErrorBanner } from "@/components/shared/error-banner";
+import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import {
   createGrowthArea,
   deleteGrowthArea,
@@ -33,6 +34,7 @@ import type {
 type ContentTab = "notes" | "kanban";
 
 export function NotesPageContent() {
+  const { openDailyNote } = useGlobalRightSidebar();
   const [areas, setAreas] = useState<GrowthAreaWithCounts[]>([]);
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -197,6 +199,7 @@ export function NotesPageContent() {
                   area={selectedArea}
                   tab={tab}
                   onTabChange={handleTabChange}
+                  onOpenTodaysNote={() => void openDailyNote()}
                 />
 
                 <NotesTabTransition

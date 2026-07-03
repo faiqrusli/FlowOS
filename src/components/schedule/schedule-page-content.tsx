@@ -1,26 +1,24 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  TaskDetailPanel,
-  DETAIL_PANEL_COLLAPSED_WIDTH_PX,
-  DETAIL_PANEL_WIDTH_PX,
-} from "@/components/tasks/task-detail-panel";
+import { setQuickScheduleOpen } from "@/lib/timeline-drag";
 import { TimelinePlanner } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";
-import { WORKSPACE_GUTTER_CLASS } from "@/lib/workspace-layout";
-import { cn } from "@/lib/utils";
+import {
+  useGlobalRightSidebar,
+} from "@/contexts/global-right-sidebar-context";
+import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
-  deleteHabit,
   fetchHabitsWithCompletions,
   HabitsError,
   toggleHabitComplete,
-  updateHabit,
 } from "@/lib/habits";
+import { setHabitDailyScheduleOverride } from "@/lib/habit-daily-schedule-store";
 import {
   addTaskToBoard,
   fetchTaskBoard,
+  isInboxGroup,
   isLaterGroup,
   isTodayGroup,
   persistTaskBoardLayout,
@@ -43,26 +41,27 @@ import type { Habit } from "@/types/habit";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
 export function SchedulePageContent() {
+  const { selectedTaskId, selectTask } = useGlobalRightSidebar();
   const [groups, setGroups] = useState<TaskGroupWithTasks[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
-  const [detailOpen, setDetailOpen] = useState(false);
   const [todayViewDate, setTodayViewDate] = useState(getTodayDateString);
   const updateTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
     new Map()
   );
 
-  const selectedTask = useMemo(() => {
-    if (!selectedTaskId) return null;
-    for (const group of groups) {
-      const match = group.tasks.find((task) => task.id === selectedTaskId);
-      if (match) return match;
-    }
-    return null;
-  }, [groups, selectedTaskId]);
+  const getTask = useCallback(
+    (taskId: string) => {
+      for (const group of groups) {
+        const match = group.tasks.find((task) => task.id === taskId);
+        if (match) return match;
+      }
+      return null;
+    },
+    [groups]
+  );
 
   const loadBoard = useCallback(async () => {
     setLoading(true);
@@ -93,6 +92,11 @@ export function SchedulePageContent() {
   useEffect(() => {
     void loadBoard();
   }, [loadBoard]);
+
+  useEffect(() => {
+    setQuickScheduleOpen(true);
+    return () => setQuickScheduleOpen(false);
+  }, []);
 
   useEffect(() => {
     setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
@@ -166,26 +170,11 @@ export function SchedulePageContent() {
 
   async function handleScheduleHabit(
     habitId: string,
-    updates: { scheduled_time: string | null }
+    updates: { scheduled_time: string | null },
+    scheduleDate: string
   ) {
     setError(null);
-    setHabits((prev) =>
-      prev.map((habit) =>
-        habit.id === habitId ? { ...habit, ...updates } : habit
-      )
-    );
-
-    try {
-      const updated = await updateHabit(habitId, updates);
-      setHabits((prev) =>
-        prev.map((habit) => (habit.id === updated.id ? updated : habit))
-      );
-    } catch (err) {
-      setError(
-        err instanceof HabitsError ? err.message : "Failed to schedule habit."
-      );
-      void loadBoard();
-    }
+    setHabitDailyScheduleOverride(habitId, scheduleDate, updates.scheduled_time);
   }
 
   async function handleUpdateTask(taskId: string, updates: Partial<Task>) {
@@ -222,6 +211,7 @@ export function SchedulePageContent() {
     setError(null);
     const todayGroup = groups.find(isTodayGroup);
     const laterGroup = groups.find(isLaterGroup);
+    const inboxGroup = groups.find(isInboxGroup);
     const next = moveTaskInBoard(
       groups,
       taskId,
@@ -233,6 +223,7 @@ export function SchedulePageContent() {
       {
         todayGroupId: todayGroup?.id,
         laterGroupId: laterGroup?.id,
+        inboxGroupId: inboxGroup?.id,
         todayViewDate,
       }
     );
@@ -279,6 +270,7 @@ export function SchedulePageContent() {
     let nextBoard = groups;
     setGroups((prev) => {
       const todayGroup = prev.find(isTodayGroup);
+      const inboxGroup = prev.find(isInboxGroup);
       nextBoard = moveTaskInBoard(
         prev,
         taskId,
@@ -290,6 +282,7 @@ export function SchedulePageContent() {
         {
           todayGroupId: todayGroup?.id,
           laterGroupId: laterGroup.id,
+          inboxGroupId: inboxGroup?.id,
           todayViewDate,
         }
       );
@@ -397,8 +390,7 @@ export function SchedulePageContent() {
     setError(null);
     setGroups((prev) => removeTaskFromBoard(prev, taskId));
     if (selectedTaskId === taskId) {
-      setSelectedTaskId(null);
-      setDetailOpen(false);
+      selectTask(null);
     }
 
     try {
@@ -411,22 +403,17 @@ export function SchedulePageContent() {
     }
   }
 
-  async function handleDeleteHabit(habitId: string) {
-    setError(null);
-    setHabits((prev) => prev.filter((habit) => habit.id !== habitId));
-    if (selectedHabitId === habitId) {
-      setSelectedHabitId(null);
-    }
-
-    try {
-      await deleteHabit(habitId);
-    } catch (err) {
-      setError(
-        err instanceof HabitsError ? err.message : "Failed to delete habit."
-      );
-      void loadBoard();
-    }
-  }
+  useRegisterTaskDetailSource(
+    {
+      groups,
+      todayViewDate,
+      getTask,
+      onUpdate: handleUpdateTask,
+      onMoveToGroup: handleMoveTask,
+      onPlanningStateChange: handleSetPlanningState,
+    },
+    [groups, todayViewDate, getTask]
+  );
 
   if (loading) {
     return (
@@ -438,12 +425,7 @@ export function SchedulePageContent() {
 
   return (
     <div className="relative flex h-full min-h-0">
-      <div
-        className={cn(
-          "flex min-h-0 min-w-0 flex-1 flex-col",
-          WORKSPACE_GUTTER_CLASS
-        )}
-      >
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {error && (
           <div className="shrink-0 pt-3">
             <ErrorBanner message={error} />
@@ -459,20 +441,16 @@ export function SchedulePageContent() {
           selectedTaskId={selectedTaskId}
           selectedHabitId={selectedHabitId}
           onSelectTask={(taskId) => {
-            setSelectedTaskId(taskId);
+            selectTask(taskId, { openDetails: Boolean(taskId) });
             if (taskId) setSelectedHabitId(null);
           }}
           onSelectHabit={(habitId) => {
             setSelectedHabitId(habitId);
-            if (habitId) {
-              setSelectedTaskId(null);
-              setDetailOpen(false);
-            }
+            if (habitId) selectTask(null, { openDetails: false });
           }}
           onOpenDetail={(taskId) => {
-            setSelectedTaskId(taskId);
+            selectTask(taskId);
             setSelectedHabitId(null);
-            setDetailOpen(true);
           }}
           onScheduleTask={handleScheduleTask}
           onScheduleHabit={handleScheduleHabit}
@@ -480,32 +458,8 @@ export function SchedulePageContent() {
           onUpdateTask={handleUpdateTask}
           onToggleHabitComplete={handleToggleHabitComplete}
           onDeleteTask={handleDeleteTask}
-          onDeleteHabit={handleDeleteHabit}
           onDuplicateTask={handleDuplicateTask}
           onSetPlanningState={handleSetPlanningState}
-        />
-      </div>
-
-      <div
-        className="relative h-full shrink-0"
-        style={{
-          width: `min(100%, ${detailOpen ? DETAIL_PANEL_WIDTH_PX : DETAIL_PANEL_COLLAPSED_WIDTH_PX}px)`,
-        }}
-      >
-        <TaskDetailPanel
-          task={selectedTask}
-          groups={groups}
-          todayViewDate={todayViewDate}
-          expanded={detailOpen}
-          onToggleExpanded={() => setDetailOpen((value) => !value)}
-          onChange={(updates) => {
-            if (!selectedTask) return;
-            void handleUpdateTask(selectedTask.id, updates);
-          }}
-          onMoveToGroup={(groupId) => {
-            if (!selectedTask) return;
-            void handleMoveTask(selectedTask.id, groupId);
-          }}
         />
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Clock, PanelRightClose, PanelRightOpen } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
   TimelinePlanner,
   type TimelinePlannerProps,
@@ -10,6 +11,11 @@ import {
   panelTogglePrimaryIconClass,
   panelToggleTabClass,
 } from "@/lib/panel-toggle-styles";
+import {
+  PANEL_LAYOUT_MS,
+  panelSlideTransitionStyle,
+  panelWidthTransitionStyle,
+} from "@/lib/panel-layout-animation";
 import { TIMELINE_DRAWER_WIDTH_PX } from "@/lib/timeline-drag";
 import { cn } from "@/lib/utils";
 
@@ -48,19 +54,55 @@ function TimelineTabButton({
 }
 
 export function TimelineDrawer({ open, onClose, ...props }: TimelineDrawerProps) {
-  if (!open) return null;
+  const [showContent, setShowContent] = useState(open);
+
+  useEffect(() => {
+    if (open) {
+      setShowContent(true);
+      return;
+    }
+
+    const timer = window.setTimeout(() => setShowContent(false), PANEL_LAYOUT_MS);
+    return () => window.clearTimeout(timer);
+  }, [open]);
 
   return (
     <div
-      className="relative h-full shrink-0"
-      style={{ width: `min(100%, ${TIMELINE_DRAWER_WIDTH_PX}px)` }}
+      aria-hidden={!open}
+      className={cn(
+        "relative h-full shrink-0 overflow-visible",
+        !open && "pointer-events-none"
+      )}
+      style={{
+        width: open ? `min(100%, ${TIMELINE_DRAWER_WIDTH_PX}px)` : 0,
+        transition: panelWidthTransitionStyle(),
+      }}
     >
-      <TimelineTabButton
-        active
-        onClick={onClose}
-        className="absolute top-1/2 -left-8 -translate-y-1/2"
-      />
-      <TimelinePlanner variant="drawer" onClose={onClose} {...props} />
+      {open ? (
+        <TimelineTabButton
+          active
+          onClick={onClose}
+          className="absolute top-1/2 -left-8 z-30 -translate-y-1/2"
+        />
+      ) : null}
+      <div
+        className="relative h-full shrink-0 overflow-hidden"
+        style={{ width: `min(100%, ${TIMELINE_DRAWER_WIDTH_PX}px)` }}
+      >
+        <div
+          className={cn(
+            "relative h-full",
+            open
+              ? "translate-x-0 opacity-100"
+              : "pointer-events-none translate-x-5 opacity-0"
+          )}
+          style={{ transition: panelSlideTransitionStyle() }}
+        >
+          {showContent ? (
+            <TimelinePlanner variant="drawer" onClose={onClose} {...props} />
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }
@@ -74,13 +116,37 @@ export function TimelineDrawerToggle({
   detailPanelOffsetPx?: number;
   onToggle: () => void;
 }) {
-  if (open) return null;
+  const [mounted, setMounted] = useState(!open);
+  const [visible, setVisible] = useState(!open);
+
+  useEffect(() => {
+    if (open) {
+      setVisible(false);
+      const timer = window.setTimeout(() => setMounted(false), PANEL_LAYOUT_MS);
+      return () => window.clearTimeout(timer);
+    }
+
+    setMounted(true);
+    setVisible(false);
+    const frame = window.requestAnimationFrame(() => {
+      setVisible(true);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [open]);
+
+  if (!mounted) return null;
 
   return (
     <TimelineTabButton
       onClick={onToggle}
-      className="absolute top-1/2 -translate-y-1/2"
-      style={{ right: detailPanelOffsetPx }}
+      className={cn(
+        "fixed top-1/2 z-30 -translate-y-1/2",
+        visible ? "translate-x-0 opacity-100" : "pointer-events-none translate-x-5 opacity-0"
+      )}
+      style={{
+        right: detailPanelOffsetPx,
+        transition: panelWidthTransitionStyle(),
+      }}
     />
   );
 }

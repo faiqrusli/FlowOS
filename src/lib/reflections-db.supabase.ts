@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { requireUserId } from "@/lib/auth";
-import type { CustomEntry, Reflection, ReflectionDraft } from "@/types/reflection";
+import type { CustomEntry, Reflection, ReflectionDraft, ReflectionKanban } from "@/types/reflection";
 import { ReflectionsError } from "@/lib/reflections-errors";
 
 type ReflectionRow = {
@@ -8,6 +8,7 @@ type ReflectionRow = {
   reflection_date: string;
   went_well: string;
   went_wrong: string;
+  custom_kanbans: ReflectionKanban[] | null;
   user_id: string | null;
   created_at: string;
 };
@@ -35,6 +36,29 @@ function entryRowToCustomEntry(row: ReflectionEntryRow): CustomEntry {
   };
 }
 
+function normalizeKanbans(value: unknown): ReflectionKanban[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is ReflectionKanban => {
+      return (
+        item !== null &&
+        typeof item === "object" &&
+        typeof (item as ReflectionKanban).id === "string" &&
+        typeof (item as ReflectionKanban).title === "string" &&
+        Array.isArray((item as ReflectionKanban).cards)
+      );
+    })
+    .map((kanban) => ({
+      id: kanban.id,
+      title: kanban.title,
+      collapsed: kanban.collapsed ?? false,
+      cards: (kanban.cards ?? []).map((card) => ({
+        id: card.id,
+        content: card.content ?? "",
+      })),
+    }));
+}
+
 function rowToReflection(row: ReflectionRowWithEntries): Reflection {
   const entries = row.reflection_entries ?? [];
 
@@ -44,6 +68,7 @@ function rowToReflection(row: ReflectionRowWithEntries): Reflection {
     went_well: row.went_well ?? "",
     went_wrong: row.went_wrong ?? "",
     custom_entries: entries.map(entryRowToCustomEntry),
+    custom_kanbans: normalizeKanbans(row.custom_kanbans),
     user_id: row.user_id,
     created_at: row.created_at,
   };
@@ -101,7 +126,7 @@ export async function fetchReflectionsFromSupabase(): Promise<Reflection[]> {
     throw new ReflectionsError(error.message);
   }
 
-  return (data as ReflectionRowWithEntries[]).map(rowToReflection);
+  return (data as unknown as ReflectionRowWithEntries[]).map(rowToReflection);
 }
 
 export async function fetchTodayReflectionFromSupabase(
@@ -119,7 +144,9 @@ export async function fetchTodayReflectionFromSupabase(
     throw new ReflectionsError(error.message);
   }
 
-  return data ? rowToReflection(data as ReflectionRowWithEntries) : null;
+  return data
+    ? rowToReflection(data as unknown as ReflectionRowWithEntries)
+    : null;
 }
 
 export async function saveReflectionToSupabase(
@@ -131,6 +158,7 @@ export async function saveReflectionToSupabase(
     reflection_date: dateKey,
     went_well: draft.went_well,
     went_wrong: draft.went_wrong,
+    custom_kanbans: draft.custom_kanbans ?? [],
     user_id: userId,
   };
 
@@ -149,6 +177,7 @@ export async function saveReflectionToSupabase(
       .update({
         went_well: payload.went_well,
         went_wrong: payload.went_wrong,
+        custom_kanbans: payload.custom_kanbans,
       })
       .eq("id", existing.id)
       .eq("user_id", userId)
@@ -180,6 +209,7 @@ export async function saveReflectionToSupabase(
     went_well: reflectionRow.went_well ?? "",
     went_wrong: reflectionRow.went_wrong ?? "",
     custom_entries,
+    custom_kanbans: normalizeKanbans(reflectionRow.custom_kanbans),
     user_id: reflectionRow.user_id,
     created_at: reflectionRow.created_at,
   };

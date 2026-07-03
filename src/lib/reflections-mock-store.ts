@@ -82,6 +82,7 @@ export function saveMockReflection(
       went_well: draft.went_well,
       went_wrong: draft.went_wrong,
       custom_entries,
+      custom_kanbans: draft.custom_kanbans ?? [],
     };
     reflections[existingIndex] = saved;
   } else {
@@ -91,6 +92,7 @@ export function saveMockReflection(
       went_well: draft.went_well,
       went_wrong: draft.went_wrong,
       custom_entries,
+      custom_kanbans: draft.custom_kanbans ?? [],
       created_at: new Date().toISOString(),
       user_id: null,
     };

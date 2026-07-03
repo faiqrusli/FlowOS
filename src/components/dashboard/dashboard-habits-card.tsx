@@ -6,7 +6,8 @@ import {
   DashboardPanel,
   DashboardSupportingText,
 } from "@/components/dashboard/dashboard-card-shell";
-import { formatTimeShort } from "@/lib/date-utils";
+import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
+import { getHabitDurationMinutes } from "@/lib/schedule-durations";
 import { sortHabitsForPreview } from "@/lib/dashboard-command";
 import { type } from "@/lib/typography";
 import { cn } from "@/lib/utils";
@@ -29,7 +30,10 @@ function HabitPreviewRow({
   disabled: boolean;
   onToggle: () => void;
 }) {
-  const time = formatTimeShort(habit.scheduled_time);
+  const time = formatHabitTimeRangeWithDuration(
+    habit.scheduled_time,
+    getHabitDurationMinutes(habit.id)
+  );
 
   return (
     <li className="flex items-center gap-2.5 py-1.5">
@@ -41,7 +45,7 @@ function HabitPreviewRow({
           "flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
           habit.completed
             ? "border-orange-600 bg-orange-600 text-white"
-            : "border-neutral-400 bg-transparent hover:border-orange-500",
+            : "border-muted-foreground/45 bg-transparent hover:border-orange-500/70",
           disabled && "opacity-50"
         )}
         aria-label={`Mark "${habit.name}" as ${habit.completed ? "incomplete" : "complete"}`}

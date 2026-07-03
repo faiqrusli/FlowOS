@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { CustomEntriesSection } from "@/components/reflection/custom-entries-section";
+import { ReflectionKanbanSection } from "@/components/reflection/reflection-kanban-section";
 import { ReflectionHistory } from "@/components/reflection/reflection-history";
 import { ReflectionQuestionsCard } from "@/components/reflection/reflection-questions-card";
 import { TodaySummaryCard } from "@/components/reflection/today-summary-card";
@@ -16,7 +17,7 @@ import {
 } from "@/lib/reflection-storage";
 import { fetchReflectionDayReview } from "@/lib/reflection-day-review";
 import type { ReflectionDayReview } from "@/lib/reflection-day-review";
-import type { CustomEntry, Reflection } from "@/types/reflection";
+import type { CustomEntry, Reflection, ReflectionKanban } from "@/types/reflection";
 
 export function ReflectionPageContent() {
   const [dayReview, setDayReview] = useState<ReflectionDayReview | null>(null);
@@ -24,6 +25,7 @@ export function ReflectionPageContent() {
   const [wentWell, setWentWell] = useState("");
   const [wentWrong, setWentWrong] = useState("");
   const [customEntries, setCustomEntries] = useState<CustomEntry[]>([]);
+  const [customKanbans, setCustomKanbans] = useState<ReflectionKanban[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,9 +51,11 @@ export function ReflectionPageContent() {
         setWentWell(todayReflection.went_well);
         setWentWrong(todayReflection.went_wrong);
         setCustomEntries(todayReflection.custom_entries);
+        setCustomKanbans(todayReflection.custom_kanbans ?? []);
       } else {
         setWentWell("");
         setWentWrong("");
+        setCustomKanbans([]);
         setCustomEntries([
           { id: crypto.randomUUID(), title: "Weight", content: "72.4kg" },
           {
@@ -82,6 +86,7 @@ export function ReflectionPageContent() {
         went_well: wentWell,
         went_wrong: wentWrong,
         custom_entries: customEntries.filter((e) => e.title.trim()),
+        custom_kanbans: customKanbans,
       });
 
       const allReflections = await fetchReflections();
@@ -91,6 +96,7 @@ export function ReflectionPageContent() {
       setDayReview(refreshedReview);
       setWentWell(saved.went_well);
       setWentWrong(saved.went_wrong);
+      setCustomKanbans(saved.custom_kanbans ?? customKanbans);
       setCustomEntries(
         saved.custom_entries.length > 0
           ? saved.custom_entries
@@ -139,12 +145,18 @@ export function ReflectionPageContent() {
         disabled={loading || saving}
       />
 
+      <ReflectionKanbanSection
+        kanbans={customKanbans}
+        onChange={setCustomKanbans}
+        disabled={loading || saving}
+      />
+
       <div className="flex justify-center pt-2">
         <Button
           type="button"
           onClick={handleSave}
           disabled={loading || saving}
-          className="w-full rounded-full bg-neutral-800 px-8 py-2 text-white hover:bg-neutral-700 sm:w-auto sm:min-w-[200px]"
+          className="w-full rounded-full px-8 py-2 sm:w-auto sm:min-w-[200px]"
         >
           {saving ? "Saving…" : "Save reflection"}
         </Button>

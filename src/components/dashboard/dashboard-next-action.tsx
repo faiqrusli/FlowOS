@@ -69,6 +69,7 @@ export function DashboardNextAction({
           )}
         <Button
           size="sm"
+          nativeButton={false}
           className="h-8 gap-1.5 px-3 text-sm"
           render={<Link href={action.href} />}
         >

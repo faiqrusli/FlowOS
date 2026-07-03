@@ -16,17 +16,19 @@ import {
   GLOBAL_ACCESS_PANEL_WIDTH_PX,
 } from "@/components/layout/global-access-panel";
 import { Input } from "@/components/ui/input";
-import { NativePickerInput } from "@/components/ui/native-picker-input";
+import {
+  ScheduleDatePickerField,
+  ScheduleTimePickerField,
+} from "@/components/ui/schedule-picker-field";
 import { Label } from "@/components/ui/label";
+import { TaskAlertBeforePicker } from "@/components/tasks/task-alert-before-picker";
+import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { toTimeInputValue } from "@/lib/date-utils";
-import { TASK_DURATION_OPTIONS } from "@/lib/task-duration-options";
 import { TaskPriorityPicker } from "@/components/tasks/task-priority-picker";
 import { TaskGroupPicker } from "@/components/tasks/task-group-picker";
 import {
@@ -34,6 +36,7 @@ import {
   PLANNING_INTRO,
   PLANNING_STATE_CONFIG,
   PLANNING_STATES,
+  PLAN_SECTION_LABEL,
 } from "@/lib/task-planning";
 import { cn } from "@/lib/utils";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
@@ -79,7 +82,7 @@ function PlanningInfoMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger
         className="inline-flex shrink-0 items-center justify-center rounded-sm px-0.5 text-[11px] leading-none text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-        aria-label="About planning"
+        aria-label={`About ${PLAN_SECTION_LABEL.toLowerCase()}`}
       >
         ⓘ
       </DropdownMenuTrigger>
@@ -105,7 +108,7 @@ function PlanningInfoMenu() {
   );
 }
 
-function TaskDetailEmptyState() {
+export function TaskDetailEmptyState() {
   return (
     <div className="flex h-full min-h-[12rem] flex-col items-center justify-center px-4 py-8 text-center">
       <ClipboardList
@@ -120,7 +123,7 @@ function TaskDetailEmptyState() {
   );
 }
 
-function TaskDetailFields({
+export function TaskDetailFields({
   task,
   groups,
   todayViewDate,
@@ -189,7 +192,7 @@ function TaskDetailFields({
 
       <div className="space-y-1.5">
         <div className="flex items-center gap-1">
-          <PropertyLabel icon={CalendarClock}>Planning</PropertyLabel>
+          <PropertyLabel icon={CalendarClock}>{PLAN_SECTION_LABEL}</PropertyLabel>
           <PlanningInfoMenu />
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -221,12 +224,11 @@ function TaskDetailFields({
           <PropertyLabel icon={CalendarDays} htmlFor="task-detail-date">
             Date
           </PropertyLabel>
-          <NativePickerInput
+          <ScheduleDatePickerField
             id="task-detail-date"
-            type="date"
-            value={task.scheduled_date ?? ""}
-            onChange={(event) =>
-              onChange({ scheduled_date: event.target.value || null })
+            value={task.scheduled_date ?? null}
+            onChange={(dateKey) =>
+              onChange({ scheduled_date: dateKey })
             }
           />
         </div>
@@ -234,17 +236,10 @@ function TaskDetailFields({
           <PropertyLabel icon={Clock} htmlFor="task-detail-time">
             Time
           </PropertyLabel>
-          <NativePickerInput
+          <ScheduleTimePickerField
             id="task-detail-time"
-            type="time"
-            value={toTimeInputValue(task.scheduled_time)}
-            onChange={(event) =>
-              onChange({
-                scheduled_time: event.target.value
-                  ? `${event.target.value}:00`
-                  : null,
-              })
-            }
+            value={task.scheduled_time}
+            onChange={(time) => onChange({ scheduled_time: time })}
           />
         </div>
       </div>
@@ -254,43 +249,25 @@ function TaskDetailFields({
           <PropertyLabel icon={Clock} htmlFor="task-detail-duration">
             Duration
           </PropertyLabel>
-          <select
-            id="task-detail-duration"
-            value={task.duration_minutes ?? ""}
-            onChange={(event) =>
-              onChange({
-                duration_minutes: event.target.value
-                  ? Number(event.target.value)
-                  : null,
-              })
-            }
-            className="h-9 w-full rounded-lg border border-border/50 bg-background px-2 text-sm outline-none"
-          >
-            <option value="">No duration</option>
-            {TASK_DURATION_OPTIONS.map((option) => (
-              <option key={option.minutes} value={option.minutes}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <TaskDurationPicker
+            variant="detail"
+            durationMinutes={task.duration_minutes}
+            onChange={(minutes) => onChange({ duration_minutes: minutes })}
+            className="w-full"
+          />
         </div>
 
         <div className="space-y-1.5">
-          <PropertyLabel icon={Bell} htmlFor="task-detail-notification">
-            Notification
+          <PropertyLabel icon={Bell} htmlFor="task-detail-alert-before">
+            Alert before
           </PropertyLabel>
-          <div className="flex h-9 items-center justify-between rounded-lg border border-border/50 bg-background px-2">
-            <span className="text-xs text-muted-foreground">
-              {task.notification_enabled ? "On" : "Off"}
-            </span>
-            <Switch
-              id="task-detail-notification"
-              checked={task.notification_enabled}
-              onCheckedChange={(checked) =>
-                onChange({ notification_enabled: checked })
-              }
-            />
-          </div>
+          <TaskAlertBeforePicker
+            variant="detail"
+            notificationEnabled={task.notification_enabled}
+            leadMinutes={task.notification_lead_minutes}
+            onChange={onChange}
+            className="w-full"
+          />
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import type { FocusSession, FocusSessionInsert } from "@/types/focus";
-import type { ReflectionEntry } from "@/types/reflection";
+import type { ReflectionEntry, ReflectionKanban } from "@/types/reflection";
 import type { Habit, HabitInsert, HabitUpdate } from "@/types/habit";
 import type { Task, TaskGroup, TaskGroupInsert, TaskInsert } from "@/types/task";
 import type {
@@ -26,8 +26,18 @@ type ReflectionRow = {
   reflection_date: string;
   went_well: string;
   went_wrong: string;
+  custom_kanbans: ReflectionKanban[];
   user_id: string | null;
   created_at: string;
+};
+
+type WeeklyReflectionLayoutRow = {
+  id: string;
+  user_id: string;
+  week_start: string;
+  layout: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
 };
 
 export type Database = {
@@ -84,6 +94,23 @@ export type Database = {
           reflection_date?: string;
           went_well?: string;
           went_wrong?: string;
+          custom_kanbans?: ReflectionKanban[];
+        };
+        Relationships: [];
+      };
+      weekly_reflection_layouts: {
+        Row: WeeklyReflectionLayoutRow;
+        Insert: {
+          user_id: string;
+          week_start: string;
+          layout?: Record<string, unknown>;
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          layout?: Record<string, unknown>;
+          updated_at?: string;
         };
         Relationships: [];
       };

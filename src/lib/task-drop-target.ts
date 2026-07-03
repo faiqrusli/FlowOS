@@ -1,5 +1,12 @@
 import type { DropBeforeId } from "@/lib/list-drag-utils";
 import {
+  getActiveBodyMetrics,
+  isPointerInsideColumnRect,
+  resolveActiveDropBeforeIdFromMetrics,
+  type CachedColumnRect,
+} from "@/lib/dnd/board-drag-measurements";
+import { getCachedActiveTaskIds } from "@/lib/board-displayed-tasks-cache";
+import {
   applyManualOrderUpdates,
   computeManualReorderUpdates,
   MANUAL_ORDER_STEP,
@@ -149,6 +156,75 @@ export function buildCompletedTaskDropTarget(groupId: string): TaskDragTarget {
 export type ResolvedTaskDropTarget =
   | { kind: "target"; target: TaskDragTarget }
   | { kind: "none" };
+
+/** Cached pointer resolution — one column-rect pass + one active-body pass per frame. */
+export function resolveTaskDropTargetForPointerCached(
+  board: HTMLElement,
+  column: CachedColumnRect,
+  group: TaskGroupWithTasks,
+  todayViewDate: string,
+  clientX: number,
+  clientY: number,
+  draggingTaskId: string
+): ResolvedTaskDropTarget {
+  if (!isPointerInsideColumnRect(column, clientX, clientY)) {
+    return { kind: "none" };
+  }
+
+  const activeIds = getCachedActiveTaskIds(group, todayViewDate);
+  const metrics = getActiveBodyMetrics(
+    board,
+    group.id,
+    activeIds,
+    draggingTaskId
+  );
+
+  if (!metrics) {
+    return { kind: "none" };
+  }
+
+  if (metrics.completedTop !== null && clientY >= metrics.completedTop - 8) {
+    return {
+      kind: "target",
+      target: buildCompletedTaskDropTarget(group.id),
+    };
+  }
+
+  const manual = isManualActiveDropGroup(group);
+  if (!manual) {
+    return {
+      kind: "target",
+      target: {
+        groupId: group.id,
+        beforeTaskId: null,
+        zone: "active",
+        showInsertionLine: false,
+      },
+    };
+  }
+
+  if (activeIds.length === 0) {
+    return {
+      kind: "target",
+      target: {
+        groupId: group.id,
+        beforeTaskId: null,
+        zone: "active",
+        showInsertionLine: true,
+      },
+    };
+  }
+
+  return {
+    kind: "target",
+    target: {
+      groupId: group.id,
+      beforeTaskId: resolveActiveDropBeforeIdFromMetrics(metrics, clientY),
+      zone: "active",
+      showInsertionLine: true,
+    },
+  };
+}
 
 /** Resolve drop target from column + pointer — independent of event.target. */
 export function resolveTaskDropTargetForPointer(

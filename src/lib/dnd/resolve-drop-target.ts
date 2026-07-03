@@ -16,8 +16,8 @@ import {
   buildCompletedTaskDropTarget,
   getDisplayedActiveTasks,
   isManualActiveDropGroup,
-  resolveActiveDropBeforeId,
 } from "@/lib/task-drop-target";
+import { resolveBeforeTaskIdFromPointerMidpoints } from "@/lib/dnd/pointer-target-cache";
 import { isManualTaskSortMode, type TaskSortMode } from "@/lib/task-sort";
 import type { TaskDragTarget } from "@/lib/task-drag-utils";
 import type { TaskGroupWithTasks } from "@/types/task";
@@ -118,7 +118,8 @@ export function refineManualDropTargetFromPointer(
     todayViewDate
   ).map((task) => task.id);
 
-  const beforeTaskId = resolveActiveDropBeforeId(
+  const beforeTaskId = resolveBeforeTaskIdFromPointerMidpoints(
+    target.groupId,
     activeIds,
     activeBody,
     clientY,

@@ -40,7 +40,7 @@ import {
   playAlertSound,
   showBrowserNotification,
 } from "@/lib/focus-utils";
-import type { FocusSession, PomodoroPhase, QuickFocusPhase } from "@/types/focus";
+import type { FocusSession, FocusTargetType, PomodoroPhase, QuickFocusPhase } from "@/types/focus";
 
 type DashboardActiveFocus = {
   isActive: boolean;
@@ -58,6 +58,9 @@ type FocusSessionContextValue = {
   notification: string | null;
   clearNotification: () => void;
   dashboardActive: DashboardActiveFocus;
+  prepareFocusTarget: (
+    target: { type: FocusTargetType; id: string; label?: string } | null
+  ) => void;
   quick: {
     phase: QuickFocusPhase;
     clock: string;
@@ -115,6 +118,11 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
 
   const sessionRef = useRef<StoredActiveFocusSession | null>(null);
   const completionHandledRef = useRef(false);
+  const pendingFocusTargetRef = useRef<{
+    target_type: FocusTargetType;
+    target_id: string;
+    label?: string;
+  } | null>(null);
   const focusMinutesRef = useRef(focusMinutes);
   const breakMinutesRef = useRef(breakMinutes);
 
@@ -221,10 +229,29 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     return () => window.clearInterval(interval);
   }, [handlePomodoroPhaseExpiry]);
 
+  const prepareFocusTarget = useCallback(
+    (target: { type: FocusTargetType; id: string; label?: string } | null) => {
+      pendingFocusTargetRef.current = target
+        ? {
+            target_type: target.type,
+            target_id: target.id,
+            label: target.label,
+          }
+        : null;
+    },
+    []
+  );
+
   const quickStartFocus = useCallback(() => {
     if (sessionRef.current) return;
     completionHandledRef.current = false;
-    const next = createQuickFocusSession();
+    const pending = pendingFocusTargetRef.current;
+    pendingFocusTargetRef.current = null;
+    const next = createQuickFocusSession({
+      target_type: pending?.target_type ?? null,
+      target_id: pending?.target_id ?? null,
+      label: pending?.label,
+    });
     updateSession(next);
   }, [updateSession]);
 
@@ -357,6 +384,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       notification,
       clearNotification: () => setNotification(null),
       dashboardActive,
+      prepareFocusTarget,
       quick: {
         phase: quickPhase,
         clock: quickSession ? formatQuickClock(quickSession) : "00:00",
@@ -414,6 +442,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     lastSavedSession,
     notification,
     dashboardActive,
+    prepareFocusTarget,
     quickPhase,
     quickSession,
     quickElapsed,

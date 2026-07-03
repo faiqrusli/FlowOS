@@ -82,7 +82,11 @@ export async function fetchFocusSessions(): Promise<FocusSession[]> {
   }
 
   const rows = data ?? [];
-  const deduped = dedupeFocusSessions(rows);
+  const deduped = dedupeFocusSessions(rows).map((session) => ({
+    ...session,
+    target_type: session.target_type ?? null,
+    target_id: session.target_id ?? null,
+  }));
 
   if (typeof window !== "undefined") {
     console.log("[focus] fetchFocusSessions", {
@@ -148,6 +152,8 @@ export function buildFocusSessionInsert(payload: {
   started_at: string;
   ended_at: string;
   session_status: FocusSessionInsert["session_status"];
+  target_type?: FocusSessionInsert["target_type"];
+  target_id?: FocusSessionInsert["target_id"];
 }): FocusSessionInsert {
   return {
     focus_duration: Math.max(0, Math.round(payload.focus_seconds)),
@@ -155,6 +161,8 @@ export function buildFocusSessionInsert(payload: {
     started_at: payload.started_at,
     ended_at: payload.ended_at,
     session_status: payload.session_status,
+    target_type: payload.target_type ?? null,
+    target_id: payload.target_id ?? null,
   };
 }
 

@@ -45,17 +45,18 @@ export function HabitsPageContent() {
     loadHabits();
   }, [loadHabits]);
 
-  async function handleSave(input: HabitInsert, habitId?: string) {
+  async function handleSave(input: HabitInsert, habitId?: string): Promise<Habit> {
     if (habitId) {
       const updated = await updateHabit(habitId, input);
       setHabits((prev) =>
         prev.map((h) => (h.id === updated.id ? updated : h))
       );
-      return;
+      return updated;
     }
 
     const created = await createHabit(input);
     setHabits((prev) => [created, ...prev]);
+    return created;
   }
 
   async function handleToggleComplete(habit: Habit) {

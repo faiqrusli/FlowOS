@@ -123,10 +123,6 @@ export function shouldPublishDropTargetPreview(
   if (!prev) return true;
   if (prev.groupId !== next.groupId || prev.zone !== next.zone) return true;
 
-  const isCrossColumn = sourceGroupId !== null && sourceGroupId !== next.groupId;
-  if (isCrossColumn && next.showInsertionLine) {
-    return prev.beforeTaskId !== next.beforeTaskId;
-  }
-
+  // Insert line position is painted imperatively — skip React for slot-only changes.
   return false;
 }

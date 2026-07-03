@@ -1,6 +1,6 @@
 import { parseTimestamp } from "@/lib/date-utils";
 import { formatTimerClock } from "@/lib/focus-utils";
-import type { PomodoroPhase, QuickFocusPhase } from "@/types/focus";
+import type { FocusTargetType, PomodoroPhase, QuickFocusPhase } from "@/types/focus";
 
 export const FOCUS_ACTIVE_SESSION_KEY = "flowos.focus.active";
 
@@ -20,6 +20,8 @@ export type StoredActiveFocusSession = {
   accumulated_focus_seconds: number;
   accumulated_break_seconds: number;
   label: string;
+  target_type?: FocusTargetType | null;
+  target_id?: string | null;
 };
 
 export function readActiveSession(): StoredActiveFocusSession | null {
@@ -129,7 +131,11 @@ export function computeQuickFocusSeconds(
   return { focus, break: breakSeconds };
 }
 
-export function createQuickFocusSession(): StoredActiveFocusSession {
+export function createQuickFocusSession(options?: {
+  target_type?: FocusTargetType | null;
+  target_id?: string | null;
+  label?: string;
+}): StoredActiveFocusSession {
   const now = new Date().toISOString();
 
   return {
@@ -144,7 +150,9 @@ export function createQuickFocusSession(): StoredActiveFocusSession {
     paused_segment_seconds: 0,
     accumulated_focus_seconds: 0,
     accumulated_break_seconds: 0,
-    label: "Quick Focus",
+    label: options?.label ?? "Quick Focus",
+    target_type: options?.target_type ?? null,
+    target_id: options?.target_id ?? null,
   };
 }
 
@@ -273,6 +281,8 @@ export function buildStopPayload(session: StoredActiveFocusSession): {
   session_status: "stopped";
   focus_duration?: number;
   break_duration?: number;
+  target_type?: FocusTargetType | null;
+  target_id?: string | null;
 } {
   if (session.timer_type === "quick") {
     const { focus, break: breakSeconds } = computeQuickFocusSeconds(session);
@@ -281,6 +291,8 @@ export function buildStopPayload(session: StoredActiveFocusSession): {
       break_seconds: breakSeconds,
       started_at: session.started_at,
       session_status: "stopped",
+      target_type: session.target_type ?? null,
+      target_id: session.target_id ?? null,
     };
   }
 
@@ -304,6 +316,8 @@ export function buildStopPayload(session: StoredActiveFocusSession): {
     break_duration: session.break_duration,
     started_at: session.started_at,
     session_status: "stopped",
+    target_type: session.target_type ?? null,
+    target_id: session.target_id ?? null,
   };
 }
 
@@ -314,6 +328,8 @@ export function buildCompletedPayload(session: StoredActiveFocusSession): {
   break_duration: number;
   started_at: string;
   session_status: "completed";
+  target_type?: FocusTargetType | null;
+  target_id?: string | null;
 } {
   return {
     focus_seconds: session.focus_duration * 60,
@@ -322,6 +338,8 @@ export function buildCompletedPayload(session: StoredActiveFocusSession): {
     break_duration: session.break_duration,
     started_at: session.started_at,
     session_status: "completed",
+    target_type: session.target_type ?? null,
+    target_id: session.target_id ?? null,
   };
 }
 

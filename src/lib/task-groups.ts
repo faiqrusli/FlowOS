@@ -10,7 +10,11 @@ import type {
   TaskGroupInsert,
   TaskGroupWithTasks,
 } from "@/types/task";
-import { isLaterPlanningState, normalizePlanningState } from "@/lib/task-planning";
+import {
+  isLaterPlanningState,
+  LATER_PLANNING_TASK_UPDATES,
+  normalizePlanningState,
+} from "@/lib/task-planning";
 import { normalizeTaskManualOrder } from "@/lib/manual-order";
 import { repairMissingManualOrders } from "@/lib/tasks";
 import {
@@ -217,17 +221,13 @@ export function taskBelongsInTodayView(
   return task.scheduled_date === todayViewDate;
 }
 
-/** Org columns show tasks that belong to the group and are not in a planning queue. */
+/** Org columns show tasks assigned to the group, including those also on Today/Later. */
 export function taskBelongsInOrgGroupView(
-  task: Pick<Task, "group_id" | "planning_state" | "scheduled_date">,
+  task: Pick<Task, "group_id">,
   groupId: string,
-  todayViewDate: string
+  _todayViewDate?: string
 ): boolean {
-  return (
-    task.group_id === groupId &&
-    !taskBelongsInLaterView(task) &&
-    !taskBelongsInTodayView(task, todayViewDate)
-  );
+  return task.group_id === groupId;
 }
 
 export function isOrganizationGroup(
@@ -322,13 +322,6 @@ export function syncTaskOnBoard(
       return group;
     }
 
-    if (
-      taskBelongsInLaterView(updated) ||
-      taskBelongsInTodayView(updated, todayViewDate)
-    ) {
-      return group;
-    }
-
     const { active, completed } = sortActiveAndCompletedForContext(
       [...group.tasks, updated],
       context
@@ -395,13 +388,6 @@ export function addTaskToBoard(
     }
 
     if (group.id !== task.group_id) {
-      return group;
-    }
-
-    if (
-      taskBelongsInLaterView(task) ||
-      taskBelongsInTodayView(task, todayViewDate)
-    ) {
       return group;
     }
 
@@ -691,6 +677,7 @@ export async function fetchTaskBoard(
       ...task,
       group_id: task.group_id ?? inboxGroup?.id ?? null,
       notification_enabled: task.notification_enabled ?? true,
+      notification_lead_minutes: task.notification_lead_minutes ?? null,
       planning_state: normalizePlanningState(task.planning_state),
       updated_at: task.updated_at ?? task.created_at,
       completed_at: task.completed_at ?? null,
@@ -757,7 +744,7 @@ export async function createTaskGroup(
 
   if (trimmed.toLowerCase() === "later" || trimmed.toLowerCase() === "backlog") {
     throw new TaskGroupsError(
-      "Later is a built-in planning column, not a task group."
+      "Later is a built-in plan column, not a task group."
     );
   }
 
@@ -903,6 +890,28 @@ export async function reorderTaskGroups(orderedIds: string[]): Promise<void> {
   );
 }
 
+function persistableGroupOrderIds(groups: TaskGroupWithTasks[]): string[] {
+  return orderPinnedTaskGroups(groups)
+    .filter((group) => !isLaterGroup(group))
+    .map((group) => group.id);
+}
+
+/** Persist only when movable group order changed — fast path for column reorder. */
+export async function persistTaskGroupOrderDiff(
+  previous: TaskGroupWithTasks[],
+  next: TaskGroupWithTasks[]
+): Promise<void> {
+  const prevIds = persistableGroupOrderIds(previous);
+  const nextIds = persistableGroupOrderIds(next);
+  if (
+    prevIds.length === nextIds.length &&
+    prevIds.every((id, index) => id === nextIds[index])
+  ) {
+    return;
+  }
+  await reorderTaskGroups(nextIds);
+}
+
 export async function persistTaskBoardLayout(
   groups: TaskGroupWithTasks[],
   options?: {
@@ -943,8 +952,7 @@ export async function persistTaskBoardLayout(
     const manualSort = isManualTaskSortMode(getTaskGroupSortMode(group));
 
     group.tasks.forEach((task, index) => {
-      if (taskBelongsInLaterView(task)) return;
-      if (taskBelongsInTodayView(task, todayViewDate)) return;
+      if (task.group_id !== group.id) return;
 
       const scheduledDate =
         dateByTaskId.get(task.id) ?? task.scheduled_date ?? null;
@@ -975,9 +983,7 @@ export async function persistTaskBoardLayout(
           ? task.sort_order
           : (existing?.sort_order ?? task.sort_order ?? index),
         completed: task.completed,
-        scheduled_date: task.scheduled_date ?? null,
-        scheduled_time: null,
-        planning_state: "later",
+        ...LATER_PLANNING_TASK_UPDATES,
       });
     });
   }

@@ -174,6 +174,7 @@ export async function convertToReflection(input: {
     went_well: existing?.went_well ?? "",
     went_wrong: existing?.went_wrong ?? "",
     custom_entries: [...(existing?.custom_entries ?? []), entry],
+    custom_kanbans: existing?.custom_kanbans ?? [],
   });
 
   const reflectionEntry = saved.custom_entries.find((e) => e.id === entry.id);

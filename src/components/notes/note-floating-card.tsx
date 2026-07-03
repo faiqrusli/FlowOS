@@ -2,24 +2,38 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 import { MarkdownPreview } from "@/components/notes/markdown-preview";
-import { cn } from "@/lib/utils";
 import type { Note } from "@/types/notes";
+
+const HEADER_HEIGHT_PX = 44;
 
 type NoteFloatingCardProps = {
   note: Note;
   offsetIndex: number;
   onClose: () => void;
+  onOpenInSidebar: () => void;
 };
+
+function clampHeaderPosition(x: number, y: number, cardWidth: number) {
+  const maxX = Math.max(0, window.innerWidth - cardWidth);
+  const maxY = Math.max(0, window.innerHeight - HEADER_HEIGHT_PX);
+  return {
+    x: Math.min(Math.max(0, x), maxX),
+    y: Math.min(Math.max(0, y), maxY),
+  };
+}
 
 export function NoteFloatingCard({
   note,
   offsetIndex,
   onClose,
+  onOpenInSidebar,
 }: NoteFloatingCardProps) {
   const [mounted, setMounted] = useState(false);
-  const [position, setPosition] = useState({
+  const cardRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const positionRef = useRef({
     x: 120 + offsetIndex * 24,
     y: 120 + offsetIndex * 24,
   });
@@ -36,6 +50,13 @@ export function NoteFloatingCard({
   }, []);
 
   useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+    card.style.left = `${positionRef.current.x}px`;
+    card.style.top = `${positionRef.current.y}px`;
+  }, [mounted]);
+
+  useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
     }
@@ -44,7 +65,16 @@ export function NoteFloatingCard({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+  function applyPosition(x: number, y: number) {
+    positionRef.current = { x, y };
+    const card = cardRef.current;
+    if (card) {
+      card.style.left = `${x}px`;
+      card.style.top = `${y}px`;
+    }
+  }
+
+  function handleHeaderPointerDown(event: React.PointerEvent<HTMLDivElement>) {
     if ((event.target as HTMLElement).closest("button")) return;
 
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -52,8 +82,8 @@ export function NoteFloatingCard({
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
-      originX: position.x,
-      originY: position.y,
+      originX: positionRef.current.x,
+      originY: positionRef.current.y,
     };
   }
 
@@ -62,10 +92,13 @@ export function NoteFloatingCard({
       return;
     }
 
-    setPosition({
-      x: dragRef.current.originX + (event.clientX - dragRef.current.startX),
-      y: dragRef.current.originY + (event.clientY - dragRef.current.startY),
-    });
+    const cardWidth = cardRef.current?.offsetWidth ?? 360;
+    const next = clampHeaderPosition(
+      dragRef.current.originX + (event.clientX - dragRef.current.startX),
+      dragRef.current.originY + (event.clientY - dragRef.current.startY),
+      cardWidth
+    );
+    applyPosition(next.x, next.y);
   }
 
   function handlePointerUp(event: React.PointerEvent<HTMLDivElement>) {
@@ -77,36 +110,67 @@ export function NoteFloatingCard({
     event.currentTarget.releasePointerCapture(event.pointerId);
   }
 
+  function handleBodyKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "a") {
+      event.preventDefault();
+      const body = bodyRef.current;
+      if (!body) return;
+
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(body);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
+  }
+
   if (!mounted) return null;
 
   return createPortal(
     <div
-      className="fixed z-[100] flex w-[min(92vw,360px)] flex-col overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl"
-      style={{ left: position.x, top: position.y }}
+      ref={cardRef}
+      className="fixed z-[100] flex w-[min(92vw,360px)] flex-col overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl will-change-[left,top]"
+      style={{
+        left: positionRef.current.x,
+        top: positionRef.current.y,
+      }}
     >
       <div
-        className={cn(
-          "flex cursor-grab items-center gap-2 border-b border-border/30 px-3 py-2 active:cursor-grabbing"
-        )}
-        onPointerDown={handlePointerDown}
+        className="flex h-11 items-center gap-1 border-b border-border/30 px-2"
+        onPointerDown={handleHeaderPointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
       >
-        <p className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
-          {note.title || "Untitled"}
-        </p>
+        <div className="flex min-w-0 flex-1 cursor-grab select-none items-center px-1 active:cursor-grabbing">
+          <p className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
+            {note.title || "Untitled"}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onOpenInSidebar}
+          className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          aria-label="Open note in sidebar"
+        >
+          <ExternalLink className="size-4" />
+        </button>
         <button
           type="button"
           onClick={onClose}
-          className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label="Close note card"
         >
           <X className="size-4" />
         </button>
       </div>
 
-      <div className="max-h-80 overflow-y-auto px-4 py-3">
+      <div
+        ref={bodyRef}
+        className="max-h-80 overflow-y-auto overflow-x-hidden px-4 py-3 selection:bg-primary/15"
+        onKeyDown={handleBodyKeyDown}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
         {note.content.trim() ? (
           <MarkdownPreview content={note.content} />
         ) : (

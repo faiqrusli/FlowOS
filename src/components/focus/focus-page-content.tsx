@@ -1,154 +1,118 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CustomFocusSession } from "@/components/focus/custom-focus-session";
-import { FocusHistoryList } from "@/components/focus/focus-history-list";
-import { FocusTodayBar } from "@/components/focus/focus-today-bar";
-import { QuickFocusSession } from "@/components/focus/quick-focus-session";
+import { FocusAnalyticsStrip } from "@/components/focus/focus-analytics-strip";
+import { FocusCurrentSessionCard } from "@/components/focus/focus-current-session-card";
+import {
+  FocusDailyHistoryPanel,
+  useFocusSelectedDate,
+} from "@/components/focus/focus-daily-history-panel";
+import { FocusFuturePlaceholders } from "@/components/focus/focus-future-placeholders";
+import { FocusHeatmap } from "@/components/focus/focus-heatmap";
+import { FocusReflectionWeekBoard } from "@/components/focus/focus-reflection-week-board";
+import { FocusSessionHistoryList } from "@/components/focus/focus-session-history-list";
+import { FocusSettingsPanel } from "@/components/focus/focus-settings-panel";
+import { FocusTodaySummaryCard } from "@/components/focus/focus-today-summary-card";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { PageHeader } from "@/components/shared/page-header";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
-import { usePomodoroTimer } from "@/hooks/use-pomodoro-timer";
-import { useQuickFocus } from "@/hooks/use-quick-focus";
 import {
-  formatDuration,
-  getSessionBreakSeconds,
-  getSessionFocusSeconds,
-} from "@/lib/focus-utils";
+  computeFocusAnalytics,
+  computeFocusTodaySummary,
+} from "@/lib/focus-analytics";
+import { getTodayDateString } from "@/lib/date-utils";
 import {
-  buildDailyFocusHistory,
-  computeTodayStats,
   fetchFocusSessions,
   mergeFocusSessions,
 } from "@/lib/focus-storage";
+import { fetchReflections } from "@/lib/reflection-storage";
+import type { FocusSession } from "@/types/focus";
+import type { Reflection } from "@/types/reflection";
 
 export function FocusPageContent() {
-  const [sessions, setSessions] = useState<Awaited<
-    ReturnType<typeof fetchFocusSessions>
-  > | null>(null);
+  const { lastSavedSession } = useFocusSessionContext();
+  const [sessions, setSessions] = useState<FocusSession[]>([]);
+  const [reflections, setReflections] = useState<Reflection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const todayKey = getTodayDateString();
+  const { selectedDate, setSelectedDate } = useFocusSelectedDate(sessions, todayKey);
 
-  const { lastSavedSession, notification, clearNotification } =
-    useFocusSessionContext();
-
-  const loadSessions = useCallback(async () => {
+  const loadFocusHub = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const data = await fetchFocusSessions();
-      setSessions(data);
+      const [focusSessions, allReflections] = await Promise.all([
+        fetchFocusSessions(),
+        fetchReflections(),
+      ]);
+      setSessions(focusSessions);
+      setReflections(allReflections);
     } catch {
-      setError("Failed to load focus sessions.");
+      setError("Failed to load focus data.");
       setSessions([]);
+      setReflections([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadSessions();
-  }, [loadSessions]);
+    void loadFocusHub();
+  }, [loadFocusHub]);
 
   useEffect(() => {
     if (!lastSavedSession) return;
-
-    setSessions((prev) =>
-      mergeFocusSessions(prev ?? [], [lastSavedSession])
-    );
-    setLastSaved(
-      `Saved — Focus: ${formatDuration(getSessionFocusSeconds(lastSavedSession))}, Break: ${formatDuration(getSessionBreakSeconds(lastSavedSession))}`
-    );
-
-    const timer = window.setTimeout(() => setLastSaved(null), 5000);
-    return () => window.clearTimeout(timer);
+    setSessions((prev) => mergeFocusSessions(prev, [lastSavedSession]));
   }, [lastSavedSession]);
 
-  useEffect(() => {
-    if (!notification) return;
-
-    const timer = window.setTimeout(() => clearNotification(), 6000);
-    return () => window.clearTimeout(timer);
-  }, [notification, clearNotification]);
-
-  const quick = useQuickFocus();
-  const pomodoro = usePomodoroTimer();
-
-  const todayStats = computeTodayStats(sessions ?? []);
-  const dailyHistory = useMemo(
-    () => buildDailyFocusHistory(sessions ?? []),
+  const todaySummary = useMemo(
+    () => computeFocusTodaySummary(sessions, todayKey),
+    [sessions, todayKey]
+  );
+  const analytics = useMemo(
+    () => computeFocusAnalytics(sessions),
     [sessions]
   );
 
-  const pomodoroDisabled = quick.isActive;
-  const quickStartDisabled = pomodoro.isRunning || pomodoro.isPaused;
-
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 px-1 pb-8 sm:px-2">
       <PageHeader
         title="Focus"
-        description="Start instantly. Track time. Take breaks when you need them."
+        description="Review, understand, and improve your focus. Deep work happens in Workplace."
       />
 
-      {error && <ErrorBanner message={error} />}
-      {notification && (
-        <p
-          className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-900"
-          role="status"
-        >
-          {notification}
-        </p>
-      )}
-      {lastSaved && (
-        <p
-          className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800"
-          role="status"
-        >
-          {lastSaved}
-        </p>
-      )}
+      {error ? <ErrorBanner message={error} /> : null}
 
-      <FocusTodayBar stats={todayStats} loading={loading} />
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <FocusCurrentSessionCard />
+        <FocusTodaySummaryCard summary={todaySummary} loading={loading} />
+      </div>
 
-      <QuickFocusSession
-        clock={quick.clock}
-        statusLabel={quick.statusLabel}
-        isIdle={quick.isIdle}
-        isOnBreak={quick.isOnBreak}
-        isPaused={quick.isPaused}
-        isFocusing={quick.isFocusing}
-        currentFocusSeconds={quick.currentFocusSeconds}
-        currentBreakSeconds={quick.currentBreakSeconds}
-        onStartFocus={quick.startFocus}
-        startDisabled={quickStartDisabled}
-        onPause={quick.pause}
-        onResume={quick.resume}
-        onBreak={quick.startBreak}
-        onResumeFocus={quick.resumeFocus}
-        onStop={quick.stopSession}
-      />
+      <FocusAnalyticsStrip analytics={analytics} loading={loading} />
 
-      <CustomFocusSession
-        clock={pomodoro.clock}
-        progress={pomodoro.progress}
-        mode={pomodoro.mode}
-        focusMinutes={pomodoro.focusMinutes}
-        breakMinutes={pomodoro.breakMinutes}
-        onFocusMinutesChange={pomodoro.setFocusMinutes}
-        onBreakMinutesChange={pomodoro.setBreakMinutes}
-        isIdle={pomodoro.isIdle}
-        isRunning={pomodoro.isRunning}
-        isPaused={pomodoro.isPaused}
-        disabled={pomodoroDisabled}
-        onStart={pomodoro.startPomodoro}
-        onPause={pomodoro.pause}
-        onResume={pomodoro.resume}
-        onStop={pomodoro.stop}
-      />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <FocusDailyHistoryPanel
+          sessions={sessions}
+          loading={loading}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+        />
+        <FocusHeatmap sessions={sessions} loading={loading} />
+      </div>
 
-      <FocusHistoryList history={dailyHistory} loading={loading} />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <FocusSessionHistoryList
+          sessions={sessions}
+          filterDate={selectedDate}
+          loading={loading}
+        />
+        <FocusReflectionWeekBoard reflections={reflections} loading={loading} />
+      </div>
+
+      <FocusSettingsPanel />
+      <FocusFuturePlaceholders />
     </div>
   );
 }

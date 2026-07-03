@@ -249,8 +249,8 @@ export function GrowthAreaSidebar({
                 className={cn(
                   "flex size-10 shrink-0 items-center justify-center rounded-xl text-lg leading-none transition-[background-color,box-shadow]",
                   active
-                    ? "bg-zinc-200 shadow-sm dark:bg-zinc-700"
-                    : "hover:bg-zinc-100 dark:hover:bg-zinc-800/70"
+                    ? "bg-selected shadow-sm"
+                    : "hover:bg-muted/60 dark:hover:bg-muted/40"
                 )}
               >
                 {area.emoji}
@@ -291,8 +291,8 @@ export function GrowthAreaSidebar({
                   className={cn(
                     "flex min-w-0 flex-1 items-center gap-2 rounded-xl py-2 pr-8 pl-1 text-left transition-[background-color,box-shadow]",
                     active
-                      ? "bg-zinc-100 shadow-sm dark:bg-zinc-800/90"
-                      : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                      ? "bg-selected shadow-sm"
+                      : "hover:bg-muted/50 dark:hover:bg-muted/35"
                   )}
                 >
                   <span className="flex w-6 shrink-0 items-center justify-center text-lg leading-none">

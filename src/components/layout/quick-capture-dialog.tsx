@@ -1,0 +1,308 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { fetchTaskBoard, filterTasksForGroup, isInboxGroup } from "@/lib/task-groups";
+import {
+  createTask,
+  TasksError,
+} from "@/lib/tasks";
+import {
+  DEFAULT_TASK_SORT_MODE,
+  getTaskGroupSortMode,
+  isManualTaskSortMode,
+} from "@/lib/task-sort";
+import {
+  manualOrderForNewTaskAtEnd,
+  manualOrderForNewTaskAtTop,
+  sortByManualOrder,
+} from "@/lib/manual-order";
+import { getTodayDateString } from "@/lib/date-utils";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScheduleDatePickerField } from "@/components/ui/schedule-picker-field";
+import { TaskPrioritySelect } from "@/components/tasks/task-priority-select";
+import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
+import { getTaskGroupAppearance, TASK_GROUP_SWATCH_CLASS } from "@/lib/task-group-appearance";
+import type { TaskPriority } from "@/lib/task-priority";
+import { cn } from "@/lib/utils";
+import type { PlanningState, TaskGroupWithTasks } from "@/types/task";
+
+export function QuickCaptureDialog() {
+  const { quickCaptureOpen, setQuickCaptureOpen, notifyWorkplaceTaskCreated } =
+    useGlobalRightSidebar();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [showDescription, setShowDescription] = useState(false);
+  const [showPlanning, setShowPlanning] = useState(false);
+  const [priority, setPriority] = useState<TaskPriority>("low");
+  const [planningState, setPlanningState] = useState<PlanningState>("none");
+  const [scheduledDate, setScheduledDate] = useState(getTodayDateString());
+  const [groups, setGroups] = useState<TaskGroupWithTasks[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const selectedSortMode = useMemo(() => {
+    const group = groups.find((item) => item.id === selectedGroupId);
+    return group ? getTaskGroupSortMode(group) ?? DEFAULT_TASK_SORT_MODE : DEFAULT_TASK_SORT_MODE;
+  }, [groups, selectedGroupId]);
+  const selectedGroupAppearance = useMemo(() => {
+    const group = groups.find((item) => item.id === selectedGroupId);
+    return group ? getTaskGroupAppearance(group) : null;
+  }, [groups, selectedGroupId]);
+
+  useEffect(() => {
+    if (!quickCaptureOpen) {
+      setTitle("");
+      setDescription("");
+      setShowDescription(false);
+      setShowPlanning(false);
+      setPriority("low");
+      setPlanningState("none");
+      setScheduledDate(getTodayDateString());
+      setGroups([]);
+      setSelectedGroupId("");
+      setError(null);
+    }
+  }, [quickCaptureOpen]);
+
+  useEffect(() => {
+    if (!quickCaptureOpen) return;
+    void (async () => {
+      try {
+        const boardGroups = await fetchTaskBoard();
+        setGroups(boardGroups);
+        const inbox = boardGroups.find(isInboxGroup);
+        if (inbox) setSelectedGroupId(inbox.id);
+      } catch (err) {
+        setError(
+          err instanceof TasksError ? err.message : "Failed to load groups."
+        );
+      }
+    })();
+  }, [quickCaptureOpen]);
+
+  async function handleSubmit() {
+    const trimmed = title.trim();
+    if (!trimmed) return;
+
+    setSaving(true);
+    setError(null);
+
+    try {
+      const boardGroups = groups.length > 0 ? groups : await fetchTaskBoard();
+      const fallbackInbox = boardGroups.find(isInboxGroup);
+      const targetGroupId = selectedGroupId || fallbackInbox?.id;
+      if (!targetGroupId) {
+        throw new TasksError("No group available.");
+      }
+      const targetGroup = boardGroups.find((item) => item.id === targetGroupId) ?? fallbackInbox;
+      if (!targetGroup) throw new TasksError("Target group not found.");
+
+      const todayViewDate = getTodayDateString();
+      const sortMode = getTaskGroupSortMode(targetGroup) ?? selectedSortMode;
+      const columnActiveTasks = sortByManualOrder(
+        filterTasksForGroup(targetGroup, targetGroup.tasks, todayViewDate).filter(
+          (task) => !task.completed
+        )
+      );
+      const manualTopInsert = isManualTaskSortMode(sortMode);
+
+      const created = await createTask({
+        title: trimmed,
+        description: showDescription ? description.trim() || null : null,
+        group_id: targetGroup.id,
+        sort_order: manualTopInsert
+          ? manualOrderForNewTaskAtTop(columnActiveTasks)
+          : manualOrderForNewTaskAtEnd(columnActiveTasks),
+        priority,
+        scheduled_date: scheduledDate || null,
+        planning_state: showPlanning ? planningState : "none",
+      });
+
+      notifyWorkplaceTaskCreated(created);
+
+      setQuickCaptureOpen(false);
+      setTitle("");
+    } catch (err) {
+      setError(
+        err instanceof TasksError ? err.message : "Failed to create task."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog open={quickCaptureOpen} onOpenChange={setQuickCaptureOpen}>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Quick capture</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-2">
+          <Input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Title"
+            autoFocus
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                void handleSubmit();
+              }
+            }}
+          />
+
+          <div className="grid grid-cols-3 gap-2">
+            <ScheduleDatePickerField
+              value={scheduledDate}
+              onChange={(dateKey) => setScheduledDate(dateKey ?? getTodayDateString())}
+              placeholder="Pick date"
+              className="h-9"
+            />
+            <TaskPrioritySelect
+              value={priority}
+              onChange={setPriority}
+              className="h-9"
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="flex h-9 items-center gap-2 rounded-md border border-input bg-background px-2.5 text-sm outline-none"
+                aria-label="Group"
+              >
+                <span
+                  className={cn(
+                    "inline-flex size-4 shrink-0 items-center justify-center rounded-full text-[11px]",
+                    selectedGroupAppearance
+                      ? TASK_GROUP_SWATCH_CLASS[selectedGroupAppearance.colorKey]
+                      : "bg-muted"
+                  )}
+                >
+                  {selectedGroupAppearance?.icon ?? "📁"}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-left">
+                  {groups.find((group) => group.id === selectedGroupId)?.title ??
+                    "Group"}
+                </span>
+                <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="bottom" align="start" className="min-w-[12rem]">
+                {groups.map((group) => {
+                  const appearance = getTaskGroupAppearance(group);
+                  return (
+                    <DropdownMenuItem
+                      key={group.id}
+                      onClick={() => setSelectedGroupId(group.id)}
+                      className={cn(
+                        "gap-2",
+                        group.id === selectedGroupId && "bg-muted font-medium"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "inline-flex size-4 shrink-0 items-center justify-center rounded-full text-[11px]",
+                          TASK_GROUP_SWATCH_CLASS[appearance.colorKey]
+                        )}
+                      >
+                        {appearance.icon}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate">{group.title}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <div className="flex items-center gap-4 text-sm">
+            <button
+              type="button"
+              className="font-medium text-foreground hover:text-foreground/80"
+              onClick={() => setShowDescription((value) => !value)}
+            >
+              + Description
+            </button>
+            <button
+              type="button"
+              className="font-medium text-foreground hover:text-foreground/80"
+              onClick={() => setShowPlanning((value) => !value)}
+            >
+              + Planning
+            </button>
+          </div>
+
+          {showDescription ? (
+            <Textarea
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Description"
+              rows={3}
+              className="resize-none"
+            />
+          ) : null}
+
+          {showPlanning ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Plan</span>
+              <div className="inline-flex rounded-full border border-border p-0.5">
+                <button
+                  type="button"
+                  className={`rounded-full px-3 py-1 text-sm ${planningState === "none" ? "bg-muted text-foreground" : "text-muted-foreground"}`}
+                  onClick={() => setPlanningState("none")}
+                >
+                  Normal
+                </button>
+                <button
+                  type="button"
+                  className={`rounded-full px-3 py-1 text-sm ${planningState === "later" ? "bg-muted text-foreground" : "text-muted-foreground"}`}
+                  onClick={() => setPlanningState("later")}
+                >
+                  Later
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        {error && (
+          <p className="text-sm text-destructive" role="alert">
+            {error}
+          </p>
+        )}
+
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setQuickCaptureOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            onClick={() => void handleSubmit()}
+            disabled={saving || !title.trim()}
+          >
+            {saving ? "Adding…" : "Add task"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

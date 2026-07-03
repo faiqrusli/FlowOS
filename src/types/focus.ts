@@ -9,6 +9,8 @@ export type QuickFocusPhase =
 
 export type PomodoroPhase = "idle" | "focus" | "break" | "paused";
 
+export type FocusTargetType = "task" | "habit";
+
 export type FocusSession = {
   id: string;
   focus_duration: number;
@@ -16,6 +18,8 @@ export type FocusSession = {
   started_at: string;
   ended_at: string | null;
   session_status: SessionStatus;
+  target_type: FocusTargetType | null;
+  target_id: string | null;
   user_id: string | null;
   created_at?: string;
 };
@@ -46,4 +50,6 @@ export type FocusSessionSavePayload = {
   break_seconds: number;
   started_at: string;
   session_status: "completed" | "stopped";
+  target_type?: FocusTargetType | null;
+  target_id?: string | null;
 };

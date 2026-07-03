@@ -2,13 +2,16 @@ import type { PlanningState } from "@/types/task";
 
 export type { PlanningState };
 
-/** Exposed planning options in the UI. Extend this list as new states ship. */
+/** User-facing section label for task plan state (Normal / Later). */
+export const PLAN_SECTION_LABEL = "Plan";
+
+/** Exposed plan options in the UI. Extend this list as new states ship. */
 export const PLANNING_STATES = ["none", "later"] as const satisfies readonly PlanningState[];
 
 export type ExposedPlanningState = (typeof PLANNING_STATES)[number];
 
 export const PLANNING_INTRO =
-  "Planning determines whether this task is ready to be scheduled.";
+  "Plan determines whether this task is ready to be scheduled.";
 
 export const PLANNING_STATE_CONFIG: Record<
   ExposedPlanningState,
@@ -22,9 +25,19 @@ export const PLANNING_STATE_CONFIG: Record<
   later: {
     label: "Later",
     description:
-      "Set the task aside until you're ready to schedule it. Moving a task to Later clears its scheduled time but keeps its date and duration.",
+      "Set the task aside until you're ready to schedule it. Moving a task to Later removes its scheduled date and time, so it can be planned again later.",
   },
 };
+
+export const LATER_PLANNING_TASK_UPDATES = {
+  planning_state: "later" as const,
+  scheduled_date: null,
+  scheduled_time: null,
+} as const;
+
+export function getLaterPlanningTaskUpdates() {
+  return { ...LATER_PLANNING_TASK_UPDATES };
+}
 
 export function normalizePlanningState(
   value: string | null | undefined

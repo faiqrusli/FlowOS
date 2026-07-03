@@ -41,7 +41,10 @@ export async function fetchHabits(): Promise<Habit[]> {
     throw new HabitsError(error.message);
   }
 
-  return data ?? [];
+  return (data ?? []).map((habit) => ({
+    ...habit,
+    track_with_focus: habit.track_with_focus ?? false,
+  }));
 }
 
 export function isHabitScheduledToday(habit: Habit, dayAbbrev = getTodayDayAbbrev()): boolean {
@@ -66,7 +69,29 @@ export async function fetchHabitsWithCompletions(): Promise<Habit[]> {
   const habits = await fetchHabits();
   await loadHabitCompletions();
   reconcileCompletionsWithHabits(habits);
-  return habits;
+  return resetStaleHabitCompletedFlags(habits);
+}
+
+async function resetStaleHabitCompletedFlags(habits: Habit[]): Promise<Habit[]> {
+  const today = getTodayDateString();
+  const stale = habits.filter(
+    (habit) =>
+      habit.completed && !getHabitCompletionDates(habit.id).includes(today)
+  );
+
+  if (stale.length === 0) return habits;
+
+  const resetIds = new Set(
+    (
+      await Promise.all(
+        stale.map((habit) => updateHabit(habit.id, { completed: false }))
+      )
+    ).map((habit) => habit.id)
+  );
+
+  return habits.map((habit) =>
+    resetIds.has(habit.id) ? { ...habit, completed: false } : habit
+  );
 }
 
 export async function fetchTodayHabits(): Promise<Habit[]> {

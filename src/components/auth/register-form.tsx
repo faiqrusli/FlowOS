@@ -74,7 +74,7 @@ export function RegisterForm() {
       footer={
         <>
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-neutral-900 underline">
+          <Link href="/login" className="font-medium text-foreground underline">
             Login
           </Link>
         </>
@@ -148,7 +148,7 @@ export function RegisterForm() {
         <Button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-full bg-neutral-800 text-white hover:bg-neutral-700"
+          className="w-full rounded-full"
         >
           {submitting ? "Creating account…" : "Register"}
         </Button>

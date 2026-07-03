@@ -151,6 +151,63 @@ export function formatWeekdayLabel(
   return weekdayLongFormatter.format(date);
 }
 
+/** Sidebar / daily note header date, e.g. "Thursday, 2 July". */
+export function formatSidebarDateHeading(
+  dateKey: string,
+  timeZone: string = APP_TIMEZONE
+): string {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  const dayMonth = new Intl.DateTimeFormat(APP_LOCALE, {
+    timeZone,
+    day: "numeric",
+    month: "long",
+  }).format(date);
+  return `${formatWeekdayLabel(dateKey, timeZone)}, ${dayMonth}`;
+}
+
+/** Alias for workplace daily note card subtitle. */
+export function formatDailyNoteHeaderDate(
+  dateKey: string,
+  timeZone: string = APP_TIMEZONE
+): string {
+  return formatSidebarDateHeading(dateKey, timeZone);
+}
+
+export function getWeekStartMonday(dateKey: string): string {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  const weekday = date.getUTCDay();
+  const diff = weekday === 0 ? -6 : 1 - weekday;
+  date.setUTCDate(date.getUTCDate() + diff);
+  return date.toISOString().slice(0, 10);
+}
+
+export function getWeekDateKeys(weekStartMonday: string): string[] {
+  const [year, month, day] = weekStartMonday.split("-").map(Number);
+  const start = new Date(Date.UTC(year, month - 1, day, 12));
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(start);
+    date.setUTCDate(start.getUTCDate() + index);
+    return date.toISOString().slice(0, 10);
+  });
+}
+
+/** Daily note title, e.g. "Apr 20, Monday". */
+export function formatDailyNoteTitle(
+  dateKey: string,
+  timeZone: string = APP_TIMEZONE
+): string {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  const monthDay = new Intl.DateTimeFormat(APP_LOCALE, {
+    timeZone,
+    month: "short",
+    day: "numeric",
+  }).format(date);
+  return `${monthDay}, ${formatWeekdayLabel(dateKey, timeZone)}`;
+}
+
 export function isSameDay(
   isoOrDate: string,
   dateKey: string,

@@ -6,7 +6,7 @@ import type { Task } from "@/types/task";
 export const SCHEDULE_START_HOUR = 6;
 export const SCHEDULE_END_HOUR = 24;
 export const HOUR_HEIGHT_PX = 64;
-export const SNAP_MINUTES = 15;
+export const SNAP_MINUTES = 5;
 export const TIMELINE_START_MINUTES = SCHEDULE_START_HOUR * 60;
 export const TIMELINE_END_MINUTES = SCHEDULE_END_HOUR * 60;
 export const TIMELINE_HEIGHT_PX =

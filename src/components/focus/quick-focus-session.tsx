@@ -41,7 +41,7 @@ export function QuickFocusSession({
   startDisabled = false,
 }: QuickFocusSessionProps) {
   return (
-    <section className="flex flex-col items-center rounded-2xl border border-neutral-200 bg-white px-6 py-12 shadow-sm sm:py-16">
+    <section className="flex flex-col items-center rounded-2xl border border-border/50 bg-card px-6 py-12 shadow-sm sm:py-16">
       {!isIdle && (
         <p className="mb-2 text-sm font-medium text-muted-foreground">
           {statusLabel}
@@ -59,7 +59,7 @@ export function QuickFocusSession({
             onClick={onStartFocus}
             disabled={startDisabled}
             size="lg"
-            className="h-16 w-full max-w-xs rounded-full bg-neutral-800 text-lg text-white hover:bg-neutral-700"
+            className="h-16 w-full max-w-xs rounded-full text-lg"
           >
             <Play className="size-6" data-icon="inline-start" />
             Start Focus
@@ -70,7 +70,7 @@ export function QuickFocusSession({
           <p
             className={cn(
               "font-mono text-7xl font-bold tabular-nums tracking-tight sm:text-8xl",
-              isOnBreak ? "text-amber-600" : "text-neutral-900"
+              isOnBreak ? "text-amber-600" : "text-foreground"
             )}
           >
             {clock}
@@ -93,7 +93,7 @@ export function QuickFocusSession({
                 {isPaused ? (
                   <Button
                     onClick={onResume}
-                    className="rounded-full bg-neutral-800 px-6 text-white hover:bg-neutral-700"
+                    className="rounded-full px-6"
                   >
                     <Play className="size-4" data-icon="inline-start" />
                     Resume
@@ -132,7 +132,7 @@ export function QuickFocusSession({
                 ) : null}
                 <Button
                   onClick={onResumeFocus}
-                  className="rounded-full bg-neutral-800 px-6 text-white hover:bg-neutral-700"
+                  className="rounded-full px-6"
                 >
                   <Play className="size-4" data-icon="inline-start" />
                   Resume Focus

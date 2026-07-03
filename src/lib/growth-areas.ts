@@ -16,6 +16,12 @@ export class GrowthAreasError extends Error {
 
 export const DEFAULT_GROWTH_AREAS: GrowthAreaInsert[] = [
   {
+    emoji: "📅",
+    name: "Daily Notes",
+    description: "Daily journals and dated notes.",
+    sort_order: -1,
+  },
+  {
     emoji: "🧠",
     name: "Mindset",
     description: "Beliefs, mental models, and inner dialogue.",

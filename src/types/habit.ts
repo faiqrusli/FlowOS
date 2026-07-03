@@ -16,6 +16,7 @@ export type Habit = {
   scheduled_time: string | null;
   days_of_week: string[] | null;
   completed: boolean;
+  track_with_focus: boolean;
   user_id: string | null;
   created_at: string;
 };
@@ -25,6 +26,7 @@ export type HabitInsert = {
   scheduled_time?: string | null;
   days_of_week?: string[] | null;
   completed?: boolean;
+  track_with_focus?: boolean;
   user_id?: string | null;
 };
 

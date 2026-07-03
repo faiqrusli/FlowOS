@@ -11,30 +11,32 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  ScheduleDatePickerField,
+  ScheduleTimePickerField,
+} from "@/components/ui/schedule-picker-field";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { TaskPrioritySelect } from "@/components/tasks/task-priority-select";
 import {
   normalizeTaskPriority,
-  TASK_PRIORITIES,
-  TASK_PRIORITY_CONFIG,
   type TaskPriority,
 } from "@/lib/task-priority";
-import { cn } from "@/lib/utils";
 import type { Task, TaskInsert } from "@/types/task";
 
 type TaskFormValues = {
   title: string;
   description: string;
-  scheduledDate: string;
-  scheduledTime: string;
+  scheduledDate: string | null;
+  scheduledTime: string | null;
   priority: TaskPriority;
 };
 
 const emptyForm: TaskFormValues = {
   title: "",
   description: "",
-  scheduledDate: "",
-  scheduledTime: "",
+  scheduledDate: null,
+  scheduledTime: null,
   priority: "medium",
 };
 
@@ -42,8 +44,8 @@ function taskToForm(task: Task): TaskFormValues {
   return {
     title: task.title,
     description: task.description ?? "",
-    scheduledDate: task.scheduled_date ?? "",
-    scheduledTime: task.scheduled_time?.slice(0, 5) ?? "",
+    scheduledDate: task.scheduled_date ?? null,
+    scheduledTime: task.scheduled_time ?? null,
     priority: normalizeTaskPriority(task.priority),
   };
 }
@@ -162,43 +164,27 @@ export function TaskDialog({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor={`${mode}-scheduled_date`}>Date</Label>
-          <Input
+          <ScheduleDatePickerField
             id={`${mode}-scheduled_date`}
-            type="date"
             value={form.scheduledDate}
-            onChange={(e) => updateField("scheduledDate", e.target.value)}
+            onChange={(dateKey) => updateField("scheduledDate", dateKey)}
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor={`${mode}-scheduled_time`}>Time</Label>
-          <Input
+          <ScheduleTimePickerField
             id={`${mode}-scheduled_time`}
-            type="time"
             value={form.scheduledTime}
-            onChange={(e) => updateField("scheduledTime", e.target.value)}
+            onChange={(time) => updateField("scheduledTime", time)}
           />
         </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor={`${mode}-priority`}>Priority</Label>
-        <select
-          id={`${mode}-priority`}
+        <TaskPrioritySelect
           value={form.priority}
-          onChange={(e) =>
-            updateField("priority", e.target.value as TaskPriority)
-          }
-          className={cn(
-            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs",
-            "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"
-          )}
-        >
-          {TASK_PRIORITIES.map((priority) => (
-            <option key={priority} value={priority}>
-              {TASK_PRIORITY_CONFIG[priority].emoji}{" "}
-              {TASK_PRIORITY_CONFIG[priority].label}
-            </option>
-          ))}
-        </select>
+          onChange={(priority) => updateField("priority", priority)}
+        />
       </div>
       {error && (
         <p className="text-sm text-destructive" role="alert">
@@ -217,7 +203,7 @@ export function TaskDialog({
         <Button
           type="submit"
           disabled={submitting}
-          className="rounded-full bg-neutral-800 text-white hover:bg-neutral-700"
+          className="rounded-full"
         >
           {submitting
             ? mode === "edit"
@@ -248,7 +234,7 @@ export function TaskDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button className="rounded-full bg-neutral-800 text-white hover:bg-neutral-700" />
+          <Button className="rounded-full" />
         }
       >
         Add Task

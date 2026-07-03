@@ -1,14 +1,14 @@
 export const TASK_DURATION_OPTIONS = [
-  { label: "5 min", minutes: 5 },
-  { label: "10 min", minutes: 10 },
-  { label: "15 min", minutes: 15 },
-  { label: "20 min", minutes: 20 },
-  { label: "25 min", minutes: 25 },
-  { label: "30 min", minutes: 30 },
-  { label: "45 min", minutes: 45 },
-  { label: "1 hr", minutes: 60 },
-  { label: "1.5 hr", minutes: 90 },
-  { label: "2 hr", minutes: 120 },
+  { label: "5m", minutes: 5 },
+  { label: "10m", minutes: 10 },
+  { label: "15m", minutes: 15 },
+  { label: "20m", minutes: 20 },
+  { label: "25m", minutes: 25 },
+  { label: "30m", minutes: 30 },
+  { label: "45m", minutes: 45 },
+  { label: "1h", minutes: 60 },
+  { label: "1.5h", minutes: 90 },
+  { label: "2h", minutes: 120 },
 ] as const;
 
 export function formatDurationMinutes(minutes: number | null | undefined): string {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CalendarPlus, GripVertical, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { buildScheduleInbox } from "@/lib/schedule-inbox";
+import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import {
   getHabitDurationMinutes,
   getTaskDurationMinutes,
@@ -123,6 +124,10 @@ function DraggableHabitRow({
 }) {
   const channel = getChannelStyle("habit");
   const duration = getHabitDurationMinutes(habit.id);
+  const timeRange = formatHabitTimeRangeWithDuration(
+    habit.scheduled_time,
+    duration
+  );
 
   return (
     <li
@@ -152,7 +157,7 @@ function DraggableHabitRow({
             {habit.name}
           </p>
           <p className="mt-0.5 text-[11px] text-muted-foreground">
-            Habit · {formatDurationLabel(duration)}
+            {timeRange ? `Habit · ${timeRange}` : `Habit · ${formatDurationLabel(duration)}`}
           </p>
         </div>
         {onAutoschedule && !habit.completed && (

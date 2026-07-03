@@ -16,11 +16,11 @@ type FutureRoadmapProps = {
 function statusBadgeClass(status: RoadmapStatus): string {
   switch (status) {
     case "in-development":
-      return "border-violet-200 bg-violet-50 text-violet-800";
+      return "border-violet-200 bg-violet-50 text-violet-800 dark:border-violet-400/30 dark:bg-violet-500/12 dark:text-violet-200";
     case "researching":
-      return "border-sky-200 bg-sky-50 text-sky-800";
+      return "border-sky-200 bg-sky-50 text-sky-800 dark:border-sky-400/30 dark:bg-sky-500/12 dark:text-sky-200";
     default:
-      return "border-neutral-200 bg-neutral-50 text-neutral-700";
+      return "border-border/50 bg-muted/35 text-foreground/85";
   }
 }
 

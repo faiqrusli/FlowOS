@@ -51,15 +51,15 @@ export function SidebarAccountMenu({
         <DropdownMenuTrigger
           aria-label={compact ? displayName : undefined}
           className={cn(
-            "group/account relative flex items-center rounded-lg border border-border/70 bg-background text-left shadow-sm transition-colors",
-            "hover:bg-muted/40 aria-expanded:border-border aria-expanded:bg-muted/30",
+            "group/account relative flex items-center rounded-xl border border-border bg-card text-left shadow-xs transition-[background-color,border-color,box-shadow] duration-150",
+            "hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_12%)] hover:bg-surface-elevated hover:shadow-sm aria-expanded:border-border aria-expanded:bg-surface-elevated",
             compact
-              ? "mx-auto size-9 justify-center border-transparent bg-transparent p-0 shadow-none hover:bg-muted/60"
+              ? "mx-auto size-9 justify-center border-transparent bg-transparent p-0 shadow-none hover:bg-sidebar-accent hover:shadow-none"
               : "w-full gap-2.5 px-2.5 py-2"
           )}
         >
           <div
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-[11px] font-semibold text-foreground"
+            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/85 to-primary/60 text-[11px] font-semibold text-primary-foreground shadow-xs"
             aria-hidden
           >
             {initials}
@@ -83,7 +83,7 @@ export function SidebarAccountMenu({
           {compact && (
             <span
               role="tooltip"
-              className="pointer-events-none absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-border/60 bg-popover px-2 py-1 text-xs font-medium text-popover-foreground shadow-md group-hover/account:block"
+              className="flow-surface-elevated pointer-events-none absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden -translate-y-1/2 scale-95 whitespace-nowrap px-2.5 py-1 text-xs font-medium text-popover-foreground opacity-0 transition-[opacity,transform] duration-150 group-hover/account:block group-hover/account:scale-100 group-hover/account:opacity-100"
             >
               {displayName}
             </span>
@@ -91,7 +91,7 @@ export function SidebarAccountMenu({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
-          className="w-[15rem] rounded-xl border border-border/80 p-1.5 shadow-lg"
+          className="w-[15rem] rounded-xl p-1.5"
           side="top"
           align={compact ? "center" : "start"}
           sideOffset={8}

@@ -66,17 +66,17 @@ export function TaskSection({
               isOpen && "rotate-180"
             )}
           />
-          <h2 className="text-sm font-semibold text-neutral-900">{title}</h2>
+          <h2 className="text-sm font-semibold text-foreground">{title}</h2>
           <span className="text-sm text-muted-foreground">({count})</span>
         </button>
       ) : (
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-neutral-900">{title}</h2>
+          <h2 className="text-sm font-semibold text-foreground">{title}</h2>
           <span className="text-sm text-muted-foreground">({count})</span>
         </div>
       )}
 
-      <hr className="border-neutral-200" />
+      <hr className="border-border/50" />
 
       {isOpen &&
         (tasks.length === 0 ? (

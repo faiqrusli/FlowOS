@@ -60,7 +60,7 @@ export function LoginForm() {
       footer={
         <>
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-medium text-neutral-900 underline">
+          <Link href="/register" className="font-medium text-foreground underline">
             Register
           </Link>
         </>
@@ -102,7 +102,7 @@ export function LoginForm() {
         <Button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-full bg-neutral-800 text-white hover:bg-neutral-700"
+          className="w-full rounded-full"
         >
           {submitting ? "Signing in…" : "Login"}
         </Button>

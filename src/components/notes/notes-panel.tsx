@@ -12,7 +12,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { MarkdownEditor } from "@/components/notes/markdown-editor";
-import { NoteFloatingCard } from "@/components/notes/note-floating-card";
 import { NoteMoveDialog } from "@/components/notes/note-move-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import {
   createNote,
   deleteNote,
@@ -60,6 +60,7 @@ export function NotesPanel({
   onAreasRefresh,
   embedded = false,
 }: NotesPanelProps) {
+  const { openFloatingNote, closeFloatingNote } = useGlobalRightSidebar();
   const [selectedId, setSelectedId] = useState<string | null>(
     notes[0]?.id ?? null
   );
@@ -72,7 +73,6 @@ export function NotesPanel({
   const [renameDraft, setRenameDraft] = useState("");
   const [moveNoteId, setMoveNoteId] = useState<string | null>(null);
   const [openMenuNoteId, setOpenMenuNoteId] = useState<string | null>(null);
-  const [floatingNoteIds, setFloatingNoteIds] = useState<string[]>([]);
   const [focusTitleNoteId, setFocusTitleNoteId] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -91,14 +91,6 @@ export function NotesPanel({
         note.content.toLowerCase().includes(q)
     );
   }, [sortedNotes, search]);
-
-  const floatingNotes = useMemo(
-    () =>
-      floatingNoteIds
-        .map((id) => notes.find((note) => note.id === id))
-        .filter((note): note is Note => Boolean(note)),
-    [floatingNoteIds, notes]
-  );
 
   useEffect(() => {
     if (!selectedId && sortedNotes[0]) setSelectedId(sortedNotes[0].id);
@@ -200,7 +192,7 @@ export function NotesPanel({
       setSelectedId((current) =>
         current === note.id ? next[0]?.id ?? null : current
       );
-      setFloatingNoteIds((prev) => prev.filter((noteId) => noteId !== note.id));
+      closeFloatingNote(note.id);
       showNotice(`"${deletedTitle}" deleted`);
       onAreasRefresh();
     } catch (err) {
@@ -242,14 +234,11 @@ export function NotesPanel({
     setSelectedId((current) =>
       current === noteId ? next[0]?.id ?? null : current
     );
-    setFloatingNoteIds((prev) => prev.filter((id) => id !== noteId));
     onAreasRefresh();
   }
 
-  function openFloatingCard(noteId: string) {
-    setFloatingNoteIds((prev) =>
-      prev.includes(noteId) ? prev : [...prev, noteId]
-    );
+  function openFloatingCard(note: Note) {
+    openFloatingNote(note);
   }
 
   function updateLocal(id: string, patch: Partial<Note>) {
@@ -383,7 +372,7 @@ export function NotesPanel({
                           Move to
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => openFloatingCard(note.id)}
+                          onClick={() => openFloatingCard(note)}
                         >
                           <ExternalLink className="size-3.5" />
                           Open on small card
@@ -461,17 +450,6 @@ export function NotesPanel({
           if (moveNoteId) void handleMove(moveNoteId, areaId);
         }}
       />
-
-      {floatingNotes.map((note, index) => (
-        <NoteFloatingCard
-          key={note.id}
-          note={note}
-          offsetIndex={index}
-          onClose={() =>
-            setFloatingNoteIds((prev) => prev.filter((id) => id !== note.id))
-          }
-        />
-      ))}
     </>
   );
 }

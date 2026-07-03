@@ -42,7 +42,7 @@ export function FocusHistoryList({ history, loading }: FocusHistoryListProps) {
   }
 
   return (
-    <Card className="border-neutral-200/80 bg-neutral-50/80 ring-neutral-200/80">
+    <Card>
       <CardHeader>
         <CardTitle>Focus history</CardTitle>
       </CardHeader>
@@ -54,7 +54,7 @@ export function FocusHistoryList({ history, loading }: FocusHistoryListProps) {
             No focus sessions yet.
           </p>
         ) : (
-          <ul className="divide-y divide-neutral-100">
+          <ul className="divide-y divide-border/40">
             {history.map((day) => {
               const isOpen = expanded.has(day.date);
 
@@ -72,7 +72,7 @@ export function FocusHistoryList({ history, loading }: FocusHistoryListProps) {
                           isOpen && "rotate-180"
                         )}
                       />
-                      <span className="font-medium text-neutral-900">
+                      <span className="font-medium text-foreground">
                         {day.label}
                       </span>
                       <span className="text-xs text-muted-foreground">
@@ -81,7 +81,7 @@ export function FocusHistoryList({ history, loading }: FocusHistoryListProps) {
                       </span>
                     </div>
                     <div className="text-right text-sm tabular-nums">
-                      <p className="text-neutral-700">
+                      <p className="text-foreground/85">
                         {formatDuration(day.focusSeconds)}
                       </p>
                       {day.breakSeconds > 0 && (
@@ -93,14 +93,14 @@ export function FocusHistoryList({ history, loading }: FocusHistoryListProps) {
                   </button>
 
                   {isOpen && (
-                    <ul className="mt-3 space-y-2 border-l-2 border-neutral-200 pl-4">
+                    <ul className="mt-3 space-y-2 border-l-2 border-border/50 pl-4">
                       {day.sessions.map((session) => (
                         <li
                           key={session.id}
-                          className="rounded-lg border border-neutral-100 bg-white px-3 py-2.5 text-sm"
+                          className="rounded-lg border border-border/40 bg-card px-3 py-2.5 text-sm"
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2">
-                            <span className="font-medium text-neutral-800">
+                            <span className="font-medium text-foreground/90">
                               {formatSessionTime(
                                 session.ended_at ?? session.started_at
                               )}
@@ -112,19 +112,19 @@ export function FocusHistoryList({ history, loading }: FocusHistoryListProps) {
                           <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                             <span>
                               Focus:{" "}
-                              <span className="text-neutral-800">
+                              <span className="text-foreground/90">
                                 {formatDuration(getSessionFocusSeconds(session))}
                               </span>
                             </span>
                             <span>
                               Break:{" "}
-                              <span className="text-neutral-800">
+                              <span className="text-foreground/90">
                                 {formatDuration(getSessionBreakSeconds(session))}
                               </span>
                             </span>
                             <span>
                               Total:{" "}
-                              <span className="text-neutral-800">
+                              <span className="text-foreground/90">
                                 {formatDuration(getSessionTotalSeconds(session))}
                               </span>
                             </span>

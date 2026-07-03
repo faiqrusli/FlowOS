@@ -66,7 +66,10 @@ export function setDragImageFromElement(
   ghost.style.top = "-1000px";
   ghost.style.left = "-1000px";
   ghost.style.pointerEvents = "none";
+  ghost.style.boxShadow = "var(--shadow-lg)";
+  ghost.style.transform = "scale(1.015)";
+  ghost.style.transformOrigin = "top left";
   document.body.appendChild(ghost);
-  event.dataTransfer.setDragImage(ghost, offsetX, offsetY);
+  event.dataTransfer.setDragImage(ghost, offsetX * 1.015, offsetY * 1.015);
   requestAnimationFrame(() => ghost.remove());
 }

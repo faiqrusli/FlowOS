@@ -10,7 +10,16 @@ export class NotesError extends Error {
 }
 
 function normalizeNote(note: Note): Note {
-  return { ...note, is_pinned: note.is_pinned ?? false };
+  return {
+    ...note,
+    is_pinned: note.is_pinned ?? false,
+    is_menu_pinned: note.is_menu_pinned ?? false,
+    note_date: note.note_date ?? null,
+  };
+}
+
+export function normalizeNoteForClient(note: Note): Note {
+  return normalizeNote(note);
 }
 
 export async function fetchNotesByArea(growthAreaId: string): Promise<Note[]> {
@@ -38,6 +47,8 @@ export async function createNote(input: NoteInsert): Promise<Note> {
       title: input.title ?? "Untitled",
       content: input.content ?? "",
       is_pinned: input.is_pinned ?? false,
+      is_menu_pinned: input.is_menu_pinned ?? false,
+      note_date: input.note_date ?? null,
       user_id: userId,
     })
     .select()
@@ -85,6 +96,13 @@ export async function setNotePinned(
   isPinned: boolean
 ): Promise<Note> {
   return updateNote(noteId, { is_pinned: isPinned });
+}
+
+export async function setNoteMenuPinned(
+  noteId: string,
+  isMenuPinned: boolean
+): Promise<Note> {
+  return updateNote(noteId, { is_menu_pinned: isMenuPinned });
 }
 
 export async function getNote(id: string): Promise<Note | null> {

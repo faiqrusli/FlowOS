@@ -8,6 +8,8 @@ type ReflectionQuestionsCardProps = {
   onWentWellChange: (value: string) => void;
   onWentWrongChange: (value: string) => void;
   disabled?: boolean;
+  hideTitle?: boolean;
+  compact?: boolean;
 };
 
 export function ReflectionQuestionsCard({
@@ -16,13 +18,23 @@ export function ReflectionQuestionsCard({
   onWentWellChange,
   onWentWrongChange,
   disabled,
+  hideTitle = false,
+  compact = false,
 }: ReflectionQuestionsCardProps) {
   return (
-    <Card className="border-neutral-200/80 bg-white ring-neutral-200/80">
-      <CardHeader>
-        <CardTitle>Reflection</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <Card
+      className={
+        compact
+          ? "border-border/40 bg-transparent shadow-none ring-0"
+          : ""
+      }
+    >
+      {hideTitle ? null : (
+        <CardHeader>
+          <CardTitle>Reflection</CardTitle>
+        </CardHeader>
+      )}
+      <CardContent className={hideTitle ? "space-y-6 p-0" : "space-y-6"}>
         <div className="space-y-2">
           <Label htmlFor="went-well">What went well today?</Label>
           <Textarea
@@ -32,7 +44,7 @@ export function ReflectionQuestionsCard({
             placeholder="Celebrate wins, progress, and positive moments…"
             rows={4}
             disabled={disabled}
-            className="min-h-24 resize-y bg-neutral-50/50"
+            className="min-h-24 resize-y bg-muted/35"
           />
         </div>
         <div className="space-y-2">
@@ -44,7 +56,7 @@ export function ReflectionQuestionsCard({
             placeholder="Note challenges, distractions, or lessons…"
             rows={4}
             disabled={disabled}
-            className="min-h-24 resize-y bg-neutral-50/50"
+            className="min-h-24 resize-y bg-muted/35"
           />
         </div>
       </CardContent>

@@ -22,12 +22,12 @@ export function ReflectionCollapsibleSection({
   return (
     <details
       className={cn(
-        "group rounded-lg border border-neutral-200 bg-white",
+        "group rounded-lg border border-border/50 bg-card",
         className
       )}
       open={defaultOpen}
     >
-      <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-sm font-medium text-neutral-900 marker:content-none [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-sm font-medium text-foreground marker:content-none [&::-webkit-details-marker]:hidden">
         <ChevronRight
           className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-90"
           aria-hidden
@@ -36,7 +36,7 @@ export function ReflectionCollapsibleSection({
           {title} ({count})
         </span>
       </summary>
-      <div className="border-t border-neutral-100 px-3 py-2.5">{children}</div>
+      <div className="border-t border-border/40 px-3 py-2.5">{children}</div>
     </details>
   );
 }

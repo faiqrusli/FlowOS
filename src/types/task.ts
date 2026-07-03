@@ -37,6 +37,7 @@ export type Task = {
   sort_order: number;
   duration_minutes: number | null;
   notification_enabled: boolean;
+  notification_lead_minutes: number | null;
   completed: boolean;
   planning_state: PlanningState;
   created_at: string;
@@ -59,6 +60,7 @@ export type TaskInsert = {
   sort_order?: number;
   duration_minutes?: number | null;
   notification_enabled?: boolean;
+  notification_lead_minutes?: number | null;
   planning_state?: PlanningState;
 };
 

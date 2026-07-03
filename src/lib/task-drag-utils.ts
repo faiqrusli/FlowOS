@@ -13,6 +13,7 @@ import {
   isManualTaskSortMode,
   sortActiveAndCompletedForContext,
 } from "@/lib/task-sort";
+import { LATER_PLANNING_TASK_UPDATES } from "@/lib/task-planning";
 import {
   isLaterGroup,
   isPinnedTaskGroup,
@@ -35,6 +36,7 @@ export type TaskDragTarget = {
 export type MoveTaskInBoardOptions = {
   todayGroupId?: string | null;
   laterGroupId?: string | null;
+  inboxGroupId?: string | null;
   todayViewDate?: string;
   /** When set, org-group moves are blocked only if the drag started from Today/Later. */
   sourceGroupId?: string | null;
@@ -225,6 +227,86 @@ function isPlanningColumnSource(
   );
 }
 
+function upsertTaskInOrgGroup(
+  board: TaskGroupWithTasks[],
+  task: Task
+): TaskGroupWithTasks[] {
+  return board.map((group) => {
+    if (group.id !== task.group_id) {
+      return group;
+    }
+
+    const hasTask = group.tasks.some((item) => item.id === task.id);
+    const nextTasks = hasTask
+      ? group.tasks.map((item) => (item.id === task.id ? task : item))
+      : [...group.tasks, task];
+    const { active, completed } = sortActiveAndCompletedForContext(
+      nextTasks,
+      getSortContextForGroup(group)
+    );
+
+    return { ...group, tasks: [...active, ...completed] };
+  });
+}
+
+function stripTaskFromPlanningColumns(
+  board: TaskGroupWithTasks[],
+  taskId: string
+): TaskGroupWithTasks[] {
+  return board.map((group) => {
+    if (!isLaterGroup(group) && !isTodayGroup(group)) {
+      return group;
+    }
+
+    return {
+      ...group,
+      tasks: group.tasks.filter((task) => task.id !== taskId),
+    };
+  });
+}
+
+function removeTaskFromOtherOrgGroups(
+  board: TaskGroupWithTasks[],
+  taskId: string,
+  keepGroupId: string | null | undefined
+): TaskGroupWithTasks[] {
+  return board.map((group) => {
+    if (isTodayGroup(group) || isLaterGroup(group) || group.id === keepGroupId) {
+      return group;
+    }
+
+    return {
+      ...group,
+      tasks: group.tasks.filter((task) => task.id !== taskId),
+    };
+  });
+}
+
+function insertTaskIntoPlanningColumn(
+  board: TaskGroupWithTasks[],
+  task: Task,
+  target: TaskDragTarget,
+  insertOptions: { manualReorder?: boolean; todayViewDate?: string }
+): TaskGroupWithTasks[] {
+  return board.map((group) => {
+    if (group.id !== target.groupId) return group;
+    return insertTaskIntoGroup(group, task, target, insertOptions);
+  });
+}
+
+function moveTaskToPlanningColumn(
+  board: TaskGroupWithTasks[],
+  taskId: string,
+  updatedTask: Task,
+  target: TaskDragTarget,
+  insertOptions: { manualReorder?: boolean; todayViewDate?: string }
+): TaskGroupWithTasks[] {
+  let next = stripTaskFromPlanningColumns(board, taskId);
+  next = upsertTaskInOrgGroup(next, updatedTask);
+  next = removeTaskFromOtherOrgGroups(next, taskId, updatedTask.group_id);
+  return insertTaskIntoPlanningColumn(next, updatedTask, target, insertOptions);
+}
+
 export function moveTaskInBoard(
   board: TaskGroupWithTasks[],
   taskId: string,
@@ -266,20 +348,17 @@ export function moveTaskInBoard(
   if (isLaterTarget) {
     const laterTask: Task = {
       ...movingTask,
-      planning_state: "later",
-      scheduled_time: null,
+      ...LATER_PLANNING_TASK_UPDATES,
       completed: target.zone === "completed",
     };
 
-    const stripped = board.map((group) => ({
-      ...group,
-      tasks: group.tasks.filter((task) => task.id !== taskId),
-    }));
-
-    return stripped.map((group) => {
-      if (group.id !== target.groupId) return group;
-      return insertTaskIntoGroup(group, laterTask, target, insertOptions);
-    });
+    return moveTaskToPlanningColumn(
+      board,
+      taskId,
+      laterTask,
+      target,
+      insertOptions
+    );
   }
 
   if (isTodayTarget) {
@@ -290,15 +369,13 @@ export function moveTaskInBoard(
       completed: target.zone === "completed",
     };
 
-    const stripped = board.map((group) => ({
-      ...group,
-      tasks: group.tasks.filter((task) => task.id !== taskId),
-    }));
-
-    return stripped.map((group) => {
-      if (group.id !== target.groupId) return group;
-      return insertTaskIntoGroup(group, scheduledTask, target, insertOptions);
-    });
+    return moveTaskToPlanningColumn(
+      board,
+      taskId,
+      scheduledTask,
+      target,
+      insertOptions
+    );
   }
 
   const nextTask: Task = {

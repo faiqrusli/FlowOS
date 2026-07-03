@@ -15,12 +15,13 @@ export const TIMELINE_START_MINUTES = TIMELINE_START_HOUR * 60;
 export const TIMELINE_END_MINUTES = TIMELINE_END_HOUR * 60;
 /** Unscheduled click-to-place window matches the visible timeline (6 AM – midnight). */
 export const TIMELINE_PLACEMENT_END_MINUTES = TIMELINE_END_MINUTES;
-export const SNAP_MINUTES = 15;
+export const SNAP_MINUTES = 5;
 export const DEFAULT_TASK_DURATION = 30;
 export const DEFAULT_HABIT_DURATION = 15;
 export const MIN_BLOCK_HEIGHT_PX = 34;
 
-export type TimelineZoom = "5" | "15" | "30" | "60";
+export type TimelineZoom = "5" | "10" | "15" | "20";
+
 export type TimelineEntryKind = "task" | "habit";
 
 export type ScheduledTimelineSlot = {
@@ -31,20 +32,26 @@ export type ScheduledTimelineSlot = {
 
 const ZOOM_HOUR_HEIGHT_PX: Record<TimelineZoom, number> = {
   "5": 288,
+  "10": 144,
   "15": 96,
-  "30": 64,
-  "60": 40,
+  "20": 72,
 };
 
 export const TIMELINE_ZOOM_OPTIONS: {
   value: TimelineZoom;
   label: string;
 }[] = [
-  { value: "5", label: "5 min" },
-  { value: "15", label: "15 min" },
-  { value: "30", label: "30 min" },
-  { value: "60", label: "1 hour" },
+  { value: "5", label: "5m" },
+  { value: "10", label: "10m" },
+  { value: "15", label: "15m" },
+  { value: "20", label: "20m" },
 ];
+
+export const WORKPLACE_TIMELINE_ZOOM_OPTIONS = TIMELINE_ZOOM_OPTIONS.filter(
+  (option) => option.value !== "20"
+);
+
+export const DEFAULT_TIMELINE_ZOOM: TimelineZoom = "10";
 
 export function getHourHeightPx(zoom: TimelineZoom): number {
   return ZOOM_HOUR_HEIGHT_PX[zoom];

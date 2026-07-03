@@ -64,39 +64,55 @@ function getSessionElapsedSeconds(session: FocusSession): number | null {
 /** Older rows store minutes; new quick-focus rows store seconds. */
 function sessionUsesMinuteStorage(session: FocusSession): boolean {
   const elapsed = getSessionElapsedSeconds(session);
-  if (elapsed === null) {
-    return session.focus_duration >= 10 || session.break_duration >= 5;
+
+  // Rows saved by quick focus / workplace timer store seconds in focus_duration.
+  if (session.target_type !== null && session.target_type !== undefined) {
+    return false;
   }
 
   const minuteTotal =
     (session.focus_duration + session.break_duration) * 60;
   const secondTotal = session.focus_duration + session.break_duration;
 
-  if (minuteTotal > 0 && Math.abs(minuteTotal - elapsed) <= 120) {
+  if (elapsed !== null) {
+    if (minuteTotal > 0 && Math.abs(minuteTotal - elapsed) <= 120) {
+      return true;
+    }
+
+    if (secondTotal > 0 && Math.abs(secondTotal - elapsed) <= 5) {
+      return false;
+    }
+  }
+
+  // Minute-based pomodoro sessions stay small (typically <= 120).
+  if (session.focus_duration <= 180 && session.break_duration <= 60) {
     return true;
   }
 
-  if (secondTotal > 0 && Math.abs(secondTotal - elapsed) <= 5) {
-    return false;
-  }
-
-  return session.focus_duration >= 10;
+  return false;
 }
 
 export function getSessionFocusSeconds(session: FocusSession): number {
-  if (sessionUsesMinuteStorage(session)) {
-    return session.focus_duration * 60;
-  }
+  const raw = sessionUsesMinuteStorage(session)
+    ? session.focus_duration * 60
+    : session.focus_duration;
 
-  return session.focus_duration;
+  const elapsed = getSessionElapsedSeconds(session);
+  if (elapsed === null) return raw;
+
+  return Math.min(raw, elapsed);
 }
 
 export function getSessionBreakSeconds(session: FocusSession): number {
-  if (sessionUsesMinuteStorage(session)) {
-    return session.break_duration * 60;
-  }
+  const raw = sessionUsesMinuteStorage(session)
+    ? session.break_duration * 60
+    : session.break_duration;
 
-  return session.break_duration;
+  const elapsed = getSessionElapsedSeconds(session);
+  if (elapsed === null) return raw;
+
+  const focusSeconds = getSessionFocusSeconds(session);
+  return Math.min(raw, Math.max(0, elapsed - focusSeconds));
 }
 
 export function getSessionTotalSeconds(session: FocusSession): number {

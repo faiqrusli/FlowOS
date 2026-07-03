@@ -13,20 +13,20 @@
 
 export const type = {
   pageTitle:
-    "font-heading text-2xl font-bold tracking-tight text-foreground",
-  pageGreeting: "text-sm font-medium text-muted-foreground",
-  pageDescription: "text-sm text-muted-foreground",
+    "font-heading text-[1.625rem] leading-tight font-bold tracking-tight text-foreground",
+  pageGreeting: "text-sm font-medium text-foreground-secondary",
+  pageDescription: "text-sm leading-relaxed text-muted-foreground",
   pageDate: "text-sm text-muted-foreground",
 
   sectionTitle: "text-sm font-semibold tracking-tight text-foreground",
   sectionLabel:
-    "text-xs font-semibold uppercase tracking-wider text-muted-foreground",
+    "text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/85",
 
   contentPrimary: "text-sm font-semibold text-foreground",
   contentPrimaryLg: "text-base font-semibold text-foreground",
 
-  body: "text-sm text-foreground",
-  bodyMuted: "text-sm text-muted-foreground",
+  body: "text-sm leading-relaxed text-foreground",
+  bodyMuted: "text-sm leading-relaxed text-muted-foreground",
 
   meta: "text-xs text-muted-foreground",
   metaMedium: "text-xs font-medium text-muted-foreground",

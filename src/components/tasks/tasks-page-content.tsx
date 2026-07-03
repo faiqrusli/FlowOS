@@ -1,13 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { TaskDetailPanel, DETAIL_PANEL_COLLAPSED_WIDTH_PX, DETAIL_PANEL_WIDTH_PX } from "@/components/tasks/task-detail-panel";
-import { WORKSPACE_GUTTER_CLASS } from "@/lib/workspace-layout";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { WORKSPACE_GUTTER_LEFT_CLASS } from "@/lib/workspace-layout";
 import { cn } from "@/lib/utils";
 import { TimelineDrawer, TimelineDrawerToggle } from "@/components/tasks/timeline-drawer";
 import { TasksBoardView } from "@/components/tasks/tasks-board-view";
-import { TaskDndContext } from "@/lib/dnd";
 import { ErrorBanner } from "@/components/shared/error-banner";
+import {
+  useGlobalRightSidebar,
+  useGlobalRightSidebarOffsetPx,
+} from "@/contexts/global-right-sidebar-context";
+import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
   addTaskToBoard,
@@ -21,6 +24,7 @@ import {
   orderPinnedTaskGroups,
   persistTaskBoardLayout,
   persistTaskBoardDiff,
+  persistTaskGroupOrderDiff,
   rebuildTodayColumn,
   removeTaskFromBoard,
   replaceTaskOnBoard,
@@ -51,9 +55,23 @@ import {
   updateTask,
 } from "@/lib/tasks";
 import { moveTaskInBoard } from "@/lib/task-drag-utils";
+import {
+  animateGroupColumnLayoutPush,
+  captureGroupColumnLayout,
+} from "@/lib/group-drop-layout-animation";
 import { setQuickScheduleOpen } from "@/lib/timeline-drag";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
-import { normalizePlanningState } from "@/lib/task-planning";
+import {
+  getLaterPlanningTaskUpdates,
+  normalizePlanningState,
+} from "@/lib/task-planning";
+import {
+  fetchHabitsWithCompletions,
+  HabitsError,
+  toggleHabitComplete,
+} from "@/lib/habits";
+import { setHabitDailyScheduleOverride } from "@/lib/habit-daily-schedule-store";
+import type { Habit } from "@/types/habit";
 
 function normalizeScheduleUpdates(updates: Partial<Task>): Partial<Task> {
   const normalized = { ...updates };
@@ -66,44 +84,54 @@ function normalizeScheduleUpdates(updates: Partial<Task>): Partial<Task> {
 }
 
 export function TasksPageContent() {
+  const { selectedTaskId, selectTask } = useGlobalRightSidebar();
+  const sidebarOffsetPx = useGlobalRightSidebarOffsetPx();
   const [groups, setGroups] = useState<TaskGroupWithTasks[]>([]);
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [detailOpen, setDetailOpen] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [todayViewDate, setTodayViewDate] = useState(getTodayDateString);
   const updateTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
     new Map()
   );
+  const plannerLayoutSnapshotRef = useRef<Map<string, DOMRect> | null>(null);
 
-  const selectedTask = useMemo(() => {
-    if (!selectedTaskId) return null;
-    let fallback: Task | null = null;
-    for (const group of groups) {
-      const match = group.tasks.find((task) => task.id === selectedTaskId);
-      if (!match) continue;
-      if (isLaterGroup(group) || isTodayGroup(group)) return match;
-      fallback = match;
-    }
-    return fallback;
-  }, [groups, selectedTaskId]);
+  function setTimelineOpenWithLayoutAnimation(
+    value: boolean | ((previous: boolean) => boolean)
+  ) {
+    setTimelineOpen((previous) => {
+      const next = typeof value === "function" ? value(previous) : value;
+      if (next !== previous) {
+        plannerLayoutSnapshotRef.current = captureGroupColumnLayout();
+      }
+      return next;
+    });
+  }
 
   const loadBoard = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const board = await fetchTaskBoard();
+      const [board, nextHabits] = await Promise.all([
+        fetchTaskBoard(),
+        fetchHabitsWithCompletions(),
+      ]);
       setGroups(board);
+      setHabits(nextHabits);
     } catch (err) {
       setError(
-        err instanceof TaskGroupsError || err instanceof TasksError
+        err instanceof TaskGroupsError ||
+          err instanceof TasksError ||
+          err instanceof HabitsError
           ? err.message
           : "Failed to load tasks."
       );
       setGroups([]);
+      setHabits([]);
     } finally {
       setLoading(false);
     }
@@ -119,6 +147,13 @@ export function TasksPageContent() {
 
   useEffect(() => {
     setQuickScheduleOpen(timelineOpen);
+  }, [timelineOpen]);
+
+  useLayoutEffect(() => {
+    const snapshot = plannerLayoutSnapshotRef.current;
+    if (!snapshot) return;
+    plannerLayoutSnapshotRef.current = null;
+    animateGroupColumnLayoutPush(snapshot);
   }, [timelineOpen]);
 
   useEffect(() => {
@@ -302,6 +337,7 @@ export function TasksPageContent() {
     setGroups((prev) => {
       const todayGroup = prev.find(isTodayGroup);
       const laterGroup = prev.find(isLaterGroup);
+      const inboxGroup = prev.find(isInboxGroup);
       nextBoard = moveTaskInBoard(
         prev,
         taskId,
@@ -313,6 +349,7 @@ export function TasksPageContent() {
         {
           todayGroupId: todayGroup?.id,
           laterGroupId: laterGroup?.id,
+          inboxGroupId: inboxGroup?.id,
           todayViewDate,
         }
       );
@@ -359,6 +396,7 @@ export function TasksPageContent() {
           {
             todayGroupId: withNewGroup.find(isTodayGroup)?.id,
             laterGroupId: withNewGroup.find(isLaterGroup)?.id,
+            inboxGroupId: withNewGroup.find(isInboxGroup)?.id,
             todayViewDate,
           }
         );
@@ -381,8 +419,7 @@ export function TasksPageContent() {
     setError(null);
     setGroups((prev) => removeTaskFromBoard(prev, taskId));
     if (selectedTaskId === taskId) {
-      setSelectedTaskId(null);
-      setDetailOpen(false);
+      selectTask(null);
     }
 
     try {
@@ -568,6 +605,13 @@ export function TasksPageContent() {
     await batchUpdateManualOrders(updates);
   }
 
+  async function handlePersistGroupOrder(
+    previous: TaskGroupWithTasks[],
+    next: TaskGroupWithTasks[]
+  ) {
+    await persistTaskGroupOrderDiff(previous, next);
+  }
+
   async function handlePersistLayout(
     next: TaskGroupWithTasks[],
     options?: {
@@ -608,6 +652,8 @@ export function TasksPageContent() {
   async function handleMoveToLater(taskId: string) {
     setError(null);
 
+    const laterUpdates = getLaterPlanningTaskUpdates();
+
     let nextBoard = groups;
     setGroups((prev) => {
       nextBoard = replaceTaskOnBoard(
@@ -615,8 +661,7 @@ export function TasksPageContent() {
         taskId,
         (task) => ({
           ...task,
-          planning_state: "later",
-          scheduled_time: null,
+          ...laterUpdates,
         }),
         todayViewDate
       );
@@ -624,10 +669,7 @@ export function TasksPageContent() {
     });
 
     try {
-      const updated = await updateTask(taskId, {
-        planning_state: "later",
-        scheduled_time: null,
-      });
+      const updated = await updateTask(taskId, laterUpdates);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
@@ -691,9 +733,61 @@ export function TasksPageContent() {
   }
 
   function handleSelectTask(taskId: string | null) {
-    setSelectedTaskId(taskId);
-    if (taskId) setDetailOpen(true);
+    selectTask(taskId);
   }
+
+  async function handleScheduleHabit(
+    habitId: string,
+    updates: { scheduled_time: string | null },
+    scheduleDate: string
+  ) {
+    setError(null);
+    setHabitDailyScheduleOverride(habitId, scheduleDate, updates.scheduled_time);
+  }
+
+  async function handleToggleHabitComplete(habit: Habit) {
+    setError(null);
+    setHabits((prev) =>
+      prev.map((item) =>
+        item.id === habit.id ? { ...item, completed: !item.completed } : item
+      )
+    );
+
+    try {
+      const updated = await toggleHabitComplete(habit);
+      setHabits((prev) =>
+        prev.map((item) => (item.id === updated.id ? updated : item))
+      );
+    } catch (err) {
+      setError(
+        err instanceof HabitsError ? err.message : "Failed to update habit."
+      );
+      void loadBoard();
+    }
+  }
+
+  const getTask = useCallback(
+    (taskId: string) => {
+      for (const group of groups) {
+        const match = group.tasks.find((task) => task.id === taskId);
+        if (match) return match;
+      }
+      return null;
+    },
+    [groups]
+  );
+
+  useRegisterTaskDetailSource(
+    {
+      groups,
+      todayViewDate,
+      getTask,
+      onUpdate: handleUpdateTask,
+      onMoveToGroup: handleMoveTask,
+      onPlanningStateChange: handleSetPlanningState,
+    },
+    [groups, todayViewDate, getTask]
+  );
 
   if (loading) {
     return (
@@ -709,7 +803,7 @@ export function TasksPageContent() {
       <div
         className={cn(
           "flex min-h-0 min-w-0 flex-1 flex-col pb-3 pt-2",
-          WORKSPACE_GUTTER_CLASS
+          WORKSPACE_GUTTER_LEFT_CLASS
         )}
       >
         {error && (
@@ -721,7 +815,7 @@ export function TasksPageContent() {
         {hint && (
           <div className="mb-3 shrink-0">
             <p
-              className="rounded-lg border border-sky-200/80 bg-sky-50/90 px-3 py-2 text-sm text-sky-950"
+              className="rounded-lg border border-sky-200/80 bg-sky-50/90 px-3 py-2 text-sm text-sky-950 dark:border-sky-400/30 dark:bg-sky-500/12 dark:text-sky-100"
               role="status"
             >
               {hint}
@@ -729,13 +823,14 @@ export function TasksPageContent() {
           </div>
         )}
 
-        <TaskDndContext>
           <TasksBoardView
             groups={groups}
             selectedTaskId={selectedTaskId}
             todayViewDate={todayViewDate}
             plannerActive={timelineOpen}
-            onToggleQuickPlanner={() => setTimelineOpen((value) => !value)}
+            onToggleQuickPlanner={() =>
+              setTimelineOpenWithLayoutAnimation((value) => !value)
+            }
             onTodayViewDateChange={setTodayViewDate}
             onGroupsChange={setGroups}
             onSelectTask={handleSelectTask}
@@ -753,11 +848,11 @@ export function TasksPageContent() {
             onUpdateGroupSortMode={handleUpdateGroupSortMode}
             onDeleteGroup={handleDeleteGroup}
             onPersistLayout={handlePersistLayout}
+            onPersistGroupOrder={handlePersistGroupOrder}
             onPersistManualOrder={handlePersistManualOrder}
             onShowHint={setHint}
             onSetPlanningState={handleSetPlanningState}
           />
-        </TaskDndContext>
       </div>
 
       <TimelineDrawer
@@ -765,54 +860,33 @@ export function TasksPageContent() {
         viewDate={todayViewDate}
         onViewDateChange={setTodayViewDate}
         groups={groups}
+        habits={habits}
         selectedTaskId={selectedTaskId}
-        onClose={() => setTimelineOpen(false)}
-        onSelectTask={(taskId) => setSelectedTaskId(taskId)}
-        onOpenDetail={(taskId) => {
-          setSelectedTaskId(taskId);
-          setDetailOpen(true);
+        selectedHabitId={selectedHabitId}
+        onClose={() => setTimelineOpenWithLayoutAnimation(false)}
+        onSelectTask={(taskId) => {
+          selectTask(taskId);
+          if (taskId) setSelectedHabitId(null);
         }}
+        onSelectHabit={(habitId) => {
+          setSelectedHabitId(habitId);
+          if (habitId) selectTask(null);
+        }}
+        onOpenDetail={(taskId) => selectTask(taskId)}
         onScheduleTask={handleScheduleTask}
+        onScheduleHabit={handleScheduleHabit}
         onToggleComplete={handleToggleComplete}
+        onToggleHabitComplete={handleToggleHabitComplete}
         onUpdateTask={handleUpdateTask}
         onDeleteTask={handleDeleteTask}
         onDuplicateTask={handleDuplicateTask}
         onSetPlanningState={handleSetPlanningState}
       />
 
-      <div
-        className="relative h-full shrink-0"
-        style={{
-          width: `min(100%, ${detailOpen ? DETAIL_PANEL_WIDTH_PX : DETAIL_PANEL_COLLAPSED_WIDTH_PX}px)`,
-        }}
-      >
-        <TaskDetailPanel
-          task={selectedTask}
-          groups={groups}
-          todayViewDate={todayViewDate}
-          expanded={detailOpen}
-          onToggleExpanded={() => setDetailOpen((value) => !value)}
-          onChange={(updates) => {
-            if (!selectedTask) return;
-            void handleUpdateTask(selectedTask.id, updates);
-          }}
-          onMoveToGroup={(groupId) => {
-            if (!selectedTask) return;
-            void handleMoveTask(selectedTask.id, groupId);
-          }}
-          onPlanningStateChange={(planningState) => {
-            if (!selectedTask) return;
-            void handleSetPlanningState(selectedTask.id, planningState);
-          }}
-        />
-      </div>
-
       <TimelineDrawerToggle
         open={timelineOpen}
-        detailPanelOffsetPx={
-          detailOpen ? DETAIL_PANEL_WIDTH_PX : DETAIL_PANEL_COLLAPSED_WIDTH_PX
-        }
-        onToggle={() => setTimelineOpen((value) => !value)}
+        detailPanelOffsetPx={sidebarOffsetPx}
+        onToggle={() => setTimelineOpenWithLayoutAnimation(true)}
       />
     </div>
   );

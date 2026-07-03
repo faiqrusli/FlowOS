@@ -30,7 +30,7 @@ export function TaskList({
 
   if (tasks.length === 0) {
     return (
-      <Card className="bg-neutral-50 ring-neutral-200/80">
+      <Card>
         <CardContent className="py-12 text-center text-sm text-muted-foreground">
           No tasks yet. Click Add Task to create your first one.
         </CardContent>

@@ -1,4 +1,5 @@
 import { normalizeTaskPriority, type TaskPriority } from "@/lib/task-priority";
+import { clampHabitDuration } from "@/lib/habit-duration";
 
 const STORAGE_KEY = "flowos.schedule.durations";
 
@@ -9,6 +10,7 @@ const DEFAULT_BY_PRIORITY: Record<TaskPriority, number> = {
 };
 
 const HABIT_DEFAULT = 15;
+const DURATION_CHANGED_EVENT = "flowos:duration-changed";
 
 function loadMap(): Record<string, number> {
   if (typeof window === "undefined") return {};
@@ -50,6 +52,23 @@ export function setItemDurationMinutes(
   minutes: number
 ): void {
   const map = loadMap();
-  map[durationKey(type, entityId)] = Math.max(15, Math.min(240, minutes));
+  map[durationKey(type, entityId)] =
+    type === "habit"
+      ? clampHabitDuration(minutes)
+      : Math.max(15, Math.min(240, minutes));
   saveMap(map);
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent(DURATION_CHANGED_EVENT, {
+        detail: { type, entityId, minutes: map[durationKey(type, entityId)] },
+      })
+    );
+  }
+}
+
+export function onDurationChanged(listener: () => void): () => void {
+  if (typeof window === "undefined") return () => undefined;
+  const handler = () => listener();
+  window.addEventListener(DURATION_CHANGED_EVENT, handler);
+  return () => window.removeEventListener(DURATION_CHANGED_EVENT, handler);
 }

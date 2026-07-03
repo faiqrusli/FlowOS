@@ -46,13 +46,13 @@ export function CustomFocusSession({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-neutral-50/50">
+    <div className="rounded-xl border border-border/50 bg-muted/35">
       <button
         type="button"
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between px-5 py-4 text-left"
       >
-        <span className="text-sm font-medium text-neutral-900">
+        <span className="text-sm font-medium text-foreground">
           Custom focus session
         </span>
         <ChevronDown
@@ -64,7 +64,7 @@ export function CustomFocusSession({
       </button>
 
       {open && (
-        <div className="space-y-4 border-t border-neutral-200 px-5 pb-5 pt-4">
+        <div className="space-y-4 border-t border-border/50 px-5 pb-5 pt-4">
           <p className="text-xs text-muted-foreground">
             Pomodoro-style countdown. Optional — quick focus above is the default.
           </p>
@@ -123,7 +123,7 @@ export function CustomFocusSession({
               <Button
                 onClick={onStart}
                 disabled={disabled}
-                className="rounded-full bg-neutral-800 text-white hover:bg-neutral-700"
+                className="rounded-full"
               >
                 <Play className="size-4" data-icon="inline-start" />
                 Start Pomodoro
@@ -138,7 +138,7 @@ export function CustomFocusSession({
             {isPaused && (
               <Button
                 onClick={onResume}
-                className="rounded-full bg-neutral-800 text-white hover:bg-neutral-700"
+                className="rounded-full"
               >
                 <Play className="size-4" data-icon="inline-start" />
                 Resume

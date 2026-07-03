@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Eye } from "lucide-react";
+import { CalendarRange, Eye } from "lucide-react";
 import { ReflectionDetailContent } from "@/components/reflection/reflection-detail-content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -82,7 +83,7 @@ export function ReflectionHistory({
 
   return (
     <>
-      <Card className="border-neutral-200/80 bg-neutral-50/80 ring-neutral-200/80">
+      <Card>
         <CardHeader>
           <CardTitle>Reflection history</CardTitle>
         </CardHeader>
@@ -107,7 +108,7 @@ export function ReflectionHistory({
                     onView={() => setViewing(todayReflection)}
                   />
                 ) : (
-                  <p className="rounded-lg border border-dashed border-neutral-200 bg-white px-4 py-6 text-center text-sm text-muted-foreground">
+                  <p className="rounded-lg border border-dashed border-border/50 bg-card px-4 py-6 text-center text-sm text-muted-foreground">
                     No reflection saved for today yet. Fill in your notes above
                     and click Save reflection.
                   </p>
@@ -119,7 +120,7 @@ export function ReflectionHistory({
                   <h3 className="text-sm font-medium text-muted-foreground">
                     Previous
                   </h3>
-                  <ul className="divide-y divide-neutral-100">
+                  <ul className="divide-y divide-border/40">
                     {pastReflections.map((reflection) => (
                       <li
                         key={reflection.id}
@@ -138,6 +139,15 @@ export function ReflectionHistory({
             </>
           )}
         </CardContent>
+        <div className="border-t border-border/40 px-6 pb-6 pt-4">
+          <Link
+            href="/reflection/WeeklyReflection"
+            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+          >
+            <CalendarRange className="size-4" />
+            Weekly reflection
+          </Link>
+        </div>
       </Card>
 
       <Dialog
@@ -177,10 +187,10 @@ function ReflectionHistoryItem({
   const isToday = reflection.reflection_date === todayDate;
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-neutral-100 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-lg border border-border/40 bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="font-medium text-neutral-900">
+          <p className="font-medium text-foreground">
             {getReflectionDayLabel(reflection.reflection_date)}
           </p>
           {isToday && (

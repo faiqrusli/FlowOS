@@ -9,7 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formatTimeShort } from "@/lib/date-utils";
+import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
+import { getHabitDurationMinutes } from "@/lib/schedule-durations";
 import { cn } from "@/lib/utils";
 import type { Habit } from "@/types/habit";
 
@@ -41,7 +42,10 @@ function HabitOccurrenceRow({
   disabled: boolean;
   onToggle: () => void;
 }) {
-  const time = formatTimeShort(habit.scheduled_time);
+  const time = formatHabitTimeRangeWithDuration(
+    habit.scheduled_time,
+    getHabitDurationMinutes(habit.id)
+  );
 
   return (
     <li className="flex items-start gap-2 text-sm">
@@ -53,7 +57,7 @@ function HabitOccurrenceRow({
           "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
           habit.completed
             ? "border-orange-600 bg-orange-600 text-white"
-            : "border-neutral-400 bg-transparent hover:border-orange-500",
+            : "border-muted-foreground/45 bg-transparent hover:border-orange-500/70",
           disabled && "opacity-50"
         )}
         aria-label={`Mark today's "${habit.name}" occurrence as ${habit.completed ? "incomplete" : "complete"}`}
@@ -63,7 +67,7 @@ function HabitOccurrenceRow({
       <div className="min-w-0 flex-1 leading-tight">
         <p
           className={cn(
-            "truncate font-medium text-neutral-900",
+            "truncate font-medium text-foreground",
             habit.completed && "text-muted-foreground"
           )}
         >
@@ -90,7 +94,7 @@ export function HabitsTodayChecklistCard({
   const completed = habits.filter((h) => h.completed).length;
 
   return (
-    <Card className="bg-neutral-50 ring-neutral-200/80">
+    <Card>
       <CardHeader className="space-y-0.5 pb-3">
         <CardTitle className="text-base">
           Today&apos;s habits {completed}/{habits.length}
@@ -120,7 +124,8 @@ export function HabitsTodayChecklistCard({
 
         {showManageButton && (
           <Button
-            className="w-full rounded-full bg-neutral-800 text-white hover:bg-neutral-700"
+            className="w-full rounded-full"
+            nativeButton={false}
             render={<Link href="/habits" />}
           >
             Manage habits

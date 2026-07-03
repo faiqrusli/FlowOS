@@ -1,82 +1,151 @@
 "use client";
 
-import { memo, useMemo, Fragment, type DragEvent, type ReactNode } from "react";
-import { useDroppable } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
+import { memo, useSyncExternalStore, type DragEvent, type ReactNode } from "react";
 import { TaskRow } from "@/components/tasks/task-row";
-import { useTaskBoardActions } from "@/components/tasks/task-board-actions-context";
 import {
-  columnActiveDroppableId,
-  columnActiveEndDroppableId,
-  columnCompletedDroppableId,
-} from "@/lib/dnd/droppable-ids";
-import { getGroupDndMetadata } from "@/lib/dnd/group-metadata";
-import { isColumnActiveDropTarget } from "@/lib/dnd/preview";
-import { useColumnDragPreviewDropTarget, useDragPreviewActiveTaskId } from "@/lib/dnd/preview-store";
+  isExternalTaskDragActive,
+  isSortedColumnDropHighlight,
+  isTaskDragSource,
+  shouldShowActiveDropLine,
+  subscribeTaskDragSession,
+} from "@/lib/task-drag-session";
+import {
+  isTaskDropRevealing,
+  subscribeTaskDropReveal,
+} from "@/lib/task-drop-reveal";
+import { useTaskDragSessionSelector } from "@/lib/use-task-drag-session-selector";
+import { useStableTaskList } from "@/lib/use-stable-task-list";
+import { useIsTaskSelected } from "@/lib/task-board-selection";
 import { REORDER_DISABLED_TOOLTIP } from "@/lib/task-sort";
 import { cn } from "@/lib/utils";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
-type MemoizedTaskRowProps = {
+function TaskDropLine() {
+  return (
+    <div
+      className="mx-0.5 h-0.5 shrink-0 rounded-full bg-primary/70"
+      aria-hidden
+    />
+  );
+}
+
+const ActiveDropLine = memo(function ActiveDropLine({
+  groupId,
+  beforeTaskId,
+}: {
+  groupId: string;
+  beforeTaskId: string | null;
+}) {
+  const visible = useTaskDragSessionSelector(
+    (snapshot) => shouldShowActiveDropLine(groupId, beforeTaskId),
+    (previous, next) => previous === next
+  );
+  if (!visible) return null;
+  return <TaskDropLine />;
+});
+
+type BoardTaskRowProps = {
   task: Task;
-  group: TaskGroupWithTasks;
+  groupId: string;
   zone: "active" | "completed";
-  groups: TaskGroupWithTasks[];
   todayViewDate: string;
-  isSelected: boolean;
   dragEnabled: boolean;
   reorderEnabled: boolean;
 };
 
-const MemoizedTaskRow = memo(function MemoizedTaskRow({
+const BoardTaskRow = memo(function BoardTaskRow({
   task,
-  group,
+  groupId,
   zone,
-  groups,
   todayViewDate,
-  isSelected,
   dragEnabled,
   reorderEnabled,
-}: MemoizedTaskRowProps) {
-  const actions = useTaskBoardActions();
+}: BoardTaskRowProps) {
+  const isSelected = useIsTaskSelected(task.id);
+  const isDragSource = useSyncExternalStore(
+    subscribeTaskDragSession,
+    () => isTaskDragSource(task.id, groupId),
+    () => false
+  );
+  const isDropReveal = useSyncExternalStore(
+    subscribeTaskDropReveal,
+    () => isTaskDropRevealing(task.id),
+    () => false
+  );
 
   return (
-    <TaskRow
-      task={task}
-      groupId={group.id}
-      zone={zone}
-      groups={groups}
-      todayViewDate={todayViewDate}
-      isSelected={isSelected}
-      dragEnabled={dragEnabled}
-      reorderEnabled={reorderEnabled}
-      reorderDisabledTooltip={REORDER_DISABLED_TOOLTIP}
-      onToggleComplete={() => actions.onToggleComplete(task)}
-      onOpenDetail={() => actions.onOpenDetail(task.id)}
-      onDuplicate={() => actions.onDuplicateTask(task)}
-      onMoveToGroup={(targetGroupId) =>
-        actions.onMoveTask(task.id, targetGroupId)
-      }
-      onDelete={() => actions.onDeleteTask(task.id)}
-      onUpdate={(updates) => actions.onUpdateTask(task.id, updates)}
-      onSetPlanningState={
-        actions.onSetPlanningState
-          ? (planningState) =>
-              actions.onSetPlanningState?.(task.id, planningState)
-          : undefined
-      }
-      onRequestCreateGroup={() => actions.onRequestCreateGroup(task.id)}
-    />
+    <div
+      data-task-board-slot={task.id}
+      className={cn(
+        isDragSource && "pointer-events-none opacity-0",
+        isDropReveal && !isDragSource && "animate-task-drop-reveal"
+      )}
+    >
+      <TaskRow
+        task={task}
+        groupId={groupId}
+        zone={zone}
+        todayViewDate={todayViewDate}
+        isSelected={isSelected}
+        dragEnabled={dragEnabled}
+        reorderEnabled={reorderEnabled}
+        reorderDisabledTooltip={REORDER_DISABLED_TOOLTIP}
+      />
+    </div>
+  );
+}, (previous, next) => {
+  return (
+    previous.task === next.task &&
+    previous.groupId === next.groupId &&
+    previous.zone === next.zone &&
+    previous.todayViewDate === next.todayViewDate &&
+    previous.dragEnabled === next.dragEnabled &&
+    previous.reorderEnabled === next.reorderEnabled
+  );
+});
+
+type ActiveTaskSlotProps = {
+  groupId: string;
+  task: Task;
+  todayViewDate: string;
+  dragEnabled: boolean;
+  reorderEnabled: boolean;
+};
+
+const ActiveTaskSlot = memo(function ActiveTaskSlot({
+  groupId,
+  task,
+  todayViewDate,
+  dragEnabled,
+  reorderEnabled,
+}: ActiveTaskSlotProps) {
+  return (
+    <>
+      <ActiveDropLine groupId={groupId} beforeTaskId={task.id} />
+      <BoardTaskRow
+        task={task}
+        groupId={groupId}
+        zone="active"
+        todayViewDate={todayViewDate}
+        dragEnabled={dragEnabled}
+        reorderEnabled={reorderEnabled}
+      />
+    </>
+  );
+}, (previous, next) => {
+  return (
+    previous.groupId === next.groupId &&
+    previous.task === next.task &&
+    previous.todayViewDate === next.todayViewDate &&
+    previous.dragEnabled === next.dragEnabled &&
+    previous.reorderEnabled === next.reorderEnabled
   );
 });
 
 export type TaskColumnActiveListProps = {
   group: TaskGroupWithTasks;
   tasks: Task[];
-  groups: TaskGroupWithTasks[];
   todayViewDate: string;
-  selectedTaskId: string | null;
   dragEnabled: boolean;
   reorderEnabled: boolean;
   composeTop?: React.ReactNode;
@@ -85,81 +154,50 @@ export type TaskColumnActiveListProps = {
 export const TaskColumnActiveList = memo(function TaskColumnActiveList({
   group,
   tasks,
-  groups,
   todayViewDate,
-  selectedTaskId,
   dragEnabled,
   reorderEnabled,
   composeTop,
 }: TaskColumnActiveListProps) {
-  const taskIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
-  const activeTaskId = useDragPreviewActiveTaskId();
-  const dropTarget = useColumnDragPreviewDropTarget(group.id);
-
-  const showInsertLine = Boolean(
-    activeTaskId &&
-      dropTarget?.showInsertionLine &&
-      dropTarget.zone === "active" &&
-      !tasks.some((task) => task.id === activeTaskId)
-  );
+  const stableTasks = useStableTaskList(tasks);
+  const groupId = group.id;
 
   return (
-    <SortableContext
-      id={`${group.id}:active`}
-      items={taskIds}
-      strategy={verticalListSortingStrategy}
-    >
+    <>
       {composeTop}
-      {showInsertLine && tasks.length === 0 ? (
-        <TaskBoardInsertLine className="my-1" />
-      ) : null}
-      {tasks.map((task) => (
-        <Fragment key={task.id}>
-          {showInsertLine && dropTarget?.beforeTaskId === task.id ? (
-            <TaskBoardInsertLine />
-          ) : null}
-          <MemoizedTaskRow
-            task={task}
-            group={group}
-            zone="active"
-            groups={groups}
-            todayViewDate={todayViewDate}
-            isSelected={selectedTaskId === task.id}
-            dragEnabled={dragEnabled}
-            reorderEnabled={reorderEnabled}
-          />
-        </Fragment>
+      {stableTasks.map((task) => (
+        <ActiveTaskSlot
+          key={task.id}
+          groupId={groupId}
+          task={task}
+          todayViewDate={todayViewDate}
+          dragEnabled={dragEnabled}
+          reorderEnabled={reorderEnabled}
+        />
       ))}
-      {showInsertLine &&
-      tasks.length > 0 &&
-      dropTarget?.beforeTaskId === null ? (
-        <TaskBoardInsertLine />
-      ) : null}
-      <ColumnActiveEndDropZone group={group} />
-    </SortableContext>
+      <ActiveDropLine groupId={groupId} beforeTaskId={null} />
+      <div className="min-h-1 shrink-0" aria-hidden />
+    </>
   );
 });
 
-const ColumnActiveEndDropZone = memo(function ColumnActiveEndDropZone({
-  group,
+const SortedColumnDropHighlight = memo(function SortedColumnDropHighlight({
+  groupId,
 }: {
-  group: TaskGroupWithTasks;
+  groupId: string;
 }) {
-  const droppableMeta = useMemo(() => getGroupDndMetadata(group), [group]);
-  const { setNodeRef } = useDroppable({
-    id: columnActiveEndDroppableId(group.id),
-    data: { type: "column-active-end", groupId: group.id, ...droppableMeta },
-  });
-
+  const visible = useTaskDragSessionSelector(
+    (snapshot) => isSortedColumnDropHighlight(groupId, "active"),
+    (previous, next) => previous === next
+  );
+  if (!visible) return null;
   return (
-    <div ref={setNodeRef} className="min-h-1 shrink-0" aria-hidden />
+    <div
+      className="pointer-events-none absolute inset-0 z-0 rounded-lg border border-primary/40 bg-primary/5 transition-colors"
+      aria-hidden
+    />
   );
 });
-
-export function useColumnHasActiveDropTarget(groupId: string): boolean {
-  const dropTarget = useColumnDragPreviewDropTarget(groupId);
-  return isColumnActiveDropTarget(dropTarget, groupId);
-}
 
 export const TaskGroupActiveBody = memo(function TaskGroupActiveBody({
   group,
@@ -174,37 +212,72 @@ export const TaskGroupActiveBody = memo(function TaskGroupActiveBody({
   onDragOver?: (event: DragEvent<HTMLElement>) => void;
   onDrop?: (event: DragEvent<HTMLElement>) => void;
 }) {
-  const droppableMeta = useMemo(() => getGroupDndMetadata(group), [group]);
-  const { setNodeRef } = useDroppable({
-    id: columnActiveDroppableId(group.id),
-    data: { type: "column-active", groupId: group.id, ...droppableMeta },
-  });
-
   return (
     <div
-      ref={setNodeRef}
       data-task-active-body
-      className={className}
+      className={cn(className, "relative")}
       onDragOver={onDragOver}
       onDrop={onDrop}
     >
-      {children}
+      <SortedColumnDropHighlight groupId={group.id} />
+      <div className="relative z-[1] flex min-h-0 flex-1 flex-col">{children}</div>
     </div>
   );
 });
 
-export function ActiveEmptyDropPlaceholder({
+export const ColumnEmptyDragStretch = memo(function ColumnEmptyDragStretch({
+  isEmpty,
+}: {
+  isEmpty: boolean;
+}) {
+  const dragActive = useTaskDragSessionSelector(
+    () => isExternalTaskDragActive(),
+    (previous, next) => previous === next
+  );
+  if (!isEmpty || !dragActive) return null;
+  return <div className="min-h-[2.5rem] flex-1" aria-hidden />;
+});
+
+export const LaterEmptyColumnHint = memo(function LaterEmptyColumnHint({
+  isEmpty,
+  isComposing,
+}: {
+  isEmpty: boolean;
+  isComposing: boolean;
+}) {
+  const dragActive = useTaskDragSessionSelector(
+    () => isExternalTaskDragActive(),
+    (previous, next) => previous === next
+  );
+  if (!isEmpty || isComposing || dragActive) return null;
+
+  return (
+    <div className="px-2 py-6 text-center">
+      <p className="text-[11px] font-medium text-foreground/85">No tasks in Later.</p>
+      <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+        Move tasks here when you want to plan them another time.
+      </p>
+    </div>
+  );
+});
+
+export const ActiveEmptyDropPlaceholder = memo(function ActiveEmptyDropPlaceholder({
   groupId,
-  visible,
   blocked,
 }: {
   groupId: string;
-  visible: boolean;
   blocked: boolean;
 }) {
-  const highlighted = useColumnHasActiveDropTarget(groupId);
+  const dragActive = useTaskDragSessionSelector(
+    () => isExternalTaskDragActive(),
+    (previous, next) => previous === next
+  );
+  const highlighted = useTaskDragSessionSelector(
+    (snapshot) => isSortedColumnDropHighlight(groupId, "active"),
+    (previous, next) => previous === next
+  );
 
-  if (!visible || blocked) return null;
+  if (!dragActive || blocked) return null;
 
   return (
     <div
@@ -216,47 +289,42 @@ export function ActiveEmptyDropPlaceholder({
       Drop task here
     </div>
   );
-}
+});
 
 export const TaskColumnCompletedList = memo(function TaskColumnCompletedList({
   group,
   tasks,
-  groups,
   todayViewDate,
-  selectedTaskId,
   dragEnabled,
   reorderEnabled,
-}: Omit<TaskColumnActiveListProps, "composeTop"> & {
+}: {
+  group: TaskGroupWithTasks;
+  tasks: Task[];
+  todayViewDate: string;
   dragEnabled: boolean;
   reorderEnabled: boolean;
 }) {
-  const taskIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
+  const stableTasks = useStableTaskList(tasks);
+  const groupId = group.id;
 
   return (
-    <SortableContext
-      id={`${group.id}:completed`}
-      items={taskIds}
-      strategy={verticalListSortingStrategy}
-    >
-      {tasks.map((task) => (
-        <MemoizedTaskRow
+    <>
+      {stableTasks.map((task) => (
+        <BoardTaskRow
           key={task.id}
           task={task}
-          group={group}
+          groupId={groupId}
           zone="completed"
-          groups={groups}
           todayViewDate={todayViewDate}
-          isSelected={selectedTaskId === task.id}
           dragEnabled={dragEnabled}
           reorderEnabled={reorderEnabled}
         />
       ))}
-    </SortableContext>
+    </>
   );
 });
 
 export const TaskCompletedBody = memo(function TaskCompletedBody({
-  group,
   className,
   children,
   onDragOver,
@@ -268,15 +336,8 @@ export const TaskCompletedBody = memo(function TaskCompletedBody({
   onDragOver?: (event: DragEvent<HTMLElement>) => void;
   onDrop?: (event: DragEvent<HTMLElement>) => void;
 }) {
-  const droppableMeta = useMemo(() => getGroupDndMetadata(group), [group]);
-  const { setNodeRef } = useDroppable({
-    id: columnCompletedDroppableId(group.id),
-    data: { type: "column-completed", groupId: group.id, ...droppableMeta },
-  });
-
   return (
     <div
-      ref={setNodeRef}
       data-task-completed-body
       className={className}
       onDragOver={onDragOver}

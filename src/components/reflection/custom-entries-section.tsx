@@ -49,7 +49,7 @@ export function CustomEntriesSection({
   }
 
   return (
-    <Card className="border-neutral-200/80 bg-white ring-neutral-200/80">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-4">
         <CardTitle>Custom entries</CardTitle>
         <Button
@@ -74,10 +74,10 @@ export function CustomEntriesSection({
             {entries.map((entry) => (
               <li
                 key={entry.id}
-                className="flex items-start justify-between gap-3 rounded-lg border border-neutral-100 bg-neutral-50/80 px-4 py-3"
+                className="flex items-start justify-between gap-3 rounded-lg border border-border/40 bg-muted/30 px-4 py-3"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-neutral-900">
+                  <p className="text-sm font-medium text-foreground">
                     {entry.title}
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">

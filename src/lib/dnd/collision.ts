@@ -1,16 +1,11 @@
-import {
-  closestCenter,
-  pointerWithin,
-  type CollisionDetection,
-} from "@dnd-kit/core";
+import { pointerWithin, type CollisionDetection } from "@dnd-kit/core";
 
-/** Prefer pointer position, fall back to closest center for column/task targeting. */
+/**
+ * Pointer-only collision — no rect-intersection fallback loop.
+ * Board drop targeting uses cached pointer math in board-drag-measurements.
+ */
 export const taskCollisionDetection: CollisionDetection = (args) => {
-  const pointerCollisions = pointerWithin(args);
-  if (pointerCollisions.length > 0) {
-    return pointerCollisions;
-  }
-  return closestCenter(args);
+  return pointerWithin(args);
 };
 
 export const COLLISION_STRATEGY = {

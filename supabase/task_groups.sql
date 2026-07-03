@@ -30,7 +30,8 @@ alter table tasks
   add column if not exists group_id uuid references task_groups(id) on delete set null,
   add column if not exists sort_order integer not null default 0,
   add column if not exists duration_minutes integer,
-  add column if not exists notification_enabled boolean not null default true;
+  add column if not exists notification_enabled boolean not null default true,
+  add column if not exists notification_lead_minutes integer;
 
 create index if not exists tasks_group_sort_idx on tasks (group_id, sort_order);
 

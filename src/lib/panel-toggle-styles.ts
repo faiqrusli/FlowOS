@@ -32,6 +32,41 @@ export function panelToggleHoverIconClass(size: "sm" | "md" = "md") {
   );
 }
 
+/** Neutral global sidebar rail — matches panel icon hover/active. */
+export function globalRailButtonClass(active = false) {
+  return cn(
+    "inline-flex size-10 items-center justify-center rounded-lg transition-colors",
+    active
+      ? "bg-muted text-foreground"
+      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+  );
+}
+
+function globalRailIconSize(size: "sm" | "md") {
+  return size === "sm" ? "size-4" : "size-4.5";
+}
+
+export function globalRailPrimaryIconClass(size: "sm" | "md" = "md") {
+  return cn(
+    globalRailIconSize(size),
+    "text-current transition-opacity duration-150 group-hover/panel-toggle:opacity-0"
+  );
+}
+
+export function globalRailHoverIconClass(size: "sm" | "md" = "md") {
+  return cn(
+    globalRailIconSize(size),
+    "absolute text-current opacity-0 transition-opacity duration-150 group-hover/panel-toggle:opacity-100"
+  );
+}
+
+/** Edge tab for Quick Schedule — neutral, sits against global sidebar. */
+export function globalRailTabClass() {
+  return cn(
+    "group/panel-toggle relative z-30 flex size-8 items-center justify-center rounded-l-lg border border-r-0 border-border/40 bg-card text-muted-foreground shadow-sm transition-colors hover:bg-muted hover:text-foreground"
+  );
+}
+
 /** Rounded square — global access panel header. */
 export function panelToggleSquareClass(size: "sm" | "md" = "md") {
   return panelToggleButtonClass(

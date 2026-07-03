@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import type { PlanningState, Task } from "@/types/task";
+import type { TaskRowPointerCoords } from "@/lib/task-row-pointer-gesture";
 
 export type TaskBoardActions = {
   onToggleComplete: (task: Task) => void;
@@ -18,9 +19,19 @@ export type TaskBoardActions = {
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
   onSetPlanningState?: (taskId: string, planningState: PlanningState) => void;
   onRequestCreateGroup: (taskId: string) => void;
+  onTaskPointerDragStart: (
+    taskId: string,
+    groupId: string,
+    coords: TaskRowPointerCoords
+  ) => void;
+  onTaskPointerDragEnd: () => void;
 };
 
 const TaskBoardActionsContext = createContext<TaskBoardActions | null>(null);
+
+export function useOptionalTaskBoardActions(): TaskBoardActions | null {
+  return useContext(TaskBoardActionsContext);
+}
 
 export function useTaskBoardActions(): TaskBoardActions {
   const ctx = useContext(TaskBoardActionsContext);
@@ -58,6 +69,9 @@ export function TaskBoardActionsProvider({
         : undefined,
       onRequestCreateGroup: (taskId) =>
         actionsRef.current.onRequestCreateGroup(taskId),
+      onTaskPointerDragStart: (taskId, groupId, coords) =>
+        actionsRef.current.onTaskPointerDragStart(taskId, groupId, coords),
+      onTaskPointerDragEnd: () => actionsRef.current.onTaskPointerDragEnd(),
     }),
     []
   );

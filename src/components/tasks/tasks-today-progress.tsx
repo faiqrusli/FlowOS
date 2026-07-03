@@ -15,21 +15,21 @@ export function TasksTodayProgress({
     <section
       className={
         variant === "standalone"
-          ? "space-y-3 rounded-xl border border-neutral-200 bg-white px-5 py-4"
+          ? "space-y-3 rounded-xl border border-border/50 bg-card px-5 py-4"
           : "space-y-2"
       }
     >
       <p
         className={
           variant === "standalone"
-            ? "text-sm font-semibold text-neutral-900"
+            ? "text-sm font-semibold text-foreground"
             : "text-xs font-medium uppercase tracking-wide text-muted-foreground"
         }
       >
         Today&apos;s Progress
       </p>
       <div
-        className="h-2.5 w-full overflow-hidden rounded-full bg-neutral-200"
+        className="h-2.5 w-full overflow-hidden rounded-full bg-muted"
         role="progressbar"
         aria-valuenow={percent}
         aria-valuemin={0}
@@ -37,12 +37,12 @@ export function TasksTodayProgress({
         aria-label={`${percent}% of today's tasks completed`}
       >
         <div
-          className="h-full rounded-full bg-neutral-800 transition-all duration-300"
+          className="h-full rounded-full bg-primary transition-all duration-300"
           style={{ width: `${percent}%` }}
         />
       </div>
       <p className="text-sm text-muted-foreground">
-        <span className="font-medium text-neutral-900">
+        <span className="font-medium text-foreground">
           {completed} / {total} Completed
         </span>
         {" · "}

@@ -1,4 +1,4 @@
-import type { DragOverEvent, Over, UniqueIdentifier } from "@dnd-kit/core";
+import type { ClientRect, DragOverEvent, Over, UniqueIdentifier } from "@dnd-kit/core";
 import { arrayMove, hasSortableData } from "@dnd-kit/sortable";
 import type { DropBeforeId } from "@/lib/list-drag-utils";
 import { isTaskDragData } from "@/lib/dnd/drag-utils";
@@ -9,13 +9,20 @@ function asIdList(items: UniqueIdentifier[]): string[] {
   return items.map(String);
 }
 
-function getOverRect(over: Over) {
-  const rect = over.rect;
+type OverRectWithCurrent = {
+  current?: {
+    translated?: ClientRect | null;
+    initial?: ClientRect | null;
+  } | null;
+};
+
+function getOverRect(over: Over): ClientRect | null {
+  const rect = over.rect as ClientRect | OverRectWithCurrent;
   if (!rect) return null;
   if ("current" in rect) {
     return rect.current?.translated ?? rect.current?.initial ?? null;
   }
-  return rect;
+  return rect as ClientRect;
 }
 
 function pointerYFromEvent(event: DragOverEvent): number | null {

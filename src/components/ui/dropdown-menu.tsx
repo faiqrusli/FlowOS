@@ -23,6 +23,7 @@ function DropdownMenuContent({
   side = "top",
   align = "start",
   sideOffset = 6,
+  collisionAvoidance,
   children,
 }: Menu.Positioner.Props & {
   className?: string;
@@ -34,12 +35,14 @@ function DropdownMenuContent({
         side={side}
         align={align}
         sideOffset={sideOffset}
+        collisionAvoidance={collisionAvoidance}
         className="z-50 outline-none"
       >
         <Menu.Popup
           data-slot="dropdown-menu-content"
           className={cn(
-            "min-w-[12rem] overflow-hidden rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none",
+            "flow-surface-elevated min-w-[12rem] overflow-hidden p-1 outline-none",
+            "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-97 data-open:duration-150 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-97 data-closed:duration-100",
             className
           )}
         >
@@ -55,7 +58,7 @@ function DropdownMenuItem({ className, ...props }: Menu.Item.Props) {
     <Menu.Item
       data-slot="dropdown-menu-item"
       className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none select-none data-highlighted:bg-muted data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5]",
+        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 outline-none select-none transition-colors duration-100 data-highlighted:bg-muted/70 data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground [&_svg]:transition-colors [&_svg]:duration-100 data-highlighted:[&_svg]:text-foreground",
         className
       )}
       {...props}
@@ -69,7 +72,7 @@ function DropdownMenuLinkItem({ className, ...props }: Menu.LinkItem.Props) {
       data-slot="dropdown-menu-link-item"
       closeOnClick
       className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm no-underline outline-none select-none data-highlighted:bg-muted data-highlighted:text-foreground [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5]",
+        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 no-underline outline-none select-none transition-colors duration-100 data-highlighted:bg-muted/70 data-highlighted:text-foreground [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground data-highlighted:[&_svg]:text-foreground",
         className
       )}
       {...props}
@@ -81,7 +84,7 @@ function DropdownMenuSeparator({ className, ...props }: Menu.Separator.Props) {
   return (
     <Menu.Separator
       data-slot="dropdown-menu-separator"
-      className={cn("-mx-1 my-1 h-px bg-border", className)}
+      className={cn("-mx-1 my-1 h-px bg-divider", className)}
       {...props}
     />
   );

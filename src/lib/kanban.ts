@@ -398,14 +398,40 @@ export async function insertKanbanColumn(
 }
 
 export async function persistKanbanLayout(
-  board: KanbanBoardWithColumns
+  board: KanbanBoardWithColumns,
+  previousBoard?: KanbanBoardWithColumns
 ): Promise<void> {
   const userId = await requireUserId();
 
-  await reorderKanbanColumns(
-    board.id,
-    board.columns.map((c) => c.id)
-  );
+  const nextColumnIds = board.columns.map((column) => column.id);
+  if (previousBoard) {
+    await reorderKanbanColumns(
+      board.id,
+      nextColumnIds,
+      previousBoard.columns.map((column) => column.id)
+    );
+  } else {
+    await reorderKanbanColumns(board.id, nextColumnIds);
+  }
+
+  type CardLayout = {
+    column_id: string;
+    sort_order: number;
+    is_archived: boolean;
+  };
+
+  const previousCards = new Map<string, CardLayout>();
+  if (previousBoard) {
+    for (const column of previousBoard.columns) {
+      for (const card of column.cards) {
+        previousCards.set(card.id, {
+          column_id: card.column_id,
+          sort_order: card.sort_order,
+          is_archived: card.is_archived,
+        });
+      }
+    }
+  }
 
   const updates: {
     id: string;
@@ -415,15 +441,26 @@ export async function persistKanbanLayout(
   }[] = [];
 
   for (const column of board.columns) {
-    column.cards.forEach((card, index) => {
-      updates.push({
-        id: card.id,
-        column_id: column.id,
-        sort_order: index,
-        is_archived: card.is_archived,
-      });
-    });
+    for (const card of column.cards) {
+      const previous = previousCards.get(card.id);
+      if (
+        !previousBoard ||
+        !previous ||
+        previous.column_id !== column.id ||
+        previous.sort_order !== card.sort_order ||
+        previous.is_archived !== card.is_archived
+      ) {
+        updates.push({
+          id: card.id,
+          column_id: column.id,
+          sort_order: card.sort_order,
+          is_archived: card.is_archived,
+        });
+      }
+    }
   }
+
+  if (updates.length === 0) return;
 
   await Promise.all(
     updates.map((item) =>

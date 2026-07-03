@@ -70,9 +70,9 @@ export function ScheduleTimeline({
 
   if (items.length === 0 && !activeSession) {
     return (
-      <Card className="border-dashed border-neutral-200 bg-neutral-50/50 ring-neutral-200/80">
+      <Card className="border-dashed border-border/50 bg-muted/35 ring-border/40">
         <CardContent className="py-12 text-center">
-          <p className="text-sm font-medium text-neutral-900">
+          <p className="text-sm font-medium text-foreground">
             Nothing scheduled for today
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -103,7 +103,7 @@ export function ScheduleTimeline({
     <div className="space-y-4">
       {showSummary && <ScheduleSummaryCard summary={summary} />}
 
-      <Card className="bg-neutral-50 ring-neutral-200/80">
+      <Card>
         <CardContent className="py-6">
           <ul className="relative space-y-0">
             {timelineEntries.map((entry, entryIndex) => {
@@ -131,7 +131,7 @@ export function ScheduleTimeline({
                     <span
                       className={cn(
                         "absolute left-[27px] top-8 h-[calc(100%-1rem)] w-px",
-                        status === "past" ? "bg-neutral-300" : "bg-neutral-200"
+                        status === "past" ? "bg-muted-foreground/30" : "bg-muted"
                       )}
                       aria-hidden
                     />
@@ -192,7 +192,7 @@ function ScheduleTimelineRow({
             "text-sm font-semibold tabular-nums",
             isPast && !isCurrent && "text-muted-foreground",
             isCurrent && "text-blue-700",
-            !isPast && !isCurrent && "text-neutral-900"
+            !isPast && !isCurrent && "text-foreground"
           )}
         >
           {item.time ?? "—"}
@@ -206,13 +206,13 @@ function ScheduleTimelineRow({
 
       <div
         className={cn(
-          "relative z-10 mt-1.5 flex size-3 shrink-0 border-2 bg-white",
-          isFocus && "rounded-full border-violet-400 bg-violet-100",
-          isHabit && "rounded-sm border-orange-300",
-          !isFocus && !isHabit && "rounded-full border-neutral-300",
-          isCurrent && !isFocus && "border-blue-500 bg-blue-100",
-          isPast && item.completed && "border-green-500 bg-green-500",
-          isPast && !item.completed && !isFocus && "border-amber-300 bg-amber-50"
+          "relative z-10 mt-1.5 flex size-3 shrink-0 border-2 bg-card",
+          isFocus && "rounded-full border-violet-400 bg-violet-100 dark:border-violet-400/70 dark:bg-violet-500/25",
+          isHabit && "rounded-sm border-orange-300 dark:border-orange-400/70",
+          !isFocus && !isHabit && "rounded-full border-muted-foreground/35",
+          isCurrent && !isFocus && "border-blue-500 bg-blue-100 dark:border-sky-400 dark:bg-sky-500/25",
+          isPast && item.completed && "border-green-500 bg-green-500 dark:border-emerald-400 dark:bg-emerald-400",
+          isPast && !item.completed && !isFocus && "border-amber-300 bg-amber-50 dark:border-amber-400/60 dark:bg-amber-500/20"
         )}
       />
 
@@ -220,9 +220,9 @@ function ScheduleTimelineRow({
         className={cn(
           "min-w-0 flex-1 rounded-lg border px-4 py-3 transition-colors",
           isCurrent &&
-            "border-blue-300 bg-blue-50/80 shadow-sm ring-1 ring-blue-200/60",
-          isPast && "border-neutral-100 bg-neutral-50/80 opacity-80",
-          !isCurrent && !isPast && "border-neutral-100 bg-white",
+            "border-blue-300 bg-blue-50/80 shadow-sm ring-1 ring-blue-200/60 dark:border-sky-400/40 dark:bg-sky-500/10 dark:ring-sky-400/25",
+          isPast && "border-border/40 bg-muted/30 opacity-80",
+          !isCurrent && !isPast && "border-border/40 bg-card",
           isFocus && !isCurrent && "border-violet-200 bg-violet-50/50"
         )}
       >
@@ -237,10 +237,10 @@ function ScheduleTimelineRow({
             <div className="flex flex-wrap items-center gap-2">
               <p
                 className={cn(
-                  "font-medium text-neutral-900",
+                  "font-medium text-foreground",
                   isPast && item.completed && "text-muted-foreground line-through",
                   isPast && isHabit && item.completed && "line-through",
-                  isPast && !item.completed && !isFocus && "text-neutral-700"
+                  isPast && !item.completed && !isFocus && "text-foreground/85"
                 )}
               >
                 {item.title}
@@ -308,10 +308,10 @@ function ScheduleTimelineRow({
                   item.completed
                     ? isHabit
                       ? "border-orange-600 bg-orange-600 text-white"
-                      : "border-neutral-800 bg-neutral-800 text-white"
+                      : "border-primary bg-primary text-primary-foreground"
                     : isHabit
                       ? "border-orange-300 bg-transparent hover:border-orange-500"
-                      : "border-neutral-300 bg-transparent hover:border-neutral-500",
+                      : "border-muted-foreground/35 bg-transparent hover:border-muted-foreground/60",
                   disabled && "opacity-50"
                 )}
                 aria-label={
@@ -324,7 +324,7 @@ function ScheduleTimelineRow({
               </button>
             )}
             {!interactive && item.completed && !isFocus && (
-              <Check className="size-4 text-neutral-800" strokeWidth={2.5} />
+              <Check className="size-4 text-foreground/90" strokeWidth={2.5} />
             )}
             {isFocus && (
               <Button

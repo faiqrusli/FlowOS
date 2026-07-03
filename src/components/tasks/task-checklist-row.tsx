@@ -38,8 +38,8 @@ export function TaskChecklistRow({
           "flex shrink-0 items-center justify-center rounded-full border transition-colors",
           compact ? "size-4" : "size-5",
           task.completed
-            ? "border-neutral-800 bg-neutral-800 text-white"
-            : "border-neutral-400 bg-transparent hover:border-neutral-600",
+            ? "border-primary bg-primary text-primary-foreground"
+            : "border-muted-foreground/45 bg-transparent hover:border-muted-foreground/70",
           disabled && "opacity-50"
         )}
         aria-label={`Mark "${task.title}" as ${task.completed ? "incomplete" : "complete"}`}
@@ -51,7 +51,7 @@ export function TaskChecklistRow({
       <p
         className={cn(
           "min-w-0 flex-1 truncate",
-          compact ? type.contentPrimary : "font-medium text-neutral-900",
+          compact ? type.contentPrimary : "font-medium text-foreground",
           task.completed && "text-muted-foreground line-through"
         )}
       >

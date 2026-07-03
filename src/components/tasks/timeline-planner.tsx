@@ -3,13 +3,16 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type DragEvent,
   type MouseEvent,
   type ReactNode,
+  type RefObject,
 } from "react";
+import { createPortal } from "react-dom";
 import {
   CalendarClock,
   CalendarDays,
@@ -20,14 +23,28 @@ import {
   ClipboardList,
   Clock,
   Copy,
+  Eye,
+  EyeOff,
   GripVertical,
   PanelRightClose,
+  Play,
   Trash2,
   X,
   type LucideIcon,
 } from "lucide-react";
-import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
+import { CalendarPanel, CALENDAR_PANEL_WIDTH_CLASS } from "@/components/ui/calendar-panel";
 import { QuickScheduleResizeHandle } from "@/components/tasks/quick-schedule-resize-handle";
+import { WorkplaceTimelineTaskMenu } from "@/components/workplace/workplace-timeline-task-menu";
+import {
+  getEffectiveHabitScheduledTime,
+  useHabitDailyScheduleStore,
+} from "@/lib/habit-daily-schedule-store";
+import {
+  readModuleVisibility,
+  writeModuleVisibility,
+  type WorkplaceModuleVisibility,
+} from "@/lib/workplace-module-visibility";
+import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import { Button } from "@/components/ui/button";
@@ -46,6 +63,7 @@ import {
   parseTimeToMinutes,
   shiftDateKey,
 } from "@/lib/date-utils";
+import { setDragImageFromElement } from "@/lib/list-drag-utils";
 import {
   panelToggleHoverIconClass,
   panelTogglePrimaryIconClass,
@@ -53,10 +71,10 @@ import {
 } from "@/lib/panel-toggle-styles";
 import {
   clampQuickScheduleTaskListWidth,
+  getQuickScheduleTaskListEffectiveMax,
   getQuickScheduleTaskListWidth,
   QUICK_SCHEDULE_TASK_LIST_WIDTH_DEFAULT,
   QUICK_SCHEDULE_TASK_LIST_WIDTH_MIN,
-  getQuickScheduleTaskListEffectiveMax,
   setQuickScheduleTaskListWidth,
 } from "@/lib/quick-schedule-task-list-width";
 import { formatTodayColumnTitle, isInboxGroup, isTodayGroup, taskBelongsInLaterView } from "@/lib/task-groups";
@@ -84,12 +102,20 @@ import {
   minutesToTopPx,
   resolveDropStartMinutes,
   TIMELINE_ZOOM_OPTIONS,
+  WORKPLACE_TIMELINE_ZOOM_OPTIONS,
+  DEFAULT_TIMELINE_ZOOM,
   topPxToMinutes,
   type TimelineBlock,
   type TimelineEntryKind,
   type TimelineZoom,
 } from "@/lib/timeline-layout";
 import { formatDurationLabel } from "@/lib/schedule-layout";
+import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
+import {
+  timelineHabitBlockClassNames,
+  timelineHabitChipClassNames,
+} from "@/lib/timeline-habit-appearance";
+import { TimelineHabitLabel } from "@/components/tasks/timeline-habit-label";
 import { QUICK_SCHEDULE_HELP } from "@/lib/schedule-help";
 import {
   timelineGridGutterClass,
@@ -99,20 +125,35 @@ import {
   getActiveTaskDragId,
   markTimelineDropConsumed,
   setActiveTaskDragId,
+  setActiveTimelineDrag,
   TIMELINE_DRAG_ID_MIME,
   TIMELINE_DRAG_KIND_MIME,
   TIMELINE_SCHEDULER_ATTR,
+  QUICK_SCHEDULE_INBOX_ATTR,
+  QUICK_SCHEDULE_INBOX_TAB_ATTR,
+  QUICK_SCHEDULE_TIMELINE_BODY_ATTR,
+  isPointerOverQuickScheduleInbox,
+  isPointerOverQuickScheduleTimelineBody,
+  resolveQuickScheduleInboxDropZoneAtPoint,
+  resolveQuickScheduleInboxDropZoneFromTarget,
+  type QuickScheduleInboxDropZone,
 } from "@/lib/timeline-drag";
+import {
+  closeTaskDetailMenus,
+  isEventTargetInside,
+  registerTimelineContextMenuCloser,
+} from "@/lib/task-detail-menu-coordinator";
 import { cn } from "@/lib/utils";
 import type { Habit } from "@/types/habit";
 import {
   normalizePlanningState,
   PLANNING_STATE_CONFIG,
   PLANNING_STATES,
+  PLAN_SECTION_LABEL,
 } from "@/lib/task-planning";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
-export type TimelinePlannerVariant = "drawer" | "fullscreen";
+export type TimelinePlannerVariant = "drawer" | "fullscreen" | "workplace";
 
 export type TimelinePlannerFocusRequest = {
   taskId: string;
@@ -146,15 +187,17 @@ export type TimelinePlannerProps = {
     taskId: string,
     planningState: PlanningState
   ) => Promise<void>;
+  onStartFocusTask?: (taskId: string) => void;
+  onStartFocusHabit?: (habitId: string) => void;
   habits?: Habit[];
   selectedHabitId?: string | null;
   onSelectHabit?: (habitId: string | null) => void;
   onScheduleHabit?: (
     habitId: string,
-    updates: { scheduled_time: string | null }
+    updates: { scheduled_time: string | null },
+    scheduleDate: string
   ) => Promise<void>;
   onToggleHabitComplete?: (habit: Habit) => Promise<void>;
-  onDeleteHabit?: (habitId: string) => Promise<void>;
 };
 
 type DragSource = "pool" | "unscheduled" | "timeline";
@@ -163,11 +206,15 @@ type DragItem = { kind: TimelineEntryKind; id: string };
 const TIMELINE_EDGE_SCROLL_ZONE = 56;
 const TIMELINE_EDGE_SCROLL_SPEED = 14;
 const TIMELINE_TASK_ELEVATION =
-  "shadow-[0_1px_2px_0_rgba(15,23,42,0.06)] dark:shadow-[0_1px_2px_0_rgba(0,0,0,0.2)]";
+  "shadow-sm dark:shadow-[0_1px_3px_0_oklch(0.05_0.02_268/30%),inset_0_1px_0_0_oklch(1_0_0/6%)]";
 const TIMELINE_TASK_SELECTED =
-  "border-sky-400/38 bg-sky-50/55 dark:bg-sky-500/10";
+  "border-selected-border bg-selected dark:shadow-[0_0_14px_-4px_var(--primary-glow),inset_0_1px_0_0_oklch(1_0_0/8%)]";
 const TIMELINE_DROP_PREVIEW =
-  "rounded-lg border border-dashed border-sky-400/45 bg-sky-500/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35)]";
+  "rounded-lg border border-dashed border-primary/45 bg-primary/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35)] dark:border-primary/50 dark:bg-primary/12 dark:shadow-[inset_0_1px_0_0_oklch(1_0_0/6%)]";
+const QUICK_SCHEDULE_INBOX_DROP_HIGHLIGHT =
+  "ring-2 ring-sky-400/25 shadow-md shadow-sky-500/10";
+const QUICK_SCHEDULE_INBOX_TAB_DROP_HIGHLIGHT =
+  "bg-background text-foreground shadow-sm ring-1 ring-sky-400/35";
 
 function QuickScheduleInfoMenu() {
   return (
@@ -218,17 +265,27 @@ export function TimelinePlanner({
   onDeleteTask,
   onDuplicateTask,
   onSetPlanningState,
+  onStartFocusTask,
+  onStartFocusHabit,
   habits = [],
   selectedHabitId = null,
   onSelectHabit,
   onScheduleHabit,
   onToggleHabitComplete,
-  onDeleteHabit,
 }: TimelinePlannerProps) {
   const isFullscreen = variant === "fullscreen";
   const isDrawer = variant === "drawer";
+  const isWorkplace = variant === "workplace";
+  const habitScheduleRevision = useHabitDailyScheduleStore();
+  const [timelineVisibility, setTimelineVisibility] =
+    useState<WorkplaceModuleVisibility>("always");
+  const [timelineHovered, setTimelineHovered] = useState(false);
+  const useCompactChrome = isDrawer || isWorkplace;
+  const useDrawerTimeline = isDrawer || isWorkplace;
   const showTaskPool = isFullscreen;
-  const showHabits = showTaskPool && habits.length > 0 && Boolean(onScheduleHabit);
+  const showHabitTimeline =
+    habits.length > 0 && Boolean(onScheduleHabit);
+  const showHabitPool = showHabitTimeline && (isFullscreen || isDrawer);
   const scrollRef = useRef<HTMLDivElement>(null);
   const timelineBodyRef = useRef<HTMLDivElement>(null);
   const dropPreviewMinutesRef = useRef<number | null>(null);
@@ -236,11 +293,11 @@ export function TimelinePlanner({
   const pointerYRef = useRef(0);
   const timelineAutoScrollRafRef = useRef<number | null>(null);
   const scheduledSlotsRef = useRef<ReturnType<typeof buildScheduledSlots>>([]);
-  const zoomRef = useRef<TimelineZoom>("30");
+  const zoomRef = useRef<TimelineZoom>(DEFAULT_TIMELINE_ZOOM);
   const taskByIdRef = useRef<Map<string, Task>>(new Map());
   const unscheduledSectionRef = useRef<HTMLElement>(null);
   const focusHandledRef = useRef<string | null>(null);
-  const [zoom, setZoom] = useState<TimelineZoom>("30");
+  const [zoom, setZoom] = useState<TimelineZoom>(DEFAULT_TIMELINE_ZOOM);
   const [nowTick, setNowTick] = useState(0);
   const [poolCollapsed, setPoolCollapsed] = useState<Set<string>>(new Set());
   const [habitsPoolCollapsed, setHabitsPoolCollapsed] = useState(false);
@@ -249,15 +306,53 @@ export function TimelinePlanner({
   const [dropPreviewMinutes, setDropPreviewMinutes] = useState<number | null>(
     null
   );
+  const contextMenuRef = useRef<HTMLDivElement>(null);
   const [contextMenu, setContextMenu] = useState<
-    | { kind: "task"; task: Task; x: number; y: number }
-    | { kind: "habit"; habit: Habit; x: number; y: number }
+    | { kind: "task"; task: Task; x: number; y: number; anchorRect?: DOMRect }
+    | { kind: "habit"; habit: Habit; x: number; y: number; anchorRect?: DOMRect }
     | null
   >(null);
+  const openTimelineContextMenu = useCallback(
+    (
+      menu:
+        | { kind: "task"; task: Task; x: number; y: number; anchorRect?: DOMRect }
+        | { kind: "habit"; habit: Habit; x: number; y: number; anchorRect?: DOMRect }
+    ) => {
+      closeTaskDetailMenus();
+      setContextMenu(menu);
+    },
+    []
+  );
   const [inboxTab, setInboxTab] = useState<InboxTab>("unscheduled");
+  const [inboxDropTarget, setInboxDropTarget] =
+    useState<QuickScheduleInboxDropZone | null>(null);
+  const inboxTabRef = useRef<InboxTab>("unscheduled");
+  const inboxDropTargetRef = useRef<QuickScheduleInboxDropZone | null>(null);
+  const viewDateRef = useRef(viewDate);
+  const onScheduleTaskRef = useRef(onScheduleTask);
+  const onSetPlanningStateRef = useRef(onSetPlanningState);
+  const onScheduleHabitRef = useRef(onScheduleHabit);
   const [taskListWidth, setTaskListWidth] = useState(
     QUICK_SCHEDULE_TASK_LIST_WIDTH_DEFAULT
   );
+  useEffect(() => {
+    inboxTabRef.current = inboxTab;
+  }, [inboxTab]);
+
+  useEffect(() => {
+    inboxDropTargetRef.current = inboxDropTarget;
+  }, [inboxDropTarget]);
+
+  useEffect(() => {
+    viewDateRef.current = viewDate;
+  }, [viewDate]);
+
+  useEffect(() => {
+    onScheduleTaskRef.current = onScheduleTask;
+    onSetPlanningStateRef.current = onSetPlanningState;
+    onScheduleHabitRef.current = onScheduleHabit;
+  }, [onScheduleTask, onSetPlanningState, onScheduleHabit]);
+
   const taskListMaxWidth = getQuickScheduleTaskListEffectiveMax();
   const compactTaskListTabs = taskListWidth < 240;
 
@@ -283,17 +378,34 @@ export function TimelinePlanner({
   const hourHeightPx = getHourHeightPx(zoom);
   const timelineHeightPx = getTimelineHeightPx(zoom);
   const hourLabels = useMemo(() => buildTimelineHourLabels(), []);
-  const hourGridBorderClass = isDrawer ? "border-border/38" : "border-border/22";
+  const hourGridBorderClass = useDrawerTimeline
+    ? "border-border/70"
+    : "border-border/45";
 
   const dayTasks = useMemo(
     () => collectTasksForViewDate(groups, viewDate),
     [groups, viewDate]
   );
 
-  const dayHabits = useMemo(
-    () => (showHabits ? filterHabitsForViewDate(habits, viewDate) : []),
-    [showHabits, habits, viewDate]
-  );
+  const dayHabits = useMemo(() => {
+    if (!showHabitTimeline) return [];
+    return filterHabitsForViewDate(habits, viewDate).map((habit) => ({
+      ...habit,
+      scheduled_time: getEffectiveHabitScheduledTime(
+        habit.id,
+        habit.scheduled_time,
+        viewDate
+      ),
+    }));
+  }, [showHabitTimeline, habits, viewDate, habitScheduleRevision]);
+
+  useEffect(() => {
+    if (!isWorkplace) return;
+    setTimelineVisibility(readModuleVisibility("timeline"));
+  }, [isWorkplace]);
+
+  const timelineRevealActive =
+    !isWorkplace || timelineVisibility === "always" || timelineHovered;
 
   const allBoardTasks = useMemo(
     () => collectAllBoardTasks(groups),
@@ -463,13 +575,33 @@ export function TimelinePlanner({
   }, [isViewingToday]);
 
   useEffect(() => {
+    return registerTimelineContextMenuCloser(() => setContextMenu(null));
+  }, []);
+
+  useEffect(() => {
     if (!contextMenu) return;
-    const close = () => setContextMenu(null);
-    window.addEventListener("mousedown", close);
-    window.addEventListener("scroll", close, true);
+
+    function isContextMenuTarget(target: EventTarget | null): boolean {
+      return isEventTargetInside(target, [
+        "[data-timeline-context-menu]",
+        "[data-timeline-context-submenu]",
+      ]);
+    }
+
+    function close(event: globalThis.MouseEvent) {
+      if (isContextMenuTarget(event.target)) return;
+      setContextMenu(null);
+    }
+
+    function closeOnScroll() {
+      setContextMenu(null);
+    }
+
+    document.addEventListener("click", close);
+    window.addEventListener("scroll", closeOnScroll, true);
     return () => {
-      window.removeEventListener("mousedown", close);
-      window.removeEventListener("scroll", close, true);
+      document.removeEventListener("click", close);
+      window.removeEventListener("scroll", closeOnScroll, true);
     };
   }, [contextMenu]);
 
@@ -602,7 +734,7 @@ export function TimelinePlanner({
     }
 
     return resolveDropStartMinutes(
-      rawMinutes,
+      rawMinutes - duration / 2,
       scheduledSlotsRef.current,
       dragItem?.id ?? null,
       duration
@@ -614,6 +746,7 @@ export function TimelinePlanner({
 
     const dragItem = readActiveDragItem(event);
     const minutes = resolveDropMinutesAt(clientY, dragItem);
+    if (dropPreviewMinutesRef.current === minutes) return;
     dropPreviewMinutesRef.current = minutes;
     setDropPreviewMinutes(minutes);
   }
@@ -661,39 +794,64 @@ export function TimelinePlanner({
 
   useEffect(() => {
     const onDocumentDragOver = (event: globalThis.DragEvent) => {
-      if (!isTimelineDragActive(event)) {
+      const reactDragEvent = event as unknown as DragEvent;
+      if (!isTimelineDragActive(reactDragEvent)) {
         stopTimelineAutoScroll();
+        setInboxDropTarget(null);
         return;
       }
 
       pointerYRef.current = event.clientY;
 
-      const container = scrollRef.current;
-      if (!container) return;
+      if (isPointerOverQuickScheduleTimelineBody(event.clientX, event.clientY)) {
+        setInboxDropTarget(null);
+        const container = scrollRef.current;
+        if (!container) return;
 
-      const rect = container.getBoundingClientRect();
-      const nearTimeline =
-        event.clientX >= rect.left &&
-        event.clientX <= rect.right &&
-        event.clientY >= rect.top - TIMELINE_EDGE_SCROLL_ZONE &&
-        event.clientY <= rect.bottom + TIMELINE_EDGE_SCROLL_ZONE;
+        const rect = container.getBoundingClientRect();
+        const nearTimeline =
+          event.clientX >= rect.left &&
+          event.clientX <= rect.right &&
+          event.clientY >= rect.top - TIMELINE_EDGE_SCROLL_ZONE &&
+          event.clientY <= rect.bottom + TIMELINE_EDGE_SCROLL_ZONE;
 
-      if (!nearTimeline) {
-        stopTimelineAutoScroll();
+        if (!nearTimeline) {
+          stopTimelineAutoScroll();
+          return;
+        }
+
+        startTimelineAutoScroll();
+
+        if (event.clientY >= rect.top && event.clientY <= rect.bottom) {
+          event.preventDefault();
+          if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = "move";
+          }
+          updateTimelineDropPreview(event.clientY, reactDragEvent);
+        }
         return;
       }
 
-      startTimelineAutoScroll();
+      stopTimelineAutoScroll();
+      setDropPreviewMinutes(null);
+      dropPreviewMinutesRef.current = null;
 
-      if (
-        event.clientY >= rect.top &&
-        event.clientY <= rect.bottom
-      ) {
+      const fallback =
+        inboxTabRef.current === "later" ? "later" : "unscheduled";
+      const inboxZone = resolveQuickScheduleInboxDropZoneFromTarget(
+        event.target,
+        fallback
+      );
+
+      if (inboxZone && isPointerOverQuickScheduleInbox(event.clientX, event.clientY)) {
         event.preventDefault();
         if (event.dataTransfer) {
           event.dataTransfer.dropEffect = "move";
         }
-        updateTimelineDropPreview(event.clientY, event);
+        setInboxDropTarget(inboxZone);
+        setInboxTab(inboxZone);
+      } else {
+        setInboxDropTarget(null);
       }
     };
 
@@ -717,6 +875,7 @@ export function TimelinePlanner({
     const item = { kind, id };
     draggingItemRef.current = item;
     setDraggingItem(item);
+    setActiveTimelineDrag({ kind, id });
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.setData(TIMELINE_DRAG_KIND_MIME, kind);
     event.dataTransfer.setData(TIMELINE_DRAG_ID_MIME, id);
@@ -739,6 +898,7 @@ export function TimelinePlanner({
     setDropPreviewMinutes(null);
     dropPreviewMinutesRef.current = null;
     setActiveTaskDragId(null);
+    setActiveTimelineDrag(null);
     stopTimelineAutoScroll();
   }
 
@@ -784,14 +944,69 @@ export function TimelinePlanner({
   async function scheduleAtMinutes(dragItem: DragItem, minutes: number) {
     const time = `${minutesToTimeString(minutes)}:00`;
     if (dragItem.kind === "habit") {
-      await onScheduleHabit?.(dragItem.id, { scheduled_time: time });
+      await onScheduleHabitRef.current?.(dragItem.id, { scheduled_time: time }, viewDateRef.current);
       return;
     }
-    await onScheduleTask(dragItem.id, {
-      scheduled_date: viewDate,
+    await onScheduleTaskRef.current(dragItem.id, {
+      scheduled_date: viewDateRef.current,
       scheduled_time: time,
     });
   }
+
+  async function applyInboxDrop(
+    dragItem: DragItem,
+    zone: QuickScheduleInboxDropZone
+  ) {
+    if (dragItem.kind === "habit") {
+      await onScheduleHabitRef.current?.(dragItem.id, { scheduled_time: null }, viewDateRef.current);
+      setInboxTab("unscheduled");
+      return;
+    }
+
+    if (zone === "later" && onSetPlanningStateRef.current) {
+      await onSetPlanningStateRef.current(dragItem.id, "later");
+      return;
+    }
+
+    await onScheduleTaskRef.current(dragItem.id, {
+      scheduled_date: viewDateRef.current,
+      scheduled_time: null,
+    });
+
+    const task = taskByIdRef.current.get(dragItem.id);
+    if (task && taskBelongsInLaterView(task) && onSetPlanningStateRef.current) {
+      await onSetPlanningStateRef.current(dragItem.id, "none");
+    }
+  }
+
+  const clearInboxDropHighlight = useCallback(() => {
+    setInboxDropTarget(null);
+  }, []);
+
+  const syncInboxDropHighlight = useCallback(
+    (
+      clientX: number,
+      clientY: number,
+      target?: EventTarget | null
+    ): QuickScheduleInboxDropZone | null => {
+      const fallback =
+        inboxTabRef.current === "later" ? "later" : "unscheduled";
+      const zone =
+        target !== undefined
+          ? resolveQuickScheduleInboxDropZoneFromTarget(target, fallback)
+          : resolveQuickScheduleInboxDropZoneAtPoint(clientX, clientY, fallback);
+
+      if (!zone) {
+        setInboxDropTarget(null);
+        return null;
+      }
+
+      setInboxDropTarget(zone);
+      setInboxTab(zone);
+      return zone;
+    },
+    []
+  );
 
   async function handleTimelineDrop(event: DragEvent) {
     event.preventDefault();
@@ -805,28 +1020,147 @@ export function TimelinePlanner({
     if (minutes === null) return;
 
     markTimelineDropConsumed();
+    clearInboxDropHighlight();
     await scheduleAtMinutes(dragItem, minutes);
     endDrag();
   }
 
-  async function handleUnscheduleDrop(event: DragEvent) {
+  async function handleInboxDrop(
+    event: DragEvent,
+    zone?: QuickScheduleInboxDropZone
+  ) {
     event.preventDefault();
     const dragItem = readDragItem(event);
     if (!dragItem) return;
 
-    if (dragItem.kind === "habit") {
-      await onScheduleHabit?.(dragItem.id, { scheduled_time: null });
-    } else if (inboxTab === "later" && onSetPlanningState) {
-      await onSetPlanningState(dragItem.id, "later");
-    } else {
-      await onScheduleTask(dragItem.id, {
-        scheduled_date: viewDate,
-        scheduled_time: null,
-      });
-    }
+    const dropZone =
+      zone ??
+      inboxDropTargetRef.current ??
+      (inboxTabRef.current === "later" ? "later" : "unscheduled");
+
+    await applyInboxDrop(dragItem, dropZone);
     markTimelineDropConsumed();
+    clearInboxDropHighlight();
     endDrag();
   }
+
+  async function handleUnscheduleDrop(event: DragEvent) {
+    await handleInboxDrop(event);
+  }
+
+  function handleTaskPoolDragOver(event: DragEvent) {
+    if (!isTimelineDragActive(event)) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "none";
+  }
+
+  function handleInboxDragOver(event: DragEvent) {
+    if (!isTimelineDragActive(event)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = "move";
+    stopTimelineAutoScroll();
+    setDropPreviewMinutes(null);
+    dropPreviewMinutesRef.current = null;
+    syncInboxDropHighlight(event.clientX, event.clientY, event.target);
+  }
+
+  function handleInboxDragLeave(event: DragEvent) {
+    const related = event.relatedTarget;
+    if (
+      related instanceof Node &&
+      unscheduledSectionRef.current?.contains(related)
+    ) {
+      return;
+    }
+    clearInboxDropHighlight();
+  }
+
+  useEffect(() => {
+    const syncBoardPointerDrag = (clientX: number, clientY: number) => {
+      const activeTaskId = getActiveTaskDragId();
+      if (!activeTaskId || draggingItemRef.current) return;
+
+      pointerYRef.current = clientY;
+
+      if (isPointerOverQuickScheduleTimelineBody(clientX, clientY)) {
+        clearInboxDropHighlight();
+        updateTimelineDropPreview(clientY);
+        startTimelineAutoScroll();
+        return;
+      }
+
+      stopTimelineAutoScroll();
+      setDropPreviewMinutes(null);
+      dropPreviewMinutesRef.current = null;
+
+      const fallback =
+        inboxTabRef.current === "later" ? "later" : "unscheduled";
+      const inboxZone = resolveQuickScheduleInboxDropZoneAtPoint(
+        clientX,
+        clientY,
+        fallback
+      );
+
+      if (inboxZone) {
+        setInboxDropTarget(inboxZone);
+        setInboxTab(inboxZone);
+        return;
+      }
+
+      clearInboxDropHighlight();
+    };
+
+    const commitBoardPointerDrop = async (clientX: number, clientY: number) => {
+      const activeTaskId = getActiveTaskDragId();
+      if (!activeTaskId || draggingItemRef.current) return false;
+
+      const dragItem = { kind: "task" as const, id: activeTaskId };
+
+      if (isPointerOverQuickScheduleTimelineBody(clientX, clientY)) {
+        const minutes =
+          dropPreviewMinutesRef.current ??
+          resolveDropMinutesAt(clientY, dragItem);
+        if (minutes === null) return false;
+
+        markTimelineDropConsumed();
+        clearInboxDropHighlight();
+        await scheduleAtMinutes(dragItem, minutes);
+        return true;
+      }
+
+      const fallback =
+        inboxTabRef.current === "later" ? "later" : "unscheduled";
+      const inboxZone =
+        inboxDropTargetRef.current ??
+        resolveQuickScheduleInboxDropZoneAtPoint(clientX, clientY, fallback);
+
+      if (!inboxZone) return false;
+
+      markTimelineDropConsumed();
+      await applyInboxDrop(dragItem, inboxZone);
+      clearInboxDropHighlight();
+      return true;
+    };
+
+    const onPointerMove = (event: globalThis.PointerEvent) => {
+      syncBoardPointerDrag(event.clientX, event.clientY);
+    };
+
+    const onPointerEnd = (event: globalThis.PointerEvent) => {
+      void commitBoardPointerDrop(event.clientX, event.clientY);
+    };
+
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", onPointerEnd, true);
+    document.addEventListener("pointercancel", onPointerEnd, true);
+
+    return () => {
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerEnd, true);
+      document.removeEventListener("pointercancel", onPointerEnd, true);
+    };
+  }, [clearInboxDropHighlight]);
 
   function handleTimelineDragOver(event: DragEvent) {
     if (!isTimelineDragActive(event)) return;
@@ -834,6 +1168,7 @@ export function TimelinePlanner({
     event.stopPropagation();
     event.dataTransfer.dropEffect = "move";
     pointerYRef.current = event.clientY;
+    clearInboxDropHighlight();
     startTimelineAutoScroll();
     updateTimelineDropPreview(event.clientY, event);
   }
@@ -872,28 +1207,34 @@ export function TimelinePlanner({
     []
   );
 
+  const zoomOptions = isFullscreen
+    ? TIMELINE_ZOOM_OPTIONS
+    : WORKPLACE_TIMELINE_ZOOM_OPTIONS;
+
   const zoomControl = (
     <div
       className={cn(
         "flex shrink-0 rounded-md border p-0.5",
-        isDrawer
+        useDrawerTimeline
           ? "h-7 items-center rounded-full border-border/50 bg-muted/15 p-0.5"
           : "border-border/50"
       )}
     >
-      {TIMELINE_ZOOM_OPTIONS.map((option) => (
+      {zoomOptions.map((option) => (
         <button
           key={option.value}
           type="button"
           onClick={() => setZoom(option.value)}
           className={cn(
             "rounded font-medium transition-colors",
-            isDrawer
+            useDrawerTimeline
               ? "px-2 py-0.5 text-xs"
-              : "rounded-md px-2 py-0.5 text-[10px]",
+              : isWorkplace
+                ? "rounded-md px-2 py-0.5 text-[12px]"
+                : "rounded-md px-2 py-0.5 text-[11px]",
             zoom === option.value
-              ? isDrawer
-                ? "bg-background text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
+              ? useDrawerTimeline
+                ? "bg-background text-foreground shadow-sm"
                 : "bg-foreground text-background"
               : "text-muted-foreground hover:text-foreground"
           )}
@@ -936,7 +1277,7 @@ export function TimelinePlanner({
             )}
           />
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" align="center" className="w-40 p-1">
+        <DropdownMenuContent side="bottom" align="center" className={cn(CALENDAR_PANEL_WIDTH_CLASS, "p-0")}>
           {drawerQuickDates.map((item) => (
             <DropdownMenuItem
               key={item.key}
@@ -945,13 +1286,22 @@ export function TimelinePlanner({
                 setDayPickerOpen(false);
               }}
               className={cn(
-                "text-xs",
+                "mx-2 mt-1 text-xs first:mt-0",
                 viewDate === item.key && "bg-muted font-medium"
               )}
             >
               {item.label}
             </DropdownMenuItem>
           ))}
+          <div className="mt-1 border-t border-border/50">
+            <CalendarPanel
+              value={viewDate}
+              onChange={(dateKey) => {
+                onViewDateChange(dateKey);
+                setDayPickerOpen(false);
+              }}
+            />
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
       <Button
@@ -974,7 +1324,11 @@ export function TimelinePlanner({
       size="sm"
       className={cn(
         "shrink-0 rounded-md border-border/50 bg-background font-normal text-muted-foreground/85 shadow-sm hover:border-sky-400/35 hover:bg-background hover:text-foreground",
-        isDrawer ? "h-5 px-1.5 text-[10px]" : "h-6 px-2 text-[11px]"
+        useDrawerTimeline
+          ? "h-5 px-1.5 text-[10px]"
+          : isWorkplace
+            ? "h-6 px-2 text-[13px]"
+            : "h-6 px-2 text-[12px]"
       )}
       onClick={handleNowClick}
     >
@@ -986,8 +1340,15 @@ export function TimelinePlanner({
     <div
       ref={scrollRef}
       className={cn(
-        "relative min-h-0 flex-1 overflow-y-auto bg-background",
-        !isDrawer && "border-t border-border/40"
+        "relative min-h-0 flex-1",
+        isWorkplace
+          ? "workplace-timeline-scroll overflow-y-scroll bg-background pr-1.5 pt-8 transition-opacity duration-200"
+          : "overflow-y-auto bg-background",
+        isWorkplace &&
+          (timelineRevealActive
+            ? "opacity-100"
+            : "opacity-0 pointer-events-none"),
+        !useDrawerTimeline && !isWorkplace && !isFullscreen && "border-t border-border/40"
       )}
       onDragOver={handleTimelineDragOver}
       onDrop={(event) => void handleTimelineDrop(event)}
@@ -995,20 +1356,23 @@ export function TimelinePlanner({
     >
       <div
         ref={timelineBodyRef}
+        {...{ [QUICK_SCHEDULE_TIMELINE_BODY_ATTR]: "" }}
         className="relative"
         style={{ height: timelineHeightPx }}
       >
         <div
           className={cn(
             "absolute inset-0 flex",
-            timelineGridGutterClass(isDrawer)
+            timelineGridGutterClass(useDrawerTimeline)
           )}
         >
           <div
             className={cn(
               "relative shrink-0 border-r",
               TIMELINE_TIME_COLUMN_CLASS,
-              isDrawer ? "border-border/30 bg-muted/10" : "border-border/20"
+              useDrawerTimeline
+                ? "border-border/30 bg-muted/10"
+                : "border-border/20"
             )}
           >
             {hourLabels.map(({ hour, label }) => (
@@ -1061,7 +1425,7 @@ export function TimelinePlanner({
               >
                 {dropPreviewLayout.startMinutes % 60 === 0 ? (
                   <div
-                    className="absolute right-0 left-0 top-0 z-10 h-0.5 bg-sky-500/85"
+                    className="absolute right-0 left-0 top-0 z-10 h-0.5 bg-ring/85"
                     aria-hidden
                   />
                 ) : null}
@@ -1071,11 +1435,12 @@ export function TimelinePlanner({
 
             {nowLineTopPx !== null && (
               <div
-                className="pointer-events-none absolute inset-x-1 z-30 flex items-center gap-2"
+                className="pointer-events-none absolute inset-x-1 z-30 flex items-center gap-1.5"
                 style={{ top: nowLineTopPx }}
               >
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-red-400/85 to-transparent" />
-                <span className="shrink-0 rounded-full bg-red-500/90 px-2 py-0.5 text-[10px] font-medium tabular-nums text-white shadow-sm">
+                <span className="size-[5px] shrink-0 rounded-full bg-red-500 shadow-[0_0_0_2.5px_oklch(0.665_0.165_25/22%)]" />
+                <div className="h-px flex-1 bg-gradient-to-r from-red-500/75 to-transparent" />
+                <span className="shrink-0 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-medium tabular-nums text-white shadow-sm">
                   {formatNowTimeInAppTimezone()}
                 </span>
               </div>
@@ -1087,7 +1452,7 @@ export function TimelinePlanner({
                 block={block}
                 groups={groups}
                 viewDate={viewDate}
-                drawerMode={isDrawer}
+                drawerMode={useDrawerTimeline}
                 selected={
                   block.kind === "task"
                     ? selectedTaskId === block.id
@@ -1120,19 +1485,24 @@ export function TimelinePlanner({
                 }}
                 onContextMenu={(event) => {
                   event.preventDefault();
+                  const anchorRect = (
+                    event.currentTarget as HTMLElement
+                  ).getBoundingClientRect();
                   if (block.kind === "task" && block.task) {
-                    setContextMenu({
+                    openTimelineContextMenu({
                       kind: "task",
                       task: block.task,
                       x: event.clientX,
                       y: event.clientY,
+                      anchorRect: isWorkplace ? anchorRect : undefined,
                     });
                   } else if (block.kind === "habit" && block.habit) {
-                    setContextMenu({
+                    openTimelineContextMenu({
                       kind: "habit",
                       habit: block.habit,
                       x: event.clientX,
                       y: event.clientY,
+                      anchorRect: isWorkplace ? anchorRect : undefined,
                     });
                   }
                 }}
@@ -1158,9 +1528,14 @@ export function TimelinePlanner({
         "flex h-full min-h-0 flex-col bg-card",
         isFullscreen
           ? "w-full"
-          : "h-full w-full border-l border-border/50 bg-[#fafbfc] shadow-sm animate-in slide-in-from-right-4 duration-200 dark:bg-card"
+          : isWorkplace
+            ? "group/timeline relative h-full w-full overflow-hidden border-l border-border/45 bg-timeline shadow-[inset_1px_0_0_0_oklch(0.91_0.012_265/6%)]"
+            : "h-full w-full border-l border-border/50 bg-timeline shadow-sm animate-in slide-in-from-right-4 duration-200"
       )}
+      onMouseEnter={isWorkplace ? () => setTimelineHovered(true) : undefined}
+      onMouseLeave={isWorkplace ? () => setTimelineHovered(false) : undefined}
     >
+      {!isWorkplace ? (
       <header
         className={cn(
           "relative shrink-0 border-b",
@@ -1170,7 +1545,7 @@ export function TimelinePlanner({
         )}
       >
         {isDrawer ? (
-          <div className="flex w-full items-center gap-1">
+          <div className="relative flex w-full items-center gap-1">
             <div className="flex min-w-0 shrink-0 items-center gap-1">
               {onClose ? (
                   <button
@@ -1190,27 +1565,31 @@ export function TimelinePlanner({
               </h2>
               <QuickScheduleInfoMenu />
             </div>
+            <div className="pointer-events-none absolute inset-x-0 flex justify-center">
+              <div className="pointer-events-auto">{dayNavControl}</div>
+            </div>
             <div className="ml-auto flex shrink-0 items-center gap-1">
-              {dayNavControl}
               {nowButton}
               {zoomControl}
             </div>
           </div>
         ) : (
-          <>
+          <div className="relative flex w-full items-center gap-2 px-1">
             <div className="flex min-w-0 flex-1 items-center gap-2">
               <Clock className="size-4 shrink-0 text-sky-600" />
               <div className="min-w-0">
                 <h2 className="truncate text-base font-semibold">Schedule</h2>
                 <p className="truncate text-[11px] text-muted-foreground">
-                  {viewDateLabel}
-                  {" · drag tasks & habits to plan your day"}
+                  Drag tasks & habits to plan your day
                 </p>
               </div>
             </div>
 
+            <div className="pointer-events-none absolute inset-x-0 flex justify-center">
+              <div className="pointer-events-auto">{dayNavControl}</div>
+            </div>
+
             <div className="ml-auto flex shrink-0 items-center gap-1">
-              {dayNavControl}
               {nowButton}
               {zoomControl}
 
@@ -1226,18 +1605,64 @@ export function TimelinePlanner({
                 </Button>
               ) : null}
             </div>
-          </>
+          </div>
         )}
       </header>
+      ) : (
+        <header
+          className={cn(
+            "pointer-events-none absolute inset-x-0 top-0 z-20 shrink-0 bg-gradient-to-b from-timeline via-timeline/95 to-transparent px-2 pt-1.5 pb-3 transition-opacity duration-200",
+            timelineRevealActive
+              ? "pointer-events-auto opacity-100"
+              : "opacity-0"
+          )}
+        >
+          <div className="flex w-full items-center gap-2 pl-0.5 pr-5">
+            <button
+              type="button"
+              onClick={() => {
+                setTimelineVisibility((current) => {
+                  const next = current === "always" ? "hover" : "always";
+                  writeModuleVisibility("timeline", next);
+                  return next;
+                });
+              }}
+              className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-muted/50 hover:text-muted-foreground"
+              aria-label={
+                timelineVisibility === "hover"
+                  ? "Show on hover — click for always visible"
+                  : "Always visible — click for show on hover"
+              }
+              title={
+                timelineVisibility === "hover" ? "Show on hover" : "Always visible"
+              }
+            >
+              {timelineVisibility === "hover" ? (
+                <EyeOff className="size-4" />
+              ) : (
+                <Eye className="size-4" />
+              )}
+            </button>
+            {nowButton}
+            <div className="ml-auto flex shrink-0 items-center gap-1.5">
+              {zoomControl}
+            </div>
+          </div>
+        </header>
+      )}
 
       <div className="flex min-h-0 flex-1">
+        {isWorkplace ? (
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">{timelinePanel}</div>
+        ) : (
+          <>
         <div
           className={cn(
             "flex min-h-0 flex-col",
             isDrawer
               ? "shrink-0 overflow-hidden border-r border-border/30 bg-gradient-to-b from-muted/25 to-muted/10"
-              : showTaskPool
-                ? "min-w-0 flex-[7] border-r border-border/30"
+              : isFullscreen
+                ? "min-w-0 flex-[2.5] border-r border-border/30"
                 : "min-w-0 flex-1"
           )}
             style={
@@ -1250,18 +1675,31 @@ export function TimelinePlanner({
               : undefined
           }
         >
+          {isFullscreen ? (
+            <div className="shrink-0 border-b border-border/30 px-3 py-2">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                Plan pool
+              </p>
+              <p className="text-[10px] text-muted-foreground">
+                Unscheduled & Later
+              </p>
+            </div>
+          ) : null}
           <section
             ref={unscheduledSectionRef}
+            {...{ [QUICK_SCHEDULE_INBOX_ATTR]: "" }}
             className={cn(
-              isDrawer ? "px-1.5" : "px-0",
+              "relative transition-[box-shadow,background-color] duration-150",
+              isDrawer ? "px-1.5" : isFullscreen ? "flex min-h-0 flex-1 flex-col px-1 py-2" : "px-0",
               isDrawer
                 ? "flex min-h-0 flex-1 flex-col overflow-hidden py-1.5"
-                : "shrink-0 border-b border-border/30 py-2"
+                : isFullscreen
+                  ? "min-h-0 overflow-hidden"
+                  : "shrink-0 border-b border-border/30 py-2",
+              inboxDropTarget && QUICK_SCHEDULE_INBOX_DROP_HIGHLIGHT
             )}
-            onDragOver={(event) => {
-              event.preventDefault();
-              event.dataTransfer.dropEffect = "move";
-            }}
+            onDragOver={handleInboxDragOver}
+            onDragLeave={handleInboxDragLeave}
             onDrop={(event) => void handleUnscheduleDrop(event)}
           >
             <div
@@ -1272,13 +1710,16 @@ export function TimelinePlanner({
             >
                 <button
                   type="button"
+                  {...{ [QUICK_SCHEDULE_INBOX_TAB_ATTR]: "unscheduled" }}
                   onClick={() => setInboxTab("unscheduled")}
                   className={cn(
                     "shrink-0 rounded px-1.5 py-0.5 font-medium whitespace-nowrap transition-colors",
                     compactTaskListTabs ? "text-[9px]" : "text-[10px]",
                     inboxTab === "unscheduled"
                       ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
+                    inboxDropTarget === "unscheduled" &&
+                      QUICK_SCHEDULE_INBOX_TAB_DROP_HIGHLIGHT
                   )}
                 >
                   {compactTaskListTabs
@@ -1287,13 +1728,16 @@ export function TimelinePlanner({
                 </button>
                 <button
                   type="button"
+                  {...{ [QUICK_SCHEDULE_INBOX_TAB_ATTR]: "later" }}
                   onClick={() => setInboxTab("later")}
                   className={cn(
                     "shrink-0 rounded px-1.5 py-0.5 font-medium whitespace-nowrap transition-colors",
                     compactTaskListTabs ? "text-[9px]" : "text-[10px]",
                     inboxTab === "later"
                       ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
+                    inboxDropTarget === "later" &&
+                      QUICK_SCHEDULE_INBOX_TAB_DROP_HIGHLIGHT
                   )}
                 >
                   Later ({laterTasks.length})
@@ -1301,15 +1745,27 @@ export function TimelinePlanner({
             </div>
             <div
               className={cn(
-                "flex gap-1.5",
-                isDrawer
+                "relative flex gap-1.5",
+                isDrawer || isFullscreen
                   ? "min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto"
                   : "min-h-[3rem] flex-wrap"
               )}
             >
+              {timelineSchedulingDragActive && inboxDropTarget ? (
+                <div
+                  className={cn(
+                    "pointer-events-none absolute inset-1 z-10 flex items-center justify-center rounded-lg border border-dashed border-primary/25 bg-primary/[0.03] px-2 py-2 text-[11px] text-foreground/80",
+                    isDrawer ? "inset-0.5" : "inset-1"
+                  )}
+                >
+                  {inboxDropTarget === "later"
+                    ? "Drop to Later"
+                    : "Drop to Unscheduled"}
+                </div>
+              ) : null}
               {inboxTab === "unscheduled" &&
               inboxTasks.length === 0 &&
-              (!showHabits || unscheduledHabits.length === 0) ? (
+              (!showHabitPool || unscheduledHabits.length === 0) ? (
                 <div className="flex w-full flex-col gap-0.5 px-1 py-1.5">
                   {isDrawer ? (
                     <>
@@ -1332,7 +1788,7 @@ export function TimelinePlanner({
                     No tasks in Later.
                   </p>
                   <p className="text-[11px] text-muted-foreground">
-                    Move tasks to Later from the board or task menu.
+                    Drag tasks here from the timeline or task pool.
                   </p>
                 </div>
               ) : (
@@ -1342,8 +1798,8 @@ export function TimelinePlanner({
                       key={`task-${task.id}`}
                       task={task}
                       groups={groups}
-                      fullWidth={isDrawer}
-                      compact={isDrawer}
+                      fullWidth={isDrawer || isFullscreen}
+                      compact={isDrawer || isFullscreen}
                       selected={selectedTaskId === task.id}
                       onSelect={() => {
                         onSelectTask(task.id);
@@ -1353,7 +1809,7 @@ export function TimelinePlanner({
                       onToggleComplete={() => void onToggleComplete(task)}
                       onContextMenu={(event) => {
                         event.preventDefault();
-                        setContextMenu({
+                        openTimelineContextMenu({
                           kind: "task",
                           task,
                           x: event.clientX,
@@ -1371,13 +1827,13 @@ export function TimelinePlanner({
                     />
                   ))}
                   {inboxTab === "unscheduled" &&
-                    showHabits &&
+                    showHabitPool &&
                     unscheduledHabits.map((habit) => (
                     <TimelineHabitChip
                       key={`habit-${habit.id}`}
                       habit={habit}
                       viewDate={viewDate}
-                      compact={isDrawer}
+                      compact={isDrawer || isFullscreen}
                       selected={selectedHabitId === habit.id}
                       onSelect={() => {
                         onSelectHabit?.(habit.id);
@@ -1388,7 +1844,7 @@ export function TimelinePlanner({
                       }
                       onContextMenu={(event) => {
                         event.preventDefault();
-                        setContextMenu({
+                        openTimelineContextMenu({
                           kind: "habit",
                           habit,
                           x: event.clientX,
@@ -1406,8 +1862,12 @@ export function TimelinePlanner({
               )}
             </div>
           </section>
-          {!isDrawer ? timelinePanel : null}
         </div>
+        {isFullscreen ? (
+          <div className="flex min-h-0 min-w-0 flex-[5] flex-col">
+            {timelinePanel}
+          </div>
+        ) : null}
         {isDrawer ? (
           <>
             <QuickScheduleResizeHandle
@@ -1421,7 +1881,10 @@ export function TimelinePlanner({
         ) : null}
 
         {showTaskPool ? (
-        <aside className="flex min-w-0 flex-[3] flex-col">
+        <aside
+          className="flex min-w-0 flex-[3] flex-col"
+          onDragOver={handleTaskPoolDragOver}
+        >
           <div className="shrink-0 border-b border-border/30 px-3 py-2">
             <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
               Task pool
@@ -1431,7 +1894,7 @@ export function TimelinePlanner({
             </p>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
-            {showHabits && (
+            {showHabitPool && (
               <div className="mb-3">
                 <button
                   type="button"
@@ -1480,7 +1943,7 @@ export function TimelinePlanner({
                             }
                             onContextMenu={(event) => {
                               event.preventDefault();
-                              setContextMenu({
+                              openTimelineContextMenu({
                                 kind: "habit",
                                 habit,
                                 x: event.clientX,
@@ -1544,7 +2007,7 @@ export function TimelinePlanner({
                             onToggleComplete={() => void onToggleComplete(task)}
                             onContextMenu={(event) => {
                               event.preventDefault();
-                              setContextMenu({
+                              openTimelineContextMenu({
                                 kind: "task",
                                 task,
                                 x: event.clientX,
@@ -1573,10 +2036,55 @@ export function TimelinePlanner({
           </div>
         </aside>
         ) : null}
+          </>
+        )}
       </div>
 
-      {contextMenu?.kind === "task" && (
+      {contextMenu?.kind === "task" && isWorkplace && contextMenu.anchorRect ? (
+        <WorkplaceTimelineTaskMenu
+          menuRef={contextMenuRef}
+          task={contextMenu.task}
+          groups={groups}
+          anchorRect={contextMenu.anchorRect}
+          onClose={() => setContextMenu(null)}
+          onClearTime={
+            contextMenu.task.scheduled_time
+              ? () => {
+                  void onScheduleTask(contextMenu.task.id, {
+                    scheduled_date: viewDate,
+                    scheduled_time: null,
+                  });
+                  setContextMenu(null);
+                }
+              : undefined
+          }
+          onStartFocus={() => {
+            onStartFocusTask?.(contextMenu.task.id);
+            setContextMenu(null);
+          }}
+          onMoveToTomorrow={() => {
+            void onScheduleTask(contextMenu.task.id, {
+              scheduled_date: getTomorrowDateString(),
+              scheduled_time: contextMenu.task.scheduled_time,
+            });
+            setContextMenu(null);
+          }}
+          onPlanLater={() => {
+            if (onSetPlanningState) {
+              void onSetPlanningState(contextMenu.task.id, "later");
+            }
+            setContextMenu(null);
+          }}
+          onDelete={() => {
+            void onDeleteTask(contextMenu.task.id);
+            setContextMenu(null);
+          }}
+        />
+      ) : null}
+
+      {contextMenu?.kind === "task" && (!isWorkplace || !contextMenu.anchorRect) ? (
         <TimelineContextMenu
+          menuRef={contextMenuRef}
           task={contextMenu.task}
           x={contextMenu.x}
           y={contextMenu.y}
@@ -1596,11 +2104,12 @@ export function TimelinePlanner({
                 }
               : undefined
           }
-          onRemoveDate={
-            contextMenu.task.scheduled_date
+          onAddToToday={
+            contextMenu.task.scheduled_date !== getTodayDateString()
               ? () => {
                   void onUpdateTask(contextMenu.task.id, {
-                    scheduled_date: null,
+                    scheduled_date: getTodayDateString(),
+                    planning_state: "none",
                   });
                   setContextMenu(null);
                 }
@@ -1623,28 +2132,35 @@ export function TimelinePlanner({
             setContextMenu(null);
           }}
         />
-      )}
+      ) : null}
 
       {contextMenu?.kind === "habit" && (
         <TimelineHabitContextMenu
+          menuRef={contextMenuRef}
           habit={contextMenu.habit}
           x={contextMenu.x}
           y={contextMenu.y}
           onClose={() => setContextMenu(null)}
-          onClearTime={
-            contextMenu.habit.scheduled_time
+          onStartFocus={
+            contextMenu.habit.track_with_focus && onStartFocusHabit
               ? () => {
-                  void onScheduleHabit?.(contextMenu.habit.id, {
-                    scheduled_time: null,
-                  });
+                  onStartFocusHabit(contextMenu.habit.id);
                   setContextMenu(null);
                 }
               : undefined
           }
-          onDelete={() => {
-            void onDeleteHabit?.(contextMenu.habit.id);
-            setContextMenu(null);
-          }}
+          onClearTime={
+            contextMenu.habit.scheduled_time
+              ? () => {
+                  void onScheduleHabit?.(
+                    contextMenu.habit.id,
+                    { scheduled_time: null },
+                    viewDate
+                  );
+                  setContextMenu(null);
+                }
+              : undefined
+          }
         />
       )}
     </Root>
@@ -1691,7 +2207,7 @@ function TimelineDropTimeMarker({
       <div
         className={cn(
           "absolute right-0 left-0 h-px",
-          subdued ? "bg-sky-500/55" : "bg-sky-500/85"
+          subdued ? "bg-ring/50" : "bg-ring/80"
         )}
         aria-hidden
       />
@@ -1700,8 +2216,8 @@ function TimelineDropTimeMarker({
           className={cn(
             "inline-block rounded-sm bg-background px-0.5 text-[10px] font-medium tabular-nums shadow-sm ring-1",
             subdued
-              ? "text-sky-700/75 ring-sky-400/20"
-              : "text-sky-600 ring-sky-400/35"
+              ? "text-accent-text/75 ring-ring/25"
+              : "text-accent-text ring-ring/45"
           )}
         >
           {formatTimelineMinutesLabel(minutes)}
@@ -1800,6 +2316,7 @@ function TimelineTaskRowContent({
 
         <TaskDurationPicker
           variant="timeline"
+          compact={compact}
           durationMinutes={task.duration_minutes}
           onChange={onUpdateDuration}
         />
@@ -1839,13 +2356,13 @@ function TimelinePoolChip({
         onOpenDetail();
       }}
       className={cn(
-        "group flex cursor-grab items-center border bg-background transition-[border-color,box-shadow,background-color,opacity] active:cursor-grabbing",
+        "group flex cursor-grab items-center border bg-background transition-[border-color,box-shadow,background-color,opacity,transform] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] active:cursor-grabbing",
         TIMELINE_TASK_ELEVATION,
         fullWidth
           ? "min-h-[26px] w-full rounded-lg px-2 py-1"
           : "min-h-[30px] rounded-lg px-2.5 py-1.5",
         compact ? "text-xs" : "text-[13px]",
-        "border-border/55 hover:border-border/75 hover:bg-muted/15",
+        "border-border hover:border-border hover:bg-muted/40 hover:shadow-sm",
         selected && TIMELINE_TASK_SELECTED,
         isDragging && "opacity-40",
         task.completed &&
@@ -1906,7 +2423,10 @@ function TimelineScheduledBlock({
     ? isHabitDoneOnDate(block.habit!, viewDate)
     : block.task!.completed;
   const durationLabel = isHabit
-    ? formatDurationLabel(getHabitDurationMinutes(block.id))
+    ? formatHabitTimeRangeWithDuration(
+        block.habit?.scheduled_time ?? null,
+        getHabitDurationMinutes(block.id)
+      )
     : null;
   const { topPx, heightPx } = block;
   const compact = heightPx < 48;
@@ -1936,13 +2456,14 @@ function TimelineScheduledBlock({
         }
       }}
       className={cn(
-        "group absolute inset-x-1 z-10 flex cursor-grab overflow-hidden rounded-lg border transition-[border-color,box-shadow,background-color] active:cursor-grabbing",
+        "group absolute inset-x-1 z-10 flex cursor-grab overflow-hidden rounded-lg border transition-[border-color,box-shadow,background-color,transform] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] active:cursor-grabbing",
         TIMELINE_TASK_ELEVATION,
         groupAccentClass && "border-l-[3px]",
         groupAccentClass,
         useCleanLayout
-          ? "border-border/55 bg-background/98 backdrop-blur-[1px]"
-          : "border-border/55 bg-background/95",
+          ? "border-border bg-card/95 backdrop-blur-[1px] hover:border-border hover:bg-card"
+          : "border-border bg-card/90 hover:bg-card",
+        !isDragging && "hover:z-20 hover:shadow-sm",
         useCleanLayout
           ? compact
             ? "items-center px-2.5 py-1.5"
@@ -1950,9 +2471,9 @@ function TimelineScheduledBlock({
           : compact
             ? "items-center gap-1.5 px-1.5 py-0.5"
             : "flex-col gap-0.5 px-2 py-1",
-        isHabit && "border-orange-300/50 bg-orange-50/40",
+        isHabit && timelineHabitBlockClassNames(),
         selected && TIMELINE_TASK_SELECTED,
-        overlapping && "border-amber-400/60 bg-amber-50/35",
+        overlapping && "border-amber-400/60 bg-amber-50/35 dark:border-amber-400/35 dark:bg-amber-500/10",
         isDragging && "opacity-40",
         completed &&
           "opacity-[0.45] transition-opacity hover:opacity-[0.62]"
@@ -2000,7 +2521,10 @@ function TimelineScheduledBlock({
           </button>
 
           {isHabit ? (
-            <span className="size-2 shrink-0 rounded-full bg-orange-500" />
+            <TimelineHabitLabel
+              compact={compact}
+              trackWithFocus={Boolean(block.habit?.track_with_focus)}
+            />
           ) : (
             <TaskPriorityFlagIcon
               priority={normalizeTaskPriority(block.task!.priority)}
@@ -2019,6 +2543,7 @@ function TimelineScheduledBlock({
 
           {!isHabit && onUpdateDuration && (
             <TaskDurationPicker
+              variant="timeline"
               compact={compact}
               durationMinutes={block.task!.duration_minutes}
               onChange={onUpdateDuration}
@@ -2068,7 +2593,10 @@ function TimelineHabitChip({
   onDragEnd,
 }: TimelineHabitChipProps) {
   const completed = isHabitDoneOnDate(habit, viewDate);
-  const durationLabel = formatDurationLabel(getHabitDurationMinutes(habit.id));
+  const durationLabel = formatHabitTimeRangeWithDuration(
+    habit.scheduled_time,
+    getHabitDurationMinutes(habit.id)
+  );
 
   return (
     <div
@@ -2080,7 +2608,8 @@ function TimelineHabitChip({
       onContextMenu={onContextMenu}
       onClick={onSelect}
       className={cn(
-        "group flex w-full cursor-grab items-center gap-1.5 rounded-lg border border-orange-300/45 bg-orange-50/25 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] active:cursor-grabbing",
+        "group flex w-full cursor-grab items-center gap-1.5 rounded-lg border shadow-xs transition-[border-color,box-shadow,background-color] duration-150 active:cursor-grabbing",
+        timelineHabitChipClassNames(),
         compact ? "px-2 py-1 text-[11px]" : "px-1.5 py-1 text-xs",
         selected && TIMELINE_TASK_SELECTED,
         isDragging && "opacity-40",
@@ -2105,7 +2634,7 @@ function TimelineHabitChip({
         {completed && <Check className="size-2.5" strokeWidth={3} />}
       </button>
 
-      <span className="size-2 shrink-0 rounded-full bg-orange-500" />
+      <TimelineHabitLabel compact={compact} trackWithFocus={habit.track_with_focus} />
 
       <span
         className={cn(
@@ -2125,6 +2654,56 @@ function TimelineHabitChip({
       <GripVertical className="size-3 shrink-0 text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100" />
     </div>
   );
+}
+
+function useClampedFixedMenuPosition(
+  x: number,
+  y: number,
+  menuRef: RefObject<HTMLDivElement | null>,
+  repositionKey = 0
+) {
+  const [mounted, setMounted] = useState(false);
+  const [position, setPosition] = useState({ left: x, top: y });
+
+  const updatePosition = useCallback(() => {
+    const menu = menuRef.current;
+    const width = menu?.offsetWidth ?? 168;
+    const height = menu?.offsetHeight ?? 220;
+    const padding = 8;
+    let left = x;
+    let top = y;
+    if (left + width > window.innerWidth - padding) {
+      left = window.innerWidth - width - padding;
+    }
+    if (top + height > window.innerHeight - padding) {
+      top = window.innerHeight - height - padding;
+    }
+    setPosition({
+      left: Math.max(padding, left),
+      top: Math.max(padding, top),
+    });
+  }, [menuRef, x, y]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    updatePosition();
+    const frame = requestAnimationFrame(updatePosition);
+    return () => cancelAnimationFrame(frame);
+  }, [updatePosition, repositionKey]);
+
+  useEffect(() => {
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [updatePosition]);
+
+  return { mounted, position };
 }
 
 function TimelineContextSubmenuRow({
@@ -2152,6 +2731,10 @@ function TimelineContextSubmenuRow({
       <button
         type="button"
         className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+        onClick={(event) => {
+          event.stopPropagation();
+          onOpenChange(true);
+        }}
       >
         <Icon className="size-3.5 shrink-0" />
         {label}
@@ -2160,11 +2743,12 @@ function TimelineContextSubmenuRow({
       {open ? (
         <div className="absolute top-0 left-full z-50 -ml-2 pl-2">
           <div
+            data-timeline-context-submenu
             className={cn(
-              "rounded-lg border border-border/60 bg-popover p-1 shadow-lg",
+              "flow-surface-elevated p-1",
               submenuClassName ?? "min-w-[7rem]"
             )}
-            onMouseDown={(event) => event.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           >
             {children}
           </div>
@@ -2182,25 +2766,53 @@ function PlanningStateMenuIcon({ state }: { state: (typeof PLANNING_STATES)[numb
 }
 
 function TimelineHabitContextMenu({
+  menuRef,
+  habit,
   x,
   y,
   onClose,
+  onStartFocus,
   onClearTime,
-  onDelete,
 }: {
+  menuRef: RefObject<HTMLDivElement | null>;
   habit: Habit;
   x: number;
   y: number;
   onClose: () => void;
+  onStartFocus?: () => void;
   onClearTime?: () => void;
-  onDelete: () => void;
 }) {
-  return (
+  const { mounted, position } = useClampedFixedMenuPosition(x, y, menuRef);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <div
-      className="fixed z-50 min-w-[10rem] rounded-lg border border-border/50 bg-popover p-1 shadow-md"
-      style={{ left: x, top: y }}
+      ref={menuRef}
+      data-timeline-context-menu
+      className="flow-surface-elevated fixed z-[100] min-w-[10rem] p-1"
+      style={{ left: position.left, top: position.top }}
       onMouseDown={(event) => event.stopPropagation()}
     >
+      <div className="border-b border-border/40 px-2 py-1.5">
+        <p className="truncate text-xs font-medium text-foreground">{habit.name}</p>
+        <p className="mt-0.5 text-[10px] text-muted-foreground">
+          {formatHabitTimeRangeWithDuration(
+            habit.scheduled_time,
+            getHabitDurationMinutes(habit.id)
+          ) ?? "No time set"}
+        </p>
+      </div>
+      {onStartFocus ? (
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+          onClick={onStartFocus}
+        >
+          <Play className="size-3.5 shrink-0" />
+          Start now
+        </button>
+      ) : null}
       {onClearTime ? (
         <button
           type="button"
@@ -2213,79 +2825,66 @@ function TimelineHabitContextMenu({
       ) : null}
       <button
         type="button"
-        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-muted"
-        onClick={onDelete}
-      >
-        <Trash2 className="size-3.5 shrink-0" />
-        Delete
-      </button>
-      <button
-        type="button"
         className="sr-only"
         onClick={onClose}
         aria-label="Close menu"
       />
-    </div>
+    </div>,
+    document.body
   );
 }
 
 function TimelineContextMenu({
+  menuRef,
   task,
   x,
   y,
   onClose,
   onOpenDetail,
   onClearTime,
-  onRemoveDate,
+  onAddToToday,
   onSetPlanningState,
   onDuplicate,
   onDelete,
 }: {
+  menuRef: RefObject<HTMLDivElement | null>;
   task: Task;
   x: number;
   y: number;
   onClose: () => void;
   onOpenDetail: () => void;
   onClearTime?: () => void;
-  onRemoveDate?: () => void;
+  onAddToToday?: () => void;
   onSetPlanningState?: (planningState: PlanningState) => void;
   onDuplicate: () => void;
   onDelete: () => void;
 }) {
   const planningState = normalizePlanningState(task.planning_state);
   const [planningSubmenuOpen, setPlanningSubmenuOpen] = useState(false);
-  const submenuCloseTimeoutRef = useRef<number | null>(null);
+  const { mounted, position } = useClampedFixedMenuPosition(
+    x,
+    y,
+    menuRef,
+    planningSubmenuOpen ? 1 : 0
+  );
 
-  const cancelSubmenuClose = useCallback(() => {
-    if (submenuCloseTimeoutRef.current !== null) {
-      window.clearTimeout(submenuCloseTimeoutRef.current);
-      submenuCloseTimeoutRef.current = null;
-    }
-  }, []);
+  if (!mounted) return null;
 
-  const scheduleSubmenuClose = useCallback(() => {
-    cancelSubmenuClose();
-    submenuCloseTimeoutRef.current = window.setTimeout(() => {
-      setPlanningSubmenuOpen(false);
-    }, 250);
-  }, [cancelSubmenuClose]);
-
-  useEffect(() => {
-    return () => cancelSubmenuClose();
-  }, [cancelSubmenuClose]);
-
-  return (
+  return createPortal(
     <div
-      className="fixed z-[100] min-w-[10.5rem] overflow-visible rounded-lg border border-border/60 bg-popover p-1 text-popover-foreground shadow-lg"
-      style={{ left: x, top: y }}
-      onMouseDown={(event) => event.stopPropagation()}
-      onMouseEnter={cancelSubmenuClose}
-      onMouseLeave={scheduleSubmenuClose}
+      ref={menuRef}
+      data-timeline-context-menu
+      className="flow-surface-elevated fixed z-[100] min-w-[10.5rem] overflow-visible p-1"
+      style={{ left: position.left, top: position.top }}
+      onClick={(event) => event.stopPropagation()}
     >
       <button
         type="button"
         className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
-        onClick={onOpenDetail}
+        onClick={(event) => {
+          event.stopPropagation();
+          onOpenDetail();
+        }}
       >
         <ClipboardList className="size-3.5 shrink-0" />
         Open details
@@ -2294,26 +2893,32 @@ function TimelineContextMenu({
         <button
           type="button"
           className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
-          onClick={onClearTime}
+          onClick={(event) => {
+            event.stopPropagation();
+            onClearTime();
+          }}
         >
           <Clock className="size-3.5 shrink-0 text-muted-foreground" />
           Unschedule
         </button>
       ) : null}
-      {onRemoveDate ? (
+      {onAddToToday ? (
         <button
           type="button"
           className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
-          onClick={onRemoveDate}
+          onClick={(event) => {
+            event.stopPropagation();
+            onAddToToday();
+          }}
         >
           <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
-          Remove date
+          Add to Today
         </button>
       ) : null}
       {onSetPlanningState ? (
         <div className="border-t border-border/40 pt-1">
           <TimelineContextSubmenuRow
-            label="Planning"
+            label={PLAN_SECTION_LABEL}
             icon={CalendarClock}
             open={planningSubmenuOpen}
             onOpenChange={setPlanningSubmenuOpen}
@@ -2327,7 +2932,10 @@ function TimelineContextMenu({
                   "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted",
                   planningState === state && "bg-muted font-medium text-foreground"
                 )}
-                onClick={() => onSetPlanningState(state)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onSetPlanningState(state);
+                }}
               >
                 <PlanningStateMenuIcon state={state} />
                 {PLANNING_STATE_CONFIG[state].label}
@@ -2339,7 +2947,10 @@ function TimelineContextMenu({
       <button
         type="button"
         className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
-        onClick={onDuplicate}
+        onClick={(event) => {
+          event.stopPropagation();
+          onDuplicate();
+        }}
       >
         <Copy className="size-3.5 shrink-0" />
         Duplicate
@@ -2347,7 +2958,10 @@ function TimelineContextMenu({
       <button
         type="button"
         className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-muted"
-        onClick={onDelete}
+        onClick={(event) => {
+          event.stopPropagation();
+          onDelete();
+        }}
       >
         <Trash2 className="size-3.5 shrink-0" />
         Delete
@@ -2358,7 +2972,8 @@ function TimelineContextMenu({
         onClick={onClose}
         aria-label="Close menu"
       />
-    </div>
+    </div>,
+    document.body
   );
 }
 

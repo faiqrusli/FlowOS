@@ -8,6 +8,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type MouseEvent,
   type PointerEvent,
   type ReactNode,
@@ -28,16 +29,19 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
+import { AlertBeforeCustomInput } from "@/components/tasks/task-alert-before-picker";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
-import { Switch } from "@/components/ui/switch";
+import { TaskSchedulePopover } from "@/components/tasks/task-schedule-popover";
 import {
   formatDurationMinutes,
 } from "@/lib/task-duration-options";
-import { formatTimeShort, getTodayDateString, getTomorrowDateString, toTimeInputValue } from "@/lib/date-utils";
+import { TASK_ALERT_BEFORE_OPTIONS, applyPresetAlert } from "@/lib/task-alert-before-options";
+import { getTodayDateString } from "@/lib/date-utils";
 import {
   normalizePlanningState,
   PLANNING_STATE_CONFIG,
   PLANNING_STATES,
+  PLAN_SECTION_LABEL,
 } from "@/lib/task-planning";
 import { getGroupDisplayTitle, isLaterGroup, isTodayGroup } from "@/lib/task-groups";
 import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
@@ -47,39 +51,95 @@ import {
   TASK_PRIORITY_CONFIG,
   type TaskPriority,
 } from "@/lib/task-priority";
-import { formatTaskScheduleCompact } from "@/lib/tasks";
-import type { TaskDragData } from "@/lib/dnd/drag-types";
-import { getTaskDndMetadata } from "@/lib/dnd/group-metadata";
+import {
+  formatTaskScheduleCompact,
+  getTaskScheduleDateColorClass,
+  getTaskScheduleDateTone,
+} from "@/lib/tasks";
+import { useTaskRowPointerGesture } from "@/lib/task-row-pointer-gesture";
+import {
+  bindTaskDetailMenuActions,
+  type TaskDetailMenuActionHandlers,
+} from "@/lib/task-detail-menu-actions";
+import {
+  isActiveTaskDetailMenuAnchor,
+  resolveEventTargetElement,
+  setActiveTaskDetailMenuAnchor,
+  subscribeTaskDetailMenu,
+  type TaskDetailMenuAnchor,
+} from "@/lib/task-detail-menu-coordinator";
 import { cn } from "@/lib/utils";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
+import { useOptionalTaskBoardActions } from "@/components/tasks/task-board-actions-context";
+import { useOptionalTaskBoardGroups } from "@/components/tasks/task-board-groups-context";
 
 function isTaskDragInteractiveTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof Element)) return false;
-  return Boolean(target.closest("[data-no-task-drag]"));
+  const element = resolveEventTargetElement(target);
+  return Boolean(element?.closest("[data-no-task-drag]"));
+}
+
+function isTaskTitleTarget(target: EventTarget | null): boolean {
+  const element = resolveEventTargetElement(target);
+  return Boolean(element?.closest("[data-task-title]"));
 }
 
 type TaskRowProps = {
   task: Task;
   groupId: string;
   zone?: "active" | "completed";
-  groups: TaskGroupWithTasks[];
+  groups?: TaskGroupWithTasks[];
   todayViewDate: string;
   isSelected?: boolean;
   dragEnabled?: boolean;
   reorderEnabled?: boolean;
   reorderDisabledTooltip?: string;
-  onToggleComplete: () => void;
-  onOpenDetail: () => void;
-  onDuplicate: () => void;
-  onMoveToGroup: (groupId: string) => void;
-  onDelete: () => void;
-  onUpdate: (updates: Partial<Task>) => void;
+  onToggleComplete?: () => void;
+  onOpenDetail?: () => void;
+  onDuplicate?: () => void;
+  onMoveToGroup?: (groupId: string) => void;
+  onDelete?: () => void;
+  onUpdate?: (updates: Partial<Task>) => void;
   onSetPlanningState?: (planningState: PlanningState) => void;
   onRequestCreateGroup?: () => void;
-  overlay?: boolean;
 };
+
+function areTaskRowDisplayFieldsEqual(previous: Task, next: Task): boolean {
+  return (
+    previous.id === next.id &&
+    previous.title === next.title &&
+    previous.completed === next.completed &&
+    previous.priority === next.priority &&
+    previous.duration_minutes === next.duration_minutes &&
+    previous.scheduled_date === next.scheduled_date &&
+    previous.scheduled_time === next.scheduled_time &&
+    previous.planning_state === next.planning_state &&
+    previous.notification_enabled === next.notification_enabled &&
+    previous.notification_lead_minutes === next.notification_lead_minutes &&
+    previous.group_id === next.group_id &&
+    previous.sort_order === next.sort_order
+  );
+}
+
+function areTaskRowPropsEqual(previous: TaskRowProps, next: TaskRowProps): boolean {
+  if (previous.groupId !== next.groupId) return false;
+  if (previous.zone !== next.zone) return false;
+  if (previous.todayViewDate !== next.todayViewDate) return false;
+  if (previous.isSelected !== next.isSelected) return false;
+  if (previous.dragEnabled !== next.dragEnabled) return false;
+  if (previous.reorderEnabled !== next.reorderEnabled) return false;
+  if (!areTaskRowDisplayFieldsEqual(previous.task, next.task)) return false;
+  return (
+    previous.onToggleComplete === next.onToggleComplete &&
+    previous.onOpenDetail === next.onOpenDetail &&
+    previous.onDuplicate === next.onDuplicate &&
+    previous.onMoveToGroup === next.onMoveToGroup &&
+    previous.onDelete === next.onDelete &&
+    previous.onUpdate === next.onUpdate &&
+    previous.onSetPlanningState === next.onSetPlanningState &&
+    previous.onRequestCreateGroup === next.onRequestCreateGroup &&
+    previous.groups === next.groups
+  );
+}
 
 function PriorityFlagIcon({
   priority,
@@ -108,40 +168,6 @@ function uniqueMoveTargets(
     seen.add(group.id);
     return true;
   });
-}
-
-function NotificationBellOffIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={cn("size-3.5 shrink-0", className)}
-      aria-hidden="true"
-    >
-      <path
-        d="M10.268 21a2 2 0 0 0 3.464 0"
-        strokeWidth="2"
-      />
-      <path
-        d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"
-        strokeWidth="2"
-      />
-      <path d="M4 4l16 16" strokeWidth="2.5" />
-    </svg>
-  );
-}
-
-function formatNotifyDateLabel(dateKey: string): string {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day, 12));
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-  }).format(date);
 }
 
 function TaskPriorityMenuPopover({
@@ -220,15 +246,15 @@ function TaskPriorityMenuPopover({
   return createPortal(
     <div
       ref={popoverRef}
-      className="fixed z-[100] min-w-[8.5rem] rounded-lg border border-border/60 bg-popover p-1 shadow-lg"
+      className="flow-surface-elevated fixed z-[100] min-w-[8.5rem] p-1"
       style={{ top, left }}
     >
       <button
         type="button"
         onClick={() => onUpdate({ priority: "high" })}
         className={cn(
-          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted",
-          priority === "high" && "bg-red-500/10 font-medium text-red-700"
+          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
+          priority === "high" && "bg-red-500/10 font-medium text-red-700 dark:bg-red-500/15 dark:text-red-300"
         )}
       >
         <PriorityFlagIcon priority="high" /> {TASK_PRIORITY_CONFIG.high.label}
@@ -237,8 +263,8 @@ function TaskPriorityMenuPopover({
         type="button"
         onClick={() => onUpdate({ priority: "medium" })}
         className={cn(
-          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted",
-          priority === "medium" && "bg-amber-500/10 font-medium text-amber-700"
+          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
+          priority === "medium" && "bg-amber-500/10 font-medium text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
         )}
       >
         <PriorityFlagIcon priority="medium" /> {TASK_PRIORITY_CONFIG.medium.label}
@@ -247,7 +273,7 @@ function TaskPriorityMenuPopover({
         type="button"
         onClick={() => onUpdate({ priority: "low" })}
         className={cn(
-          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted",
+          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
           priority === "low" && "bg-muted font-medium text-foreground"
         )}
       >
@@ -264,6 +290,7 @@ function TaskDetailSubmenuRow({
   open,
   onOpenChange,
   onActivate,
+  submenuToggleAction,
   submenuClassName,
   children,
   className,
@@ -273,6 +300,7 @@ function TaskDetailSubmenuRow({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onActivate: () => void;
+  submenuToggleAction: string;
   submenuClassName?: string;
   children: ReactNode;
   className?: string;
@@ -287,26 +315,26 @@ function TaskDetailSubmenuRow({
     >
       <button
         type="button"
-        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+        data-task-menu-action={submenuToggleAction}
+        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70"
       >
         <Icon className="size-3.5" />
         {label}
         <span className="ml-auto text-muted-foreground">›</span>
       </button>
-      {open && (
+      {open ? (
         <div className="absolute top-0 left-full z-50 -ml-2 pl-2">
           <div
-            data-task-move-submenu
+            data-task-detail-submenu
             className={cn(
-              "rounded-lg border border-border/60 bg-popover p-1 shadow-lg",
+              "flow-surface-elevated overflow-hidden p-0",
               submenuClassName ?? "min-w-[7rem]"
             )}
-            onMouseDown={(event) => event.stopPropagation()}
           >
             {children}
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -322,10 +350,14 @@ function TaskDetailMenuPopover({
   onMoveSubmenuOpenChange,
   planningSubmenuOpen,
   onPlanningSubmenuOpenChange,
+  alertSubmenuOpen,
+  onAlertSubmenuOpenChange,
   onDuplicate,
   onMoveToGroup,
-  onRemoveDate,
+  onAddToToday,
   onSetPlanningState,
+  onSetAlertBefore,
+  onCloseMenu,
   onDelete,
   onRequestCreateGroup,
 }: {
@@ -339,39 +371,98 @@ function TaskDetailMenuPopover({
   onMoveSubmenuOpenChange: (open: boolean) => void;
   planningSubmenuOpen: boolean;
   onPlanningSubmenuOpenChange: (open: boolean) => void;
+  alertSubmenuOpen: boolean;
+  onAlertSubmenuOpenChange: (open: boolean) => void;
   onDuplicate: () => void;
   onMoveToGroup: (groupId: string) => void;
-  onRemoveDate?: () => void;
+  onAddToToday?: () => void;
   onSetPlanningState?: (planningState: PlanningState) => void;
+  onSetAlertBefore: (updates: {
+    notification_enabled: boolean;
+    notification_lead_minutes: number | null;
+  }) => void;
+  onCloseMenu: () => void;
   onDelete: () => void;
   onRequestCreateGroup?: () => void;
 }) {
-  const hasDate = Boolean(task.scheduled_date);
   const planningState = normalizePlanningState(task.planning_state);
   const [mounted, setMounted] = useState(false);
   const [position, setPosition] = useState<{ top: number; left: number } | null>(
     null
   );
-  const submenuCloseTimeoutRef = useRef<number | null>(null);
-
-  const cancelSubmenuClose = useCallback(() => {
-    if (submenuCloseTimeoutRef.current !== null) {
-      window.clearTimeout(submenuCloseTimeoutRef.current);
-      submenuCloseTimeoutRef.current = null;
-    }
-  }, []);
-
-  const scheduleSubmenuClose = useCallback(() => {
-    cancelSubmenuClose();
-    submenuCloseTimeoutRef.current = window.setTimeout(() => {
+  const menuActionsRef = useRef<TaskDetailMenuActionHandlers>({
+    onDuplicate,
+    onDelete,
+    onMoveToGroup,
+    onAddToToday,
+    onSetPlanningState,
+    onSetAlertBefore,
+    onRequestCreateGroup,
+    onOpenPlanningSubmenu: () => {
       onMoveSubmenuOpenChange(false);
+      onAlertSubmenuOpenChange(false);
+      onPlanningSubmenuOpenChange(true);
+    },
+    onOpenMoveSubmenu: () => {
       onPlanningSubmenuOpenChange(false);
-    }, 250);
-  }, [cancelSubmenuClose, onMoveSubmenuOpenChange, onPlanningSubmenuOpenChange]);
+      onAlertSubmenuOpenChange(false);
+      onMoveSubmenuOpenChange(true);
+    },
+    onOpenAlertSubmenu: () => {
+      onPlanningSubmenuOpenChange(false);
+      onMoveSubmenuOpenChange(false);
+      onAlertSubmenuOpenChange(true);
+    },
+  });
 
-  useEffect(() => {
-    return () => cancelSubmenuClose();
-  }, [cancelSubmenuClose]);
+  menuActionsRef.current = {
+    onDuplicate,
+    onDelete,
+    onMoveToGroup,
+    onAddToToday,
+    onSetPlanningState,
+    onSetAlertBefore,
+    onRequestCreateGroup,
+    onOpenPlanningSubmenu: () => {
+      onMoveSubmenuOpenChange(false);
+      onAlertSubmenuOpenChange(false);
+      onPlanningSubmenuOpenChange(true);
+    },
+    onOpenMoveSubmenu: () => {
+      onPlanningSubmenuOpenChange(false);
+      onAlertSubmenuOpenChange(false);
+      onMoveSubmenuOpenChange(true);
+    },
+    onOpenAlertSubmenu: () => {
+      onPlanningSubmenuOpenChange(false);
+      onMoveSubmenuOpenChange(false);
+      onAlertSubmenuOpenChange(true);
+    },
+  };
+
+  const menuCleanupRef = useRef<(() => void) | null>(null);
+
+  const bindMenuActionsRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      menuCleanupRef.current?.();
+      menuCleanupRef.current = null;
+      popoverRef.current = node;
+      if (!node) return;
+      menuCleanupRef.current = bindTaskDetailMenuActions(
+        node,
+        () => menuActionsRef.current
+      );
+    },
+    [popoverRef]
+  );
+
+  useEffect(
+    () => () => {
+      menuCleanupRef.current?.();
+      menuCleanupRef.current = null;
+    },
+    []
+  );
 
   const updatePosition = useCallback(() => {
     const popoverWidth = popoverRef.current?.offsetWidth ?? 168;
@@ -431,6 +522,8 @@ function TaskDetailMenuPopover({
   }, [
     updatePosition,
     moveSubmenuOpen,
+    planningSubmenuOpen,
+    alertSubmenuOpen,
     moveTargets.length,
   ]);
 
@@ -454,55 +547,105 @@ function TaskDetailMenuPopover({
 
   return createPortal(
     <div
-      ref={popoverRef}
-      className="fixed z-[100] min-w-[10.5rem] overflow-visible rounded-lg border border-border/60 bg-popover p-1 text-popover-foreground shadow-lg"
+      ref={bindMenuActionsRef}
+      data-task-detail-menu
+      className="flow-surface-elevated fixed z-[100] min-w-[10.5rem] overflow-visible p-1"
       style={{ top, left }}
-      onMouseEnter={cancelSubmenuClose}
-      onMouseLeave={scheduleSubmenuClose}
     >
       <button
         type="button"
-        onClick={onDuplicate}
-        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+        data-task-menu-action="duplicate"
+        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70"
       >
         <Copy className="size-3.5" /> Duplicate
       </button>
 
+      <TaskDetailSubmenuRow
+        label="Alert before"
+        icon={Bell}
+        open={alertSubmenuOpen}
+        onOpenChange={onAlertSubmenuOpenChange}
+        onActivate={() => {
+          onMoveSubmenuOpenChange(false);
+          onPlanningSubmenuOpenChange(false);
+        }}
+        submenuToggleAction="submenu-alert"
+        submenuClassName="min-w-[7rem]"
+      >
+        <AlertBeforeCustomInput
+          key={alertSubmenuOpen ? "open" : "closed"}
+          notificationEnabled={task.notification_enabled}
+          leadMinutes={task.notification_lead_minutes}
+          onCommit={(minutes) => onSetAlertBefore(applyPresetAlert(minutes))}
+          onCommitDone={onCloseMenu}
+        />
+        <button
+          type="button"
+          data-task-menu-action="alert:silent"
+          className={cn(
+            "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
+            !task.notification_enabled && "bg-muted font-medium text-foreground"
+          )}
+        >
+          Silent
+        </button>
+        {TASK_ALERT_BEFORE_OPTIONS.map((option) => (
+          <button
+            key={option.minutes}
+            type="button"
+            data-task-menu-action={`alert:${option.minutes}`}
+            className={cn(
+              "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs tabular-nums hover:bg-muted",
+              task.notification_enabled &&
+                task.notification_lead_minutes === option.minutes &&
+                "bg-muted font-medium text-foreground"
+            )}
+          >
+            {option.label}
+          </button>
+        ))}
+        <div className="my-1 border-t border-border/40" />
+        <button
+          type="button"
+          data-task-menu-action="alert:clear"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground hover:bg-muted"
+        >
+          Clear
+        </button>
+      </TaskDetailSubmenuRow>
+
       <div className="border-t border-border/40 pt-1">
-        {hasDate && onRemoveDate ? (
+        {onAddToToday ? (
           <button
             type="button"
-            onClick={onRemoveDate}
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+            data-task-menu-action="add-to-today"
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70"
           >
             <CalendarDays className="size-3.5 text-muted-foreground" />
-            Remove date
+            Add to Today
           </button>
         ) : null}
 
         {onSetPlanningState ? (
           <TaskDetailSubmenuRow
-            label="Planning"
+            label={PLAN_SECTION_LABEL}
             icon={CalendarClock}
             open={planningSubmenuOpen}
             onOpenChange={onPlanningSubmenuOpenChange}
-            onActivate={() => onMoveSubmenuOpenChange(false)}
+            onActivate={() => {
+              onMoveSubmenuOpenChange(false);
+              onAlertSubmenuOpenChange(false);
+            }}
+            submenuToggleAction="submenu-planning"
             submenuClassName="min-w-[7.5rem]"
           >
             {PLANNING_STATES.map((state) => (
               <button
                 key={state}
                 type="button"
-                onMouseDown={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onSetPlanningState(state);
-                }}
+                data-task-menu-action={`planning:${state}`}
                 className={cn(
-                  "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted",
+                  "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
                   planningState === state && "bg-muted font-medium text-foreground"
                 )}
               >
@@ -523,7 +666,11 @@ function TaskDetailMenuPopover({
         icon={ArrowRightLeft}
         open={moveSubmenuOpen}
         onOpenChange={onMoveSubmenuOpenChange}
-        onActivate={() => onPlanningSubmenuOpenChange(false)}
+        onActivate={() => {
+          onPlanningSubmenuOpenChange(false);
+          onAlertSubmenuOpenChange(false);
+        }}
+        submenuToggleAction="submenu-move"
         submenuClassName="min-w-[9rem]"
         className="border-t border-border/40 pt-1"
       >
@@ -534,14 +681,7 @@ function TaskDetailMenuPopover({
           {onRequestCreateGroup ? (
             <button
               type="button"
-              onMouseDown={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-              }}
-              onClick={(event) => {
-                event.stopPropagation();
-                onRequestCreateGroup();
-              }}
+              data-task-menu-action="create-group"
               className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
               aria-label="New group"
             >
@@ -555,15 +695,8 @@ function TaskDetailMenuPopover({
             <button
               key={group.id}
               type="button"
-              onMouseDown={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-              }}
-              onClick={(event) => {
-                event.stopPropagation();
-                onMoveToGroup(group.id);
-              }}
-              className="flex w-full items-center rounded-md px-2 py-1.5 text-left hover:bg-muted"
+              data-task-menu-action={`move:${group.id}`}
+              className="flex w-full items-center rounded-md px-2 py-1.5 text-left transition-colors duration-100 hover:bg-muted/70"
             >
               <TaskGroupPill
                 icon={appearance.icon}
@@ -583,7 +716,7 @@ function TaskDetailMenuPopover({
 
       <button
         type="button"
-        onClick={onDelete}
+        data-task-menu-action="delete"
         className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-muted"
       >
         <Trash2 className="size-3.5" /> Delete
@@ -593,307 +726,125 @@ function TaskDetailMenuPopover({
   );
 }
 
-function TaskNotificationPopover({
-  task,
-  notifyConfigured,
-  anchorRef,
-  popoverRef,
-  onUpdate,
-  openDatePickerInitially = false,
-}: {
-  task: Task;
-  notifyConfigured: boolean;
-  anchorRef: RefObject<HTMLDivElement | null>;
-  popoverRef: RefObject<HTMLDivElement | null>;
-  onUpdate: (updates: Partial<Task>) => void;
-  openDatePickerInitially?: boolean;
-}) {
-  const dateInputRef = useRef<HTMLInputElement>(null);
-  const datePickerRef = useRef<HTMLDivElement>(null);
-  const timeInputRef = useRef<HTMLInputElement>(null);
-  const [mounted, setMounted] = useState(false);
-  const [datePickerOpen, setDatePickerOpen] = useState(openDatePickerInitially);
-  const [position, setPosition] = useState<{ top: number; left: number } | null>(
-    null
-  );
-
-  const dateInputValue = task.scheduled_date ?? "";
-  const dateLabel = task.scheduled_date
-    ? formatNotifyDateLabel(task.scheduled_date)
-    : "Set date";
-  const timeValue = toTimeInputValue(task.scheduled_time);
-  const timeLabel = formatTimeShort(task.scheduled_time) ?? "Set time";
-
-  const selectDate = useCallback(
-    (dateKey: string) => {
-      onUpdate({ scheduled_date: dateKey });
-      setDatePickerOpen(false);
-    },
-    [onUpdate]
-  );
-
-  const updatePosition = useCallback(() => {
-    const anchor = anchorRef.current;
-    if (!anchor) return;
-
-    const rect = anchor.getBoundingClientRect();
-    const popoverWidth = popoverRef.current?.offsetWidth ?? 232;
-    const popoverHeight = popoverRef.current?.offsetHeight ?? 72;
-    const gap = 4;
-    const padding = 8;
-    const toggleRowHeight = 32;
-
-    let left = rect.right + gap;
-    if (left + popoverWidth > window.innerWidth - padding) {
-      left = rect.left - popoverWidth - gap;
-    } else {
-      // Keep the toggle row flush beside the bell; date/time extend left in the L.
-      const toggleWidth =
-        popoverRef.current?.querySelector<HTMLElement>("[data-notify-toggle]")
-          ?.offsetWidth ?? 96;
-      left = rect.right + gap - (popoverWidth - toggleWidth);
-    }
-    left = Math.max(
-      padding,
-      Math.min(left, window.innerWidth - popoverWidth - padding)
-    );
-
-    // Align the top toggle row with the bell icon center.
-    let top = rect.top + rect.height / 2 - toggleRowHeight / 2;
-    if (top + popoverHeight > window.innerHeight - padding) {
-      top = window.innerHeight - popoverHeight - padding;
-    }
-    top = Math.max(
-      padding,
-      Math.min(top, window.innerHeight - popoverHeight - padding)
-    );
-
-    setPosition({ top, left });
-  }, [anchorRef, popoverRef]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (openDatePickerInitially) {
-      setDatePickerOpen(true);
-    }
-  }, [openDatePickerInitially]);
-
-  useLayoutEffect(() => {
-    updatePosition();
-    const frame = requestAnimationFrame(updatePosition);
-    return () => cancelAnimationFrame(frame);
-  }, [
-    updatePosition,
-    task.notification_enabled,
-    task.scheduled_date,
-    task.scheduled_time,
-    datePickerOpen,
-  ]);
-
-  useEffect(() => {
-    if (!datePickerOpen) return;
-
-    function handlePointerDown(event: globalThis.MouseEvent) {
-      const target = event.target as Node;
-      if (datePickerRef.current?.contains(target)) return;
-      if (
-        target instanceof Element &&
-        target.closest("[data-notify-date-trigger]")
-      ) {
-        return;
-      }
-      setDatePickerOpen(false);
-    }
-
-    document.addEventListener("mousedown", handlePointerDown);
-    return () => document.removeEventListener("mousedown", handlePointerDown);
-  }, [datePickerOpen]);
-
-  useEffect(() => {
-    if (!datePickerOpen) return;
-    const frame = requestAnimationFrame(() => {
-      dateInputRef.current?.showPicker?.();
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [datePickerOpen]);
-
-  useEffect(() => {
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [updatePosition]);
-
-  if (!mounted) return null;
-
-  const anchorRect = anchorRef.current?.getBoundingClientRect();
-  const top = position?.top ?? anchorRect?.top ?? 0;
-  const left = position?.left ?? (anchorRect ? anchorRect.right + 6 : 0);
-
-  return createPortal(
-    <div
-      ref={popoverRef}
-      className="fixed z-[100] w-max"
-      style={{ top, left }}
-    >
-      <div className="inline-flex flex-col items-end gap-1.5">
-        <div
-          data-notify-toggle
-          className="flex h-8 w-max items-center gap-2.5 rounded-full bg-white px-3 shadow-md ring-1 ring-black/5"
-        >
-          {task.notification_enabled ? (
-            <Bell
-              className={cn(
-                "size-3.5 shrink-0 text-foreground",
-                notifyConfigured && "fill-foreground/10"
-              )}
-            />
-          ) : (
-            <NotificationBellOffIcon className="text-muted-foreground" />
-          )}
-          <Switch
-            checked={task.notification_enabled}
-            onCheckedChange={(checked) =>
-              onUpdate({ notification_enabled: checked })
-            }
-            aria-label="Toggle notification"
-          />
-        </div>
-
-        <div className="flex w-max gap-1.5">
-          <div className="relative">
-            <button
-              type="button"
-              data-notify-date-trigger
-              onClick={() => setDatePickerOpen((value) => !value)}
-              className={cn(
-                "flex h-8 min-w-[6.75rem] items-center gap-1.5 rounded-full bg-white px-2.5 shadow-md ring-1 ring-black/5 hover:bg-neutral-50",
-                !task.scheduled_date && "text-muted-foreground"
-              )}
-            >
-              <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
-              <span
-                className={cn(
-                  "truncate text-xs font-medium",
-                  task.scheduled_date ? "text-foreground" : "text-muted-foreground"
-                )}
-              >
-                {dateLabel}
-              </span>
-            </button>
-
-            {datePickerOpen && (
-              <div
-                ref={datePickerRef}
-                className="absolute left-0 top-full z-[110] mt-1.5 w-[15.5rem] overflow-hidden rounded-xl border border-border/60 bg-white p-2 shadow-lg ring-1 ring-black/5"
-              >
-                <div className="flex items-center justify-center gap-2 border-b border-border/40 pb-2 text-xs font-medium">
-                  <button
-                    type="button"
-                    onClick={() => selectDate(getTodayDateString())}
-                    className="text-foreground hover:underline"
-                  >
-                    Today
-                  </button>
-                  <span className="text-muted-foreground">|</span>
-                  <button
-                    type="button"
-                    onClick={() => selectDate(getTomorrowDateString())}
-                    className="text-foreground hover:underline"
-                  >
-                    Tomorrow
-                  </button>
-                </div>
-                <input
-                  ref={dateInputRef}
-                  type="date"
-                  value={dateInputValue}
-                  onChange={(event) => {
-                    const nextDate = event.target.value || null;
-                    onUpdate({ scheduled_date: nextDate });
-                    if (nextDate) {
-                      setDatePickerOpen(false);
-                    }
-                  }}
-                  className="mt-2 w-full rounded-md border border-border/50 bg-white px-2 py-1.5 text-xs text-foreground outline-none focus:border-primary/40"
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => timeInputRef.current?.showPicker?.()}
-              className="flex h-8 min-w-[6.25rem] items-center gap-1 rounded-full bg-white px-2.5 shadow-md ring-1 ring-black/5 hover:bg-neutral-50"
-            >
-              <span className="flex-1 truncate text-left text-xs font-medium text-foreground">
-                {timeLabel}
-              </span>
-              <ChevronDown className="size-3 shrink-0 text-muted-foreground" />
-              <input
-                ref={timeInputRef}
-                type="time"
-                value={timeValue}
-                onChange={(event) =>
-                  onUpdate({
-                    scheduled_time: event.target.value
-                      ? `${event.target.value}:00`
-                      : null,
-                  })
-                }
-                className="sr-only"
-                tabIndex={-1}
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>,
-    document.body
-  );
-}
-
 export const TaskRow = memo(function TaskRow({
   task,
   groupId,
   zone,
-  groups,
+  groups: groupsProp,
   todayViewDate,
   isSelected = false,
   dragEnabled = true,
   reorderEnabled = true,
   reorderDisabledTooltip = "Switch to Manual sorting to reorder tasks.",
-  onToggleComplete,
-  onOpenDetail,
-  onDuplicate,
-  onMoveToGroup,
-  onDelete,
-  onUpdate,
-  onSetPlanningState,
-  onRequestCreateGroup,
-  overlay = false,
+  onToggleComplete: onToggleCompleteProp,
+  onOpenDetail: onOpenDetailProp,
+  onDuplicate: onDuplicateProp,
+  onMoveToGroup: onMoveToGroupProp,
+  onDelete: onDeleteProp,
+  onUpdate: onUpdateProp,
+  onSetPlanningState: onSetPlanningStateProp,
+  onRequestCreateGroup: onRequestCreateGroupProp,
 }: TaskRowProps) {
-  const [detailMenuOpen, setDetailMenuOpen] = useState(false);
+  const groupsFromBoard = useOptionalTaskBoardGroups();
+  const groups = groupsProp ?? groupsFromBoard ?? [];
+  const boardActions = useOptionalTaskBoardActions();
+
+  const onToggleComplete = useCallback(() => {
+    if (onToggleCompleteProp) {
+      onToggleCompleteProp();
+      return;
+    }
+    boardActions?.onToggleComplete(task);
+  }, [boardActions, onToggleCompleteProp, task]);
+
+  const onOpenDetail = useCallback(() => {
+    if (onOpenDetailProp) {
+      onOpenDetailProp();
+      return;
+    }
+    boardActions?.onOpenDetail(task.id);
+  }, [boardActions, onOpenDetailProp, task.id]);
+
+  const onDuplicate = useCallback(() => {
+    if (onDuplicateProp) {
+      onDuplicateProp();
+      return;
+    }
+    boardActions?.onDuplicateTask(task);
+  }, [boardActions, onDuplicateProp, task]);
+
+  const onMoveToGroup = useCallback(
+    (targetGroupId: string) => {
+      if (onMoveToGroupProp) {
+        onMoveToGroupProp(targetGroupId);
+        return;
+      }
+      boardActions?.onMoveTask(task.id, targetGroupId);
+    },
+    [boardActions, onMoveToGroupProp, task.id]
+  );
+
+  const onDelete = useCallback(() => {
+    if (onDeleteProp) {
+      onDeleteProp();
+      return;
+    }
+    boardActions?.onDeleteTask(task.id);
+  }, [boardActions, onDeleteProp, task.id]);
+
+  const onUpdate = useCallback(
+    (updates: Partial<Task>) => {
+      if (onUpdateProp) {
+        onUpdateProp(updates);
+        return;
+      }
+      boardActions?.onUpdateTask(task.id, updates);
+    },
+    [boardActions, onUpdateProp, task.id]
+  );
+
+  const onSetPlanningState = useCallback(
+    (planningState: PlanningState) => {
+      if (onSetPlanningStateProp) {
+        onSetPlanningStateProp(planningState);
+        return;
+      }
+      boardActions?.onSetPlanningState?.(task.id, planningState);
+    },
+    [boardActions, onSetPlanningStateProp, task.id]
+  );
+
+  const onRequestCreateGroup = useCallback(() => {
+    if (onRequestCreateGroupProp) {
+      onRequestCreateGroupProp();
+      return;
+    }
+    boardActions?.onRequestCreateGroup(task.id);
+  }, [boardActions, onRequestCreateGroupProp, task.id]);
+
+  const menuAnchor: TaskDetailMenuAnchor = {
+    taskId: task.id,
+    groupId,
+    zone: zone ?? "active",
+  };
+  const detailMenuOpen = useSyncExternalStore(
+    subscribeTaskDetailMenu,
+    () => isActiveTaskDetailMenuAnchor(menuAnchor),
+    () => false
+  );
   const [flagMenuOpen, setFlagMenuOpen] = useState(false);
   const [moveSubmenuOpen, setMoveSubmenuOpen] = useState(false);
   const [planningSubmenuOpen, setPlanningSubmenuOpen] = useState(false);
+  const [alertSubmenuOpen, setAlertSubmenuOpen] = useState(false);
   const [durationOpen, setDurationOpen] = useState(false);
-  const [notifyOpen, setNotifyOpen] = useState(false);
-  const [openDatePickerOnNotify, setOpenDatePickerOnNotify] = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const detailPopoverRef = useRef<HTMLDivElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
   const contextMenuPointRef = useRef<{ x: number; y: number } | null>(null);
   const flagAnchorRef = useRef<HTMLDivElement>(null);
   const flagPopoverRef = useRef<HTMLDivElement>(null);
-  const notifyAnchorRef = useRef<HTMLDivElement>(null);
-  const notifyPopoverRef = useRef<HTMLDivElement>(null);
+  const scheduleAnchorRef = useRef<HTMLDivElement>(null);
+  const schedulePopoverRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [titleDraft, setTitleDraft] = useState(task.title);
@@ -903,10 +854,10 @@ export const TaskRow = memo(function TaskRow({
     [groups, task.group_id]
   );
 
-  const notifyConfigured =
-    task.notification_enabled &&
-    Boolean(task.scheduled_date) &&
-    Boolean(task.scheduled_time);
+  const hasSchedule = Boolean(task.scheduled_date);
+  const scheduleDateColorClass = getTaskScheduleDateColorClass(
+    getTaskScheduleDateTone(task, todayViewDate)
+  );
 
   const scheduleLabel = formatTaskScheduleCompact(task);
   const isCompleted = task.completed;
@@ -914,8 +865,7 @@ export const TaskRow = memo(function TaskRow({
   const durationLabel = hasDuration
     ? formatDurationMinutes(task.duration_minutes!)
     : null;
-  const metaPrimary = scheduleLabel ?? durationLabel;
-  const showDurationBesideSchedule = Boolean(scheduleLabel && durationLabel);
+  const showMetaRow = Boolean(scheduleLabel);
 
   useEffect(() => {
     if (!isRenaming) {
@@ -933,63 +883,34 @@ export const TaskRow = memo(function TaskRow({
     return () => cancelAnimationFrame(frame);
   }, [isRenaming]);
 
-  const taskZone = zone ?? (task.completed ? "completed" : "active");
-  const sourceGroup = useMemo(
-    () => groups.find((group) => group.id === groupId) ?? null,
-    [groupId, groups]
+  const onPointerDragStart = useCallback(
+    (coords: { clientX: number; clientY: number }) => {
+      boardActions?.onTaskPointerDragStart(task.id, groupId, coords);
+    },
+    [boardActions, groupId, task.id]
   );
 
-  const sortableData: TaskDragData = useMemo(() => {
-    if (!sourceGroup) {
-      return {
-        type: "task",
-        taskId: task.id,
-        groupId,
-        zone: taskZone,
-        planningState: normalizePlanningState(task.planning_state),
-        sortMode: "manual",
-      };
-    }
-    return getTaskDndMetadata(task, sourceGroup, taskZone);
-  }, [groupId, sourceGroup, task, taskZone]);
+  const onPointerDragEnd = useCallback(() => {
+    boardActions?.onTaskPointerDragEnd();
+  }, [boardActions]);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: task.id,
-    disabled: overlay || !dragEnabled || isRenaming,
-    data: sortableData,
-    // Layout animation fights sortable transforms during drag — transforms only.
-    animateLayoutChanges: () => false,
-    transition: null,
+  const startRename = useCallback(() => {
+    setTitleDraft(task.title);
+    setIsRenaming(true);
+  }, [task.title]);
+
+  const rowPointerGesture = useTaskRowPointerGesture({
+    dragEnabled,
+    gestureEnabled: !isRenaming,
+    isInteractiveTarget: isTaskDragInteractiveTarget,
+    isDoubleClickTarget: isTaskTitleTarget,
+    onOpenDetail,
+    onDoubleClick: startRename,
+    onPointerDragStart,
+    onPointerDragEnd,
   });
 
-  const sortableListeners = useMemo(() => {
-    if (overlay || !listeners) return undefined;
-
-    const { onPointerDown, ...rest } = listeners;
-    return {
-      ...rest,
-      onPointerDown: (event: PointerEvent<HTMLDivElement>) => {
-        if (isTaskDragInteractiveTarget(event.target)) return;
-        // dnd-kit aborts when defaultPrevented is already true — never preventDefault here.
-        onPointerDown?.(event);
-      },
-    };
-  }, [listeners, overlay]);
-
-  const setRowRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      rowRef.current = node;
-      setNodeRef(node);
-    },
-    [setNodeRef]
-  );
+  const { cancelPendingOpenDetail, ...rowPointerHandlers } = rowPointerGesture;
 
   const commitRename = useCallback(() => {
     setIsRenaming(false);
@@ -1005,31 +926,35 @@ export const TaskRow = memo(function TaskRow({
     setTitleDraft(task.title);
   }, [task.title]);
 
-  function handleTitleDoubleClick(event: MouseEvent<HTMLDivElement>) {
-    event.preventDefault();
-    event.stopPropagation();
-    setTitleDraft(task.title);
-    setIsRenaming(true);
-  }
-
-  function handleRowClick(event: MouseEvent<HTMLDivElement>) {
-    if (isTaskDragInteractiveTarget(event.target)) return;
-    onOpenDetail();
-  }
+  const handleTitleDoubleClick = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      cancelPendingOpenDetail();
+      startRename();
+    },
+    [cancelPendingOpenDetail, startRename]
+  );
 
   useEffect(() => {
-    if (!notifyOpen) return;
+    if (!scheduleOpen) return;
 
     function handlePointerDown(event: globalThis.MouseEvent) {
       const target = event.target as Node;
-      if (notifyAnchorRef.current?.contains(target)) return;
-      if (notifyPopoverRef.current?.contains(target)) return;
-      setNotifyOpen(false);
+      if (scheduleAnchorRef.current?.contains(target)) return;
+      if (schedulePopoverRef.current?.contains(target)) return;
+      if (
+        target instanceof Element &&
+        target.closest("[data-schedule-popover]")
+      ) {
+        return;
+      }
+      setScheduleOpen(false);
     }
 
     document.addEventListener("mousedown", handlePointerDown);
     return () => document.removeEventListener("mousedown", handlePointerDown);
-  }, [notifyOpen]);
+  }, [scheduleOpen]);
 
   useEffect(() => {
     if (!flagMenuOpen) return;
@@ -1046,87 +971,48 @@ export const TaskRow = memo(function TaskRow({
   }, [flagMenuOpen]);
 
   const closeDetailMenu = useCallback(() => {
-    setDetailMenuOpen(false);
-    contextMenuPointRef.current = null;
-    setMoveSubmenuOpen(false);
+    setActiveTaskDetailMenuAnchor(null);
   }, []);
 
   useEffect(() => {
-    if (!detailMenuOpen) return;
-
-    function handlePointerDown(event: globalThis.MouseEvent) {
-      const target = event.target as Node;
-      if (detailPopoverRef.current?.contains(target)) return;
-      if (
-        target instanceof Element &&
-        target.closest("[data-task-move-submenu]")
-      ) {
-        return;
-      }
-      closeDetailMenu();
-    }
-
-    document.addEventListener("mousedown", handlePointerDown);
-    return () => document.removeEventListener("mousedown", handlePointerDown);
-  }, [closeDetailMenu, detailMenuOpen]);
+    if (detailMenuOpen) return;
+    contextMenuPointRef.current = null;
+    setMoveSubmenuOpen(false);
+    setPlanningSubmenuOpen(false);
+    setAlertSubmenuOpen(false);
+  }, [detailMenuOpen]);
 
   function handleContextMenu(event: MouseEvent<HTMLDivElement>) {
     event.preventDefault();
     setFlagMenuOpen(false);
-    setNotifyOpen(false);
+    setScheduleOpen(false);
     contextMenuPointRef.current = {
       x: event.clientX,
       y: event.clientY,
     };
-    setDetailMenuOpen(true);
+    setActiveTaskDetailMenuAnchor(menuAnchor);
   }
 
   return (
     <div
-      ref={setRowRef}
+      ref={rowRef}
       data-task-row={task.id}
-      style={{
-        transform:
-          isDragging && !overlay
-            ? undefined
-            : CSS.Transform.toString(transform),
-        transition: isDragging ? undefined : transition,
-        touchAction: overlay ? undefined : "none",
-        ...(isDragging && !overlay
-          ? {
-              height: 0,
-              minHeight: 0,
-              marginTop: 0,
-              marginBottom: 0,
-              paddingTop: 0,
-              paddingBottom: 0,
-              borderWidth: 0,
-              opacity: 0,
-            }
-          : null),
-      }}
-      {...(overlay ? {} : attributes)}
-      {...(overlay ? {} : sortableListeners)}
-      onClick={overlay ? undefined : handleRowClick}
-      onContextMenu={overlay ? undefined : handleContextMenu}
+      data-task-board-group={groupId}
+      {...rowPointerHandlers}
+      onContextMenu={handleContextMenu}
       title={
         dragEnabled && !reorderEnabled ? reorderDisabledTooltip : undefined
       }
       className={cn(
-        "group relative mx-0.5 flex min-w-0 select-none items-center gap-0 rounded-md border border-transparent py-1 pl-0.5 pr-0.5 transition-[background-color,border-color,opacity] duration-150",
-        !overlay &&
-          dragEnabled &&
-          !isDragging &&
-          "cursor-grab hover:border-border/40 hover:bg-muted/40",
-        isDragging && !overlay && "pointer-events-none overflow-hidden",
-        overlay && "pointer-events-none",
-        !overlay && notifyOpen && "z-20",
-        !overlay && detailMenuOpen && "z-20",
-        !overlay && flagMenuOpen && "z-20",
+        "group relative mx-0.5 flex min-w-0 select-none items-center gap-0 rounded-md border border-transparent py-1 pl-0.5 pr-0.5 transition-[background-color,border-color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        dragEnabled &&
+          "cursor-grab hover:border-border/60 hover:bg-muted/45 active:cursor-grabbing",
+        scheduleOpen && "z-20",
+        detailMenuOpen && "z-20",
+        flagMenuOpen && "z-20",
         isSelected &&
-          !overlay &&
-          "bg-sky-50/55 shadow-[inset_0_0_0_1px_rgba(14,165,233,0.18)] dark:bg-sky-500/10",
-        isCompleted && !isDragging && !overlay && "opacity-[0.45] transition-opacity hover:opacity-[0.62]"
+          "bg-selected shadow-[inset_0_0_0_1px_var(--selected-border)]",
+        isCompleted && "opacity-[0.45] hover:opacity-[0.62]"
       )}
     >
       <button
@@ -1138,7 +1024,7 @@ export const TaskRow = memo(function TaskRow({
         aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
       >
         {isCompleted ? (
-          <CheckCircle2 className="size-3.5 fill-emerald-500/12 text-emerald-600" />
+          <CheckCircle2 className="size-3.5 fill-emerald-500/12 text-emerald-600 dark:fill-emerald-400/15 dark:text-emerald-400" />
         ) : (
           <Circle className="size-3.5 transition-colors group-hover:text-foreground/80" />
         )}
@@ -1176,6 +1062,7 @@ export const TaskRow = memo(function TaskRow({
           />
         ) : (
           <div
+            data-task-title
             onDoubleClick={handleTitleDoubleClick}
             className={cn(
               "flex min-w-0 w-full flex-1 flex-col items-start gap-px px-1 text-left",
@@ -1184,6 +1071,7 @@ export const TaskRow = memo(function TaskRow({
             title={task.title}
           >
             <span
+              data-task-title-text
               className={cn(
                 "min-w-0 w-full truncate font-[520] text-foreground",
                 isCompleted
@@ -1194,18 +1082,20 @@ export const TaskRow = memo(function TaskRow({
             >
               {task.title || "Untitled"}
             </span>
-            {metaPrimary ? (
+            {showMetaRow ? (
               <span
                 className={cn(
                   "flex w-full min-w-0 items-center justify-between gap-2 font-normal tabular-nums",
                   isCompleted
-                    ? "text-[9px] leading-[10px] text-muted-foreground/70"
-                    : "text-[10px] leading-[11px] text-muted-foreground/80"
+                    ? "text-[9px] leading-[10px] text-muted-foreground/60"
+                    : "text-[10px] leading-[11px] text-muted-foreground/65"
                 )}
               >
-                <span className="min-w-0 truncate">{metaPrimary}</span>
-                {showDurationBesideSchedule ? (
-                  <span className="shrink-0 text-muted-foreground/65">
+                <span className="min-w-0 truncate">
+                  {scheduleLabel ?? ""}
+                </span>
+                {durationLabel ? (
+                  <span className="shrink-0 text-muted-foreground/55">
                     {durationLabel}
                   </span>
                 ) : null}
@@ -1230,6 +1120,41 @@ export const TaskRow = memo(function TaskRow({
           onChange={(minutes) => onUpdate({ duration_minutes: minutes })}
           onOpenChange={setDurationOpen}
         />
+      </div>
+
+      <div
+        ref={scheduleAnchorRef}
+        data-no-task-drag
+        className={cn(
+          "relative size-6 shrink-0 transition-opacity",
+          hasSchedule || scheduleOpen
+            ? "opacity-100"
+            : "opacity-0 group-hover:opacity-100"
+        )}
+      >
+        <button
+          type="button"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={() => setScheduleOpen((value) => !value)}
+          className={cn(
+            "absolute inset-0 flex items-center justify-center rounded hover:bg-muted/80",
+            scheduleOpen && "bg-muted/80",
+            scheduleDateColorClass
+          )}
+          aria-label="Schedule date and time"
+          aria-expanded={scheduleOpen}
+        >
+          <CalendarDays className="size-3.5" strokeWidth={1.75} />
+        </button>
+
+        {scheduleOpen && (
+          <TaskSchedulePopover
+            task={task}
+            anchorRef={scheduleAnchorRef}
+            popoverRef={schedulePopoverRef}
+            onUpdate={onUpdate}
+          />
+        )}
       </div>
 
       <div ref={flagAnchorRef} data-no-task-drag className="relative shrink-0">
@@ -1257,55 +1182,7 @@ export const TaskRow = memo(function TaskRow({
         )}
       </div>
 
-      <div
-        ref={notifyAnchorRef}
-        data-no-task-drag
-        className={cn(
-          "relative size-6 shrink-0 transition-opacity",
-          notifyConfigured || notifyOpen
-            ? "opacity-100"
-            : "opacity-0 group-hover:opacity-100"
-        )}
-      >
-        <button
-          type="button"
-          onPointerDown={(event) => event.stopPropagation()}
-          onClick={() => {
-            setOpenDatePickerOnNotify(false);
-            setNotifyOpen((value) => !value);
-          }}
-          className={cn(
-            "absolute inset-0 flex items-center justify-center rounded hover:bg-muted/80",
-            notifyOpen && "bg-muted/80",
-            !task.notification_enabled && "text-muted-foreground/70",
-            task.notification_enabled && !notifyConfigured && "text-muted-foreground",
-            notifyConfigured && "text-foreground"
-          )}
-          aria-label="Notification settings"
-          aria-expanded={notifyOpen}
-        >
-          {task.notification_enabled ? (
-            <Bell
-              className={cn("size-3.5", notifyConfigured && "fill-foreground/10")}
-            />
-          ) : (
-            <NotificationBellOffIcon />
-          )}
-        </button>
-
-        {notifyOpen && (
-          <TaskNotificationPopover
-            task={task}
-            notifyConfigured={notifyConfigured}
-            anchorRef={notifyAnchorRef}
-            popoverRef={notifyPopoverRef}
-            openDatePickerInitially={openDatePickerOnNotify}
-            onUpdate={onUpdate}
-          />
-        )}
-      </div>
-
-      {detailMenuOpen && !overlay && (
+      {detailMenuOpen && (
         <TaskDetailMenuPopover
           task={task}
           todayViewDate={todayViewDate}
@@ -1317,41 +1194,45 @@ export const TaskRow = memo(function TaskRow({
           onMoveSubmenuOpenChange={setMoveSubmenuOpen}
           planningSubmenuOpen={planningSubmenuOpen}
           onPlanningSubmenuOpenChange={setPlanningSubmenuOpen}
-          onDuplicate={() => {
+          alertSubmenuOpen={alertSubmenuOpen}
+          onAlertSubmenuOpenChange={setAlertSubmenuOpen}
+          onSetAlertBefore={(updates) => {
+            onUpdate(updates);
             closeDetailMenu();
-            onDuplicate();
           }}
-          onRemoveDate={
-            task.scheduled_date
-              ? () => {
-                  closeDetailMenu();
-                  onUpdate({
-                    scheduled_date: null,
-                  });
-                }
-              : undefined
-          }
-          onSetPlanningState={
-            onSetPlanningState
-              ? (planningState) => {
-                  closeDetailMenu();
-                  onSetPlanningState(planningState);
-                }
-              : undefined
-          }
-          onMoveToGroup={(groupId) => {
+          onCloseMenu={closeDetailMenu}
+          onDuplicate={() => {
+            onDuplicate();
             closeDetailMenu();
+          }}
+          onAddToToday={
+            task.scheduled_date !== getTodayDateString()
+              ? () => {
+                  void onUpdate({
+                    scheduled_date: getTodayDateString(),
+                    planning_state: "none",
+                  });
+                  closeDetailMenu();
+                }
+              : undefined
+          }
+          onSetPlanningState={(planningState) => {
+            onSetPlanningState(planningState);
+            closeDetailMenu();
+          }}
+          onMoveToGroup={(groupId) => {
             onMoveToGroup(groupId);
+            closeDetailMenu();
           }}
           onDelete={() => {
-            closeDetailMenu();
             onDelete();
+            closeDetailMenu();
           }}
           onRequestCreateGroup={
             onRequestCreateGroup
               ? () => {
-                  closeDetailMenu();
                   onRequestCreateGroup();
+                  closeDetailMenu();
                 }
               : undefined
           }
@@ -1359,4 +1240,4 @@ export const TaskRow = memo(function TaskRow({
       )}
     </div>
   );
-});
+}, areTaskRowPropsEqual);

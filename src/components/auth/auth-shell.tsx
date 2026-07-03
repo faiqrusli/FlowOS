@@ -21,16 +21,16 @@ export function AuthShell({
   footer,
 }: AuthShellProps) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-muted/35 px-4 py-10">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
           <Link href="/" className="inline-block">
-            <p className="text-lg font-semibold text-neutral-900">FlowOS</p>
+            <p className="text-lg font-semibold text-foreground">FlowOS</p>
             <p className="text-xs text-muted-foreground">Productivity SaaS</p>
           </Link>
         </div>
 
-        <Card className="bg-white ring-neutral-200/80">
+        <Card className="bg-card ring-border/40">
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl">{title}</CardTitle>
             <CardDescription>{description}</CardDescription>

@@ -34,7 +34,7 @@ export function TaskDndContext({ children }: TaskDndContextProps) {
       sensors={sensors}
       collisionDetection={taskCollisionDetection}
       measuring={{
-        droppable: { strategy: MeasuringStrategy.WhileDragging },
+        droppable: { strategy: MeasuringStrategy.BeforeDragging },
       }}
       autoScroll={{ canScroll: canAutoScrollElement }}
       onDragStart={handleTaskDndDragStart}

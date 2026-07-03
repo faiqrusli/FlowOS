@@ -14,19 +14,24 @@ import {
   HabitFormFields,
   type HabitFormValues,
 } from "@/components/habits/habit-form-fields";
+import { getHabitDurationMinutes, setItemDurationMinutes } from "@/lib/schedule-durations";
 import type { Habit, HabitInsert } from "@/types/habit";
 
 const emptyForm: HabitFormValues = {
   name: "",
   scheduledTime: "",
+  durationMinutes: 15,
   daysOfWeek: [],
+  trackWithFocus: false,
 };
 
 function habitToForm(habit: Habit): HabitFormValues {
   return {
     name: habit.name,
     scheduledTime: habit.scheduled_time?.slice(0, 5) ?? "",
+    durationMinutes: getHabitDurationMinutes(habit.id),
     daysOfWeek: habit.days_of_week ?? [],
+    trackWithFocus: habit.track_with_focus ?? false,
   };
 }
 
@@ -35,6 +40,7 @@ function formToInsert(values: HabitFormValues): HabitInsert {
     name: values.name.trim(),
     scheduled_time: values.scheduledTime || null,
     days_of_week: values.daysOfWeek.length > 0 ? values.daysOfWeek : null,
+    track_with_focus: values.trackWithFocus,
   };
 }
 
@@ -43,7 +49,7 @@ type HabitDialogProps = {
   habit?: Habit;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onSave: (input: HabitInsert, habitId?: string) => Promise<void>;
+  onSave: (input: HabitInsert, habitId?: string) => Promise<Habit>;
 };
 
 export function HabitDialog({
@@ -99,7 +105,8 @@ export function HabitDialog({
 
     try {
       const input = formToInsert(form);
-      await onSave(input, mode === "edit" ? habit?.id : undefined);
+      const saved = await onSave(input, mode === "edit" ? habit?.id : undefined);
+      setItemDurationMinutes("habit", saved.id, form.durationMinutes);
       setOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save habit.");
@@ -139,7 +146,7 @@ export function HabitDialog({
           <Button
             type="submit"
             disabled={submitting}
-            className="rounded-full bg-neutral-800 text-white hover:bg-neutral-700"
+            className="rounded-full"
           >
             {submitting ? "Saving…" : submitLabel}
           </Button>
@@ -160,7 +167,7 @@ export function HabitDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button className="rounded-full bg-neutral-800 text-white hover:bg-neutral-700" />
+          <Button className="rounded-full" />
         }
       >
         Add Habit

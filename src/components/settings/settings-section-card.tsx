@@ -26,7 +26,7 @@ export function SettingsSectionCard({
   return (
     <Card
       id={id}
-      className={cn("scroll-mt-6 bg-neutral-50 ring-neutral-200/80", className)}
+      className={cn("scroll-mt-6 ", className)}
     >
       <CardHeader>
         <CardTitle className="text-base">{title}</CardTitle>

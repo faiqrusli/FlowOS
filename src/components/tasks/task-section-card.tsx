@@ -35,10 +35,10 @@ export function TaskSectionCard({
   return (
     <Card
       className={cn(
-        "ring-neutral-200/80",
-        tone === "today" && "border-blue-200/80 bg-blue-50/40",
-        tone === "missed" && "border-amber-200/80 bg-amber-50/40",
-        tone === "default" && "bg-neutral-50/80"
+        "ring-border/40",
+        tone === "today" && "border-blue-200/80 bg-blue-50/40 dark:border-blue-400/30 dark:bg-blue-500/10",
+        tone === "missed" && "border-amber-200/80 bg-amber-50/40 dark:border-amber-400/30 dark:bg-amber-500/10",
+        tone === "default" && "bg-muted/35"
       )}
     >
       <CardHeader className="pb-3">
@@ -56,7 +56,7 @@ export function TaskSectionCard({
                   open && "rotate-180"
                 )}
               />
-              <h2 className="text-sm font-semibold text-neutral-900">{title}</h2>
+              <h2 className="text-sm font-semibold text-foreground">{title}</h2>
               <span className="text-xs text-muted-foreground">
                 ({tasks.length})
               </span>

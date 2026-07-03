@@ -297,7 +297,7 @@ export function KanbanPanel({
                     className={cn(
                       "whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
                       isActive
-                        ? "bg-foreground text-background"
+                        ? "flow-selected text-foreground"
                         : "bg-muted/50 text-foreground/70 hover:bg-muted hover:text-foreground"
                     )}
                   >

@@ -6,6 +6,11 @@ import { HabitsTodayChecklistCard } from "@/components/habits/habits-today-check
 import { EntityGridSkeleton } from "@/components/shared/entity-grid-skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import {
+  useHabitDailyScheduleStore,
+  withHabitScheduleForDate,
+} from "@/lib/habit-daily-schedule-store";
+import { getTodayDateString } from "@/lib/date-utils";
+import {
   computeHabitStatsMap,
   getCachedHabitCompletions,
   isHabitScheduledToday,
@@ -31,9 +36,19 @@ export function HabitList({
   onEdit,
   onDelete,
 }: HabitListProps) {
+  const habitScheduleRevision = useHabitDailyScheduleStore();
+  const todayKey = getTodayDateString();
   const statsMap = useMemo(
     () => computeHabitStatsMap(habits, getCachedHabitCompletions()),
     [habits, completionsVersion]
+  );
+  const dueToday = useMemo(
+    () => habits.filter((habit) => isHabitScheduledToday(habit)),
+    [habits]
+  );
+  const dueTodayDisplay = useMemo(
+    () => withHabitScheduleForDate(dueToday, todayKey),
+    [dueToday, todayKey, habitScheduleRevision]
   );
 
   if (loading) {
@@ -42,7 +57,7 @@ export function HabitList({
 
   if (habits.length === 0) {
     return (
-      <Card className="bg-neutral-50 ring-neutral-200/80">
+      <Card>
         <CardContent className="py-12 text-center text-sm text-muted-foreground">
           No habits yet. Click Add Habit to build your routine.
         </CardContent>
@@ -50,19 +65,17 @@ export function HabitList({
     );
   }
 
-  const dueToday = habits.filter((habit) => isHabitScheduledToday(habit));
-
   return (
     <div className="space-y-8">
       <HabitsTodayChecklistCard
-        habits={dueToday}
+        habits={dueTodayDisplay}
         pendingId={pendingId}
         onToggle={onToggleComplete}
       />
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-sm font-medium text-neutral-900">All habits</h2>
+          <h2 className="text-sm font-medium text-foreground">All habits</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
             Edit schedules and manage your routines below.
           </p>

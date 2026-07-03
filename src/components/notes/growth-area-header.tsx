@@ -1,6 +1,8 @@
 import { type } from "@/lib/typography";
+import { MINDSET_GROWTH_AREA_NAME } from "@/lib/notes-utils";
 import { cn } from "@/lib/utils";
 import type { GrowthArea } from "@/types/notes";
+import { Button } from "@/components/ui/button";
 
 type ContentTab = "notes" | "kanban";
 
@@ -8,12 +10,14 @@ type GrowthAreaHeaderProps = {
   area: GrowthArea;
   tab: ContentTab;
   onTabChange: (tab: ContentTab) => void;
+  onOpenTodaysNote?: () => void;
 };
 
 export function GrowthAreaHeader({
   area,
   tab,
   onTabChange,
+  onOpenTodaysNote,
 }: GrowthAreaHeaderProps) {
   return (
     <div className="shrink-0 border-b border-border/30 px-4 py-2">
@@ -45,6 +49,18 @@ export function GrowthAreaHeader({
             </button>
           ))}
         </div>
+
+        {area.name === MINDSET_GROWTH_AREA_NAME && onOpenTodaysNote ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="ml-auto shrink-0"
+            onClick={onOpenTodaysNote}
+          >
+            Open today&apos;s note
+          </Button>
+        ) : null}
       </div>
     </div>
   );

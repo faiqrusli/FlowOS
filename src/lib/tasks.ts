@@ -64,6 +64,33 @@ export function isTaskMissed(
   );
 }
 
+export type TaskScheduleDateTone = "none" | "today" | "overdue" | "future";
+
+export function getTaskScheduleDateTone(
+  task: Pick<Task, "scheduled_date" | "completed">,
+  todayKey: string
+): TaskScheduleDateTone {
+  if (!task.scheduled_date) return "none";
+  if (task.scheduled_date === todayKey) return "today";
+  if (!task.completed && task.scheduled_date < todayKey) return "overdue";
+  return "future";
+}
+
+export function getTaskScheduleDateColorClass(
+  tone: TaskScheduleDateTone
+): string {
+  switch (tone) {
+    case "today":
+      return "text-sky-600";
+    case "overdue":
+      return "text-red-600";
+    case "none":
+    case "future":
+    default:
+      return "text-muted-foreground/70";
+  }
+}
+
 function sortBySchedule(a: Task, b: Task): number {
   const dateCompare = (a.scheduled_date ?? "").localeCompare(
     b.scheduled_date ?? ""
@@ -169,6 +196,7 @@ export async function fetchTasks(): Promise<Task[]> {
 function normalizeTaskFromDb(task: Task): Task {
   return normalizeTaskManualOrder({
     ...task,
+    notification_lead_minutes: task.notification_lead_minutes ?? null,
     planning_state: normalizePlanningState(task.planning_state),
     updated_at: task.updated_at ?? task.created_at,
     completed_at: task.completed_at ?? null,
@@ -306,6 +334,7 @@ export async function duplicateTask(
     sort_order: sortOrder,
     duration_minutes: task.duration_minutes,
     notification_enabled: task.notification_enabled,
+    notification_lead_minutes: task.notification_lead_minutes,
     planning_state: task.planning_state,
   });
 }

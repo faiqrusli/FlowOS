@@ -46,7 +46,7 @@ function SidebarToggleIcon({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-md border border-border/60 bg-background",
+        "flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-background shadow-xs",
         className
       )}
     >
@@ -78,7 +78,7 @@ function SidebarBrand({
 }) {
   if (collapsed) {
     return (
-      <div className="relative z-20 flex shrink-0 justify-center overflow-visible border-b border-sidebar-border/25 py-3.5">
+      <div className="relative z-20 flex shrink-0 justify-center overflow-visible border-b border-sidebar-border py-3.5">
         <button
           type="button"
           onClick={onToggleCollapse}
@@ -93,7 +93,7 @@ function SidebarBrand({
   }
 
   return (
-    <div className="flex shrink-0 items-center justify-between gap-2 border-b border-sidebar-border/25 px-3 pb-3.5 pt-3.5">
+    <div className="flex shrink-0 items-center justify-between gap-2 border-b border-sidebar-border px-3 pb-3.5 pt-3.5">
       <div className="flex min-w-0 items-center gap-2">
         <SidebarLogoMark />
         <div className="min-w-0 leading-none">
@@ -108,7 +108,7 @@ function SidebarBrand({
       <button
         type="button"
         onClick={onToggleCollapse}
-        className="shrink-0 rounded-md transition-colors hover:bg-muted/60"
+        className="shrink-0 rounded-md transition-colors duration-150 hover:bg-sidebar-accent/70"
         aria-label="Collapse sidebar"
         title="Collapse sidebar"
       >
@@ -140,11 +140,11 @@ function SidebarNav({
           className={cn(sectionIndex > 0 && (collapsed ? "mt-3" : "mt-5"))}
         >
           {!collapsed && (
-            <p className="mb-2 px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            <p className="mb-2 px-2.5 text-[10.5px] font-semibold uppercase tracking-[0.09em] text-muted-foreground/75">
               {section.label}
             </p>
           )}
-          <ul className="space-y-1">
+          <ul className="space-y-0.5">
             {section.items.map((item) => {
               const isActive = isNavItemActive(pathname, item.href);
               const Icon = item.icon;
@@ -156,32 +156,28 @@ function SidebarNav({
                     onClick={onNavigate}
                     aria-label={collapsed ? item.label : undefined}
                     className={cn(
-                      "group/nav relative flex h-9 items-center rounded-lg text-[14px] font-normal transition-colors",
+                      "group/nav relative flex h-9 items-center rounded-lg text-[13.5px] transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
                       collapsed ? "justify-center px-0" : "gap-2.5 px-2.5",
                       isActive
-                        ? "text-foreground"
-                        : "text-foreground/60 hover:text-foreground/85"
+                        ? "bg-primary font-medium text-primary-foreground shadow-sm dark:shadow-[var(--shadow-primary)]"
+                        : "font-normal text-foreground/58 hover:bg-sidebar-accent hover:text-foreground/92"
                     )}
                   >
-                    {isActive && (
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "absolute w-0.5 rounded-full bg-foreground/80",
-                          collapsed
-                            ? "bottom-2 left-1 top-2"
-                            : "bottom-1.5 left-0 top-1.5"
-                        )}
-                      />
-                    )}
-                    <Icon className="size-[18px] shrink-0 stroke-[1.75] text-foreground/45 group-hover/nav:text-foreground/65" />
+                    <Icon
+                      className={cn(
+                        "size-[17px] shrink-0 stroke-[1.75] transition-colors duration-150",
+                        isActive
+                          ? "text-primary-foreground"
+                          : "text-foreground/40 group-hover/nav:text-foreground/75"
+                      )}
+                    />
                     {!collapsed && (
                       <span className="truncate">{item.label}</span>
                     )}
                     {collapsed && (
                       <span
                         role="tooltip"
-                        className="pointer-events-none absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-border/60 bg-popover px-2 py-1 text-xs font-medium text-popover-foreground shadow-md group-hover/nav:block"
+                        className="flow-surface-elevated pointer-events-none absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden -translate-y-1/2 scale-95 whitespace-nowrap px-2.5 py-1 text-xs font-medium text-popover-foreground opacity-0 transition-[opacity,transform] duration-150 group-hover/nav:block group-hover/nav:scale-100 group-hover/nav:opacity-100"
                       >
                         {item.label}
                       </span>
@@ -216,8 +212,9 @@ function SidebarPanel({
     <aside
       style={{ width }}
       className={cn(
-        "flex h-full shrink-0 flex-col border-r border-sidebar-border/25 bg-sidebar text-sidebar-foreground",
-        animateWidth && "transition-[width] duration-200 ease-out",
+        "flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground",
+        animateWidth &&
+          "transition-[width] duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
         collapsed && "overflow-visible",
         className
       )}
@@ -355,18 +352,21 @@ export function AppSidebar({ mobileOpen, onMobileOpenChange }: AppSidebarProps) 
           <button
             type="button"
             aria-label="Close navigation menu"
-            className="absolute inset-0 bg-black/40"
+            className="absolute inset-0 bg-black/35 backdrop-blur-[2px] dark:bg-black/55"
             onClick={() => onMobileOpenChange(false)}
           />
           <div
-            className="relative h-full shadow-xl"
-            style={{ width: `min(${SIDEBAR_WIDTH_EXPANDED}px, 85vw)` }}
+            className="relative h-full"
+            style={{
+              width: `min(${SIDEBAR_WIDTH_EXPANDED}px, 85vw)`,
+              boxShadow: "var(--shadow-lg)",
+            }}
           >
             <button
               type="button"
               onClick={() => onMobileOpenChange(false)}
               aria-label="Close navigation menu"
-              className="absolute top-3.5 right-3 z-10 flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              className="absolute top-3.5 right-3 z-10 flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
               <X className="size-4 stroke-[1.5]" />
             </button>
@@ -390,12 +390,12 @@ type MobileSidebarTriggerProps = {
 
 export function MobileSidebarTrigger({ onOpen }: MobileSidebarTriggerProps) {
   return (
-    <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/35 bg-background px-4 lg:hidden">
+    <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background px-4 lg:hidden">
       <button
         type="button"
         onClick={onOpen}
         aria-label="Open navigation menu"
-        className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
       >
         <Menu className="size-4 stroke-[1.5]" />
       </button>

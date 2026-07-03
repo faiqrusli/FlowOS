@@ -25,6 +25,8 @@ export type Note = {
   title: string;
   content: string;
   is_pinned: boolean;
+  is_menu_pinned: boolean;
+  note_date: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -34,6 +36,8 @@ export type NoteInsert = {
   title?: string;
   content?: string;
   is_pinned?: boolean;
+  is_menu_pinned?: boolean;
+  note_date?: string | null;
 };
 
 export type NoteUpdate = Partial<NoteInsert>;

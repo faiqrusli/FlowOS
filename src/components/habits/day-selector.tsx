@@ -41,7 +41,7 @@ export function DaySelector({ value, onChange, disabled }: DaySelectorProps) {
               variant={selected ? "default" : "outline"}
               className={cn(
                 "px-2.5",
-                selected && "bg-neutral-800 text-white hover:bg-neutral-800"
+                selected && "bg-primary text-white hover:bg-primary/88"
               )}
             >
               {day}

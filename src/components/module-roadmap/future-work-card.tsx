@@ -12,11 +12,11 @@ type FutureWorkCardProps = {
 
 export function FutureWorkCard({ items }: FutureWorkCardProps) {
   return (
-    <Card className="bg-neutral-50 ring-neutral-200/80">
+    <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-neutral-200/80">
-            <Map className="size-4 text-neutral-600 stroke-[1.5]" />
+          <div className="flex size-8 items-center justify-center rounded-lg bg-muted/60">
+            <Map className="size-4 text-muted-foreground stroke-[1.5]" />
           </div>
           <CardTitle className="text-base">Future Work</CardTitle>
         </div>
@@ -30,7 +30,7 @@ export function FutureWorkCard({ items }: FutureWorkCardProps) {
             >
               <span
                 aria-hidden
-                className="mt-2 size-1 shrink-0 rounded-full bg-neutral-300"
+                className="mt-2 size-1 shrink-0 rounded-full bg-muted-foreground/30"
               />
               <span>{item}</span>
             </li>

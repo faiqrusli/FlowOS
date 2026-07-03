@@ -26,8 +26,8 @@ export function TaskCard({
   return (
     <Card
       className={cn(
-        "bg-neutral-50 ring-neutral-200/80",
-        task.completed && "opacity-70"
+        "group/task-card transition-[border-color,box-shadow] duration-150 hover:border-border/85 hover:shadow-sm",
+        task.completed && "opacity-65 hover:opacity-80"
       )}
     >
       <CardContent className="flex items-start gap-3 py-4">
@@ -40,14 +40,14 @@ export function TaskCard({
         <div className="min-w-0 flex-1">
           <p
             className={cn(
-              "font-medium text-neutral-900",
+              "font-medium text-foreground",
               task.completed && "text-muted-foreground line-through"
             )}
           >
             {task.title}
           </p>
           {task.description && (
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-foreground-secondary">
               {task.description}
             </p>
           )}
@@ -60,7 +60,7 @@ export function TaskCard({
           variant="ghost"
           size="icon-sm"
           disabled={disabled}
-          className="shrink-0 text-muted-foreground hover:text-destructive"
+          className="shrink-0 text-muted-foreground opacity-60 transition-opacity hover:text-destructive group-hover/task-card:opacity-100"
           onClick={() => onDelete(task.id)}
           aria-label={`Delete "${task.title}"`}
         >

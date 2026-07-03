@@ -1,13 +1,14 @@
 "use client";
 
-import { Check, Pencil, Trash2 } from "lucide-react";
+import { Check, Crosshair, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   formatDaysOfWeek,
-  formatHabitTime,
   isHabitScheduledToday,
 } from "@/lib/habits";
+import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
+import { getHabitDurationMinutes } from "@/lib/schedule-durations";
 import { cn } from "@/lib/utils";
 import type { Habit, HabitStats } from "@/types/habit";
 
@@ -36,22 +37,37 @@ export function HabitCard({
   onDelete,
 }: HabitCardProps) {
   const scheduledToday = isHabitScheduledToday(habit);
-  const time = formatHabitTime(habit.scheduled_time);
+  const duration = getHabitDurationMinutes(habit.id);
+  const time = formatHabitTimeRangeWithDuration(habit.scheduled_time, duration);
   const daysLabel = formatDaysOfWeek(habit.days_of_week);
 
   return (
     <Card
       className={cn(
-        "bg-neutral-50 ring-neutral-200/80",
         scheduledToday &&
           habit.completed &&
-          "border-green-200 bg-green-50/40 ring-green-200/60"
+          "border-green-200 bg-green-50/40 ring-green-200/60 dark:border-green-400/30 dark:bg-green-500/10 dark:ring-green-400/25"
       )}
     >
       <CardContent className="space-y-4 py-4">
         <div className="flex items-start gap-3">
           <div className="min-w-0 flex-1 space-y-2">
-            <p className="font-medium text-neutral-900">{habit.name}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="font-medium text-foreground">{habit.name}</p>
+              {habit.track_with_focus ? (
+                <span
+                  className="inline-flex items-center gap-1 rounded-md bg-violet-100/90 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
+                  title="Track with Focus enabled"
+                >
+                  <Crosshair className="size-3" />
+                  Focus
+                </span>
+              ) : (
+                <span className="rounded-md bg-muted/55 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                  No focus tracking
+                </span>
+              )}
+            </div>
 
             <div className="space-y-0.5">
               <p
@@ -76,7 +92,7 @@ export function HabitCard({
                 habit.days_of_week!.map((day) => (
                   <span
                     key={day}
-                    className="rounded-md bg-neutral-200/70 px-2 py-0.5 text-[10px] font-medium text-neutral-700"
+                    className="rounded-md bg-muted/55 px-2 py-0.5 text-[10px] font-medium text-foreground/85"
                   >
                     {day}
                   </span>
@@ -113,7 +129,7 @@ export function HabitCard({
         </div>
 
         {showTodayStatus && scheduledToday ? (
-          <div className="rounded-lg border border-neutral-200/80 bg-white px-3 py-3">
+          <div className="rounded-lg border border-border/50/80 bg-card px-3 py-3">
             <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
               Today&apos;s status
             </p>
@@ -139,7 +155,7 @@ export function HabitCard({
               </div>
             ) : (
               <div className="mt-2 space-y-2">
-                <p className="text-sm text-neutral-700">
+                <p className="text-sm text-foreground/85">
                   Mark today&apos;s occurrence when you&apos;re done.
                 </p>
                 <Button
@@ -147,7 +163,7 @@ export function HabitCard({
                   size="sm"
                   disabled={disabled}
                   onClick={() => onToggleComplete(habit)}
-                  className="rounded-full bg-neutral-800 text-white hover:bg-neutral-700"
+                  className="rounded-full"
                 >
                   Mark complete
                 </Button>
@@ -155,7 +171,7 @@ export function HabitCard({
             )}
           </div>
         ) : showTodayStatus ? (
-          <p className="rounded-lg border border-dashed border-neutral-200 bg-white/60 px-3 py-2 text-xs text-muted-foreground">
+          <p className="rounded-lg border border-dashed border-border/50 bg-card/60 px-3 py-2 text-xs text-muted-foreground">
             Not scheduled today. Manage the routine above — no checkbox needed.
           </p>
         ) : null}

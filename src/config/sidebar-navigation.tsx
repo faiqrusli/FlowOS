@@ -2,6 +2,7 @@ import {
   CalendarDays,
   CheckSquare,
   LayoutDashboard,
+  LayoutTemplate,
   NotebookPen,
   Repeat,
   StickyNote,
@@ -29,6 +30,7 @@ export const sidebarSections: SidebarNavSection[] = [
   {
     label: "Productivity",
     items: [
+      { label: "Workplace", href: "/workplace", icon: LayoutTemplate },
       { label: "Schedule", href: "/schedule", icon: CalendarDays },
       { label: "Tasks", href: "/tasks", icon: CheckSquare },
       { label: "Habits", href: "/habits", icon: Repeat },

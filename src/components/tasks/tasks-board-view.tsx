@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -26,6 +27,7 @@ import {
   Smile,
   Trash2,
 } from "lucide-react";
+import { CalendarPanel, CALENDAR_PANEL_WIDTH_CLASS } from "@/components/ui/calendar-panel";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskGroupColorChooser } from "@/components/tasks/task-group-color-chooser";
 import {
@@ -63,7 +65,6 @@ import {
   setQuickScheduleOpen,
 } from "@/lib/timeline-drag";
 import {
-  filterTasksForGroup,
   formatTodayColumnTitle,
   getGroupDisplayTitle,
   canReorderTasksInGroup,
@@ -71,7 +72,6 @@ import {
   isLaterGroup,
   isPinnedTaskGroup,
   isTodayGroup,
-  sortActiveAndCompleted,
   taskBelongsInLaterView,
 } from "@/lib/task-groups";
 import {
@@ -85,17 +85,28 @@ import {
   TaskBoardActionsProvider,
   type TaskBoardActions,
 } from "@/components/tasks/task-board-actions-context";
+import { TaskBoardGroupsProvider } from "@/components/tasks/task-board-groups-context";
 import {
   TaskColumnActiveList,
   TaskColumnCompletedList,
   ActiveEmptyDropPlaceholder,
+  ColumnEmptyDragStretch,
+  LaterEmptyColumnHint,
   TaskGroupActiveBody,
   TaskCompletedBody,
 } from "@/components/tasks/task-column-active-list";
 import {
+  findBoardColumnAtPoint,
+  invalidateActiveBodyRowMidpoints,
+  invalidateBoardDragMeasurements,
+} from "@/lib/dnd/board-drag-measurements";
+import { getCachedColumnDisplayedTasks } from "@/lib/board-displayed-tasks-cache";
+import { setBoardSelectedTaskId } from "@/lib/task-board-selection";
+import {
   getDisplayedActiveTasks,
+  buildCompletedTaskDropTarget,
   isManualActiveDropGroup,
-  resolveTaskDropTargetForPointer,
+  resolveTaskDropTargetForPointerCached,
 } from "@/lib/task-drop-target";
 import {
   beginCrossGroupManualTrace,
@@ -106,27 +117,56 @@ import {
   maybeLogPreviewStage,
 } from "@/lib/task-drag-pipeline-debug";
 import {
-  applyLiveBoardReorderIfChanged,
-  buildInitialTaskDropTarget,
-  isTaskDragData,
-  refineManualDropTargetFromPointer,
-  resolveTaskDropTargetFromDndEvent,
-  setTaskBoardDndBridge,
-  TaskBoardDragPreviewProvider,
-  useTaskBoardDragPreview,
-} from "@/lib/dnd";
-import {
   blockDragTextSelection,
   unblockDragTextSelection,
 } from "@/lib/dnd/drag-select-block";
-import { pointerFromActivatorEvent, pointerFromDragDelta } from "@/lib/dnd/drag-utils";
 import {
-  clearDragPreview,
-  shouldPublishDropTargetPreview,
-} from "@/lib/dnd/preview-store";
-import type { DragOverEvent } from "@dnd-kit/core";
+  beginTaskDragSession,
+  endTaskDragSession,
+  freezeTaskDragCommitTarget,
+  getTaskDragSessionSnapshot,
+  setTaskDragDropTarget,
+  setTaskDragStickyTarget,
+} from "@/lib/task-drag-session";
+import {
+  BoardGroupDragScrollChrome,
+  BoardGroupDropTrailingMarker,
+  GroupColumnBoardSlot,
+  GroupColumnDragShell,
+  GroupDragBlockedTooltip,
+} from "@/components/tasks/group-column-drag-ui";
+import {
+  beginGroupDragSession,
+  endGroupDragSession,
+  setGroupDragFeedback,
+} from "@/lib/group-drag-session";
+import {
+  animateGroupDragCancel,
+  animateGroupDropLayout,
+  captureGroupColumnLayout,
+  clearGroupDropLayoutAnimation,
+  resolveGroupCancelSlideX,
+} from "@/lib/group-drop-layout-animation";
 import { applyManualActiveReorder } from "@/lib/manual-reorder";
 import type { ManualOrderUpdate } from "@/lib/manual-order";
+import {
+  animateTaskDragPreviewCancel,
+  createTaskDragPreview,
+  destroyTaskDragPreview,
+  findTaskRowElement,
+  updateTaskDragPreviewPointer,
+  type TaskDragPreviewBadge,
+} from "@/lib/task-drag-preview";
+import {
+  animateTaskDropLayout,
+  captureTaskSlotLayout,
+  clearTaskDropLayoutAnimation,
+} from "@/lib/task-drop-layout-animation";
+import {
+  beginTaskDropReveal,
+  clearTaskDropReveal,
+} from "@/lib/task-drop-reveal";
+import { formatTaskScheduleCompact } from "@/lib/tasks";
 import { getTaskGroupAppearance, TASK_GROUP_COLUMN_SURFACE_CLASS } from "@/lib/task-group-appearance";
 import {
   canAcceptActiveDropTarget,
@@ -136,6 +176,7 @@ import {
   partitionGroupTasks,
   taskDragTargetsEqual,
   type TaskDragTarget,
+  type TaskDragZone,
 } from "@/lib/task-drag-utils";
 import { cn } from "@/lib/utils";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
@@ -180,6 +221,37 @@ const SYSTEM_VIEW_INFO: Record<
   },
 };
 
+function buildTaskDragPreviewBadges(
+  sourceGroup: TaskGroupWithTasks | undefined,
+  orgGroup: TaskGroupWithTasks | undefined,
+  todayViewDate: string
+): TaskDragPreviewBadge[] {
+  const badges: TaskDragPreviewBadge[] = [];
+  if (sourceGroup) {
+    const sourceAppearance = getTaskGroupAppearance(sourceGroup);
+    badges.push({
+      label: getGroupDisplayTitle(sourceGroup, todayViewDate),
+      emoji: sourceAppearance.icon,
+    });
+  }
+
+  if (
+    orgGroup &&
+    sourceGroup &&
+    orgGroup.id !== sourceGroup.id &&
+    !isTodayGroup(orgGroup) &&
+    !isLaterGroup(orgGroup)
+  ) {
+    const orgAppearance = getTaskGroupAppearance(orgGroup);
+    badges.push({
+      label: orgGroup.title,
+      emoji: orgAppearance.icon,
+    });
+  }
+
+  return badges;
+}
+
 type TasksBoardViewProps = {
   groups: TaskGroupWithTasks[];
   selectedTaskId: string | null;
@@ -217,6 +289,10 @@ type TasksBoardViewProps = {
       taskDateAssignments?: { taskId: string; scheduledDate: string }[];
     }
   ) => Promise<void>;
+  onPersistGroupOrder: (
+    previous: TaskGroupWithTasks[],
+    next: TaskGroupWithTasks[]
+  ) => Promise<void>;
   onPersistManualOrder: (updates: ManualOrderUpdate[]) => Promise<void>;
   onShowHint?: (message: string) => void;
   onSetPlanningState?: (taskId: string, planningState: PlanningState) => Promise<void>;
@@ -238,61 +314,10 @@ function findBoardGroupColumnAtPoint(
   clientY: number,
   stickyColumnId?: string | null
 ): HTMLElement | null {
-  const columns = Array.from(
-    board.querySelectorAll<HTMLElement>("[data-task-group]")
+  return (
+    findBoardColumnAtPoint(board, clientX, clientY, stickyColumnId)?.element ??
+    null
   );
-  if (columns.length === 0) return null;
-
-  for (const column of columns) {
-    const rect = column.getBoundingClientRect();
-    if (
-      clientX >= rect.left &&
-      clientX <= rect.right &&
-      clientY >= rect.top &&
-      clientY <= rect.bottom
-    ) {
-      return column;
-    }
-  }
-
-  if (stickyColumnId) {
-    const stickyColumn = board.querySelector<HTMLElement>(
-      `[data-task-group="${stickyColumnId}"]`
-    );
-    if (stickyColumn) {
-      const rect = stickyColumn.getBoundingClientRect();
-      if (
-        clientX >= rect.left &&
-        clientX <= rect.right &&
-        clientY >= rect.top &&
-        clientY <= rect.bottom
-      ) {
-        return stickyColumn;
-      }
-    }
-  }
-
-  const boardRect = board.getBoundingClientRect();
-  if (clientY >= boardRect.top && clientY <= boardRect.bottom) {
-    let minDistance = Infinity;
-    let nearest: HTMLElement | null = null;
-    for (const column of columns) {
-      const rect = column.getBoundingClientRect();
-      const distance =
-        clientX < rect.left
-          ? rect.left - clientX
-          : clientX > rect.right
-            ? clientX - rect.right
-            : 0;
-      if (distance < minDistance) {
-        minDistance = distance;
-        nearest = column;
-      }
-    }
-    return nearest;
-  }
-
-  return null;
 }
 
 function resolveGroupReorderBlockState(
@@ -323,11 +348,7 @@ function resolveGroupReorderBlockState(
 }
 
 export function TasksBoardView(props: TasksBoardViewProps) {
-  return (
-    <TaskBoardDragPreviewProvider>
-      <TasksBoardViewContent {...props} />
-    </TaskBoardDragPreviewProvider>
-  );
+  return <TasksBoardViewContent {...props} />;
 }
 
 function TasksBoardViewContent({
@@ -353,33 +374,29 @@ function TasksBoardViewContent({
   onUpdateGroupSortMode,
   onDeleteGroup,
   onPersistLayout,
+  onPersistGroupOrder,
   onPersistManualOrder,
   onShowHint,
   onSetPlanningState,
 }: TasksBoardViewProps) {
-  const {
-    activeTaskId,
-    setActiveTaskId: setPreviewActiveTaskId,
-    setDropTarget: setPreviewDropTarget,
-  } = useTaskBoardDragPreview();
   const boardRef = useRef<HTMLDivElement>(null);
   const groupsRef = useRef(groups);
   const dragKindRef = useRef<DragKind>(null);
   const dragIdRef = useRef<string | null>(null);
-  const activeTaskIdRef = useRef<string | null>(null);
+  const pointerDragCleanupRef = useRef<(() => void) | null>(null);
+  const groupFeedbackRafRef = useRef<number | null>(null);
+  const pendingGroupFeedbackRef = useRef<{ x: number; y: number } | null>(null);
   const pointerXRef = useRef(0);
   const pointerYRef = useRef(0);
   const autoScrollRafRef = useRef<number | null>(null);
   const todayViewDateRef = useRef(todayViewDate);
   const todayGroupIdRef = useRef<string | null>(null);
   const laterGroupIdRef = useRef<string | null>(null);
+  const inboxGroupIdRef = useRef<string | null>(null);
   const plannerActiveRef = useRef(plannerActive);
 
-  const [dragKind, setDragKind] = useState<DragKind>(null);
-  const [dragId, setDragId] = useState<string | null>(null);
   const [externalTaskDragId, setExternalTaskDragId] = useState<string | null>(null);
   const selectedTaskIdRef = useRef(selectedTaskId);
-  const [dropBeforeGroupId, setDropBeforeGroupId] = useState<DropBeforeId>(null);
   const taskDropTargetRef = useRef<TaskDragTarget | null>(null);
   const commitDropTargetRef = useRef<TaskDragTarget | null>(null);
   const columnStickyDropRef = useRef<{
@@ -391,12 +408,17 @@ function TasksBoardViewContent({
   const groupChangeBlockedNotifiedRef = useRef(false);
   const dragSourceGroupIdRef = useRef<string | null>(null);
   const dragOriginalSourceGroupIdRef = useRef<string | null>(null);
-  const dragSnapshotRef = useRef<TaskGroupWithTasks[] | null>(null);
-  const lastLiveTargetRef = useRef<TaskDragTarget | null>(null);
-  const liveDragAppliedRef = useRef(false);
-  const dragPreviewRafRef = useRef<number | null>(null);
-  const pendingDragEventRef = useRef<DragOverEvent | null>(null);
   const taskReorderBlockedUiRef = useRef(false);
+  const pendingPointerRef = useRef<{ x: number; y: number } | null>(null);
+  const pointerSyncRafRef = useRef<number | null>(null);
+  const completedExpandDuringDragRef = useRef<Set<string>>(new Set());
+  const lastPointerTargetGroupRef = useRef<string | null>(null);
+  const pendingNewGroupAnimationRef = useRef<{
+    snapshot: Map<string, DOMRect>;
+    groupId: string;
+  } | null>(null);
+  const groupDragKeyCleanupRef = useRef<(() => void) | null>(null);
+  const groupDragInitialBeforeIdRef = useRef<DropBeforeId>(null);
 
   const [iconChooserGroupId, setIconChooserGroupId] = useState<string | null>(
     null
@@ -410,18 +432,11 @@ function TasksBoardViewContent({
   );
   const newGroupMoveTaskIdRef = useRef<string | null>(null);
   const [todayTitleOpen, setTodayTitleOpen] = useState(false);
+  const [todayCalendarOpen, setTodayCalendarOpen] = useState(false);
   const [planningQueueDragTooltip, setPlanningQueueDragTooltip] = useState<{
     x: number;
     y: number;
     message: string;
-  } | null>(null);
-  const [groupReorderBlocked, setGroupReorderBlocked] = useState(false);
-  const [groupReorderBlockedTargetId, setGroupReorderBlockedTargetId] = useState<
-    string | null
-  >(null);
-  const [groupReorderDragTooltip, setGroupReorderDragTooltip] = useState<{
-    x: number;
-    y: number;
   } | null>(null);
   const [taskReorderBlockedDragTooltip, setTaskReorderBlockedDragTooltip] =
     useState<{ x: number; y: number } | null>(null);
@@ -443,6 +458,7 @@ function TasksBoardViewContent({
   const [completedExpanded, setCompletedExpanded] = useState<Set<string>>(
     new Set()
   );
+  const completedExpandedRef = useRef(completedExpanded);
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
   const [groupTitleDraft, setGroupTitleDraft] = useState("");
 
@@ -461,6 +477,14 @@ function TasksBoardViewContent({
   const todayGroup = groups.find((group) => isTodayGroup(group));
   const laterGroup = groups.find((group) => isLaterGroup(group));
   const inboxGroup = groups.find((group) => isInboxGroup(group));
+
+  useEffect(() => {
+    setBoardSelectedTaskId(selectedTaskId);
+  }, [selectedTaskId]);
+
+  useEffect(() => {
+    completedExpandedRef.current = completedExpanded;
+  }, [completedExpanded]);
 
   useEffect(() => {
     composingGroupIdRef.current = composingGroupId;
@@ -482,7 +506,16 @@ function TasksBoardViewContent({
     groupsRef.current = groups;
     todayGroupIdRef.current = todayGroup?.id ?? null;
     laterGroupIdRef.current = laterGroup?.id ?? null;
-  }, [groups, todayGroup?.id, laterGroup?.id]);
+    inboxGroupIdRef.current = inboxGroup?.id ?? null;
+  }, [groups, todayGroup?.id, laterGroup?.id, inboxGroup?.id]);
+
+  useLayoutEffect(() => {
+    const pending = pendingNewGroupAnimationRef.current;
+    if (!pending) return;
+    if (!groups.some((group) => group.id === pending.groupId)) return;
+    pendingNewGroupAnimationRef.current = null;
+    animateGroupDropLayout(pending.snapshot, { droppedGroupId: pending.groupId });
+  }, [groups]);
 
   useEffect(() => {
     onGroupsChangeRef.current = onGroupsChange;
@@ -525,9 +558,170 @@ function TasksBoardViewContent({
   useEffect(() => {
     return () => {
       stopBoardAutoScroll();
+      detachPointerDragListeners();
       unblockDragTextSelection();
     };
   }, []);
+
+  function detachPointerDragListeners() {
+    pointerDragCleanupRef.current?.();
+    pointerDragCleanupRef.current = null;
+  }
+
+  function attachPointerDragListeners() {
+    detachPointerDragListeners();
+
+    const preventSelect = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const onPointerMove = (event: globalThis.PointerEvent) => {
+      if (dragKindRef.current !== "task") return;
+      event.preventDefault();
+      pointerXRef.current = event.clientX;
+      pointerYRef.current = event.clientY;
+      updateTaskDragPreviewPointer(event.clientX, event.clientY);
+
+      if (
+        isBoardOriginatedTaskDrag() &&
+        isPointerOverTimeline(event.clientX, event.clientY)
+      ) {
+        applyTaskDropTarget(null);
+        setPlanningQueueDragTooltip(null);
+        stopBoardAutoScroll();
+        return;
+      }
+
+      trackTaskDragPointer(event.clientX, event.clientY);
+      startBoardAutoScroll();
+    };
+
+    const onPointerEnd = () => {
+      window.getSelection()?.removeAllRanges();
+      void handleTaskDragEnd();
+    };
+
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Escape" || dragKindRef.current !== "task") return;
+      event.preventDefault();
+      if (dragEndedRef.current) return;
+      dragEndedRef.current = true;
+      cancelBoardTaskDrag(getActiveTaskDragIdForDrop());
+    };
+
+    document.addEventListener("selectstart", preventSelect);
+    document.addEventListener("pointermove", onPointerMove, { passive: false });
+    document.addEventListener("pointerup", onPointerEnd);
+    document.addEventListener("pointercancel", onPointerEnd);
+    document.addEventListener("keydown", onKeyDown);
+
+    pointerDragCleanupRef.current = () => {
+      document.removeEventListener("selectstart", preventSelect);
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerEnd);
+      document.removeEventListener("pointercancel", onPointerEnd);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }
+
+  function beginBoardTaskDragSession(taskId: string, groupId: string) {
+    dragEndedRef.current = false;
+    beginDrag("task", taskId);
+    setActiveTaskDragId(taskId);
+    dragSourceGroupIdRef.current = groupId;
+    dragOriginalSourceGroupIdRef.current = groupId;
+    invalidateBoardDragMeasurements();
+    lastPointerTargetGroupRef.current = groupId;
+
+    const sourceGroup = groupsRef.current.find((group) => group.id === groupId);
+    const movingTask = sourceGroup?.tasks.find((task) => task.id === taskId);
+
+    if (sourceGroup && movingTask) {
+      const zone: TaskDragZone = movingTask.completed ? "completed" : "active";
+      const initialTarget: TaskDragTarget =
+        zone === "completed"
+          ? buildCompletedTaskDropTarget(sourceGroup.id)
+          : isManualActiveDropGroup(sourceGroup)
+            ? {
+                groupId: sourceGroup.id,
+                beforeTaskId: initialDropBeforeId(
+                  getDisplayedActiveTasks(
+                    sourceGroup,
+                    sourceGroup.tasks.filter((task) => task.id !== taskId),
+                    todayViewDateRef.current
+                  ).map((task) => task.id),
+                  taskId
+                ),
+                zone: "active",
+                showInsertionLine: true,
+              }
+            : {
+                groupId: sourceGroup.id,
+                beforeTaskId: null,
+                zone: "active",
+                showInsertionLine: false,
+              };
+
+      beginTaskDragSession(taskId, groupId, initialTarget);
+      taskDropTargetRef.current = initialTarget;
+      columnStickyDropRef.current = {
+        columnId: groupId,
+        target: initialTarget,
+      };
+      commitDropTargetRef.current = null;
+    }
+  }
+
+  function handleTaskPointerDragStart(
+    taskId: string,
+    groupId: string,
+    coords: { clientX: number; clientY: number }
+  ) {
+    window.getSelection()?.removeAllRanges();
+    clearTaskDropReveal();
+    clearTaskDropLayoutAnimation();
+    beginBoardTaskDragSession(taskId, groupId);
+    pointerXRef.current = coords.clientX;
+    pointerYRef.current = coords.clientY;
+    trackTaskDragPointer(coords.clientX, coords.clientY);
+
+    const task = findTaskInBoard(taskId);
+    const sourceGroup = groupsRef.current.find((group) => group.id === groupId);
+    const orgGroup = task?.group_id
+      ? groupsRef.current.find((group) => group.id === task.group_id)
+      : undefined;
+    const rowEl = findTaskRowElement(taskId, groupId);
+    if (task && rowEl) {
+      createTaskDragPreview(
+        taskId,
+        {
+          title: task.title,
+          completed: task.completed,
+          metaPrimary: formatTaskScheduleCompact(task),
+          badges: buildTaskDragPreviewBadges(
+            sourceGroup,
+            orgGroup,
+            todayViewDateRef.current
+          ),
+        },
+        rowEl.getBoundingClientRect(),
+        coords.clientX,
+        coords.clientY
+      );
+    }
+
+    startBoardAutoScroll();
+    attachPointerDragListeners();
+    blockDragTextSelection();
+  }
+
+  function handleTaskPointerDragEnd() {
+    void handleTaskDragEnd();
+  }
+
+  function trackTaskDragPointer(clientX: number, clientY: number) {
+    syncBoardTaskDropTargetFromPointer(clientX, clientY);
+  }
 
   function stopBoardAutoScroll() {
     if (autoScrollRafRef.current !== null) {
@@ -536,29 +730,8 @@ function TasksBoardViewContent({
     }
   }
 
-  function setActiveBoardTaskId(taskId: string | null) {
-    activeTaskIdRef.current = taskId;
-    setPreviewActiveTaskId(taskId);
-  }
-
-  function updatePointerCoordsFromDnd(event: {
-    activatorEvent: Event | null;
-    delta?: { x: number; y: number };
-  }) {
-    const coords =
-      event.delta !== undefined
-        ? pointerFromDragDelta({
-            activatorEvent: event.activatorEvent,
-            delta: event.delta,
-          })
-        : pointerFromActivatorEvent(event);
-    if (!coords) return;
-    pointerXRef.current = coords.x;
-    pointerYRef.current = coords.y;
-  }
-
   function getActiveTaskDragIdForDrop() {
-    return activeTaskIdRef.current ?? getActiveTaskDragId();
+    return dragIdRef.current ?? getActiveTaskDragId();
   }
 
   function findTaskInBoard(taskId: string): Task | null {
@@ -691,22 +864,6 @@ function TasksBoardViewContent({
     }
   }
 
-  function publishDropTargetPreview(
-    prev: TaskDragTarget | null,
-    target: TaskDragTarget | null
-  ) {
-    if (
-      !shouldPublishDropTargetPreview(
-        prev,
-        target,
-        dragOriginalSourceGroupIdRef.current
-      )
-    ) {
-      return;
-    }
-    setPreviewDropTarget(target);
-  }
-
   function commitDropTargetRefs(target: TaskDragTarget | null) {
     if (target) {
       columnStickyDropRef.current = { columnId: target.groupId, target };
@@ -714,174 +871,6 @@ function TasksBoardViewContent({
       columnStickyDropRef.current = null;
     }
     taskDropTargetRef.current = target;
-  }
-
-  function isSameColumnActiveDrag(target: TaskDragTarget): boolean {
-    const sourceGroupId = dragOriginalSourceGroupIdRef.current;
-    return (
-      sourceGroupId !== null &&
-      sourceGroupId === target.groupId &&
-      target.zone === "active"
-    );
-  }
-
-  function resolveDropTargetForDrag(
-    event: DragOverEvent,
-    taskId: string
-  ): TaskDragTarget | null {
-    const target = resolveTaskDropTargetFromDndEvent(
-      event,
-      groupsRef.current,
-      todayViewDateRef.current,
-      taskId
-    );
-    if (!target) return null;
-    if (isSameColumnActiveDrag(target)) return target;
-    if (!target.showInsertionLine || target.zone !== "active") return target;
-
-    return refineManualDropTargetFromPointer(
-      target,
-      groupsRef.current,
-      todayViewDateRef.current,
-      pointerYRef.current,
-      taskId
-    );
-  }
-
-  function cancelDragPreviewRaf() {
-    if (dragPreviewRafRef.current !== null) {
-      cancelAnimationFrame(dragPreviewRafRef.current);
-      dragPreviewRafRef.current = null;
-    }
-    pendingDragEventRef.current = null;
-  }
-
-  function flushBoardTaskDropPreview(event: DragOverEvent) {
-    const data = event.active.data.current;
-    if (!isTaskDragData(data)) return;
-
-    updatePointerCoordsFromDnd(event);
-
-    if (isPointerOverTimeline(pointerXRef.current, pointerYRef.current)) {
-      setTaskDropIfChanged(null);
-      setPlanningQueueDragTooltip(null);
-      stopBoardAutoScroll();
-      return;
-    }
-
-    const refinedTarget = resolveDropTargetForDrag(event, data.taskId);
-
-    if (!refinedTarget) {
-      setTaskReorderBlockedState(false);
-      if (
-        !updatePlanningQueueDragFeedback(
-          pointerXRef.current,
-          pointerYRef.current
-        )
-      ) {
-        setPlanningQueueDragTooltip(null);
-      }
-      applyTaskDropTarget(null);
-      return;
-    }
-
-    if (
-      updatePlanningQueueDragFeedback(
-        pointerXRef.current,
-        pointerYRef.current,
-        refinedTarget.groupId
-      ) ||
-      isBlockedPlanningQueueDrop(
-        pointerXRef.current,
-        pointerYRef.current,
-        refinedTarget.groupId
-      )
-    ) {
-      const prevTarget = taskDropTargetRef.current;
-      commitDropTargetRefs(null);
-      publishDropTargetPreview(prevTarget, null);
-      return;
-    }
-
-    if (refinedTarget.zone === "completed") {
-      setCompletedExpanded((prev) => {
-        if (prev.has(refinedTarget.groupId)) return prev;
-        const next = new Set(prev);
-        next.add(refinedTarget.groupId);
-        return next;
-      });
-    }
-
-    if (isTaskActiveReorderBlocked(refinedTarget)) {
-      setTaskReorderBlockedState(true, pointerXRef.current, pointerYRef.current);
-      applyTaskDropTarget(null);
-      return;
-    }
-
-    setTaskReorderBlockedState(false);
-    setPlanningQueueDragTooltip(null);
-
-    const destinationGroup = groupsRef.current.find(
-      (group) => group.id === refinedTarget.groupId
-    );
-    if (
-      destinationGroup &&
-      isManualActiveDropGroup(destinationGroup) &&
-      dragSourceGroupIdRef.current &&
-      dragSourceGroupIdRef.current !== refinedTarget.groupId &&
-      refinedTarget.zone === "active"
-    ) {
-      maybeLogPreviewStage({
-        movingTaskId: data.taskId,
-        sourceGroupId: dragSourceGroupIdRef.current,
-        destinationGroup,
-        todayViewDate: todayViewDateRef.current,
-        pointerY: pointerYRef.current,
-        target: refinedTarget,
-      });
-    }
-
-    applyStickyColumnTarget(refinedTarget.groupId, refinedTarget);
-
-    const liveResult = applyLiveBoardReorderIfChanged(
-      groupsRef.current,
-      refinedTarget,
-      data.taskId,
-      dragSourceGroupIdRef.current,
-      lastLiveTargetRef.current,
-      {
-        todayGroupId: todayGroupIdRef.current,
-        laterGroupId: laterGroupIdRef.current,
-        todayViewDate: todayViewDateRef.current,
-        sourceGroupId: dragSourceGroupIdRef.current,
-      }
-    );
-
-    if (liveResult) {
-      liveDragAppliedRef.current = true;
-      lastLiveTargetRef.current = refinedTarget;
-      dragSourceGroupIdRef.current = liveResult.sourceGroupId;
-      groupsRef.current = liveResult.board;
-      onGroupsChangeRef.current(liveResult.board);
-    }
-
-    startBoardAutoScroll();
-  }
-
-  function scheduleBoardTaskDropPreview(event: DragOverEvent) {
-    pendingDragEventRef.current = event;
-    if (dragPreviewRafRef.current !== null) return;
-    dragPreviewRafRef.current = requestAnimationFrame(() => {
-      dragPreviewRafRef.current = null;
-      const pending = pendingDragEventRef.current;
-      pendingDragEventRef.current = null;
-      if (pending) flushBoardTaskDropPreview(pending);
-    });
-  }
-
-  function updateBoardTaskDropPreviewFromDnd(event: DragOverEvent) {
-    updatePointerCoordsFromDnd(event);
-    scheduleBoardTaskDropPreview(event);
   }
 
   function isPlanningColumnTarget(groupId: string): boolean {
@@ -937,20 +926,15 @@ function TasksBoardViewContent({
   }
 
   function freezeCommitDropTarget(): TaskDragTarget | null {
-    const frozen =
-      commitDropTargetRef.current ??
-      taskDropTargetRef.current ??
-      columnStickyDropRef.current?.target ??
-      null;
+    const frozen = freezeTaskDragCommitTarget();
     commitDropTargetRef.current = frozen;
     return frozen;
   }
 
   function setTaskDropIfChanged(target: TaskDragTarget | null) {
     if (taskDragTargetsEqual(taskDropTargetRef.current, target)) return;
-    const prev = taskDropTargetRef.current;
     commitDropTargetRefs(target);
-    publishDropTargetPreview(prev, target);
+    setTaskDragDropTarget(target);
   }
 
   function applyTaskDropTarget(target: TaskDragTarget | null) {
@@ -958,14 +942,46 @@ function TasksBoardViewContent({
   }
 
   function applyStickyColumnTarget(columnId: string, target: TaskDragTarget) {
-    if (taskDragTargetsEqual(taskDropTargetRef.current, target)) return;
-    const prev = taskDropTargetRef.current;
     columnStickyDropRef.current = { columnId, target };
     taskDropTargetRef.current = target;
-    publishDropTargetPreview(prev, target);
+    setTaskDragStickyTarget(columnId, target);
   }
 
-  function syncTimelineTaskDropTargetFromPointer(
+  function cancelPointerTargetSync() {
+    if (pointerSyncRafRef.current !== null) {
+      cancelAnimationFrame(pointerSyncRafRef.current);
+      pointerSyncRafRef.current = null;
+    }
+    pendingPointerRef.current = null;
+  }
+
+  function scheduleBoardTaskDropTargetSync(clientX: number, clientY: number) {
+    pointerXRef.current = clientX;
+    pointerYRef.current = clientY;
+    pendingPointerRef.current = { x: clientX, y: clientY };
+    if (pointerSyncRafRef.current !== null) return;
+    pointerSyncRafRef.current = requestAnimationFrame(() => {
+      pointerSyncRafRef.current = null;
+      const pending = pendingPointerRef.current;
+      if (!pending) return;
+      syncBoardTaskDropTargetFromPointer(pending.x, pending.y);
+    });
+  }
+
+  function ensureCompletedVisible(groupId: string) {
+    if (completedExpandedRef.current.has(groupId)) return;
+    if (completedExpandDuringDragRef.current.has(groupId)) return;
+    completedExpandDuringDragRef.current.add(groupId);
+    invalidateActiveBodyRowMidpoints(groupId);
+    setCompletedExpanded((prev) => {
+      if (prev.has(groupId)) return prev;
+      const next = new Set(prev);
+      next.add(groupId);
+      return next;
+    });
+  }
+
+  function syncBoardTaskDropTargetFromPointer(
     clientX: number,
     clientY: number
   ) {
@@ -974,7 +990,7 @@ function TasksBoardViewContent({
     if (!taskId || !board) return;
 
     const stickyColumnId = columnStickyDropRef.current?.columnId ?? null;
-    const targetColumn = findBoardGroupColumnAtPoint(
+    const targetColumn = findBoardColumnAtPoint(
       board,
       clientX,
       clientY,
@@ -995,13 +1011,18 @@ function TasksBoardViewContent({
       }
 
       columnStickyDropRef.current = null;
+      lastPointerTargetGroupRef.current = null;
       setTaskReorderBlockedState(false);
       applyTaskDropTarget(null);
       return;
     }
 
-    const groupId = targetColumn.getAttribute("data-task-group");
-    if (!groupId) return;
+    const groupId = targetColumn.id;
+
+    if (lastPointerTargetGroupRef.current !== groupId) {
+      lastPointerTargetGroupRef.current = groupId;
+      invalidateActiveBodyRowMidpoints(groupId);
+    }
 
     if (
       updatePlanningQueueDragFeedback(clientX, clientY, groupId) ||
@@ -1015,7 +1036,8 @@ function TasksBoardViewContent({
     const group = groupsRef.current.find((item) => item.id === groupId);
     if (!group) return;
 
-    const resolved = resolveTaskDropTargetForPointer(
+    const resolved = resolveTaskDropTargetForPointerCached(
+      board,
       targetColumn,
       group,
       todayViewDateRef.current,
@@ -1039,12 +1061,7 @@ function TasksBoardViewContent({
     const target = resolved.target;
 
     if (target.zone === "completed") {
-      setCompletedExpanded((prev) => {
-        if (prev.has(groupId)) return prev;
-        const next = new Set(prev);
-        next.add(groupId);
-        return next;
-      });
+      ensureCompletedVisible(groupId);
     }
 
     if (isTaskActiveReorderBlocked(target)) {
@@ -1055,6 +1072,7 @@ function TasksBoardViewContent({
 
     setTaskReorderBlockedState(false);
     if (
+      process.env.NODE_ENV !== "production" &&
       isManualActiveDropGroup(group) &&
       dragSourceGroupIdRef.current &&
       dragSourceGroupIdRef.current !== groupId &&
@@ -1077,7 +1095,7 @@ function TasksBoardViewContent({
   }
 
   function isBoardOriginatedTaskDrag() {
-    return Boolean(activeTaskIdRef.current);
+    return dragKindRef.current === "task";
   }
 
   /** Drag started from Quick Schedule / timeline, not the board task row. */
@@ -1096,7 +1114,7 @@ function TasksBoardViewContent({
 
   function tickBoardAutoScroll() {
     const boardEl = boardRef.current;
-    if (!boardEl || (!activeTaskIdRef.current && !dragKindRef.current && !getActiveTaskDragId())) {
+    if (!boardEl || (!dragKindRef.current && !getActiveTaskDragId())) {
       stopBoardAutoScroll();
       return;
     }
@@ -1151,7 +1169,8 @@ function TasksBoardViewContent({
   useEffect(() => {
     const onDocumentDragOver = (event: globalThis.DragEvent) => {
       const externalTaskId = getActiveTaskDragId();
-      const isTimelineTaskDrag = Boolean(externalTaskId) && !activeTaskIdRef.current;
+      const isTimelineTaskDrag =
+        Boolean(externalTaskId) && dragKindRef.current !== "task";
       const isGroupDrag = dragKindRef.current === "group";
 
       if (!isTimelineTaskDrag && !isGroupDrag) return;
@@ -1164,7 +1183,7 @@ function TasksBoardViewContent({
       pointerYRef.current = event.clientY;
 
       if (isGroupDrag && dragIdRef.current && boardRef.current) {
-        updateGroupDragFeedback(event.clientX, event.clientY);
+        scheduleGroupDragFeedback(event.clientX, event.clientY);
         if (event.dataTransfer) {
           event.dataTransfer.dropEffect = groupReorderBlockedRef.current
             ? "none"
@@ -1185,7 +1204,7 @@ function TasksBoardViewContent({
           targetGroupIdAtPoint(event.clientX, event.clientY) ?? "";
 
         if (targetGroupId && isPlanningColumnTarget(targetGroupId)) {
-          syncTimelineTaskDropTargetFromPointer(event.clientX, event.clientY);
+          syncBoardTaskDropTargetFromPointer(event.clientX, event.clientY);
           setExternalTaskDragId((current) =>
             externalTaskId === current ? current : externalTaskId
           );
@@ -1225,7 +1244,7 @@ function TasksBoardViewContent({
 
     const onWheel = (event: WheelEvent) => {
       const isTaskDrag =
-        Boolean(activeTaskIdRef.current) || Boolean(getActiveTaskDragId());
+        dragKindRef.current === "task" || Boolean(getActiveTaskDragId());
       if (!isTaskDrag || !isQuickScheduleOpenForDrag()) return;
       event.preventDefault();
     };
@@ -1233,6 +1252,14 @@ function TasksBoardViewContent({
     board.addEventListener("wheel", onWheel, { passive: false });
     return () => board.removeEventListener("wheel", onWheel);
   }, []);
+
+  function cancelGroupFeedbackSync() {
+    if (groupFeedbackRafRef.current !== null) {
+      cancelAnimationFrame(groupFeedbackRafRef.current);
+      groupFeedbackRafRef.current = null;
+    }
+    pendingGroupFeedbackRef.current = null;
+  }
 
   function updateGroupDragFeedback(clientX: number, clientY: number) {
     if (!dragIdRef.current || !boardRef.current) return;
@@ -1254,31 +1281,78 @@ function TasksBoardViewContent({
     );
 
     groupReorderBlockedRef.current = blocked;
-    setGroupReorderBlocked(blocked);
-    setGroupReorderBlockedTargetId(blocked ? pinnedTargetId : null);
+    dropBeforeGroupIdRef.current = beforeId;
 
-    if (blocked) {
-      setGroupReorderDragTooltip({ x: clientX, y: clientY });
+    setGroupDragFeedback({
+      dropBeforeGroupId: beforeId,
+      reorderBlocked: blocked,
+      reorderBlockedTargetId: blocked ? pinnedTargetId : null,
+      blockedTooltip: blocked ? { x: clientX, y: clientY } : null,
+    });
+  }
+
+  function scheduleGroupDragFeedback(clientX: number, clientY: number) {
+    pendingGroupFeedbackRef.current = { x: clientX, y: clientY };
+    if (groupFeedbackRafRef.current !== null) return;
+    groupFeedbackRafRef.current = requestAnimationFrame(() => {
+      groupFeedbackRafRef.current = null;
+      const pending = pendingGroupFeedbackRef.current;
+      if (!pending) return;
+      updateGroupDragFeedback(pending.x, pending.y);
+    });
+  }
+
+  function detachGroupDragKeyListener() {
+    groupDragKeyCleanupRef.current?.();
+  }
+
+  function attachGroupDragKeyListener() {
+    detachGroupDragKeyListener();
+
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Escape" || dragKindRef.current !== "group") return;
+      event.preventDefault();
+      if (dragEndedRef.current) return;
+      cancelBoardGroupDrag(dragIdRef.current);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    groupDragKeyCleanupRef.current = () => {
+      document.removeEventListener("keydown", onKeyDown);
+      groupDragKeyCleanupRef.current = null;
+    };
+  }
+
+  function cancelBoardGroupDrag(groupId: string | null) {
+    if (!groupId || dragKindRef.current !== "group") {
+      dragEndedRef.current = true;
+      resetDrag();
       return;
     }
 
-    setGroupReorderDragTooltip(null);
-    setGroupDropIfChanged(beforeId);
+    dragEndedRef.current = true;
+
+    const snapshot = captureGroupColumnLayout();
+    const slideX = resolveGroupCancelSlideX(
+      boardGroupIds(groupsRef.current),
+      groupId,
+      groupDragInitialBeforeIdRef.current,
+      dropBeforeGroupIdRef.current
+    );
+
+    resetDrag();
+    animateGroupDragCancel(snapshot, { groupId, slideX });
   }
 
   function resetDrag() {
     dragKindRef.current = null;
     dragIdRef.current = null;
-    setDragKind(null);
-    setDragId(null);
-    setActiveBoardTaskId(null);
     setExternalTaskDragId(null);
-    setDropBeforeGroupId(null);
     dropBeforeGroupIdRef.current = null;
     taskDropTargetRef.current = null;
     commitDropTargetRef.current = null;
     columnStickyDropRef.current = null;
-    clearDragPreview();
+    endTaskDragSession();
     clearCrossGroupManualTrace();
     groupChangeBlockedNotifiedRef.current = false;
     dragSourceGroupIdRef.current = null;
@@ -1286,96 +1360,104 @@ function TasksBoardViewContent({
     setPlanningQueueDragTooltip(null);
     setTaskReorderBlockedState(false);
     groupReorderBlockedRef.current = false;
-    setGroupReorderBlocked(false);
-    setGroupReorderBlockedTargetId(null);
-    setGroupReorderDragTooltip(null);
+    endGroupDragSession();
     setActiveTaskDragId(null);
+    detachPointerDragListeners();
     unblockDragTextSelection();
     stopBoardAutoScroll();
-    cancelDragPreviewRaf();
-    dragSnapshotRef.current = null;
-    lastLiveTargetRef.current = null;
-    liveDragAppliedRef.current = false;
+    cancelPointerTargetSync();
+    cancelGroupFeedbackSync();
+    completedExpandDuringDragRef.current.clear();
+    lastPointerTargetGroupRef.current = null;
+    invalidateBoardDragMeasurements();
+    destroyTaskDragPreview();
+    detachGroupDragKeyListener();
+    groupDragInitialBeforeIdRef.current = null;
   }
 
-  useEffect(() => {
-    setTaskBoardDndBridge({
-      onDragStart(event) {
-        const data = event.active.data.current;
-        if (!isTaskDragData(data)) return;
-        window.getSelection()?.removeAllRanges();
-        dragEndedRef.current = false;
-        dragSnapshotRef.current = groupsRef.current;
-        lastLiveTargetRef.current = null;
-        liveDragAppliedRef.current = false;
+  function canCommitBoardTaskDrop(
+    activeDragId: string | null,
+    target: TaskDragTarget | null
+  ): boolean {
+    if (!activeDragId || !target) return false;
+    if (taskReorderBlockedRef.current) return false;
 
-        setActiveBoardTaskId(data.taskId);
-        dragOriginalSourceGroupIdRef.current = data.groupId;
-        dragSourceGroupIdRef.current = data.groupId;
-        setActiveTaskDragId(data.taskId);
+    if (
+      isTimelineOriginatedTaskDrag() &&
+      !isPlanningColumnTarget(target.groupId)
+    ) {
+      return false;
+    }
 
-        updatePointerCoordsFromDnd(event);
+    if (isPlanningQueueDropBlockedForGroup(target.groupId)) {
+      return false;
+    }
 
-        const initialTarget = buildInitialTaskDropTarget(
-          data.taskId,
-          data.groupId,
-          groupsRef.current,
-          todayViewDateRef.current
-        );
+    const sourceGroupId = dragOriginalSourceGroupIdRef.current;
 
-        const refinedInitialTarget = initialTarget
-          ? refineManualDropTargetFromPointer(
-              initialTarget,
-              groupsRef.current,
-              todayViewDateRef.current,
-              pointerYRef.current,
-              data.taskId
-            )
-          : null;
+    if (
+      target.zone === "active" &&
+      isSameGroupActiveReorderAttempt(sourceGroupId, target) &&
+      !canAcceptActiveDropTarget(groupsRef.current, sourceGroupId, target)
+    ) {
+      return false;
+    }
 
-        taskDropTargetRef.current = refinedInitialTarget;
-        columnStickyDropRef.current = refinedInitialTarget
-          ? { columnId: data.groupId, target: refinedInitialTarget }
-          : null;
-        commitDropTargetRef.current = null;
-        setPreviewDropTarget(refinedInitialTarget);
+    const sourceGroup = sourceGroupId
+      ? groupsRef.current.find((group) => group.id === sourceGroupId)
+      : null;
+    const isSameGroupManualActiveReorder =
+      sourceGroupId === target.groupId &&
+      target.zone === "active" &&
+      sourceGroup &&
+      canReorderTasksInGroup(sourceGroup);
 
-        startBoardAutoScroll();
-        blockDragTextSelection();
-      },
-      onDragMove(event) {
-        updatePointerCoordsFromDnd(event);
-        startBoardAutoScroll();
-      },
-      onDragOver(event) {
-        updateBoardTaskDropPreviewFromDnd(event);
-      },
-      onDragEnd() {
-        void handleTaskDragEnd();
-      },
-      onDragCancel() {
-        if (dragEndedRef.current) return;
-        dragEndedRef.current = true;
-        if (liveDragAppliedRef.current && dragSnapshotRef.current) {
-          onGroupsChangeRef.current(dragSnapshotRef.current);
-        }
+    if (isSameGroupManualActiveReorder) {
+      const { updates } = applyManualActiveReorder(
+        groupsRef.current,
+        target.groupId,
+        activeDragId,
+        target.beforeTaskId,
+        todayViewDateRef.current
+      );
+      return updates.length > 0;
+    }
+
+    return true;
+  }
+
+  function cancelBoardTaskDrag(taskId: string | null) {
+    detachPointerDragListeners();
+    stopBoardAutoScroll();
+    applyTaskDropTarget(null);
+    clearTaskDropReveal();
+    clearTaskDropLayoutAnimation();
+
+    if (!taskId) {
+      destroyTaskDragPreview();
+      resetDrag();
+      return;
+    }
+
+    animateTaskDragPreviewCancel(
+      taskId,
+      () => {
         resetDrag();
       },
-      findTask: findTaskInBoard,
-      getOverlayContext: () => ({
-        groups: groupsRef.current,
-        todayViewDate: todayViewDateRef.current,
-        selectedTaskId: selectedTaskIdRef.current,
-      }),
-    });
+      getTaskDragSessionSnapshot().sourceGroupId
+    );
+  }
 
-    return () => setTaskBoardDndBridge(null);
-  }, []);
-
-  async function commitTaskDropIfNeeded() {
-    const activeDragId = getActiveTaskDragIdForDrop();
+  async function commitTaskDropIfNeeded(
+    explicit?: { activeDragId: string; target: TaskDragTarget }
+  ) {
+    const activeDragId =
+      explicit?.activeDragId ?? getActiveTaskDragIdForDrop();
     const previewTarget = taskDropTargetRef.current;
-    const target = commitDropTargetRef.current ?? freezeCommitDropTarget();
+    const target =
+      explicit?.target ??
+      commitDropTargetRef.current ??
+      freezeCommitDropTarget();
 
     if (!activeDragId || !target) return false;
 
@@ -1408,36 +1490,6 @@ function TasksBoardViewContent({
       target.zone === "active" &&
       sourceGroup &&
       canReorderTasksInGroup(sourceGroup);
-
-    if (liveDragAppliedRef.current && dragSnapshotRef.current) {
-      const previousBoard = dragSnapshotRef.current;
-      const currentBoard = groupsRef.current;
-
-      if (isSameGroupManualActiveReorder) {
-        const { updates } = applyManualActiveReorder(
-          previousBoard,
-          target.groupId,
-          activeDragId,
-          target.beforeTaskId,
-          todayViewDateRef.current
-        );
-
-        if (updates.length > 0) {
-          void onPersistManualOrder(updates).catch(() => {
-            onGroupsChangeRef.current(previousBoard);
-          });
-        }
-        return true;
-      }
-
-      void onPersistLayout(currentBoard, {
-        todayViewDate: todayViewDateRef.current,
-        previousBoard,
-      }).catch(() => {
-        onGroupsChangeRef.current(previousBoard);
-      });
-      return true;
-    }
 
     if (isSameGroupManualActiveReorder) {
       const previousBoard = groupsRef.current;
@@ -1501,6 +1553,7 @@ function TasksBoardViewContent({
     const next = moveTaskInBoard(previousBoard, activeDragId, target, {
       todayGroupId: todayGroupIdRef.current,
       laterGroupId: laterGroupIdRef.current,
+      inboxGroupId: inboxGroupIdRef.current,
       todayViewDate: todayViewDateRef.current,
       sourceGroupId,
     });
@@ -1532,63 +1585,45 @@ function TasksBoardViewContent({
     return true;
   }
 
-  function setGroupDropIfChanged(beforeId: DropBeforeId) {
-    if (dropBeforeGroupIdRef.current === beforeId) return;
+  function beginGroupDrag(groupId: string) {
+    clearGroupDropLayoutAnimation();
+    dragEndedRef.current = false;
+    groupChangeBlockedNotifiedRef.current = false;
+    groupReorderBlockedRef.current = false;
+    dragKindRef.current = "group";
+    dragIdRef.current = groupId;
+    setExternalTaskDragId(null);
+    const beforeId = initialDropBeforeId(
+      movableGroupIds(groupsRef.current),
+      groupId
+    );
     dropBeforeGroupIdRef.current = beforeId;
-    setDropBeforeGroupId(beforeId);
+    groupDragInitialBeforeIdRef.current = beforeId;
+    beginGroupDragSession(groupId, beforeId);
+    attachGroupDragKeyListener();
   }
 
   function beginDrag(kind: DragKind, id: string) {
     dragEndedRef.current = false;
     groupChangeBlockedNotifiedRef.current = false;
     groupReorderBlockedRef.current = false;
-    setGroupReorderBlocked(false);
-    setGroupReorderBlockedTargetId(null);
-    setGroupReorderDragTooltip(null);
     dragKindRef.current = kind;
     dragIdRef.current = id;
-    setDragKind(kind);
-    setDragId(id);
     setExternalTaskDragId(null);
   }
 
   async function handleTaskDragEnd() {
     if (dragEndedRef.current) return;
-
-    cancelDragPreviewRaf();
-
-    const activeDragId = activeTaskIdRef.current;
-    const currentTarget = taskDropTargetRef.current;
-    if (activeDragId && currentTarget) {
-      const refined =
-        currentTarget.showInsertionLine &&
-        currentTarget.zone === "active" &&
-        !isSameColumnActiveDrag(currentTarget)
-          ? refineManualDropTargetFromPointer(
-              currentTarget,
-              groupsRef.current,
-              todayViewDateRef.current,
-              pointerYRef.current,
-              activeDragId
-            )
-          : currentTarget;
-      taskDropTargetRef.current = refined;
-      columnStickyDropRef.current = {
-        columnId: refined.groupId,
-        target: refined,
-      };
-      setPreviewDropTarget(refined);
-    }
-
-    freezeCommitDropTarget();
     dragEndedRef.current = true;
 
     if (consumeTimelineDropConsumed()) {
+      destroyTaskDragPreview();
       resetDrag();
       return;
     }
 
     if (isTimelineOriginatedTaskDrag()) {
+      freezeCommitDropTarget();
       const committed = await commitTaskDropIfNeeded();
       if (!committed) {
         notifyGroupChangeBlockedIfNeeded(
@@ -1597,12 +1632,36 @@ function TasksBoardViewContent({
           pointerYRef.current
         );
       }
+      destroyTaskDragPreview();
       resetDrag();
       return;
     }
 
-    if (activeTaskIdRef.current) {
-      void commitTaskDropIfNeeded();
+    if (dragKindRef.current === "task") {
+      cancelPointerTargetSync();
+      syncBoardTaskDropTargetFromPointer(
+        pointerXRef.current,
+        pointerYRef.current
+      );
+      const activeDragId = getActiveTaskDragIdForDrop();
+      const target = taskDropTargetRef.current;
+
+      if (activeDragId && target && canCommitBoardTaskDrop(activeDragId, target)) {
+        const sourceGroupId = dragOriginalSourceGroupIdRef.current;
+        const layoutSnapshot = captureTaskSlotLayout([
+          sourceGroupId,
+          target.groupId,
+        ]);
+        void commitTaskDropIfNeeded({ activeDragId, target });
+        destroyTaskDragPreview();
+        resetDrag();
+        animateTaskDropLayout(layoutSnapshot, { droppedTaskId: activeDragId });
+        beginTaskDropReveal(activeDragId);
+        return;
+      }
+
+      cancelBoardTaskDrag(activeDragId);
+      return;
     }
 
     resetDrag();
@@ -1631,7 +1690,7 @@ function TasksBoardViewContent({
       return;
     }
 
-    if (activeTaskIdRef.current || getActiveTaskDragId()) {
+    if (dragKindRef.current === "task" || getActiveTaskDragId()) {
       await commitTaskDropIfNeeded();
     }
 
@@ -1644,7 +1703,7 @@ function TasksBoardViewContent({
 
     event.stopPropagation();
     setActiveTaskDragId(null);
-    beginDrag("group", groupId);
+    beginGroupDrag(groupId);
 
     const column = event.currentTarget.closest(
       "[data-task-group-column]"
@@ -1653,29 +1712,34 @@ function TasksBoardViewContent({
 
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.setData("text/plain", groupId);
-
-    setGroupDropIfChanged(
-      initialDropBeforeId(movableGroupIds(groupsRef.current), groupId)
-    );
   }
 
-  async function handleGroupDragEnd() {
+  function handleGroupDragEnd() {
     if (dragEndedRef.current) return;
     dragEndedRef.current = true;
 
     const activeDragId = dragIdRef.current;
     const beforeId = dropBeforeGroupIdRef.current;
 
-    if (dragKindRef.current === "group" && activeDragId) {
-      if (!groupReorderBlockedRef.current) {
-        const next = moveGroupInBoard(groupsRef.current, activeDragId, beforeId);
-        onGroupsChange(next);
-        try {
-          await onPersistLayout(next);
-        } catch {
-          onGroupsChange(groupsRef.current);
-        }
+    if (dragKindRef.current === "group" && activeDragId && !groupReorderBlockedRef.current) {
+      const previousBoard = groupsRef.current;
+      const next = moveGroupInBoard(previousBoard, activeDragId, beforeId);
+      const orderChanged = boardGroupIds(previousBoard).some(
+        (id, index) => id !== boardGroupIds(next)[index]
+      );
+      const layoutSnapshot = orderChanged ? captureGroupColumnLayout() : null;
+
+      onGroupsChange(next);
+      resetDrag();
+
+      if (orderChanged && layoutSnapshot) {
+        animateGroupDropLayout(layoutSnapshot, { droppedGroupId: activeDragId });
       }
+
+      void onPersistGroupOrder(previousBoard, next).catch(() => {
+        onGroupsChange(previousBoard);
+      });
+      return;
     }
 
     resetDrag();
@@ -1686,7 +1750,7 @@ function TasksBoardViewContent({
 
     if (dragKindRef.current === "group" && dragIdRef.current && boardRef.current) {
       event.preventDefault();
-      updateGroupDragFeedback(event.clientX, event.clientY);
+      scheduleGroupDragFeedback(event.clientX, event.clientY);
       event.dataTransfer.dropEffect = groupReorderBlockedRef.current
         ? "none"
         : "move";
@@ -1718,7 +1782,7 @@ function TasksBoardViewContent({
 
     event.preventDefault();
     event.stopPropagation();
-    syncTimelineTaskDropTargetFromPointer(event.clientX, event.clientY);
+    syncBoardTaskDropTargetFromPointer(event.clientX, event.clientY);
     event.dataTransfer.dropEffect = "move";
   }
 
@@ -1766,7 +1830,7 @@ function TasksBoardViewContent({
       return next;
     });
 
-    syncTimelineTaskDropTargetFromPointer(event.clientX, event.clientY);
+    syncBoardTaskDropTargetFromPointer(event.clientX, event.clientY);
   }
 
   function toggleCollapsed(groupId: string) {
@@ -1860,37 +1924,25 @@ function TasksBoardViewContent({
     setComposePlacement(placement);
   }
 
-  const isDraggingTask = Boolean(activeTaskId) || externalTaskDragId !== null;
-  const activeDragTaskId = activeTaskId ?? externalTaskDragId;
-  const isDraggingGroup = dragKind === "group";
-
   function handleSortModeChange(groupId: string, sortMode: TaskSortMode) {
     void onUpdateGroupSortMode(groupId, sortMode);
   }
 
-  function renderGroupColumn(group: TaskGroupWithTasks) {
+  function renderGroupColumn(group: TaskGroupWithTasks, columnIndex: number) {
     const isToday = isTodayGroup(group);
     const isLater = isLaterGroup(group);
     const isPinned = isPinnedTaskGroup(group);
     const canCollapse = !isToday;
-    const visibleTasks = filterTasksForGroup(group, group.tasks, todayViewDate);
     const sortMode = getTaskGroupSortMode(group);
     const showSortMenu = isSortableTaskColumn(group);
     const canReorder = canReorderTasksInGroup(group);
-    const { active, completed } = sortActiveAndCompleted(visibleTasks, group);
+    const { active, completed } = getCachedColumnDisplayedTasks(
+      group,
+      todayViewDate
+    );
     const isComposing = composingGroupId === group.id;
     const isComposingTop = isComposing && composePlacement === "top";
     const isComposingBottom = isComposing && composePlacement === "bottom";
-    const isSourceGroup = isDraggingGroup && dragId === group.id;
-    const isGroupReorderBlockTarget =
-      isDraggingGroup &&
-      groupReorderBlockedTargetId === group.id &&
-      isPinned;
-    const showGroupMarker =
-      isDraggingGroup &&
-      !groupReorderBlocked &&
-      dropBeforeGroupId === group.id &&
-      !isSourceGroup;
     const isCompletedOpen = completedExpanded.has(group.id);
     const isCollapsed = canCollapse && collapsed.has(group.id);
     const displayTitle = getGroupDisplayTitle(group, todayViewDate);
@@ -2001,20 +2053,18 @@ function TasksBoardViewContent({
 
     if (isCollapsed) {
       return (
-        <div
+        <GroupColumnBoardSlot
           key={group.id}
-          data-task-group-column={group.id}
-          data-task-group={group.id}
+          groupId={group.id}
+          balanceInGap={columnIndex > 0}
+          collapsed
           className="flex shrink-0 items-stretch"
         >
-          {showGroupMarker && <GroupDropMarker />}
-          <div
+          <GroupColumnDragShell
+            groupId={group.id}
             className={cn(
               "flex w-11 shrink-0 flex-col items-center rounded-xl border py-2 shadow-sm transition-[box-shadow,background-color,border-color] duration-150",
-              TASK_GROUP_COLUMN_SURFACE_CLASS[groupAppearance.colorKey],
-              isSourceGroup && "opacity-40",
-              isGroupReorderBlockTarget &&
-                "border-destructive/35 bg-destructive/[0.06] ring-2 ring-destructive/30"
+              TASK_GROUP_COLUMN_SURFACE_CLASS[groupAppearance.colorKey]
             )}
           >
             <button
@@ -2052,29 +2102,26 @@ function TasksBoardViewContent({
             <span className="max-h-48 text-xs font-semibold text-foreground/80 [writing-mode:vertical-rl] rotate-180">
               {displayTitle}
             </span>
-          </div>
-        </div>
+          </GroupColumnDragShell>
+        </GroupColumnBoardSlot>
       );
     }
 
     return (
-      <div
+      <GroupColumnBoardSlot
         key={group.id}
-        data-task-group-column={group.id}
-        data-task-group={group.id}
+        groupId={group.id}
+        balanceInGap={columnIndex > 0}
         className={cn("flex shrink-0 items-stretch", GROUP_COLUMN_WIDTH_CLASS)}
       >
-        {showGroupMarker && <GroupDropMarker />}
-        <div
+        <GroupColumnDragShell
+          groupId={group.id}
           className={cn(
             "flex h-full max-h-full w-full shrink-0 flex-col rounded-xl border shadow-[0_1px_3px_0_rgba(15,23,42,0.04)] transition-[box-shadow,background-color,border-color] duration-150",
             TASK_GROUP_COLUMN_SURFACE_CLASS[groupAppearance.colorKey],
             isToday &&
               plannerActive &&
-              "ring-2 ring-sky-400/25 shadow-md shadow-sky-500/10",
-            isSourceGroup && "opacity-40",
-            isGroupReorderBlockTarget &&
-              "border-destructive/35 bg-destructive/[0.06] ring-2 ring-destructive/30"
+              "ring-2 ring-sky-400/25 shadow-md shadow-sky-500/10"
           )}
         >
           <div className="group/column-header flex h-11 shrink-0 items-center gap-0 border-b border-border/25 px-1.5 transition-colors duration-150 hover:bg-muted/25">
@@ -2112,7 +2159,7 @@ function TasksBoardViewContent({
                     <DropdownMenuContent
                       side="bottom"
                       align="center"
-                      className="w-40 p-1"
+                      className={cn(CALENDAR_PANEL_WIDTH_CLASS, "p-0")}
                     >
                       {todayQuickDates.map((item) => (
                         <DropdownMenuItem
@@ -2122,13 +2169,22 @@ function TasksBoardViewContent({
                             setTodayTitleOpen(false);
                           }}
                           className={cn(
-                            "text-xs",
+                            "mx-2 mt-1 text-xs first:mt-0",
                             todayViewDate === item.key && "bg-muted font-medium"
                           )}
                         >
                           {item.label}
                         </DropdownMenuItem>
                       ))}
+                      <div className="mt-1 border-t border-border/50">
+                        <CalendarPanel
+                          value={todayViewDate}
+                          onChange={(dateKey) => {
+                            onTodayViewDateChange(dateKey);
+                            setTodayTitleOpen(false);
+                          }}
+                        />
+                      </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <button
@@ -2142,25 +2198,31 @@ function TasksBoardViewContent({
                     <ChevronRight className="size-4" />
                   </button>
                 </div>
-                <label className="relative flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-sky-600 hover:bg-sky-500/10">
-                  <input
-                    type="date"
-                    value={todayViewDate}
-                    onClick={(event) => {
-                      try {
-                        event.currentTarget.showPicker?.();
-                      } catch {
-                        // Browser may reject if already open.
-                      }
-                    }}
-                    onChange={(event) =>
-                      onTodayViewDateChange(event.target.value)
-                    }
-                    className="absolute inset-0 cursor-pointer opacity-0"
+                <DropdownMenu
+                  open={todayCalendarOpen}
+                  onOpenChange={setTodayCalendarOpen}
+                >
+                  <DropdownMenuTrigger
+                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-sky-600 outline-none hover:bg-sky-500/10"
                     aria-label="Pick date"
-                  />
-                  <CalendarDays className="pointer-events-none size-3.5" />
-                </label>
+                  >
+                    <CalendarDays className="size-3.5" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    side="bottom"
+                    align="end"
+                    className={cn(CALENDAR_PANEL_WIDTH_CLASS, "p-0")}
+                  >
+                    <CalendarPanel
+                      value={todayViewDate}
+                      showQuickActions
+                      onChange={(dateKey) => {
+                        onTodayViewDateChange(dateKey);
+                        setTodayCalendarOpen(false);
+                      }}
+                    />
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 {groupHeaderActions}
               </>
             ) : (
@@ -2200,10 +2262,7 @@ function TasksBoardViewContent({
           >
             <TaskGroupActiveBody
               group={group}
-              className={cn(
-                "flex flex-col divide-y divide-border/20 transition-[opacity,transform] duration-300 ease-out",
-                active.length === 0 && isDraggingTask && "min-h-[2.5rem] flex-1"
-              )}
+              className="flex flex-col divide-y divide-border/20 transition-[opacity,transform] duration-300 ease-out"
               onDragOver={
                 isTimelineTaskDrag()
                   ? (event) => handleActiveBodyDragOver(event, group.id)
@@ -2213,20 +2272,16 @@ function TasksBoardViewContent({
                 isTimelineTaskDrag() ? handleGroupDropZoneDrop : undefined
               }
             >
-              {isLater && active.length === 0 && !isComposing && !isDraggingTask ? (
-                <div className="px-2 py-6 text-center">
-                  <p className="text-[11px] font-medium text-foreground/85">
-                    No tasks in Later.
-                  </p>
-                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                    Move tasks here when you want to plan them another time.
-                  </p>
-                </div>
+              <ColumnEmptyDragStretch isEmpty={active.length === 0} />
+              {isLater ? (
+                <LaterEmptyColumnHint
+                  isEmpty={active.length === 0}
+                  isComposing={isComposing}
+                />
               ) : null}
               {active.length === 0 && (
                 <ActiveEmptyDropPlaceholder
                   groupId={group.id}
-                  visible={isDraggingTask}
                   blocked={isPlanningQueueDropBlockedForGroup(group.id)}
                 />
               )}
@@ -2234,9 +2289,7 @@ function TasksBoardViewContent({
               <TaskColumnActiveList
                 group={group}
                 tasks={active}
-                groups={groups}
                 todayViewDate={todayViewDate}
-                selectedTaskId={selectedTaskId}
                 dragEnabled
                 reorderEnabled={canReorder}
               />
@@ -2272,7 +2325,7 @@ function TasksBoardViewContent({
                             next.add(group.id);
                             return next;
                           });
-                          syncTimelineTaskDropTargetFromPointer(
+                          syncBoardTaskDropTargetFromPointer(
                             event.clientX,
                             event.clientY
                           );
@@ -2302,9 +2355,7 @@ function TasksBoardViewContent({
                     <TaskColumnCompletedList
                       group={group}
                       tasks={completed}
-                      groups={groups}
                       todayViewDate={todayViewDate}
-                      selectedTaskId={selectedTaskId}
                       dragEnabled
                       reorderEnabled={canReorder}
                     />
@@ -2313,8 +2364,8 @@ function TasksBoardViewContent({
               </div>
             )}
           </div>
-        </div>
-      </div>
+        </GroupColumnDragShell>
+      </GroupColumnBoardSlot>
     );
   }
 
@@ -2331,62 +2382,84 @@ function TasksBoardViewContent({
   }
 
   async function handleSaveNewGroup(input: TaskGroupCreateInput) {
+    const layoutSnapshot = captureGroupColumnLayout();
     const moveTaskId = newGroupMoveTaskIdRef.current ?? newGroupMoveTaskId;
+    let newGroupId: string;
     if (moveTaskId) {
-      await onCreateGroupAndMoveTask(input, moveTaskId);
+      newGroupId = await onCreateGroupAndMoveTask(input, moveTaskId);
     } else {
-      await onCreateGroup(input);
+      newGroupId = await onCreateGroup(input);
     }
+    pendingNewGroupAnimationRef.current = {
+      snapshot: layoutSnapshot,
+      groupId: newGroupId,
+    };
     newGroupMoveTaskIdRef.current = null;
     setNewGroupMoveTaskId(null);
   }
 
-  const boardActions: TaskBoardActions = {
-    onToggleComplete: (task) => {
-      void onToggleComplete(task);
-    },
-    onOpenDetail: onSelectTask,
-    onDuplicateTask: (task) => {
-      void onDuplicateTask(task);
-    },
-    onMoveTask: (taskId, targetGroupId) => {
-      void onMoveTask(taskId, targetGroupId);
-    },
-    onDeleteTask: (taskId) => {
-      void onDeleteTask(taskId);
-    },
-    onUpdateTask: (taskId, updates) => {
-      void onUpdateTask(taskId, updates);
-    },
-    onSetPlanningState: onSetPlanningState
-      ? (taskId, planningState) => {
-          void onSetPlanningState(taskId, planningState);
-        }
-      : undefined,
-    onRequestCreateGroup: (taskId) => openNewGroupDialog(taskId),
-  };
+  const boardActions = useMemo<TaskBoardActions>(
+    () => ({
+      onToggleComplete: (task) => {
+        void onToggleComplete(task);
+      },
+      onOpenDetail: onSelectTask,
+      onDuplicateTask: (task) => {
+        void onDuplicateTask(task);
+      },
+      onMoveTask: (taskId, targetGroupId) => {
+        void onMoveTask(taskId, targetGroupId);
+      },
+      onDeleteTask: (taskId) => {
+        void onDeleteTask(taskId);
+      },
+      onUpdateTask: (taskId, updates) => {
+        void onUpdateTask(taskId, updates);
+      },
+      onSetPlanningState: onSetPlanningState
+        ? (taskId, planningState) => {
+            void onSetPlanningState(taskId, planningState);
+          }
+        : undefined,
+      onRequestCreateGroup: (taskId) => openNewGroupDialog(taskId),
+      onTaskPointerDragStart: (taskId, groupId, coords) =>
+        handleTaskPointerDragStart(taskId, groupId, coords),
+      onTaskPointerDragEnd: handleTaskPointerDragEnd,
+    }),
+    [
+      onToggleComplete,
+      onSelectTask,
+      onDuplicateTask,
+      onMoveTask,
+      onDeleteTask,
+      onUpdateTask,
+      onSetPlanningState,
+    ]
+  );
 
   return (
+    <TaskBoardGroupsProvider groups={groups}>
     <TaskBoardActionsProvider actions={boardActions}>
     <>
       <div className="flex h-full min-h-0 flex-col gap-3">
-      <div className="grid w-full shrink-0 grid-cols-3 items-center gap-4">
-        <h1 className={cn(type.pageTitle, "min-w-0")}>Tasks</h1>
-        <div className="flex justify-center">
-          {onToggleQuickPlanner ? (
+      <div className="relative flex w-full shrink-0 items-center pr-5 sm:pr-6">
+        <h1 className={cn(type.pageTitle, "min-w-0 shrink-0")}>Tasks</h1>
+
+        {onToggleQuickPlanner ? (
+          <div className="pointer-events-none absolute inset-x-0 flex justify-center">
             <Button
               type="button"
               variant="outline"
               size="sm"
               className={cn(
-                "h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
+                "pointer-events-auto h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
                 "border-border/45 bg-background text-foreground/85",
-                "shadow-[0_1px_2px_0_rgba(15,23,42,0.05)]",
+                "shadow-sm",
                 "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
-                "hover:border-sky-400/35 hover:bg-sky-50/70 hover:text-foreground hover:shadow-[0_1px_3px_0_rgba(14,165,233,0.08)]",
-                "active:scale-[0.98] active:bg-sky-50 active:shadow-[0_1px_1px_0_rgba(15,23,42,0.04)]",
+                "hover:border-sky-400/35 hover:bg-sky-50/70 hover:text-foreground dark:hover:bg-sky-500/12",
+                "active:scale-[0.98] active:bg-sky-50 dark:active:bg-sky-500/15",
                 plannerActive &&
-                  "border-sky-400/45 bg-sky-50/90 text-sky-950 shadow-[0_0_0_1px_rgba(14,165,233,0.14),0_1px_2px_0_rgba(14,165,233,0.1)] hover:bg-sky-100/80 hover:border-sky-400/55"
+                  "border-sky-400/45 bg-sky-50/90 text-sky-950 shadow-sm dark:bg-sky-500/15 dark:text-sky-100 hover:bg-sky-100/80 dark:hover:bg-sky-500/20 hover:border-sky-400/55"
               )}
               onClick={onToggleQuickPlanner}
               aria-pressed={plannerActive}
@@ -2399,30 +2472,29 @@ function TasksBoardViewContent({
               />
               Quick Schedule
             </Button>
-          ) : null}
-        </div>
-        <div className="flex justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className={cn(
-              "h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
-              "border-border/45 bg-background text-foreground/85",
-              "shadow-[0_1px_2px_0_rgba(15,23,42,0.05)]",
-              "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
-              "hover:border-border/70 hover:bg-muted/40 hover:text-foreground hover:shadow-[0_1px_3px_0_rgba(15,23,42,0.07)]",
-              "active:scale-[0.98] active:bg-muted/55 active:shadow-[0_1px_1px_0_rgba(15,23,42,0.04)]"
-            )}
-            onClick={() => openNewGroupDialog()}
-          >
-            <Plus className="size-3.5 text-muted-foreground transition-colors duration-150 group-hover/button:text-foreground" />
-            New Group
-          </Button>
-        </div>
+          </div>
+        ) : null}
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className={cn(
+            "relative z-20 ml-auto h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
+            "border-border/45 bg-background text-foreground/85",
+            "shadow-[0_1px_2px_0_rgba(15,23,42,0.05)]",
+            "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
+            "hover:border-border/70 hover:bg-muted/40 hover:text-foreground hover:shadow-[0_1px_3px_0_rgba(15,23,42,0.07)]",
+            "active:scale-[0.98] active:bg-muted/55 active:shadow-[0_1px_1px_0_rgba(15,23,42,0.04)]"
+          )}
+          onClick={() => openNewGroupDialog()}
+        >
+          <Plus className="size-3.5 text-muted-foreground transition-colors duration-150 group-hover/button:text-foreground" />
+          New Group
+        </Button>
       </div>
 
-      <div
+      <BoardGroupDragScrollChrome
         ref={boardRef}
         onDragOver={handleBoardDragOver}
         onDrop={(event) => {
@@ -2433,26 +2505,18 @@ function TasksBoardViewContent({
           }
           void handleExternalTaskDrop(event);
         }}
-        className={cn(
-          "tasks-board-scroll flex min-h-0 flex-1 gap-3 overflow-x-auto overscroll-x-contain pb-1",
-          isDraggingGroup && groupReorderBlocked && "cursor-not-allowed"
-        )}
+        className="tasks-board-scroll flex min-h-0 flex-1 gap-3 overflow-x-auto overscroll-x-contain pb-1"
       >
-        {groups.map((group) => renderGroupColumn(group))}
-        {isDraggingGroup && !groupReorderBlocked && dropBeforeGroupId === null && (
-          <GroupDropMarker />
-        )}
-      </div>
+        {groups.map((group, columnIndex) => renderGroupColumn(group, columnIndex))}
+        <BoardGroupDropTrailingMarker />
+      </BoardGroupDragScrollChrome>
       </div>
 
       <DragBlockedTooltip
         position={planningQueueDragTooltip}
         message={planningQueueDragTooltip?.message ?? ""}
       />
-      <DragBlockedTooltip
-        position={groupReorderDragTooltip}
-        message={SYSTEM_VIEW_REORDER_BLOCKED_HINT}
-      />
+      <GroupDragBlockedTooltip message={SYSTEM_VIEW_REORDER_BLOCKED_HINT} />
       <DragBlockedTooltip
         position={taskReorderBlockedDragTooltip}
         message={REORDER_DISABLED_TOOLTIP}
@@ -2506,6 +2570,7 @@ function TasksBoardViewContent({
       />
     </>
     </TaskBoardActionsProvider>
+    </TaskBoardGroupsProvider>
   );
 }
 
@@ -2585,22 +2650,13 @@ function DragBlockedTooltip({
 
   return createPortal(
     <div
-      className="pointer-events-none fixed z-[200] max-w-[15rem] rounded-md border border-border/60 bg-popover px-2.5 py-1.5 text-[11px] leading-snug text-popover-foreground shadow-md"
+      className="flow-surface-elevated pointer-events-none fixed z-[200] max-w-[15rem] rounded-md px-2.5 py-1.5 text-[11px] leading-snug"
       style={{ left: position.x + 14, top: position.y + 14 }}
       role="status"
     >
       {message}
     </div>,
     document.body
-  );
-}
-
-function GroupDropMarker() {
-  return (
-    <div
-      className="mx-0.5 w-0.5 shrink-0 self-stretch rounded-full bg-primary/35"
-      aria-hidden
-    />
   );
 }
 

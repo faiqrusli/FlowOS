@@ -215,7 +215,7 @@ export function ScheduleTimeGrid({
   }
 
   return (
-    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/40 bg-[#faf9f7] shadow-sm dark:bg-card xl:basis-[76%]">
+    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/40 bg-timeline shadow-sm xl:basis-[76%]">
       <div
         ref={gridRef}
         className="relative max-h-[calc(100vh-12rem)] min-h-[560px] overflow-y-auto"
@@ -274,7 +274,7 @@ export function ScheduleTimeGrid({
 
             {dropPreview && (
               <div
-                className="pointer-events-none absolute right-3 left-3 z-20 rounded-xl border-2 border-dashed border-foreground/20 bg-foreground/5 shadow-inner"
+                className="pointer-events-none absolute right-3 left-3 z-20 rounded-xl border-2 border-dashed border-primary/40 bg-primary/[0.07] shadow-inner"
                 style={{
                   top: dropPreview.topPx,
                   height: dropPreview.heightPx,

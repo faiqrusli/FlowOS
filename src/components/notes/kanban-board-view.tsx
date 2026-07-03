@@ -15,7 +15,6 @@ import {
   Archive,
   ChevronDown,
   ChevronRight,
-  GripVertical,
   MoreHorizontal,
   Pencil,
   Plus,
@@ -46,6 +45,16 @@ import {
   setDragImageFromElement,
   type DropBeforeId,
 } from "@/lib/list-drag-utils";
+import { useKanbanCardPointerGesture } from "@/lib/kanban-card-pointer-gesture";
+import {
+  focusTextareaAtEnd,
+  focusTextareaWithWordAtPoint,
+} from "@/lib/kanban-text-selection";
+import {
+  createTaskDragPreview,
+  destroyTaskDragPreview,
+  updateTaskDragPreviewPointer,
+} from "@/lib/task-drag-preview";
 import {
   createKanbanCard,
   createKanbanColumn,
@@ -72,6 +81,8 @@ type KanbanBoardViewProps = {
 };
 
 type DragKind = "card" | "column" | null;
+
+type CardEditFocus = { mode: "end" } | { mode: "word"; x: number; y: number };
 
 function resolveCardDropBeforeId(
   columnBody: HTMLElement,
@@ -114,6 +125,9 @@ export function KanbanBoardView({
   const dropBeforeColumnIdRef = useRef<DropBeforeId>(null);
   const dragEndedRef = useRef(false);
   const pointerXRef = useRef(0);
+  const pointerYRef = useRef(0);
+  const dragSnapshotRef = useRef<KanbanBoardWithColumns | null>(null);
+  const cardPointerCleanupRef = useRef<(() => void) | null>(null);
   const autoScrollRafRef = useRef<number | null>(null);
   const documentDragOverRef = useRef<((event: globalThis.DragEvent) => void) | null>(
     null
@@ -130,7 +144,13 @@ export function KanbanBoardView({
   );
   const [composeText, setComposeText] = useState("");
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
+  const [cardEditFocus, setCardEditFocus] = useState<CardEditFocus | null>(null);
   const [cardDraft, setCardDraft] = useState("");
+  const [cardContextMenu, setCardContextMenu] = useState<{
+    cardId: string;
+    x: number;
+    y: number;
+  } | null>(null);
   const composeRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -158,6 +178,8 @@ export function KanbanBoardView({
     return () => {
       stopBoardAutoScroll();
       removeDocumentDragOverListener();
+      detachCardPointerListeners();
+      destroyTaskDragPreview();
     };
   }, []);
 
@@ -241,13 +263,15 @@ export function KanbanBoardView({
     startBoardAutoScroll();
   }
 
-  const commitBoard = useCallback(
-    async (next: KanbanBoardWithColumns) => {
-      onBoardChange(next);
-      await persistKanbanLayout(next);
-    },
-    [onBoardChange]
-  );
+  function persistBoardLayoutInBackground(
+    next: KanbanBoardWithColumns,
+    previous: KanbanBoardWithColumns
+  ) {
+    void persistKanbanLayout(next, previous).catch(() => {
+      boardStateRef.current = previous;
+      onBoardChange(previous);
+    });
+  }
 
   function resetDrag() {
     dragKindRef.current = null;
@@ -268,39 +292,171 @@ export function KanbanBoardView({
     setDragId(id);
   }
 
+  function detachCardPointerListeners() {
+    cardPointerCleanupRef.current?.();
+    cardPointerCleanupRef.current = null;
+  }
+
+  function applyOptimisticCardMove(target: CardDragTarget) {
+    const activeDragId = dragIdRef.current;
+    if (!activeDragId || dragKindRef.current !== "card") return;
+
+    const next = moveCardInBoard(boardStateRef.current, activeDragId, target);
+    boardStateRef.current = next;
+    onBoardChange(next);
+  }
+
   function setCardDropIfChanged(target: CardDragTarget | null) {
     if (cardDragTargetsEqual(cardDropTargetRef.current, target)) return;
     cardDropTargetRef.current = target;
     setCardDropTarget(target);
+    if (target && dragKindRef.current === "card") {
+      applyOptimisticCardMove(target);
+    }
   }
 
-  function setColumnDropIfChanged(beforeId: DropBeforeId) {
-    if (dropBeforeColumnIdRef.current === beforeId) return;
-    dropBeforeColumnIdRef.current = beforeId;
-    setDropBeforeColumnId(beforeId);
-  }
+  function syncCardDropFromPointer(clientX: number, clientY: number) {
+    const cardId = dragIdRef.current;
+    if (dragKindRef.current !== "card" || !cardId) return;
 
-  function handleCardDragStart(cardId: string, e: DragEvent<HTMLButtonElement>) {
-    e.stopPropagation();
-    beginDrag("card", cardId);
+    const element = document.elementFromPoint(clientX, clientY);
+    if (!element) return;
 
-    const cardEl = e.currentTarget.closest(
-      "[data-kanban-card]"
-    ) as HTMLElement | null;
-    if (cardEl) {
-      setDragImageFromElement(e, cardEl, 20, 20);
+    const archivedBody = element.closest<HTMLElement>("[data-kanban-archived-body]");
+    if (archivedBody) {
+      const columnId = archivedBody
+        .closest<HTMLElement>("[data-kanban-column]")
+        ?.getAttribute("data-kanban-column");
+      if (!columnId) return;
+
+      const column = boardStateRef.current.columns.find(
+        (item) => item.id === columnId
+      );
+      if (!column) return;
+
+      setArchivedExpanded((prev) => {
+        if (prev.has(columnId)) return prev;
+        const next = new Set(prev);
+        next.add(columnId);
+        return next;
+      });
+
+      const { archived } = partitionColumnCards(column.cards);
+      const beforeCardId = resolveCardDropBeforeId(
+        archivedBody,
+        archived.map((card) => card.id),
+        clientY,
+        cardId
+      );
+      setCardDropIfChanged({ columnId, beforeCardId, zone: "archived" });
+      return;
     }
 
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", cardId);
+    const columnBody = element.closest<HTMLElement>("[data-kanban-column-body]");
+    if (!columnBody) return;
+
+    const columnId = columnBody
+      .closest<HTMLElement>("[data-kanban-column]")
+      ?.getAttribute("data-kanban-column");
+    if (!columnId) return;
+
+    const column = boardStateRef.current.columns.find(
+      (item) => item.id === columnId
+    );
+    if (!column) return;
+
+    const { active } = partitionColumnCards(column.cards);
+    const beforeCardId = resolveCardDropBeforeId(
+      columnBody,
+      active.map((card) => card.id),
+      clientY,
+      cardId
+    );
+    setCardDropIfChanged({ columnId, beforeCardId, zone: "active" });
+  }
+
+  function attachCardPointerListeners() {
+    detachCardPointerListeners();
+
+    const preventSelect = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const onPointerMove = (event: globalThis.PointerEvent) => {
+      if (dragKindRef.current !== "card") return;
+      event.preventDefault();
+      pointerXRef.current = event.clientX;
+      pointerYRef.current = event.clientY;
+      updateTaskDragPreviewPointer(event.clientX, event.clientY);
+      syncCardDropFromPointer(event.clientX, event.clientY);
+    };
+
+    const onPointerEnd = () => {
+      window.getSelection()?.removeAllRanges();
+      handleCardDragEnd();
+    };
+
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Escape" || dragKindRef.current !== "card") return;
+      event.preventDefault();
+      if (dragEndedRef.current) return;
+      dragEndedRef.current = true;
+      if (dragSnapshotRef.current) {
+        boardStateRef.current = dragSnapshotRef.current;
+        onBoardChange(dragSnapshotRef.current);
+      }
+      destroyTaskDragPreview();
+      resetDrag();
+    };
+
+    document.addEventListener("selectstart", preventSelect);
+    document.addEventListener("pointermove", onPointerMove, { passive: false });
+    document.addEventListener("pointerup", onPointerEnd);
+    document.addEventListener("pointercancel", onPointerEnd);
+    document.addEventListener("keydown", onKeyDown);
+
+    cardPointerCleanupRef.current = () => {
+      document.removeEventListener("selectstart", preventSelect);
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerEnd);
+      document.removeEventListener("pointercancel", onPointerEnd);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }
+
+  function handleCardPointerDragStart(
+    cardId: string,
+    coords: { clientX: number; clientY: number }
+  ) {
+    dragSnapshotRef.current = boardStateRef.current;
+    beginDrag("card", cardId);
+    pointerXRef.current = coords.clientX;
+    pointerYRef.current = coords.clientY;
+
+    const card = boardStateRef.current.columns
+      .flatMap((column) => column.cards)
+      .find((item) => item.id === cardId);
+    const rowEl = document.querySelector<HTMLElement>(
+      `[data-kanban-card="${cardId}"]`
+    );
+
+    if (card && rowEl) {
+      createTaskDragPreview(
+        cardId,
+        { title: cardText(card), completed: false },
+        rowEl.getBoundingClientRect(),
+        coords.clientX,
+        coords.clientY
+      );
+    }
 
     const sourceColumn = boardStateRef.current.columns.find((column) =>
-      column.cards.some((card) => card.id === cardId)
+      column.cards.some((item) => item.id === cardId)
     );
     if (sourceColumn) {
-      const movingCard = sourceColumn.cards.find((card) => card.id === cardId);
+      const movingCard = sourceColumn.cards.find((item) => item.id === cardId);
       const { active, archived } = partitionColumnCards(
-        sourceColumn.cards.filter((card) => card.id !== cardId)
+        sourceColumn.cards.filter((item) => item.id !== cardId)
       );
       const zone: CardDragZone = movingCard?.is_archived ? "archived" : "active";
       const pool = zone === "archived" ? archived : active;
@@ -308,35 +464,51 @@ export function KanbanBoardView({
       setCardDropIfChanged({
         columnId: sourceColumn.id,
         beforeCardId: initialDropBeforeId(
-          pool.map((card) => card.id),
+          pool.map((item) => item.id),
           cardId
         ),
         zone,
       });
     }
+
+    attachCardPointerListeners();
   }
 
-  async function handleCardDragEnd() {
+  function setColumnDropIfChanged(beforeId: DropBeforeId) {
+    if (dropBeforeColumnIdRef.current === beforeId) return;
+    dropBeforeColumnIdRef.current = beforeId;
+    setDropBeforeColumnId(beforeId);
+
+    const columnId = dragIdRef.current;
+    if (dragKindRef.current === "column" && columnId) {
+      const next = moveColumnInBoard(boardStateRef.current, columnId, beforeId);
+      boardStateRef.current = next;
+      onBoardChange(next);
+    }
+  }
+
+  function handleCardDragEnd() {
     if (dragEndedRef.current) return;
     dragEndedRef.current = true;
+    detachCardPointerListeners();
 
     const activeDragId = dragIdRef.current;
-    const target = cardDropTargetRef.current;
+    const wasCardDrag = dragKindRef.current === "card";
+    const snapshot = dragSnapshotRef.current;
 
-    if (dragKindRef.current === "card" && activeDragId && target) {
-      const nextBoard = moveCardInBoard(
-        boardStateRef.current,
-        activeDragId,
-        target
-      );
-      onBoardChange(nextBoard);
-      try {
-        await persistKanbanLayout(nextBoard);
-      } catch {
-        onBoardChange(boardStateRef.current);
-      }
+    if (wasCardDrag && activeDragId) {
+      syncCardDropFromPointer(pointerXRef.current, pointerYRef.current);
     }
+
+    const boardToPersist = boardStateRef.current;
+
+    dragSnapshotRef.current = null;
+    destroyTaskDragPreview();
     resetDrag();
+
+    if (wasCardDrag && activeDragId && snapshot) {
+      persistBoardLayoutInBackground(boardToPersist, snapshot);
+    }
   }
 
   function handleColumnBodyDragOver(
@@ -414,9 +586,10 @@ export function KanbanBoardView({
 
   function handleColumnDragStart(
     columnId: string,
-    e: DragEvent<HTMLButtonElement>
+    e: DragEvent<HTMLElement>
   ) {
     e.stopPropagation();
+    dragSnapshotRef.current = boardStateRef.current;
     beginDrag("column", columnId);
     pointerXRef.current = e.clientX;
 
@@ -451,23 +624,33 @@ export function KanbanBoardView({
     }
   }
 
-  async function handleColumnDragEnd() {
+  function handleColumnDragEnd() {
     stopBoardAutoScroll();
     removeDocumentDragOverListener();
 
     const activeDragId = dragIdRef.current;
     const beforeColumnId = dropBeforeColumnIdRef.current;
+    const wasColumnDrag = dragKindRef.current === "column";
+    const snapshot = dragSnapshotRef.current;
 
-    if (dragKindRef.current === "column" && activeDragId) {
+    let boardToPersist = boardStateRef.current;
+    if (wasColumnDrag && activeDragId) {
       const nextBoard = moveColumnInBoard(
         boardStateRef.current,
         activeDragId,
         beforeColumnId
       );
+      boardStateRef.current = nextBoard;
       onBoardChange(nextBoard);
-      await persistKanbanLayout(nextBoard);
+      boardToPersist = nextBoard;
     }
+
+    dragSnapshotRef.current = null;
     resetDrag();
+
+    if (wasColumnDrag && activeDragId && snapshot) {
+      persistBoardLayoutInBackground(boardToPersist, snapshot);
+    }
   }
 
   function toggleCollapsed(columnId: string) {
@@ -566,32 +749,28 @@ export function KanbanBoardView({
       .find((item) => item.id === cardId);
     if (!card) return;
 
+    const snapshot = board;
     const nextBoard = moveCardInBoard(board, cardId, {
       columnId: card.column_id,
       beforeCardId: null,
       zone: "archived",
     });
+    boardStateRef.current = nextBoard;
     onBoardChange(nextBoard);
-    try {
-      await persistKanbanLayout(nextBoard);
-    } catch {
-      onBoardChange(board);
-    }
+    persistBoardLayoutInBackground(nextBoard, snapshot);
     onAreasRefresh();
   }
 
   async function handleMoveCardToList(cardId: string, targetColumnId: string) {
+    const snapshot = board;
     const nextBoard = moveCardInBoard(board, cardId, {
       columnId: targetColumnId,
       beforeCardId: null,
       zone: "active",
     });
+    boardStateRef.current = nextBoard;
     onBoardChange(nextBoard);
-    try {
-      await persistKanbanLayout(nextBoard);
-    } catch {
-      onBoardChange(board);
-    }
+    persistBoardLayoutInBackground(nextBoard, snapshot);
     onAreasRefresh();
   }
 
@@ -634,6 +813,7 @@ export function KanbanBoardView({
       })),
     });
     setEditingCardId(null);
+    setCardEditFocus(null);
     onAreasRefresh();
   }
 
@@ -652,6 +832,12 @@ export function KanbanBoardView({
   function openCompose(columnId: string) {
     setComposingColumnId(columnId);
     setComposeText("");
+  }
+
+  function startEditCard(card: KanbanCard, focus: CardEditFocus) {
+    setEditingCardId(card.id);
+    setCardEditFocus(focus);
+    setCardDraft(cardText(card));
   }
 
   const isDraggingCard = dragKind === "card";
@@ -681,27 +867,20 @@ export function KanbanBoardView({
               {showColumnMarker && <ColumnDropMarker />}
               <div
                 data-kanban-column={column.id}
+                draggable
+                onDragStart={(e) => handleColumnDragStart(column.id, e)}
+                onDragEnd={handleColumnDragEnd}
                 className={cn(
-                  "flex w-11 shrink-0 flex-col items-center rounded-xl border border-border/40 bg-muted/30 py-2",
+                  "flex w-11 shrink-0 cursor-grab flex-col items-center rounded-xl border border-border/40 bg-muted/30 py-2 active:cursor-grabbing",
                   isSourceColumn && "opacity-40"
                 )}
               >
                 <button
                   type="button"
-                  draggable
-                  onDragStart={(e) => handleColumnDragStart(column.id, e)}
-                  onDragEnd={() => void handleColumnDragEnd()}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  className="mb-1 flex size-7 cursor-grab items-center justify-center rounded-md text-muted-foreground hover:bg-muted active:cursor-grabbing"
-                  aria-label={`Move ${column.title}`}
-                >
-                  <GripVertical className="size-3.5" />
-                </button>
-                <button
-                  type="button"
                   onClick={() => toggleCollapsed(column.id)}
                   className="mb-2 flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
                   aria-label={`Expand ${column.title}`}
+                  onMouseDown={(event) => event.stopPropagation()}
                 >
                   <ChevronRight className="size-3.5" />
                 </button>
@@ -724,23 +903,29 @@ export function KanbanBoardView({
               )}
               onDragOver={(e) => handleColumnBodyDragOver(e, column.id)}
             >
-              <div className="flex shrink-0 items-center gap-1 border-b border-border/30 px-2 py-2">
-                <button
-                  type="button"
-                  draggable
-                  onDragStart={(e) => handleColumnDragStart(column.id, e)}
-                  onDragEnd={() => void handleColumnDragEnd()}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  className="flex size-7 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground hover:bg-muted active:cursor-grabbing"
-                  aria-label={`Move ${column.title}`}
-                >
-                  <GripVertical className="size-3.5" />
-                </button>
+              <div
+                className="flex shrink-0 items-center gap-1 border-b border-border/30 px-2 py-2"
+                draggable={editingColumnId !== column.id}
+                onDragStart={(event) => {
+                  const target = event.target as HTMLElement;
+                  if (
+                    target.closest(
+                      "button, input, textarea, [data-radix-collection-item]"
+                    )
+                  ) {
+                    event.preventDefault();
+                    return;
+                  }
+                  handleColumnDragStart(column.id, event);
+                }}
+                onDragEnd={handleColumnDragEnd}
+              >
                 <button
                   type="button"
                   onClick={() => toggleCollapsed(column.id)}
                   className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
                   aria-label={`Collapse ${column.title}`}
+                  onMouseDown={(event) => event.stopPropagation()}
                 >
                   <ChevronDown className="size-3.5" />
                 </button>
@@ -814,7 +999,7 @@ export function KanbanBoardView({
                 onDragOver={(e) => handleColumnBodyDragOver(e, column.id)}
                 onDrop={(e) => {
                   e.preventDefault();
-                  void handleCardDragEnd();
+                  handleCardDragEnd();
                 }}
               >
                 {activeCards.map((card) => (
@@ -827,23 +1012,40 @@ export function KanbanBoardView({
                       columns={board.columns}
                       isEditing={editingCardId === card.id}
                       isDragging={isDraggingCard && dragId === card.id}
+                      editFocus={
+                        editingCardId === card.id ? cardEditFocus : null
+                      }
                       draft={
                         editingCardId === card.id ? cardDraft : cardText(card)
                       }
                       onDraftChange={setCardDraft}
-                      onStartEdit={() => {
-                        setEditingCardId(card.id);
-                        setCardDraft(cardText(card));
-                      }}
+                      onStartEditAtEnd={() =>
+                        startEditCard(card, { mode: "end" })
+                      }
+                      onStartEditWord={(coords) =>
+                        startEditCard(card, {
+                          mode: "word",
+                          x: coords.clientX,
+                          y: coords.clientY,
+                        })
+                      }
                       onSaveEdit={() => void handleSaveCard(card, cardDraft)}
-                      onCancelEdit={() => setEditingCardId(null)}
+                      onCancelEdit={() => {
+                        setEditingCardId(null);
+                        setCardEditFocus(null);
+                      }}
                       onArchive={() => void handleArchiveCard(card.id)}
                       onMoveToList={(targetColumnId) =>
                         void handleMoveCardToList(card.id, targetColumnId)
                       }
                       onDelete={() => void handleDeleteCard(card.id)}
-                      onDragStart={(e) => handleCardDragStart(card.id, e)}
-                      onDragEnd={() => void handleCardDragEnd()}
+                      onPointerDragStart={(coords) =>
+                        handleCardPointerDragStart(card.id, coords)
+                      }
+                      onPointerDragEnd={handleCardDragEnd}
+                      onOpenContextMenu={(x, y) =>
+                        setCardContextMenu({ cardId: card.id, x, y })
+                      }
                     />
                   </div>
                 ))}
@@ -926,27 +1128,44 @@ export function KanbanBoardView({
                               columns={board.columns}
                               isEditing={editingCardId === card.id}
                               isDragging={isDraggingCard && dragId === card.id}
+                              editFocus={
+                                editingCardId === card.id ? cardEditFocus : null
+                              }
                               draft={
                                 editingCardId === card.id
                                   ? cardDraft
                                   : cardText(card)
                               }
                               onDraftChange={setCardDraft}
-                              onStartEdit={() => {
-                                setEditingCardId(card.id);
-                                setCardDraft(cardText(card));
-                              }}
+                              onStartEditAtEnd={() =>
+                                startEditCard(card, { mode: "end" })
+                              }
+                              onStartEditWord={(coords) =>
+                                startEditCard(card, {
+                                  mode: "word",
+                                  x: coords.clientX,
+                                  y: coords.clientY,
+                                })
+                              }
                               onSaveEdit={() =>
                                 void handleSaveCard(card, cardDraft)
                               }
-                              onCancelEdit={() => setEditingCardId(null)}
+                              onCancelEdit={() => {
+                                setEditingCardId(null);
+                                setCardEditFocus(null);
+                              }}
                               onArchive={() => void handleArchiveCard(card.id)}
                               onMoveToList={(targetColumnId) =>
                                 void handleMoveCardToList(card.id, targetColumnId)
                               }
                               onDelete={() => void handleDeleteCard(card.id)}
-                              onDragStart={(e) => handleCardDragStart(card.id, e)}
-                              onDragEnd={() => void handleCardDragEnd()}
+                              onPointerDragStart={(coords) =>
+                                handleCardPointerDragStart(card.id, coords)
+                              }
+                              onPointerDragEnd={handleCardDragEnd}
+                              onOpenContextMenu={(x, y) =>
+                                setCardContextMenu({ cardId: card.id, x, y })
+                              }
                             />
                           </div>
                         ))}
@@ -965,6 +1184,35 @@ export function KanbanBoardView({
       })}
 
       {isDraggingColumn && dropBeforeColumnId === null && <ColumnDropMarker />}
+
+      {cardContextMenu ? (
+        <KanbanCardContextMenu
+          cardId={cardContextMenu.cardId}
+          x={cardContextMenu.x}
+          y={cardContextMenu.y}
+          board={board}
+          onClose={() => setCardContextMenu(null)}
+          onEdit={(cardId) => {
+            const card = board.columns
+              .flatMap((column) => column.cards)
+              .find((item) => item.id === cardId);
+            if (card) startEditCard(card, { mode: "end" });
+            setCardContextMenu(null);
+          }}
+          onArchive={(cardId) => {
+            void handleArchiveCard(cardId);
+            setCardContextMenu(null);
+          }}
+          onMoveToList={(cardId, columnId) => {
+            void handleMoveCardToList(cardId, columnId);
+            setCardContextMenu(null);
+          }}
+          onDelete={(cardId) => {
+            void handleDeleteCard(cardId);
+            setCardContextMenu(null);
+          }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -972,7 +1220,7 @@ export function KanbanBoardView({
 function CardDropLine() {
   return (
     <div
-      className="my-1.5 h-0.5 rounded-full bg-foreground/75"
+      className="my-1 h-0.5 rounded-full bg-sky-500/85"
       aria-hidden
     />
   );
@@ -981,7 +1229,7 @@ function CardDropLine() {
 function ColumnDropMarker() {
   return (
     <div
-      className="mx-0.5 w-0.5 shrink-0 self-stretch rounded-full bg-foreground/30"
+      className="mx-0.5 w-0.5 shrink-0 self-stretch rounded-full bg-sky-500/70"
       aria-hidden
     />
   );
@@ -1005,7 +1253,7 @@ type AutoGrowTextareaProps = {
   onChange: (value: string) => void;
   className?: string;
   placeholder?: string;
-  focusAtStart?: boolean;
+  editFocus?: CardEditFocus | null;
   onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
   onBlur?: () => void;
 };
@@ -1017,7 +1265,7 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
       onChange,
       className,
       placeholder,
-      focusAtStart = false,
+      editFocus = null,
       onKeyDown,
       onBlur,
     },
@@ -1038,11 +1286,12 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
       resize();
       const el = innerRef.current;
       if (!el) return;
-      el.focus();
-      if (focusAtStart) {
-        el.setSelectionRange(0, 0);
+      if (editFocus?.mode === "word") {
+        focusTextareaWithWordAtPoint(el, editFocus.x, editFocus.y);
+      } else {
+        focusTextareaAtEnd(el);
       }
-    }, [focusAtStart, resize]);
+    }, [editFocus, resize]);
 
     useEffect(() => {
       resize();
@@ -1112,34 +1361,58 @@ const KanbanCardRow = memo(function KanbanCardRow({
   columns,
   isEditing,
   isDragging,
+  editFocus,
   draft,
   onDraftChange,
-  onStartEdit,
+  onStartEditAtEnd,
+  onStartEditWord,
   onSaveEdit,
   onCancelEdit,
   onArchive,
   onMoveToList,
   onDelete,
-  onDragStart,
-  onDragEnd,
+  onPointerDragStart,
+  onPointerDragEnd,
+  onOpenContextMenu,
 }: {
   card: KanbanCard;
   columns: (KanbanColumn & { cards: KanbanCard[] })[];
   isEditing: boolean;
   isDragging: boolean;
+  editFocus: CardEditFocus | null;
   draft: string;
   onDraftChange: (value: string) => void;
-  onStartEdit: () => void;
+  onStartEditAtEnd: () => void;
+  onStartEditWord: (coords: { clientX: number; clientY: number }) => void;
   onSaveEdit: () => void;
   onCancelEdit: () => void;
   onArchive: () => void;
   onMoveToList: (targetColumnId: string) => void;
   onDelete: () => void;
-  onDragStart: (e: DragEvent<HTMLButtonElement>) => void;
-  onDragEnd: () => void;
+  onPointerDragStart: (coords: { clientX: number; clientY: number }) => void;
+  onPointerDragEnd: () => void;
+  onOpenContextMenu: (x: number, y: number) => void;
 }) {
   const body = cardBodyDraft(card);
   const moveTargets = columns.filter((column) => column.id !== card.column_id);
+
+  const isInteractiveTarget = useCallback((target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false;
+    return Boolean(
+      target.closest(
+        "button, textarea, input, [role='menu'], [data-radix-popper-content-wrapper]"
+      )
+    );
+  }, []);
+
+  const pointerGesture = useKanbanCardPointerGesture({
+    enabled: !isEditing,
+    isInteractiveTarget,
+    onSingleClickEdit: onStartEditAtEnd,
+    onDoubleClickWord: onStartEditWord,
+    onPointerDragStart,
+    onPointerDragEnd,
+  });
 
   function saveDraft() {
     onDraftChange(normalizeCardInput(draft));
@@ -1150,35 +1423,32 @@ const KanbanCardRow = memo(function KanbanCardRow({
     <div
       data-kanban-card={card.id}
       className={cn(
-        "group relative min-w-0 overflow-hidden rounded-lg border border-border/45 bg-card shadow-sm",
+        "group relative min-w-0 touch-none overflow-hidden rounded-lg border border-border/45 bg-card shadow-sm",
         card.is_archived && "border-border/30 bg-muted/20 opacity-90",
-        isDragging && "opacity-40"
+        !isEditing && "cursor-grab active:cursor-grabbing",
+        isDragging && "pointer-events-none opacity-0"
       )}
+      onPointerDown={isEditing ? undefined : pointerGesture.onPointerDown}
+      onPointerMove={isEditing ? undefined : pointerGesture.onPointerMove}
+      onPointerUp={isEditing ? undefined : pointerGesture.onPointerUp}
+      onPointerCancel={isEditing ? undefined : pointerGesture.onPointerCancel}
+      onContextMenu={(event) => {
+        if (isEditing) return;
+        event.preventDefault();
+        onOpenContextMenu(event.clientX, event.clientY);
+      }}
     >
-      {!isEditing && (
-        <button
-          type="button"
-          draggable
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          onMouseDown={(event) => event.stopPropagation()}
-          className="absolute top-1.5 left-1.5 z-10 flex size-6 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted active:cursor-grabbing"
-          aria-label={`Move card`}
-        >
-          <GripVertical className="size-3.5" />
-        </button>
-      )}
-
       {!isEditing && (
         <DropdownMenu>
           <DropdownMenuTrigger
             className="absolute top-1.5 right-1.5 z-10 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted"
             aria-label="Card options"
+            onPointerDown={(event) => event.stopPropagation()}
           >
             <MoreHorizontal className="size-3.5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="rounded-xl">
-            <DropdownMenuItem onClick={onStartEdit}>
+            <DropdownMenuItem onClick={onStartEditAtEnd}>
               <Pencil className="size-3.5" />
               Edit card
             </DropdownMenuItem>
@@ -1217,9 +1487,9 @@ const KanbanCardRow = memo(function KanbanCardRow({
         <AutoGrowTextarea
           value={draft}
           onChange={onDraftChange}
-          focusAtStart
+          editFocus={editFocus}
           placeholder="Write here... use - for bullets"
-          className="bg-transparent px-3 py-2.5 pl-9 pr-9 text-foreground"
+          className="bg-transparent px-3 py-2.5 text-foreground"
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();
@@ -1230,17 +1500,97 @@ const KanbanCardRow = memo(function KanbanCardRow({
           onBlur={saveDraft}
         />
       ) : (
-        <button
-          type="button"
-          onClick={onStartEdit}
-          className="w-full min-w-0 overflow-hidden px-3 py-2.5 pl-9 pr-9 text-left"
-        >
+        <div className="w-full min-w-0 overflow-hidden px-3 py-2.5 pr-9 text-left select-text">
           <CardBodyDisplay text={body} />
-        </button>
+        </div>
       )}
     </div>
   );
 });
+
+function KanbanCardContextMenu({
+  cardId,
+  x,
+  y,
+  board,
+  onClose,
+  onEdit,
+  onArchive,
+  onMoveToList,
+  onDelete,
+}: {
+  cardId: string;
+  x: number;
+  y: number;
+  board: KanbanBoardWithColumns;
+  onClose: () => void;
+  onEdit: (cardId: string) => void;
+  onArchive: (cardId: string) => void;
+  onMoveToList: (cardId: string, columnId: string) => void;
+  onDelete: (cardId: string) => void;
+}) {
+  const card = board.columns
+    .flatMap((column) => column.cards)
+    .find((item) => item.id === cardId);
+  const moveTargets = board.columns.filter(
+    (column) => column.id !== card?.column_id
+  );
+
+  if (!card) return null;
+
+  return (
+    <>
+      <button
+        type="button"
+        className="fixed inset-0 z-[99] cursor-default bg-transparent"
+        aria-label="Close menu"
+        onClick={onClose}
+      />
+      <div
+        className="flow-surface-elevated fixed z-[100] min-w-[11rem] p-1"
+        style={{ left: x, top: y }}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+          onClick={() => onEdit(cardId)}
+        >
+          <Pencil className="size-3.5 shrink-0" />
+          Edit card
+        </button>
+        {!card.is_archived ? (
+          <button
+            type="button"
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+            onClick={() => onArchive(cardId)}
+          >
+            <Archive className="size-3.5 shrink-0" />
+            Archive card
+          </button>
+        ) : null}
+        {moveTargets.map((column) => (
+          <button
+            key={column.id}
+            type="button"
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+            onClick={() => onMoveToList(cardId, column.id)}
+          >
+            {column.title}
+          </button>
+        ))}
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-muted"
+          onClick={() => onDelete(cardId)}
+        >
+          <Trash2 className="size-3.5 shrink-0" />
+          Delete card
+        </button>
+      </div>
+    </>
+  );
+}
 
 function CardBodyDisplay({ text }: { text: string }) {
   if (!text.trim()) {

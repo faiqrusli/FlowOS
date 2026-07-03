@@ -102,7 +102,7 @@ export function CustomEntryDialog({
             </Button>
             <Button
               type="submit"
-              className="rounded-full bg-neutral-800 text-white hover:bg-neutral-700"
+              className="rounded-full"
             >
               {mode === "create" ? "Add entry" : "Save changes"}
             </Button>
