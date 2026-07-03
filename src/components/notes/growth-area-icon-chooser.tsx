@@ -182,7 +182,7 @@ function IconButton({
       className={cn(
         "flex size-11 items-center justify-center rounded-xl text-xl leading-none transition-colors",
         selected
-          ? "bg-foreground text-background shadow-sm"
+          ? "flow-selected text-foreground"
           : "hover:bg-muted/80"
       )}
     >

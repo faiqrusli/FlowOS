@@ -230,7 +230,7 @@ export function ScheduleTaskSidebar({
             <button
               type="button"
               onClick={onAutoscheduleAll}
-              className="inline-flex items-center gap-1 rounded-lg bg-foreground px-2.5 py-1.5 text-[11px] font-medium text-background transition-colors hover:bg-foreground/90"
+              className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-secondary px-2.5 py-1.5 text-[11px] font-medium text-secondary-foreground transition-colors hover:border-border hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_6%)]"
             >
               <Sparkles className="size-3" />
               Auto

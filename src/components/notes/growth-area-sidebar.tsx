@@ -197,7 +197,7 @@ export function GrowthAreaSidebar({
               <button
                 type="button"
                 onClick={onCreate}
-                className="flex size-8 items-center justify-center rounded-lg bg-foreground text-background transition-colors hover:bg-foreground/90"
+                className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover"
                 aria-label="Add growth area"
                 title="Add growth area"
               >

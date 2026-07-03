@@ -433,7 +433,7 @@ export function NotesPanel({
       {notice && (
         <div
           role="status"
-          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-border/50 bg-foreground px-4 py-2 text-sm text-background shadow-lg"
+          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-border/50 bg-popover px-4 py-2 text-sm text-popover-foreground shadow-lg"
         >
           {notice}
         </div>

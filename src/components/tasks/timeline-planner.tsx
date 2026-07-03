@@ -1235,7 +1235,7 @@ export function TimelinePlanner({
             zoom === option.value
               ? useDrawerTimeline
                 ? "bg-background text-foreground shadow-sm"
-                : "bg-foreground text-background"
+                : "bg-card text-foreground shadow-xs"
               : "text-muted-foreground hover:text-foreground"
           )}
         >

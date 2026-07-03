@@ -45,7 +45,7 @@ type TimePickerPanelProps = {
 };
 
 const SEGMENT_ACTIVE_CLASS =
-  "rounded bg-background text-foreground shadow-sm ring-1 ring-sky-400/45";
+  "rounded bg-background text-foreground shadow-sm ring-1 ring-ring/45";
 
 function TimePickerColumn<T extends string | number>({
   items,
@@ -70,7 +70,7 @@ function TimePickerColumn<T extends string | number>({
     <div className="relative min-w-0 flex-1">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-1/2 z-10 h-7 -translate-y-1/2 rounded-md border border-sky-400/30 bg-sky-50/40 dark:bg-sky-500/10"
+        className="pointer-events-none absolute inset-x-0 top-1/2 z-10 h-7 -translate-y-1/2 rounded-md border border-selected-border bg-selected"
       />
       <div
         aria-hidden

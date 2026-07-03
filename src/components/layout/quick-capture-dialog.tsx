@@ -260,21 +260,22 @@ export function QuickCaptureDialog() {
           {showPlanning ? (
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Plan</span>
-              <div className="inline-flex rounded-full border border-border p-0.5">
-                <button
-                  type="button"
-                  className={`rounded-full px-3 py-1 text-sm ${planningState === "none" ? "bg-muted text-foreground" : "text-muted-foreground"}`}
-                  onClick={() => setPlanningState("none")}
-                >
-                  Normal
-                </button>
-                <button
-                  type="button"
-                  className={`rounded-full px-3 py-1 text-sm ${planningState === "later" ? "bg-muted text-foreground" : "text-muted-foreground"}`}
-                  onClick={() => setPlanningState("later")}
-                >
-                  Later
-                </button>
+              <div className="inline-flex rounded-lg border border-border/60 bg-muted/40 p-0.5">
+                {(["none", "later"] as const).map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setPlanningState(item)}
+                    className={cn(
+                      "rounded-md px-2.5 py-0.5 text-[14px] font-medium capitalize transition-[background-color,color,box-shadow] duration-150",
+                      planningState === item
+                        ? "bg-card text-foreground shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {item === "none" ? "Normal" : "Later"}
+                  </button>
+                ))}
               </div>
             </div>
           ) : null}
