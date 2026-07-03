@@ -17,7 +17,7 @@ export function TaskPriorityFlagIcon({
     <Flag
       className={cn("size-3.5 shrink-0", config.flagClassName, className)}
       strokeWidth={1.5}
-      aria-hidden
+      aria-label={config.label}
     />
   );
 }

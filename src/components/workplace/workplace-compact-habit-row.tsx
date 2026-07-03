@@ -173,8 +173,8 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
           className={cn(
             "flex size-4 shrink-0 items-center justify-center rounded-sm border transition-colors",
             habit.completed
-              ? "border-orange-600 bg-orange-600 text-white"
-              : "border-orange-400/45 hover:border-orange-500"
+              ? "border-warning bg-warning text-background"
+              : "border-warning/45 hover:border-warning"
           )}
           aria-label={`Mark "${habit.name}" complete`}
         >
@@ -195,7 +195,7 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
         </span>
 
         {streakLabel ? (
-          <span className="shrink-0 text-[11px] text-orange-600/85 dark:text-orange-400/85">{streakLabel}</span>
+          <span className="shrink-0 text-[11px] text-warning">{streakLabel}</span>
         ) : null}
 
         {time ? (
@@ -205,7 +205,7 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
         ) : null}
 
         {habit.track_with_focus && !habit.completed ? (
-          <Clock className="size-3 shrink-0 text-violet-600/70 dark:text-violet-400/75" aria-hidden />
+          <Clock className="size-3 shrink-0 text-accent-text" aria-hidden />
         ) : null}
       </div>
 

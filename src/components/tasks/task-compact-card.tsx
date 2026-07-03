@@ -1,9 +1,11 @@
 "use client";
 
 import { Check, Pencil, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TaskPriorityEmoji } from "@/components/tasks/task-priority-badge";
+import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import { formatTaskCardMeta } from "@/lib/tasks";
+import { normalizeTaskPriority } from "@/lib/task-priority";
 import { cn } from "@/lib/utils";
 import type { Task } from "@/types/task";
 
@@ -32,6 +34,7 @@ export function TaskCompactCard({
 }: TaskCompactCardProps) {
   const meta = formatTaskCardMeta(task, variant);
   const isCompleted = task.completed || variant === "completed";
+  const priority = normalizeTaskPriority(task.priority);
 
   return (
     <article
@@ -40,7 +43,7 @@ export function TaskCompactCard({
         isCompleted && "border-border/70 bg-muted/25 opacity-70 hover:translate-y-0 hover:shadow-xs",
         overdue &&
           !isCompleted &&
-          "border-amber-200/80 bg-amber-50/30 dark:border-amber-400/30 dark:bg-amber-500/8"
+          "border-l-[3px] border-l-warning/50"
       )}
     >
       <button
@@ -61,7 +64,7 @@ export function TaskCompactCard({
 
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex min-w-0 items-start gap-1.5">
-          <TaskPriorityEmoji task={task} />
+          <TaskPriorityFlagIcon priority={priority} className="mt-0.5 size-3.5 shrink-0" />
           <p
             className={cn(
               "line-clamp-1 text-sm font-semibold text-foreground",
@@ -88,9 +91,7 @@ export function TaskCompactCard({
             <p className="text-xs text-muted-foreground">{meta}</p>
           )}
           {overdue && !isCompleted && (
-            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
-              Overdue
-            </span>
+            <Badge variant="status-warning">Overdue</Badge>
           )}
         </div>
       </div>

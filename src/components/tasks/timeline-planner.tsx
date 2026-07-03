@@ -212,9 +212,9 @@ const TIMELINE_TASK_SELECTED =
 const TIMELINE_DROP_PREVIEW =
   "rounded-lg border border-dashed border-primary/45 bg-primary/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35)] dark:border-primary/50 dark:bg-primary/12 dark:shadow-[inset_0_1px_0_0_oklch(1_0_0/6%)]";
 const QUICK_SCHEDULE_INBOX_DROP_HIGHLIGHT =
-  "ring-2 ring-sky-400/25 shadow-md shadow-sky-500/10";
+  "ring-2 ring-primary/25 shadow-md shadow-primary/10";
 const QUICK_SCHEDULE_INBOX_TAB_DROP_HIGHLIGHT =
-  "bg-background text-foreground shadow-sm ring-1 ring-sky-400/35";
+  "bg-background text-foreground shadow-sm ring-1 ring-primary/35";
 
 function QuickScheduleInfoMenu() {
   return (
@@ -1323,7 +1323,7 @@ export function TimelinePlanner({
       variant="outline"
       size="sm"
       className={cn(
-        "shrink-0 rounded-md border-border/50 bg-background font-normal text-muted-foreground/85 shadow-sm hover:border-sky-400/35 hover:bg-background hover:text-foreground",
+        "shrink-0 rounded-md border-border/50 bg-background font-normal text-muted-foreground/85 shadow-sm hover:border-primary/35 hover:bg-background hover:text-foreground",
         useDrawerTimeline
           ? "h-5 px-1.5 text-[10px]"
           : isWorkplace
@@ -1558,7 +1558,7 @@ export function TimelinePlanner({
                     <PanelRightClose className={panelToggleHoverIconClass("sm")} />
                   </button>
                 ) : (
-                  <Clock className="size-3.5 shrink-0 text-sky-600" />
+                  <Clock className={panelTogglePrimaryIconClass("sm")} />
                 )}
               <h2 className="shrink-0 text-sm font-semibold leading-none tracking-tight text-foreground">
                 Quick Schedule
@@ -1576,7 +1576,7 @@ export function TimelinePlanner({
         ) : (
           <div className="relative flex w-full items-center gap-2 px-1">
             <div className="flex min-w-0 flex-1 items-center gap-2">
-              <Clock className="size-4 shrink-0 text-sky-600" />
+              <Clock className={panelTogglePrimaryIconClass()} />
               <div className="min-w-0">
                 <h2 className="truncate text-base font-semibold">Schedule</h2>
                 <p className="truncate text-[11px] text-muted-foreground">
@@ -2306,10 +2306,8 @@ function TimelineTaskRowContent({
             name={group.title}
             appearance={appearance}
             className={cn(
-              "max-w-[6rem] shrink-0 gap-0.5 font-medium",
-              compact
-                ? "rounded px-1 py-px text-[10px] [&_span:first-child]:text-[11px]"
-                : "gap-1 rounded-md px-1.5 py-0.5 text-[11px] [&_span:first-child]:text-xs"
+              "max-w-[6rem] shrink-0 font-medium",
+              compact ? "text-[10px]" : "text-[11px]"
             )}
           />
         ) : null}
@@ -2473,7 +2471,7 @@ function TimelineScheduledBlock({
             : "flex-col gap-0.5 px-2 py-1",
         isHabit && timelineHabitBlockClassNames(),
         selected && TIMELINE_TASK_SELECTED,
-        overlapping && "border-amber-400/60 bg-amber-50/35 dark:border-amber-400/35 dark:bg-amber-500/10",
+        overlapping && "border-warning/50 bg-warning-muted/40",
         isDragging && "opacity-40",
         completed &&
           "opacity-[0.45] transition-opacity hover:opacity-[0.62]"
@@ -2509,10 +2507,10 @@ function TimelineScheduledBlock({
               isHabit ? "rounded-sm" : "rounded-full",
               completed
                 ? isHabit
-                  ? "border-orange-600 bg-orange-600 text-white"
+                  ? "border-warning bg-warning text-background"
                   : "border-foreground bg-foreground text-background"
                 : isHabit
-                  ? "border-orange-400/60"
+                  ? "border-warning/50"
                   : "border-muted-foreground/40"
             )}
             aria-label={`Mark "${title}" complete`}
@@ -2561,7 +2559,7 @@ function TimelineScheduledBlock({
       )}
 
       {overlapping && !compact && (
-        <p className="text-[9px] text-amber-700">Overlaps another item</p>
+        <p className="text-[9px] text-warning">Overlaps another item</p>
       )}
     </div>
   );
@@ -2626,8 +2624,8 @@ function TimelineHabitChip({
         className={cn(
           "flex size-4 shrink-0 items-center justify-center rounded-sm border transition-colors",
           completed
-            ? "border-orange-600 bg-orange-600 text-white"
-            : "border-orange-400/60 hover:border-orange-500"
+            ? "border-warning bg-warning text-background"
+            : "border-warning/50 hover:border-warning/70"
         )}
         aria-label={`Mark "${habit.name}" complete`}
       >

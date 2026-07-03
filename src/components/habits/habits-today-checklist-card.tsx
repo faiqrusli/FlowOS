@@ -56,8 +56,8 @@ function HabitOccurrenceRow({
         className={cn(
           "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
           habit.completed
-            ? "border-orange-600 bg-orange-600 text-white"
-            : "border-muted-foreground/45 bg-transparent hover:border-orange-500/70",
+            ? "border-warning bg-warning text-background"
+            : "border-muted-foreground/45 bg-transparent hover:border-warning/70",
           disabled && "opacity-50"
         )}
         aria-label={`Mark today's "${habit.name}" occurrence as ${habit.completed ? "incomplete" : "complete"}`}

@@ -39,7 +39,7 @@ export function ScheduleHabitStrip({
         channel.bg,
         channel.border,
         interactive && !item.completed && "cursor-grab hover:shadow-sm active:cursor-grabbing",
-        isCurrent && "ring-1 ring-emerald-400/40",
+        isCurrent && "ring-1 ring-primary/35",
         item.completed && "opacity-60"
       )}
       style={{ top: topPx, height: heightPx }}
@@ -86,8 +86,8 @@ export function ScheduleHabitStrip({
             className={cn(
               "flex size-6 items-center justify-center rounded-md border transition-colors",
               item.completed
-                ? "border-emerald-600 bg-emerald-600 text-white"
-                : "border-foreground/20 bg-background/70 hover:border-foreground/40",
+                ? "border-warning bg-warning text-background"
+                : "border-warning/40 bg-background/70 hover:border-warning/60",
               disabled && "opacity-50"
             )}
             aria-label={`Mark ${item.title} complete`}

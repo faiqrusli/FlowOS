@@ -1,19 +1,23 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import {
+  getGroupDotClass,
+  TASK_GROUP_SWATCH_CLASS,
+  type TaskGroupAppearance,
+} from "@/lib/task-group-appearance";
 import { cn } from "@/lib/utils";
-import type { TaskGroupAppearance } from "@/lib/task-group-appearance";
 
 type TaskGroupPillProps = {
   icon: string;
   name: string;
-  appearance: Pick<TaskGroupAppearance, "pillClassName">;
+  appearance: Pick<TaskGroupAppearance, "colorKey">;
   count?: number;
   variant?: "filled" | "plain";
   className?: string;
 };
 
 export function TaskGroupPill({
-  icon,
   name,
   appearance,
   count,
@@ -21,6 +25,7 @@ export function TaskGroupPill({
   className,
 }: TaskGroupPillProps) {
   const showCount = count !== undefined && count > 0;
+  const dotClassName = TASK_GROUP_SWATCH_CLASS[appearance.colorKey];
 
   if (variant === "plain") {
     return (
@@ -30,9 +35,10 @@ export function TaskGroupPill({
           className
         )}
       >
-        <span className="text-base leading-none" aria-hidden>
-          {icon}
-        </span>
+        <span
+          className={getGroupDotClass(appearance.colorKey)}
+          aria-hidden
+        />
         <span className="truncate">{name}</span>
         {showCount ? (
           <span className="shrink-0 text-xs text-muted-foreground">{count}</span>
@@ -42,17 +48,12 @@ export function TaskGroupPill({
   }
 
   return (
-    <span
-      className={cn(
-        "inline-flex max-w-full min-w-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-sm font-medium",
-        appearance.pillClassName,
-        className
-      )}
+    <Badge
+      variant="entity-dot"
+      dotClassName={dotClassName}
+      className={cn("max-w-full min-w-0", className)}
     >
-      <span className="text-sm leading-none" aria-hidden>
-        {icon}
-      </span>
-      <span className="truncate leading-tight">{name}</span>
-    </span>
+      <span className="truncate">{name}</span>
+    </Badge>
   );
 }

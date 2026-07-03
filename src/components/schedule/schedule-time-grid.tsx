@@ -264,10 +264,10 @@ export function ScheduleTimeGrid({
             )}
 
             <div
-              className="pointer-events-none absolute right-0 left-0 border-t border-dashed border-amber-300/60"
+              className="pointer-events-none absolute right-0 left-0 border-t border-dashed border-warning/50"
               style={{ top: `${shutdownPercent}%` }}
             >
-              <span className="absolute -top-2.5 right-3 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">
+              <span className="absolute -top-2.5 right-3 rounded-full bg-warning-muted px-2 py-0.5 text-[10px] font-medium text-warning">
                 Shutdown 6 PM
               </span>
             </div>

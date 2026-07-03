@@ -152,12 +152,19 @@ export function TaskGroupDialog({
                         aria-pressed={color === colorKey}
                         onClick={() => setColor(colorKey)}
                         className={cn(
-                          "aspect-square rounded-lg shadow-sm transition-transform hover:scale-105",
-                          TASK_GROUP_SWATCH_CLASS[colorKey],
+                          "flex aspect-square items-center justify-center rounded-lg border border-border/50 bg-muted/20 shadow-sm transition-transform hover:scale-105",
                           color === colorKey &&
                             "ring-2 ring-foreground ring-offset-2 ring-offset-background"
                         )}
-                      />
+                      >
+                        <span
+                          className={cn(
+                            "size-2 shrink-0 rounded-full",
+                            TASK_GROUP_SWATCH_CLASS[colorKey]
+                          )}
+                          aria-hidden
+                        />
+                      </button>
                     ))}
                   </div>
                 </div>

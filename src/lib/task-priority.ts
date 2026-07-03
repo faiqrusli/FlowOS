@@ -9,19 +9,19 @@ export const TASK_PRIORITY_CONFIG: Record<
   high: {
     label: "Urgent",
     emoji: "🔴",
-    className: "text-red-700",
-    flagClassName: "fill-red-500 text-red-500",
+    className: "text-destructive",
+    flagClassName: "fill-destructive text-destructive",
   },
   medium: {
     label: "Priority",
     emoji: "🟡",
-    className: "text-amber-700",
-    flagClassName: "fill-amber-400 text-amber-500",
+    className: "text-warning",
+    flagClassName: "fill-warning text-warning",
   },
   low: {
     label: "Normal",
     emoji: "🟢",
-    className: "text-green-700",
+    className: "text-muted-foreground",
     flagClassName: "fill-muted-foreground/45 text-muted-foreground",
   },
 };

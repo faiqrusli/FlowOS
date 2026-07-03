@@ -36,7 +36,7 @@ export function DashboardSchedulePreview({
                 className={cn(
                   type.meta,
                   "shrink-0 uppercase tracking-wide",
-                  item.type === "habit" ? "text-orange-700/80" : "text-muted-foreground"
+                  item.type === "habit" ? "text-warning" : "text-muted-foreground"
                 )}
               >
                 {item.type === "habit" ? "Habit" : "Task"}

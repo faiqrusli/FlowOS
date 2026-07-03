@@ -30,7 +30,7 @@ export function ScheduleKpiRow({ kpis }: ScheduleKpiRowProps) {
         </span>
         <div className="h-1 min-w-[4rem] flex-1 overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full rounded-full bg-emerald-500 transition-all"
+            className="h-full rounded-full bg-success transition-all"
             style={{ width: `${kpis.onTrackPercent}%` }}
           />
         </div>

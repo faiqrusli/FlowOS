@@ -53,22 +53,22 @@ export type ScheduleTypeStyle = {
 
 export const SCHEDULE_TYPE_STYLES: Record<ScheduleItemType, ScheduleTypeStyle> = {
   task: {
-    block: "border-blue-400/50 bg-blue-500/10",
-    badge: "bg-blue-500/15 text-blue-700",
-    bell: "text-blue-600 hover:bg-blue-500/10",
-    dot: "bg-blue-500",
+    block: "border-border/50 bg-card",
+    badge: "bg-muted/50 text-foreground",
+    bell: "text-muted-foreground hover:bg-muted/60",
+    dot: "bg-muted-foreground/40",
   },
   habit: {
-    block: "border-orange-400/50 bg-orange-500/10",
-    badge: "bg-orange-500/15 text-orange-800",
-    bell: "text-orange-600 hover:bg-orange-500/10",
-    dot: "bg-orange-500",
+    block: "border-border/50 border-l-[3px] border-l-warning/50 bg-card",
+    badge: "text-warning",
+    bell: "text-warning hover:bg-muted/60",
+    dot: "bg-warning",
   },
   focus: {
-    block: "border-violet-400/50 bg-violet-500/10",
-    badge: "bg-violet-500/15 text-violet-800",
-    bell: "text-violet-600 hover:bg-violet-500/10",
-    dot: "bg-violet-500",
+    block: "border-border/50 border-l-[3px] border-l-primary/40 bg-card",
+    badge: "text-accent-text",
+    bell: "text-accent-text hover:bg-muted/60",
+    dot: "bg-primary",
   },
 };
 

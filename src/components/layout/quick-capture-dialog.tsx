@@ -188,13 +188,21 @@ export function QuickCaptureDialog() {
               >
                 <span
                   className={cn(
-                    "inline-flex size-4 shrink-0 items-center justify-center rounded-full text-[11px]",
+                    "inline-flex size-4 shrink-0 items-center justify-center",
                     selectedGroupAppearance
-                      ? TASK_GROUP_SWATCH_CLASS[selectedGroupAppearance.colorKey]
-                      : "bg-muted"
+                      ? ""
+                      : "rounded-full bg-muted"
                   )}
                 >
-                  {selectedGroupAppearance?.icon ?? "📁"}
+                  {selectedGroupAppearance ? (
+                    <span
+                      className={cn(
+                        "size-2 shrink-0 rounded-full",
+                        TASK_GROUP_SWATCH_CLASS[selectedGroupAppearance.colorKey]
+                      )}
+                      aria-hidden
+                    />
+                  ) : null}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-left">
                   {groups.find((group) => group.id === selectedGroupId)?.title ??
@@ -216,12 +224,11 @@ export function QuickCaptureDialog() {
                     >
                       <span
                         className={cn(
-                          "inline-flex size-4 shrink-0 items-center justify-center rounded-full text-[11px]",
+                          "size-2 shrink-0 rounded-full",
                           TASK_GROUP_SWATCH_CLASS[appearance.colorKey]
                         )}
-                      >
-                        {appearance.icon}
-                      </span>
+                        aria-hidden
+                      />
                       <span className="min-w-0 flex-1 truncate">{group.title}</span>
                     </DropdownMenuItem>
                   );

@@ -37,7 +37,7 @@ export function TaskSectionCard({
       className={cn(
         "ring-border/40",
         tone === "today" && "border-blue-200/80 bg-blue-50/40 dark:border-blue-400/30 dark:bg-blue-500/10",
-        tone === "missed" && "border-amber-200/80 bg-amber-50/40 dark:border-amber-400/30 dark:bg-amber-500/10",
+        tone === "missed" && "border-warning/30 bg-warning-muted/40 dark:border-warning/25 dark:bg-warning-muted/20",
         tone === "default" && "bg-muted/35"
       )}
     >

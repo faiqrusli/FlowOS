@@ -25,7 +25,7 @@ type KpiCellProps = {
   value: string;
   href?: string;
   icon: ComponentType<{ className?: string }>;
-  accent?: "neutral" | "orange" | "emerald" | "status";
+  accent?: "neutral" | "warning" | "success" | "status";
   statusClass?: string;
 };
 
@@ -38,10 +38,10 @@ function KpiCell({
   statusClass,
 }: KpiCellProps) {
   const accentClass =
-    accent === "orange"
-      ? "text-orange-600"
-      : accent === "emerald"
-        ? "text-emerald-600"
+    accent === "warning"
+      ? "text-warning"
+      : accent === "success"
+        ? "text-success"
         : accent === "status"
           ? ""
           : "text-muted-foreground";
@@ -73,11 +73,11 @@ function KpiCell({
 function getOnTrackClass(label: OnTrackStatus["label"]): string {
   switch (label) {
     case "On track":
-      return "text-emerald-700";
+      return "text-success";
     case "Making progress":
-      return "text-amber-700";
+      return "text-warning";
     case "Needs focus":
-      return "text-orange-700";
+      return "text-warning";
     default:
       return "text-foreground";
   }
@@ -113,7 +113,7 @@ export function DashboardKpiStrip({
           value={`${progress.habitsCompleted}/${progress.habitsTotal}`}
           href="/habits"
           icon={Flame}
-          accent="orange"
+          accent="warning"
         />
         <KpiCell
           label="Focus"
@@ -126,7 +126,7 @@ export function DashboardKpiStrip({
           value={reflectionDone ? "Done" : "Pending"}
           href="/reflection"
           icon={NotebookPen}
-          accent={reflectionDone ? "emerald" : "neutral"}
+          accent={reflectionDone ? "success" : "neutral"}
         />
       </div>
       <p className={cn("border-t border-border/60 px-4 py-2", type.meta)}>

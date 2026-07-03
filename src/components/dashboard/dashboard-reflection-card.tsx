@@ -29,7 +29,7 @@ export function DashboardReflectionCard({
     >
       {completed ? (
         <>
-          <DashboardSupportingText className="text-emerald-700 dark:text-emerald-400">
+          <DashboardSupportingText className="text-success">
             Completed today
           </DashboardSupportingText>
           {wins[0] && (

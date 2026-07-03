@@ -702,7 +702,7 @@ function TaskDetailMenuPopover({
                 icon={appearance.icon}
                 name={getGroupDisplayTitle(group, todayViewDate)}
                 appearance={appearance}
-                className="max-w-full text-[11px] [&_span:first-child]:text-xs"
+                className="max-w-full text-[11px]"
               />
             </button>
           );

@@ -1,17 +1,15 @@
 "use client";
 
 import { Check, Crosshair, Pencil, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";import { Card, CardContent } from "@/components/ui/card";
 import {
   formatDaysOfWeek,
   isHabitScheduledToday,
 } from "@/lib/habits";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { getHabitDurationMinutes } from "@/lib/schedule-durations";
-import { cn } from "@/lib/utils";
 import type { Habit, HabitStats } from "@/types/habit";
-
 type HabitCardProps = {
   habit: Habit;
   stats: HabitStats;
@@ -42,13 +40,7 @@ export function HabitCard({
   const daysLabel = formatDaysOfWeek(habit.days_of_week);
 
   return (
-    <Card
-      className={cn(
-        scheduledToday &&
-          habit.completed &&
-          "border-green-200 bg-green-50/40 ring-green-200/60 dark:border-green-400/30 dark:bg-green-500/10 dark:ring-green-400/25"
-      )}
-    >
+    <Card>
       <CardContent className="space-y-4 py-4">
         <div className="flex items-start gap-3">
           <div className="min-w-0 flex-1 space-y-2">
@@ -56,11 +48,11 @@ export function HabitCard({
               <p className="font-medium text-foreground">{habit.name}</p>
               {habit.track_with_focus ? (
                 <span
-                  className="inline-flex items-center gap-1 rounded-md bg-violet-100/90 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
+                  className="inline-flex items-center text-accent-text"
                   title="Track with Focus enabled"
                 >
-                  <Crosshair className="size-3" />
-                  Focus
+                  <Crosshair className="size-3" aria-hidden />
+                  <span className="sr-only">Track with Focus enabled</span>
                 </span>
               ) : (
                 <span className="rounded-md bg-muted/55 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
@@ -70,14 +62,15 @@ export function HabitCard({
             </div>
 
             <div className="space-y-0.5">
-              <p
-                className={cn(
-                  "text-sm font-medium",
-                  stats.streak > 0 ? "text-orange-600" : "text-muted-foreground"
-                )}
-              >
-                {formatStreakLabel(stats.streak)}
-              </p>
+              {stats.streak > 0 ? (
+                <Badge variant="status-warning">
+                  {formatStreakLabel(stats.streak)}
+                </Badge>
+              ) : (
+                <p className="text-sm font-medium text-muted-foreground">
+                  {formatStreakLabel(stats.streak)}
+                </p>
+              )}
               <p className="text-xs text-muted-foreground">
                 {stats.completionRate}% completion · last 30 days
               </p>
@@ -135,7 +128,7 @@ export function HabitCard({
             </p>
             {habit.completed ? (
               <div className="mt-2 space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-green-700">
+                <div className="flex items-center gap-2 text-sm font-medium text-success">
                   <Check className="size-4" strokeWidth={2.5} />
                   Completed today
                 </div>

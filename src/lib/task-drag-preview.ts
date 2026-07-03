@@ -39,7 +39,7 @@ function buildPreviewInnerHtml(data: TaskDragPreviewData): string {
   const badges = (data.badges ?? [])
     .map(
       (badge) =>
-        `<span class="inline-flex max-w-[5rem] shrink-0 items-center gap-0.5 truncate rounded-full border border-border/35 bg-muted/50 px-1.5 py-0 text-[9px] font-medium text-foreground/85"><span aria-hidden>${escapeHtml(badge.emoji ?? "")}</span><span class="truncate">${escapeHtml(badge.label)}</span></span>`
+        `<span class="inline-flex max-w-[5rem] shrink-0 items-center truncate rounded-md border border-border/35 bg-muted/50 px-1.5 py-0 text-[11px] font-medium text-foreground/85"><span class="truncate">${escapeHtml(badge.label)}</span></span>`
     )
     .join("");
   const titleClass = data.completed
@@ -51,7 +51,7 @@ function buildPreviewInnerHtml(data: TaskDragPreviewData): string {
       <div class="flex size-5 shrink-0 items-center justify-center text-muted-foreground">
         ${
           data.completed
-            ? `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5 text-emerald-600"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>`
+            ? `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>`
             : `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5"><circle cx="12" cy="12" r="10"/></svg>`
         }
       </div>

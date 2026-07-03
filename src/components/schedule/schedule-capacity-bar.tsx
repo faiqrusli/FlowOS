@@ -29,7 +29,7 @@ export function ScheduleCapacityBar({
           <span
             className={cn(
               "shrink-0 text-xs font-semibold tabular-nums",
-              capacity.isOverloaded ? "text-rose-600" : "text-emerald-600"
+              capacity.isOverloaded ? "text-destructive" : "text-success"
             )}
           >
             {capacity.isOverloaded ? "Over capacity" : `${capacity.loadPercent}%`}
@@ -41,8 +41,8 @@ export function ScheduleCapacityBar({
             className={cn(
               "h-full rounded-full transition-all duration-500",
               capacity.isOverloaded
-                ? "bg-gradient-to-r from-amber-400 to-rose-500"
-                : "bg-gradient-to-r from-emerald-400 to-teal-500"
+                ? "bg-gradient-to-r from-warning/70 to-destructive/80"
+                : "bg-gradient-to-r from-success-muted to-success/60"
             )}
             style={{ width: `${barPercent}%` }}
           />

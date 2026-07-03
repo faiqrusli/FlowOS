@@ -1,3 +1,4 @@
+import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import {
   normalizeTaskPriority,
   TASK_PRIORITY_CONFIG,
@@ -24,7 +25,7 @@ type TaskPriorityBadgeProps = {
 export function TaskPriorityBadge({
   priority,
   task,
-  showEmoji = true,
+  showEmoji = false,
   className,
 }: TaskPriorityBadgeProps) {
   const resolved = resolvePriority(priority, task);
@@ -38,18 +39,23 @@ export function TaskPriorityBadge({
         className
       )}
     >
-      {showEmoji && <span aria-hidden>{config.emoji}</span>}
+      {showEmoji ? (
+        <span aria-hidden>{config.emoji}</span>
+      ) : (
+        <TaskPriorityFlagIcon priority={resolved} />
+      )}
       {config.label}
     </span>
   );
 }
 
 export function TaskPriorityEmoji({ task }: { task: Task }) {
-  const config = TASK_PRIORITY_CONFIG[normalizeTaskPriority(task.priority)];
+  const priority = normalizeTaskPriority(task.priority);
 
   return (
-    <span className="shrink-0 text-sm leading-none" aria-hidden>
-      {config.emoji}
-    </span>
+    <TaskPriorityFlagIcon
+      priority={priority}
+      className="size-3.5 shrink-0"
+    />
   );
 }

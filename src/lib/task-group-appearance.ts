@@ -36,56 +36,61 @@ export const TASK_GROUP_COLOR_KEYS: TaskGroupColorKey[] = [
   "slate",
 ];
 
-const PILL_CLASS_BY_COLOR: Record<TaskGroupColorKey, string> = {
-  sky: "bg-sky-600/92 text-white shadow-sm",
-  blue: "bg-blue-600/92 text-white shadow-sm",
-  indigo: "bg-indigo-600/92 text-white shadow-sm",
-  violet: "bg-violet-600/92 text-white shadow-sm",
-  emerald: "bg-emerald-700/92 text-white shadow-sm",
-  teal: "bg-teal-600/92 text-white shadow-sm",
-  amber: "bg-amber-600/92 text-white shadow-sm",
-  orange: "bg-orange-600/92 text-white shadow-sm",
-  rose: "bg-rose-600/92 text-white shadow-sm",
-  slate: "bg-slate-600/92 text-white shadow-sm",
-  inbox: "bg-[#C4B5E8] text-[#443A5C] shadow-sm border border-[#B0A0DC]/50",
-  later: "bg-[#E5D5BC] text-[#5A4632] shadow-sm border border-[#D4C4A8]/60",
+/** Neutral chip chrome until Task 3 migrates consumers to dot + label. */
+const NEUTRAL_PILL_CLASS =
+  "border-border/50 bg-muted/30 text-foreground shadow-xs";
+
+const GROUP_DOT_CLASS: Record<TaskGroupColorKey, string> = {
+  sky: "size-2 shrink-0 rounded-full bg-chart-1",
+  blue: "size-2 shrink-0 rounded-full bg-chart-1",
+  indigo: "size-2 shrink-0 rounded-full bg-chart-1",
+  violet: "size-2 shrink-0 rounded-full bg-chart-1",
+  emerald: "size-2 shrink-0 rounded-full bg-chart-2",
+  teal: "size-2 shrink-0 rounded-full bg-chart-2",
+  amber: "size-2 shrink-0 rounded-full bg-chart-3",
+  orange: "size-2 shrink-0 rounded-full bg-chart-3",
+  rose: "size-2 shrink-0 rounded-full bg-chart-4",
+  slate: "size-2 shrink-0 rounded-full bg-chart-5",
+  inbox: "size-2 shrink-0 rounded-full bg-chart-1",
+  later: "size-2 shrink-0 rounded-full bg-chart-3",
 };
 
-const TIMELINE_PILL_CLASS_BY_COLOR: Record<TaskGroupColorKey, string> = {
-  sky: "border border-sky-500/20 bg-sky-500/10 text-sky-900",
-  blue: "border border-blue-500/20 bg-blue-500/10 text-blue-900",
-  indigo: "border border-indigo-500/20 bg-indigo-500/10 text-indigo-900",
-  violet: "border border-violet-500/20 bg-violet-500/10 text-violet-900",
-  emerald: "border border-emerald-500/20 bg-emerald-500/10 text-emerald-900",
-  teal: "border border-teal-500/20 bg-teal-500/10 text-teal-900",
-  amber: "border border-amber-500/20 bg-amber-500/10 text-amber-900",
-  orange: "border border-orange-500/20 bg-orange-500/10 text-orange-900",
-  rose: "border border-rose-500/20 bg-rose-500/10 text-rose-900",
-  slate: "border border-slate-500/20 bg-slate-500/10 text-slate-800",
-  inbox: "border border-[#E4DDF0]/40 bg-[#FAF8FF] text-[#443A5C]",
-  later: "border border-[#E8D8BC]/45 bg-[#FFF8ED] text-[#5C4830]",
+const GROUP_EDGE_CLASS: Record<TaskGroupColorKey, string> = {
+  sky: "border-l-[3px] border-l-chart-1/35",
+  blue: "border-l-[3px] border-l-chart-1/35",
+  indigo: "border-l-[3px] border-l-chart-1/35",
+  violet: "border-l-[3px] border-l-chart-1/35",
+  emerald: "border-l-[3px] border-l-chart-2/35",
+  teal: "border-l-[3px] border-l-chart-2/35",
+  amber: "border-l-[3px] border-l-chart-3/35",
+  orange: "border-l-[3px] border-l-chart-3/35",
+  rose: "border-l-[3px] border-l-chart-4/35",
+  slate: "border-l-[3px] border-l-chart-5/35",
+  inbox: "border-l-[3px] border-l-chart-1/35",
+  later: "border-l-[3px] border-l-chart-3/35",
 };
+
+export function getGroupDotClass(colorKey: TaskGroupColorKey): string {
+  return GROUP_DOT_CLASS[colorKey] ?? GROUP_DOT_CLASS.blue;
+}
+
+export function getGroupEdgeClass(colorKey: TaskGroupColorKey): string {
+  return GROUP_EDGE_CLASS[colorKey] ?? GROUP_EDGE_CLASS.blue;
+}
+
+export function getGroupLabelClass(): string {
+  return "text-sm font-medium text-foreground";
+}
 
 export function getTaskGroupTimelinePillClass(
   colorKey: TaskGroupColorKey
 ): string {
-  return TIMELINE_PILL_CLASS_BY_COLOR[colorKey] ?? TIMELINE_PILL_CLASS_BY_COLOR.blue;
+  void colorKey;
+  return NEUTRAL_PILL_CLASS;
 }
 
-export const TASK_GROUP_ACCENT_BORDER_CLASS: Record<TaskGroupColorKey, string> = {
-  sky: "border-l-sky-400",
-  blue: "border-l-blue-400",
-  indigo: "border-l-indigo-400",
-  violet: "border-l-violet-400",
-  emerald: "border-l-emerald-500",
-  teal: "border-l-teal-400",
-  amber: "border-l-amber-400",
-  orange: "border-l-orange-400",
-  rose: "border-l-rose-400",
-  slate: "border-l-slate-400",
-  inbox: "border-l-[#9B8AD4]",
-  later: "border-l-[#C9B896]",
-};
+export const TASK_GROUP_ACCENT_BORDER_CLASS: Record<TaskGroupColorKey, string> =
+  GROUP_EDGE_CLASS;
 
 export const TASK_GROUP_COLOR_LABELS: Record<TaskGroupColorKey, string> = {
   sky: "Sky",
@@ -103,33 +108,33 @@ export const TASK_GROUP_COLOR_LABELS: Record<TaskGroupColorKey, string> = {
 };
 
 export const TASK_GROUP_SWATCH_CLASS: Record<TaskGroupColorKey, string> = {
-  sky: "bg-sky-600",
-  blue: "bg-blue-600",
-  indigo: "bg-indigo-600",
-  violet: "bg-violet-600",
-  emerald: "bg-emerald-700",
-  teal: "bg-teal-600",
-  amber: "bg-amber-600",
-  orange: "bg-orange-600",
-  rose: "bg-rose-600",
-  slate: "bg-slate-600",
-  inbox: "bg-[#9B8AD4]",
-  later: "bg-[#C9B896]",
+  sky: "bg-chart-1",
+  blue: "bg-chart-1",
+  indigo: "bg-chart-1",
+  violet: "bg-chart-1",
+  emerald: "bg-chart-2",
+  teal: "bg-chart-2",
+  amber: "bg-chart-3",
+  orange: "bg-chart-3",
+  rose: "bg-chart-4",
+  slate: "bg-chart-5",
+  inbox: "bg-chart-1",
+  later: "bg-chart-3",
 };
 
 export const TASK_GROUP_COLUMN_SURFACE_CLASS: Record<TaskGroupColorKey, string> = {
-  sky: "border-sky-500/[0.12] bg-gradient-to-b from-sky-500/[0.04] to-muted/15",
-  blue: "border-blue-500/[0.12] bg-gradient-to-b from-blue-500/[0.04] to-muted/15",
-  indigo: "border-indigo-500/[0.12] bg-gradient-to-b from-indigo-500/[0.04] to-muted/15",
-  violet: "border-violet-500/[0.12] bg-gradient-to-b from-violet-500/[0.04] to-muted/15",
-  emerald: "border-emerald-500/[0.12] bg-gradient-to-b from-emerald-500/[0.04] to-muted/15",
-  teal: "border-teal-500/[0.12] bg-gradient-to-b from-teal-500/[0.04] to-muted/15",
-  amber: "border-amber-500/[0.12] bg-gradient-to-b from-amber-500/[0.04] to-muted/15",
-  orange: "border-orange-500/[0.12] bg-gradient-to-b from-orange-500/[0.04] to-muted/15",
-  rose: "border-rose-500/[0.12] bg-gradient-to-b from-rose-500/[0.04] to-muted/15",
-  slate: "border-slate-500/[0.12] bg-gradient-to-b from-slate-500/[0.04] to-muted/15",
-  inbox: "border-violet-400/[0.12] bg-gradient-to-b from-violet-400/[0.04] to-muted/15",
-  later: "border-amber-400/[0.12] bg-gradient-to-b from-amber-400/[0.04] to-muted/15",
+  sky: "border-border/50 bg-muted/20",
+  blue: "border-border/50 bg-muted/20",
+  indigo: "border-border/50 bg-muted/20",
+  violet: "border-border/50 bg-muted/20",
+  emerald: "border-border/50 bg-muted/20",
+  teal: "border-border/50 bg-muted/20",
+  amber: "border-border/50 bg-muted/20",
+  orange: "border-border/50 bg-muted/20",
+  rose: "border-border/50 bg-muted/20",
+  slate: "border-border/50 bg-muted/20",
+  inbox: "border-border/50 bg-muted/20",
+  later: "border-border/50 bg-muted/20",
 };
 
 const SYSTEM_TASK_GROUP_COLOR_KEYS: TaskGroupColorKey[] = ["inbox", "later"];
@@ -262,6 +267,6 @@ export function getTaskGroupAppearance(
   return {
     icon,
     colorKey,
-    pillClassName: PILL_CLASS_BY_COLOR[colorKey] ?? PILL_CLASS_BY_COLOR.blue,
+    pillClassName: NEUTRAL_PILL_CLASS,
   };
 }

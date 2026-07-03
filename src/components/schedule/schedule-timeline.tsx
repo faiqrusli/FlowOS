@@ -2,13 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, Crosshair } from "lucide-react";
 import { ScheduleSummaryCard } from "@/components/schedule/schedule-summary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { getNowMinutesInAppTimezone } from "@/lib/date-utils";
+import { getChannelStyle } from "@/lib/schedule-palette";
+import { normalizeTaskPriority } from "@/lib/task-priority";
 import {
   buildTimelineEntries,
   computeScheduleSummary,
@@ -156,11 +158,11 @@ export function ScheduleTimeline({
 function NowMarker({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3 pl-[72px]">
-      <div className="h-px flex-1 bg-blue-300" />
-      <span className="shrink-0 text-xs font-semibold uppercase tracking-wide text-blue-600">
+      <div className="h-px flex-1 bg-primary/30" />
+      <span className="shrink-0 text-xs font-semibold uppercase tracking-wide text-primary">
         {label}
       </span>
-      <div className="h-px flex-1 bg-blue-300" />
+      <div className="h-px flex-1 bg-primary/30" />
     </div>
   );
 }
@@ -180,9 +182,14 @@ function ScheduleTimelineRow({
 }) {
   const isHabit = item.type === "habit";
   const isFocus = item.type === "focus";
+  const isTask = item.type === "task";
   const timeRange = formatScheduleTimeRange(item);
   const isPast = status === "past";
   const isCurrent = status === "current";
+  const channel = getChannelStyle(
+    item.type,
+    isTask ? normalizeTaskPriority(item.priority) : undefined
+  );
 
   return (
     <>
@@ -191,7 +198,7 @@ function ScheduleTimelineRow({
           className={cn(
             "text-sm font-semibold tabular-nums",
             isPast && !isCurrent && "text-muted-foreground",
-            isCurrent && "text-blue-700",
+            isCurrent && "text-primary",
             !isPast && !isCurrent && "text-foreground"
           )}
         >
@@ -207,27 +214,35 @@ function ScheduleTimelineRow({
       <div
         className={cn(
           "relative z-10 mt-1.5 flex size-3 shrink-0 border-2 bg-card",
-          isFocus && "rounded-full border-violet-400 bg-violet-100 dark:border-violet-400/70 dark:bg-violet-500/25",
-          isHabit && "rounded-sm border-orange-300 dark:border-orange-400/70",
-          !isFocus && !isHabit && "rounded-full border-muted-foreground/35",
-          isCurrent && !isFocus && "border-blue-500 bg-blue-100 dark:border-sky-400 dark:bg-sky-500/25",
-          isPast && item.completed && "border-green-500 bg-green-500 dark:border-emerald-400 dark:bg-emerald-400",
-          isPast && !item.completed && !isFocus && "border-amber-300 bg-amber-50 dark:border-amber-400/60 dark:bg-amber-500/20"
+          isFocus && "rounded-full border-primary/50 bg-primary/10",
+          isHabit && "rounded-sm border-warning/60",
+          isTask && "rounded-full border-muted-foreground/35",
+          isCurrent &&
+            !isFocus &&
+            "border-primary bg-primary/15 ring-2 ring-primary/20",
+          isPast &&
+            item.completed &&
+            "border-success bg-success",
+          isPast &&
+            !item.completed &&
+            !isFocus &&
+            "border-warning/50 bg-warning-muted"
         )}
       />
 
       <div
         className={cn(
           "min-w-0 flex-1 rounded-lg border px-4 py-3 transition-colors",
+          channel.bg,
+          channel.border,
           isCurrent &&
-            "border-blue-300 bg-blue-50/80 shadow-sm ring-1 ring-blue-200/60 dark:border-sky-400/40 dark:bg-sky-500/10 dark:ring-sky-400/25",
-          isPast && "border-border/40 bg-muted/30 opacity-80",
-          !isCurrent && !isPast && "border-border/40 bg-card",
-          isFocus && !isCurrent && "border-violet-200 bg-violet-50/50"
+            "shadow-sm ring-1 ring-primary/20 border-primary/35 bg-primary/[0.06]",
+          isPast && "opacity-80",
+          !isCurrent && !isPast && !isFocus && "border-border/40"
         )}
       >
         {isCurrent && (
-          <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-blue-600">
+          <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
             {isFocus ? "Focus in progress" : "Current task"}
           </p>
         )}
@@ -245,33 +260,23 @@ function ScheduleTimelineRow({
               >
                 {item.title}
               </p>
-              <Badge
-                variant="outline"
-                className={cn(
-                  "text-[10px]",
-                  isHabit && "border-orange-200 text-orange-800",
-                  isFocus && "border-violet-200 text-violet-800"
-                )}
-              >
-                {isFocus ? "Focus" : isHabit ? "Habit" : "Task"}
-              </Badge>
+              {isHabit ? (
+                <Badge variant="entity-habit">Habit</Badge>
+              ) : isFocus ? (
+                <Badge variant="entity-focus" className="p-0">
+                  <Crosshair className="size-2.5" />
+                  <span className="sr-only">Focus</span>
+                </Badge>
+              ) : (
+                <Badge variant="plain">Task</Badge>
+              )}
               {item.completed && !isFocus && (
-                <Badge
-                  className={cn(
-                    "text-[10px] text-white hover:bg-green-600",
-                    isHabit ? "bg-orange-600 hover:bg-orange-600" : "bg-green-600"
-                  )}
-                >
+                <Badge variant="status-success">
                   {isHabit ? "Done today" : "Done"}
                 </Badge>
               )}
               {isPast && !item.completed && !isFocus && (
-                <Badge
-                  variant="outline"
-                  className="border-amber-200 text-[10px] text-amber-800"
-                >
-                  Past due
-                </Badge>
+                <Badge variant="status-warning">Past due</Badge>
               )}
             </div>
 
@@ -280,13 +285,13 @@ function ScheduleTimelineRow({
             )}
 
             {isCurrent && !isFocus && item.time && (
-              <p className="mt-1 text-xs text-blue-700/80">
+              <p className="mt-1 text-xs text-primary/80">
                 Started {item.time}
               </p>
             )}
 
             {isFocus && timeRange && (
-              <p className="mt-1 text-xs text-violet-700/80">{timeRange}</p>
+              <p className="mt-1 text-xs text-accent-text/80">{timeRange}</p>
             )}
 
             {isHabit && !item.subtitle && (
@@ -307,10 +312,10 @@ function ScheduleTimelineRow({
                   isHabit ? "rounded-md" : "rounded-full",
                   item.completed
                     ? isHabit
-                      ? "border-orange-600 bg-orange-600 text-white"
+                      ? "border-warning bg-warning text-background"
                       : "border-primary bg-primary text-primary-foreground"
                     : isHabit
-                      ? "border-orange-300 bg-transparent hover:border-orange-500"
+                      ? "border-warning/40 bg-transparent hover:border-warning/60"
                       : "border-muted-foreground/35 bg-transparent hover:border-muted-foreground/60",
                   disabled && "opacity-50"
                 )}

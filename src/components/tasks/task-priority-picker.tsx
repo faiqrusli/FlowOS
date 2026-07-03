@@ -59,8 +59,8 @@ export function TaskPriorityPicker({
               }}
               className={cn(
                 "gap-2 py-2 text-xs",
-                selected && option === "high" && "bg-red-500/10 font-medium text-red-700",
-                selected && option === "medium" && "bg-amber-500/10 font-medium text-amber-700",
+                selected && option === "high" && "bg-destructive-muted font-medium text-destructive",
+                selected && option === "medium" && "bg-warning-muted font-medium text-warning",
                 selected && option === "low" && "bg-muted font-medium text-foreground"
               )}
             >

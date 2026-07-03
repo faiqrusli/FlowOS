@@ -17,10 +17,10 @@ type FocusHeatmapProps = {
 
 function intensityClass(focusSeconds: number): string {
   if (focusSeconds <= 0) return "bg-muted/40";
-  if (focusSeconds < 900) return "bg-emerald-200/80";
-  if (focusSeconds < 3600) return "bg-emerald-400/75";
-  if (focusSeconds < 7200) return "bg-emerald-500/80";
-  return "bg-emerald-600/85";
+  if (focusSeconds < 900) return "bg-success-muted";
+  if (focusSeconds < 3600) return "bg-success/25";
+  if (focusSeconds < 7200) return "bg-success/45";
+  return "bg-success/70";
 }
 
 function HeatmapCell({

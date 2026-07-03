@@ -167,7 +167,7 @@ import {
   clearTaskDropReveal,
 } from "@/lib/task-drop-reveal";
 import { formatTaskScheduleCompact } from "@/lib/tasks";
-import { getTaskGroupAppearance, TASK_GROUP_COLUMN_SURFACE_CLASS } from "@/lib/task-group-appearance";
+import { getTaskGroupAppearance, getGroupDotClass, TASK_GROUP_COLUMN_SURFACE_CLASS } from "@/lib/task-group-appearance";
 import {
   canAcceptActiveDropTarget,
   isSameGroupActiveReorderAttempt,
@@ -2095,9 +2095,10 @@ function TasksBoardViewContent({
             {isLater ? (
               <LaterViewIcon className="mb-2" />
             ) : (
-              <span className="mb-2 text-base leading-none" aria-hidden>
-                {groupAppearance.icon}
-              </span>
+              <span
+                className={cn("mb-2", getGroupDotClass(groupAppearance.colorKey))}
+                aria-hidden
+              />
             )}
             <span className="max-h-48 text-xs font-semibold text-foreground/80 [writing-mode:vertical-rl] rotate-180">
               {displayTitle}
@@ -2121,7 +2122,7 @@ function TasksBoardViewContent({
             TASK_GROUP_COLUMN_SURFACE_CLASS[groupAppearance.colorKey],
             isToday &&
               plannerActive &&
-              "ring-2 ring-sky-400/25 shadow-md shadow-sky-500/10"
+              "ring-2 ring-primary/25 shadow-md shadow-primary/10"
           )}
         >
           <div className="group/column-header flex h-11 shrink-0 items-center gap-0 border-b border-border/25 px-1.5 transition-colors duration-150 hover:bg-muted/25">
@@ -2203,7 +2204,7 @@ function TasksBoardViewContent({
                   onOpenChange={setTodayCalendarOpen}
                 >
                   <DropdownMenuTrigger
-                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-sky-600 outline-none hover:bg-sky-500/10"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-accent-text outline-none hover:bg-muted/60"
                     aria-label="Pick date"
                   >
                     <CalendarDays className="size-3.5" />
@@ -2456,10 +2457,10 @@ function TasksBoardViewContent({
                 "border-border/45 bg-background text-foreground/85",
                 "shadow-sm",
                 "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
-                "hover:border-sky-400/35 hover:bg-sky-50/70 hover:text-foreground dark:hover:bg-sky-500/12",
-                "active:scale-[0.98] active:bg-sky-50 dark:active:bg-sky-500/15",
+                "hover:border-primary/35 hover:bg-muted/45 hover:text-foreground",
+                "active:scale-[0.98] active:bg-muted/50",
                 plannerActive &&
-                  "border-sky-400/45 bg-sky-50/90 text-sky-950 shadow-sm dark:bg-sky-500/15 dark:text-sky-100 hover:bg-sky-100/80 dark:hover:bg-sky-500/20 hover:border-sky-400/55"
+                  "border-primary/45 bg-primary/[0.06] text-foreground shadow-sm hover:bg-primary/[0.08] hover:border-primary/55"
               )}
               onClick={onToggleQuickPlanner}
               aria-pressed={plannerActive}
@@ -2467,7 +2468,7 @@ function TasksBoardViewContent({
               <Clock
                 className={cn(
                   "size-3.5 transition-colors duration-150",
-                  plannerActive ? "text-sky-600" : "text-sky-600/90"
+                  plannerActive ? "text-accent-text" : "text-accent-text/90"
                 )}
               />
               Quick Schedule

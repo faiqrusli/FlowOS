@@ -45,16 +45,26 @@ export function TaskPrioritySelect({
         <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="start" className="min-w-[10rem] rounded-xl">
-        {TASK_PRIORITIES.map((priority) => (
-          <DropdownMenuItem
-            key={priority}
-            onClick={() => onChange(priority)}
-            className="gap-2"
-          >
-            <TaskPriorityFlagIcon priority={priority} className="size-3.5" />
-            {TASK_PRIORITY_CONFIG[priority].label}
-          </DropdownMenuItem>
-        ))}
+        {TASK_PRIORITIES.map((priority) => {
+          const selected = value === priority;
+          const config = TASK_PRIORITY_CONFIG[priority];
+
+          return (
+            <DropdownMenuItem
+              key={priority}
+              onClick={() => onChange(priority)}
+              className={cn(
+                "gap-2",
+                selected && priority === "high" && "bg-destructive-muted font-medium text-destructive",
+                selected && priority === "medium" && "bg-warning-muted font-medium text-warning",
+                selected && priority === "low" && "bg-muted font-medium text-foreground"
+              )}
+            >
+              <TaskPriorityFlagIcon priority={priority} className="size-3.5" />
+              {config.label}
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );

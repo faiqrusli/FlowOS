@@ -152,7 +152,7 @@ export function ScheduleBlock({
           {isFocus ? (
             <Link
               href={item.href}
-              className="flex size-7 items-center justify-center rounded-lg bg-violet-500/15 text-violet-700 transition-colors hover:bg-violet-500/25"
+              className="flex size-7 items-center justify-center rounded-lg bg-primary/15 text-accent-text transition-colors hover:bg-primary/25"
               aria-label="Open focus session"
             >
               <Play className="size-3.5 fill-current" />

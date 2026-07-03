@@ -6,10 +6,7 @@ import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import { formatTaskFocusSchedule } from "@/lib/task-focus-display";
-import {
-  getTaskGroupAppearance,
-  getTaskGroupTimelinePillClass,
-} from "@/lib/task-group-appearance";
+import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
 import { getWorkplaceGroupAccentClass } from "@/lib/workplace-group-accent";
 import { normalizeTaskPriority } from "@/lib/task-priority";
 import { setActiveTaskDragId, setBoardTaskDragData } from "@/lib/timeline-drag";
@@ -112,10 +109,8 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
             <TaskGroupPill
               icon={appearance.icon}
               name={group.title}
-              appearance={{
-                pillClassName: getTaskGroupTimelinePillClass(appearance.colorKey),
-              }}
-              className="max-w-[5rem] shrink-0 px-1.5 py-0 text-[11px]"
+              appearance={appearance}
+              className="max-w-[5rem] shrink-0 text-[11px]"
             />
           ) : null}
           <TaskDurationPicker
@@ -131,10 +126,8 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
             <TaskGroupPill
               icon={appearance.icon}
               name={group.title}
-              appearance={{
-                pillClassName: getTaskGroupTimelinePillClass(appearance.colorKey),
-              }}
-              className="max-w-[5rem] shrink-0 px-1.5 py-0 text-[11px]"
+              appearance={appearance}
+              className="max-w-[5rem] shrink-0 text-[11px]"
             />
           ) : null}
           <span className="shrink-0 text-[13px] tabular-nums text-muted-foreground/80">

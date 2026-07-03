@@ -7,9 +7,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  getGroupDotClass,
   TASK_GROUP_COLOR_KEYS,
   TASK_GROUP_COLOR_LABELS,
-  TASK_GROUP_SWATCH_CLASS,
   type TaskGroupColorKey,
 } from "@/lib/task-group-appearance";
 import { cn } from "@/lib/utils";
@@ -46,12 +46,13 @@ export function TaskGroupColorChooser({
                 onOpenChange(false);
               }}
               className={cn(
-                "aspect-square rounded-xl shadow-sm transition-transform hover:scale-105",
-                TASK_GROUP_SWATCH_CLASS[colorKey],
+                "flex aspect-square items-center justify-center rounded-xl border border-border/50 bg-muted/20 shadow-sm transition-transform hover:scale-105",
                 value === colorKey &&
                   "ring-2 ring-foreground ring-offset-2 ring-offset-background"
               )}
-            />
+            >
+              <span className={getGroupDotClass(colorKey)} aria-hidden />
+            </button>
           ))}
         </div>
       </DialogContent>

@@ -1,13 +1,13 @@
 import { cn } from "@/lib/utils";
 
 /** Shared Quick Schedule / global access panel toggle chrome. */
-export const PANEL_TOGGLE_ICON_CLASS = "text-sky-600";
+export const PANEL_TOGGLE_ICON_CLASS = "text-accent-text";
 
 export function panelToggleButtonClass(
   ...extra: (string | false | null | undefined)[]
 ) {
   return cn(
-    "group/panel-toggle relative flex items-center justify-center border text-sky-600 transition-colors hover:border-sky-400/35 hover:bg-sky-500/10",
+    "group/panel-toggle relative flex items-center justify-center border text-accent-text transition-colors hover:border-border/40 hover:bg-muted/60",
     ...extra
   );
 }
@@ -78,6 +78,6 @@ export function panelToggleSquareClass(size: "sm" | "md" = "md") {
 /** D-tab on the drawer edge — Quick Schedule open/close. */
 export function panelToggleTabClass() {
   return panelToggleButtonClass(
-    "z-30 size-8 rounded-l-lg border-r-0 border-sky-400/25 bg-card/95 shadow-[0_1px_3px_rgba(15,23,42,0.06)] backdrop-blur-sm hover:border-sky-400/40"
+    "z-30 size-8 rounded-l-lg border-r-0 border-border/40 bg-card/95 shadow-[0_1px_3px_rgba(15,23,42,0.06)] backdrop-blur-sm hover:border-border/55"
   );
 }

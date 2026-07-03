@@ -5,7 +5,6 @@ import {
   Check,
   ChevronDown,
   Coffee,
-  Flame,
   Pause,
   Play,
   Square,
@@ -30,10 +29,8 @@ import {
 import { normalizeTaskPriority } from "@/lib/task-priority";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { getHabitDurationMinutes } from "@/lib/schedule-durations";
-import {
-  getTaskGroupAppearance,
-  getTaskGroupTimelinePillClass,
-} from "@/lib/task-group-appearance";
+import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
+import { TimelineHabitLabel } from "@/components/tasks/timeline-habit-label";
 import {
   getActiveTimelineDrag,
   TIMELINE_DRAG_ID_MIME,
@@ -102,7 +99,7 @@ function TaskFocusRow({
       onContextMenu={onContextMenu}
       className={cn(
         "rounded-md border border-border/50 transition-colors duration-500",
-        isPrimary && timingTone === "before" && "bg-emerald-500/[0.06] dark:bg-emerald-400/[0.07]",
+        isPrimary && timingTone === "before" && "bg-success-muted/60",
         isPrimary && timingTone === "during-or-after" && "bg-red-500/[0.06] dark:bg-red-400/[0.08]",
         !isPrimary && "bg-muted/30",
         donePending && "translate-y-1 scale-[0.985] opacity-0"
@@ -144,10 +141,8 @@ function TaskFocusRow({
             <TaskGroupPill
               icon={groupAppearance.icon}
               name={group.title}
-              appearance={{
-                pillClassName: getTaskGroupTimelinePillClass(groupAppearance.colorKey),
-              }}
-              className="max-w-[5.5rem] shrink-0 px-1.5 py-0 text-[12px]"
+              appearance={groupAppearance}
+              className="max-w-[5.5rem] shrink-0 text-[12px]"
             />
           ) : null}
           <span className="shrink-0 text-[13px] tabular-nums text-muted-foreground">
@@ -174,7 +169,7 @@ function TaskFocusRow({
               className={cn(
                 "h-6 w-full px-2 text-[13px] transition-colors",
                 donePending &&
-                  "border-emerald-500/55 bg-emerald-50 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400/35 dark:bg-emerald-500/12 dark:text-emerald-300 dark:hover:bg-emerald-500/12"
+                  "border-success/55 bg-success-muted text-success hover:bg-success-muted"
               )}
               disabled={donePending}
               onClick={onToggleComplete}
@@ -213,16 +208,13 @@ function HabitFocusRow({
   return (
     <div
       className={cn(
-        "rounded-md border border-border/50 bg-orange-500/[0.05] transition-all duration-500 dark:bg-orange-400/[0.06]",
+        "rounded-md border border-border/50 border-l-[3px] border-l-warning/50 bg-muted/30 transition-all duration-500",
         donePending && "translate-y-1 scale-[0.985] opacity-0"
       )}
     >
       <div className="flex items-center gap-1.5 px-2 py-1.5">
         <span className="size-6 shrink-0" />
-        <Flame className="size-3.5 shrink-0 text-orange-500" />
-        <span className="rounded-full border border-orange-400/25 bg-orange-500/10 px-1.5 py-0 text-[11px] font-medium text-orange-800">
-          Habit
-        </span>
+        <TimelineHabitLabel compact trackWithFocus={habit.track_with_focus} />
         <p className="min-w-0 flex-1 truncate text-[14px] font-medium leading-none text-foreground">
           {habit.name}
         </p>
@@ -239,7 +231,7 @@ function HabitFocusRow({
             className={cn(
               "h-6 w-full px-2 text-[13px] transition-colors",
               donePending &&
-                "border-emerald-500/55 bg-emerald-50 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400/35 dark:bg-emerald-500/12 dark:text-emerald-300 dark:hover:bg-emerald-500/12"
+                "border-success/55 bg-success-muted text-success hover:bg-success-muted"
             )}
             disabled={donePending}
             onClick={onToggleComplete}
@@ -478,7 +470,7 @@ export function WorkplaceFocusCard({
         className={cn(
           "relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border transition-[border-color,background-color,box-shadow] duration-150",
           dropActive && habitDropBlocked
-            ? "border-amber-400/45 bg-amber-50/40 dark:border-amber-400/35 dark:bg-amber-500/10"
+            ? "border-warning/45 bg-warning-muted/40"
             : dropActive
               ? "border-primary/40 bg-surface-elevated shadow-md"
               : "border-border bg-surface-elevated shadow-sm"
@@ -541,13 +533,13 @@ export function WorkplaceFocusCard({
 
         <div className="relative flex min-h-0 flex-1 flex-col px-3.5 pb-3.5">
           {dropActive && habitDropBlocked ? (
-            <div className="pointer-events-none absolute inset-x-3.5 top-2 z-10 rounded-md border border-dashed border-amber-400/50 bg-amber-50/90 px-3 py-2 text-center text-[13px] leading-snug text-amber-900 shadow-sm dark:border-amber-400/35 dark:bg-amber-500/12 dark:text-amber-200">
+            <div className="pointer-events-none absolute inset-x-3.5 top-2 z-10 rounded-md border border-dashed border-warning/50 bg-warning-muted/90 px-3 py-2 text-center text-[13px] leading-snug text-warning shadow-sm">
               Enable <span className="font-medium">Track with Focus</span> on this
               habit to drop it here.
             </div>
           ) : null}
           {habitDropNotice ? (
-            <div className="mb-2 shrink-0 rounded-md border border-amber-300/60 bg-amber-50/80 px-3 py-2 text-[13px] leading-snug text-amber-950 dark:border-amber-400/30 dark:bg-amber-500/10 dark:text-amber-200">
+            <div className="mb-2 shrink-0 rounded-md border border-warning/40 bg-warning-muted/80 px-3 py-2 text-[13px] leading-snug text-warning">
               {habitDropNotice}
             </div>
           ) : null}
@@ -574,7 +566,7 @@ export function WorkplaceFocusCard({
                     <p
                       className={cn(
                         "font-mono text-[49px] font-semibold tabular-nums tracking-tight transition-[opacity,filter] duration-200 group-hover/timer:opacity-20 group-hover/timer:blur-[2px]",
-                        quick.isOnBreak ? "text-amber-600 dark:text-amber-400" : "text-foreground"
+                        quick.isOnBreak ? "text-warning" : "text-foreground"
                       )}
                     >
                       {quick.clock}
