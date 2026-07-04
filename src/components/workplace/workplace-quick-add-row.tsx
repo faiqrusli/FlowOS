@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useRef,
   useState,
   type KeyboardEvent,
@@ -21,10 +22,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useOptionalTaskBoardGroups } from "@/components/tasks/task-board-groups-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
+import { getTodayDateString } from "@/lib/date-utils";
+import { addTaskToBoard } from "@/lib/task-groups";
 import { createQuickCaptureTask } from "@/lib/quick-capture-task";
 import { TasksError } from "@/lib/tasks";
 import { cn } from "@/lib/utils";
+import type { TaskGroupWithTasks } from "@/types/task";
 
 type WorkplaceQuickAddRowProps = {
   onOpenTaskDetails: () => void;
@@ -53,36 +58,52 @@ function QuickAddHint({
 export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRowProps) {
   const { createNewNote, openDailyNote, openReflection, notifyWorkplaceTaskCreated } =
     useGlobalRightSidebar();
+  const boardGroups = useOptionalTaskBoardGroups();
   const [title, setTitle] = useState("");
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const pendingSaveRef = useRef<Promise<void>>(Promise.resolve());
+  const boardGroupsRef = useRef<TaskGroupWithTasks[] | null>(boardGroups);
 
-  const submitInlineTask = useCallback(async () => {
-    const trimmed = title.trim();
-    if (!trimmed || saving) return;
+  useEffect(() => {
+    boardGroupsRef.current = boardGroups;
+  }, [boardGroups]);
 
-    setSaving(true);
-    setError(null);
+  const enqueueInlineTask = useCallback(
+    (taskTitle: string) => {
+      setError(null);
+      const todayViewDate = getTodayDateString();
 
-    try {
-      const created = await createQuickCaptureTask({ title: trimmed });
-      notifyWorkplaceTaskCreated(created);
-      setTitle("");
-    } catch (err) {
-      setError(
-        err instanceof TasksError ? err.message : "Failed to create task."
-      );
-    } finally {
-      setSaving(false);
-      requestAnimationFrame(() => inputRef.current?.focus());
-    }
-  }, [notifyWorkplaceTaskCreated, saving, title]);
+      pendingSaveRef.current = pendingSaveRef.current
+        .then(async () => {
+          const created = await createQuickCaptureTask({
+            title: taskTitle,
+            boardGroups: boardGroupsRef.current ?? undefined,
+          });
+          notifyWorkplaceTaskCreated(created);
+          if (boardGroupsRef.current) {
+            boardGroupsRef.current = addTaskToBoard(
+              boardGroupsRef.current,
+              created,
+              todayViewDate
+            );
+          }
+        })
+        .catch((err) => {
+          setError(
+            err instanceof TasksError ? err.message : "Failed to create task."
+          );
+        });
+    },
+    [notifyWorkplaceTaskCreated]
+  );
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
       event.preventDefault();
-      void submitInlineTask();
+      const trimmed = title.trim();
+      if (!trimmed) return;
+      setTitle("");
+      enqueueInlineTask(trimmed);
     }
   }
 
@@ -90,12 +111,10 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
     <div className="flex w-full min-w-0 flex-col gap-1">
       <div className="flex w-full min-w-0 flex-nowrap items-center gap-2">
         <Input
-          ref={inputRef}
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Add a task…"
-          disabled={saving}
           title="Type a task and press Enter to add to Today"
           className="h-8 min-w-0 flex-1 border-border/50 bg-background/80 px-2.5 text-[13px] shadow-none"
         />

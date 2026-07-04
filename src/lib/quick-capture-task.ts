@@ -16,7 +16,7 @@ import {
   isManualTaskSortMode,
 } from "@/lib/task-sort";
 import { createTask, TasksError } from "@/lib/tasks";
-import type { PlanningState, Task } from "@/types/task";
+import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
 export type QuickCaptureTaskInput = {
   title: string;
@@ -25,6 +25,7 @@ export type QuickCaptureTaskInput = {
   scheduledDate?: string | null;
   planningState?: PlanningState;
   groupId?: string;
+  boardGroups?: TaskGroupWithTasks[];
 };
 
 export async function createQuickCaptureTask(
@@ -35,7 +36,7 @@ export async function createQuickCaptureTask(
     throw new TasksError("Title is required.");
   }
 
-  const boardGroups = await fetchTaskBoard();
+  const boardGroups = input.boardGroups ?? (await fetchTaskBoard());
   const fallbackInbox = boardGroups.find(isInboxGroup);
   const targetGroupId = input.groupId || fallbackInbox?.id;
   if (!targetGroupId) {
