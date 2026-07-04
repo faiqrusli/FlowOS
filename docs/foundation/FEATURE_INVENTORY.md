@@ -1,0 +1,206 @@
+# Feature Inventory
+
+**Status:** Living document  
+**Audience:** Engineers, product lead  
+**Last updated:** July 3, 2026
+
+---
+
+## Purpose
+
+Single source of truth for what FlowOS has **shipped**, **partially built**, **placeholder**, or **deferred**. Prevents re-debating built vs planned features.
+
+For SRS future enhancements (FE-1–FE-13), see [../project/03-future-enhancements.md](../project/03-future-enhancements.md).
+
+---
+
+## Shipped modules (nav-visible)
+
+| Module | Route | Status | SRL phase | Phase 3 impact |
+|--------|-------|--------|-----------|----------------|
+| Dashboard | `/` | **Shipped** — wrong default home | Performance (monitor) | Merge intelligence into Today; demote to `/overview` |
+| Workplace | `/workplace` | **Shipped** — true execution surface | Performance | Become default home `/` |
+| Schedule | `/schedule` | **Shipped** | Forethought | Demote to "open fullscreen timeline" action |
+| Tasks | `/tasks` | **Shipped** | Forethought | Keep; secondary access via command palette + inline capture |
+| Habits | `/habits` | **Shipped** | Forethought + Performance | Keep; inline on Today |
+| Focus | `/focus` | **Shipped** | Performance | Reframe page as history/analytics; focus becomes mode |
+| Reflection | `/reflection` | **Shipped** | Self-reflection | Keep; unify save behavior; evening nudge |
+| Notes | `/notes` | **Shipped** (beyond original MVP) | Self-reflection (supplementary) | Keep secondary; no kanban expansion in Phase 3 |
+
+---
+
+## Authentication & account
+
+| Feature | Route | Status | Notes |
+|---------|-------|--------|-------|
+| Login | `/login` | Shipped | Supabase email/password |
+| Register | `/register` | Shipped | Email confirmation flow |
+| Auth callback | `/auth/callback` | Shipped | OAuth/code exchange |
+| Settings | `/settings` | Shipped | Preferences, durations |
+| Account | `/account` | Shipped | Profile management |
+| Session middleware | — | Shipped | **Gap:** `/workplace` not in protected prefixes — see [DEPLOYMENT_READINESS.md](./DEPLOYMENT_READINESS.md) |
+
+---
+
+## Workplace sub-features
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Focus timer card | Shipped | Hover-gated controls — Phase 3.3 fix |
+| Timeline embed | Shipped | Third scheduling surface — Phase 3.4 simplification |
+| Today's tasks card | Shipped | Primary task execution on Workplace |
+| Habits card | Shipped | Daily habit completion |
+| Daily note card | Shipped | Overlaps Notes module |
+| Quick add card | Shipped | Task creation on Workplace |
+| **Agenda card** | **Dead code** | Component exists but **not imported** — delete in security week; not user-visible |
+| Focus reflection modal | Shipped | Post-session capture |
+
+---
+
+## Dashboard sub-features
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| KPI tiles (tasks, habits, focus) | Shipped | Read-only intelligence |
+| On-track status | Shipped | Progress computation |
+| Next action recommendation | Shipped | **Routes incorrectly** — focus → `/focus`, tasks → `/tasks` list |
+| Upcoming schedule preview | Shipped | Links to wrong surfaces |
+| Task/habit previews | Shipped | — |
+
+Logic: `flowos/src/lib/dashboard-command.ts`
+
+---
+
+## Tasks sub-features
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Kanban board by group | Shipped | Custom pointer drag; dnd-kit foundation installed |
+| Quick schedule drawer | Shipped | Second scheduling surface |
+| Task dialog (create/edit) | Shipped | Modal capture path |
+| Priority, duration, alerts | Shipped | GTD clarify |
+| Planning states (Today/Later/date) | Shipped | Planning model overload — Phase 3.4 |
+| Manual sort mode | Shipped | Requires explicit enable for drag reorder |
+| Task groups with appearance | Shipped | Phase 2 accent dots |
+
+---
+
+## Focus sub-features
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Pomodoro / custom timer | Shipped | Workplace + Focus page |
+| Session history | Shipped | `/focus` analytics |
+| Focus heatmap | Shipped | Phase 2 contrast pass |
+| Session targets | Shipped | SQL migration exists |
+| Habit focus tracking | Shipped | Requires `track_with_focus` opt-in per habit |
+| Reflection on session end | Shipped | Modal on Workplace |
+
+---
+
+## Reflection sub-features
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Daily reflection questions | Shipped | Achievements, challenges, etc. |
+| Custom reflection entries | Shipped | User-defined fields |
+| Sidebar reflection (Workplace) | Shipped | **Dual save behavior** vs full page — Phase 3.5 |
+| Weekly reflection layout | **Partial** | `/reflection/WeeklyReflection` exists; no auto-summary (FE-5) |
+| Reflection kanbans | Shipped | SQL migration exists |
+
+---
+
+## Notes sub-features
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Daily notes list | Shipped | FE-2 implemented |
+| Note editor | Shipped | — |
+| Kanban boards | Shipped | Feature-rich; disconnected from daily loop |
+| Growth areas | Shipped | Phase 2 explicitly excluded from accent sweep |
+| Pinned notes / menu pin | Shipped | SQL migrations exist |
+
+---
+
+## Placeholder / hidden routes
+
+| Feature | Route | Status | SRS | Action |
+|---------|-------|--------|-----|--------|
+| Goals | `/goals` | Placeholder | FE-1 | Hidden from nav; defer to Phase 4+ |
+| AI Coach | `/ai-coach` | Not built | FE-4 | In middleware; hide or 404 |
+| Weekly Review | `/weekly-review` | Partial | FE-5 | Secondary; no auto-summary |
+| Future Work | `/future-work` | Info page | — | Portfolio/thesis reference |
+
+---
+
+## Global UX features
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Quick capture dialog | Shipped | Modal, tasks-only — Phase 3.2 inline capture replaces as default |
+| Global shortcuts | Shipped | 4 shortcuts only — Phase 3.6 keyboard OS |
+| Command palette | **Not built** | Phase 3.2 — table stakes |
+| Global search | **Not built** | Part of command palette v1 |
+| Onboarding | **Not built** | Post Phase 3.1 |
+| Right sidebar (hover) | Shipped | Hover-reveal — accessibility concern |
+
+---
+
+## SRS future enhancements (FE-1–FE-13)
+
+| ID | Enhancement | Status | Phase / notes |
+|----|-------------|--------|---------------|
+| FE-1 | Goal Management | Partial / placeholder | Phase 4+ |
+| FE-2 | Daily Notes | **Implemented** | Notes module |
+| FE-3 | Daily Manifesto | Not implemented | Agenda card is fake placeholder |
+| FE-4 | AI Assistant | Not implemented | Explicitly deferred |
+| FE-5 | Weekly Reflection | Partial | Layout exists; no auto-summary |
+| FE-6 | Music / Focus Integration | Not implemented | — |
+| FE-7 | Advanced Analytics | Partial | Dashboard KPIs, heatmap; no report engine |
+| FE-8 | Smart Notifications | Not implemented | — |
+| FE-9 | Mobile Apps | Not planned | Web-only |
+| FE-10 | Gamification | Not implemented | — |
+| FE-11 | Calendar Sync | Not planned | Out of original scope |
+| FE-12 | Voice Assistant | Not implemented | — |
+| FE-13 | Distraction Management | Not implemented | Focus sessions exist; no OS-level blocking |
+
+Full detail: [../project/03-future-enhancements.md](../project/03-future-enhancements.md)
+
+---
+
+## Explicitly deferred (do not build until daily loop validated)
+
+- Goals module build-out  
+- AI Coach  
+- Gamification  
+- Calendar sync  
+- Mobile apps  
+- Music integration  
+- Voice assistant  
+- Light theme  
+- Distraction management (OS-level)  
+- Notes kanban expansion  
+- Weekly reflection auto-summary  
+
+---
+
+## Design system (not features, but shipped)
+
+| Phase | Status | Commit |
+|-------|--------|--------|
+| Design Audit | Complete | — |
+| Phase 0 — Foundation | Complete | `5fc780a` |
+| Phase 1 — Interaction | Complete | `04fe227` |
+| Phase 2 — Accent language | Complete | `9f7e7c4` |
+| Phase 3 — Daily loop | **Not started** | — |
+
+Source: [../design/PROJECT_STATE.md](../design/PROJECT_STATE.md)
+
+---
+
+## Related documents
+
+- [INFORMATION_ARCHITECTURE.md](./INFORMATION_ARCHITECTURE.md) — how modules relate  
+- [../project/03-future-enhancements.md](../project/03-future-enhancements.md) — SRS FE-1–FE-13  
+- [../design/ROADMAP.md](../design/ROADMAP.md) — Phase 3 feature plan  
+- [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) — implementation stack  
