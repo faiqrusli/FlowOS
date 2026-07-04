@@ -33,6 +33,11 @@ export function SidebarDetailsPanel() {
               taskDetailSource.onPlanningStateChange?.(task.id, planningState)
           : undefined
       }
+      onToggleComplete={
+        taskDetailSource.onToggleComplete
+          ? () => taskDetailSource.onToggleComplete?.(task)
+          : undefined
+      }
     />
   );
 }

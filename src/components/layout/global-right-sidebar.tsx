@@ -3,10 +3,12 @@
 import {
   BookOpen,
   ClipboardList,
+  ExternalLink,
   PanelRightClose,
   PanelRightOpen,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SidebarDetailsPanel } from "@/components/layout/sidebar-details-panel";
 import { SidebarNotesPanel } from "@/components/layout/sidebar-notes-panel";
@@ -132,10 +134,20 @@ export function GlobalRightSidebar() {
               transition: panelSlideTransitionStyle(),
             }}
           >
-            <div className="flex shrink-0 items-center border-b border-border/30 px-3 py-2.5">
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border/30 px-3 py-2.5">
               <h2 className="text-sm font-semibold tracking-tight">
                 {PANEL_ITEMS.find((item) => item.id === activePanel)?.label}
               </h2>
+              {activePanel === "reflection" ? (
+                <Link
+                  href="/reflection"
+                  className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-muted/50 hover:text-muted-foreground"
+                  aria-label="Open reflection page"
+                  title="Open reflection page"
+                >
+                  <ExternalLink className="size-4" />
+                </Link>
+              ) : null}
             </div>
 
             <div className="min-h-0 flex-1 overflow-hidden">

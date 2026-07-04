@@ -2068,19 +2068,6 @@ export function TimelinePlanner({
             onStartFocusTask?.(contextMenu.task.id);
             setContextMenu(null);
           }}
-          onMoveToTomorrow={() => {
-            void onScheduleTask(contextMenu.task.id, {
-              scheduled_date: getTomorrowDateString(),
-              scheduled_time: contextMenu.task.scheduled_time,
-            });
-            setContextMenu(null);
-          }}
-          onPlanLater={() => {
-            if (onSetPlanningState) {
-              void onSetPlanningState(contextMenu.task.id, "later");
-            }
-            setContextMenu(null);
-          }}
           onToggleComplete={() => {
             void onToggleComplete(contextMenu.task);
             setContextMenu(null);

@@ -5,6 +5,7 @@ import {
   Bell,
   CalendarDays,
   CalendarClock,
+  Check,
   ClipboardList,
   Clock,
   Flag,
@@ -130,6 +131,7 @@ export function TaskDetailFields({
   onChange,
   onMoveToGroup,
   onPlanningStateChange,
+  onToggleComplete,
 }: {
   task: Task;
   groups: TaskGroupWithTasks[];
@@ -137,6 +139,7 @@ export function TaskDetailFields({
   onChange: (updates: Partial<Task>) => void;
   onMoveToGroup: (groupId: string) => void;
   onPlanningStateChange?: (planningState: PlanningState) => void;
+  onToggleComplete?: () => void;
 }) {
   const planningState = normalizePlanningState(task.planning_state);
 
@@ -146,11 +149,38 @@ export function TaskDetailFields({
         <Label htmlFor="task-detail-title" className="text-xs text-muted-foreground">
           Title
         </Label>
-        <Input
-          id="task-detail-title"
-          value={task.title}
-          onChange={(event) => onChange({ title: event.target.value })}
-        />
+        <div className="flex items-center gap-2">
+          {onToggleComplete ? (
+            <button
+              type="button"
+              onClick={onToggleComplete}
+              className={cn(
+                "flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors",
+                task.completed
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-muted-foreground/35 hover:border-foreground/55"
+              )}
+              aria-label={
+                task.completed
+                  ? `Mark "${task.title}" incomplete`
+                  : `Mark "${task.title}" complete`
+              }
+            >
+              {task.completed ? (
+                <Check className="size-2.5" strokeWidth={3} />
+              ) : null}
+            </button>
+          ) : null}
+          <Input
+            id="task-detail-title"
+            value={task.title}
+            onChange={(event) => onChange({ title: event.target.value })}
+            className={cn(
+              "min-w-0 flex-1",
+              task.completed && "line-through opacity-60"
+            )}
+          />
+        </div>
       </div>
 
       <div className="space-y-1.5">

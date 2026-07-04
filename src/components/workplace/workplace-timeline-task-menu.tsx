@@ -9,7 +9,6 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import {
-  CalendarClock,
   CalendarDays,
   Check,
   ClipboardList,
@@ -18,7 +17,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
-import { Button } from "@/components/ui/button";
 import {
   formatTimeShort,
   parseTimeToMinutes,
@@ -43,8 +41,6 @@ type WorkplaceTimelineTaskMenuProps = {
   onOpenDetail: () => void;
   onClearTime?: () => void;
   onStartFocus: () => void;
-  onMoveToTomorrow: () => void;
-  onPlanLater: () => void;
   onToggleComplete: () => void;
   onDelete: () => void;
 };
@@ -133,8 +129,6 @@ export function WorkplaceTimelineTaskMenu({
   onOpenDetail,
   onClearTime,
   onStartFocus,
-  onMoveToTomorrow,
-  onPlanLater,
   onToggleComplete,
   onDelete,
 }: WorkplaceTimelineTaskMenuProps) {
@@ -175,20 +169,10 @@ export function WorkplaceTimelineTaskMenu({
           aria-hidden
         />
 
-        <div className="flex items-start justify-between gap-2 border-b border-border/30 px-3 py-2.5">
-          <p className="min-w-0 flex-1 text-sm font-semibold leading-snug text-foreground">
+        <div className="border-b border-border/30 px-3 py-2.5">
+          <p className="text-sm font-semibold leading-snug text-foreground">
             {task.title}
           </p>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="size-7 shrink-0 text-muted-foreground hover:text-destructive"
-            onClick={onDelete}
-            aria-label="Delete task"
-          >
-            <Trash2 className="size-3.5" />
-          </Button>
         </div>
 
         <div className="space-y-2 px-3 py-2.5 text-[13px] text-muted-foreground">
@@ -212,16 +196,6 @@ export function WorkplaceTimelineTaskMenu({
         </div>
 
         <div className="border-t border-border/30 p-1">
-          {!completed && onClearTime ? (
-            <button
-              type="button"
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-              onClick={onClearTime}
-            >
-              <Clock className="size-3.5 shrink-0 text-muted-foreground" />
-              Unschedule
-            </button>
-          ) : null}
           {!completed ? (
             <button
               type="button"
@@ -235,38 +209,39 @@ export function WorkplaceTimelineTaskMenu({
           <button
             type="button"
             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+            onClick={onToggleComplete}
+          >
+            <Check className="size-3.5 shrink-0 text-muted-foreground" />
+            {completed ? "Mark incomplete" : "Mark complete"}
+          </button>
+          <button
+            type="button"
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
             onClick={onOpenDetail}
           >
             <ClipboardList className="size-3.5 shrink-0 text-muted-foreground" />
             Open details
           </button>
-          {!completed ? (
-            <>
-              <button
-                type="button"
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-                onClick={onMoveToTomorrow}
-              >
-                <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
-                Move to tomorrow
-              </button>
-              <button
-                type="button"
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-                onClick={onPlanLater}
-              >
-                <CalendarClock className="size-3.5 shrink-0 text-muted-foreground" />
-                Plan later
-              </button>
-            </>
+          {!completed && onClearTime ? (
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+              onClick={onClearTime}
+            >
+              <Clock className="size-3.5 shrink-0 text-muted-foreground" />
+              Unschedule
+            </button>
           ) : null}
+        </div>
+
+        <div className="border-t border-border/30 p-1">
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-            onClick={onToggleComplete}
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] text-destructive hover:bg-destructive/10"
+            onClick={onDelete}
           >
-            <Check className="size-3.5 shrink-0 text-muted-foreground" />
-            {completed ? "Mark incomplete" : "Mark complete"}
+            <Trash2 className="size-3.5 shrink-0" />
+            Delete
           </button>
         </div>
       </div>

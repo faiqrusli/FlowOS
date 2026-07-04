@@ -41,6 +41,7 @@ export type TaskDetailSource = {
   onUpdate: (taskId: string, updates: Partial<Task>) => void;
   onMoveToGroup: (taskId: string, groupId: string) => void;
   onPlanningStateChange?: (taskId: string, planningState: PlanningState) => void;
+  onToggleComplete?: (task: Task) => void;
 };
 
 type SelectTaskOptions = {
