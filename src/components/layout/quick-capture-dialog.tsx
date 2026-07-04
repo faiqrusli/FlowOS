@@ -2,21 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { fetchTaskBoard, filterTasksForGroup, isInboxGroup } from "@/lib/task-groups";
+import { fetchTaskBoard, isInboxGroup } from "@/lib/task-groups";
+import { createQuickCaptureTask } from "@/lib/quick-capture-task";
 import {
-  createTask,
   TasksError,
 } from "@/lib/tasks";
-import {
-  DEFAULT_TASK_SORT_MODE,
-  getTaskGroupSortMode,
-  isManualTaskSortMode,
-} from "@/lib/task-sort";
-import {
-  manualOrderForNewTaskAtEnd,
-  manualOrderForNewTaskAtTop,
-  sortByManualOrder,
-} from "@/lib/manual-order";
 import { getTodayDateString } from "@/lib/date-utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +29,10 @@ import { TaskPrioritySelect } from "@/components/tasks/task-priority-select";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import { getTaskGroupAppearance, TASK_GROUP_SWATCH_CLASS } from "@/lib/task-group-appearance";
 import type { TaskPriority } from "@/lib/task-priority";
+import {
+  DEFAULT_TASK_SORT_MODE,
+  getTaskGroupSortMode,
+} from "@/lib/task-sort";
 import { cn } from "@/lib/utils";
 import type { PlanningState, TaskGroupWithTasks } from "@/types/task";
 
@@ -105,34 +99,13 @@ export function QuickCaptureDialog() {
     setError(null);
 
     try {
-      const boardGroups = groups.length > 0 ? groups : await fetchTaskBoard();
-      const fallbackInbox = boardGroups.find(isInboxGroup);
-      const targetGroupId = selectedGroupId || fallbackInbox?.id;
-      if (!targetGroupId) {
-        throw new TasksError("No group available.");
-      }
-      const targetGroup = boardGroups.find((item) => item.id === targetGroupId) ?? fallbackInbox;
-      if (!targetGroup) throw new TasksError("Target group not found.");
-
-      const todayViewDate = getTodayDateString();
-      const sortMode = getTaskGroupSortMode(targetGroup) ?? selectedSortMode;
-      const columnActiveTasks = sortByManualOrder(
-        filterTasksForGroup(targetGroup, targetGroup.tasks, todayViewDate).filter(
-          (task) => !task.completed
-        )
-      );
-      const manualTopInsert = isManualTaskSortMode(sortMode);
-
-      const created = await createTask({
+      const created = await createQuickCaptureTask({
         title: trimmed,
         description: showDescription ? description.trim() || null : null,
-        group_id: targetGroup.id,
-        sort_order: manualTopInsert
-          ? manualOrderForNewTaskAtTop(columnActiveTasks)
-          : manualOrderForNewTaskAtEnd(columnActiveTasks),
+        groupId: selectedGroupId || undefined,
         priority,
-        scheduled_date: scheduledDate || null,
-        planning_state: showPlanning ? planningState : "none",
+        scheduledDate: scheduledDate || null,
+        planningState: showPlanning ? planningState : "none",
       });
 
       notifyWorkplaceTaskCreated(created);

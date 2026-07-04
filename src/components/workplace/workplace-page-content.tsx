@@ -524,7 +524,7 @@ export function WorkplacePageContent() {
                   }
                 />
               </div>
-              <WorkplaceQuickAddCard onNewTask={requestQuickCapture} />
+              <WorkplaceQuickAddCard onOpenTaskDetails={requestQuickCapture} />
               <div className="flex min-h-0 min-w-0 flex-col">
                 <WorkplaceFocusCard
                   groups={groups}

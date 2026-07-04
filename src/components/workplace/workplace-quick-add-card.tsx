@@ -11,15 +11,17 @@ import {
 import { cn } from "@/lib/utils";
 
 type WorkplaceQuickAddCardProps = {
-  onNewTask: () => void;
+  onOpenTaskDetails: () => void;
 };
 
-export function WorkplaceQuickAddCard({ onNewTask }: WorkplaceQuickAddCardProps) {
+export function WorkplaceQuickAddCard({
+  onOpenTaskDetails,
+}: WorkplaceQuickAddCardProps) {
   const [hovered, setHovered] = useState(false);
-  const [visibility, setVisibility] = useState<WorkplaceModuleVisibility>("hover");
+  const [visibility, setVisibility] = useState<WorkplaceModuleVisibility>("always");
 
   useEffect(() => {
-    setVisibility(readModuleVisibility("quick-add", "hover"));
+    setVisibility(readModuleVisibility("quick-add", "always"));
   }, []);
 
   const hoverReveal = visibility === "hover";
@@ -37,7 +39,7 @@ export function WorkplaceQuickAddCard({ onNewTask }: WorkplaceQuickAddCardProps)
   return (
     <section
       className={cn(
-        "group/qa flex h-7 shrink-0 items-center rounded-xl border px-2 py-0.5 transition-[border-color,background-color,box-shadow] duration-200",
+        "group/qa flex shrink-0 items-center rounded-xl border px-2 py-1 transition-[border-color,background-color,box-shadow] duration-200",
         showChrome
           ? "border-border/35 bg-muted/20"
           : "border-transparent bg-transparent shadow-none"
@@ -46,7 +48,11 @@ export function WorkplaceQuickAddCard({ onNewTask }: WorkplaceQuickAddCardProps)
       onMouseLeave={() => setHovered(false)}
     >
       <div className="min-w-0 flex-1 overflow-hidden">
-        <WorkplaceQuickAddRow visible={showActions} onNewTask={onNewTask} />
+        {showActions ? (
+          <WorkplaceQuickAddRow onOpenTaskDetails={onOpenTaskDetails} />
+        ) : (
+          <div className="h-7" aria-hidden />
+        )}
       </div>
       <button
         type="button"
