@@ -53,9 +53,22 @@ type WorkplaceFocusCardProps = {
   onPlanLater: (task: Task) => void;
 };
 
-function TimerHoverControls({ children }: { children: React.ReactNode }) {
+function TimerHoverControls({
+  children,
+  alwaysVisible = false,
+}: {
+  children: React.ReactNode;
+  alwaysVisible?: boolean;
+}) {
   return (
-    <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover/timer:pointer-events-auto group-hover/timer:opacity-100">
+    <div
+      className={cn(
+        "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
+        alwaysVisible
+          ? "pointer-events-auto opacity-100"
+          : "pointer-events-none opacity-0 group-hover/timer:pointer-events-auto group-hover/timer:opacity-100"
+      )}
+    >
       <div className="flex flex-wrap items-center justify-center gap-3">{children}</div>
     </div>
   );
@@ -156,7 +169,7 @@ function TaskFocusRow({
               type="button"
               size="sm"
               variant="outline"
-              className="h-6 w-full px-2 text-[13px] opacity-0 transition-opacity group-hover/row:opacity-100"
+              className="h-6 w-full px-2 text-[13px]"
               onClick={onStart}
             >
               <Play className="size-3" />
@@ -567,7 +580,7 @@ export function WorkplaceFocusCard({
                     </p>
                     <p
                       className={cn(
-                        "font-mono text-[49px] font-semibold tabular-nums tracking-tight transition-[opacity,filter] duration-200 group-hover/timer:opacity-20 group-hover/timer:blur-[2px]",
+                        "font-mono text-[49px] font-semibold tabular-nums tracking-tight",
                         quick.isOnBreak ? "text-warning" : "text-foreground"
                       )}
                     >
@@ -575,12 +588,12 @@ export function WorkplaceFocusCard({
                     </p>
                     {(quick.currentFocusSeconds > 0 ||
                       quick.currentBreakSeconds > 0) && (
-                      <p className="mt-3 text-[13px] text-muted-foreground transition-opacity duration-200 group-hover/timer:opacity-40">
+                      <p className="mt-3 text-[13px] text-muted-foreground">
                         Focus {formatDuration(quick.currentFocusSeconds)} · Break{" "}
                         {formatDuration(quick.currentBreakSeconds)}
                       </p>
                     )}
-                    <TimerHoverControls>
+                    <TimerHoverControls alwaysVisible>
                       {quick.isFocusing ? (
                         <>
                           {quick.isPaused ? (
@@ -715,7 +728,15 @@ export function WorkplaceFocusCard({
                       groups={groups}
                       onToggleComplete={() => onToggleComplete(nextTask, true)}
                       onOpenDetail={() => onOpenDetail(nextTask.id)}
-                      onStart={() => setActiveTaskId(nextTask.id, "manual")}
+                      onStart={() => {
+                        prepareFocusTarget({
+                          type: "task",
+                          id: nextTask.id,
+                          label: nextTask.title,
+                        });
+                        setActiveTaskId(nextTask.id, "manual");
+                        quick.startFocus();
+                      }}
                       onContextMenu={handleFocusTaskContextMenu(nextTask)}
                       showStartOnHover
                     />
@@ -789,17 +810,17 @@ export function WorkplaceFocusCard({
                   <p className="text-[13px] font-medium text-muted-foreground">
                     Session {sessionNumber}
                   </p>
-                  <p className="font-mono text-6xl font-semibold tabular-nums tracking-tight text-foreground transition-[opacity,filter] duration-200 group-hover/timer:opacity-20 group-hover/timer:blur-[2px]">
+                  <p className="font-mono text-6xl font-semibold tabular-nums tracking-tight text-foreground">
                     {pomodoro.clock}
                   </p>
-                  <p className="text-[13px] text-muted-foreground transition-opacity duration-200 group-hover/timer:opacity-40">
+                  <p className="text-[13px] text-muted-foreground">
                     Focus {pomodoro.focusMinutes}m · Break {pomodoro.breakMinutes}m
                   </p>
                   <Progress
                     value={pomodoro.progress}
-                    className="h-1.5 w-full max-w-xs transition-opacity duration-200 group-hover/timer:opacity-40"
+                    className="h-1.5 w-full max-w-xs"
                   />
-                  <TimerHoverControls>
+                  <TimerHoverControls alwaysVisible>
                     {pomodoro.isPaused ? (
                       <Button
                         type="button"
