@@ -2454,7 +2454,10 @@ function TimelineScheduledBlock({
         }
       }}
       className={cn(
-        "group absolute inset-x-1 z-10 flex cursor-grab overflow-hidden rounded-lg border transition-[border-color,box-shadow,background-color,transform] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] active:cursor-grabbing",
+        "group absolute inset-x-1 z-10 flex overflow-hidden rounded-lg border transition-[border-color,box-shadow,background-color,transform] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        completed
+          ? "cursor-default"
+          : "cursor-grab active:cursor-grabbing",
         TIMELINE_TASK_ELEVATION,
         groupAccentClass && "border-l-[3px]",
         groupAccentClass,
@@ -2554,7 +2557,9 @@ function TimelineScheduledBlock({
             </span>
           )}
 
-          <GripVertical className="size-3 shrink-0 text-muted-foreground/40 opacity-0 group-hover:opacity-100" />
+          {!completed ? (
+            <GripVertical className="size-3 shrink-0 text-muted-foreground/40 opacity-0 group-hover:opacity-100" />
+          ) : null}
         </div>
       )}
 
@@ -2606,7 +2611,10 @@ function TimelineHabitChip({
       onContextMenu={onContextMenu}
       onClick={onSelect}
       className={cn(
-        "group flex w-full cursor-grab items-center gap-1.5 rounded-lg border shadow-xs transition-[border-color,box-shadow,background-color] duration-150 active:cursor-grabbing",
+        "group flex w-full items-center gap-1.5 rounded-lg border shadow-xs transition-[border-color,box-shadow,background-color] duration-150",
+        completed
+          ? "cursor-default"
+          : "cursor-grab active:cursor-grabbing",
         timelineHabitChipClassNames(),
         compact ? "px-2 py-1 text-[11px]" : "px-1.5 py-1 text-xs",
         selected && TIMELINE_TASK_SELECTED,
@@ -2649,7 +2657,9 @@ function TimelineHabitChip({
         </span>
       )}
 
-      <GripVertical className="size-3 shrink-0 text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100" />
+      {!completed ? (
+        <GripVertical className="size-3 shrink-0 text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100" />
+      ) : null}
     </div>
   );
 }
