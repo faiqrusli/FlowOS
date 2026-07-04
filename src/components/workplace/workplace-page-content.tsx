@@ -474,6 +474,7 @@ export function WorkplacePageContent({
       onUpdate: handleUpdateTask,
       onMoveToGroup: handleMoveTask,
       onPlanningStateChange: handleSetPlanningState,
+      onToggleComplete: (task) => void handleToggleComplete(task),
     },
     [groups, todayViewDate, getTask]
   );
