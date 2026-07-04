@@ -51,7 +51,7 @@ export function WorkplaceQuickAddCard({
         {showActions ? (
           <WorkplaceQuickAddRow onOpenTaskDetails={onOpenTaskDetails} />
         ) : (
-          <div className="h-7" aria-hidden />
+          <div className="h-8" aria-hidden />
         )}
       </div>
       <button
