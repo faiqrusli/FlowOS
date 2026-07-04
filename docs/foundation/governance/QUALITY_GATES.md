@@ -1,35 +1,27 @@
-# Quality Gates
+﻿# Quality Gates
 
 **Status:** Active  
 **Audience:** Founder, engineers  
-**Last updated:** July 3, 2026
+**Last updated:** July 4, 2026
 
----
-
-## Purpose
-
-Definition of done for any feature or phase shipment. A feature is **not complete** until all applicable gates pass.
-
-Release stage gates: [RELEASE_CRITERIA.md](./RELEASE_CRITERIA.md).
+Definition of done for any feature shipment. Release stages: [GATES.md](./GATES.md).
 
 ---
 
 ## Gate matrix
 
-Every feature change must pass applicable reviews:
+| Gate | Required when | Pass criteria |
+|------|---------------|---------------|
+| **Product** | User-facing change | [PRINCIPLES.md](./PRINCIPLES.md) feature test |
+| **UX** | Workflow, nav, routing, capture | Reduces clicks/switches |
+| **Architecture** | Routes, data model, lib boundaries | Matches [TECHNICAL_ARCHITECTURE.md](../TECHNICAL_ARCHITECTURE.md) |
+| **Accessibility** | Interactive controls | No hover-only critical controls |
+| **Performance** | Large lists, new fetches | No obvious regression |
+| **Security** | Auth, RLS, middleware | User-scoped data |
+| **Deployment** | Shipped to hosted env | Build green; production verified |
+| **Documentation** | Behavior changes | FEATURE_INVENTORY + decision-log if significant |
 
-| Gate | Required when | Owner | Pass criteria |
-|------|---------------|-------|---------------|
-| **Product review** | Any user-facing change | Founder | Aligns with [PRODUCT_PRINCIPLES.md](./PRODUCT_PRINCIPLES.md) + [PRODUCT_DECISION_FRAMEWORK.md](./PRODUCT_DECISION_FRAMEWORK.md) |
-| **UX review** | Workflow, nav, routing, capture, focus | Founder | Reduces clicks/switches; no new detours |
-| **Architecture review** | New routes, data model, lib boundaries | Founder | Matches [TECHNICAL_ARCHITECTURE.md](../TECHNICAL_ARCHITECTURE.md); no scope creep |
-| **Accessibility review** | Interactive controls, hover-only patterns | Founder | No new hover-only critical controls; keyboard reachable |
-| **Performance review** | Large lists, new data fetches | Founder | No obvious regression; lazy load if needed |
-| **Security review** | Auth, RLS, middleware, API | Founder | User-scoped data; protected routes |
-| **Deployment review** | Anything shipped to hosted env | Founder | Build green; env documented |
-| **Documentation review** | New modules, behavior changes | Founder | FEATURE_INVENTORY + DECISION_LOG if significant |
-
-**Solo founder:** These are checklist self-reviews, not committee meetings. Still mandatory.
+Solo founder: self-review checklist, still mandatory.
 
 ---
 
@@ -37,67 +29,42 @@ Every feature change must pass applicable reviews:
 
 | Change type | Gates required |
 |-------------|----------------|
-| Bug fix (internal) | Deployment (build) |
+| Bug fix (internal) | Deployment |
 | Security fix | Security, Deployment, Documentation |
-| Phase 3 UX feature | Product, UX, Architecture, Security, Deployment, Documentation |
-| Visual-only (Phase 4) | Product, UX, Accessibility, Deployment |
+| M2 UX feature | Product, UX, Architecture, Security, Deployment, Documentation |
 | Refactor (no behavior change) | Architecture, Deployment |
-| New module | **Reject** unless all 8 gates + alpha gate |
-
----
-
-## Accessibility gate (workflow-focused)
-
-- [ ] Critical actions reachable without hover-only UI  
-- [ ] Focus visible on interactive elements  
-- [ ] `prefers-reduced-motion` not regressed  
-- [ ] Form inputs have labels  
-- [ ] Color not sole indicator of state (Phase 2 accent rules help)
-
-Full WCAG audit deferred to closed beta ([BETA_SUCCESS_CRITERIA.md](./BETA_SUCCESS_CRITERIA.md)).
+| New module | **Reject** unless all gates + alpha gate |
 
 ---
 
 ## Security gate
 
-- [ ] Route in middleware if authenticated content  
-- [ ] Supabase queries scoped to `auth.uid()`  
-- [ ] RLS policies verified for new tables  
-- [ ] No secrets in client bundle  
-- [ ] No `using (true)` on user data tables  
+- [ ] Route in middleware if authenticated content
+- [ ] Supabase queries scoped to `auth.uid()`
+- [ ] RLS policies verified for new tables
+- [ ] No secrets in client bundle
+- [ ] No `using (true)` on user data tables
 
 ---
 
 ## Deployment gate
 
-- [ ] `npm run build` passes  
-- [ ] `npm run lint` no new errors in touched files  
-- [ ] Manual smoke: login → primary flow → logout  
-- [ ] Hosted deploy tested if shipping to alpha  
+- [ ] `npm run build` passes
+- [ ] `npm run lint` no new errors in touched files
+- [ ] Manual smoke: login → primary flow → logout
+- [ ] Hosted deploy tested on https://flowos-sage.vercel.app
 
 ---
 
 ## Documentation gate
 
-- [ ] [FEATURE_INVENTORY.md](../FEATURE_INVENTORY.md) updated if user-visible  
-- [ ] [DECISION_LOG.md](../DECISION_LOG.md) for Build/Kill decisions  
-- [ ] Drift fixed in PROJECT_STATE if routes/nav changed  
+- [ ] [FEATURE_INVENTORY.md](../FEATURE_INVENTORY.md) updated if user-visible
+- [ ] [decision-log.md](../../execution/logs/decision-log.md) for Build/Kill decisions
 
 ---
 
-## Phase 3 shipment bundle (additional)
+## Related
 
-Before marking Phase 3.x complete:
-
-- [ ] Open → first action < 5 sec (founder tested)  
-- [ ] Next-action never routes to wrong module  
-- [ ] No fake/dead UI in user paths  
-- [ ] Phase post-review doc in `docs/design/` per contract model  
-
----
-
-## Related documents
-
-- [RELEASE_CRITERIA.md](./RELEASE_CRITERIA.md)  
-- [ENGINEERING_DECISION_FRAMEWORK.md](./ENGINEERING_DECISION_FRAMEWORK.md)  
-- [../../design/README.md](../../design/README.md)  
+- [PRINCIPLES.md](./PRINCIPLES.md)
+- [GATES.md](./GATES.md)
+- [ENGINEERING.md](./ENGINEERING.md)

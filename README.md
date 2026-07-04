@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FlowOS
 
-## Getting Started
+An integrated productivity and reflection system — tasks, habits, focus, scheduling, reflection, and notes in one daily driver.
 
-First, run the development server:
+**Production:** https://flowos-sage.vercel.app  
+**Documentation:** [docs/README.md](./docs/README.md)
 
-```bash
+---
+
+## Quick start
+
+```powershell
+cd flowos
+npm install
+# Add Supabase vars to .env.local — see docs/foundation/TECHNICAL_ARCHITECTURE.md
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Stack
 
-## Learn More
+Next.js 16 · React 19 · Tailwind v4 · Supabase · TypeScript
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Where to read
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Role | Start here |
+|------|------------|
+| Founder | [docs/start-here/founder.md](./docs/start-here/founder.md) |
+| Engineer | [docs/start-here/engineer.md](./docs/start-here/engineer.md) |
+| New contributor | [docs/start-here/new-contributor.md](./docs/start-here/new-contributor.md) |
+| Full index | [docs/README.md](./docs/README.md) |
 
-## Deploy on Vercel
+**Current milestone:** M2 — Founder Daily Driver ([docs/execution/README.md](./docs/execution/README.md))
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run start` | Start production server |

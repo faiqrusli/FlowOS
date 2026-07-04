@@ -1,8 +1,8 @@
-# Product Vision
+﻿# Product Vision
 
 **Status:** Active  
 **Audience:** Founders, contributors, early users  
-**Last updated:** July 3, 2026
+**Last updated:** July 4, 2026 (Pass 5 consolidation)
 
 ---
 
@@ -32,7 +32,7 @@ Help self-directed individuals **plan, execute, focus, and reflect** in one cont
 
 ## Theoretical foundation
 
-FlowOS is grounded in **Self-Regulated Learning (SRL)** theory (Zimmerman, 2002) and complementary frameworks documented in [../project/02-related-works.md](../project/02-related-works.md):
+FlowOS is grounded in **Self-Regulated Learning (SRL)** theory (Zimmerman, 2002) and complementary frameworks documented in [../archive/project/02-related-works.md](../archive/project/02-related-works.md):
 
 | Phase | Meaning | Product expression |
 |-------|---------|-------------------|
@@ -40,7 +40,7 @@ FlowOS is grounded in **Self-Regulated Learning (SRL)** theory (Zimmerman, 2002)
 | Performance | Execute and monitor | Workplace, Focus sessions |
 | Self-reflection | Evaluate and improve | Reflection, Notes |
 
-See [PRODUCT_PHILOSOPHY.md](./PRODUCT_PHILOSOPHY.md) for how these phases map to product decisions.
+See [governance/PRINCIPLES.md](./governance/PRINCIPLES.md) for how these phases map to product decisions.
 
 ---
 
@@ -60,7 +60,7 @@ See [PRODUCT_PHILOSOPHY.md](./PRODUCT_PHILOSOPHY.md) for how these phases map to
 - Casual list-makers who need a simple todo app
 - Users who require mobile-first or calendar-sync-first experiences
 
-Details: [USER_PERSONAS.md](./USER_PERSONAS.md)
+Details: [../execution/ops/recruiting-pipeline.md](../execution/ops/recruiting-pipeline.md) (M3). Full persona profiles: [../archive/foundation/USER_PERSONAS.md](../archive/foundation/USER_PERSONAS.md).
 
 ---
 
@@ -74,7 +74,7 @@ Details: [USER_PERSONAS.md](./USER_PERSONAS.md)
 
 **The complete SRL cycle in one product.** Most competitors excel at one phase (tasks OR habits OR focus OR journaling). FlowOS integrates all three — when the daily loop works.
 
-> **Current state:** The *promise* is differentiated. The *experience* still feels like eight modules until Phase 3 ships. See [../design/ux-friction-review.md](../design/ux-friction-review.md).
+> **Current state:** The *promise* is differentiated. The *experience* still feels like eight modules until Phase 3 ships. See [../archive/design/ux-friction-review.md](../archive/design/ux-friction-review.md).
 
 ---
 
@@ -106,26 +106,26 @@ FlowOS is **not**:
 | AI productivity coach (FE-4) | Deferred until retention proven |
 | Mobile app (FE-9) | Web-only; resource constraints |
 | Gamified habit app (Habitica) | SRL seriousness over XP badges |
-| Production SaaS today | Launch readiness ~4/10; see [DEPLOYMENT_READINESS.md](./DEPLOYMENT_READINESS.md) |
+| Production SaaS today | M1 complete; M2 dogfood in progress — see [governance/GATES.md](./governance/GATES.md) |
 
 ---
 
-## Current product assessment (July 2026)
+## Current product assessment (July 4, 2026)
 
-| Dimension | Score | Summary |
-|-----------|-------|---------|
-| Vision (documentation) | 7/10 | Strong thesis; clear in docs |
-| Vision (in-product) | 4/10 | Eight modules; no gravitational center |
-| Overall product | 6/10 | Impressive solo build; not retention-ready |
+| Dimension | Summary |
+|-----------|---------|
+| Vision (documentation) | Strong thesis; clear in docs |
+| Vision (in-product) | M2 in progress — Today home, routing, capture |
+| Overall product | M1 shipped; founder dogfood + M3 prep underway |
 
-**Strategic priority:** Phase 3 — Effortless Daily Loop. Not new modules. See [../design/ROADMAP.md](../design/ROADMAP.md).
+**Strategic priority:** M2 Founder Daily Driver → M3 private alpha. See [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md).
 
 ---
 
 ## Related documents
 
-- [PRODUCT_PHILOSOPHY.md](./PRODUCT_PHILOSOPHY.md) — principles and decision rules  
-- [../project/01-introduction.md](../project/01-introduction.md) — original thesis vision  
-- [../project/02-related-works.md](../project/02-related-works.md) — theoretical foundations  
-- [LAUNCH_PLAN.md](./LAUNCH_PLAN.md) — go-to-market timeline  
-- [SUCCESS_METRICS.md](./SUCCESS_METRICS.md) — how we measure progress toward this vision  
+- [governance/PRINCIPLES.md](./governance/PRINCIPLES.md) — principles and decision rules  
+- [../archive/project/01-introduction.md](../archive/project/01-introduction.md) — original thesis vision  
+- [../archive/project/02-related-works.md](../archive/project/02-related-works.md) — theoretical foundations  
+- [launch-plan-july-2026.md](../archive/planning/launch-plan-july-2026.md) — go-to-market timeline  
+- [governance/GATES.md](./governance/GATES.md) — release gates and metric definitions  

@@ -1,16 +1,65 @@
-# Feature Inventory
+﻿# Feature Inventory
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 3, 2026
+**Last updated:** July 4, 2026 (Pass 5 — IA merged here)
 
 ---
 
 ## Purpose
 
-Single source of truth for what FlowOS has **shipped**, **partially built**, **placeholder**, or **deferred**. Prevents re-debating built vs planned features.
+Single source of truth for what FlowOS has **shipped**, **partially built**, **placeholder**, or **deferred** — and how modules relate in navigation. Prevents re-debating built vs planned features.
 
-For SRS future enhancements (FE-1–FE-13), see [../project/03-future-enhancements.md](../project/03-future-enhancements.md).
+For SRS future enhancements (FE-1–FE-13), see [../archive/project/03-future-enhancements.md](../archive/project/03-future-enhancements.md).
+
+---
+
+## Information architecture
+
+### Current navigation
+
+Eight sidebar items with **equal visual weight**. Source: `src/config/sidebar-navigation.tsx`
+
+```
+Overview
+  └── Dashboard (/)          ← default landing (read-only intelligence)
+
+Productivity
+  ├── Workplace (/workplace) ← primary execution surface
+  ├── Schedule (/schedule)
+  ├── Tasks (/tasks)
+  ├── Habits (/habits)
+  ├── Focus (/focus)
+  ├── Reflection (/reflection)
+  └── Notes (/notes)
+```
+
+**Known problems (M2 addressing):** Dashboard at `/` vs execution at `/workplace`; eight equal nav items; three scheduling surfaces; focus as a destination page; no command layer. Diagnosis: [../archive/design/ux-friction-review.md](../archive/design/ux-friction-review.md).
+
+### Target navigation (post M2/M3)
+
+| Tier | Modules |
+|------|---------|
+| **Primary** | Today (`/`) — execution + inline intelligence; focus as overlay mode |
+| **Secondary** | Overview (`/overview`), Tasks, Habits, Focus (history/analytics), Reflection |
+| **Tertiary** | Schedule (fullscreen planner), Notes |
+
+**Target flow:** Open → Today → inline capture / execute / focus → evening reflection. Command palette (`Cmd+K`) for search and jump.
+
+### Module roles (target state)
+
+| Module | Route | Verdict |
+|--------|-------|---------|
+| Dashboard | `/` | Demote to `/overview`; merge KPIs into Today |
+| Workplace | `/workplace` | Become default home Today |
+| Tasks | `/tasks` | Keep; secondary via palette + inline capture |
+| Schedule | `/schedule` | Tertiary — "open fullscreen timeline" from Today |
+| Habits | `/habits` | Keep; primary completion on Today |
+| Focus | `/focus` | Mode on Today; page = history/analytics only |
+| Reflection | `/reflection` | Keep; unify save behavior; evening nudge |
+| Notes | `/notes` | Keep secondary; no kanban expansion until loop proven |
+
+**M2 MVP bundle:** Today as home, next-action stays on Today, sidebar ≤ 5 items, inline capture, visible focus controls. Full plan: [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md).
 
 ---
 
@@ -38,7 +87,7 @@ For SRS future enhancements (FE-1–FE-13), see [../project/03-future-enhancemen
 | Auth callback | `/auth/callback` | Shipped | OAuth/code exchange |
 | Settings | `/settings` | Shipped | Preferences, durations |
 | Account | `/account` | Shipped | Profile management |
-| Session middleware | — | Shipped | **Gap:** `/workplace` not in protected prefixes — see [DEPLOYMENT_READINESS.md](./DEPLOYMENT_READINESS.md) |
+| Session middleware | — | Shipped | `/workplace` in `PROTECTED_PREFIXES` (M1) |
 
 ---
 
@@ -164,7 +213,7 @@ Logic: `flowos/src/lib/dashboard-command.ts`
 | FE-12 | Voice Assistant | Not implemented | — |
 | FE-13 | Distraction Management | Not implemented | Focus sessions exist; no OS-level blocking |
 
-Full detail: [../project/03-future-enhancements.md](../project/03-future-enhancements.md)
+Full detail: [../archive/project/03-future-enhancements.md](../archive/project/03-future-enhancements.md)
 
 ---
 
@@ -194,13 +243,13 @@ Full detail: [../project/03-future-enhancements.md](../project/03-future-enhance
 | Phase 2 — Accent language | Complete | `9f7e7c4` |
 | Phase 3 — Daily loop | **Not started** | — |
 
-Source: [../design/PROJECT_STATE.md](../design/PROJECT_STATE.md)
+Source: [../archive/design/project-state-july-2026.md](../archive/design/project-state-july-2026.md)
 
 ---
 
 ## Related documents
 
-- [INFORMATION_ARCHITECTURE.md](./INFORMATION_ARCHITECTURE.md) — how modules relate  
-- [../project/03-future-enhancements.md](../project/03-future-enhancements.md) — SRS FE-1–FE-13  
-- [../design/ROADMAP.md](../design/ROADMAP.md) — Phase 3 feature plan  
+- [../archive/project/03-future-enhancements.md](../archive/project/03-future-enhancements.md) — SRS FE-1–FE-13  
+- [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md) — current milestone plan  
 - [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) — implementation stack  
+- [../archive/foundation/INFORMATION_ARCHITECTURE.md](../archive/foundation/INFORMATION_ARCHITECTURE.md) — full IA doc (archived)  

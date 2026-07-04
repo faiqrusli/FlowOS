@@ -1,73 +1,102 @@
-# FlowOS Documentation
+﻿# FlowOS Documentation
 
-Official documentation for **FlowOS: An Integrated Productivity and Reflection Management System**.
+**FlowOS** is an integrated productivity and reflection system — a personal daily driver for tasks, habits, focus, scheduling, reflection, and notes.
 
-| Directory | Contents |
-|-----------|----------|
-| [project/](./project/) | Original thesis vision, theoretical foundations, and SRS future enhancements (2026) |
-| [design/](./design/) | Design system history — Audit through Phase 2, UX friction review, Phase 3 roadmap |
-| [foundation/](./foundation/) | Product strategy, architecture, launch plan, CEO review |
-| [foundation/governance/](./foundation/governance/) | Decision rules, release gates, risks — pre-Phase 3 |
+**Current milestone:** [M2 — Founder Daily Driver](./execution/README.md) (engineering Sessions 1–6 shipped; Sessions 7–8 in progress)
+
+**Production:** https://flowos-sage.vercel.app
 
 ---
 
-## Where to start
+## Start here
 
-| Audience | Start here |
-|----------|------------|
-| **Strategic assessment** | [foundation/CEO_REVIEW_JULY_2026.md](./foundation/CEO_REVIEW_JULY_2026.md) |
-| **Product decisions / Phase 3** | [foundation/governance/PRODUCT_PRINCIPLES.md](./foundation/governance/PRODUCT_PRINCIPLES.md) |
-| Founder / product direction | [foundation/governance/PRODUCT_STRATEGY.md](./foundation/governance/PRODUCT_STRATEGY.md) |
-| Launch and alpha planning | [foundation/LAUNCH_PLAN.md](./foundation/LAUNCH_PLAN.md) |
-| New to FlowOS (original vision) | [project/01-introduction.md](./project/01-introduction.md) |
-| New engineer (current state) | [design/PROJECT_STATE.md](./design/PROJECT_STATE.md) |
-| Engineering architecture | [foundation/TECHNICAL_ARCHITECTURE.md](./foundation/TECHNICAL_ARCHITECTURE.md) |
-| Design history | [design/README.md](./design/README.md) |
-| Phase 3 implementation | [design/ux-friction-review.md](./design/ux-friction-review.md) |
+| Role | Entry point |
+|------|-------------|
+| **Founder / product** | [start-here/founder.md](./start-here/founder.md) |
+| **Engineer** | [start-here/engineer.md](./start-here/engineer.md) |
+| **New contributor** | [start-here/new-contributor.md](./start-here/new-contributor.md) |
+
+---
+
+## Authority hierarchy
+
+When documents conflict, this order wins:
+
+| Priority | Source | Role |
+|----------|--------|------|
+| 1 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions |
+| 2 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 |
+| 3 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
+| 4 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
+| 5 | [archive/](./archive/) | Historical reference only |
+
+---
+
+## Folder map
+
+| Directory | Contents | Status |
+|-----------|----------|--------|
+| [strategy/](./strategy/) | Execution masterplan | **Active** |
+| [execution/](./execution/) | Runbooks, ops, logs | **Active** |
+| [foundation/](./foundation/) | Vision, features, architecture (3 files) | **Active** |
+| [foundation/governance/](./foundation/governance/) | 4 rule docs (PRINCIPLES, GATES, QUALITY, ENGINEERING) | **Reference** |
+| [archive/](./archive/) | Thesis, design history, superseded plans | **Archive** |
+| [meta/](./meta/document-map.md) | Full doc inventory | Meta |
+
+**Operational docs outside `docs/`:** [supabase/APPLIED_STATE.md](../supabase/APPLIED_STATE.md)
+
+**Legacy redirects:** `docs/design/`, `docs/project/`, and `foundation/LAUNCH_PLAN.md` stub → canonical paths in [archive/](./archive/).
+
+---
+
+## Quick index — active documents
+
+### Strategy and execution
+
+| Document | Purpose |
+|----------|---------|
+| [execution-masterplan.md](./strategy/execution-masterplan.md) | Primary plan — milestones M0–M5 |
+| [m1-ship-gate.md](./execution/runbooks/m1-ship-gate.md) | M1 deploy, migrations, RLS |
+| [m2-founder-daily-driver.md](./execution/runbooks/m2-founder-daily-driver.md) | M2 Today home, routing, capture |
+| [friction-log.md](./execution/logs/friction-log.md) | Live founder dogfood log |
+| [decision-log.md](./execution/logs/decision-log.md) | Product decisions (append-only) |
+| [recruiting-pipeline.md](./execution/ops/recruiting-pipeline.md) | M3 recruiting prep |
+
+### Product and engineering
+
+| Document | Purpose |
+|----------|---------|
+| [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
+| [TECHNICAL_ARCHITECTURE.md](./foundation/TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt |
+| [governance/GATES.md](./foundation/governance/GATES.md) | Launch gates, WAD, D7 definitions |
+| [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | North star and non-goals |
+
+Full foundation index: [foundation/README.md](./foundation/README.md)
+
+---
+
+## Superseded documents (archive only)
+
+| Document | Superseded by |
+|----------|---------------|
+| [roadmap-pre-masterplan.md](./archive/design/roadmap-pre-masterplan.md) (Phase 3+) | [execution-masterplan.md](./strategy/execution-masterplan.md) |
+| [launch-plan-july-2026.md](./archive/planning/launch-plan-july-2026.md) | Same masterplan |
+| [project-state-july-2026.md](./archive/design/project-state-july-2026.md) | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) + [execution/README.md](./execution/README.md) |
+
+Full archive index: [archive/README.md](./archive/README.md)
 
 ---
 
 ## Document lineage
 
 ```
-Original thesis & SRS (docs/project/)
+Thesis & SRS (docs/archive/project/)        ← origin
     ↓
-MVP implementation (flowos/)
+Design Audit → Phase 0–2 (docs/archive/design/)
     ↓
-Design Audit → Phase 0 → Phase 1 → Phase 2 (docs/design/)
+Foundation + governance (docs/foundation/)
     ↓
-Foundation layer — product strategy & launch (docs/foundation/)
-    ↓
-Governance layer — decision rules & release gates (docs/foundation/governance/)
-    ↓
-Phase 3 — Effortless Daily Loop (docs/design/ROADMAP.md)
+Active strategy + execution (docs/strategy/, docs/execution/) ← current
 ```
 
-| Layer | Answers |
-|-------|---------|
-| **project/** | *Why was FlowOS conceived?* |
-| **design/** | *How was the product refined?* |
-| **foundation/** | *What exists and what should we do next?* |
-| **foundation/governance/** | *What rules govern future decisions?* |
-
----
-
-## Foundation documents (quick index)
-
-| Document | Purpose |
-|----------|---------|
-| [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | North star and positioning |
-| [PRODUCT_PHILOSOPHY.md](./foundation/PRODUCT_PHILOSOPHY.md) | SRL principles and decision rules |
-| [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | Shipped vs deferred features |
-| [INFORMATION_ARCHITECTURE.md](./foundation/INFORMATION_ARCHITECTURE.md) | Module hierarchy and Phase 3 IA |
-| [TECHNICAL_ARCHITECTURE.md](./foundation/TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt |
-| [DEPLOYMENT_READINESS.md](./foundation/DEPLOYMENT_READINESS.md) | Launch gates and blockers |
-| [USER_PERSONAS.md](./foundation/USER_PERSONAS.md) | Alpha user profiles |
-| [SUCCESS_METRICS.md](./foundation/SUCCESS_METRICS.md) | What to measure |
-| [DECISION_LOG.md](./foundation/DECISION_LOG.md) | Product decisions |
-| [LAUNCH_PLAN.md](./foundation/LAUNCH_PLAN.md) | Alpha → production timeline |
-| [CEO_REVIEW_JULY_2026.md](./foundation/CEO_REVIEW_JULY_2026.md) | Strategic assessment |
-| [GOVERNANCE_PASS_REPORT.md](./foundation/GOVERNANCE_PASS_REPORT.md) | Governance audit |
-| [governance/](./foundation/governance/) | Principles, strategy, release gates, risks |
-
-Full reading order: [foundation/README.md](./foundation/README.md)
+Doc map: [meta/document-map.md](./meta/document-map.md)

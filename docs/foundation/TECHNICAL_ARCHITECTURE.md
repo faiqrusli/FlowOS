@@ -1,14 +1,14 @@
-# Technical Architecture
+﻿# Technical Architecture
 
 **Status:** Living document  
 **Audience:** Engineers  
-**Last updated:** July 3, 2026
+**Last updated:** July 4, 2026 (Pass 5 — M1 auth gap resolved)
 
 ---
 
 ## Purpose
 
-Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For current implementation snapshot, also see [../design/PROJECT_STATE.md](../design/PROJECT_STATE.md).
+Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For current implementation snapshot, also see [../archive/design/project-state-july-2026.md](../archive/design/project-state-july-2026.md).
 
 ---
 
@@ -68,11 +68,7 @@ flowos/
 4. Unauthenticated users on protected routes → redirect to `/login?next=...`
 5. Authenticated users on auth routes → redirect to `/`
 
-### Known blocker: `/workplace` not protected
-
-`PROTECTED_PREFIXES` in `middleware.ts` includes `/`, `/tasks`, `/habits`, etc. but **does not include `/workplace`**. The primary execution surface may be accessible without authentication until fixed.
-
-**Action:** Add `/workplace` to `PROTECTED_PREFIXES` before private alpha.
+`/workplace` is in `PROTECTED_PREFIXES` (M1 ship gate). Unauthenticated access redirects to `/login?next=...`.
 
 ---
 
@@ -137,7 +133,6 @@ Navigation config: `src/config/sidebar-navigation.tsx`
 
 | Item | Severity | Target |
 |------|----------|--------|
-| `/workplace` auth middleware gap | **Critical** | Before alpha |
 | Zero automated tests | High | Before beta |
 | No `error.tsx` / `loading.tsx` boundaries | High | Before alpha |
 | 542 hardcoded palette references (post-Phase 2 baseline) | Medium | Ongoing |
@@ -147,7 +142,7 @@ Navigation config: `src/config/sidebar-navigation.tsx`
 | Three card border radii in production | Low | Phase 4 |
 | setState-in-effect lint in dialog components | Low | Pre-existing |
 
-Source: [../design/PROJECT_STATE.md](../design/PROJECT_STATE.md)
+Source: [../archive/design/project-state-july-2026.md](../archive/design/project-state-july-2026.md)
 
 ---
 
@@ -178,11 +173,10 @@ Recommended host: **Vercel** (Next.js native). Supabase project must have all SQ
 - [ ] All Supabase migrations applied  
 - [ ] RLS policies verified for production (user-scoped)  
 - [ ] Environment variables set on host  
-- [ ] `/workplace` added to auth middleware  
 - [ ] Fake Agenda card removed  
 - [ ] Error/loading boundaries on main routes  
 
-Full gates: [DEPLOYMENT_READINESS.md](./DEPLOYMENT_READINESS.md)
+Full gates: [governance/GATES.md](./governance/GATES.md)
 
 ---
 
@@ -202,6 +196,6 @@ Do not document these in design phase contracts. Consider `docs/engineering/` if
 ## Related documents
 
 - [FEATURE_INVENTORY.md](./FEATURE_INVENTORY.md) — shipped features  
-- [DEPLOYMENT_READINESS.md](./DEPLOYMENT_READINESS.md) — launch gates  
-- [../design/PROJECT_STATE.md](../design/PROJECT_STATE.md) — design system state  
-- [INFORMATION_ARCHITECTURE.md](./INFORMATION_ARCHITECTURE.md) — routing and nav targets  
+- [governance/GATES.md](./governance/GATES.md) — launch gates  
+- [../archive/design/project-state-july-2026.md](../archive/design/project-state-july-2026.md) — design system state  
+- [FEATURE_INVENTORY.md](./FEATURE_INVENTORY.md) — routing, nav, and feature status  
