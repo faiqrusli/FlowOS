@@ -1,6 +1,11 @@
 import { getNowMinutesInAppTimezone, parseTimeToMinutes } from "@/lib/date-utils";
 import { computeScheduleSummary } from "@/lib/schedule-utils";
 import { normalizeTaskPriority, TASK_PRIORITY_CONFIG } from "@/lib/task-priority";
+import {
+  todayHabitAnchorId,
+  todayTaskAnchorId,
+  TODAY_FOCUS_ANCHOR_ID,
+} from "@/lib/today-in-place";
 import type { TodayProgress } from "@/types/dashboard";
 import type { Habit } from "@/types/habit";
 import type { Reflection } from "@/types/reflection";
@@ -13,6 +18,15 @@ export type OnTrackStatus = {
   percent: number;
 };
 
+export type InPlaceAction =
+  | "scroll-to-task"
+  | "scroll-to-habit"
+  | "scroll-to-focus"
+  | "start-focus"
+  | "continue-focus"
+  | "open-reflection"
+  | "open-capture";
+
 export type NextAction = {
   title: string;
   description: string;
@@ -20,6 +34,8 @@ export type NextAction = {
   actionLabel: string;
   type: "task" | "habit" | "focus" | "reflection" | "schedule" | "empty";
   entityId?: string;
+  inPlaceAction?: InPlaceAction;
+  scrollTargetId?: string;
 };
 
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
@@ -107,21 +123,52 @@ export function getUpcomingSchedulePreview(
     .slice(0, limit);
 }
 
+function resolveScheduleItemAction(item: ScheduleItem): Pick<
+  NextAction,
+  "inPlaceAction" | "scrollTargetId" | "href"
+> {
+  if (item.type === "habit") {
+    return {
+      inPlaceAction: "scroll-to-habit",
+      scrollTargetId: item.scrollTargetId ?? todayHabitAnchorId(item.entityId),
+      href: "#",
+    };
+  }
+
+  if (item.type === "focus") {
+    return {
+      inPlaceAction: item.isActiveFocus ? "continue-focus" : "scroll-to-focus",
+      scrollTargetId: item.scrollTargetId ?? TODAY_FOCUS_ANCHOR_ID,
+      href: "#",
+    };
+  }
+
+  return {
+    inPlaceAction: "scroll-to-task",
+    scrollTargetId: item.scrollTargetId ?? todayTaskAnchorId(item.entityId),
+    href: "#",
+  };
+}
+
 export function getNextActionRecommendation(
   tasks: Task[],
   habits: Habit[],
   timeline: ScheduleItem[],
   reflection: Reflection | null,
   focusSeconds: number,
-  options?: { hasActiveFocus?: boolean }
+  options?: { hasActiveFocus?: boolean; forToday?: boolean }
 ): NextAction {
+  const forToday = options?.forToday ?? false;
+
   if (options?.hasActiveFocus) {
     return {
       title: "Continue your focus session",
       description: "You're in the zone — pick up where you left off.",
-      href: "/focus",
+      href: forToday ? "#" : "/focus",
       actionLabel: "Return to Focus",
       type: "focus",
+      inPlaceAction: forToday ? "continue-focus" : undefined,
+      scrollTargetId: forToday ? TODAY_FOCUS_ANCHOR_ID : undefined,
     };
   }
 
@@ -129,16 +176,19 @@ export function getNextActionRecommendation(
   if (summary.nextItem) {
     const item = summary.nextItem;
     const typeLabel = item.type === "habit" ? "habit" : "task";
+    const scheduleAction = forToday ? resolveScheduleItemAction(item) : null;
 
     return {
       title: item.title,
       description: item.time
         ? `Scheduled for ${item.time} — your next ${typeLabel} on the timeline.`
         : `Your next ${typeLabel} for today.`,
-      href: item.href,
+      href: forToday ? "#" : item.href,
       actionLabel: item.type === "habit" ? "Complete habit" : "Open task",
       type: item.type === "habit" ? "habit" : "task",
       entityId: item.entityId,
+      inPlaceAction: scheduleAction?.inPlaceAction,
+      scrollTargetId: scheduleAction?.scrollTargetId,
     };
   }
 
@@ -149,10 +199,12 @@ export function getNextActionRecommendation(
     return {
       title: nextTask.title,
       description: `${TASK_PRIORITY_CONFIG[priority].label} priority task — knock this out first.`,
-      href: "/tasks",
+      href: forToday ? "#" : "/tasks",
       actionLabel: "View task",
       type: "task",
       entityId: nextTask.id,
+      inPlaceAction: forToday ? "scroll-to-task" : undefined,
+      scrollTargetId: forToday ? todayTaskAnchorId(nextTask.id) : undefined,
     };
   }
 
@@ -161,10 +213,12 @@ export function getNextActionRecommendation(
     return {
       title: nextHabit.name,
       description: "Last habit standing for today.",
-      href: "/habits",
+      href: forToday ? "#" : "/habits",
       actionLabel: "Complete habit",
       type: "habit",
       entityId: nextHabit.id,
+      inPlaceAction: forToday ? "scroll-to-habit" : undefined,
+      scrollTargetId: forToday ? todayHabitAnchorId(nextHabit.id) : undefined,
     };
   }
 
@@ -177,9 +231,10 @@ export function getNextActionRecommendation(
     return {
       title: "Reflect on your day",
       description: "Capture wins and lessons while they're fresh.",
-      href: "/reflection",
+      href: forToday ? "#" : "/reflection",
       actionLabel: "Start reflection",
       type: "reflection",
+      inPlaceAction: forToday ? "open-reflection" : undefined,
     };
   }
 
@@ -187,17 +242,20 @@ export function getNextActionRecommendation(
     return {
       title: "Start a focus session",
       description: "Block time for deep work on what matters most.",
-      href: "/focus",
+      href: forToday ? "#" : "/focus",
       actionLabel: "Start Focus",
       type: "focus",
+      inPlaceAction: forToday ? "start-focus" : undefined,
+      scrollTargetId: forToday ? TODAY_FOCUS_ANCHOR_ID : undefined,
     };
   }
 
   return {
     title: "Plan your day",
     description: "Add a task or habit to build your command center.",
-    href: "/tasks",
+    href: forToday ? "#" : "/tasks",
     actionLabel: "Add task",
     type: "empty",
+    inPlaceAction: forToday ? "open-capture" : undefined,
   };
 }

@@ -30,6 +30,7 @@ import { normalizeTaskPriority } from "@/lib/task-priority";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { getHabitDurationMinutes } from "@/lib/schedule-durations";
 import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
+import { TODAY_FOCUS_ANCHOR_ID } from "@/lib/today-in-place";
 import { TimelineHabitLabel } from "@/components/tasks/timeline-habit-label";
 import {
   getActiveTimelineDrag,
@@ -467,6 +468,7 @@ export function WorkplaceFocusCard({
   return (
     <>
       <section
+        id={TODAY_FOCUS_ANCHOR_ID}
         className={cn(
           "relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border transition-[border-color,background-color,box-shadow] duration-150",
           dropActive && habitDropBlocked

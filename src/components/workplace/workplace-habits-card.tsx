@@ -8,6 +8,7 @@ import {
   partitionWorkplaceHabits,
   type WorkplaceHabitTab,
 } from "@/lib/workplace-habits";
+import { TODAY_HABITS_SECTION_ID } from "@/lib/today-in-place";
 import { cn } from "@/lib/utils";
 import type { Habit } from "@/types/habit";
 
@@ -53,6 +54,7 @@ export function WorkplaceHabitsCard({
   return (
     <WorkplaceModuleCard
       moduleId="habits"
+      anchorId={TODAY_HABITS_SECTION_ID}
       title="Today's Habits"
       titleMeta={titleMeta}
       className="min-h-0 overflow-hidden"

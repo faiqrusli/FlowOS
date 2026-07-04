@@ -19,6 +19,7 @@ export type ScheduleItem = {
   priority?: TaskPriority | null;
   completed: boolean;
   href: string;
+  scrollTargetId?: string;
   isActiveFocus?: boolean;
 };
 

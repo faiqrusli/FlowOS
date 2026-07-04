@@ -17,6 +17,7 @@ type DashboardNextActionProps = {
   action: NextAction;
   onQuickComplete?: () => void;
   completing?: boolean;
+  onAction?: (action: NextAction) => void;
 };
 
 const TYPE_ICONS = {
@@ -32,8 +33,10 @@ export function DashboardNextAction({
   action,
   onQuickComplete,
   completing,
+  onAction,
 }: DashboardNextActionProps) {
   const Icon = TYPE_ICONS[action.type];
+  const useInPlace = Boolean(onAction && action.inPlaceAction);
 
   return (
     <section className="flex flex-col gap-3 rounded-lg border border-border/60 bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -67,15 +70,27 @@ export function DashboardNextAction({
               Done
             </Button>
           )}
-        <Button
-          size="sm"
-          nativeButton={false}
-          className="h-8 gap-1.5 px-3 text-sm"
-          render={<Link href={action.href} />}
-        >
-          {action.actionLabel}
-          <ArrowRight className="size-3.5" />
-        </Button>
+        {useInPlace ? (
+          <Button
+            type="button"
+            size="sm"
+            className="h-8 gap-1.5 px-3 text-sm"
+            onClick={() => onAction?.(action)}
+          >
+            {action.actionLabel}
+            <ArrowRight className="size-3.5" />
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            nativeButton={false}
+            className="h-8 gap-1.5 px-3 text-sm"
+            render={<Link href={action.href} />}
+          >
+            {action.actionLabel}
+            <ArrowRight className="size-3.5" />
+          </Button>
+        )}
       </div>
     </section>
   );

@@ -14,6 +14,7 @@ type WorkplaceModuleCardProps = {
   title: string;
   titleCount?: number;
   titleMeta?: string;
+  anchorId?: string;
   children: ReactNode;
   className?: string;
   headerExtra?: ReactNode;
@@ -25,6 +26,7 @@ export function WorkplaceModuleCard({
   title,
   titleCount,
   titleMeta,
+  anchorId,
   children,
   className,
   headerExtra,
@@ -51,6 +53,7 @@ export function WorkplaceModuleCard({
 
   return (
     <section
+      id={anchorId}
       className={cn(
         "flow-surface-card group/module flex min-h-0 flex-col overflow-hidden transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_12%)] hover:shadow-sm",
         !cardVisible && "border-transparent bg-transparent shadow-none",

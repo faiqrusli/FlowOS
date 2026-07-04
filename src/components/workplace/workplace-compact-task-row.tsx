@@ -12,6 +12,7 @@ import { normalizeTaskPriority } from "@/lib/task-priority";
 import { setActiveTaskDragId, setBoardTaskDragData } from "@/lib/timeline-drag";
 import { setDragImageFromElement } from "@/lib/list-drag-utils";
 import { cn } from "@/lib/utils";
+import { todayTaskAnchorId } from "@/lib/today-in-place";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 type WorkplaceCompactTaskRowProps = {
@@ -59,6 +60,7 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
 
   return (
     <div
+      id={todayTaskAnchorId(task.id)}
       draggable={!task.completed}
       onDragStart={task.completed ? undefined : handleDragStart}
       onDragEnd={handleDragEnd}

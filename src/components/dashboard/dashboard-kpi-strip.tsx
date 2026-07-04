@@ -14,16 +14,20 @@ import type { TodayProgress } from "@/types/dashboard";
 import type { Reflection } from "@/types/reflection";
 import { cn } from "@/lib/utils";
 
+export type KpiCellKey = "tasks" | "habits" | "focus" | "reflection";
+
 type DashboardKpiStripProps = {
   progress: TodayProgress;
   reflection: Reflection | null;
   onTrack: OnTrackStatus;
+  onCellAction?: (cell: KpiCellKey) => void;
 };
 
 type KpiCellProps = {
   label: string;
   value: string;
   href?: string;
+  onAction?: () => void;
   icon: ComponentType<{ className?: string }>;
   accent?: "neutral" | "warning" | "success" | "status";
   statusClass?: string;
@@ -33,6 +37,7 @@ function KpiCell({
   label,
   value,
   href,
+  onAction,
   icon: Icon,
   accent = "neutral",
   statusClass,
@@ -58,6 +63,14 @@ function KpiCell({
 
   const cellClassName =
     "min-w-0 flex-1 px-4 py-3 transition-colors hover:bg-muted/30";
+
+  if (onAction) {
+    return (
+      <button type="button" onClick={onAction} className={cellClassName}>
+        {content}
+      </button>
+    );
+  }
 
   if (href) {
     return (
@@ -87,6 +100,7 @@ export function DashboardKpiStrip({
   progress,
   reflection,
   onTrack,
+  onCellAction,
 }: DashboardKpiStripProps) {
   const reflectionDone = Boolean(reflection);
   const onTrackValue =
@@ -105,26 +119,30 @@ export function DashboardKpiStrip({
         <KpiCell
           label="Tasks"
           value={`${progress.tasksCompleted}/${progress.tasksTotal}`}
-          href="/tasks"
+          href={onCellAction ? undefined : "/tasks"}
+          onAction={onCellAction ? () => onCellAction("tasks") : undefined}
           icon={CheckSquare}
         />
         <KpiCell
           label="Habits"
           value={`${progress.habitsCompleted}/${progress.habitsTotal}`}
-          href="/habits"
+          href={onCellAction ? undefined : "/habits"}
+          onAction={onCellAction ? () => onCellAction("habits") : undefined}
           icon={Flame}
           accent="warning"
         />
         <KpiCell
           label="Focus"
           value={formatDuration(progress.focusSeconds)}
-          href="/focus"
+          href={onCellAction ? undefined : "/focus"}
+          onAction={onCellAction ? () => onCellAction("focus") : undefined}
           icon={Timer}
         />
         <KpiCell
           label="Reflection"
           value={reflectionDone ? "Done" : "Pending"}
-          href="/reflection"
+          href={onCellAction ? undefined : "/reflection"}
+          onAction={onCellAction ? () => onCellAction("reflection") : undefined}
           icon={NotebookPen}
           accent={reflectionDone ? "success" : "neutral"}
         />

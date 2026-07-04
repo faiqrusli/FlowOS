@@ -2,19 +2,32 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DashboardCommandHeader } from "@/components/dashboard/dashboard-command-header";
-import { DashboardKpiStrip } from "@/components/dashboard/dashboard-kpi-strip";
+import {
+  DashboardKpiStrip,
+  type KpiCellKey,
+} from "@/components/dashboard/dashboard-kpi-strip";
 import { DashboardNextAction } from "@/components/dashboard/dashboard-next-action";
 import { DashboardCommandSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { WorkplacePageContent } from "@/components/workplace/workplace-page-content";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
+import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import {
   computeOnTrackStatus,
   getNextActionRecommendation,
+  type NextAction,
 } from "@/lib/dashboard-command";
 import { DashboardError, fetchDashboardData } from "@/lib/dashboard";
 import { toggleHabitComplete } from "@/lib/habits";
 import { toggleTaskComplete } from "@/lib/tasks";
+import {
+  scrollToTodayTarget,
+  TODAY_FOCUS_ANCHOR_ID,
+  TODAY_HABITS_SECTION_ID,
+  TODAY_TASKS_SECTION_ID,
+  todayHabitAnchorId,
+  todayTaskAnchorId,
+} from "@/lib/today-in-place";
 import { getUserDisplayName } from "@/lib/user-profile";
 import { createClient } from "@/lib/supabase/client";
 import type { DashboardData } from "@/types/dashboard";
@@ -22,7 +35,8 @@ import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
 
 export function TodayPageContent() {
-  const { dashboardActive } = useFocusSessionContext();
+  const { dashboardActive, prepareFocusTarget, quick } = useFocusSessionContext();
+  const { openReflection, requestQuickCapture } = useGlobalRightSidebar();
   const [data, setData] = useState<DashboardData | null>(null);
   const [displayName, setDisplayName] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
@@ -68,9 +82,10 @@ export function TodayPageContent() {
       return {
         title: "",
         description: "",
-        href: "/tasks",
+        href: "#",
         actionLabel: "Add task",
         type: "empty" as const,
+        inPlaceAction: "open-capture" as const,
       };
     }
 
@@ -80,9 +95,86 @@ export function TodayPageContent() {
       data.timeline,
       data.reflection,
       data.progress.focusSeconds,
-      { hasActiveFocus: dashboardActive.isActive }
+      { hasActiveFocus: dashboardActive.isActive, forToday: true }
     );
   }, [data, dashboardActive.isActive]);
+
+  const handleNextAction = useCallback(
+    (action: NextAction) => {
+      switch (action.inPlaceAction) {
+        case "scroll-to-task": {
+          const targetId =
+            action.scrollTargetId ??
+            (action.entityId ? todayTaskAnchorId(action.entityId) : null);
+          if (targetId) scrollToTodayTarget(targetId);
+          else scrollToTodayTarget(TODAY_TASKS_SECTION_ID);
+          return;
+        }
+        case "scroll-to-habit": {
+          const targetId =
+            action.scrollTargetId ??
+            (action.entityId ? todayHabitAnchorId(action.entityId) : null);
+          if (targetId) scrollToTodayTarget(targetId);
+          else scrollToTodayTarget(TODAY_HABITS_SECTION_ID);
+          return;
+        }
+        case "scroll-to-focus":
+        case "continue-focus":
+          scrollToTodayTarget(TODAY_FOCUS_ANCHOR_ID);
+          return;
+        case "start-focus": {
+          if (action.entityId && data) {
+            const task = data.tasks.find((item) => item.id === action.entityId);
+            if (task) {
+              prepareFocusTarget({
+                type: "task",
+                id: task.id,
+                label: task.title,
+              });
+            } else {
+              prepareFocusTarget(null);
+            }
+          } else {
+            prepareFocusTarget(null);
+          }
+          quick.startFocus();
+          scrollToTodayTarget(TODAY_FOCUS_ANCHOR_ID);
+          return;
+        }
+        case "open-reflection":
+          openReflection();
+          return;
+        case "open-capture":
+          requestQuickCapture();
+          return;
+        default:
+          return;
+      }
+    },
+    [data, openReflection, prepareFocusTarget, quick, requestQuickCapture]
+  );
+
+  const handleKpiCellAction = useCallback(
+    (cell: KpiCellKey) => {
+      switch (cell) {
+        case "tasks":
+          scrollToTodayTarget(TODAY_TASKS_SECTION_ID);
+          return;
+        case "habits":
+          scrollToTodayTarget(TODAY_HABITS_SECTION_ID);
+          return;
+        case "focus":
+          scrollToTodayTarget(TODAY_FOCUS_ANCHOR_ID);
+          return;
+        case "reflection":
+          openReflection();
+          return;
+        default:
+          return;
+      }
+    },
+    [openReflection]
+  );
 
   async function handleToggleTask(task: Task) {
     setError(null);
@@ -183,10 +275,12 @@ export function TodayPageContent() {
               progress={data.progress}
               reflection={data.reflection}
               onTrack={onTrack}
+              onCellAction={handleKpiCellAction}
             />
 
             <DashboardNextAction
               action={nextAction}
+              onAction={handleNextAction}
               onQuickComplete={
                 nextAction.entityId &&
                 (nextAction.type === "task" || nextAction.type === "habit")

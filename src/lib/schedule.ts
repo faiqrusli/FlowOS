@@ -9,8 +9,12 @@ import {
 } from "@/lib/schedule-durations";
 import { fetchTodayHabits } from "@/lib/habits";
 import { fetchTasks, fetchTodayTasks, partitionTasks } from "@/lib/tasks";
-import type { ScheduleData, ScheduleItem } from "@/types/schedule";
+import {
+  todayHabitAnchorId,
+  todayTaskAnchorId,
+} from "@/lib/today-in-place";
 import type { Habit } from "@/types/habit";
+import type { ScheduleData, ScheduleItem } from "@/types/schedule";
 import type { Task } from "@/types/task";
 import type { TaskBuckets } from "@/lib/tasks";
 
@@ -21,9 +25,12 @@ export class ScheduleError extends Error {
   }
 }
 
+export type ScheduleLinkMode = "module" | "today";
+
 export function buildScheduleItems(
   tasks: Task[],
-  habits: Habit[]
+  habits: Habit[],
+  linkMode: ScheduleLinkMode = "module"
 ): ScheduleItem[] {
   const items: ScheduleItem[] = [
     ...tasks.map((task) => {
@@ -43,7 +50,9 @@ export function buildScheduleItems(
         durationMinutes,
         priority: task.priority,
         completed: task.completed,
-        href: "/tasks",
+        href: linkMode === "today" ? "#" : "/tasks",
+        scrollTargetId:
+          linkMode === "today" ? todayTaskAnchorId(task.id) : undefined,
       };
     }),
     ...habits.map((habit) => {
@@ -62,7 +71,9 @@ export function buildScheduleItems(
             : undefined,
         durationMinutes,
         completed: habit.completed,
-        href: "/habits",
+        href: linkMode === "today" ? "#" : "/habits",
+        scrollTargetId:
+          linkMode === "today" ? todayHabitAnchorId(habit.id) : undefined,
       };
     }),
   ];

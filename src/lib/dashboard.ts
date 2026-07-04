@@ -42,7 +42,7 @@ export async function fetchDashboardData(): Promise<DashboardData> {
 
     const focus = computeFocusStatsForDate(focusSessions, today);
     const progress = buildProgress(tasks, habits, focus.totalFocusSeconds);
-    const timeline = buildScheduleItems(tasks, habits);
+    const timeline = buildScheduleItems(tasks, habits, "today");
 
     return {
       progress,

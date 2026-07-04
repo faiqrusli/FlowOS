@@ -13,6 +13,7 @@ import {
   TIMELINE_DRAG_KIND_MIME,
 } from "@/lib/timeline-drag";
 import { timelineHabitChipClassNames } from "@/lib/timeline-habit-appearance";
+import { todayHabitAnchorId } from "@/lib/today-in-place";
 import { cn } from "@/lib/utils";
 import type { Habit } from "@/types/habit";
 
@@ -147,6 +148,7 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
   return (
     <>
       <div
+        id={todayHabitAnchorId(habit.id)}
         draggable={focusDraggable}
         onDragStart={focusDraggable ? handleDragStart : undefined}
         onDragEnd={focusDraggable ? handleDragEnd : undefined}

@@ -7,6 +7,7 @@ import {
   partitionWorkplaceTasks,
   type WorkplaceTaskTab,
 } from "@/lib/workplace-tasks";
+import { TODAY_TASKS_SECTION_ID } from "@/lib/today-in-place";
 import { taskBelongsInLaterView, taskBelongsInTodayView } from "@/lib/task-groups";
 import { cn } from "@/lib/utils";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
@@ -70,7 +71,10 @@ export function WorkplaceTasksCard({
   };
 
   return (
-    <WorkplaceModuleCard moduleId="tasks" title="Today's Tasks" titleMeta={titleMeta} className="min-h-0">
+    <WorkplaceModuleCard
+      moduleId="tasks"
+      anchorId={TODAY_TASKS_SECTION_ID}
+      title="Today's Tasks" titleMeta={titleMeta} className="min-h-0">
       <div className="flex min-h-0 flex-col">
         <div className="flex shrink-0 flex-wrap gap-1 border-b border-divider px-2 py-1.5">
           {TABS.map((item) => (
