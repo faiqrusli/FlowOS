@@ -1,11 +1,8 @@
 import {
-  CalendarDays,
   CheckSquare,
-  LayoutDashboard,
   LayoutTemplate,
   NotebookPen,
   Repeat,
-  StickyNote,
   Timer,
   type LucideIcon,
 } from "lucide-react";
@@ -21,22 +18,16 @@ export type SidebarNavSection = {
   items: SidebarNavItem[];
 };
 
-/** Shown in the sidebar for demo / portfolio builds. */
+/** Primary app navigation — five items per M2 IA. */
 export const sidebarSections: SidebarNavSection[] = [
-  {
-    label: "Overview",
-    items: [{ label: "Dashboard", href: "/", icon: LayoutDashboard }],
-  },
   {
     label: "Productivity",
     items: [
-      { label: "Workplace", href: "/workplace", icon: LayoutTemplate },
-      { label: "Schedule", href: "/schedule", icon: CalendarDays },
+      { label: "Today", href: "/", icon: LayoutTemplate },
       { label: "Tasks", href: "/tasks", icon: CheckSquare },
       { label: "Habits", href: "/habits", icon: Repeat },
       { label: "Focus", href: "/focus", icon: Timer },
       { label: "Reflection", href: "/reflection", icon: NotebookPen },
-      { label: "Notes", href: "/notes", icon: StickyNote },
     ],
   },
 ];
