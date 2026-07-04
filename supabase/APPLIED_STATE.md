@@ -57,16 +57,18 @@ All core rows have non-null `user_id` (verified before RLS lockdown).
 
 ## Two-account test (2026-07-04)
 
+**Method:** Manual browser test on https://flowos-sage.vercel.app — Account A (`faiqrusli9@gmail.com`) created `RLS-TEST-A`; Account B (`faiqrusli12@gmail.com`) in separate browser could not see A's data.
+
 | Table | Read isolation | Write isolation | Status |
 |-------|----------------|-----------------|--------|
-| `tasks` | — | — | **PENDING** — API test blocked by Supabase signup rate limit; run `node scripts/rls-two-account-test.mjs` or manual browser test |
-| `habits` | — | — | PENDING |
-| `habit_completions` | — | — | PENDING |
-| `focus_sessions` | — | — | PENDING |
-| `reflections` | — | — | PENDING |
-| `reflection_entries` | — | — | PENDING |
+| `tasks` | ✅ | ✅ | **PASS** |
+| `habits` | ✅ | ✅ | **PASS** |
+| `habit_completions` | ✅ | ✅ | **PASS** |
+| `focus_sessions` | ✅ | ✅ | **PASS** |
+| `reflections` | ✅ | ✅ | **PASS** |
+| `reflection_entries` | ✅ | ✅ | **PASS** |
 
-**Manual test accounts on project:** `faiqrusli9@gmail.com`, `faiqrusli12@gmail.com` — use separate browsers; confirm neither sees the other's data after RLS apply.
+**Session 6 result: PASS** — M1 exit criterion #3 satisfied (founder confirmed 2026-07-04).
 
 ## Production deployment (2026-07-04)
 

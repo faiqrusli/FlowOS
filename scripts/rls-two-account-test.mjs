@@ -27,9 +27,16 @@ if (!url || !anonKey) {
 }
 
 const ts = Date.now();
-const emailA = `shipgatea${ts}@gmail.com`;
-const emailB = `shipgateb${ts}@gmail.com`;
-const password = `ShipGate!${ts}`;
+const useExisting =
+  env.SHIPGATE_EMAIL_A &&
+  env.SHIPGATE_PASSWORD_A &&
+  env.SHIPGATE_EMAIL_B &&
+  env.SHIPGATE_PASSWORD_B;
+
+const emailA = useExisting ? env.SHIPGATE_EMAIL_A : `shipgatea${ts}@gmail.com`;
+const emailB = useExisting ? env.SHIPGATE_EMAIL_B : `shipgateb${ts}@gmail.com`;
+const password = useExisting ? env.SHIPGATE_PASSWORD_A : `ShipGate!${ts}`;
+const passwordB = useExisting ? env.SHIPGATE_PASSWORD_B : password;
 
 const tables = [
   { name: "tasks", insert: (uid) => ({ title: `RLS-A-${ts}`, user_id: uid }) },
@@ -67,15 +74,31 @@ async function signUp(email) {
   return client;
 }
 
+async function signIn(email, pass) {
+  const client = createClient(url, anonKey);
+  const { data, error } = await client.auth.signInWithPassword({ email, password: pass });
+  if (error) throw new Error(`signIn ${email}: ${error.message}`);
+  if (!data.session) throw new Error(`signIn ${email}: no session`);
+  return client;
+}
+
 async function main() {
-  console.log("Creating test accounts...");
-  const clientA = await signUp(emailA);
+  let clientA;
+  let clientB;
+  if (useExisting) {
+    console.log("Using existing accounts from .env.local (SHIPGATE_EMAIL_A/B)...");
+    clientA = await signIn(emailA, password);
+    clientB = await signIn(emailB, passwordB);
+  } else {
+    console.log("Creating test accounts...");
+    clientA = await signUp(emailA);
+    clientB = await signUp(emailB);
+  }
   const {
     data: { user: userA },
   } = await clientA.auth.getUser();
   if (!userA) throw new Error("No user A");
 
-  const clientB = await signUp(emailB);
   const inserted = {};
 
   for (const t of tables) {
