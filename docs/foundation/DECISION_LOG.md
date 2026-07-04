@@ -36,6 +36,16 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-04 — FlowOS-old archived to git branch
+
+**Context:** `FlowOS-old/` at workspace root was an undocumented duplicate repo (pre–Workplace snapshot at `9859cf6`).  
+**Decision:** Preserve as `archive/flowos-old` branch on `origin`; delete local `FlowOS-old/` folder.  
+**Alternatives rejected:** Zip in repo (large binary, redundant — commit already on GitHub).  
+**Outcome:** Branch pushed; local folder removed in M0 Session 2.  
+**Related:** WP-0.3, M0 exit criterion #4
+
+---
+
 ### 2026-07-04 — Documentation lives inside the git repository
 
 **Context:** The entire `docs/` tree (foundation, design, project) existed only on the founder laptop outside `flowos/` git — a disk failure would erase institutional knowledge (M0 custody gap).  
