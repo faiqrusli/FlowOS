@@ -9,12 +9,12 @@ import {
   type ReactNode,
 } from "react";
 import {
-  CalendarDays,
+  BookOpen,
   ChevronDown,
-  NotebookPen,
   Plus,
+  SlidersHorizontal,
+  Sparkles,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,6 +54,9 @@ function QuickAddHint({
     </span>
   );
 }
+
+const iconActionClass =
+  "inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-xs transition-colors hover:bg-muted/40";
 
 export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRowProps) {
   const { createNewNote, openDailyNote, openReflection, notifyWorkplaceTaskCreated } =
@@ -109,43 +112,45 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-1">
-      <div className="flex w-full min-w-0 flex-nowrap items-center gap-2">
-        <Input
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Add a task…"
-          title="Type a task and press Enter to add to Today"
-          className="h-8 min-w-0 flex-1 border-border/50 bg-background/80 px-2.5 text-[13px] shadow-none"
-        />
-        <QuickAddHint label="Full task form — priority, schedule, group · Ctrl+Shift+A">
-          <button
-            type="button"
-            onClick={onOpenTaskDetails}
-            className="inline-flex h-8 shrink-0 items-center px-1 text-[12px] text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Details…
-          </button>
-        </QuickAddHint>
-        <QuickAddHint label="Daily note or blank note in sidebar">
+      <div className="flex w-full min-w-0 flex-nowrap items-center gap-1.5">
+        <div className="relative min-w-0 flex-1">
+          <Input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Add a task…"
+            title="Type a task and press Enter to add to Today"
+            className="h-8 min-w-0 border-border/50 bg-background/80 pr-9 pl-2.5 text-[13px] shadow-none"
+          />
+          <QuickAddHint label="Full task form — priority, schedule, group · Ctrl+Shift+A">
+            <button
+              type="button"
+              onClick={onOpenTaskDetails}
+              className="absolute top-1/2 right-1.5 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+              aria-label="Open full task form"
+            >
+              <SlidersHorizontal className="size-3.5" />
+            </button>
+          </QuickAddHint>
+        </div>
+        <QuickAddHint label="Today's note or blank note in sidebar">
           <DropdownMenu>
             <DropdownMenuTrigger
-              className={cn(
-                "inline-flex h-8 shrink-0 items-center gap-1 rounded-full border border-border bg-background px-2.5 text-[12px] font-medium text-foreground shadow-xs transition-colors hover:bg-muted/40"
-              )}
+              className={cn(iconActionClass, "gap-0")}
               aria-label="Notes"
             >
-              <NotebookPen className="size-3.5 shrink-0" />
-              Notes
-              <ChevronDown className="size-3 shrink-0 opacity-60" />
+              <BookOpen className="size-3.5 shrink-0" />
             </DropdownMenuTrigger>
             <DropdownMenuContent side="bottom" align="end" className="min-w-[11rem]">
               <DropdownMenuItem
                 onClick={() => void openDailyNote()}
                 className="gap-2 text-[13px]"
               >
-                <CalendarDays className="size-3.5 shrink-0" />
-                Daily note (today)
+                <BookOpen className="size-3.5 shrink-0" />
+                Today&apos;s note
+                <span className="ml-auto text-[10px] text-muted-foreground">
+                  Ctrl+Shift+D
+                </span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => void createNewNote()}
@@ -161,16 +166,14 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
           </DropdownMenu>
         </QuickAddHint>
         <QuickAddHint label="Daily reflection in sidebar · Ctrl+Shift+R">
-          <Button
+          <button
             type="button"
-            variant="outline"
-            size="sm"
-            className="h-8 shrink-0 gap-1 rounded-full px-2.5 text-[12px]"
             onClick={openReflection}
+            className={iconActionClass}
             aria-label="Reflection"
           >
-            Reflect
-          </Button>
+            <Sparkles className="size-3.5 shrink-0" />
+          </button>
         </QuickAddHint>
       </div>
       {error ? (
