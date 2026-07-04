@@ -68,6 +68,14 @@ All core rows have non-null `user_id` (verified before RLS lockdown).
 
 **Manual test accounts on project:** `faiqrusli9@gmail.com`, `faiqrusli12@gmail.com` — use separate browsers; confirm neither sees the other's data after RLS apply.
 
+## Production deployment (2026-07-04)
+
+**URL:** https://flowos-sage.vercel.app  
+**Vercel project:** `flow-os3/flowos`  
+**Env vars set:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (production/preview/development)
+
+**Supabase Auth:** Add `https://flowos-sage.vercel.app/**` to Site URL and Redirect URLs in Supabase Dashboard → Authentication → URL configuration.
+
 ---
 
 *Update this file when two-account test completes and after any future migration.*
