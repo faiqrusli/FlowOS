@@ -19,6 +19,7 @@
 
 | Read | Why |
 |------|-----|
+| [inbox.md](../execution/logs/inbox.md) | Drop random UI/UX fix ideas (no template) |
 | [m2-founder-daily-driver.md](../execution/runbooks/m2-founder-daily-driver.md) | Session plan — Sessions 7–8 are founder-only |
 | [friction-log.md](../execution/logs/friction-log.md) | Log friction from daily production use |
 | [recruiting-pipeline.md](../execution/ops/recruiting-pipeline.md) | M3 recruiting prep (parallel with M2) |
@@ -50,6 +51,9 @@
 ## Daily loop
 
 1. Use **production** FlowOS as your daily driver
-2. Append friction to [friction-log.md](../execution/logs/friction-log.md)
-3. Log product decisions in [decision-log.md](../execution/logs/decision-log.md)
-4. Check [execution/README.md](../execution/README.md) for milestone status before starting new scope
+2. Random UI/UX fix idea → [inbox.md](../execution/logs/inbox.md) (one line)
+3. Recurring production pain with evidence → [friction-log.md](../execution/logs/friction-log.md)
+4. Log product decisions in [decision-log.md](../execution/logs/decision-log.md)
+5. When a runbook session ships → one block in [chronicle/july-2026.md](../execution/logs/chronicle/july-2026.md)
+6. Check [execution/README.md](../execution/README.md) for milestone status before starting new scope
+7. When a milestone exits, complete SRAI in [review/milestones/](../review/milestones/)

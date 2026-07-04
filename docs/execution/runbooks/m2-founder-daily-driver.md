@@ -4,7 +4,8 @@
 **Authority:** Exit criteria and closed scope list in `docs/strategy/execution-masterplan.md` Step 2 (M2). This runbook does not add, remove, defer, or weaken any M2 exit criterion.  
 **Repo root for all commands:** `flowos/` (the git repository).  
 **Production baseline (Ship Gate complete):** https://flowos-sage.vercel.app  
-**Docs path:** `flowos/docs/` (tracked in VCS since M0).
+**Docs path:** `flowos/docs/` (tracked in VCS since M0).  
+**Idea capture:** Random UI/UX fixes → [inbox.md](../logs/inbox.md) first; promote to sessions below when scoped. After each session ships → [chronicle/july-2026.md](../logs/chronicle/july-2026.md).
 
 ---
 

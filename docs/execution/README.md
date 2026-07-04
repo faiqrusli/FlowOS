@@ -31,6 +31,8 @@ This folder is the index for **how FlowOS ships right now**. Strategy lives in t
 
 Runbook index: [runbooks/README.md](./runbooks/README.md)
 
+**After milestone exit:** Write or update SRAI review in [../review/milestones/](../review/milestones/) — see [../review/README.md](../review/README.md).
+
 ---
 
 ## Operational state
@@ -46,8 +48,10 @@ Runbook index: [runbooks/README.md](./runbooks/README.md)
 
 | Log | Purpose |
 |-----|---------|
+| [inbox.md](./logs/inbox.md) | Scratch UI/UX fixes — promote to runbook when scoped |
 | [friction-log.md](./logs/friction-log.md) | Live founder friction from production use |
 | [decision-log.md](./logs/decision-log.md) | Product decisions with rationale |
+| [chronicle/](./logs/chronicle/) | Monthly session memory (after runbook ships) |
 
 Log index: [logs/README.md](./logs/README.md)
 

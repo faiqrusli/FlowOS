@@ -94,16 +94,17 @@ For each phase, read in order: **review → spec → implementation → post-rev
 
 | When | File pattern | Location |
 |------|--------------|----------|
-| Strategic review before a phase | `0N-phaseN-review.md` or `0N-phaseN-strategic-review.md` | `docs/design/` |
-| Approved engineering contract | `0N-phaseN-spec.md` | `docs/design/` |
-| Implementation completion report | `0N-phaseN-implementation.md` | `docs/design/` |
-| Release validation / patch | `0N-phaseN-post-review.md` | `docs/design/` |
-| Cross-cutting UX or product review | descriptive name, e.g. `ux-friction-review.md` | `docs/design/` |
-| Decision rationale (ongoing) | append to `AUDIT_HISTORY.md` | `docs/design/` |
-| Timeline entry | append to `CHANGELOG.md` | `docs/design/` |
-| Current state update | update `project-state-july-2026.md` and `roadmap-pre-masterplan.md` | `docs/design/` |
+| Milestone / phase SRAI review | `mN-*.md` or `phase-N-srai.md` | [../../review/](../../review/) |
+| Strategic review before a phase | `0N-phaseN-review.md` or `0N-phaseN-strategic-review.md` | Archive when frozen — [../../review/design/](../../review/design/) index |
+| Approved engineering contract | `0N-phaseN-spec.md` | `docs/archive/design/july-3/` (historical) |
+| Implementation completion report | `0N-phaseN-implementation.md` | Same |
+| Release validation / patch | `0N-phaseN-post-review.md` | Same |
+| Cross-cutting UX or product review | e.g. `ux-friction-review.md` | Archive + link from [../../review/](../../review/) |
+| Decision rationale (ongoing) | append to `AUDIT_HISTORY.md` or [decision-log.md](../../execution/logs/decision-log.md) | |
+| Timeline entry | append to `CHANGELOG.md` | This archive folder |
+| Current product state | [FEATURE_INVENTORY.md](../../foundation/FEATURE_INVENTORY.md) | foundation/ |
 
-**Do not** store design history in `.cursor/plans/` (ephemeral) or Canvas-only form (not in repo). Always normalize into `docs/design/` with the standard section structure.
+**Active review workflow:** [../../review/README.md](../../review/README.md) — Summarize → Review → Audit → Improve.
 
 ---
 

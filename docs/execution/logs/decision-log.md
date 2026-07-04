@@ -36,6 +36,26 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-04 — UX/UI fix inbox + work chronicle
+
+**Context:** Founder needed a scratch pad for random UI/UX problems without opening a formal doc; friction-log is for measured daily dogfood, not quick ideas. Ideas should flow inbox → runbook → chronicle → review.  
+**Decision:** Add `docs/execution/logs/inbox.md` (one-line capture) and `docs/execution/logs/chronicle/july-2026.md` (monthly session memory). Wire pipeline in founder daily loop and review README.  
+**Alternatives rejected:** Expand friction-log for all ideas (wrong ceremony); skip chronicle and only use decision-log (loses session narrative and undocumented changes).  
+**Outcome:** Applied July 4, 2026.  
+**Related:** [inbox.md](./inbox.md), [chronicle/july-2026.md](./chronicle/july-2026.md)
+
+---
+
+### 2026-07-04 — Add review layer (SRAI cycle)
+
+**Context:** Design phases 0–2 had review/audit/post-review docs buried in `archive/design/`. Execution milestones (M0–M5) had runbooks and logs but no standard place to Summarize, Review, Audit, and Improve after each milestone exit.  
+**Decision:** Create `docs/review/` with SRAI cycle definition, template, design phase index (→ archive), and milestone reviews (`m0`, `m1` complete; `m2` in progress). Reviews feed decision-log and foundation updates; they do not override decision-log authority.  
+**Alternatives rejected:** Fold reviews into execution/logs (mixes live logs with retrospective reports); leave only in archive (no home for M0–M5 reviews).  
+**Outcome:** Applied July 4, 2026.  
+**Related:** [review README.md](../../review/README.md), [milestones/](../../review/milestones/)
+
+---
+
 ### 2026-07-04 — Foundation docs consolidated (Pass 5)
 
 **Context:** Six active foundation files (`INFORMATION_ARCHITECTURE`, `SUCCESS_METRICS`, `USER_PERSONAS`, plus vision, inventory, architecture) overlapped with governance gates, execution runbooks, and each other. Stale M1 blockers (`/workplace` auth) remained in inventory and technical architecture.  

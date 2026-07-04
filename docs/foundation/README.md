@@ -38,6 +38,7 @@ Product truth documents — vision, features, architecture.
 |------|---------|
 | [execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5 |
 | [m2-founder-daily-driver.md](../execution/runbooks/m2-founder-daily-driver.md) | Current runbook |
+| [review/milestones/](../review/milestones/) | SRAI reviews after milestone exit |
 | [recruiting-pipeline.md](../execution/ops/recruiting-pipeline.md) | M3 alpha recruiting |
 | [decision-log.md](../execution/logs/decision-log.md) | Product decisions |
 | [friction-log.md](../execution/logs/friction-log.md) | Live friction |

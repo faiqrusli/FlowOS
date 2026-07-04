@@ -1,6 +1,6 @@
 ﻿# FlowOS Document Map
 
-**Last updated:** July 4, 2026 (Pass 5 — foundation consolidation)
+**Last updated:** July 4, 2026 (Pass 5 + review layer)
 
 ---
 
@@ -10,6 +10,9 @@
 |------|------|
 | [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5 |
 | [../execution/](../execution/) | Runbooks, logs, ops |
+| [../review/](../review/) | SRAI after each phase/milestone |
+| [../execution/logs/inbox.md](../execution/logs/inbox.md) | Scratch UI/UX fix capture |
+| [../execution/logs/chronicle/](../execution/logs/chronicle/) | Monthly session chronicle |
 | [../foundation/PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | North star |
 | [../foundation/FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | Shipped features + IA |
 | [../foundation/TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) | Stack and debt |

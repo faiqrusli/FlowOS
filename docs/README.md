@@ -37,7 +37,8 @@ When documents conflict, this order wins:
 | Directory | Contents | Status |
 |-----------|----------|--------|
 | [strategy/](./strategy/) | Execution masterplan | **Active** |
-| [execution/](./execution/) | Runbooks, ops, logs | **Active** |
+| [execution/](./execution/) | Runbooks, logs, ops | **Active** |
+| [review/](./review/) | SRAI after each phase/milestone | **Active** |
 | [foundation/](./foundation/) | Vision, features, architecture (3 files) | **Active** |
 | [foundation/governance/](./foundation/governance/) | 4 rule docs (PRINCIPLES, GATES, QUALITY, ENGINEERING) | **Reference** |
 | [archive/](./archive/) | Thesis, design history, superseded plans | **Archive** |
@@ -59,8 +60,19 @@ When documents conflict, this order wins:
 | [m1-ship-gate.md](./execution/runbooks/m1-ship-gate.md) | M1 deploy, migrations, RLS |
 | [m2-founder-daily-driver.md](./execution/runbooks/m2-founder-daily-driver.md) | M2 Today home, routing, capture |
 | [friction-log.md](./execution/logs/friction-log.md) | Live founder dogfood log |
+| [inbox.md](./execution/logs/inbox.md) | Scratch UI/UX fix ideas |
+| [chronicle/july-2026.md](./execution/logs/chronicle/july-2026.md) | July session narrative |
 | [decision-log.md](./execution/logs/decision-log.md) | Product decisions (append-only) |
 | [recruiting-pipeline.md](./execution/ops/recruiting-pipeline.md) | M3 recruiting prep |
+
+### Review (after each milestone)
+
+| Document | Purpose |
+|----------|---------|
+| [review/README.md](./review/README.md) | SRAI cycle — Summarize, Review, Audit, Improve |
+| [review/milestones/](./review/milestones/) | M0–M5 milestone reviews |
+| [review/design/](./review/design/) | Design phase review index (Phases 0–2) |
+| [review/template.md](./review/template.md) | Blank SRAI template |
 
 ### Product and engineering
 
@@ -97,6 +109,8 @@ Design Audit → Phase 0–2 (docs/archive/design/)
 Foundation + governance (docs/foundation/)
     ↓
 Active strategy + execution (docs/strategy/, docs/execution/) ← current
+    ↓
+Review after each milestone (docs/review/) ← SRAI
 ```
 
 Doc map: [meta/document-map.md](./meta/document-map.md)
