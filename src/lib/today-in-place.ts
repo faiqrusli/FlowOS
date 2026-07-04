@@ -33,3 +33,14 @@ export function scrollToTodayTarget(elementId: string): boolean {
 
   return true;
 }
+
+/** Scroll after a tab switch re-mounts the target row. */
+export function scrollToTodayTargetDeferred(elementId: string): void {
+  if (typeof window === "undefined") return;
+
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      scrollToTodayTarget(elementId);
+    });
+  });
+}

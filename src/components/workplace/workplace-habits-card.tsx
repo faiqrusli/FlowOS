@@ -1,14 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { WorkplaceCompactHabitRow } from "@/components/workplace/workplace-compact-habit-row";
 import { WorkplaceModuleCard } from "@/components/workplace/workplace-module-card";
 import { computeHabitStatsMap, getCachedHabitCompletions } from "@/lib/habits";
 import {
   partitionWorkplaceHabits,
+  resolveWorkplaceHabitTab,
   type WorkplaceHabitTab,
 } from "@/lib/workplace-habits";
-import { TODAY_HABITS_SECTION_ID } from "@/lib/today-in-place";
+import {
+  scrollToTodayTarget,
+  scrollToTodayTargetDeferred,
+  TODAY_HABITS_SECTION_ID,
+  todayHabitAnchorId,
+} from "@/lib/today-in-place";
 import { cn } from "@/lib/utils";
 import type { Habit } from "@/types/habit";
 
@@ -18,6 +31,10 @@ const TABS: { id: WorkplaceHabitTab; label: string }[] = [
   { id: "completed", label: "Completed" },
 ];
 
+export type WorkplaceHabitsCardHandle = {
+  ensureHabitVisible: (habitId: string) => boolean;
+};
+
 type WorkplaceHabitsCardProps = {
   habits: Habit[];
   todayViewDate: string;
@@ -25,13 +42,15 @@ type WorkplaceHabitsCardProps = {
   onStartFocus?: (habit: Habit) => void;
 };
 
-export function WorkplaceHabitsCard({
-  habits,
-  todayViewDate,
-  onToggleComplete,
-  onStartFocus,
-}: WorkplaceHabitsCardProps) {
+export const WorkplaceHabitsCard = forwardRef<
+  WorkplaceHabitsCardHandle,
+  WorkplaceHabitsCardProps
+>(function WorkplaceHabitsCard(
+  { habits, todayViewDate, onToggleComplete, onStartFocus },
+  ref
+) {
   const [tab, setTab] = useState<WorkplaceHabitTab>("incomplete");
+  const pendingScrollIdRef = useRef<string | null>(null);
   const sections = useMemo(
     () => partitionWorkplaceHabits(habits, todayViewDate),
     [habits, todayViewDate]
@@ -50,6 +69,41 @@ export function WorkplaceHabitsCard({
   const list = sections[tab];
   const completedCount = habits.filter((habit) => habit.completed).length;
   const titleMeta = `${completedCount}/${habits.length}`;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      ensureHabitVisible(habitId: string) {
+        const habit = habits.find((item) => item.id === habitId);
+        if (!habit) return false;
+
+        const targetTab = resolveWorkplaceHabitTab(habit, habits, todayViewDate);
+        const anchorId = todayHabitAnchorId(habitId);
+
+        if (!targetTab) {
+          scrollToTodayTarget(TODAY_HABITS_SECTION_ID);
+          return false;
+        }
+
+        if (tab === targetTab) {
+          return scrollToTodayTarget(anchorId);
+        }
+
+        pendingScrollIdRef.current = anchorId;
+        setTab(targetTab);
+        return true;
+      },
+    }),
+    [habits, tab, todayViewDate]
+  );
+
+  useEffect(() => {
+    const anchorId = pendingScrollIdRef.current;
+    if (!anchorId) return;
+
+    pendingScrollIdRef.current = null;
+    scrollToTodayTargetDeferred(anchorId);
+  }, [tab]);
 
   return (
     <WorkplaceModuleCard
@@ -100,4 +154,4 @@ export function WorkplaceHabitsCard({
       </div>
     </WorkplaceModuleCard>
   );
-}
+});

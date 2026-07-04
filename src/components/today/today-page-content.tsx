@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DashboardCommandHeader } from "@/components/dashboard/dashboard-command-header";
 import {
   DashboardKpiStrip,
@@ -10,6 +10,8 @@ import {
 import { DashboardNextAction } from "@/components/dashboard/dashboard-next-action";
 import { DashboardCommandSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorBanner } from "@/components/shared/error-banner";
+import type { WorkplaceHabitsCardHandle } from "@/components/workplace/workplace-habits-card";
+import type { WorkplaceTasksCardHandle } from "@/components/workplace/workplace-tasks-card";
 import { WorkplacePageContent } from "@/components/workplace/workplace-page-content";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
@@ -40,6 +42,8 @@ import type { Task } from "@/types/task";
 export function TodayPageContent() {
   const { dashboardActive, prepareFocusTarget, quick } = useFocusSessionContext();
   const { openReflection, requestQuickCapture } = useGlobalRightSidebar();
+  const tasksTabRef = useRef<WorkplaceTasksCardHandle>(null);
+  const habitsTabRef = useRef<WorkplaceHabitsCardHandle>(null);
   const [data, setData] = useState<DashboardData | null>(null);
   const [displayName, setDisplayName] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
@@ -102,23 +106,53 @@ export function TodayPageContent() {
     );
   }, [data, dashboardActive.isActive]);
 
+  const scrollToTask = useCallback(
+    (taskId: string, fallbackTargetId?: string | null) => {
+      if (tasksTabRef.current?.ensureTaskVisible(taskId)) return;
+
+      const targetId = fallbackTargetId ?? todayTaskAnchorId(taskId);
+      if (scrollToTodayTarget(targetId)) return;
+
+      scrollToTodayTarget(TODAY_TASKS_SECTION_ID);
+    },
+    []
+  );
+
+  const scrollToHabit = useCallback(
+    (habitId: string, fallbackTargetId?: string | null) => {
+      if (habitsTabRef.current?.ensureHabitVisible(habitId)) return;
+
+      const targetId = fallbackTargetId ?? todayHabitAnchorId(habitId);
+      if (scrollToTodayTarget(targetId)) return;
+
+      scrollToTodayTarget(TODAY_HABITS_SECTION_ID);
+    },
+    []
+  );
+
   const handleNextAction = useCallback(
     (action: NextAction) => {
       switch (action.inPlaceAction) {
         case "scroll-to-task": {
-          const targetId =
-            action.scrollTargetId ??
-            (action.entityId ? todayTaskAnchorId(action.entityId) : null);
-          if (targetId) scrollToTodayTarget(targetId);
-          else scrollToTodayTarget(TODAY_TASKS_SECTION_ID);
+          if (action.entityId) {
+            scrollToTask(
+              action.entityId,
+              action.scrollTargetId ?? todayTaskAnchorId(action.entityId)
+            );
+          } else {
+            scrollToTodayTarget(TODAY_TASKS_SECTION_ID);
+          }
           return;
         }
         case "scroll-to-habit": {
-          const targetId =
-            action.scrollTargetId ??
-            (action.entityId ? todayHabitAnchorId(action.entityId) : null);
-          if (targetId) scrollToTodayTarget(targetId);
-          else scrollToTodayTarget(TODAY_HABITS_SECTION_ID);
+          if (action.entityId) {
+            scrollToHabit(
+              action.entityId,
+              action.scrollTargetId ?? todayHabitAnchorId(action.entityId)
+            );
+          } else {
+            scrollToTodayTarget(TODAY_HABITS_SECTION_ID);
+          }
           return;
         }
         case "scroll-to-focus":
@@ -154,7 +188,7 @@ export function TodayPageContent() {
           return;
       }
     },
-    [data, openReflection, prepareFocusTarget, quick, requestQuickCapture]
+    [data, openReflection, prepareFocusTarget, quick, requestQuickCapture, scrollToHabit, scrollToTask]
   );
 
   const handleKpiCellAction = useCallback(
@@ -312,7 +346,10 @@ export function TodayPageContent() {
       </div>
 
       <div className="min-h-0 flex-1">
-        <WorkplacePageContent />
+        <WorkplacePageContent
+          tasksTabRef={tasksTabRef}
+          habitsTabRef={habitsTabRef}
+        />
       </div>
     </div>
   );

@@ -45,3 +45,22 @@ export function partitionWorkplaceHabits(
 
   return { incomplete, missed, completed };
 }
+
+/** Which Today habits-card tab owns this habit (null if not scheduled today). */
+export function resolveWorkplaceHabitTab(
+  habit: Habit,
+  habits: Habit[],
+  todayViewDate: string
+): WorkplaceHabitTab | null {
+  const sections = partitionWorkplaceHabits(habits, todayViewDate);
+
+  if (sections.incomplete.some((item) => item.id === habit.id)) {
+    return "incomplete";
+  }
+  if (sections.missed.some((item) => item.id === habit.id)) return "missed";
+  if (sections.completed.some((item) => item.id === habit.id)) {
+    return "completed";
+  }
+
+  return null;
+}

@@ -1,15 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, forwardRef, type RefObject } from "react";
 import { TimelinePlanner, type TimelinePlannerProps } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { WorkplaceDailyNoteCard } from "@/components/workplace/workplace-daily-note-card";
 import { WorkplaceFocusCard } from "@/components/workplace/workplace-focus-card";
-import { WorkplaceHabitsCard } from "@/components/workplace/workplace-habits-card";
+import { WorkplaceHabitsCard, type WorkplaceHabitsCardHandle } from "@/components/workplace/workplace-habits-card";
 import { WorkplaceNotificationHost } from "@/components/workplace/workplace-notification-host";
 import { WorkplaceQuickAddCard } from "@/components/workplace/workplace-quick-add-card";
 import { WorkplaceTodayTaskMenu } from "@/components/workplace/workplace-today-task-menu";
-import { WorkplaceTasksCard } from "@/components/workplace/workplace-tasks-card";
+import { WorkplaceTasksCard, type WorkplaceTasksCardHandle } from "@/components/workplace/workplace-tasks-card";
 import {
   TaskBoardActionsProvider,
   type TaskBoardActions,
@@ -62,7 +62,15 @@ import { fetchWorkplaceData, WorkplaceError } from "@/lib/workplace-data";
 import type { Habit } from "@/types/habit";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
-export function WorkplacePageContent() {
+type WorkplacePageContentProps = {
+  tasksTabRef?: RefObject<WorkplaceTasksCardHandle | null>;
+  habitsTabRef?: RefObject<WorkplaceHabitsCardHandle | null>;
+};
+
+export function WorkplacePageContent({
+  tasksTabRef,
+  habitsTabRef,
+}: WorkplacePageContentProps = {}) {
   const {
     selectedTaskId,
     selectTask,
@@ -511,6 +519,7 @@ export function WorkplacePageContent() {
             <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS} min-h-0 py-1`}>
               <div className="row-span-2 min-h-0">
                 <WorkplaceTasksCard
+                  ref={tasksTabRef}
                   tasks={allTasks}
                   groups={groups}
                   todayViewDate={todayViewDate}
@@ -541,6 +550,7 @@ export function WorkplacePageContent() {
                 />
               </div>
               <WorkplaceHabitsCardWithFocus
+                ref={habitsTabRef}
                 habits={todayDisplayHabits}
                 todayViewDate={todayViewDate}
                 onToggleComplete={(habit) => void handleToggleHabitComplete(habit)}
@@ -611,26 +621,29 @@ export function WorkplacePageContent() {
   );
 }
 
-function WorkplaceHabitsCardWithFocus({
-  habits,
-  todayViewDate,
-  onToggleComplete,
-}: {
-  habits: Habit[];
-  todayViewDate: string;
-  onToggleComplete: (habit: Habit) => void;
-}) {
+const WorkplaceHabitsCardWithFocus = forwardRef<
+  WorkplaceHabitsCardHandle,
+  {
+    habits: Habit[];
+    todayViewDate: string;
+    onToggleComplete: (habit: Habit) => void;
+  }
+>(function WorkplaceHabitsCardWithFocus(
+  { habits, todayViewDate, onToggleComplete },
+  habitsTabRef
+) {
   const { setActiveHabitId } = useWorkplaceFocusTask();
 
   return (
     <WorkplaceHabitsCard
+      ref={habitsTabRef}
       habits={habits}
       todayViewDate={todayViewDate}
       onToggleComplete={onToggleComplete}
       onStartFocus={(habit) => setActiveHabitId(habit.id, "manual")}
     />
   );
-}
+});
 
 function WorkplaceTimelinePlanner(
   props: Omit<

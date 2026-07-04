@@ -1,13 +1,27 @@
 "use client";
 
-import { useMemo, useState, type MouseEvent } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+} from "react";
 import { WorkplaceCompactTaskRow } from "@/components/workplace/workplace-compact-task-row";
 import { WorkplaceModuleCard } from "@/components/workplace/workplace-module-card";
 import {
   partitionWorkplaceTasks,
+  resolveWorkplaceTaskTab,
   type WorkplaceTaskTab,
 } from "@/lib/workplace-tasks";
-import { TODAY_TASKS_SECTION_ID } from "@/lib/today-in-place";
+import {
+  scrollToTodayTarget,
+  scrollToTodayTargetDeferred,
+  TODAY_TASKS_SECTION_ID,
+  todayTaskAnchorId,
+} from "@/lib/today-in-place";
 import { taskBelongsInLaterView, taskBelongsInTodayView } from "@/lib/task-groups";
 import { cn } from "@/lib/utils";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
@@ -19,6 +33,10 @@ const TABS: { id: WorkplaceTaskTab; label: string }[] = [
   { id: "completed", label: "Completed" },
 ];
 
+export type WorkplaceTasksCardHandle = {
+  ensureTaskVisible: (taskId: string) => boolean;
+};
+
 type WorkplaceTasksCardProps = {
   tasks: Task[];
   groups: TaskGroupWithTasks[];
@@ -29,16 +47,23 @@ type WorkplaceTasksCardProps = {
   onTaskContextMenu: (task: Task, anchorRect: DOMRect) => void;
 };
 
-export function WorkplaceTasksCard({
-  tasks,
-  groups,
-  todayViewDate,
-  onOpenDetail,
-  onToggleComplete,
-  onUpdateTask,
-  onTaskContextMenu,
-}: WorkplaceTasksCardProps) {
+export const WorkplaceTasksCard = forwardRef<
+  WorkplaceTasksCardHandle,
+  WorkplaceTasksCardProps
+>(function WorkplaceTasksCard(
+  {
+    tasks,
+    groups,
+    todayViewDate,
+    onOpenDetail,
+    onToggleComplete,
+    onUpdateTask,
+    onTaskContextMenu,
+  },
+  ref
+) {
   const [tab, setTab] = useState<WorkplaceTaskTab>("queue");
+  const pendingScrollIdRef = useRef<string | null>(null);
   const sections = useMemo(
     () => partitionWorkplaceTasks(tasks, todayViewDate),
     [tasks, todayViewDate]
@@ -64,6 +89,41 @@ export function WorkplaceTasksCard({
   );
   const completedToday = todayTasks.filter((task) => task.completed).length;
   const titleMeta = `${completedToday}/${todayTasks.length}`;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      ensureTaskVisible(taskId: string) {
+        const task = tasks.find((item) => item.id === taskId);
+        if (!task) return false;
+
+        const targetTab = resolveWorkplaceTaskTab(task, tasks, todayViewDate);
+        const anchorId = todayTaskAnchorId(taskId);
+
+        if (!targetTab) {
+          scrollToTodayTarget(TODAY_TASKS_SECTION_ID);
+          return false;
+        }
+
+        if (tab === targetTab) {
+          return scrollToTodayTarget(anchorId);
+        }
+
+        pendingScrollIdRef.current = anchorId;
+        setTab(targetTab);
+        return true;
+      },
+    }),
+    [tab, tasks, todayViewDate]
+  );
+
+  useEffect(() => {
+    const anchorId = pendingScrollIdRef.current;
+    if (!anchorId) return;
+
+    pendingScrollIdRef.current = null;
+    scrollToTodayTargetDeferred(anchorId);
+  }, [tab]);
 
   const handleContextMenu = (task: Task) => (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -117,4 +177,4 @@ export function WorkplaceTasksCard({
       </div>
     </WorkplaceModuleCard>
   );
-}
+});

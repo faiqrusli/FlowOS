@@ -61,3 +61,21 @@ export function partitionWorkplaceTasks(
 
   return { queue, unscheduled, completed, missed };
 }
+
+/** Which Today tasks-card tab owns this task (null if not in any tab). */
+export function resolveWorkplaceTaskTab(
+  task: Task,
+  tasks: Task[],
+  todayViewDate: string
+): WorkplaceTaskTab | null {
+  const sections = partitionWorkplaceTasks(tasks, todayViewDate);
+
+  if (sections.queue.some((item) => item.id === task.id)) return "queue";
+  if (sections.unscheduled.some((item) => item.id === task.id)) {
+    return "unscheduled";
+  }
+  if (sections.missed.some((item) => item.id === task.id)) return "missed";
+  if (sections.completed.some((item) => item.id === task.id)) return "completed";
+
+  return null;
+}
