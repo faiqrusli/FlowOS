@@ -33,6 +33,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { CalendarPanel, CALENDAR_PANEL_WIDTH_CLASS } from "@/components/ui/calendar-panel";
+import { BackToTodayLink } from "@/components/shared/back-to-today-link";
 import { QuickScheduleResizeHandle } from "@/components/tasks/quick-schedule-resize-handle";
 import { WorkplaceTimelineTaskMenu } from "@/components/workplace/workplace-timeline-task-menu";
 import {
@@ -1540,7 +1541,7 @@ export function TimelinePlanner({
         className={cn(
           "relative shrink-0 border-b",
           isFullscreen
-            ? "flex items-center gap-2 border-border/30 py-3"
+            ? "flex items-center gap-2 border-border/30 px-4 py-3"
             : "border-border/50 bg-background/70 px-2 py-1.5"
         )}
       >
@@ -1575,6 +1576,7 @@ export function TimelinePlanner({
           </div>
         ) : (
           <div className="relative flex w-full items-center gap-2 px-1">
+            <BackToTodayLink />
             <div className="flex min-w-0 flex-1 items-center gap-2">
               <Clock className={panelTogglePrimaryIconClass()} />
               <div className="min-w-0">

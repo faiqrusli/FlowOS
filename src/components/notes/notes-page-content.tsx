@@ -8,6 +8,7 @@ import { KanbanPanel } from "@/components/notes/kanban-panel";
 import { NotesPanel } from "@/components/notes/notes-panel";
 import { NotesTabTransition } from "@/components/notes/notes-tab-transition";
 import { ErrorBanner } from "@/components/shared/error-banner";
+import { BackToTodayLink } from "@/components/shared/back-to-today-link";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import {
   createGrowthArea,
@@ -160,6 +161,18 @@ export function NotesPageContent() {
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
+      <div className="flex shrink-0 items-center gap-3 border-b border-border/30 px-3 py-2 sm:px-4">
+        <BackToTodayLink />
+        <div className="min-w-0">
+          <h1 className="text-base font-semibold leading-tight text-foreground">
+            Notes
+          </h1>
+          <p className="text-xs text-muted-foreground">
+            Growth areas, notes, and kanban boards
+          </p>
+        </div>
+      </div>
+
       {error && <ErrorBanner message={error} />}
 
       <div className="relative flex min-h-0 flex-1 flex-row gap-2 overflow-hidden sm:gap-3">

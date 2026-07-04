@@ -10,6 +10,7 @@ import {
 import { DashboardNextAction } from "@/components/dashboard/dashboard-next-action";
 import { DashboardCommandSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorBanner } from "@/components/shared/error-banner";
+import { TodayEscapeLink } from "@/components/shared/today-escape-link";
 import type { WorkplaceHabitsCardHandle } from "@/components/workplace/workplace-habits-card";
 import type { WorkplaceTasksCardHandle } from "@/components/workplace/workplace-tasks-card";
 import { WorkplacePageContent } from "@/components/workplace/workplace-page-content";
@@ -33,8 +34,6 @@ import {
 } from "@/lib/today-in-place";
 import { getUserDisplayName } from "@/lib/user-profile";
 import { createClient } from "@/lib/supabase/client";
-import { type } from "@/lib/typography";
-import { cn } from "@/lib/utils";
 import type { DashboardData } from "@/types/dashboard";
 import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
@@ -332,19 +331,9 @@ export function TodayPageContent() {
               onCellAction={handleKpiCellAction}
             />
 
-            <div className={cn("flex flex-wrap gap-x-4 gap-y-1", type.meta)}>
-              <Link
-                href="/schedule"
-                className="text-muted-foreground transition-colors hover:text-foreground"
-              >
-                Open full timeline
-              </Link>
-              <Link
-                href="/notes"
-                className="text-muted-foreground transition-colors hover:text-foreground"
-              >
-                Notes
-              </Link>
+            <div className="flex flex-wrap items-center gap-2">
+              <TodayEscapeLink href="/schedule">Full timeline</TodayEscapeLink>
+              <TodayEscapeLink href="/notes">Notes</TodayEscapeLink>
             </div>
 
             <DashboardNextAction
