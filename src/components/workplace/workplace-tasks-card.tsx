@@ -134,8 +134,12 @@ export const WorkplaceTasksCard = forwardRef<
     <WorkplaceModuleCard
       moduleId="tasks"
       anchorId={TODAY_TASKS_SECTION_ID}
-      title="Today's Tasks" titleMeta={titleMeta} className="min-h-0">
-      <div className="flex min-h-0 flex-col">
+      title="Today's Tasks"
+      titleMeta={titleMeta}
+      className="min-h-0 overflow-hidden"
+      bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
+    >
+      <div className="flex h-full min-h-0 flex-col">
         <div className="flex shrink-0 flex-wrap gap-1 border-b border-divider px-2 py-1.5">
           {TABS.map((item) => (
             <button

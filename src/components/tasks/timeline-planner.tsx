@@ -2152,7 +2152,9 @@ export function TimelinePlanner({
           y={contextMenu.y}
           onClose={() => setContextMenu(null)}
           onStartFocus={
-            contextMenu.habit.track_with_focus && onStartFocusHabit
+            contextMenu.habit.track_with_focus &&
+            !contextMenu.habit.completed &&
+            onStartFocusHabit
               ? () => {
                   onStartFocusHabit(contextMenu.habit.id);
                   setContextMenu(null);

@@ -69,13 +69,13 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
       const created = await createQuickCaptureTask({ title: trimmed });
       notifyWorkplaceTaskCreated(created);
       setTitle("");
-      inputRef.current?.focus();
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to create task."
       );
     } finally {
       setSaving(false);
+      requestAnimationFrame(() => inputRef.current?.focus());
     }
   }, [notifyWorkplaceTaskCreated, saving, title]);
 
