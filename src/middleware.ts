@@ -2,9 +2,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 const AUTH_ROUTES = ["/login", "/register"];
+const PLACEHOLDER_PREFIXES = ["/goals", "/ai-coach", "/weekly-review"];
 const PROTECTED_PREFIXES = [
   "/",
   "/dashboard",
+  "/workplace",
   "/tasks",
   "/habits",
   "/schedule",
@@ -49,6 +51,15 @@ function isProtectedRoute(pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   const { supabaseResponse, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
+
+  if (
+    process.env.NODE_ENV === "production" &&
+    PLACEHOLDER_PREFIXES.some(
+      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+    )
+  ) {
+    return new NextResponse(null, { status: 404 });
+  }
 
   if (pathname === "/dashboard") {
     const url = request.nextUrl.clone();
