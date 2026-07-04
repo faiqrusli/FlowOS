@@ -1,5 +1,16 @@
-import { DashboardPageContent } from "@/components/dashboard/dashboard-page-content";
+import type { Metadata } from "next";
+import { TodayPageContent } from "@/components/today/today-page-content";
+
+export const metadata: Metadata = {
+  title: "Today",
+  description:
+    "Execute today's work — focus, schedule, habits, and tasks in one place.",
+};
 
 export default function Home() {
-  return <DashboardPageContent />;
+  return (
+    <div className="-m-6 flex h-[calc(100dvh-3rem)] min-h-0 flex-col overflow-hidden lg:-ml-10 lg:-mt-8">
+      <TodayPageContent />
+    </div>
+  );
 }

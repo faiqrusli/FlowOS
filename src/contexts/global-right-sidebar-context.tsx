@@ -95,7 +95,8 @@ export function GlobalRightSidebarProvider({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const workplaceHoverMode = pathname === "/workplace";
+  const workplaceHoverMode =
+    pathname === "/" || pathname === "/workplace";
 
   const [activePanel, setActivePanel] = useState<GlobalRightSidebarPanel>(
     readPersistedSidebarPanel
