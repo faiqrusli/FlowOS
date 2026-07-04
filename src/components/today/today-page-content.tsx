@@ -106,6 +106,23 @@ export function TodayPageContent() {
     );
   }, [data, dashboardActive.isActive]);
 
+  const nextActionTargetCompleted = useMemo(() => {
+    if (!data || !nextAction.entityId) return false;
+    if (nextAction.type === "task") {
+      return (
+        data.tasks.find((item) => item.id === nextAction.entityId)?.completed ??
+        false
+      );
+    }
+    if (nextAction.type === "habit") {
+      return (
+        data.habits.find((item) => item.id === nextAction.entityId)
+          ?.completed ?? false
+      );
+    }
+    return false;
+  }, [data, nextAction.entityId, nextAction.type]);
+
   const scrollToTask = useCallback(
     (taskId: string, fallbackTargetId?: string | null) => {
       if (tasksTabRef.current?.ensureTaskVisible(taskId)) return;
@@ -335,7 +352,8 @@ export function TodayPageContent() {
               onAction={handleNextAction}
               onQuickComplete={
                 nextAction.entityId &&
-                (nextAction.type === "task" || nextAction.type === "habit")
+                (nextAction.type === "task" || nextAction.type === "habit") &&
+                !nextActionTargetCompleted
                   ? handleQuickCompleteNext
                   : undefined
               }

@@ -67,7 +67,7 @@ export function DashboardNextAction({
               className="h-8 gap-1.5 px-3 text-sm"
             >
               <Check className="size-3.5" />
-              Done
+              Mark complete
             </Button>
           )}
         {useInPlace ? (
