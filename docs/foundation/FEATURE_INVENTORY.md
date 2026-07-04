@@ -34,7 +34,7 @@ Productivity
   └── Notes (/notes)
 ```
 
-**Known problems (M2 addressing):** Dashboard at `/` vs execution at `/workplace`; eight equal nav items; three scheduling surfaces; focus as a destination page; no command layer. Diagnosis: [../archive/design/ux-friction-review.md](../archive/design/ux-friction-review.md).
+**Known problems (M2 addressing):** Dashboard at `/` vs execution at `/workplace`; eight equal nav items; three scheduling surfaces; focus as a destination page; no command layer. Diagnosis: [../archive/design/july-3/ux-friction-review.md](../archive/design/july-3/ux-friction-review.md).
 
 ### Target navigation (post M2/M3)
 
@@ -243,7 +243,7 @@ Full detail: [../archive/project/03-future-enhancements.md](../archive/project/0
 | Phase 2 — Accent language | Complete | `9f7e7c4` |
 | Phase 3 — Daily loop | **Not started** | — |
 
-Source: [../archive/design/project-state-july-2026.md](../archive/design/project-state-july-2026.md)
+Source: [../archive/design/july-3/project-state-july-2026.md](../archive/design/july-3/project-state-july-2026.md)
 
 ---
 

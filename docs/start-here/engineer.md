@@ -12,7 +12,7 @@
 | [TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) | Stack, data model, auth, known debt |
 | [execution/README.md](../execution/README.md) | Current milestone and runbooks |
 
-**Do not use alone:** [archive/design/project-state-july-2026.md](../archive/design/project-state-july-2026.md) — frozen at July 3 (Phase 2). Use feature inventory + execution index instead.
+**Do not use alone:** [archive/design/july-3/project-state-july-2026.md](../archive/design/july-3/project-state-july-2026.md) — frozen at July 3 (Phase 2). Use feature inventory + execution index instead.
 
 ---
 
@@ -61,7 +61,9 @@ npm run dev
 
 | Read | Why |
 |------|-----|
+| [governance/GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Branch per session; merge to `main` needs your yes |
 | [governance/ENGINEERING.md](../foundation/governance/ENGINEERING.md) | How to evaluate engineering choices |
+| [governance/CODE_STANDARDS.md](../foundation/governance/CODE_STANDARDS.md) | Folder layout, TS/React, styling, pre-merge checklist |
 | [governance/QUALITY_GATES.md](../foundation/governance/QUALITY_GATES.md) | What must pass before ship |
 | [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | Target nav, module hierarchy, shipped vs deferred |
 
@@ -71,5 +73,5 @@ npm run dev
 
 Visual design phases 0–2 are complete. Read for context, not current plan:
 
-- [archive/design/README.md](../archive/design/README.md)
-- [ux-friction-review.md](../archive/design/ux-friction-review.md) — July 3 simulated audit; live evidence is [friction-log.md](../execution/logs/friction-log.md)
+- [archive/design/july-3/README.md](../archive/design/july-3/README.md)
+- [ux-friction-review.md](../archive/design/july-3/ux-friction-review.md) — July 3 simulated audit; live evidence is [friction-log.md](../execution/logs/friction-log.md)

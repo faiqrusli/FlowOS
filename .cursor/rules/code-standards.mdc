@@ -1,0 +1,51 @@
+---
+description: FlowOS code conventions — folders, React, styling, security, pre-merge
+alwaysApply: true
+---
+
+# Code standards (FlowOS)
+
+Full doc: [docs/foundation/governance/CODE_STANDARDS.md](docs/foundation/governance/CODE_STANDARDS.md)
+
+## Default behavior
+
+- **Smallest diff** — no drive-by refactors, palette sweeps, or file splits in M2.
+- **Match the touched area** — copy patterns from sibling files before inventing new ones.
+- **Compose, don't fork** — reuse existing page shells, dialogs, strips.
+
+## Where code goes
+
+| Path | Use |
+|------|-----|
+| `src/app/(main)/` | Authenticated routes |
+| `src/components/ui/` | Shared primitives |
+| `src/components/{feature}/` | Feature UI |
+| `src/lib/` | Pure logic, palettes, Supabase helpers |
+| `src/hooks/`, `src/contexts/`, `src/config/`, `src/types/` | As named |
+
+New `lib/` domains → update `FEATURE_INVENTORY.md`. Files: `kebab-case`; components: `PascalCase`; imports: `@/…`.
+
+## React
+
+- Server Components by default; `"use client"` only when hooks/events/DOM needed — keep boundary low.
+- Logic in `lib/`, not duplicated in JSX. Extend `schedule-palette.ts`, `*-appearance.ts` for colors — not inline hex.
+- No fake/placeholder shipped controls.
+
+## Styling
+
+- Semantic tokens from `src/app/globals.css` (`bg-card`, `text-foreground`, `border-border`, …).
+- Dark only. Critical controls **visible without hover** (PRINCIPLES #10).
+
+## Data, routes, security (never defer)
+
+- User-scoped Supabase queries; RLS on new tables; no `using (true)` on user data.
+- New auth route → `PROTECTED_PREFIXES` in `src/middleware.ts` + sidebar/FEATURE_INVENTORY if visible.
+- Schema → `supabase/*.sql` + `src/types/database.ts`.
+
+## Before merge (on branch)
+
+`npm run build` && `npm run lint` — no new errors in touched files. Manual smoke on changed flow. Founder approval for `main` (see `git-workflow.mdc`).
+
+## M2 out of scope
+
+Command palette, new modules, dnd-kit migration, monolith refactors, visual polish unless runbook session says so.

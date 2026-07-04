@@ -29,7 +29,7 @@ A personal productivity OS: **Today** (tasks + timeline + focus + habits), plus 
 |----------|-------------------|
 | All of `design/0x-phase*` files | Design audit trail — read when working on UI tokens |
 | [LAUNCH_PLAN.md](../archive/planning/launch-plan-july-2026.md) | Superseded by masterplan |
-| [archive/design/roadmap-pre-masterplan.md](../archive/design/roadmap-pre-masterplan.md) | Phase 3+ superseded; Phase 0–2 history only |
+| [archive/design/july-3/roadmap-pre-masterplan.md](../archive/design/july-3/roadmap-pre-masterplan.md) | Phase 3+ superseded; Phase 0–2 history only |
 | Governance folder | Read when making product decisions, not on day one |
 
 ---

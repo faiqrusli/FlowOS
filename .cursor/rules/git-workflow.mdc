@@ -1,0 +1,48 @@
+---
+description: Branch-first git workflow; main merge requires founder approval
+alwaysApply: true
+---
+
+# Git workflow (FlowOS)
+
+**`main` = production.** Never push or merge to `main` without the founder's explicit approval.
+
+## Start work
+
+- **Runbook session:** new branch from updated `main` — `m2/session-N-short-name` (e.g. `m2/session-2-routing`).
+- **UI/UX tweak:** `tweak/short-description` from `main`.
+- **Docs only:** `docs/short-description`.
+
+```powershell
+git checkout main && git pull origin main
+git checkout -b m2/session-N-short-name
+```
+
+## While working
+
+- Commit on the branch (multiple commits per session OK).
+- Push branch to `origin` for backup — **not** `main`.
+- Before merge ask: `npm run build` && `npm run lint` pass locally.
+
+## End of session — required agent behavior
+
+Report: branch, commits, build/lint, which **merge bundle** (B1–B5, see `docs/foundation/governance/GIT_WORKFLOW.md`).
+
+**Ask:** "Merge to `main`? (requires your approval)"
+
+If bundle complete (e.g. B4 = sessions 4+5): emphasize bundle ready, still wait for yes.
+
+**Never** `git push origin main`, **never** merge to `main`, **never** assume approval.
+
+## After founder approves merge
+
+```powershell
+git checkout main && git pull origin main
+git merge <branch> --no-ff
+npm run build && npm run lint
+git push origin main
+```
+
+Verify production URL; append [july-log.md](docs/execution/logs/july-log.md).
+
+Full rules: [docs/foundation/governance/GIT_WORKFLOW.md](docs/foundation/governance/GIT_WORKFLOW.md)

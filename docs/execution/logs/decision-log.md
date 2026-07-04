@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Permanent record of **product-level** decisions with context, rationale, and rejected alternatives. Design-phase decisions remain in [../../archive/design/AUDIT_HISTORY.md](../../archive/design/AUDIT_HISTORY.md). This log covers company direction, launch strategy, and cross-cutting product choices.
+Permanent record of **product-level** decisions with context, rationale, and rejected alternatives. Design-phase decisions remain in [../../archive/design/july-3/AUDIT_HISTORY.md](../../archive/design/july-3/AUDIT_HISTORY.md). This log covers company direction, launch strategy, and cross-cutting product choices.
 
 ---
 
@@ -36,13 +36,23 @@ When making a significant product decision:
 
 ## 2026 decisions
 
-### 2026-07-04 — UX/UI fix inbox + work chronicle
+### 2026-07-04 — Branch-first git workflow
 
-**Context:** Founder needed a scratch pad for random UI/UX problems without opening a formal doc; friction-log is for measured daily dogfood, not quick ideas. Ideas should flow inbox → runbook → chronicle → review.  
-**Decision:** Add `docs/execution/logs/inbox.md` (one-line capture) and `docs/execution/logs/chronicle/july-2026.md` (monthly session memory). Wire pipeline in founder daily loop and review README.  
-**Alternatives rejected:** Expand friction-log for all ideas (wrong ceremony); skip chronicle and only use decision-log (loses session narrative and undocumented changes).  
+**Context:** Runbook previously said push every session directly to `main`. Founder wants local testing on branches, per-session or per-bundle merges, and explicit approval before anything hits production.  
+**Decision:** Add [GIT_WORKFLOW.md](../../foundation/governance/GIT_WORKFLOW.md) and Cursor rule `.cursor/rules/git-workflow.mdc`. M2 **merge bundles** B1–B5 group sessions for merge reminders; AI must ask before merge/push to `main`.  
+**Alternatives rejected:** Continue push-to-main every session (no local isolation); merge without founder yes (violates production trust).  
 **Outcome:** Applied July 4, 2026.  
-**Related:** [inbox.md](./inbox.md), [chronicle/july-2026.md](./chronicle/july-2026.md)
+**Related:** [m2-founder-daily-driver.md](../runbooks/m2-founder-daily-driver.md), [ENGINEERING.md](../../foundation/governance/ENGINEERING.md)
+
+---
+
+### 2026-07-04 — UX/UI fix inbox + july-log
+
+**Context:** Founder needed a scratch pad for random UI/UX problems without opening a formal doc; friction-log is for measured daily dogfood, not quick ideas. Ideas should flow inbox → runbook → july-log → review.  
+**Decision:** Add `docs/execution/logs/inbox.md` (one-line capture) and `docs/execution/logs/july-log.md` (monthly session memory). Wire pipeline in founder daily loop and review README.  
+**Alternatives rejected:** Expand friction-log for all ideas (wrong ceremony); skip july-log and only use decision-log (loses session narrative and undocumented changes).  
+**Outcome:** Applied July 4, 2026. Chronicle folder removed — single `july-log.md` in logs.  
+**Related:** [inbox.md](./inbox.md), [july-log.md](./july-log.md)
 
 ---
 

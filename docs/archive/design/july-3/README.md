@@ -60,7 +60,7 @@ Original interactive documents live outside the repo at:
 └── flowos-phase-2-spec.canvas.tsx
 ```
 
-These Markdown files are the **permanent, repo-local source of truth**. Canvases remain useful for visual reference but must not be treated as authoritative over `docs/design/`.
+These Markdown files are the **permanent, repo-local source of truth**. Canvases remain useful for visual reference but must not be treated as authoritative over `docs/archive/design/july-3/`.
 
 ---
 

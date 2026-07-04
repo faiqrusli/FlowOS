@@ -12,7 +12,7 @@
 | [../execution/](../execution/) | Runbooks, logs, ops |
 | [../review/](../review/) | SRAI after each phase/milestone |
 | [../execution/logs/inbox.md](../execution/logs/inbox.md) | Scratch UI/UX fix capture |
-| [../execution/logs/chronicle/](../execution/logs/chronicle/) | Monthly session chronicle |
+| [../execution/logs/july-log.md](../execution/logs/july-log.md) | July session log |
 | [../foundation/PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | North star |
 | [../foundation/FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | Shipped features + IA |
 | [../foundation/TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) | Stack and debt |
@@ -20,6 +20,7 @@
 | [../foundation/governance/GATES.md](../foundation/governance/GATES.md) | Release stages + metrics |
 | [../foundation/governance/QUALITY_GATES.md](../foundation/governance/QUALITY_GATES.md) | Definition of done |
 | [../foundation/governance/ENGINEERING.md](../foundation/governance/ENGINEERING.md) | Technical rules |
+| [../foundation/governance/GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Branches, merge to main (founder approval) |
 
 **Foundation: 3 files** (was 6). **Governance: 4 files** (was 11).
 

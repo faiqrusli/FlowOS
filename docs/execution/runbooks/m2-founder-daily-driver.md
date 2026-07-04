@@ -5,7 +5,7 @@
 **Repo root for all commands:** `flowos/` (the git repository).  
 **Production baseline (Ship Gate complete):** https://flowos-sage.vercel.app  
 **Docs path:** `flowos/docs/` (tracked in VCS since M0).  
-**Idea capture:** Random UI/UX fixes → [inbox.md](../logs/inbox.md) first; promote to sessions below when scoped. After each session ships → [chronicle/july-2026.md](../logs/chronicle/july-2026.md).
+**Idea capture:** Random UI/UX fixes → [inbox.md](../logs/inbox.md) first; promote to sessions below when scoped. After each session ships → [july-log.md](../logs/july-log.md).
 
 ---
 
@@ -25,7 +25,7 @@ Use this whenever a session is blocked mid-way (env failure, ambiguous product d
 |------|--------|
 | 1 | **Stop** at the session's stop/fail condition — do not skip ahead to a dependent session. |
 | 2 | **Record blocker** in `docs/execution/logs/decision-log.md`: date, session #, WP id, symptom, what was tried, next action. |
-| 3 | **Git state:** if changes were committed but not pushed, leave them on `main`. If uncommitted WIP breaks build, `git stash` with message `M2 Session N blocked: <reason>` or revert locally — do not push red builds. |
+| 3 | **Git state:** commit WIP on the **session branch** (`WIP: Session N blocked — {reason}`) or `git stash`. Do **not** merge to `main`. See [GIT_WORKFLOW.md](../../foundation/governance/GIT_WORKFLOW.md). |
 | 4 | **Resume at the same session number** when unblocked (e.g. Session 4 blocked → fix → resume Session 4). Dependencies are strict: Session 2 requires Session 1 merged on production; Session 4 requires Session 1; etc. |
 | 5 | **Do not skip dependencies.** Example: Session 4 blocked on focus UI → note blocker → resume Session 4; do **not** jump to Session 5 inline capture. |
 | 6 | **Parallel exception:** Session 7 (recruiting) may run alongside engineering Sessions 1–6 — it does not unblock or replace a blocked engineering session. Session 8 (dogfooding) starts after Session 1 lands on production but continues through M3. |
@@ -36,7 +36,30 @@ Use this whenever a session is blocked mid-way (env failure, ambiguous product d
 
 **Budget:** 8 sessions × 2–4 hours. Engineering Sessions 1–6 are Agent-executable. Sessions 7–8 are founder-only (templates below — no Agent code).
 
-**Deploy cadence (every engineering session):** local `npm run build` + `npm run lint` → `git commit` → `git push origin main` → wait for CI green → confirm Vercel production deploy → **manual verification on https://flowos-sage.vercel.app** (not localhost-only).
+### Git workflow (required)
+
+Full rules: [GIT_WORKFLOW.md](../../foundation/governance/GIT_WORKFLOW.md).
+
+| Step | Rule |
+|------|------|
+| **Start session** | New branch from `main`: `m2/session-N-short-name` |
+| **During session** | Commit on branch; push branch to `origin` (not `main`) |
+| **End session** | Agent reports bundle status and **asks founder to approve merge to `main`** |
+| **Merge to `main`** | Only after founder says yes + `npm run build` + `npm run lint` + runbook verification |
+
+**Merge bundles (AI reminds at bundle completion):**
+
+| Bundle | Sessions | Remind merge when |
+|--------|----------|-------------------|
+| B1 — Today home | 1 | Session 1 verified |
+| B2 — Routing truth | 2 | Session 2 done (B1 must already be on `main`) |
+| B3 — Navigation | 3 | Session 3 done |
+| B4 — Interaction | 4, 5 | Both sessions done (or founder accepts partial) |
+| B5 — Reliability | 6 | Session 6 done — engineering track complete |
+
+Ad-hoc UI/UX: branch `tweak/…` from `main` — same approval rule.
+
+**Deploy cadence (after merge to `main` only):** push `main` → wait for CI/Vercel → manual check on https://flowos-sage.vercel.app → entry in [july-log.md](../logs/july-log.md).
 
 ---
 
@@ -71,7 +94,7 @@ Sidebar (`src/config/sidebar-navigation.tsx`) still lists **Dashboard** at `/` a
 | 5 | Update `src/contexts/global-right-sidebar-context.tsx` line 98: `workplaceHoverMode` must be true on **`/`** (Today), not only `/workplace`. Change to `pathname === "/" \|\| pathname === "/workplace"` until redirect is verified, then `pathname === "/"` only. |
 | 6 | Search for hardcoded `/workplace` links that should land on Today (e.g. `src/components/focus/focus-current-session-card.tsx` line 103 `href="/workplace"`) — update to `/`. |
 | 7 | Do **not** change routing hrefs in `dashboard-command.ts` yet (Session 2). Do **not** reduce sidebar yet (Session 3). |
-| 8 | `npm run build` && `npm run lint` → commit → push → verify production. |
+| 8 | `npm run build` && `npm run lint` → commit on **session branch** → push branch → ask founder to approve merge to `main`. |
 
 #### Verification
 
@@ -102,7 +125,7 @@ git status -sb   # clean after commit
 - Build or CI fails.
 - Full-height Workplace layout broken (timeline clipped, scroll broken).
 
-**Rollback:** `git revert HEAD` before push; if already deployed, revert commit and push — Vercel rolls back. Do not force-push `main`.
+**Rollback:** revert merge on `main` — never force-push `main`. See [GIT_WORKFLOW.md](../../foundation/governance/GIT_WORKFLOW.md).
 
 ---
 

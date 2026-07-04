@@ -19,7 +19,7 @@
 **Authority:** Review conclusions that change direction go to [decision-log.md](../execution/logs/decision-log.md). Review does not override the decision log or masterplan — it feeds them.
 
 ```
-Runbook (execution) → ship work → chronicle → SRAI review → update logs + foundation → next runbook
+Runbook (execution) → ship work → july-log → SRAI review → update logs + foundation → next runbook
          ↑
     inbox (scratch ideas promoted into runbook)
 ```
@@ -74,5 +74,5 @@ Run this **after** a design phase or execution milestone reaches its exit gate (
 - [GATES.md](../foundation/governance/GATES.md) — release gates and metrics  
 - [friction-log.md](../execution/logs/friction-log.md) — daily dogfood evidence (M2+)  
 - [inbox.md](../execution/logs/inbox.md) — scratch UI/UX fixes before runbook  
-- [chronicle/](../execution/logs/chronicle/) — monthly session memory  
+- [july-log.md](../execution/logs/july-log.md) — July session memory  
 - [document-map.md](../meta/document-map.md) — full doc inventory

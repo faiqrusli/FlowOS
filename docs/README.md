@@ -40,13 +40,13 @@ When documents conflict, this order wins:
 | [execution/](./execution/) | Runbooks, logs, ops | **Active** |
 | [review/](./review/) | SRAI after each phase/milestone | **Active** |
 | [foundation/](./foundation/) | Vision, features, architecture (3 files) | **Active** |
-| [foundation/governance/](./foundation/governance/) | 4 rule docs (PRINCIPLES, GATES, QUALITY, ENGINEERING) | **Reference** |
+| [foundation/governance/](./foundation/governance/) | 5 rule docs (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS) | **Reference** |
 | [archive/](./archive/) | Thesis, design history, superseded plans | **Archive** |
 | [meta/](./meta/document-map.md) | Full doc inventory | Meta |
 
 **Operational docs outside `docs/`:** [supabase/APPLIED_STATE.md](../supabase/APPLIED_STATE.md)
 
-**Legacy redirects:** `docs/design/`, `docs/project/`, and `foundation/LAUNCH_PLAN.md` stub → canonical paths in [archive/](./archive/).
+**Legacy redirects:** `foundation/LAUNCH_PLAN.md` stub → [archive/planning/](./archive/planning/). Design history: [archive/design/july-3/](./archive/design/july-3/) (no top-level `docs/design/`).
 
 ---
 
@@ -61,7 +61,7 @@ When documents conflict, this order wins:
 | [m2-founder-daily-driver.md](./execution/runbooks/m2-founder-daily-driver.md) | M2 Today home, routing, capture |
 | [friction-log.md](./execution/logs/friction-log.md) | Live founder dogfood log |
 | [inbox.md](./execution/logs/inbox.md) | Scratch UI/UX fix ideas |
-| [chronicle/july-2026.md](./execution/logs/chronicle/july-2026.md) | July session narrative |
+| [july-log.md](./execution/logs/july-log.md) | July session narrative |
 | [decision-log.md](./execution/logs/decision-log.md) | Product decisions (append-only) |
 | [recruiting-pipeline.md](./execution/ops/recruiting-pipeline.md) | M3 recruiting prep |
 
@@ -71,7 +71,7 @@ When documents conflict, this order wins:
 |----------|---------|
 | [review/README.md](./review/README.md) | SRAI cycle — Summarize, Review, Audit, Improve |
 | [review/milestones/](./review/milestones/) | M0–M5 milestone reviews |
-| [review/design/](./review/design/) | Design phase review index (Phases 0–2) |
+| [review/design/](./review/design/) | Design phase review index → [archive/design/july-3/](./archive/design/july-3/) |
 | [review/template.md](./review/template.md) | Blank SRAI template |
 
 ### Product and engineering
@@ -91,9 +91,9 @@ Full foundation index: [foundation/README.md](./foundation/README.md)
 
 | Document | Superseded by |
 |----------|---------------|
-| [roadmap-pre-masterplan.md](./archive/design/roadmap-pre-masterplan.md) (Phase 3+) | [execution-masterplan.md](./strategy/execution-masterplan.md) |
+| [roadmap-pre-masterplan.md](./archive/design/july-3/roadmap-pre-masterplan.md) (Phase 3+) | [execution-masterplan.md](./strategy/execution-masterplan.md) |
 | [launch-plan-july-2026.md](./archive/planning/launch-plan-july-2026.md) | Same masterplan |
-| [project-state-july-2026.md](./archive/design/project-state-july-2026.md) | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) + [execution/README.md](./execution/README.md) |
+| [project-state-july-2026.md](./archive/design/july-3/project-state-july-2026.md) | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) + [execution/README.md](./execution/README.md) |
 
 Full archive index: [archive/README.md](./archive/README.md)
 

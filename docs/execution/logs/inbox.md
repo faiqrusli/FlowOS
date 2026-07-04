@@ -23,7 +23,7 @@ Ideas can start here and later move to friction-log if they become recurring, me
 ```
 inbox (scratch)
     → runbook session / WP when scoped
-        → chronicle when that chunk ships
+        → july-log when that chunk ships
             → review/SRAI when milestone exits
 ```
 
@@ -31,10 +31,10 @@ inbox (scratch)
 |-------|------|
 | Capture | **This file** — Inbox section |
 | Scoped | **Promoted** section + link to runbook session |
-| Shipped | **Done** section + one line in [chronicle/july-2026.md](./chronicle/july-2026.md) |
+| Shipped | **Done** section + one line in [july-log.md](./july-log.md) |
 | Milestone close | [review/milestones/](../../review/milestones/) SRAI |
 
-**Rule:** Do not open a new doc per idea. Do not skip the chronicle when a runbook session lands — that's the session memory.
+**Rule:** Do not open a new doc per idea. Do not skip july-log when a runbook session lands — that's the session memory.
 
 ---
 
@@ -54,11 +54,11 @@ inbox (scratch)
 
 ---
 
-## Done (shipped — summarized in chronicle)
+## Done (shipped — summarized in july-log)
 
-| Idea | Shipped | Chronicle |
-|------|---------|-----------|
-| _Example: `/` = Today home_ | 2026-07-04 `aa29917` | [july-2026.md](./chronicle/july-2026.md) § 2026-07-04 |
+| Idea | Shipped | Log |
+|------|---------|-----|
+| _Example: `/` = Today home_ | 2026-07-04 `aa29917` | [july-log.md](./july-log.md) § 2026-07-04 |
 
 ---
 

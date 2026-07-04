@@ -14,7 +14,7 @@ This folder is the index for **how FlowOS ships right now**. Strategy lives in t
 |----------|---------|
 | [execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5, exit gates, scope rules |
 
-**Authority:** The masterplan supersedes [roadmap-pre-masterplan.md](../archive/design/roadmap-pre-masterplan.md) (Phase 3+) and [launch-plan-july-2026.md](../archive/planning/launch-plan-july-2026.md) (timeline).
+**Authority:** The masterplan supersedes [roadmap-pre-masterplan.md](../archive/design/july-3/roadmap-pre-masterplan.md) (Phase 3+) and [launch-plan-july-2026.md](../archive/planning/launch-plan-july-2026.md) (timeline).
 
 ---
 
@@ -51,11 +51,11 @@ Runbook index: [runbooks/README.md](./runbooks/README.md)
 | [inbox.md](./logs/inbox.md) | Scratch UI/UX fixes — promote to runbook when scoped |
 | [friction-log.md](./logs/friction-log.md) | Live founder friction from production use |
 | [decision-log.md](./logs/decision-log.md) | Product decisions with rationale |
-| [chronicle/](./logs/chronicle/) | Monthly session memory (after runbook ships) |
+| [july-log.md](./logs/july-log.md) | July session narrative |
 
 Log index: [logs/README.md](./logs/README.md)
 
-**Historical friction audit (simulated, July 3):** [ux-friction-review.md](../archive/design/ux-friction-review.md) — superseded by live friction log for evidence.
+**Historical friction audit (simulated, July 3):** [ux-friction-review.md](../archive/design/july-3/ux-friction-review.md) — superseded by live friction log for evidence.
 
 ---
 

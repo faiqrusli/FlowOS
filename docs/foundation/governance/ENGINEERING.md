@@ -94,8 +94,11 @@ M1 resolved: production build, RLS two-account test, production deploy.
 
 ## Deploy cadence
 
+**Branch workflow:** [GIT_WORKFLOW.md](./GIT_WORKFLOW.md) — work on branches; merge to `main` only with founder approval.
+
 ```
-npm run build && npm run lint → commit → push → verify production
+branch → npm run build && npm run lint → commit → push branch
+    → founder approves → merge to main → push main → verify production
 ```
 
 See [m1-ship-gate.md](../../execution/runbooks/m1-ship-gate.md) and [m2-founder-daily-driver.md](../../execution/runbooks/m2-founder-daily-driver.md).
@@ -104,6 +107,7 @@ See [m1-ship-gate.md](../../execution/runbooks/m1-ship-gate.md) and [m2-founder-
 
 ## Related
 
+- [CODE_STANDARDS.md](./CODE_STANDARDS.md)
 - [QUALITY_GATES.md](./QUALITY_GATES.md)
 - [GATES.md](./GATES.md)
 - [../../supabase/APPLIED_STATE.md](../../../supabase/APPLIED_STATE.md)

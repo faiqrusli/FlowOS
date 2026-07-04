@@ -1,8 +1,10 @@
-# July 2026 — Work Chronicle
+# July 2026 Log
 
 **Purpose:** One narrative of what happened this month — sessions, undocumented moves, phases completed.  
-**Not authority:** Structured decisions live in [decision-log.md](../decision-log.md). This is memory, not law.  
+**Not authority:** Structured decisions live in [decision-log.md](./decision-log.md). This is memory, not law.  
 **Sources:** Inbox → runbook → this file → [review/SRAI](../../review/README.md).
+
+**Next month:** add `august-log.md` beside this file (same format).
 
 ---
 
@@ -11,7 +13,7 @@
 After a runbook session (or doc pass) ships, add a dated block:
 
 - What shipped (commits, production check)  
-- Ideas that came from [inbox.md](../inbox.md)  
+- Ideas that came from [inbox.md](./inbox.md)  
 - Undocumented changes worth remembering  
 - Decisions **promoted** to decision-log (link — don't duplicate full text)  
 - Phases / milestones touched  
@@ -42,17 +44,17 @@ Low ceremony — bullets are fine.
 - Bulk link fixes across 70+ markdown files during doc passes
 - Design archive moved under `archive/design/july-3/`
 
-**Decisions promoted:** → [decision-log.md](../decision-log.md) (M0 custody, docs in git, Pass 4 governance, Pass 5 foundation, review layer)
+**Decisions promoted:** → [decision-log.md](./decision-log.md) (M0 custody, docs in git, Pass 4 governance, Pass 5 foundation, review layer)
 
 **Milestones:** M1 complete; M2 engineering Sessions 1–6 shipped; Sessions 7–8 open
 
 ---
 
-## 2026-07-04 — Inbox + chronicle layer added
+## 2026-07-04 — Inbox + july-log added
 
-**Why:** Founder needed scratch capture for random UI/UX fixes without opening a new doc; pipeline inbox → runbook → chronicle → review.
+**Why:** Founder needed scratch capture for random UI/UX fixes without opening a new doc; pipeline inbox → runbook → july-log → review.
 
-**Files:** [inbox.md](../inbox.md), this chronicle, wired into founder daily loop.
+**Files:** [inbox.md](./inbox.md), this log, wired into founder daily loop.
 
 ---
 

@@ -6,9 +6,9 @@ Append-only evidence, capture, and decision records.
 |-----|---------|
 | [inbox.md](./inbox.md) | **Scratch** — random UI/UX fix ideas (no template) |
 | [friction-log.md](./friction-log.md) | Daily dogfood evidence — what / when / cost |
+| [july-log.md](./july-log.md) | July session narrative (after runbook chunks ship) |
 | [decision-log.md](./decision-log.md) | Product-level decisions |
-| [chronicle/](./chronicle/) | Monthly session narrative (after runbook chunks ship) |
 
-**Pipeline:** inbox → runbook → chronicle → [review/SRAI](../../review/README.md)
+**Pipeline:** inbox → runbook → july-log → [review/SRAI](../../review/README.md)
 
 Index: [../README.md](../README.md)

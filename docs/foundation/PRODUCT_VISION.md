@@ -74,7 +74,7 @@ Details: [../execution/ops/recruiting-pipeline.md](../execution/ops/recruiting-p
 
 **The complete SRL cycle in one product.** Most competitors excel at one phase (tasks OR habits OR focus OR journaling). FlowOS integrates all three — when the daily loop works.
 
-> **Current state:** The *promise* is differentiated. The *experience* still feels like eight modules until Phase 3 ships. See [../archive/design/ux-friction-review.md](../archive/design/ux-friction-review.md).
+> **Current state:** The *promise* is differentiated. The *experience* still feels like eight modules until Phase 3 ships. See [../archive/design/july-3/ux-friction-review.md](../archive/design/july-3/ux-friction-review.md).
 
 ---
 

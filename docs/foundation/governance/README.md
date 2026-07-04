@@ -1,6 +1,6 @@
 ﻿# Governance
 
-**Four active documents.** Rules and gates for product and engineering decisions.
+**Five active documents.** Rules and gates for product and engineering decisions.
 
 **Last updated:** July 4, 2026 (Pass 4–5 consolidation)
 
@@ -14,6 +14,8 @@
 | [GATES.md](./GATES.md) | Release stage (M2, alpha, beta) + WAD, D7 definitions |
 | [QUALITY_GATES.md](./QUALITY_GATES.md) | Definition of done before ship |
 | [ENGINEERING.md](./ENGINEERING.md) | Technical tradeoffs and debt |
+| [CODE_STANDARDS.md](./CODE_STANDARDS.md) | TypeScript, React, styling, folder conventions |
+| [GIT_WORKFLOW.md](./GIT_WORKFLOW.md) | Branches, commits, merge to `main` (founder approval) |
 
 ## Decision flow
 

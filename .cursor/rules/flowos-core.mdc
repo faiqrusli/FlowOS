@@ -1,0 +1,37 @@
+---
+description: FlowOS project context, doc authority, current milestone
+alwaysApply: true
+---
+
+# FlowOS core context
+
+**Product:** Personal daily productivity OS (tasks, habits, focus, schedule, reflection, notes).  
+**Production:** https://flowos-sage.vercel.app  
+**Stack:** Next.js App Router, React, TypeScript, Tailwind, Supabase. Repo root = app root.
+
+**Current milestone:** M2 Founder Daily Driver (see `docs/execution/README.md`).
+
+## Doc authority (conflicts — higher wins)
+
+1. `docs/execution/logs/decision-log.md`
+2. `docs/strategy/execution-masterplan.md`
+3. `docs/foundation/governance/` (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW)
+4. `docs/foundation/` + `docs/execution/`
+5. `docs/archive/` — history only; never for current planning
+
+## Do not use for current work
+
+- `docs/archive/design/` except `july-3/` for history
+- Superseded roadmaps / launch plans — use execution masterplan
+
+## Working norms
+
+- **Runbook session:** read `docs/execution/runbooks/m2-founder-daily-driver.md`; new branch per session; see `git-workflow.mdc`
+- **UI/UX idea:** `docs/execution/logs/inbox.md` first
+- **Product decision:** append `decision-log.md`
+- **After merge to main:** `docs/execution/logs/july-log.md`
+- **Scope:** M2 closed scope only — no command palette, new modules, monolith refactors unless runbook says so
+
+## Code truth
+
+Prefer `docs/foundation/FEATURE_INVENTORY.md` + codebase over archived project-state docs.

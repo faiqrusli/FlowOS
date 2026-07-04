@@ -44,7 +44,7 @@
 | [PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | North star and non-goals |
 | [governance/GATES.md](../foundation/governance/GATES.md) | What to measure; what to ignore |
 
-**Do not use for current planning:** [launch-plan-july-2026.md](../archive/planning/launch-plan-july-2026.md), [roadmap-pre-masterplan.md](../archive/design/roadmap-pre-masterplan.md) — superseded by the masterplan.
+**Do not use for current planning:** [launch-plan-july-2026.md](../archive/planning/launch-plan-july-2026.md), [roadmap-pre-masterplan.md](../archive/design/july-3/roadmap-pre-masterplan.md) — superseded by the masterplan.
 
 ---
 
@@ -54,6 +54,6 @@
 2. Random UI/UX fix idea → [inbox.md](../execution/logs/inbox.md) (one line)
 3. Recurring production pain with evidence → [friction-log.md](../execution/logs/friction-log.md)
 4. Log product decisions in [decision-log.md](../execution/logs/decision-log.md)
-5. When a runbook session ships → one block in [chronicle/july-2026.md](../execution/logs/chronicle/july-2026.md)
+5. When a runbook session ships → one block in [july-log.md](../execution/logs/july-log.md)
 6. Check [execution/README.md](../execution/README.md) for milestone status before starting new scope
 7. When a milestone exits, complete SRAI in [review/milestones/](../review/milestones/)

@@ -29,6 +29,7 @@ Product truth documents — vision, features, architecture.
 | [GATES.md](./governance/GATES.md) | Release stages + metric definitions |
 | [QUALITY_GATES.md](./governance/QUALITY_GATES.md) | Definition of done |
 | [ENGINEERING.md](./governance/ENGINEERING.md) | Technical tradeoffs |
+| [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md) | Code conventions (TS, React, styling) |
 
 ---
 

@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For current implementation snapshot, also see [../archive/design/project-state-july-2026.md](../archive/design/project-state-july-2026.md).
+Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For current implementation snapshot, also see [../archive/design/july-3/project-state-july-2026.md](../archive/design/july-3/project-state-july-2026.md).
 
 ---
 
@@ -142,7 +142,7 @@ Navigation config: `src/config/sidebar-navigation.tsx`
 | Three card border radii in production | Low | Phase 4 |
 | setState-in-effect lint in dialog components | Low | Pre-existing |
 
-Source: [../archive/design/project-state-july-2026.md](../archive/design/project-state-july-2026.md)
+Source: [../archive/design/july-3/project-state-july-2026.md](../archive/design/july-3/project-state-july-2026.md)
 
 ---
 
