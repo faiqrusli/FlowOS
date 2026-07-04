@@ -1,6 +1,15 @@
 "use client";
 
-import { memo, useCallback, useEffect, useLayoutEffect, useRef, useState, type DragEvent } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type DragEvent,
+} from "react";
+import { registerContextMenuCloser } from "@/lib/task-detail-menu-coordinator";
 import { Check, Clock, Play } from "lucide-react";
 import { createPortal } from "react-dom";
 import { TimelineHabitLabel } from "@/components/tasks/timeline-habit-label";
@@ -122,6 +131,10 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(
     null
   );
+
+  useEffect(() => {
+    return registerContextMenuCloser(() => setContextMenu(null));
+  }, []);
   const time = formatHabitTimeRangeWithDuration(
     habit.scheduled_time,
     getHabitDurationMinutes(habit.id)
@@ -218,7 +231,7 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
           y={contextMenu.y}
           onClose={() => setContextMenu(null)}
           onStartFocus={
-            habit.track_with_focus && onStartFocus
+            habit.track_with_focus && !habit.completed && onStartFocus
               ? () => {
                   onStartFocus();
                   setContextMenu(null);

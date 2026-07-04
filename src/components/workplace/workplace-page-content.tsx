@@ -59,6 +59,7 @@ import {
   WORKPLACE_TIMELINE_WIDTH_PX,
 } from "@/lib/workplace-layout";
 import { fetchWorkplaceData, WorkplaceError } from "@/lib/workplace-data";
+import { registerContextMenuCloser } from "@/lib/task-detail-menu-coordinator";
 import type { Habit } from "@/types/habit";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
@@ -137,6 +138,10 @@ export function WorkplacePageContent({
   useEffect(() => {
     setQuickScheduleOpen(true);
     return () => setQuickScheduleOpen(false);
+  }, []);
+
+  useEffect(() => {
+    return registerContextMenuCloser(() => setTaskContextMenu(null));
   }, []);
 
   useEffect(() => {
@@ -517,7 +522,7 @@ export function WorkplacePageContent({
             ) : null}
 
             <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS} min-h-0 py-1`}>
-              <div className="row-span-2 min-h-0">
+              <div className="row-span-2 flex h-full min-h-0 flex-col overflow-hidden">
                 <WorkplaceTasksCard
                   ref={tasksTabRef}
                   tasks={allTasks}

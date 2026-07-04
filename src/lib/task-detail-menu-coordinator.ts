@@ -8,8 +8,9 @@ type TaskDetailMenuListener = (activeAnchor: TaskDetailMenuAnchor | null) => voi
 
 let activeAnchor: TaskDetailMenuAnchor | null = null;
 const listeners = new Set<TaskDetailMenuListener>();
-let closeTimelineContextMenu: (() => void) | null = null;
+const contextMenuClosers = new Set<() => void>();
 let documentListenersAttached = false;
+let globalContextMenuListenerAttached = false;
 
 function anchorKey(anchor: TaskDetailMenuAnchor): string {
   return `${anchor.taskId}:${anchor.groupId}:${anchor.zone}`;
@@ -52,6 +53,31 @@ export function isTaskDetailMenuTarget(target: EventTarget | null): boolean {
     "[data-task-detail-menu]",
     "[data-task-detail-submenu]",
   ]);
+}
+
+function closeRegisteredContextMenus() {
+  for (const closer of contextMenuClosers) {
+    closer();
+  }
+}
+
+export function closeAllContextMenus() {
+  closeRegisteredContextMenus();
+  if (activeAnchor) {
+    activeAnchor = null;
+    emit();
+    syncDocumentListeners();
+  }
+}
+
+function handleGlobalContextMenu() {
+  closeAllContextMenus();
+}
+
+function ensureGlobalContextMenuListener() {
+  if (globalContextMenuListenerAttached) return;
+  document.addEventListener("contextmenu", handleGlobalContextMenu, true);
+  globalContextMenuListenerAttached = true;
 }
 
 function handleDocumentContextMenu(event: Event) {
@@ -106,7 +132,7 @@ export function setActiveTaskDetailMenuAnchor(
 ) {
   if (anchorsEqual(activeAnchor, anchor)) return;
   if (anchor !== null) {
-    closeTimelineContextMenu?.();
+    closeRegisteredContextMenus();
   }
   activeAnchor = anchor;
   emit();
@@ -117,11 +143,14 @@ export function closeTaskDetailMenus() {
   setActiveTaskDetailMenuAnchor(null);
 }
 
-export function registerTimelineContextMenuCloser(closer: () => void): () => void {
-  closeTimelineContextMenu = closer;
+export function registerContextMenuCloser(closer: () => void): () => void {
+  ensureGlobalContextMenuListener();
+  contextMenuClosers.add(closer);
   return () => {
-    if (closeTimelineContextMenu === closer) {
-      closeTimelineContextMenu = null;
-    }
+    contextMenuClosers.delete(closer);
   };
+}
+
+export function registerTimelineContextMenuCloser(closer: () => void): () => void {
+  return registerContextMenuCloser(closer);
 }
