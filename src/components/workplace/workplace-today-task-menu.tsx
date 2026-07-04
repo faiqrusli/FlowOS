@@ -11,6 +11,7 @@ import { createPortal } from "react-dom";
 import {
   CalendarClock,
   CalendarDays,
+  Check,
   ClipboardList,
   Play,
   Trash2,
@@ -23,12 +24,14 @@ const MENU_ESTIMATED_WIDTH_PX = 220;
 type WorkplaceTodayTaskMenuProps = {
   menuRef: RefObject<HTMLDivElement | null>;
   taskTitle: string;
+  completed: boolean;
   anchorRect: DOMRect;
   onClose: () => void;
   onStartFocus: () => void;
   onOpenDetail: () => void;
   onMoveToTomorrow: () => void;
   onPlanLater: () => void;
+  onToggleComplete: () => void;
   onDelete: () => void;
 };
 
@@ -99,12 +102,14 @@ function useWorkplaceAnchoredMenuPosition(
 export function WorkplaceTodayTaskMenu({
   menuRef,
   taskTitle,
+  completed,
   anchorRect,
   onClose,
   onStartFocus,
   onOpenDetail,
   onMoveToTomorrow,
   onPlanLater,
+  onToggleComplete,
   onDelete,
 }: WorkplaceTodayTaskMenuProps) {
   const { mounted, position } = useWorkplaceAnchoredMenuPosition(
@@ -164,14 +169,16 @@ export function WorkplaceTodayTaskMenu({
         </div>
 
         <div className="p-1">
-          <button
-            type="button"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-            onClick={onStartFocus}
-          >
-            <Play className="size-3.5 shrink-0" />
-            Start focus
-          </button>
+          {!completed ? (
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+              onClick={onStartFocus}
+            >
+              <Play className="size-3.5 shrink-0" />
+              Start focus
+            </button>
+          ) : null}
           <button
             type="button"
             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
@@ -180,21 +187,33 @@ export function WorkplaceTodayTaskMenu({
             <ClipboardList className="size-3.5 shrink-0 text-muted-foreground" />
             Open details
           </button>
+          {!completed ? (
+            <>
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+                onClick={onMoveToTomorrow}
+              >
+                <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
+                Move to tomorrow
+              </button>
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+                onClick={onPlanLater}
+              >
+                <CalendarClock className="size-3.5 shrink-0 text-muted-foreground" />
+                Plan later
+              </button>
+            </>
+          ) : null}
           <button
             type="button"
             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-            onClick={onMoveToTomorrow}
+            onClick={onToggleComplete}
           >
-            <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
-            Move to tomorrow
-          </button>
-          <button
-            type="button"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-            onClick={onPlanLater}
-          >
-            <CalendarClock className="size-3.5 shrink-0 text-muted-foreground" />
-            Plan later
+            <Check className="size-3.5 shrink-0 text-muted-foreground" />
+            {completed ? "Mark incomplete" : "Mark complete"}
           </button>
           <button
             type="button"

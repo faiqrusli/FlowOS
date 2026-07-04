@@ -7,6 +7,7 @@ import { CalendarClock, CalendarDays, Clock } from "lucide-react";
 type WorkplaceFocusTaskMenuProps = {
   x: number;
   y: number;
+  completed?: boolean;
   onClose: () => void;
   onContinueLater: () => void;
   onContinueTomorrow: () => void;
@@ -16,6 +17,7 @@ type WorkplaceFocusTaskMenuProps = {
 export function WorkplaceFocusTaskMenu({
   x,
   y,
+  completed = false,
   onClose,
   onContinueLater,
   onContinueTomorrow,
@@ -54,6 +56,10 @@ export function WorkplaceFocusTaskMenu({
   }, [x, y]);
 
   if (!mounted) return null;
+
+  if (completed) {
+    return null;
+  }
 
   return createPortal(
     <>

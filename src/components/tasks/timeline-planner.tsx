@@ -2047,8 +2047,12 @@ export function TimelinePlanner({
           groups={groups}
           anchorRect={contextMenu.anchorRect}
           onClose={() => setContextMenu(null)}
+          onOpenDetail={() => {
+            onOpenDetail(contextMenu.task.id);
+            setContextMenu(null);
+          }}
           onClearTime={
-            contextMenu.task.scheduled_time
+            !contextMenu.task.completed && contextMenu.task.scheduled_time
               ? () => {
                   void onScheduleTask(contextMenu.task.id, {
                     scheduled_date: viewDate,
@@ -2073,6 +2077,10 @@ export function TimelinePlanner({
             if (onSetPlanningState) {
               void onSetPlanningState(contextMenu.task.id, "later");
             }
+            setContextMenu(null);
+          }}
+          onToggleComplete={() => {
+            void onToggleComplete(contextMenu.task);
             setContextMenu(null);
           }}
           onDelete={() => {

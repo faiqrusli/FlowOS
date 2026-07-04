@@ -11,6 +11,8 @@ import { createPortal } from "react-dom";
 import {
   CalendarClock,
   CalendarDays,
+  Check,
+  ClipboardList,
   Clock,
   Play,
   Trash2,
@@ -38,10 +40,12 @@ type WorkplaceTimelineTaskMenuProps = {
   groups: TaskGroupWithTasks[];
   anchorRect: DOMRect;
   onClose: () => void;
+  onOpenDetail: () => void;
   onClearTime?: () => void;
   onStartFocus: () => void;
   onMoveToTomorrow: () => void;
   onPlanLater: () => void;
+  onToggleComplete: () => void;
   onDelete: () => void;
 };
 
@@ -126,10 +130,12 @@ export function WorkplaceTimelineTaskMenu({
   groups,
   anchorRect,
   onClose,
+  onOpenDetail,
   onClearTime,
   onStartFocus,
   onMoveToTomorrow,
   onPlanLater,
+  onToggleComplete,
   onDelete,
 }: WorkplaceTimelineTaskMenuProps) {
   const { mounted, position } = useWorkplaceAnchoredMenuPosition(
@@ -139,6 +145,7 @@ export function WorkplaceTimelineTaskMenu({
   const group = resolveTaskGroup(task, groups);
   const groupAppearance = group ? getTaskGroupAppearance(group) : null;
   const timeRange = formatTaskTimeRange(task);
+  const completed = task.completed;
 
   if (!mounted) return null;
 
@@ -205,7 +212,7 @@ export function WorkplaceTimelineTaskMenu({
         </div>
 
         <div className="border-t border-border/30 p-1">
-          {onClearTime ? (
+          {!completed && onClearTime ? (
             <button
               type="button"
               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
@@ -215,29 +222,51 @@ export function WorkplaceTimelineTaskMenu({
               Unschedule
             </button>
           ) : null}
+          {!completed ? (
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+              onClick={onStartFocus}
+            >
+              <Play className="size-3.5 shrink-0" />
+              Start focus
+            </button>
+          ) : null}
           <button
             type="button"
             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-            onClick={onStartFocus}
+            onClick={onOpenDetail}
           >
-            <Play className="size-3.5 shrink-0" />
-            Start focus
+            <ClipboardList className="size-3.5 shrink-0 text-muted-foreground" />
+            Open details
           </button>
+          {!completed ? (
+            <>
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+                onClick={onMoveToTomorrow}
+              >
+                <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
+                Move to tomorrow
+              </button>
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+                onClick={onPlanLater}
+              >
+                <CalendarClock className="size-3.5 shrink-0 text-muted-foreground" />
+                Plan later
+              </button>
+            </>
+          ) : null}
           <button
             type="button"
             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-            onClick={onMoveToTomorrow}
+            onClick={onToggleComplete}
           >
-            <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
-            Move to tomorrow
-          </button>
-          <button
-            type="button"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
-            onClick={onPlanLater}
-          >
-            <CalendarClock className="size-3.5 shrink-0 text-muted-foreground" />
-            Plan later
+            <Check className="size-3.5 shrink-0 text-muted-foreground" />
+            {completed ? "Mark incomplete" : "Mark complete"}
           </button>
         </div>
       </div>

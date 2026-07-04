@@ -608,6 +608,10 @@ export function WorkplacePageContent({
                   void handlePlanLaterForTask(taskContextMenu.task);
                   setTaskContextMenu(null);
                 }}
+                onToggleComplete={() => {
+                  void handleToggleComplete(taskContextMenu.task);
+                  setTaskContextMenu(null);
+                }}
                 onDelete={() => {
                   void handleDeleteTask(taskContextMenu.task.id);
                   setTaskContextMenu(null);
@@ -672,6 +676,7 @@ function WorkplaceTodayTaskContextMenu({
   onOpenDetail,
   onMoveToTomorrow,
   onPlanLater,
+  onToggleComplete,
   onDelete,
 }: {
   menuRef: RefObject<HTMLDivElement | null>;
@@ -681,6 +686,7 @@ function WorkplaceTodayTaskContextMenu({
   onOpenDetail: () => void;
   onMoveToTomorrow: () => void;
   onPlanLater: () => void;
+  onToggleComplete: () => void;
   onDelete: () => void;
 }) {
   const { setActiveTaskId } = useWorkplaceFocusTask();
@@ -689,6 +695,7 @@ function WorkplaceTodayTaskContextMenu({
     <WorkplaceTodayTaskMenu
       menuRef={menuRef}
       taskTitle={task.title}
+      completed={task.completed}
       anchorRect={anchorRect}
       onClose={onClose}
       onStartFocus={() => {
@@ -698,6 +705,7 @@ function WorkplaceTodayTaskContextMenu({
       onOpenDetail={onOpenDetail}
       onMoveToTomorrow={onMoveToTomorrow}
       onPlanLater={onPlanLater}
+      onToggleComplete={onToggleComplete}
       onDelete={onDelete}
     />
   );

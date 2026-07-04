@@ -870,6 +870,7 @@ export function WorkplaceFocusCard({
         <WorkplaceFocusTaskMenu
           x={focusTaskMenu.x}
           y={focusTaskMenu.y}
+          completed={focusTaskMenu.task.completed}
           onClose={() => setFocusTaskMenu(null)}
           onContinueLater={() => {
             onContinueLater(focusTaskMenu.task);
