@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, X } from "lucide-react";
 import type { KpiCellKey } from "@/components/dashboard/dashboard-kpi-strip";
 import { Button } from "@/components/ui/button";
 import { formatDuration } from "@/lib/focus-utils";
@@ -18,6 +18,7 @@ type TodayRailStatsRowProps = {
   nextAction: NextAction;
   onCellAction: (cell: KpiCellKey) => void;
   onNextAction: (action: NextAction) => void;
+  onDismiss?: () => void;
   onQuickComplete?: () => void;
   completing?: boolean;
 };
@@ -78,6 +79,7 @@ export function TodayRailStatsRow({
   nextAction,
   onCellAction,
   onNextAction,
+  onDismiss,
   onQuickComplete,
   completing,
 }: TodayRailStatsRowProps) {
@@ -162,6 +164,19 @@ export function TodayRailStatsRow({
               >
                 {nextAction.actionLabel}
                 <ArrowRight className="size-3" />
+              </Button>
+            ) : null}
+            {onDismiss ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                onClick={onDismiss}
+                aria-label="Dismiss"
+                title="Dismiss"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="size-3" />
               </Button>
             ) : null}
           </div>

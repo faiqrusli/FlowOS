@@ -29,6 +29,12 @@ import {
   todayTaskAnchorId,
 } from "@/lib/today-in-place";
 import {
+  clearDismissedKey,
+  dismissKey,
+  readDismissedKey,
+  writeDismissedKey,
+} from "@/lib/next-action-dismiss";
+import {
   shouldShowTodayKpiStrip,
   shouldShowTodayNextAction,
 } from "@/lib/workplace-density";
@@ -46,6 +52,8 @@ export function TodayPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [completingNext, setCompletingNext] = useState(false);
+  const [dismissTick, setDismissTick] = useState(0);
+  const prevDismissKeyRef = useRef<string | null>(null);
 
   const loadDashboard = useCallback(async () => {
     setLoading(true);
@@ -114,6 +122,22 @@ export function TodayPageContent() {
     }
     return false;
   }, [data, nextAction.entityId, nextAction.type]);
+
+  const nextActionDismissKey = dismissKey(nextAction);
+
+  useEffect(() => {
+    const prev = prevDismissKeyRef.current;
+    if (prev !== null && prev !== nextActionDismissKey) {
+      clearDismissedKey();
+      setDismissTick((tick) => tick + 1);
+    }
+    prevDismissKeyRef.current = nextActionDismissKey;
+  }, [nextActionDismissKey]);
+
+  const handleDismissNextAction = useCallback(() => {
+    writeDismissedKey(nextActionDismissKey);
+    setDismissTick((tick) => tick + 1);
+  }, [nextActionDismissKey]);
 
   const scrollToTask = useCallback(
     (taskId: string, fallbackTargetId?: string | null) => {
@@ -302,9 +326,15 @@ export function TodayPageContent() {
   }
 
   const showKpiStrip = shouldShowTodayKpiStrip(density);
-  const showNextAction = shouldShowTodayNextAction(density, nextAction, {
-    hasActiveFocus: dashboardActive.isActive,
-  });
+  const isNextActionDismissed = useMemo(() => {
+    void dismissTick;
+    return readDismissedKey() === nextActionDismissKey;
+  }, [dismissTick, nextActionDismissKey]);
+
+  const showNextAction =
+    shouldShowTodayNextAction(density, nextAction, {
+      hasActiveFocus: dashboardActive.isActive,
+    }) && !isNextActionDismissed;
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -324,6 +354,7 @@ export function TodayPageContent() {
                   nextAction,
                   onCellAction: handleKpiCellAction,
                   onNextAction: handleNextAction,
+                  onDismissNextAction: handleDismissNextAction,
                   onQuickComplete:
                     nextAction.entityId &&
                     (nextAction.type === "task" ||

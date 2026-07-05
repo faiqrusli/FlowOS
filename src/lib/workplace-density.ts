@@ -72,6 +72,8 @@ export function shouldShowTodayNextAction(
   return (
     action.type === "task" ||
     action.type === "habit" ||
-    action.type === "reflection"
+    action.type === "reflection" ||
+    action.type === "focus" ||
+    action.type === "empty"
   );
 }

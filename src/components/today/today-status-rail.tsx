@@ -36,6 +36,7 @@ type TodayStatusRailProps = {
     nextAction: NextAction;
     onCellAction: (cell: KpiCellKey) => void;
     onNextAction: (action: NextAction) => void;
+    onDismissNextAction?: () => void;
     onQuickComplete?: () => void;
     completing?: boolean;
   };
@@ -119,6 +120,7 @@ export function TodayStatusRail({
           nextAction={stats.nextAction}
           onCellAction={stats.onCellAction}
           onNextAction={stats.onNextAction}
+          onDismiss={stats.onDismissNextAction}
           onQuickComplete={stats.onQuickComplete}
           completing={stats.completing}
         />
