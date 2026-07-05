@@ -5,6 +5,7 @@ import {
   type KpiCellKey,
 } from "@/components/dashboard/dashboard-kpi-strip";
 import { ErrorBanner } from "@/components/shared/error-banner";
+import { TodayNowSlot } from "@/components/today/today-now-slot";
 import { TodayStatusRail } from "@/components/today/today-status-rail";
 import type { WorkplaceHabitsCardHandle } from "@/components/workplace/workplace-habits-card";
 import type { WorkplaceTasksCardHandle } from "@/components/workplace/workplace-tasks-card";
@@ -331,10 +332,13 @@ export function TodayPageContent() {
     return readDismissedKey() === nextActionDismissKey;
   }, [dismissTick, nextActionDismissKey]);
 
-  const showNextAction =
-    shouldShowTodayNextAction(density, nextAction, {
-      hasActiveFocus: dashboardActive.isActive,
-    }) && !isNextActionDismissed;
+  const showNowSlot =
+    density !== "focus" &&
+    !isNextActionDismissed &&
+    (dashboardActive.isActive ||
+      shouldShowTodayNextAction(density, nextAction, {
+        hasActiveFocus: false,
+      }));
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -350,22 +354,29 @@ export function TodayPageContent() {
                   progress: data.progress,
                   reflection: data.reflection,
                   showKpiStats: showKpiStrip,
-                  showNextAction,
-                  nextAction,
                   onCellAction: handleKpiCellAction,
-                  onNextAction: handleNextAction,
-                  onDismissNextAction: handleDismissNextAction,
-                  onQuickComplete:
-                    nextAction.entityId &&
-                    (nextAction.type === "task" ||
-                      nextAction.type === "habit") &&
-                    !nextActionTargetCompleted
-                      ? handleQuickCompleteNext
-                      : undefined,
-                  completing: completingNext,
                 }
               : undefined
           }
+        />
+
+        <TodayNowSlot
+          loading={loading}
+          visible={showNowSlot}
+          nextAction={nextAction}
+          hasActiveFocus={dashboardActive.isActive}
+          focusSessionLabel={dashboardActive.label}
+          focusIsPaused={dashboardActive.isPaused}
+          onAction={handleNextAction}
+          onDismiss={handleDismissNextAction}
+          onQuickComplete={
+            nextAction.entityId &&
+            (nextAction.type === "task" || nextAction.type === "habit") &&
+            !nextActionTargetCompleted
+              ? handleQuickCompleteNext
+              : undefined
+          }
+          completing={completingNext}
         />
 
         {error ? (
