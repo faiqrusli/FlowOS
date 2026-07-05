@@ -59,3 +59,30 @@ Low ceremony — bullets are fine.
 ---
 
 <!-- Append new dated blocks above this line (newest first) -->
+
+## 2026-07-05 — M2 Today UX Polish (Sessions 1–4)
+
+**Runbook:** [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md) — B1–B3 on `main`; **B4 on `tweak/session-4-today-chrome` (merge pending founder approval).**
+
+**Shipped (product):**
+
+| Bundle | Summary | Merge / tip |
+|--------|---------|-------------|
+| B1 | Tasks scroll chain; habit Start now guard; global context-menu bus; Enter refocus | `main` `c717428` |
+| B2 | Slim timeline task menu; details complete toggle; reflection sidebar link to `/reflection` | `main` `b182f40` |
+| B3 | Icon-only quick-add (BookOpen/Sparkles); daily note copy + `Ctrl+Shift+D`; optimistic Enter queue (no disabled input) | `main` `783f26a` |
+| B4 | Compact `today-status-rail`; density Full/Work/Focus (`workplace-density.ts`); Full merges inline KPI + smart Next Action in rail; left-nav icons on 4 cards; ListPlus quick capture | branch `5ae47b2` |
+
+**Follow-up tweaks (same B4 branch):** task details title row + checkbox (`a7c72c9` on main via B3); card header icons; `today-rail-stats-row.tsx`.
+
+**Build/lint:** Pass on each session branch.
+
+**Production:** https://flowos-sage.vercel.app — B1–B3 live after merges; **B4 needs merge + manual test matrix** (runbook § Manual test matrix).
+
+**From inbox → runbook:** 2026-07-05 capture (Today chrome, menus, quick-add, P0 bugs) — see [inbox.md](./inbox.md) Done table.
+
+**Decisions promoted:** → [decision-log.md](./decision-log.md) (next-action hidden by default; Full density smart coach; rail-merged chrome).
+
+**Milestones:** M2 dogfood quality pass; does not close M2 exit — continue Sessions 7–8 per founder daily driver.
+
+---

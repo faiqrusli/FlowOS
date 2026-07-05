@@ -100,7 +100,9 @@ Productivity
 | Today's tasks card | Shipped | Primary task execution on Workplace |
 | Habits card | Shipped | Daily habit completion |
 | Daily note card | Shipped | Overlaps Notes module |
-| Quick add card | Shipped | Task creation on Workplace |
+| Quick add card | Shipped | Inline Enter capture (optimistic queue); icon strip; `ListPlus` full form |
+| Workplace density presets | Shipped | `full` \| `work` (default) \| `focus` — `workplace-density.ts` |
+| Today status rail | Shipped | Compact chrome on `/`; Full density inline KPI + smart Next Action |
 | **Agenda card** | **Dead code** | Component exists but **not imported** — delete in security week; not user-visible |
 | Focus reflection modal | Shipped | Post-session capture |
 
@@ -110,9 +112,9 @@ Productivity
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| KPI tiles (tasks, habits, focus) | Shipped | Read-only intelligence |
-| On-track status | Shipped | Progress computation |
-| Next action recommendation | Shipped | **Routes incorrectly** — focus → `/focus`, tasks → `/tasks` list |
+| KPI tiles (tasks, habits, focus) | Shipped | Full density only on Today (inline in status rail) |
+| On-track status | Shipped | Shown in Today status rail |
+| Next action recommendation | Shipped | Hidden by default (Work density); in-place on `/` when shown |
 | Upcoming schedule preview | Shipped | Links to wrong surfaces |
 | Task/habit previews | Shipped | — |
 

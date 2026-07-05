@@ -41,7 +41,7 @@ When making a significant product decision:
 **Context:** Full density still used ~200px of bordered KPI + Next Action cards above the workplace after smart-coach filtering; dashboard-scale typography (`text-2xl` KPI values, full Next Action card) felt too large for a daily driver.  
 **Decision:** Full density merges inline KPI chips and compact Next Action into `today-status-rail.tsx` row 2 via `today-rail-stats-row.tsx`. Separate `DashboardKpiStrip` / `DashboardNextAction` cards removed from Today. Smart coach rules unchanged.  
 **Alternatives rejected:** Shrink cards in place; hide KPI strip entirely in Full.  
-**Outcome:** Pending ship.  
+**Outcome:** On branch `tweak/session-4-today-chrome` (`5ae47b2`); merge B4 pending.  
 **Related:** [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md) Session 4, supersedes smart-coach card layout
 
 ---
@@ -51,7 +51,7 @@ When making a significant product decision:
 **Context:** Full density still stacked KPI strip and Next Action on every Today load; focus-session banner duplicated the Focus module below. On-track % appeared in status rail, KPI "Today" cell, and KPI footer.  
 **Decision:** Full density shows deduped KPI strip (Tasks · Habits · Focus · Reflection only — no Today cell or coaching footer). Next Action card appears only for concrete task, habit, or reflection nudges; hidden during active focus and for all focus-type recommendations ("Return to Focus", "Start Focus", etc.). Work remains default (status rail only).  
 **Alternatives rejected:** Always show KPI + Next Action in Full; hide Next Action entirely in Full.  
-**Outcome:** Pending ship (`workplace-density.ts`, `today-page-content.tsx`, `dashboard-kpi-strip.tsx`).  
+**Outcome:** On branch `tweak/session-4-today-chrome` (`5ae47b2`); merge B4 pending (`workplace-density.ts`, `today-page-content.tsx`, `today-rail-stats-row.tsx`).  
 **Related:** [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md) Session 4, supersedes partial outcome of entry below
 
 ---
@@ -61,7 +61,7 @@ When making a significant product decision:
 **Context:** Inbox (2026-07-05) — Today header felt like a dashboard stacked above the workplace; Next Action banner added chrome without daily-driver value once workplace modules show counts and focus.  
 **Decision:** Default workspace density **Work**: compact status rail only; KPI strip and Next Action shown only when founder sets density **Full**. Next-action in-place handlers retained in code for Full density and future coach.  
 **Alternatives rejected:** (B) collapsed one-line next-action always visible; (C) always show KPI + next-action (inbox complaint persists).  
-**Outcome:** Shipped in M2 Today UX Polish Session 4 (`workplace-density.ts`, `today-status-rail.tsx`).  
+**Outcome:** Implemented on branch `tweak/session-4-today-chrome`; merge B4 pending (`workplace-density.ts`, `today-status-rail.tsx`).  
 **Related:** [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md), runbook decision point #1
 
 ---
