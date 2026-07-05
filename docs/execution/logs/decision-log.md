@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 4, 2026
+**Last updated:** July 6, 2026
 
 ---
 
@@ -35,6 +35,16 @@ When making a significant product decision:
 ---
 
 ## 2026 decisions
+
+### 2026-07-06 — Reverse: next-action visible by default (Work density)
+
+**Context:** Today V3 runbook Session 1 — PRINCIPLES #2 requires a single clear next step on load; the 2026-07-05 decision hid next-action in default Work density. V3 §13 week-1 item 1 ships a compact one-line "Next:" strip as the NOW slot embryo.  
+**Decision:** `shouldShowTodayNextAction` returns true for **Work** and **Full** density (still false for **Focus** and during active focus). KPI strip remains Full-only. Type allowlist unchanged this session (task \| habit \| reflection).  
+**Alternatives rejected:** Keep next-action Full-only (violates P#2 default); widen allowlist now (deferred to Session 2).  
+**Outcome:** Session 1 on branch `m2/session-1-today-v3-next-action-visible`.  
+**Related:** [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md) Session 1, [today-v3-greenfield-design.md](../../review/design/today-v3-greenfield-design.md) §13 — **supersedes** 2026-07-05 "Today next-action hidden by default (density Work)"
+
+---
 
 ### 2026-07-05 — Today Full density: merge chrome into status rail
 
