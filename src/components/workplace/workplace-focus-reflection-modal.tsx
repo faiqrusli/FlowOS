@@ -9,11 +9,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { fetchTodayReflection } from "@/lib/reflection-storage";
 import {
-  fetchTodayReflection,
-  saveReflection,
-} from "@/lib/reflection-storage";
-import { FOCUS_REFLECTION_ENTRY_TITLE } from "@/lib/focus-reflection";
+  FOCUS_REFLECTION_ENTRY_TITLE,
+  saveFocusReflectionEntry,
+} from "@/lib/focus-reflection";
 
 type WorkplaceFocusReflectionModalProps = {
   open: boolean;
@@ -67,32 +67,7 @@ export function WorkplaceFocusReflectionModal({
       void (async () => {
         setSaving(true);
         try {
-          const reflection = await fetchTodayReflection();
-          const entries = reflection?.custom_entries ?? [];
-          const exists = entries.some(
-            (entry) => entry.title === FOCUS_REFLECTION_ENTRY_TITLE
-          );
-          const nextEntries = exists
-            ? entries.map((entry) =>
-                entry.title === FOCUS_REFLECTION_ENTRY_TITLE
-                  ? { ...entry, content }
-                  : entry
-              )
-            : [
-                ...entries,
-                {
-                  id: crypto.randomUUID(),
-                  title: FOCUS_REFLECTION_ENTRY_TITLE,
-                  content,
-                },
-              ];
-
-          await saveReflection({
-            went_well: reflection?.went_well ?? "",
-            went_wrong: reflection?.went_wrong ?? "",
-            custom_entries: nextEntries,
-            custom_kanbans: reflection?.custom_kanbans ?? [],
-          });
+          await saveFocusReflectionEntry(content);
           setDirty(false);
         } finally {
           setSaving(false);

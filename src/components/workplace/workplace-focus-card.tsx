@@ -16,12 +16,14 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
+import { WorkplaceFocusInlineReflection } from "@/components/workplace/workplace-focus-inline-reflection";
 import { WorkplaceFocusReflectionModal } from "@/components/workplace/workplace-focus-reflection-modal";
 import { WorkplaceFocusTaskMenu } from "@/components/workplace/workplace-focus-task-menu";
 import { useWorkplaceFocusTask } from "@/contexts/workplace-focus-task-context";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { getDateKeyInTimezone, getTodayDateString, formatNowTimeInAppTimezone } from "@/lib/date-utils";
-import { formatDuration } from "@/lib/focus-utils";
+import { formatDuration, getSessionFocusSeconds } from "@/lib/focus-utils";
+import { shouldPromptFocusReflection } from "@/lib/focus-reflection";
 import { computeTodayStats, fetchFocusSessions } from "@/lib/focus-storage";
 import {
   formatTaskFocusSchedule,
@@ -39,6 +41,7 @@ import {
   TIMELINE_DRAG_KIND_MIME,
 } from "@/lib/timeline-drag";
 import { cn } from "@/lib/utils";
+import type { FocusSession } from "@/types/focus";
 import type { Habit } from "@/types/habit";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
@@ -290,6 +293,9 @@ export function WorkplaceFocusCard({
   const [completingHabitId, setCompletingHabitId] = useState<string | null>(null);
   const [promotedNextId, setPromotedNextId] = useState<string | null>(null);
   const [clockLabel, setClockLabel] = useState(formatNowTimeInAppTimezone());
+  const [inlineReflectionSession, setInlineReflectionSession] =
+    useState<FocusSession | null>(null);
+  const pendingInlineReflectionRef = useRef(false);
 
   const {
     activeTask,
@@ -301,7 +307,8 @@ export function WorkplaceFocusCard({
     notifyTaskCompleted,
     isFocusableHabit,
   } = useWorkplaceFocusTask();
-  const { quick, pomodoro, prepareFocusTarget } = useFocusSessionContext();
+  const { quick, pomodoro, prepareFocusTarget, lastSavedSession } =
+    useFocusSessionContext();
 
   const pomodoroDisabled = quick.isActive;
   const quickStartDisabled = pomodoro.isRunning || pomodoro.isPaused;
@@ -359,6 +366,21 @@ export function WorkplaceFocusCard({
     const timer = window.setTimeout(() => setPromotedNextId(null), 700);
     return () => window.clearTimeout(timer);
   }, [promotedNextId]);
+
+  const handleQuickStop = useCallback(() => {
+    pendingInlineReflectionRef.current = shouldPromptFocusReflection(
+      quick.currentFocusSeconds
+    );
+    quick.stopSession();
+  }, [quick]);
+
+  useEffect(() => {
+    if (!lastSavedSession || !pendingInlineReflectionRef.current) return;
+    pendingInlineReflectionRef.current = false;
+    if (shouldPromptFocusReflection(getSessionFocusSeconds(lastSavedSession))) {
+      setInlineReflectionSession(lastSavedSession);
+    }
+  }, [lastSavedSession]);
 
   const handleDoneWithAnimation = useCallback(
     (task: Task) => {
@@ -569,6 +591,12 @@ export function WorkplaceFocusCard({
             <>
               <div className="group/timer relative flex shrink-0 flex-col items-center justify-center py-2 text-center">
                 {quick.isIdle ? (
+                  inlineReflectionSession ? (
+                    <WorkplaceFocusInlineReflection
+                      session={inlineReflectionSession}
+                      onDismiss={() => setInlineReflectionSession(null)}
+                    />
+                  ) : (
                   <div className="flex w-full max-w-sm flex-col items-center gap-5">
                     <Button
                       type="button"
@@ -580,6 +608,7 @@ export function WorkplaceFocusCard({
                       Start Focus
                     </Button>
                   </div>
+                  )
                 ) : (
                   <>
                     <p className="mb-2 text-[14px] font-medium text-muted-foreground">
@@ -639,7 +668,7 @@ export function WorkplaceFocusCard({
                             type="button"
                             size="sm"
                             variant="outline"
-                            onClick={quick.stopSession}
+                            onClick={handleQuickStop}
                             className="h-8 px-3.5"
                           >
                             <Square className="size-3.5" />
@@ -661,7 +690,7 @@ export function WorkplaceFocusCard({
                             type="button"
                             size="sm"
                             variant="outline"
-                            onClick={quick.stopSession}
+                            onClick={handleQuickStop}
                             className="h-8 px-3.5"
                           >
                             Stop

@@ -5,6 +5,7 @@ import {
   type KpiCellKey,
 } from "@/components/dashboard/dashboard-kpi-strip";
 import { ErrorBanner } from "@/components/shared/error-banner";
+import { TodayNowSlot } from "@/components/today/today-now-slot";
 import { TodayStatusRail } from "@/components/today/today-status-rail";
 import type { WorkplaceHabitsCardHandle } from "@/components/workplace/workplace-habits-card";
 import type { WorkplaceTasksCardHandle } from "@/components/workplace/workplace-tasks-card";
@@ -29,6 +30,12 @@ import {
   todayTaskAnchorId,
 } from "@/lib/today-in-place";
 import {
+  clearDismissedKey,
+  dismissKey,
+  readDismissedKey,
+  writeDismissedKey,
+} from "@/lib/next-action-dismiss";
+import {
   shouldShowTodayKpiStrip,
   shouldShowTodayNextAction,
 } from "@/lib/workplace-density";
@@ -46,6 +53,8 @@ export function TodayPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [completingNext, setCompletingNext] = useState(false);
+  const [dismissTick, setDismissTick] = useState(0);
+  const prevDismissKeyRef = useRef<string | null>(null);
 
   const loadDashboard = useCallback(async () => {
     setLoading(true);
@@ -114,6 +123,22 @@ export function TodayPageContent() {
     }
     return false;
   }, [data, nextAction.entityId, nextAction.type]);
+
+  const nextActionDismissKey = dismissKey(nextAction);
+
+  useEffect(() => {
+    const prev = prevDismissKeyRef.current;
+    if (prev !== null && prev !== nextActionDismissKey) {
+      clearDismissedKey();
+      setDismissTick((tick) => tick + 1);
+    }
+    prevDismissKeyRef.current = nextActionDismissKey;
+  }, [nextActionDismissKey]);
+
+  const handleDismissNextAction = useCallback(() => {
+    writeDismissedKey(nextActionDismissKey);
+    setDismissTick((tick) => tick + 1);
+  }, [nextActionDismissKey]);
 
   const scrollToTask = useCallback(
     (taskId: string, fallbackTargetId?: string | null) => {
@@ -302,9 +327,18 @@ export function TodayPageContent() {
   }
 
   const showKpiStrip = shouldShowTodayKpiStrip(density);
-  const showNextAction = shouldShowTodayNextAction(density, nextAction, {
-    hasActiveFocus: dashboardActive.isActive,
-  });
+  const isNextActionDismissed = useMemo(() => {
+    void dismissTick;
+    return readDismissedKey() === nextActionDismissKey;
+  }, [dismissTick, nextActionDismissKey]);
+
+  const showNowSlot =
+    density !== "focus" &&
+    !isNextActionDismissed &&
+    (dashboardActive.isActive ||
+      shouldShowTodayNextAction(density, nextAction, {
+        hasActiveFocus: false,
+      }));
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -320,21 +354,29 @@ export function TodayPageContent() {
                   progress: data.progress,
                   reflection: data.reflection,
                   showKpiStats: showKpiStrip,
-                  showNextAction,
-                  nextAction,
                   onCellAction: handleKpiCellAction,
-                  onNextAction: handleNextAction,
-                  onQuickComplete:
-                    nextAction.entityId &&
-                    (nextAction.type === "task" ||
-                      nextAction.type === "habit") &&
-                    !nextActionTargetCompleted
-                      ? handleQuickCompleteNext
-                      : undefined,
-                  completing: completingNext,
                 }
               : undefined
           }
+        />
+
+        <TodayNowSlot
+          loading={loading}
+          visible={showNowSlot}
+          nextAction={nextAction}
+          hasActiveFocus={dashboardActive.isActive}
+          focusSessionLabel={dashboardActive.label}
+          focusIsPaused={dashboardActive.isPaused}
+          onAction={handleNextAction}
+          onDismiss={handleDismissNextAction}
+          onQuickComplete={
+            nextAction.entityId &&
+            (nextAction.type === "task" || nextAction.type === "habit") &&
+            !nextActionTargetCompleted
+              ? handleQuickCompleteNext
+              : undefined
+          }
+          completing={completingNext}
         />
 
         {error ? (

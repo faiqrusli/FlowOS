@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 4, 2026
+**Last updated:** July 6, 2026
 
 ---
 
@@ -35,6 +35,36 @@ When making a significant product decision:
 ---
 
 ## 2026 decisions
+
+### 2026-07-06 — Session 6 blocked pending Phase C decision-log approval
+
+**Context:** Founder requested Sessions 5–6 back-to-back. Session 6 (habits interleaved into NEXT queue) is Phase C and requires approval of decision-log appendix entries #1, #3, #5 before engineering starts per [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md) resume protocol.  
+**Decision:** Session 5 completed on branch `m2/session-5-today-v3-next-queue`; Session 6 **not started** until founder approves and merges the three appendix entries into this log.  
+**Alternatives rejected:** Ship Session 6 without approval (violates runbook hard gate).  
+**Outcome:** Blocker recorded; resume Session 6 after approval.  
+**Related:** Runbook appendix "Required decision-log entries (founder approval before Phase C)"
+
+---
+
+### 2026-07-06 — Focus timer controls audit (Today V3 Session 3)
+
+**Context:** Today V3 Session 3 targeted un-gating Pause/Break/Stop per PRINCIPLES #10; FEATURE_INVENTORY still listed "Hover-gated controls — Phase 3.3 fix."  
+**Decision:** Code audit of `workplace-focus-card.tsx`: both Focus-tab and Pomodoro-tab `TimerHoverControls` call sites already pass `alwaysVisible`. No code change; inventory row updated to reflect shipped state.  
+**Alternatives rejected:** Delete hover-only branch in `TimerHoverControls` (dead path, no user impact).  
+**Outcome:** Docs-only Session 3 on branch `m2/session-3-today-v3-focus-controls-visible`.  
+**Related:** [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md) Session 3 — **deferred separately:** `global-right-sidebar.tsx` workplace hover-reveal (`workplaceHoverMode`) is a larger IA decision, not in Session 3 scope.
+
+---
+
+### 2026-07-06 — Reverse: next-action visible by default (Work density)
+
+**Context:** Today V3 runbook Session 1 — PRINCIPLES #2 requires a single clear next step on load; the 2026-07-05 decision hid next-action in default Work density. V3 §13 week-1 item 1 ships a compact one-line "Next:" strip as the NOW slot embryo.  
+**Decision:** `shouldShowTodayNextAction` returns true for **Work** and **Full** density (still false for **Focus** and during active focus). KPI strip remains Full-only. Type allowlist unchanged this session (task \| habit \| reflection).  
+**Alternatives rejected:** Keep next-action Full-only (violates P#2 default); widen allowlist now (deferred to Session 2).  
+**Outcome:** Session 1 on branch `m2/session-1-today-v3-next-action-visible`.  
+**Related:** [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md) Session 1, [today-v3-greenfield-design.md](../../review/design/today-v3-greenfield-design.md) §13 — **supersedes** 2026-07-05 "Today next-action hidden by default (density Work)"
+
+---
 
 ### 2026-07-05 — Today Full density: merge chrome into status rail
 

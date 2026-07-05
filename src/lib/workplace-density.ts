@@ -67,11 +67,13 @@ export function shouldShowTodayNextAction(
   action: Pick<NextAction, "type">,
   options?: { hasActiveFocus?: boolean }
 ): boolean {
-  if (density !== "full") return false;
+  if (density === "focus") return false;
   if (options?.hasActiveFocus) return false;
   return (
     action.type === "task" ||
     action.type === "habit" ||
-    action.type === "reflection"
+    action.type === "reflection" ||
+    action.type === "focus" ||
+    action.type === "empty"
   );
 }

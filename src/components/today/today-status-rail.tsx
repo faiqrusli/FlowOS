@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatTodayHeading } from "@/lib/date-utils";
-import type { NextAction, OnTrackStatus } from "@/lib/dashboard-command";
+import type { OnTrackStatus } from "@/lib/dashboard-command";
 import type { WorkplaceDensity } from "@/lib/workplace-density";
 import { cn } from "@/lib/utils";
 import type { TodayProgress } from "@/types/dashboard";
@@ -32,12 +32,7 @@ type TodayStatusRailProps = {
     progress: TodayProgress;
     reflection: Reflection | null;
     showKpiStats: boolean;
-    showNextAction: boolean;
-    nextAction: NextAction;
     onCellAction: (cell: KpiCellKey) => void;
-    onNextAction: (action: NextAction) => void;
-    onQuickComplete?: () => void;
-    completing?: boolean;
   };
 };
 
@@ -50,8 +45,7 @@ export function TodayStatusRail({
 }: TodayStatusRailProps) {
   const dateLabel = loading ? "…" : formatTodayHeading();
   const onTrackLabel = loading ? "…" : `${onTrack.percent}% on track`;
-  const showStatsRow =
-    stats && (stats.showKpiStats || stats.showNextAction) && !loading;
+  const showStatsRow = stats?.showKpiStats && !loading;
 
   return (
     <header className="shrink-0 space-y-0.5 px-6 lg:pl-10">
@@ -114,13 +108,7 @@ export function TodayStatusRail({
         <TodayRailStatsRow
           progress={stats.progress}
           reflection={stats.reflection}
-          showKpiStats={stats.showKpiStats}
-          showNextAction={stats.showNextAction}
-          nextAction={stats.nextAction}
           onCellAction={stats.onCellAction}
-          onNextAction={stats.onNextAction}
-          onQuickComplete={stats.onQuickComplete}
-          completing={stats.completing}
         />
       ) : null}
     </header>
