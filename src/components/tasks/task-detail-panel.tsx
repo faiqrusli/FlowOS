@@ -145,42 +145,35 @@ export function TaskDetailFields({
 
   return (
     <div className="space-y-3 p-3">
-      <div className="space-y-1.5">
-        <Label htmlFor="task-detail-title" className="text-xs text-muted-foreground">
-          Title
-        </Label>
-        <div className="flex items-center gap-2">
-          {onToggleComplete ? (
-            <button
-              type="button"
-              onClick={onToggleComplete}
-              className={cn(
-                "flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors",
-                task.completed
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-muted-foreground/35 hover:border-foreground/55"
-              )}
-              aria-label={
-                task.completed
-                  ? `Mark "${task.title}" incomplete`
-                  : `Mark "${task.title}" complete`
-              }
-            >
-              {task.completed ? (
-                <Check className="size-2.5" strokeWidth={3} />
-              ) : null}
-            </button>
-          ) : null}
-          <Input
-            id="task-detail-title"
-            value={task.title}
-            onChange={(event) => onChange({ title: event.target.value })}
+      <div className="flex items-center gap-2">
+        {onToggleComplete ? (
+          <button
+            type="button"
+            onClick={onToggleComplete}
             className={cn(
-              "min-w-0 flex-1",
-              task.completed && "line-through opacity-60"
+              "flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors",
+              task.completed
+                ? "border-foreground bg-foreground text-background"
+                : "border-muted-foreground/35 hover:border-foreground/55"
             )}
-          />
-        </div>
+            aria-label={
+              task.completed
+                ? `Mark "${task.title}" incomplete`
+                : `Mark "${task.title}" complete`
+            }
+          >
+            {task.completed ? (
+              <Check className="size-2.5" strokeWidth={3} />
+            ) : null}
+          </button>
+        ) : null}
+        <Input
+          id="task-detail-title"
+          value={task.title}
+          onChange={(event) => onChange({ title: event.target.value })}
+          aria-label="Task title"
+          className="min-w-0 flex-1"
+        />
       </div>
 
       <div className="space-y-1.5">
