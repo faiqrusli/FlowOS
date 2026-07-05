@@ -269,13 +269,13 @@ Run on **production** after Session 4.
 
 | # | Scenario | Setup | Action | Expected | Pass |
 |---|----------|-------|--------|----------|------|
-| 1 | Tasks scroll | 10+ tasks today | Scroll tasks list | Habits card visible; list scrolls internally | ☐ |
-| 2 | Menu handoff | Open timeline menu | Right-click task list row | Single menu only | ☐ |
-| 3 | Rapid capture | Empty input | Enter × 3 task titles | 3 tasks; focus never lost | ☐ |
-| 4 | Timeline menu | Scheduled incomplete task | Right-click block | Focus, complete, details, unschedule; no tomorrow/later | ☐ |
-| 5 | Details complete | Task open in drawer | Toggle checkbox | Task completes on board | ☐ |
-| 6 | Reflection escape | Reflection panel open | Click header link | Navigates to `/reflection` | ☐ |
-| 7 | Chrome | Default density | Load `/` | Compact rail; no giant Today + KPI stack | ☐ |
+| 1 | Tasks scroll | 10+ tasks today | Scroll tasks list | Habits card visible; list scrolls internally | ☑ |
+| 2 | Menu handoff | Open timeline menu | Right-click task list row | Single menu only | ☑ |
+| 3 | Rapid capture | Empty input | Enter × 3 task titles | 3 tasks; focus never lost | ☑ |
+| 4 | Timeline menu | Scheduled incomplete task | Right-click block | Focus, complete, details, unschedule; no tomorrow/later | ☑ |
+| 5 | Details complete | Task open in drawer | Toggle checkbox | Task completes on board | ☑ |
+| 6 | Reflection escape | Reflection panel open | Click header link | Navigates to `/reflection` | ☑ |
+| 7 | Chrome | Default density | Load `/` | Compact rail; no giant Today + KPI stack | ☑ |
 
 **Gate:** All applicable rows **PASS** before marking runbook complete.
 
@@ -342,10 +342,10 @@ Record founder override in [decision-log.md](../logs/decision-log.md).
 | R2 | Timeline menu slim; details complete; reflection link | 2 | ☑ `main` via B2 |
 | R3 | Quick-add icons + daily note copy/shortcuts | 3 | ☑ `main` via B3 |
 | R4 | Compact status rail + hidden next-action + density presets | 4 | ☑ `main` `9685c02` |
-| R5 | Manual test matrix all PASS on production | 4 | ☐ founder sign-off |
+| R5 | Manual test matrix all PASS on production | 4 | ☑ founder sign-off 2026-07-05 |
 | R6 | [inbox.md](../logs/inbox.md) items moved to Done; [july-log.md](../logs/july-log.md) updated | 4 | ☑ |
 
-**Acceptance test:** Founder daily driver on `/` feels like a workplace, not a dashboard stacked above a workplace. ☐ pending production sign-off after B4
+**Acceptance test:** Founder daily driver on `/` feels like a workplace, not a dashboard stacked above a workplace. ☑ 2026-07-05
 
 ---
 

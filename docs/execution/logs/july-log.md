@@ -77,7 +77,7 @@ Low ceremony — bullets are fine.
 
 **Build/lint:** Pass on each session branch.
 
-**Production:** https://flowos-sage.vercel.app — B1–B4 deployed after merge; **manual test matrix sign-off pending** (runbook § Manual test matrix).
+**Production:** https://flowos-sage.vercel.app — B1–B4 deployed; **manual test matrix PASS** (founder sign-off 2026-07-05). Runbook **complete**.
 
 **From inbox → runbook:** 2026-07-05 capture (Today chrome, menus, quick-add, P0 bugs) — see [inbox.md](./inbox.md) Done table.
 
