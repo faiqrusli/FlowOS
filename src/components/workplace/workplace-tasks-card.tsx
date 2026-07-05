@@ -9,6 +9,7 @@ import {
   useState,
   type MouseEvent,
 } from "react";
+import { CheckSquare } from "lucide-react";
 import { WorkplaceCompactTaskRow } from "@/components/workplace/workplace-compact-task-row";
 import { WorkplaceModuleCard } from "@/components/workplace/workplace-module-card";
 import {
@@ -135,6 +136,7 @@ export const WorkplaceTasksCard = forwardRef<
       moduleId="tasks"
       anchorId={TODAY_TASKS_SECTION_ID}
       title="Today's Tasks"
+      titleIcon={CheckSquare}
       titleMeta={titleMeta}
       className="min-h-0 overflow-hidden"
       bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden"

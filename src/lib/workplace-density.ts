@@ -1,3 +1,5 @@
+import type { NextAction } from "@/lib/dashboard-command";
+
 export type WorkplaceDensity = "full" | "work" | "focus";
 
 export type WorkplaceDensityModule =
@@ -56,6 +58,20 @@ export function isWorkplaceModuleShown(
   return true;
 }
 
-export function shouldShowTodayChromePanels(density: WorkplaceDensity): boolean {
+export function shouldShowTodayKpiStrip(density: WorkplaceDensity): boolean {
   return density === "full";
+}
+
+export function shouldShowTodayNextAction(
+  density: WorkplaceDensity,
+  action: Pick<NextAction, "type">,
+  options?: { hasActiveFocus?: boolean }
+): boolean {
+  if (density !== "full") return false;
+  if (options?.hasActiveFocus) return false;
+  return (
+    action.type === "task" ||
+    action.type === "habit" ||
+    action.type === "reflection"
+  );
 }

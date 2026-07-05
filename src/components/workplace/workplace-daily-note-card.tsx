@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ExternalLink, Eye, EyeOff, Plus } from "lucide-react";
+import { ExternalLink, Eye, EyeOff, NotebookPen, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   readModuleVisibility,
@@ -121,14 +121,20 @@ export function WorkplaceDailyNoteCard() {
           !cardVisible && "pointer-events-none opacity-0"
         )}
       >
-        <div className="min-w-0">
-          <h3 className="text-[14px] font-semibold tracking-tight text-foreground">
-            Today&apos;s note
-          </h3>
-          <p className="mt-0.5 text-[13px] text-muted-foreground">
-            {formatDailyNoteHeaderDate(todayKey)}
-            {saving ? " · Saving…" : null}
-          </p>
+        <div className="flex min-w-0 items-start gap-1.5">
+          <NotebookPen
+            className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+            aria-hidden
+          />
+          <div className="min-w-0">
+            <h3 className="text-[14px] font-semibold tracking-tight text-foreground">
+              Today&apos;s note
+            </h3>
+            <p className="mt-0.5 text-[13px] text-muted-foreground">
+              {formatDailyNoteHeaderDate(todayKey)}
+              {saving ? " · Saving…" : null}
+            </p>
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <button

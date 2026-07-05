@@ -8,6 +8,7 @@ import {
   Pause,
   Play,
   Square,
+  Timer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -497,7 +498,12 @@ export function WorkplaceFocusCard({
       >
         <div className="shrink-0 space-y-2 px-3.5 py-3">
           <div className="flex items-center justify-between gap-2">
-            <div className="inline-flex rounded-lg border border-border/60 bg-muted/40 p-0.5">
+            <div className="flex min-w-0 items-center gap-1.5">
+              <Timer
+                className="size-4 shrink-0 text-muted-foreground"
+                aria-hidden
+              />
+              <div className="inline-flex rounded-lg border border-border/60 bg-muted/40 p-0.5">
               {(["focus", "pomodoro"] as const).map((item) => (
                 <button
                   key={item}
@@ -513,6 +519,7 @@ export function WorkplaceFocusCard({
                   {item}
                 </button>
               ))}
+              </div>
             </div>
             <Button
               type="button"

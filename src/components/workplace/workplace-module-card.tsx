@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, type LucideIcon } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   readModuleVisibility,
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 type WorkplaceModuleCardProps = {
   moduleId: string;
   title: string;
+  titleIcon?: LucideIcon;
   titleCount?: number;
   titleMeta?: string;
   anchorId?: string;
@@ -24,6 +25,7 @@ type WorkplaceModuleCardProps = {
 export function WorkplaceModuleCard({
   moduleId,
   title,
+  titleIcon: TitleIcon,
   titleCount,
   titleMeta,
   anchorId,
@@ -68,18 +70,26 @@ export function WorkplaceModuleCard({
           !cardVisible && "pointer-events-none opacity-0"
         )}
       >
-        <h3 className="text-[14px] font-semibold tracking-tight text-foreground">
-          {title}
-          {titleMeta ? (
-            <span className="ml-1.5 font-medium text-muted-foreground">
-              {titleMeta}
-            </span>
-          ) : titleCount !== undefined ? (
-            <span className="ml-1 font-medium text-muted-foreground">
-              {titleCount}
-            </span>
+        <div className="flex min-w-0 items-center gap-1.5">
+          {TitleIcon ? (
+            <TitleIcon
+              className="size-4 shrink-0 text-muted-foreground"
+              aria-hidden
+            />
           ) : null}
-        </h3>
+          <h3 className="truncate text-[14px] font-semibold tracking-tight text-foreground">
+            {title}
+            {titleMeta ? (
+              <span className="ml-1.5 font-medium text-muted-foreground">
+                {titleMeta}
+              </span>
+            ) : titleCount !== undefined ? (
+              <span className="ml-1 font-medium text-muted-foreground">
+                {titleCount}
+              </span>
+            ) : null}
+          </h3>
+        </div>
         <div className="flex items-center gap-1.5">
           {headerExtra}
           <button

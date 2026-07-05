@@ -2,10 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  DashboardKpiStrip,
   type KpiCellKey,
 } from "@/components/dashboard/dashboard-kpi-strip";
-import { DashboardNextAction } from "@/components/dashboard/dashboard-next-action";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { TodayStatusRail } from "@/components/today/today-status-rail";
 import type { WorkplaceHabitsCardHandle } from "@/components/workplace/workplace-habits-card";
@@ -30,7 +28,10 @@ import {
   todayHabitAnchorId,
   todayTaskAnchorId,
 } from "@/lib/today-in-place";
-import { shouldShowTodayChromePanels } from "@/lib/workplace-density";
+import {
+  shouldShowTodayKpiStrip,
+  shouldShowTodayNextAction,
+} from "@/lib/workplace-density";
 import type { DashboardData } from "@/types/dashboard";
 import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
@@ -300,7 +301,10 @@ export function TodayPageContent() {
     }
   }
 
-  const showChromePanels = shouldShowTodayChromePanels(density);
+  const showKpiStrip = shouldShowTodayKpiStrip(density);
+  const showNextAction = shouldShowTodayNextAction(density, nextAction, {
+    hasActiveFocus: dashboardActive.isActive,
+  });
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -310,35 +314,32 @@ export function TodayPageContent() {
           onTrack={onTrack}
           density={density}
           onDensityChange={setDensity}
+          stats={
+            data
+              ? {
+                  progress: data.progress,
+                  reflection: data.reflection,
+                  showKpiStats: showKpiStrip,
+                  showNextAction,
+                  nextAction,
+                  onCellAction: handleKpiCellAction,
+                  onNextAction: handleNextAction,
+                  onQuickComplete:
+                    nextAction.entityId &&
+                    (nextAction.type === "task" ||
+                      nextAction.type === "habit") &&
+                    !nextActionTargetCompleted
+                      ? handleQuickCompleteNext
+                      : undefined,
+                  completing: completingNext,
+                }
+              : undefined
+          }
         />
 
         {error ? (
           <div className="px-6 lg:pl-10">
             <ErrorBanner message={error} />
-          </div>
-        ) : null}
-
-        {showChromePanels && data ? (
-          <div className="space-y-3 px-6 lg:pl-10">
-            <DashboardKpiStrip
-              progress={data.progress}
-              reflection={data.reflection}
-              onTrack={onTrack}
-              onCellAction={handleKpiCellAction}
-            />
-
-            <DashboardNextAction
-              action={nextAction}
-              onAction={handleNextAction}
-              onQuickComplete={
-                nextAction.entityId &&
-                (nextAction.type === "task" || nextAction.type === "habit") &&
-                !nextActionTargetCompleted
-                  ? handleQuickCompleteNext
-                  : undefined
-              }
-              completing={completingNext}
-            />
           </div>
         ) : null}
       </div>
