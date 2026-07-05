@@ -50,7 +50,7 @@ inbox (scratch)
 
 | Idea | Runbook | Session / WP |
 |------|---------|--------------|
-| _None — 2026-07-05 Today UX polish items shipped or on B4 branch_ | [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md) | B4 merge pending |
+| _None — 2026-07-05 Today UX polish complete on `main`_ | [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md) | B4 `9685c02` |
 
 ---
 
@@ -61,7 +61,7 @@ inbox (scratch)
 | Tasks card scroll; habit Start now guard; context-menu bus; Enter refocus | 2026-07-05 B1 `c717428` | [july-log.md](./july-log.md) § 2026-07-05 |
 | Slim timeline task menu; task details complete toggle; reflection drawer link | 2026-07-05 B2 `b182f40` | [july-log.md](./july-log.md) § 2026-07-05 |
 | Quick-add icons + daily note copy/shortcuts; optimistic Enter capture | 2026-07-05 B3 `783f26a` | [july-log.md](./july-log.md) § 2026-07-05 |
-| Today compact status rail; density Full/Work/Focus; card nav icons; ListPlus quick capture | 2026-07-05 B4 `5ae47b2` (branch, merge pending) | [july-log.md](./july-log.md) § 2026-07-05 |
+| Today compact status rail; density Full/Work/Focus; card nav icons; ListPlus quick capture | 2026-07-05 B4 `9685c02` | [july-log.md](./july-log.md) § 2026-07-05 |
 | Task details checkbox layout (list-row style) | 2026-07-05 `a7c72c9` | [july-log.md](./july-log.md) § 2026-07-05 |
 | `/` = Today home | 2026-07-04 `aa29917` | [july-log.md](./july-log.md) § 2026-07-04 |
 

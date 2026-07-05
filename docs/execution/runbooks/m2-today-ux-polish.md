@@ -341,9 +341,9 @@ Record founder override in [decision-log.md](../logs/decision-log.md).
 | R1 | P0 bugs fixed (scroll, habit menu, menu bus, Enter refocus) | 1 | ☑ `main` via B1 |
 | R2 | Timeline menu slim; details complete; reflection link | 2 | ☑ `main` via B2 |
 | R3 | Quick-add icons + daily note copy/shortcuts | 3 | ☑ `main` via B3 |
-| R4 | Compact status rail + hidden next-action + density presets | 4 | ☑ branch `tweak/session-4-today-chrome` — **merge B4 pending** |
-| R5 | Manual test matrix all PASS on production | 4 | ☐ after B4 merge |
-| R6 | [inbox.md](../logs/inbox.md) items moved to Done; [july-log.md](../logs/july-log.md) updated | 4 | ☑ docs updated 2026-07-05 — production check after merge |
+| R4 | Compact status rail + hidden next-action + density presets | 4 | ☑ `main` `9685c02` |
+| R5 | Manual test matrix all PASS on production | 4 | ☐ founder sign-off |
+| R6 | [inbox.md](../logs/inbox.md) items moved to Done; [july-log.md](../logs/july-log.md) updated | 4 | ☑ |
 
 **Acceptance test:** Founder daily driver on `/` feels like a workplace, not a dashboard stacked above a workplace. ☐ pending production sign-off after B4
 
