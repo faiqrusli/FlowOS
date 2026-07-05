@@ -37,6 +37,13 @@ Read each phase in order: **review → spec → implementation → post-review**
 | [AUDIT_HISTORY.md](../../archive/design/july-3/AUDIT_HISTORY.md) | Decision rationale index |
 | [CHANGELOG.md](../../archive/design/july-3/CHANGELOG.md) | Chronological design evolution |
 
+### Today page (July 2026)
+
+| Document | Source canvas | Role |
+|----------|---------------|------|
+| [today-executive-review.md](./today-executive-review.md) | `flowos-today-executive-review.canvas.tsx` | ChatGPT proposal vs shipped Today — audit, gap analysis, V2 convergence, 80/20 plan |
+| [today-v3-greenfield-design.md](./today-v3-greenfield-design.md) | `flowos-today-v3-greenfield-design.canvas.tsx` | First-principles Day Engine design (Concept B: NOW + NEXT + rest) |
+
 **Git anchors:** Phase 0 `5fc780a` · Phase 1 `04fe227` · Phase 2 `9f7e7c4`
 
 ---
