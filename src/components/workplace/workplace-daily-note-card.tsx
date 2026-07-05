@@ -123,7 +123,7 @@ export function WorkplaceDailyNoteCard() {
       >
         <div className="min-w-0">
           <h3 className="text-[14px] font-semibold tracking-tight text-foreground">
-            Daily Note
+            Today&apos;s note
           </h3>
           <p className="mt-0.5 text-[13px] text-muted-foreground">
             {formatDailyNoteHeaderDate(todayKey)}
@@ -195,7 +195,7 @@ export function WorkplaceDailyNoteCard() {
               onClick={() => void handleCreateDailyNote()}
             >
               <Plus className="size-3.5" />
-              Create Daily Note
+              Create note
             </Button>
           </div>
         )}
