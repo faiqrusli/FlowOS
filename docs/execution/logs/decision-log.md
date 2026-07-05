@@ -36,6 +36,16 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-06 — Focus timer controls audit (Today V3 Session 3)
+
+**Context:** Today V3 Session 3 targeted un-gating Pause/Break/Stop per PRINCIPLES #10; FEATURE_INVENTORY still listed "Hover-gated controls — Phase 3.3 fix."  
+**Decision:** Code audit of `workplace-focus-card.tsx`: both Focus-tab and Pomodoro-tab `TimerHoverControls` call sites already pass `alwaysVisible`. No code change; inventory row updated to reflect shipped state.  
+**Alternatives rejected:** Delete hover-only branch in `TimerHoverControls` (dead path, no user impact).  
+**Outcome:** Docs-only Session 3 on branch `m2/session-3-today-v3-focus-controls-visible`.  
+**Related:** [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md) Session 3 — **deferred separately:** `global-right-sidebar.tsx` workplace hover-reveal (`workplaceHoverMode`) is a larger IA decision, not in Session 3 scope.
+
+---
+
 ### 2026-07-06 — Reverse: next-action visible by default (Work density)
 
 **Context:** Today V3 runbook Session 1 — PRINCIPLES #2 requires a single clear next step on load; the 2026-07-05 decision hid next-action in default Work density. V3 §13 week-1 item 1 ships a compact one-line "Next:" strip as the NOW slot embryo.  

@@ -2,7 +2,7 @@
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 4, 2026 (Pass 5 — IA merged here)
+**Last updated:** July 6, 2026 (Pass 5 — IA merged here; Session 3 focus-controls audit)
 
 ---
 
@@ -95,7 +95,7 @@ Productivity
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Focus timer card | Shipped | Hover-gated controls — Phase 3.3 fix |
+| Focus timer card | Shipped | Controls always visible (`TimerHoverControls alwaysVisible` on both call sites) |
 | Timeline embed | Shipped | Third scheduling surface — Phase 3.4 simplification |
 | Today's tasks card | Shipped | Primary task execution on Workplace |
 | Habits card | Shipped | Daily habit completion |
