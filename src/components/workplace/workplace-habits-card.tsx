@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { Repeat } from "lucide-react";
 import { WorkplaceCompactHabitRow } from "@/components/workplace/workplace-compact-habit-row";
 import { WorkplaceModuleCard } from "@/components/workplace/workplace-module-card";
 import { computeHabitStatsMap, getCachedHabitCompletions } from "@/lib/habits";
@@ -110,6 +111,7 @@ export const WorkplaceHabitsCard = forwardRef<
       moduleId="habits"
       anchorId={TODAY_HABITS_SECTION_ID}
       title="Today's Habits"
+      titleIcon={Repeat}
       titleMeta={titleMeta}
       className="min-h-0 overflow-hidden"
       bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden"

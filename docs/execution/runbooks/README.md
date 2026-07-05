@@ -6,6 +6,7 @@ Milestone-specific operating manuals. **New runbook:** copy [RUNBOOK_TEMPLATE.md
 |---------|-----------|--------|
 | [m1-ship-gate.md](./m1-ship-gate.md) | M1 — Deployed & Secure | Complete |
 | [m2-founder-daily-driver.md](./m2-founder-daily-driver.md) | M2 — Founder Daily Driver | In progress |
+| [m2-today-ux-polish.md](./m2-today-ux-polish.md) | M2 — Today UX polish (inbox) | **Sessions 1–4 done** — B4 merge pending |
 | [RUNBOOK_TEMPLATE.md](./RUNBOOK_TEMPLATE.md) | Template for M3+ | Reference |
 
 **Git workflow:** every session starts a new branch; merge to `main` only with founder approval — [GIT_WORKFLOW.md](../../foundation/governance/GIT_WORKFLOW.md).

@@ -25,6 +25,7 @@ This folder is the index for **how FlowOS ships right now**. Strategy lives in t
 | M0 — Custody | (covered in masterplan) | Complete |
 | M1 — Deployed & Secure | [m1-ship-gate.md](./runbooks/m1-ship-gate.md) | **Complete** — RLS verified, production live |
 | M2 — Founder Daily Driver | [m2-founder-daily-driver.md](./runbooks/m2-founder-daily-driver.md) | **In progress** — Sessions 1–6 shipped |
+| M2 — Today UX polish | [m2-today-ux-polish.md](./runbooks/m2-today-ux-polish.md) | **Sessions 1–4 done** — B4 merge + production sign-off pending |
 | M3 — First Strangers | (masterplan Step 2) | Not started — recruiting prep underway |
 
 **M2 recruiting:** [recruiting-pipeline.md](./ops/recruiting-pipeline.md)

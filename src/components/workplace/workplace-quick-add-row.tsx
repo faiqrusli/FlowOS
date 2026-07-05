@@ -10,9 +10,8 @@ import {
 } from "react";
 import {
   BookOpen,
-  ChevronDown,
+  ListPlus,
   Plus,
-  SlidersHorizontal,
   Sparkles,
 } from "lucide-react";
 import {
@@ -21,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useOptionalTaskBoardGroups } from "@/components/tasks/task-board-groups-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
@@ -113,24 +113,26 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
   return (
     <div className="flex w-full min-w-0 flex-col gap-1">
       <div className="flex w-full min-w-0 flex-nowrap items-center gap-1.5">
-        <div className="relative min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 items-center gap-1">
           <Input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Add a task…"
             title="Type a task and press Enter to add to Today"
-            className="h-8 min-w-0 border-border/50 bg-background/80 pr-9 pl-2.5 text-[13px] shadow-none"
+            className="h-8 min-w-0 flex-1 border-border/50 bg-background/80 px-2.5 text-[13px] shadow-none"
           />
-          <QuickAddHint label="Full task form — priority, schedule, group · Ctrl+Shift+A">
-            <button
+          <QuickAddHint label="Quick capture — full task form · Ctrl+Shift+A">
+            <Button
               type="button"
+              variant="outline"
+              size="icon-sm"
               onClick={onOpenTaskDetails}
-              className="absolute top-1/2 right-1.5 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-              aria-label="Open full task form"
+              className="size-8 shrink-0 rounded-lg shadow-xs"
+              aria-label="Quick capture task"
             >
-              <SlidersHorizontal className="size-3.5" />
-            </button>
+              <ListPlus className="size-3.5" />
+            </Button>
           </QuickAddHint>
         </div>
         <QuickAddHint label="Today's note or blank note in sidebar">
