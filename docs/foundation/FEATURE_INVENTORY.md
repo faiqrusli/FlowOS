@@ -97,8 +97,8 @@ Productivity
 |---------|--------|-------|
 | Focus timer card | Shipped | Controls always visible (`TimerHoverControls alwaysVisible` on both call sites) |
 | Timeline embed | Shipped | Third scheduling surface — Phase 3.4 simplification |
-| Today's tasks card | Shipped | Primary task execution on Workplace |
-| Habits card | Shipped | Daily habit completion |
+| Today's tasks card | Shipped | NEXT queue (cap 5 + disclosures); unified task+habit rows when `NEXT_PUBLIC_TODAY_UNIFIED_QUEUE=true` |
+| Habits card | Shipped | Interleaved into Today NEXT queue (V3 Session 6, flag); standalone card remains on `/habits` for management |
 | Daily note card | Shipped | Overlaps Notes module |
 | Quick add card | Shipped | Inline Enter capture (optimistic queue); icon strip; `ListPlus` full form |
 | Workplace density presets | Shipped | `full` \| `work` (default) \| `focus` — `workplace-density.ts` |

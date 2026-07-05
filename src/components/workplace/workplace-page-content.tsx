@@ -47,7 +47,7 @@ import {
   TasksError,
   updateTask,
 } from "@/lib/tasks";
-import { toggleHabitComplete, HabitsError } from "@/lib/habits";
+import { toggleHabitComplete, HabitsError, computeHabitStatsMap, getCachedHabitCompletions } from "@/lib/habits";
 import {
   setHabitDailyScheduleOverride,
   useHabitDailyScheduleStore,
@@ -59,13 +59,14 @@ import {
   WORKPLACE_TIMELINE_WIDTH_PX,
 } from "@/lib/workplace-layout";
 import { fetchWorkplaceData, WorkplaceError } from "@/lib/workplace-data";
+import { isTodayUnifiedQueueEnabled } from "@/lib/today-unified-queue";
 import { registerContextMenuCloser } from "@/lib/task-detail-menu-coordinator";
 import {
   isWorkplaceModuleShown,
   type WorkplaceDensity,
 } from "@/lib/workplace-density";
 import { cn } from "@/lib/utils";
-import type { Habit } from "@/types/habit";
+import type { Habit, HabitStats } from "@/types/habit";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
 type WorkplacePageContentProps = {
@@ -106,6 +107,12 @@ export function WorkplacePageContent({
   const todayDisplayHabits = useMemo(
     () => withHabitScheduleForDate(habits, todayViewDate),
     [habits, todayViewDate, habitScheduleRevision]
+  );
+  const unifiedQueueEnabled = isTodayUnifiedQueueEnabled();
+  const habitStatsMap = useMemo(
+    () =>
+      computeHabitStatsMap(todayDisplayHabits, getCachedHabitCompletions()),
+    [todayDisplayHabits]
   );
 
   const getTask = useCallback(
@@ -536,11 +543,14 @@ export function WorkplacePageContent({
                   !isWorkplaceModuleShown("tasks", density) && "hidden"
                 )}
               >
-                <WorkplaceTasksCard
+                <WorkplaceTasksCardWithFocus
                   ref={tasksTabRef}
                   tasks={allTasks}
                   groups={groups}
                   todayViewDate={todayViewDate}
+                  unifiedQueue={unifiedQueueEnabled}
+                  habits={todayDisplayHabits}
+                  habitStatsMap={habitStatsMap}
                   onOpenDetail={(taskId) => selectTask(taskId)}
                   onToggleComplete={(task) => void handleToggleComplete(task)}
                   onUpdateTask={(taskId, updates) =>
@@ -548,6 +558,9 @@ export function WorkplacePageContent({
                   }
                   onTaskContextMenu={(task, anchorRect) =>
                     setTaskContextMenu({ task, anchorRect })
+                  }
+                  onToggleHabitComplete={(habit) =>
+                    void handleToggleHabitComplete(habit)
                   }
                 />
               </div>
@@ -579,7 +592,10 @@ export function WorkplacePageContent({
                 />
               </div>
               <div
-                className={cn(!isWorkplaceModuleShown("habits", density) && "hidden")}
+                className={cn(
+                  !isWorkplaceModuleShown("habits", density) && "hidden",
+                  unifiedQueueEnabled && "hidden"
+                )}
               >
                 <WorkplaceHabitsCardWithFocus
                   ref={habitsTabRef}
@@ -663,6 +679,62 @@ export function WorkplacePageContent({
     </TaskBoardActionsProvider>
   );
 }
+
+const WorkplaceTasksCardWithFocus = forwardRef<
+  WorkplaceTasksCardHandle,
+  {
+    tasks: Task[];
+    groups: TaskGroupWithTasks[];
+    todayViewDate: string;
+    unifiedQueue: boolean;
+    habits: Habit[];
+    habitStatsMap: Map<string, HabitStats>;
+    onOpenDetail: (taskId: string) => void;
+    onToggleComplete: (task: Task) => void;
+    onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
+    onTaskContextMenu: (task: Task, anchorRect: DOMRect) => void;
+    onToggleHabitComplete: (habit: Habit) => void;
+  }
+>(function WorkplaceTasksCardWithFocus(
+  {
+    tasks,
+    groups,
+    todayViewDate,
+    unifiedQueue,
+    habits,
+    habitStatsMap,
+    onOpenDetail,
+    onToggleComplete,
+    onUpdateTask,
+    onTaskContextMenu,
+    onToggleHabitComplete,
+  },
+  tasksTabRef
+) {
+  const { setActiveHabitId } = useWorkplaceFocusTask();
+
+  return (
+    <WorkplaceTasksCard
+      ref={tasksTabRef}
+      tasks={tasks}
+      groups={groups}
+      todayViewDate={todayViewDate}
+      unifiedQueue={unifiedQueue}
+      habits={habits}
+      habitStatsMap={habitStatsMap}
+      onOpenDetail={onOpenDetail}
+      onToggleComplete={onToggleComplete}
+      onUpdateTask={onUpdateTask}
+      onTaskContextMenu={onTaskContextMenu}
+      onToggleHabitComplete={onToggleHabitComplete}
+      onStartHabitFocus={
+        unifiedQueue
+          ? (habit) => setActiveHabitId(habit.id, "manual")
+          : undefined
+      }
+    />
+  );
+});
 
 const WorkplaceHabitsCardWithFocus = forwardRef<
   WorkplaceHabitsCardHandle,

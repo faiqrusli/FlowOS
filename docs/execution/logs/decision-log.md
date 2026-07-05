@@ -36,12 +36,42 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-06 — Habits interleaved into Today NEXT queue (Phase C #1)
+
+**Context:** Today V3 runbook Session 6; V3 §3–§4 argues a separate Habits card splits "one continuous day" (P#5). Founder approved Phase C via merge-and-continue.  
+**Decision:** Habits card removed from default Today grid when `NEXT_PUBLIC_TODAY_UNIFIED_QUEUE=true`. Due-today habits render as NEXT queue rows (HABIT glyph + streak) via `buildNextQueue` (schedule → priority → age). `WorkplaceHabitsCard` remains at `/habits` for management.  
+**Alternatives rejected:** Keep demoted habits card; user toggle unified vs separate views.  
+**Outcome:** Session 6 on branch `m2/session-6-today-v3-unified-queue`; feature-flagged; reconsider if habit completion drops >20% (V3 §12).  
+**Related:** [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md) Session 6, appendix entry #1
+
+---
+
+### 2026-07-06 — Focus becomes full page-morph state (Phase C #3)
+
+**Context:** V3 Session 7 prerequisite entry; idle focus card still consumes hero pixels. Approved with Phase C bundle.  
+**Decision:** Pending Session 7 — active focus morphs entire Today page; idle shows no timer chrome. Feature-flag `NEXT_PUBLIC_TODAY_FOCUS_MORPH`.  
+**Alternatives rejected:** Shrink idle card only; route change to `/focus` (reverts 2026-07-03 mode decision).  
+**Outcome:** Approved for Session 7 implementation.  
+**Related:** Runbook appendix entry #3, Session 7
+
+---
+
+### 2026-07-06 — Retire manual density picker (Phase C #5)
+
+**Context:** V3 argues manual Full/Work/Focus picker is anti-pattern #10; state-driven density replaces it by Phase C. Approved with Phase C bundle.  
+**Decision:** Pending Session 10 — remove density dropdown; derive from day-state; ship `Ctrl+Shift+F` keyboard override. Supersedes 2026-07-05 picker UI only (NOW slot / rail consolidation reasoning stands).  
+**Alternatives rejected:** Hide picker in submenu; remove with no override.  
+**Outcome:** Approved for Session 10; hard gate before picker deletion step.  
+**Related:** Runbook appendix entry #5, Session 10; supersedes density-picker aspects of 2026-07-05 entries
+
+---
+
 ### 2026-07-06 — Session 6 blocked pending Phase C decision-log approval
 
 **Context:** Founder requested Sessions 5–6 back-to-back. Session 6 (habits interleaved into NEXT queue) is Phase C and requires approval of decision-log appendix entries #1, #3, #5 before engineering starts per [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md) resume protocol.  
 **Decision:** Session 5 completed on branch `m2/session-5-today-v3-next-queue`; Session 6 **not started** until founder approves and merges the three appendix entries into this log.  
 **Alternatives rejected:** Ship Session 6 without approval (violates runbook hard gate).  
-**Outcome:** Blocker recorded; resume Session 6 after approval.  
+**Outcome:** **Superseded** — founder approved Phase C 2026-07-06 ("merge and next"); entries #1, #3, #5 merged above; Session 6 resumed.  
 **Related:** Runbook appendix "Required decision-log entries (founder approval before Phase C)"
 
 ---

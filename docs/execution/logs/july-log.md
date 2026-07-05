@@ -60,6 +60,25 @@ Low ceremony — bullets are fine.
 
 <!-- Append new dated blocks above this line (newest first) -->
 
+## 2026-07-06 — Today V3 Day Engine Sessions 1–5 merged
+
+**Runbook:** [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md) — **B1 + B2 merged to `main`** (`c053a23`).
+
+**Shipped (product):**
+
+| Bundle | Summary |
+|--------|---------|
+| B1 (Sessions 1–3) | Next-action visible at Work density; dismiss-until-state-change; widened allowlist; focus controls audit (pre-shipped) |
+| B2 (Sessions 4–5) | NOW slot primary region; queue cap 5 + Later/Missed/Done disclosures; inline focus session-end reflection |
+
+**Build/lint:** Pass on `main` after merge.
+
+**Decisions promoted:** → [decision-log.md](./decision-log.md) (next-action reverse; focus controls audit; Phase C entries #1, #3, #5 approved).
+
+**Next:** Session 6 (unified queue, `NEXT_PUBLIC_TODAY_UNIFIED_QUEUE`) on branch `m2/session-6-today-v3-unified-queue`.
+
+---
+
 ## 2026-07-05 — M2 Today UX Polish (Sessions 1–4)
 
 **Runbook:** [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md) — **B1–B4 merged to `main`** (`9685c02`).

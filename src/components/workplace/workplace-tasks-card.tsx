@@ -10,8 +10,14 @@ import {
   type MouseEvent,
 } from "react";
 import { CheckSquare, ChevronDown } from "lucide-react";
+import { WorkplaceCompactHabitRow } from "@/components/workplace/workplace-compact-habit-row";
 import { WorkplaceCompactTaskRow } from "@/components/workplace/workplace-compact-task-row";
 import { WorkplaceModuleCard } from "@/components/workplace/workplace-module-card";
+import {
+  buildNextQueue,
+  nextQueueItemKey,
+  type NextQueueItem,
+} from "@/lib/next-queue";
 import {
   partitionWorkplaceTasks,
   resolveWorkplaceTaskTab,
@@ -21,10 +27,12 @@ import {
   scrollToTodayTarget,
   scrollToTodayTargetDeferred,
   TODAY_TASKS_SECTION_ID,
+  todayHabitAnchorId,
   todayTaskAnchorId,
 } from "@/lib/today-in-place";
 import { taskBelongsInLaterView, taskBelongsInTodayView } from "@/lib/task-groups";
 import { cn } from "@/lib/utils";
+import type { Habit, HabitStats } from "@/types/habit";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 const QUEUE_CAP = 5;
@@ -40,6 +48,7 @@ const DISCLOSURES: {
 
 export type WorkplaceTasksCardHandle = {
   ensureTaskVisible: (taskId: string) => boolean;
+  ensureHabitVisible?: (habitId: string) => boolean;
 };
 
 type WorkplaceTasksCardProps = {
@@ -50,6 +59,11 @@ type WorkplaceTasksCardProps = {
   onToggleComplete: (task: Task) => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
   onTaskContextMenu: (task: Task, anchorRect: DOMRect) => void;
+  unifiedQueue?: boolean;
+  habits?: Habit[];
+  habitStatsMap?: Map<string, HabitStats>;
+  onToggleHabitComplete?: (habit: Habit) => void;
+  onStartHabitFocus?: (habit: Habit) => void;
 };
 
 function TaskList({
@@ -99,6 +113,73 @@ function TaskList({
   );
 }
 
+function NextQueueList({
+  items,
+  groups,
+  habitStatsMap,
+  onOpenDetail,
+  onToggleComplete,
+  onUpdateTask,
+  onTaskContextMenu,
+  onToggleHabitComplete,
+  onStartHabitFocus,
+}: {
+  items: NextQueueItem[];
+  groups: TaskGroupWithTasks[];
+  habitStatsMap?: Map<string, HabitStats>;
+  onOpenDetail: (taskId: string) => void;
+  onToggleComplete: (task: Task) => void;
+  onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
+  onTaskContextMenu: (task: Task, anchorRect: DOMRect) => void;
+  onToggleHabitComplete?: (habit: Habit) => void;
+  onStartHabitFocus?: (habit: Habit) => void;
+}) {
+  const handleContextMenu = (task: Task) => (event: MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    onTaskContextMenu(task, event.currentTarget.getBoundingClientRect());
+  };
+
+  if (items.length === 0) {
+    return (
+      <p className="flow-empty mx-1 my-1.5 px-2 py-4 text-center text-[13px] text-muted-foreground/70">
+        All clear
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-1">
+      {items.map((item) =>
+        item.kind === "task" ? (
+          <WorkplaceCompactTaskRow
+            key={nextQueueItemKey(item)}
+            task={item.task}
+            groups={groups}
+            onOpenDetail={() => onOpenDetail(item.task.id)}
+            onToggleComplete={() => onToggleComplete(item.task)}
+            onUpdateDuration={(minutes) =>
+              onUpdateTask(item.task.id, { duration_minutes: minutes })
+            }
+            onContextMenu={handleContextMenu(item.task)}
+          />
+        ) : (
+          <WorkplaceCompactHabitRow
+            key={nextQueueItemKey(item)}
+            habit={item.habit}
+            streak={habitStatsMap?.get(item.habit.id)?.streak}
+            onToggleComplete={() => onToggleHabitComplete?.(item.habit)}
+            onStartFocus={
+              onStartHabitFocus
+                ? () => onStartHabitFocus(item.habit)
+                : undefined
+            }
+          />
+        )
+      )}
+    </div>
+  );
+}
+
 export const WorkplaceTasksCard = forwardRef<
   WorkplaceTasksCardHandle,
   WorkplaceTasksCardProps
@@ -111,6 +192,11 @@ export const WorkplaceTasksCard = forwardRef<
     onToggleComplete,
     onUpdateTask,
     onTaskContextMenu,
+    unifiedQueue = false,
+    habits = [],
+    habitStatsMap,
+    onToggleHabitComplete,
+    onStartHabitFocus,
   },
   ref
 ) {
@@ -125,9 +211,23 @@ export const WorkplaceTasksCard = forwardRef<
     [tasks, todayViewDate]
   );
 
-  const hiddenQueueCount = Math.max(0, sections.queue.length - QUEUE_CAP);
-  const visibleQueue =
-    queueExpanded || hiddenQueueCount === 0
+  const nextQueue = useMemo(() => {
+    if (!unifiedQueue) return null;
+    return buildNextQueue(tasks, habits, todayViewDate);
+  }, [habits, tasks, todayViewDate, unifiedQueue]);
+
+  const queueSourceLength = unifiedQueue
+    ? (nextQueue?.length ?? 0)
+    : sections.queue.length;
+
+  const hiddenQueueCount = Math.max(0, queueSourceLength - QUEUE_CAP);
+  const visibleQueueItems = unifiedQueue
+    ? queueExpanded || hiddenQueueCount === 0
+      ? (nextQueue ?? [])
+      : (nextQueue ?? []).slice(0, QUEUE_CAP)
+    : null;
+  const visibleTaskQueue =
+    !unifiedQueue && (queueExpanded || hiddenQueueCount === 0)
       ? sections.queue
       : sections.queue.slice(0, QUEUE_CAP);
 
@@ -141,7 +241,11 @@ export const WorkplaceTasksCard = forwardRef<
     [tasks, todayViewDate]
   );
   const completedToday = todayTasks.filter((task) => task.completed).length;
-  const titleMeta = `${completedToday}/${todayTasks.length}`;
+  const titleMeta = unifiedQueue
+    ? `${completedToday + habits.filter((habit) => habit.completed).length}/${
+        todayTasks.length + habits.length
+      }`
+    : `${completedToday}/${todayTasks.length}`;
 
   const toggleDisclosure = (id: Exclude<WorkplaceTaskTab, "queue">) => {
     setExpandedDisclosures((prev) => {
@@ -168,7 +272,11 @@ export const WorkplaceTasksCard = forwardRef<
         }
 
         if (targetTab === "queue") {
-          const queueIndex = sections.queue.findIndex((item) => item.id === taskId);
+          const queueIndex = unifiedQueue
+            ? (nextQueue ?? []).findIndex(
+                (item) => item.kind === "task" && item.task.id === taskId
+              )
+            : sections.queue.findIndex((item) => item.id === taskId);
           if (queueIndex >= QUEUE_CAP) {
             setQueueExpanded(true);
           }
@@ -180,8 +288,24 @@ export const WorkplaceTasksCard = forwardRef<
         pendingScrollIdRef.current = anchorId;
         return true;
       },
+      ensureHabitVisible: unifiedQueue
+        ? (habitId: string) => {
+            const index = (nextQueue ?? []).findIndex(
+              (item) => item.kind === "habit" && item.habit.id === habitId
+            );
+            if (index === -1) {
+              scrollToTodayTarget(TODAY_TASKS_SECTION_ID);
+              return false;
+            }
+            if (index >= QUEUE_CAP) {
+              setQueueExpanded(true);
+            }
+            pendingScrollIdRef.current = todayHabitAnchorId(habitId);
+            return true;
+          }
+        : undefined,
     }),
-    [sections.queue, tasks, todayViewDate]
+    [nextQueue, sections.queue, tasks, todayViewDate, unifiedQueue]
   );
 
   useEffect(() => {
@@ -190,13 +314,13 @@ export const WorkplaceTasksCard = forwardRef<
 
     pendingScrollIdRef.current = null;
     scrollToTodayTargetDeferred(anchorId);
-  }, [queueExpanded, expandedDisclosures, visibleQueue.length]);
+  }, [queueExpanded, expandedDisclosures, visibleQueueItems?.length, visibleTaskQueue.length]);
 
   return (
     <WorkplaceModuleCard
       moduleId="tasks"
       anchorId={TODAY_TASKS_SECTION_ID}
-      title="Today's Tasks"
+      title={unifiedQueue ? "Next" : "Today's Tasks"}
       titleIcon={CheckSquare}
       titleMeta={titleMeta}
       className="min-h-0 overflow-hidden"
@@ -204,14 +328,28 @@ export const WorkplaceTasksCard = forwardRef<
     >
       <div className="flex h-full min-h-0 flex-col">
         <div className="min-h-0 flex-1 space-y-1 overflow-y-auto p-1.5">
-          <TaskList
-            list={visibleQueue}
-            groups={groups}
-            onOpenDetail={onOpenDetail}
-            onToggleComplete={onToggleComplete}
-            onUpdateTask={onUpdateTask}
-            onTaskContextMenu={onTaskContextMenu}
-          />
+          {unifiedQueue && visibleQueueItems ? (
+            <NextQueueList
+              items={visibleQueueItems}
+              groups={groups}
+              habitStatsMap={habitStatsMap}
+              onOpenDetail={onOpenDetail}
+              onToggleComplete={onToggleComplete}
+              onUpdateTask={onUpdateTask}
+              onTaskContextMenu={onTaskContextMenu}
+              onToggleHabitComplete={onToggleHabitComplete}
+              onStartHabitFocus={onStartHabitFocus}
+            />
+          ) : (
+            <TaskList
+              list={visibleTaskQueue}
+              groups={groups}
+              onOpenDetail={onOpenDetail}
+              onToggleComplete={onToggleComplete}
+              onUpdateTask={onUpdateTask}
+              onTaskContextMenu={onTaskContextMenu}
+            />
+          )}
           {hiddenQueueCount > 0 && !queueExpanded ? (
             <button
               type="button"

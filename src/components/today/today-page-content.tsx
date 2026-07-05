@@ -35,6 +35,7 @@ import {
   readDismissedKey,
   writeDismissedKey,
 } from "@/lib/next-action-dismiss";
+import { isTodayUnifiedQueueEnabled } from "@/lib/today-unified-queue";
 import {
   shouldShowTodayKpiStrip,
   shouldShowTodayNextAction,
@@ -154,6 +155,13 @@ export function TodayPageContent() {
 
   const scrollToHabit = useCallback(
     (habitId: string, fallbackTargetId?: string | null) => {
+      if (
+        isTodayUnifiedQueueEnabled() &&
+        tasksTabRef.current?.ensureHabitVisible?.(habitId)
+      ) {
+        return;
+      }
+
       if (habitsTabRef.current?.ensureHabitVisible(habitId)) return;
 
       const targetId = fallbackTargetId ?? todayHabitAnchorId(habitId);
