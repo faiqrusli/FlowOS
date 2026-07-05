@@ -1,21 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DashboardCommandHeader } from "@/components/dashboard/dashboard-command-header";
 import {
   DashboardKpiStrip,
   type KpiCellKey,
 } from "@/components/dashboard/dashboard-kpi-strip";
 import { DashboardNextAction } from "@/components/dashboard/dashboard-next-action";
-import { DashboardCommandSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorBanner } from "@/components/shared/error-banner";
-import { TodayEscapeLink } from "@/components/shared/today-escape-link";
+import { TodayStatusRail } from "@/components/today/today-status-rail";
 import type { WorkplaceHabitsCardHandle } from "@/components/workplace/workplace-habits-card";
 import type { WorkplaceTasksCardHandle } from "@/components/workplace/workplace-tasks-card";
 import { WorkplacePageContent } from "@/components/workplace/workplace-page-content";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
+import { useWorkplaceDensity } from "@/hooks/use-workplace-density";
 import {
   computeOnTrackStatus,
   getNextActionRecommendation,
@@ -32,8 +30,7 @@ import {
   todayHabitAnchorId,
   todayTaskAnchorId,
 } from "@/lib/today-in-place";
-import { getUserDisplayName } from "@/lib/user-profile";
-import { createClient } from "@/lib/supabase/client";
+import { shouldShowTodayChromePanels } from "@/lib/workplace-density";
 import type { DashboardData } from "@/types/dashboard";
 import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
@@ -41,10 +38,10 @@ import type { Task } from "@/types/task";
 export function TodayPageContent() {
   const { dashboardActive, prepareFocusTarget, quick } = useFocusSessionContext();
   const { openReflection, requestQuickCapture } = useGlobalRightSidebar();
+  const { density, setDensity } = useWorkplaceDensity();
   const tasksTabRef = useRef<WorkplaceTasksCardHandle>(null);
   const habitsTabRef = useRef<WorkplaceHabitsCardHandle>(null);
   const [data, setData] = useState<DashboardData | null>(null);
-  const [displayName, setDisplayName] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [completingNext, setCompletingNext] = useState(false);
@@ -54,13 +51,8 @@ export function TodayPageContent() {
     setError(null);
 
     try {
-      const [dashboard, userResult] = await Promise.all([
-        fetchDashboardData(),
-        createClient().auth.getUser(),
-      ]);
-
+      const dashboard = await fetchDashboardData();
       setData(dashboard);
-      setDisplayName(getUserDisplayName(userResult.data.user));
     } catch (err) {
       setError(
         err instanceof DashboardError ? err.message : "Failed to load today."
@@ -308,33 +300,32 @@ export function TodayPageContent() {
     }
   }
 
+  const showChromePanels = shouldShowTodayChromePanels(density);
+
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="shrink-0 space-y-3 px-6 pt-1 lg:pl-10">
-        <DashboardCommandHeader
-          displayName={displayName}
+      <div className="shrink-0 space-y-2">
+        <TodayStatusRail
           loading={loading}
-          title="Today"
-          anonymousGreeting={null}
+          onTrack={onTrack}
+          density={density}
+          onDensityChange={setDensity}
         />
 
-        {error ? <ErrorBanner message={error} /> : null}
+        {error ? (
+          <div className="px-6 lg:pl-10">
+            <ErrorBanner message={error} />
+          </div>
+        ) : null}
 
-        {loading || !data ? (
-          <DashboardCommandSkeleton />
-        ) : (
-          <>
+        {showChromePanels && data ? (
+          <div className="space-y-3 px-6 lg:pl-10">
             <DashboardKpiStrip
               progress={data.progress}
               reflection={data.reflection}
               onTrack={onTrack}
               onCellAction={handleKpiCellAction}
             />
-
-            <div className="flex flex-wrap items-center gap-2">
-              <TodayEscapeLink href="/schedule">Full timeline</TodayEscapeLink>
-              <TodayEscapeLink href="/notes">Notes</TodayEscapeLink>
-            </div>
 
             <DashboardNextAction
               action={nextAction}
@@ -348,12 +339,13 @@ export function TodayPageContent() {
               }
               completing={completingNext}
             />
-          </>
-        )}
+          </div>
+        ) : null}
       </div>
 
       <div className="min-h-0 flex-1">
         <WorkplacePageContent
+          density={density}
           tasksTabRef={tasksTabRef}
           habitsTabRef={habitsTabRef}
         />

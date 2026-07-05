@@ -36,6 +36,16 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-05 — Today next-action hidden by default (density Work)
+
+**Context:** Inbox (2026-07-05) — Today header felt like a dashboard stacked above the workplace; Next Action banner added chrome without daily-driver value once workplace modules show counts and focus.  
+**Decision:** Default workspace density **Work**: compact status rail only; KPI strip and Next Action shown only when founder sets density **Full**. Next-action in-place handlers retained in code for Full density and future coach.  
+**Alternatives rejected:** (B) collapsed one-line next-action always visible; (C) always show KPI + next-action (inbox complaint persists).  
+**Outcome:** Shipped in M2 Today UX Polish Session 4 (`workplace-density.ts`, `today-status-rail.tsx`).  
+**Related:** [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md), runbook decision point #1
+
+---
+
 ### 2026-07-04 — Branch-first git workflow
 
 **Context:** Runbook previously said push every session directly to `main`. Founder wants local testing on branches, per-session or per-bundle merges, and explicit approval before anything hits production.  
