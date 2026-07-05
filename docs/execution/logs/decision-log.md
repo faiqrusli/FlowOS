@@ -36,6 +36,16 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-06 — Session 6 blocked pending Phase C decision-log approval
+
+**Context:** Founder requested Sessions 5–6 back-to-back. Session 6 (habits interleaved into NEXT queue) is Phase C and requires approval of decision-log appendix entries #1, #3, #5 before engineering starts per [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md) resume protocol.  
+**Decision:** Session 5 completed on branch `m2/session-5-today-v3-next-queue`; Session 6 **not started** until founder approves and merges the three appendix entries into this log.  
+**Alternatives rejected:** Ship Session 6 without approval (violates runbook hard gate).  
+**Outcome:** Blocker recorded; resume Session 6 after approval.  
+**Related:** Runbook appendix "Required decision-log entries (founder approval before Phase C)"
+
+---
+
 ### 2026-07-06 — Focus timer controls audit (Today V3 Session 3)
 
 **Context:** Today V3 Session 3 targeted un-gating Pause/Break/Stop per PRINCIPLES #10; FEATURE_INVENTORY still listed "Hover-gated controls — Phase 3.3 fix."  
