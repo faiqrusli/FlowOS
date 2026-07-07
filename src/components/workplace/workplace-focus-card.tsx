@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  CalendarClock,
   Check,
   ChevronDown,
   Coffee,
@@ -16,6 +17,9 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
+import { FocusBreakNotification } from "@/components/focus/focus-break-notification";
+import { FocusNextBreakStrip } from "@/components/focus/focus-next-break-strip";
+import { ScheduleBreakModal } from "@/components/focus/schedule-break-modal";
 import { WorkplaceFocusInlineReflection } from "@/components/workplace/workplace-focus-inline-reflection";
 import { WorkplaceFocusReflectionModal } from "@/components/workplace/workplace-focus-reflection-modal";
 import { WorkplaceFocusTaskMenu } from "@/components/workplace/workplace-focus-task-menu";
@@ -274,6 +278,7 @@ export function WorkplaceFocusCard({
 }: WorkplaceFocusCardProps) {
   const [tab, setTab] = useState<FocusTab>("focus");
   const [reflectionOpen, setReflectionOpen] = useState(false);
+  const [scheduleBreakOpen, setScheduleBreakOpen] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
   const [todayFocusSeconds, setTodayFocusSeconds] = useState(0);
@@ -668,6 +673,16 @@ export function WorkplaceFocusCard({
                             type="button"
                             size="sm"
                             variant="outline"
+                            onClick={() => setScheduleBreakOpen(true)}
+                            className="h-8 px-3.5"
+                          >
+                            <CalendarClock className="size-3.5" />
+                            Schedule Break
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
                             onClick={handleQuickStop}
                             className="h-8 px-3.5"
                           >
@@ -701,6 +716,36 @@ export function WorkplaceFocusCard({
                   </>
                 )}
               </div>
+
+              {!quick.isIdle && quick.breakPrompt ? (
+                <div className="mt-2 shrink-0">
+                  <FocusBreakNotification
+                    kind={quick.breakPrompt}
+                    breakAtMinutes={quick.breakAtMinutes}
+                    onPrimaryAction={
+                      quick.breakPrompt === "ready"
+                        ? quick.startBreak
+                        : quick.resumeFocus
+                    }
+                    onSnooze={() =>
+                      quick.breakPrompt === "ready"
+                        ? quick.snoozeBreakReady()
+                        : quick.snoozeBreakFinished()
+                    }
+                  />
+                </div>
+              ) : null}
+
+              {quick.isFocusing && quick.hasScheduledBreak ? (
+                <div className="mt-2 flex shrink-0 justify-center">
+                  <FocusNextBreakStrip
+                    breakAtMinutes={quick.breakAtMinutes}
+                    breakLengthMinutes={quick.breakLengthMinutes}
+                    onEdit={() => setScheduleBreakOpen(true)}
+                    onCancel={quick.cancelScheduledBreak}
+                  />
+                </div>
+              ) : null}
 
               <div className="mt-1 min-h-[4.5rem] space-y-2">
                 {activeTask ? (
@@ -900,6 +945,11 @@ export function WorkplaceFocusCard({
       <WorkplaceFocusReflectionModal
         open={reflectionOpen}
         onOpenChange={setReflectionOpen}
+      />
+
+      <ScheduleBreakModal
+        open={scheduleBreakOpen}
+        onOpenChange={setScheduleBreakOpen}
       />
 
       {focusTaskMenu ? (

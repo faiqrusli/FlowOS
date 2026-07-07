@@ -43,6 +43,7 @@ Read each phase in order: **review → spec → implementation → post-review**
 |----------|---------------|------|
 | [today-executive-review.md](./today-executive-review.md) | `flowos-today-executive-review.canvas.tsx` | ChatGPT proposal vs shipped Today — audit, gap analysis, V2 convergence, 80/20 plan |
 | [today-v3-greenfield-design.md](./today-v3-greenfield-design.md) | `flowos-today-v3-greenfield-design.canvas.tsx` | First-principles Day Engine design (Concept B: NOW + NEXT + rest) |
+| [schedule-break-modal-spec.md](./schedule-break-modal-spec.md) | — | Schedule Break modal for quick focus — user-initiated reminders, not Pomodoro |
 
 **Git anchors:** Phase 0 `5fc780a` · Phase 1 `04fe227` · Phase 2 `9f7e7c4`
 

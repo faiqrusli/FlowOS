@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 6, 2026
+**Last updated:** July 7, 2026
 
 ---
 
@@ -35,6 +35,16 @@ When making a significant product decision:
 ---
 
 ## 2026 decisions
+
+### 2026-07-07 — Schedule Break: flexible focus reminders, not Pomodoro
+
+**Context:** Focus timer supports open-ended quick focus and a separate Pomodoro tab with optional auto-break. Founder wants to schedule *future* break reminders without turning quick focus into rigid Pomodoro cycles.  
+**Decision:** Add **Schedule Break** as an optional overlay on quick focus: user sets a focus-duration threshold (“Break at”) and break length; app notifies at threshold and when break ends; **never** auto-starts break or auto-resumes focus. Immediate **Break** button and Pomodoro tab remain unchanged. One scheduled break per active session.  
+**Alternatives rejected:** Merge into Pomodoro tab (conflates two mental models); auto-start break at threshold (violates flexible-focus philosophy); wall-clock “remind in N minutes” (wrong semantics — threshold is total focus duration).  
+**Outcome:** Spec captured; implementation not started.  
+**Related:** [schedule-break-modal-spec.md](../../review/design/schedule-break-modal-spec.md)
+
+---
 
 ### 2026-07-06 — Session 6 blocked pending Phase C decision-log approval
 

@@ -40,7 +40,18 @@ import {
   playAlertSound,
   showBrowserNotification,
 } from "@/lib/focus-utils";
+import {
+  clearScheduledBreak,
+  getRemainingToBreakSeconds,
+  isBreakFinished,
+  isBreakReady,
+  setScheduledBreak,
+  snoozeBreak,
+  snoozeBreakFinished,
+} from "@/lib/focus-scheduled-break";
 import type { FocusSession, FocusTargetType, PomodoroPhase, QuickFocusPhase } from "@/types/focus";
+
+export type BreakPrompt = "ready" | "finished" | null;
 
 type DashboardActiveFocus = {
   isActive: boolean;
@@ -79,6 +90,15 @@ type FocusSessionContextValue = {
     startBreak: () => void;
     resumeFocus: () => void;
     stopSession: () => void;
+    breakAtMinutes: number | null;
+    breakLengthMinutes: number | null;
+    remainingToBreakSeconds: number;
+    hasScheduledBreak: boolean;
+    breakPrompt: BreakPrompt;
+    scheduleBreak: (breakAtMinutes: number, breakLengthMinutes: number) => void;
+    cancelScheduledBreak: () => void;
+    snoozeBreakReady: (minutes?: number) => void;
+    snoozeBreakFinished: (minutes?: number) => void;
   };
   pomodoro: {
     phase: PomodoroPhase;
@@ -283,6 +303,39 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     updateSession(quickResumeFocus(current));
   }, [updateSession]);
 
+  const scheduleBreakAction = useCallback(
+    (breakAtMinutes: number, breakLengthMinutes: number) => {
+      const current = sessionRef.current;
+      if (!current || current.timer_type !== "quick") return;
+      updateSession(setScheduledBreak(current, breakAtMinutes, breakLengthMinutes));
+    },
+    [updateSession]
+  );
+
+  const cancelScheduledBreakAction = useCallback(() => {
+    const current = sessionRef.current;
+    if (!current || current.timer_type !== "quick") return;
+    updateSession(clearScheduledBreak(current));
+  }, [updateSession]);
+
+  const snoozeBreakReadyAction = useCallback(
+    (minutes?: number) => {
+      const current = sessionRef.current;
+      if (!current || current.timer_type !== "quick") return;
+      updateSession(snoozeBreak(current, minutes));
+    },
+    [updateSession]
+  );
+
+  const snoozeBreakFinishedAction = useCallback(
+    (minutes?: number) => {
+      const current = sessionRef.current;
+      if (!current || current.timer_type !== "quick") return;
+      updateSession(snoozeBreakFinished(current, minutes));
+    },
+    [updateSession]
+  );
+
   const quickStop = useCallback(async () => {
     const current = sessionRef.current;
     if (!current || current.timer_type !== "quick") return;
@@ -332,6 +385,15 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
   const quickTotals = quickSession
     ? computeQuickFocusSeconds(quickSession)
     : { focus: 0, break: 0 };
+
+  const quickBreakPrompt: BreakPrompt = useMemo(() => {
+    if (!quickSession) return null;
+    if (quickPhase === "focus" && isBreakReady(quickSession)) return "ready";
+    if (quickPhase === "break" && isBreakFinished(quickSession)) return "finished";
+    return null;
+    // Mode gates which check applies — "ready" only while actively focusing,
+    // "finished" only while actively on break — so the two can never both be true.
+  }, [quickSession, quickPhase, tick]);
 
   const pomodoroPhase: PomodoroPhase = pomodoroSession
     ? derivePomodoroPhase(pomodoroSession)
@@ -415,6 +477,19 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
         stopSession: () => {
           void quickStop();
         },
+        breakAtMinutes: quickSession?.breakAtMinutes ?? null,
+        breakLengthMinutes: quickSession?.breakLengthMinutes ?? null,
+        remainingToBreakSeconds: quickSession
+          ? getRemainingToBreakSeconds(quickSession)
+          : 0,
+        hasScheduledBreak: Boolean(
+          quickSession?.breakAtMinutes && quickSession?.breakLengthMinutes
+        ),
+        breakPrompt: quickBreakPrompt,
+        scheduleBreak: scheduleBreakAction,
+        cancelScheduledBreak: cancelScheduledBreakAction,
+        snoozeBreakReady: snoozeBreakReadyAction,
+        snoozeBreakFinished: snoozeBreakFinishedAction,
       },
       pomodoro: {
         phase: pomodoroPhase,
@@ -458,6 +533,11 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     quickStartBreakAction,
     quickResumeFocusAction,
     quickStop,
+    quickBreakPrompt,
+    scheduleBreakAction,
+    cancelScheduledBreakAction,
+    snoozeBreakReadyAction,
+    snoozeBreakFinishedAction,
     pomodoroStart,
     pomodoroPause,
     pomodoroResume,
