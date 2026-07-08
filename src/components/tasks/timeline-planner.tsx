@@ -1535,7 +1535,7 @@ export function TimelinePlanner({
                 "group/timeline relative h-full w-full overflow-hidden bg-timeline",
                 workplaceTimelineEdgeClassName
               )
-            : "h-full w-full border-l border-border/50 bg-timeline shadow-sm animate-in slide-in-from-right-4 duration-200"
+            : "h-full w-full border-l border-divider bg-timeline animate-in slide-in-from-right-4 duration-200"
       )}
       onMouseEnter={isWorkplace ? () => setTimelineHovered(true) : undefined}
       onMouseLeave={isWorkplace ? () => setTimelineHovered(false) : undefined}
@@ -1545,8 +1545,8 @@ export function TimelinePlanner({
         className={cn(
           "relative shrink-0 border-b",
           isFullscreen
-            ? "flex items-center gap-2 border-border/30 px-4 py-3"
-            : "border-border/50 bg-background/70 px-2 py-1.5"
+            ? "flex items-center gap-2 border-divider px-4 py-3"
+            : "border-divider bg-background px-2 py-1.5"
         )}
       >
         {isDrawer ? (

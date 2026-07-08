@@ -20,6 +20,5 @@ export const workplacePanelSectionClassName = [
   "hover:bg-[#1c2239] hover:shadow-sm",
 ].join(" ");
 
-/** Timeline left edge — soft divider, same family as card borders. */
-export const workplaceTimelineEdgeClassName =
-  "border-l border-[color-mix(in_srgb,#2a3050_14%,transparent)]";
+/** Timeline left edge — whisper divider on the workspace canvas. */
+export const workplaceTimelineEdgeClassName = "border-l border-divider";

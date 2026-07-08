@@ -390,12 +390,12 @@ type MobileSidebarTriggerProps = {
 
 export function MobileSidebarTrigger({ onOpen }: MobileSidebarTriggerProps) {
   return (
-    <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background px-4 lg:hidden">
+    <header className="flex h-14 shrink-0 items-center gap-3 border-b border-divider bg-background px-4 lg:hidden">
       <button
         type="button"
         onClick={onOpen}
         aria-label="Open navigation menu"
-        className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
+        className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground"
       >
         <Menu className="size-4 stroke-[1.5]" />
       </button>
