@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 7, 2026
+**Last updated:** July 8, 2026
 
 ---
 
@@ -41,8 +41,8 @@ When making a significant product decision:
 **Context:** Focus timer supports open-ended quick focus and a separate Pomodoro tab with optional auto-break. Founder wants to schedule *future* break reminders without turning quick focus into rigid Pomodoro cycles.  
 **Decision:** Add **Schedule Break** as an optional overlay on quick focus: user sets a focus-duration threshold (“Break at”) and break length; app notifies at threshold and when break ends; **never** auto-starts break or auto-resumes focus. Immediate **Break** button and Pomodoro tab remain unchanged. One scheduled break per active session.  
 **Alternatives rejected:** Merge into Pomodoro tab (conflates two mental models); auto-start break at threshold (violates flexible-focus philosophy); wall-clock “remind in N minutes” (wrong semantics — threshold is total focus duration).  
-**Outcome:** Spec captured; implementation not started.  
-**Related:** [schedule-break-modal-spec.md](../../review/design/schedule-break-modal-spec.md)
+**Outcome:** Shipped on `workplace-focus-card.tsx` quick-focus tab (2026-07-08). Snooze semantics: threshold snooze adds 5 to `breakAtMinutes`; break-finished snooze **restarts a 5-minute wall-clock countdown from the snooze moment** (banks elapsed break, resets break segment). Schedule preserved when user hits immediate **Break**; default break length 10 min; max break length 180 min. Milestone presets `[25, 45, 60, 90, 120]` +30 extend per spec. **Duration picker** retained as power-user enhancement. Next Break strip: compact countdown on narrow viewports; read-only during break. OS browser notifications fire as bonus channel when tab is backgrounded (in-app cards remain primary). `/focus` hub shows strip + notifications via `FocusCurrentSessionCard`. `fable5` parity deferred — prototype route not in repo.  
+**Related:** [schedule-break-modal-spec.md](../../review/design/schedule-break-modal-spec.md) · [schedule-break-implementation-review.md](../../review/focus/schedule-break-implementation-review.md)
 
 ---
 

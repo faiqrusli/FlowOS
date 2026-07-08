@@ -8,6 +8,7 @@ import {
   writeModuleVisibility,
   type WorkplaceModuleVisibility,
 } from "@/lib/workplace-module-visibility";
+import { workplacePanelSectionClassName } from "@/lib/workplace-panel-appearance";
 import { cn } from "@/lib/utils";
 
 type WorkplaceQuickAddCardProps = {
@@ -39,10 +40,10 @@ export function WorkplaceQuickAddCard({
   return (
     <section
       className={cn(
-        "group/qa flex shrink-0 items-center rounded-xl border px-2 py-1 transition-[border-color,background-color,box-shadow] duration-200",
-        showChrome
-          ? "border-border/35 bg-muted/20"
-          : "border-transparent bg-transparent shadow-none"
+        workplacePanelSectionClassName,
+        "group/qa flex shrink-0 items-center px-2 py-1",
+        !showChrome &&
+          "border-transparent bg-transparent shadow-none hover:border-transparent hover:bg-transparent hover:shadow-none"
       )}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

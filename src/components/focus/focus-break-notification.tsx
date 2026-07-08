@@ -25,7 +25,7 @@ export function FocusBreakNotification({
 
   return (
     <div
-      role="status"
+      role="alert"
       className="mx-auto w-full max-w-sm rounded-lg border border-primary/30 bg-primary/[0.06] px-3.5 py-3 text-center"
     >
       <p className="text-sm font-semibold text-foreground">

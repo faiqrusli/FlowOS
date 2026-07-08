@@ -1,4 +1,8 @@
-import { computeQuickFocusSeconds, type StoredActiveFocusSession } from "@/lib/focus-active-session";
+import {
+  computeQuickFocusSeconds,
+  getSegmentElapsedSeconds,
+  type StoredActiveFocusSession,
+} from "@/lib/focus-active-session";
 
 /**
  * Schedule Break — pure helpers only. No React, no side effects.
@@ -6,26 +10,51 @@ import { computeQuickFocusSeconds, type StoredActiveFocusSession } from "@/lib/f
  * and docs/execution/runbooks/m2-schedule-break.md for the implementation plan.
  */
 
-const BASE_BREAK_MILESTONES_MINUTES = [25, 45, 60, 90, 120] as const;
-const EXTENDED_MILESTONE_STEP_MINUTES = 30;
+export const BREAK_AT_PRESET_MINUTES = [25, 45, 60, 90, 120] as const;
+export const BREAK_LENGTH_PRESET_MINUTES = [5, 10, 15, 20, 30] as const;
+export const BREAK_AT_EXTEND_STEP_MINUTES = 30;
+export const BREAK_AT_VISIBLE_ROWS = 6;
 
 export const BREAK_AT_STEP_MINUTES = 5;
 export const BREAK_LENGTH_STEP_MINUTES = 5;
 export const MIN_BREAK_LENGTH_MINUTES = 5;
+export const MAX_BREAK_LENGTH_MINUTES = 180;
 export const DEFAULT_BREAK_LENGTH_MINUTES = 10;
 export const BREAK_SNOOZE_MINUTES = 5;
 
-/** Next milestone strictly greater than currentFocusMinutes; extends by +30min past the table. */
-export function getDefaultBreakAtMinutes(currentFocusMinutes: number): number {
-  const safeCurrent = Math.max(0, currentFocusMinutes);
-  const milestone = BASE_BREAK_MILESTONES_MINUTES.find((m) => m > safeCurrent);
-  if (milestone !== undefined) return milestone;
+export type BreakAtMenuOption =
+  | { kind: "preset"; minutes: number }
+  | { kind: "extend"; minutes: number; label: "+30" };
 
-  let candidate = BASE_BREAK_MILESTONES_MINUTES[BASE_BREAK_MILESTONES_MINUTES.length - 1];
-  while (candidate <= safeCurrent) {
-    candidate += EXTENDED_MILESTONE_STEP_MINUTES;
+/** Presets strictly above current focus, plus a trailing +30 extend row. */
+export function getBreakAtMenuOptions(currentFocusMinutes: number): BreakAtMenuOption[] {
+  const safeCurrent = Math.max(0, currentFocusMinutes);
+  const options: BreakAtMenuOption[] = BREAK_AT_PRESET_MINUTES.filter(
+    (minutes) => minutes > safeCurrent
+  ).map((minutes) => ({ kind: "preset", minutes }));
+
+  if (options.length > 0) {
+    const extendMinutes =
+      options[options.length - 1]!.minutes + BREAK_AT_EXTEND_STEP_MINUTES;
+    if (extendMinutes > safeCurrent) {
+      options.push({ kind: "extend", minutes: extendMinutes, label: "+30" });
+    }
+    return options;
   }
-  return candidate;
+
+  const lastPreset = BREAK_AT_PRESET_MINUTES[BREAK_AT_PRESET_MINUTES.length - 1]!;
+  let extendMinutes = lastPreset + BREAK_AT_EXTEND_STEP_MINUTES;
+  while (extendMinutes <= safeCurrent) {
+    extendMinutes += BREAK_AT_EXTEND_STEP_MINUTES;
+  }
+  options.push({ kind: "extend", minutes: extendMinutes, label: "+30" });
+  return options;
+}
+
+/** Next preset strictly greater than current focus; falls back to +30 extend. */
+export function getDefaultBreakAtMinutes(currentFocusMinutes: number): number {
+  const options = getBreakAtMenuOptions(currentFocusMinutes);
+  return options[0]?.minutes ?? getMinBreakAtMinutes(currentFocusMinutes);
 }
 
 /** Lowest valid "Break at" value for the stepper: next 5-min step above current focus. */
@@ -52,25 +81,34 @@ export function isBreakReady(session: StoredActiveFocusSession): boolean {
 export function isBreakFinished(session: StoredActiveFocusSession): boolean {
   if (!session.breakLengthMinutes) return false;
   if (session.mode !== "break") return false;
-  const { break: breakSeconds } = computeQuickFocusSeconds(session);
-  return breakSeconds >= session.breakLengthMinutes * 60;
+  const segmentSeconds = getSegmentElapsedSeconds(session);
+  return segmentSeconds >= session.breakLengthMinutes * 60;
 }
 
 export function hasScheduledBreak(session: StoredActiveFocusSession): boolean {
-  return Boolean(session.breakAtMinutes && session.breakLengthMinutes);
+  return session.breakAtMinutes != null;
+}
+
+export function clampBreakLengthMinutes(minutes: number): number {
+  return Math.min(
+    MAX_BREAK_LENGTH_MINUTES,
+    Math.max(MIN_BREAK_LENGTH_MINUTES, minutes)
+  );
 }
 
 /** Save (or replace) the session's single scheduled break. */
 export function setScheduledBreak(
   session: StoredActiveFocusSession,
   breakAtMinutes: number,
-  breakLengthMinutes: number
+  breakLengthMinutes: number | null
 ): StoredActiveFocusSession {
   const { focus } = computeQuickFocusSeconds(session);
+  const length =
+    breakLengthMinutes == null ? null : clampBreakLengthMinutes(breakLengthMinutes);
   return {
     ...session,
     breakAtMinutes,
-    breakLengthMinutes,
+    breakLengthMinutes: length,
     scheduledAtFocusTime: focus,
   };
 }
@@ -92,16 +130,35 @@ export function snoozeBreak(
   minutes: number = BREAK_SNOOZE_MINUTES
 ): StoredActiveFocusSession {
   if (!session.breakAtMinutes) return session;
-  return { ...session, breakAtMinutes: session.breakAtMinutes + minutes };
+  const { focus } = computeQuickFocusSeconds(session);
+  const floor = getMinBreakAtMinutes(Math.floor(focus / 60));
+  const next = session.breakAtMinutes + minutes;
+  return { ...session, breakAtMinutes: Math.max(floor, next) };
 }
 
-/** Push the "break finished" reminder further out — user-initiated, never automatic. */
+/** Restart break-finished countdown from now (wall-clock snooze). */
 export function snoozeBreakFinished(
   session: StoredActiveFocusSession,
   minutes: number = BREAK_SNOOZE_MINUTES
 ): StoredActiveFocusSession {
   if (!session.breakLengthMinutes) return session;
-  return { ...session, breakLengthMinutes: session.breakLengthMinutes + minutes };
+  if (session.mode !== "break") {
+    return {
+      ...session,
+      breakLengthMinutes: clampBreakLengthMinutes(session.breakLengthMinutes + minutes),
+    };
+  }
+
+  const breakSegment = getSegmentElapsedSeconds(session);
+  const now = new Date().toISOString();
+  return {
+    ...session,
+    breakLengthMinutes: clampBreakLengthMinutes(minutes),
+    accumulated_break_seconds: session.accumulated_break_seconds + breakSegment,
+    phase_started_at: now,
+    session_status: "in_progress",
+    paused_segment_seconds: 0,
+  };
 }
 
 /** "Break in 41 min 40 sec" / "Break ready" — matches spec wording exactly. */
@@ -110,4 +167,20 @@ export function formatBreakCountdownLabel(remainingSeconds: number): string {
   const minutes = Math.floor(remainingSeconds / 60);
   const seconds = remainingSeconds % 60;
   return `Break in ${minutes} min ${seconds} sec`;
+}
+
+/** Compact strip variant — minutes only (no seconds). */
+export function formatCompactBreakCountdownLabel(remainingSeconds: number): string {
+  if (remainingSeconds <= 0) return "Break ready";
+  const minutes = Math.max(1, Math.ceil(remainingSeconds / 60));
+  return `Break in ${minutes} min`;
+}
+
+export function formatBreakAtMinutes(minutes: number): string {
+  return `${minutes} min`;
+}
+
+export function formatBreakLengthMinutes(minutes: number | null): string {
+  if (minutes == null) return "Not set";
+  return `${minutes} min`;
 }

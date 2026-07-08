@@ -21,7 +21,7 @@ export function AuthShell({
   footer,
 }: AuthShellProps) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/35 px-4 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
           <Link href="/" className="inline-block">

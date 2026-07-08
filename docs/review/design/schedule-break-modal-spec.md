@@ -278,7 +278,7 @@ Ready to focus again?
 
 - Do **not** auto-resume focus.
 - **Resume Focus** → user-initiated return to focus state (`quickResumeFocus` or equivalent).
-- **Snooze 5 min** → restart break countdown at 5 minutes (user-initiated).
+- **Snooze 5 min** → restart break countdown at **5:00 from the snooze moment** (wall-clock): elapsed break segment is banked, break phase restarts now, and `breakLengthMinutes` is set to 5. User-initiated only.
 
 ---
 
