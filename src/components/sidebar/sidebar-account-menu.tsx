@@ -52,7 +52,7 @@ export function SidebarAccountMenu({
           aria-label={compact ? displayName : undefined}
           className={cn(
             "group/account relative flex items-center rounded-xl border border-border bg-card text-left shadow-xs transition-[background-color,border-color,box-shadow] duration-150",
-            "hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_12%)] hover:bg-surface-elevated hover:shadow-sm aria-expanded:border-border aria-expanded:bg-surface-elevated",
+            "hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_12%)] hover:bg-surface-hover hover:shadow-sm aria-expanded:border-border aria-expanded:bg-surface-hover",
             compact
               ? "mx-auto size-9 justify-center border-transparent bg-transparent p-0 shadow-none hover:bg-sidebar-accent hover:shadow-none"
               : "w-full gap-2.5 px-2.5 py-2"

@@ -50,7 +50,7 @@ When making a significant product decision:
 
 Implementation follows [m2-surface-hierarchy.md](../runbooks/m2-surface-hierarchy.md) in five sessions aligned with the migration plan in DESIGN_SYSTEM.md.  
 **Alternatives rejected:** Keep the existing seven-level oklch “FlowOS Night” stack (too many elevations, chrome competes with content); treat the right panel as card elevation (creates asymmetry and disconnect); heavy top-bar surface (violates continuous-workspace principle).  
-**Outcome:** Session 1 shipped canonical dark tokens in `globals.css` (branch `m2/session-1-surface-tokens`); Sessions 2–5 pending.  
+**Outcome:** Sessions 1–5 complete on branch `m2/session-3-continuous-chrome` (2026-07-08): canonical tokens, sidebar parity, continuous chrome, high-traffic audit, theme layer cleanup.  
 **Related:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · [m2-surface-hierarchy.md](../runbooks/m2-surface-hierarchy.md)
 
 ---

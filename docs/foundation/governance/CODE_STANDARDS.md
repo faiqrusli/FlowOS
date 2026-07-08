@@ -86,7 +86,7 @@ export function getChannelStyle(type, priority?) { … }
 
 ## Styling
 
-1. **Tokens first** — use CSS variables and semantic Tailwind classes from [globals.css](../../../src/app/globals.css) (`bg-card`, `text-foreground`, `border-border`, `bg-primary`, …).
+1. **Tokens first** — use CSS variables and semantic Tailwind classes from [globals.css](../../../src/app/globals.css) (`bg-background`, `bg-sidebar`, `bg-card`, `bg-surface-hover`, `text-foreground`, `border-border`, …). Surface hierarchy: [DESIGN_SYSTEM.md](../../DESIGN_SYSTEM.md).
 2. **Centralize channel colors** — schedule, habits, task groups go through `lib/*-appearance.ts` or `schedule-palette.ts`, not one-off hex in JSX.
 3. **No light theme** — dark-only; do not add theme switching.
 4. **Visible controls** — critical actions must not be hover-only ([PRINCIPLES.md](./PRINCIPLES.md) #10).

@@ -1,13 +1,10 @@
-/** Focus hero palette — reference tokens for workplace focus timer. */
+/** Focus hero palette — ring accents; surfaces use design tokens. */
 export const FOCUS_TIMER_COLORS = {
-  /** Matches `--surface-app` / `--surface-page` in globals.css (.dark). */
-  page: "#11141f",
-  surface: "#1a2035",
-  ringTrack: "#2a3050",
+  ringTrack: "color-mix(in oklch, var(--border) 55%, var(--foreground) 12%)",
   ringProgress: "#4f6ef7",
   ringProgressDeep: "#3d5ad4",
   ringDot: "#6b8fff",
-  labelFocus: "#4f6ef7",
+  labelFocus: "var(--accent-text)",
 } as const;
 
 export function getFocusRingTrackColor(lap: number): string {

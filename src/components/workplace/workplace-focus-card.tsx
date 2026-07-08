@@ -531,10 +531,10 @@ export function WorkplaceFocusCard({
           dropActive && habitDropBlocked
             ? "border-warning/45 bg-warning-muted/40"
             : dropActive
-              ? "border-primary/40 bg-surface-elevated shadow-md"
+              ? "border-primary/40 bg-card shadow-md"
               : isFocusTab
                 ? workplacePanelSectionClassName
-                : "border-border bg-surface-elevated shadow-sm hover:bg-surface-elevated"
+                : "border-border bg-card shadow-xs hover:bg-surface-hover"
         )}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}

@@ -1,23 +1,11 @@
-import { FOCUS_TIMER_COLORS } from "@/lib/focus-timer-appearance";
+import { surfaceCardClass } from "@/lib/theme/surface-classes";
 
-/** Shared workplace dashboard panel surface (focus, tasks, habits, notes, timeline). */
-export const WORKPLACE_PANEL_COLORS = {
-  /** ~2.5% darker than prior page canvas — contrast comes from cards, not borders. */
-  page: "#11141f",
-  /** Card / panel surface — unchanged. */
-  surface: FOCUS_TIMER_COLORS.surface,
-  /** ~2.5% lighter than surface — card hover lift. */
-  surfaceHover: "#1c2239",
-} as const;
-
-const panelBorderClass =
-  "border-[color-mix(in_srgb,#2a3050_14%,transparent)] hover:border-[color-mix(in_srgb,#ffffff_5%,transparent)]";
-
+/** Shared workplace dashboard panel surface (focus, tasks, habits, notes). */
 export const workplacePanelSectionClassName = [
-  "rounded-2xl border bg-[#1a2035] shadow-xs",
-  panelBorderClass,
+  surfaceCardClass,
+  "flow-card-interactive",
   "transition-[background-color,border-color,box-shadow] duration-200",
-  "hover:bg-[#1c2239] hover:shadow-sm",
+  "hover:bg-surface-hover",
 ].join(" ");
 
 /** Timeline left edge — whisper divider on the workspace canvas. */

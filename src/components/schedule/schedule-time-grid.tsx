@@ -215,7 +215,7 @@ export function ScheduleTimeGrid({
   }
 
   return (
-    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/40 bg-timeline shadow-sm xl:basis-[76%]">
+    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden flow-surface-card xl:basis-[76%]">
       <div
         ref={gridRef}
         className="relative max-h-[calc(100vh-12rem)] min-h-[560px] overflow-y-auto"
@@ -230,7 +230,7 @@ export function ScheduleTimeGrid({
             height: TIMELINE_HEIGHT_PX,
           }}
         >
-          <div className="relative border-r border-border/30 bg-background/30">
+          <div className="relative border-r border-divider bg-background">
             {hourLabels.slice(0, -1).map((label, index) => (
               <div
                 key={label}

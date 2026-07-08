@@ -1,31 +1,40 @@
 /**
- * Reusable surface & interaction class strings aligned with FlowOS theme tokens.
- * These mirror the `.flow-*` component classes in globals.css — prefer the CSS
- * classes directly; use these exports when you need to compose them in TS.
+ * Reusable surface & interaction class strings aligned with FlowOS design tokens.
+ * Canonical model: background → surface → card → surface-hover (temporary).
+ * Prefer `.flow-*` classes from globals.css directly when possible.
  */
 
-/** Level 3 — standard card / panel */
+/** Level 2 — interactive content (cards, modals, widgets) */
 export const surfaceCardClass = "flow-surface-card";
 
-/** Level 4 — raised card / active panel */
+/** Level 2 — active/raised card (same token, stronger shadow) */
 export const surfaceRaisedClass = "flow-surface-raised";
 
-/** Level 5 — dropdowns, menus, popovers */
+/** Level 2+ — dropdowns, menus, popovers (card + elevation shadow) */
 export const surfaceElevatedClass = "flow-surface-elevated";
 
-/** Level 6 — modals & dialogs */
+/** Level 2 — modals & dialogs */
 export const surfaceModalClass = "flow-surface-modal";
 
-/** Level 2 — inset page sections */
+/** Level 0 — workspace canvas */
+export const surfaceBackgroundClass = "bg-background";
+
+/** Level 1 — application chrome (sidebars, drawers) */
+export const surfaceChromeClass = "bg-sidebar text-sidebar-foreground";
+
+/** Level 3 — temporary hover / selected feedback */
+export const surfaceHoverClass = "bg-surface-hover";
+
+/** Inset sections on the workspace canvas */
 export const surfaceInsetClass =
   "rounded-xl border border-divider bg-muted/35 dark:bg-muted/30";
 
-/** Timeline workspace column */
-export const surfaceTimelineClass = "bg-timeline text-foreground";
+/** Timeline column — aliases to background */
+export const surfaceTimelineClass = "bg-background text-foreground";
 
 /** Subtle hover for list rows & chips */
 export const interactiveHoverClass =
-  "transition-colors duration-150 hover:bg-muted/60 dark:hover:bg-accent/60";
+  "transition-colors duration-150 hover:bg-surface-hover";
 
 /** Selected list / nav item */
 export const selectedItemClass = "flow-selected text-foreground";

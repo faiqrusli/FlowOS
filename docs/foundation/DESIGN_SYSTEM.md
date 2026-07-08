@@ -1,7 +1,7 @@
 # FlowOS Visual Design System
 
 **Date:** July 8, 2026  
-**Status:** Spec captured — approved 2026-07-08; implementation pending  
+**Status:** Implemented — Sessions 1–5 complete (2026-07-08)  
 **Scope:** Application-wide surface hierarchy, chrome treatment, and elevation model  
 **Related:** [globals.css](../../src/app/globals.css), [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md), [PRINCIPLES.md](./governance/PRINCIPLES.md)  
 **Decision:** [decision-log.md](../execution/logs/decision-log.md) — 2026-07-08 "Four-level surface hierarchy"  
