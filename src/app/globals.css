@@ -15,6 +15,8 @@
   --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 
   /* Surface hierarchy */
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
   --color-surface-sidebar: var(--surface-sidebar);
   --color-surface-page: var(--surface-page);
   --color-surface-card: var(--surface-card);
@@ -87,6 +89,9 @@
   --surface-dialog: oklch(1 0 0);
   --timeline-surface: oklch(0.985 0.006 265);
 
+  --surface: oklch(0.975 0.005 265);
+  --surface-hover: oklch(0.955 0.012 265);
+
   --background: var(--surface-app);
   --foreground: oklch(0.205 0.02 265);
   --foreground-secondary: oklch(0.42 0.02 265);
@@ -148,33 +153,33 @@
   --sidebar-ring: oklch(0.58 0.1 265);
 }
 
-/* ─── Dark theme: "FlowOS Night" ───
-   A navy-indigo material system, not a gray admin theme.
-   Neutrals carry real chroma (hue 268) so the canvas reads as deep
-   indigo night, never pure black. Surface steps are large enough that
-   every layer — App / Sidebar / Workspace / Card / Elevated / Popover /
-   Dialog — is recognizable at a glance. One saturated indigo primary
-   drives CTAs, focus, and selection; everything else stays calm. */
+/* ─── Dark theme: four-level surface stack ───
+   Canonical tokens per DESIGN_SYSTEM.md — content first, chrome second.
+   Legacy L0–L6 names alias below for incremental migration (Sessions 4–5). */
 .dark {
   color-scheme: dark;
 
-  /* Surface hierarchy (L0 → L6) — deep indigo, rising toward the user */
-  --surface-app: oklch(0.171 0.030 268);       /* L0 — app canvas, deep navy */
-  --surface-sidebar: oklch(0.148 0.032 268);   /* L1 — recessed nav rail */
-  --surface-page: oklch(0.192 0.030 268);      /* L2 — workspace */
-  --timeline-surface: oklch(0.204 0.030 268);  /* timeline canvas, above workspace */
-  --surface-card: oklch(0.229 0.032 268);      /* L3 — cards float above the page */
-  --surface-elevated: oklch(0.262 0.034 268);  /* L4 — raised / active panels */
-  --surface-popover: oklch(0.276 0.036 268);   /* L5 — dropdowns & menus */
-  --surface-dialog: oklch(0.296 0.036 268);    /* L6 — modals, closest to the user */
+  /* Level 0–3 — canonical */
+  --background: #0e111b;
+  --surface: #121826;
+  --card: #1a2133;
+  --surface-hover: #232d45;
 
-  --background: var(--surface-app);
+  /* Legacy aliases */
+  --surface-app: var(--background);
+  --surface-sidebar: var(--surface);
+  --surface-page: var(--background);
+  --timeline-surface: var(--background);
+  --surface-card: var(--card);
+  --surface-elevated: var(--surface-hover);
+  --surface-popover: var(--card);
+  --surface-dialog: var(--card);
+
   --foreground: oklch(0.935 0.010 268);
   --foreground-secondary: oklch(0.760 0.018 268);
   --foreground-disabled: oklch(0.480 0.020 268);
-  --card: var(--surface-card);
   --card-foreground: var(--foreground);
-  --popover: var(--surface-popover);
+  --popover: var(--card);
   --popover-foreground: var(--foreground);
 
   /* Primary — a confident, saturated indigo. The one loud voice in the
@@ -199,9 +204,9 @@
   --warning: oklch(0.780 0.120 82);
   --warning-muted: oklch(0.780 0.120 82 / 13%);
 
-  --border: oklch(0.90 0.030 268 / 12%);
-  --divider: oklch(0.90 0.030 268 / 7%);
-  --input: oklch(0.90 0.030 268 / 14%);
+  --border: rgba(255, 255, 255, 0.05);
+  --divider: rgba(255, 255, 255, 0.04);
+  --input: rgba(255, 255, 255, 0.08);
   --ring: oklch(0.575 0.205 272 / 55%);
 
   --selected: oklch(0.575 0.205 272 / 16%);
@@ -213,22 +218,23 @@
   --chart-4: oklch(0.680 0.175 22);
   --chart-5: oklch(0.600 0.050 268);
 
-  /* Elevation — deep soft shadows + a hairline of light on every raised
-     edge; the inner highlight is what makes surfaces feel like material */
-  --shadow-xs: 0 1px 2px 0 oklch(0.05 0.02 268 / 30%), inset 0 1px 0 0 oklch(1 0 0 / 5%);
-  --shadow-sm: 0 2px 6px -1px oklch(0.05 0.02 268 / 38%), inset 0 1px 0 0 oklch(1 0 0 / 6%);
-  --shadow-md: 0 10px 28px -8px oklch(0.05 0.02 268 / 50%), inset 0 1px 0 0 oklch(1 0 0 / 7%);
-  --shadow-lg: 0 24px 56px -16px oklch(0.05 0.02 268 / 65%), inset 0 1px 0 0 oklch(1 0 0 / 8%);
-  --shadow-primary: 0 2px 12px -2px var(--primary-glow), inset 0 1px 0 0 oklch(1 0 0 / 18%);
+  /* Elevation — restrained per DESIGN_SYSTEM.md */
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.18);
+  --shadow-modal: 0 12px 48px rgba(0, 0, 0, 0.35);
+  --shadow-xs: var(--shadow-card);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-lg: var(--shadow-modal);
+  --shadow-primary: 0 2px 12px -2px var(--primary-glow);
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --sidebar: var(--surface-sidebar);
+  --sidebar: var(--surface);
   --sidebar-foreground: oklch(0.870 0.014 268);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.212 0.032 268);
+  --sidebar-accent: var(--surface-hover);
   --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: oklch(0.90 0.030 268 / 9%);
+  --sidebar-border: rgba(255, 255, 255, 0.05);
   --sidebar-ring: oklch(0.575 0.205 272 / 45%);
 }
 
@@ -253,7 +259,7 @@
   .flow-surface-card,
   .flow-panel {
     @apply rounded-2xl border border-border bg-card text-card-foreground;
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--shadow-card, var(--shadow-xs));
   }
 
   /* Translucent top-light: layers over any background tint a card sets */
@@ -289,7 +295,7 @@
   /* Level 6 — modals & dialogs, the most prominent surface in the app */
   .flow-surface-modal {
     @apply rounded-2xl border border-border bg-surface-dialog text-popover-foreground;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-modal, var(--shadow-lg));
   }
 
   .flow-interactive,
@@ -334,20 +340,9 @@
     background: color-mix(in oklch, transparent, var(--primary) 3%);
   }
 
-  /* Workspace canvas — in dark mode a faint indigo bloom in the top
-     corner keeps large pages from feeling like a flat void. */
+  /* Workspace canvas — continuous with application background */
   .flow-workspace {
-    background: var(--surface-page);
-  }
-
-  .dark .flow-workspace {
-    background:
-      radial-gradient(
-        1100px 700px at 88% -12%,
-        oklch(0.575 0.205 272 / 5%),
-        transparent 62%
-      ),
-      var(--surface-page);
+    background: var(--background);
   }
 }
 
