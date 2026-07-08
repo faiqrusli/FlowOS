@@ -9,13 +9,14 @@ Product truth documents — vision, features, architecture.
 
 ---
 
-## Core documents (3)
+## Core documents (4)
 
 | File | Purpose |
 |------|---------|
 | [PRODUCT_VISION.md](./PRODUCT_VISION.md) | North star, positioning, non-goals, target user |
 | [FEATURE_INVENTORY.md](./FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
 | [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt, deployment |
+| [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) | Surface hierarchy, chrome treatment, elevation model |
 
 **Metrics and release gates:** [governance/GATES.md](./governance/GATES.md) (WAD, D7, alpha/beta thresholds)
 

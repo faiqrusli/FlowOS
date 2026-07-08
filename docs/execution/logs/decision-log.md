@@ -36,6 +36,25 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-08 — Four-level surface hierarchy (content first, chrome second)
+
+**Context:** FlowOS reads as dashboard-like: the right panel uses card elevation while the left uses sidebar surface, the workspace uses a separate `--surface-page` / `--timeline-surface`, and the dark theme defines seven surface levels (L0–L6) with gradients and inner highlights. Founder documented a content-first visual language: workspace not dashboard, chrome second, four elevation tokens only.  
+**Decision:** Adopt the visual design system in [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) as the authoritative surface model for all UI work:
+
+- **Four tokens only:** `--background` (`#0E111B`), `--surface` (`#121826`), `--card` (`#1A2133`), `--surface-hover` (`#232D45`) — no new dark background colors without semantic reason.
+- **Chrome:** Left and right sidebars both use `--surface` with `rgba(255,255,255,.05)` outer borders; no sidebar shadows.
+- **Top bar:** Uses `--background`, not `--surface`; divider `rgba(255,255,255,.04)` only — no visible seam.
+- **Workspace:** Main canvas uses `--background`; cards are the strongest visual objects.
+- **Interaction:** Hover/selected/pressed/focus use `--surface-hover` temporarily only.
+- **Shadows:** Cards `0 2px 12px rgba(0,0,0,.18)`; modals `0 12px 48px rgba(0,0,0,.35)`; sidebars and top bar none.
+
+Implementation follows [m2-surface-hierarchy.md](../runbooks/m2-surface-hierarchy.md) in five sessions aligned with the migration plan in DESIGN_SYSTEM.md.  
+**Alternatives rejected:** Keep the existing seven-level oklch “FlowOS Night” stack (too many elevations, chrome competes with content); treat the right panel as card elevation (creates asymmetry and disconnect); heavy top-bar surface (violates continuous-workspace principle).  
+**Outcome:** Sessions 1–5 complete on branch `m2/session-3-continuous-chrome` (2026-07-08): canonical tokens, sidebar parity, continuous chrome, high-traffic audit, theme layer cleanup.  
+**Related:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · [m2-surface-hierarchy.md](../runbooks/m2-surface-hierarchy.md)
+
+---
+
 ### 2026-07-07 — Schedule Break: flexible focus reminders, not Pomodoro
 
 **Context:** Focus timer supports open-ended quick focus and a separate Pomodoro tab with optional auto-break. Founder wants to schedule *future* break reminders without turning quick focus into rigid Pomodoro cycles.  

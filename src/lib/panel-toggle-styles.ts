@@ -63,7 +63,7 @@ export function globalRailHoverIconClass(size: "sm" | "md" = "md") {
 /** Edge tab for Quick Schedule — neutral, sits against global sidebar. */
 export function globalRailTabClass() {
   return cn(
-    "group/panel-toggle relative z-30 flex size-8 items-center justify-center rounded-l-lg border border-r-0 border-border/40 bg-card text-muted-foreground shadow-sm transition-colors hover:bg-muted hover:text-foreground"
+    "group/panel-toggle relative z-30 flex size-8 items-center justify-center rounded-l-lg border border-r-0 border-sidebar-border bg-sidebar text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
   );
 }
 
@@ -78,6 +78,6 @@ export function panelToggleSquareClass(size: "sm" | "md" = "md") {
 /** D-tab on the drawer edge — Quick Schedule open/close. */
 export function panelToggleTabClass() {
   return panelToggleButtonClass(
-    "z-30 size-8 rounded-l-lg border-r-0 border-border/40 bg-card/95 shadow-[0_1px_3px_rgba(15,23,42,0.06)] backdrop-blur-sm hover:border-border/55"
+    "z-30 size-8 rounded-l-lg border-r-0 border-sidebar-border bg-sidebar hover:border-sidebar-border hover:bg-sidebar-accent"
   );
 }
