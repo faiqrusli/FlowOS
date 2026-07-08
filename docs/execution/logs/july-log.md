@@ -58,6 +58,31 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-08 — Surface hierarchy (Sessions 1–5)
+
+**Runbook:** [m2-surface-hierarchy.md](../runbooks/m2-surface-hierarchy.md) — **merged to `main`** (`d9fed0b`).
+
+**Shipped (product):**
+- Four-level dark surface stack: `--background`, `--surface`, `--card`, `--surface-hover` in `globals.css`
+- Right sidebar chrome matches left rail (no card elevation / shadow on rails)
+- Continuous workspace: mobile header whisper divider, unified shell background, timeline seam cleanup
+- High-traffic audit: workplace panels, schedule grid, dialog backdrop, removed card gloss gradients
+- Theme helpers (`tokens.ts`, `surface-classes.ts`) aligned to design system
+
+**Shipped (docs):**
+- [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) — authoritative visual spec
+- Decision-log entry 2026-07-08 surface hierarchy
+
+**Build/lint/test:** Pass on branch before merge.
+
+**Production:** https://flowos-sage.vercel.app — deploy pending Vercel; manual visual check recommended (Today `/`, right panel open, Schedule Break modal).
+
+**Decisions promoted:** → [decision-log.md](./decision-log.md) (2026-07-08 four-level surface hierarchy)
+
+**Milestones:** M2 visual polish; does not close M2 exit criteria by itself
+
+---
+
 <!-- Append new dated blocks above this line (newest first) -->
 
 ## 2026-07-05 — M2 Today UX Polish (Sessions 1–4)
