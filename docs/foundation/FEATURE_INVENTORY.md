@@ -2,7 +2,7 @@
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 6, 2026 (Pass 5 — IA merged here; Session 3 focus-controls audit)
+**Last updated:** July 8, 2026 (Schedule Break shipped)
 
 ---
 
@@ -146,6 +146,7 @@ Logic: `flowos/src/lib/dashboard-command.ts`
 | Session targets | Shipped | SQL migration exists |
 | Habit focus tracking | Shipped | Requires `track_with_focus` opt-in per habit |
 | Reflection on session end | Shipped | Modal on Workplace |
+| Schedule Break (modal + Next Break strip + break notifications) | **Shipped** | Quick-focus tab on Workplace focus card; preset/custom duration picker; spec: [schedule-break-modal-spec.md](../review/design/schedule-break-modal-spec.md) |
 
 ---
 

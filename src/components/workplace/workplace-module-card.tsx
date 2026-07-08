@@ -7,6 +7,7 @@ import {
   writeModuleVisibility,
   type WorkplaceModuleVisibility,
 } from "@/lib/workplace-module-visibility";
+import { workplacePanelSectionClassName } from "@/lib/workplace-panel-appearance";
 import { cn } from "@/lib/utils";
 
 type WorkplaceModuleCardProps = {
@@ -57,8 +58,10 @@ export function WorkplaceModuleCard({
     <section
       id={anchorId}
       className={cn(
-        "flow-surface-card group/module flex min-h-0 flex-col overflow-hidden transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_12%)] hover:shadow-sm",
-        !cardVisible && "border-transparent bg-transparent shadow-none",
+        workplacePanelSectionClassName,
+        "group/module flex min-h-0 flex-col overflow-hidden",
+        !cardVisible &&
+          "border-transparent bg-transparent shadow-none hover:border-transparent hover:bg-transparent hover:shadow-none",
         className
       )}
       onMouseEnter={() => setHovered(true)}

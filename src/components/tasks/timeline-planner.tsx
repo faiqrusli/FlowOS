@@ -45,6 +45,7 @@ import {
   writeModuleVisibility,
   type WorkplaceModuleVisibility,
 } from "@/lib/workplace-module-visibility";
+import { workplaceTimelineEdgeClassName } from "@/lib/workplace-panel-appearance";
 import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
@@ -1530,7 +1531,10 @@ export function TimelinePlanner({
         isFullscreen
           ? "w-full"
           : isWorkplace
-            ? "group/timeline relative h-full w-full overflow-hidden border-l border-border/45 bg-timeline shadow-[inset_1px_0_0_0_oklch(0.91_0.012_265/6%)]"
+            ? cn(
+                "group/timeline relative h-full w-full overflow-hidden bg-timeline",
+                workplaceTimelineEdgeClassName
+              )
             : "h-full w-full border-l border-border/50 bg-timeline shadow-sm animate-in slide-in-from-right-4 duration-200"
       )}
       onMouseEnter={isWorkplace ? () => setTimelineHovered(true) : undefined}

@@ -22,6 +22,12 @@ export type StoredActiveFocusSession = {
   label: string;
   target_type?: FocusTargetType | null;
   target_id?: string | null;
+  /** Total accumulated focus minutes at which the break reminder should fire. Quick focus only. */
+  breakAtMinutes?: number | null;
+  /** Break length (minutes) used both as the modal's field and the break-finished threshold. */
+  breakLengthMinutes?: number | null;
+  /** Focus seconds elapsed when the schedule was last saved — audit / snooze baseline. */
+  scheduledAtFocusTime?: number | null;
 };
 
 export function readActiveSession(): StoredActiveFocusSession | null {

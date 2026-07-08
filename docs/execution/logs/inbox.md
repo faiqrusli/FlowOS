@@ -48,8 +48,9 @@ inbox (scratch)
 
 ## Promoted (in runbook — not shipped yet)
 
-| Idea | Runbook | Session / WP |
-|------|---------|--------------|
+| Idea | Runbook / spec | Session / WP |
+|------|----------------|--------------|
+| Schedule Break modal — future break reminders on quick focus (not Pomodoro) | [schedule-break-modal-spec.md](../../review/design/schedule-break-modal-spec.md) | Not scoped to runbook yet |
 | _None — 2026-07-05 Today UX polish complete on `main`_ | [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md) | B4 `9685c02` |
 
 ---
