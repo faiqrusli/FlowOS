@@ -102,7 +102,7 @@ export function GlobalRightSidebar() {
 
       <aside
         className={cn(
-          "relative flex h-full shrink-0 overflow-hidden border-l border-border/40 bg-card shadow-sm",
+          "relative flex h-full shrink-0 overflow-hidden border-l border-sidebar-border bg-sidebar text-sidebar-foreground",
             workplaceHoverMode && "fixed inset-y-0 right-0 z-40",
             !sidebarVisible && workplaceHoverMode && "pointer-events-none opacity-0"
         )}
@@ -134,7 +134,7 @@ export function GlobalRightSidebar() {
               transition: panelSlideTransitionStyle(),
             }}
           >
-            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border/30 px-3 py-2.5">
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-sidebar-border px-3 py-2.5">
               <h2 className="text-sm font-semibold tracking-tight">
                 {PANEL_ITEMS.find((item) => item.id === activePanel)?.label}
               </h2>
@@ -156,7 +156,7 @@ export function GlobalRightSidebar() {
           </div>
 
           <div
-            className="flex h-full shrink-0 flex-col items-center border-l border-border/30 px-1 py-3"
+            className="flex h-full shrink-0 flex-col items-center border-l border-sidebar-border px-1 py-3"
             style={{ width: GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX }}
           >
             <button
@@ -191,7 +191,7 @@ export function GlobalRightSidebar() {
               )}
             </button>
 
-            <div className="mt-3 flex w-full flex-col items-center gap-2.5 border-t border-border/30 pt-3">
+            <div className="mt-3 flex w-full flex-col items-center gap-2.5 border-t border-sidebar-border pt-3">
               {PANEL_ITEMS.map((item) => {
                 const Icon = item.icon;
                 const active = activePanel === item.id;

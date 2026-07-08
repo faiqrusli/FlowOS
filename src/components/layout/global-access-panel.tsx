@@ -57,14 +57,14 @@ export function GlobalAccessPanel({
   return (
     <aside
       className={cn(
-        "flex h-full w-full shrink-0 flex-col bg-card shadow-sm",
-        onRight ? "border-l border-border/40" : "border-r border-border/40",
+        "flex h-full w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground",
+        onRight ? "border-l border-sidebar-border" : "border-r border-sidebar-border",
         className
       )}
     >
       <div
         className={cn(
-          "flex shrink-0 items-center border-b border-border/30",
+          "flex shrink-0 items-center border-b border-sidebar-border",
           expanded ? "gap-1.5 px-2 py-2" : "justify-center px-0.5 py-1.5"
         )}
       >
