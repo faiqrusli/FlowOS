@@ -58,6 +58,23 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-09 — Remove Today's note; tall Focus
+
+**Shipped (product):**
+- Removed Workplace daily-note card from Today grid
+- Focus card `row-span-2` fills the right column; Habits stays bottom-left
+- Daily notes via Notes sidebar / `Ctrl+Shift+D` only
+
+**Branch / merge:** `tweak/remove-workplace-daily-note` → `main`
+
+**Build/lint:** Pass on merge.
+
+**Decisions promoted:** → [decision-log.md](./decision-log.md) § 2026-07-09
+
+**Milestones:** UI tweak; not a runbook session bundle
+
+---
+
 ## 2026-07-08 — Surface hierarchy (Sessions 1–5)
 
 **Runbook:** [m2-surface-hierarchy.md](../runbooks/m2-surface-hierarchy.md) — **merged to `main`** (`d9fed0b`).

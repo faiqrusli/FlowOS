@@ -48,7 +48,6 @@ inbox (scratch)
 
 | Idea | Runbook / spec | Session / WP |
 |------|----------------|--------------|
-| Remove Today's note; Focus spans habits row; Habits stays bottom-left | [decision-log.md](./decision-log.md) § 2026-07-09 | `tweak/remove-workplace-daily-note` |
 | Schedule Break modal — future break reminders on quick focus (not Pomodoro) | [schedule-break-modal-spec.md](../../review/design/schedule-break-modal-spec.md) | Not scoped to runbook yet |
 | _None — 2026-07-05 Today UX polish complete on `main`_ | [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md) | B4 `9685c02` |
 
@@ -58,6 +57,7 @@ inbox (scratch)
 
 | Idea | Shipped | Log |
 |------|---------|-----|
+| Remove Today's note; Focus spans habits row; Habits stays bottom-left | 2026-07-09 `tweak/remove-workplace-daily-note` | [july-log.md](./july-log.md) § 2026-07-09 |
 | Tasks card scroll; habit Start now guard; context-menu bus; Enter refocus | 2026-07-05 B1 `c717428` | [july-log.md](./july-log.md) § 2026-07-05 |
 | Slim timeline task menu; task details complete toggle; reflection drawer link | 2026-07-05 B2 `b182f40` | [july-log.md](./july-log.md) § 2026-07-05 |
 | Quick-add icons + daily note copy/shortcuts; optimistic Enter capture | 2026-07-05 B3 `783f26a` | [july-log.md](./july-log.md) § 2026-07-05 |
