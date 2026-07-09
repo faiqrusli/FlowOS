@@ -120,92 +120,81 @@ Avoid:
 
 ---
 
-## Surface hierarchy
+## Surface hierarchy (Layer 0–5)
 
-FlowOS uses **only four surface levels**.
+**Canonical visual source:** VDS Sessions **1–5** tip (`33928bb`) — Workspace Drawer card-on-chrome, quiet left nav, and the Today page (including Focus tabs on `bg-muted/40` / active `bg-card`). All future UI (Tasks and beyond) must match that look.
 
-No additional background colors should be introduced without a semantic reason.
+FlowOS uses **six layers**. Do not invent new permanent background colors outside this stack.
 
-| Level | Token | Purpose |
-|-------|-------|---------|
-| **0** | `--background` | Infinite workspace canvas |
-| **1** | `--surface` | Application chrome |
-| **2** | `--card` | Interactive content |
-| **3** | `--surface-hover` | Temporary interaction only |
+| Layer | Role | Token / signal | Purpose |
+|-------|------|----------------|---------|
+| **0** | Navigation | `--surface` | Darkest — left nav, workspace drawer chrome |
+| **1** | Workspace | `--background` | Page / canvas behind cards |
+| **2** | Standard surfaces | `--card` | Cards, lists, panels, dialogs |
+| **3** | Hero surfaces | `--surface-focus` | Current Focus / primary workspace hero |
+| **4** | Interactive | `--primary`, selected | Buttons, selected, blue accent |
+| **5** | Feedback | `--success`, `--warning`, `--destructive` | Success, warning, danger |
 
-This hierarchy should remain stable across the entire application.
+Temporary hover uses `--surface-hover` (and Focus hover variants). It is **not** a permanent layer — never ship hover as a resting fill.
 
 ### Current dark values (implementation)
 
-Canonical values live in [globals.css](../../src/app/globals.css). As of 2026-07-10:
+Canonical values live in [globals.css](../../src/app/globals.css). Frozen to Sessions 1–5:
 
-| Level | Token | Value |
+| Layer | Token | Value |
 |-------|-------|-------|
-| 0 | `--background` | `oklch(0.171 0.030 268)` ≈ `#0A0F1D` |
-| 1 | `--surface` | `oklch(0.148 0.032 268)` ≈ `#060A18` |
+| 0 | `--surface` | `oklch(0.148 0.032 268)` ≈ `#060A18` |
+| 1 | `--background` | `oklch(0.171 0.030 268)` ≈ `#0A0F1D` |
 | 2 | `--card` | `oklch(0.229 0.032 268)` ≈ `#161C2C` |
-| 3 | `--surface-hover` | `oklch(0.262 0.034 268)` ≈ `#1D2435` |
+| 3 | `--surface-focus` | `color-mix(in oklab, var(--card) 92%, white 8%)` |
+| 4 | `--primary` | `oklch(0.575 0.205 272)` (indigo accent) |
+| 5 | semantic | success / warning / destructive tokens |
 
-Chrome is recessed (darker than the canvas) so navigation stays behind content. Do not reintroduce a seven-level stack or decorative glows.
+Navigation (Layer 0) is recessed below the workspace canvas (Layer 1). Do not reintroduce decorative glows or a seven-level stack.
 
 ---
 
 ## Surface responsibilities
 
-### Level 0 — Background
+### Layer 0 — Navigation
 
-**Purpose:** The infinite workspace.
+**Purpose:** Application chrome — darkest frame.
 
-**Used by:** Application canvas, empty layout, gutters, behind all cards.
+**Includes:** Left sidebar, workspace drawer shell, future AI drawer chrome.
 
-**Rules:**
+**Rules:** Darker than workspace and cards. Never used for editing. Expand/resize changes width only — never elevation.
 
-- Always darkest relative to content (canvas role)
-- Never interactive
-- Never contains user content
+### Layer 1 — Workspace
 
-### Level 1 — Chrome
+**Purpose:** Page background / infinite canvas.
 
-**Purpose:** Application infrastructure.
+**Includes:** Main content area, gutters, top bar (merged into canvas).
 
-Chrome frames work. It never becomes the work.
+**Rules:** Never interactive content. Never brighter than cards.
 
-**Chrome includes:**
+### Layer 2 — Standard surfaces
 
-- Left sidebar
-- Workspace drawer
-- Top navigation
-- Command palette
-- Inspector
-- Future AI drawer
+**Purpose:** Units of work — cards, lists, panels, forms, dialogs.
 
-**Rules:**
+**Rules:** Share one common `--card` surface. No feature-specific permanent card colors. Content in the drawer lives on Layer 2 over Layer 0 chrome.
 
-- Darker than content
-- Never brighter than cards
-- Never used for editing
+### Layer 3 — Hero surfaces
 
-### Level 2 — Cards
+**Purpose:** The one primary workspace on a screen (Today = Focus).
 
-**Purpose:** Units of interaction.
+**Rules:** Use `--surface-focus` whisper lift above `--card`. Border `--border-focus`. No glow, no blue fill, no elevated shadow as permanent hero treatment. Focus/Pomodoro tab chrome stays on card/muted — **never** `bg-background` holes in the hero.
 
-**Examples:** Tasks, habits, Focus, dashboard widgets, dialogs, forms.
+### Layer 4 — Interactive
 
-Cards always appear above chrome.
+**Purpose:** Buttons, selected states, blue accent, active nav.
 
-Cards should share one common surface.
+**Rules:** Primary indigo is the loud voice. Selected uses `--selected` / primary tints. Do not paint whole panels with primary.
 
-Avoid feature-specific card colors.
+### Layer 5 — Feedback
 
-**Today Focus (whisper lift):** The Focus card may use `--surface-focus` — a subtle `color-mix` of `--card` toward white so Focus reads slightly above peer cards without changing the navy page cast. Border: `--border-focus` barely above `--border`. Same restrained card shadow; no glow, no blue fill, no elevated shadow. Hover: `--surface-focus-hover` (temporary). This is not a fifth surface level — it is a hero treatment within Level 2. Edit this note when adjusting; do not add a parallel hierarchy document.
+**Purpose:** Success, warning, danger.
 
-### Level 3 — Hover
-
-**Purpose:** Temporary interaction.
-
-**Examples:** Hover, drag target, keyboard focus, selected state.
-
-Never use as a permanent background. Never use `--surface-hover` as the permanent Focus fill.
+**Rules:** Semantic only — status, validation, destructive actions. Never as page or card resting backgrounds.
 
 ---
 
@@ -235,12 +224,12 @@ Each visual layer has one responsibility.
 
 | Layer | Responsibility |
 |-------|----------------|
-| Background | Provides breathing room |
-| Chrome | Provides navigation |
-| Workspace | Provides context |
-| Cards | Provide interaction |
-| Components | Provide functionality |
-| Accent | Communicates state |
+| 0 Navigation | Frames the app (darkest) |
+| 1 Workspace | Provides page breathing room |
+| 2 Standard surfaces | Hold lists, panels, forms |
+| 3 Hero | One primary workspace per screen |
+| 4 Interactive | Buttons, selected, blue accent |
+| 5 Feedback | Success, warning, danger |
 
 ---
 
@@ -475,14 +464,16 @@ No new surface colors should be required.
 
 ## Frozen decisions
 
-- Four surface levels only
-- Content is brighter than chrome
+- Layer 0–5 only (Navigation → Workspace → Standard → Hero → Interactive → Feedback)
+- Sessions 1–5 Today + navigation are the visual source of truth for future UI
+- Content is brighter than navigation chrome
 - Chrome frames work
-- Every screen has one visual hero
+- Every screen has one visual hero (Layer 3)
 - Pages own workflows
-- Workspace Drawer owns contextual workspaces
+- Workspace Drawer owns contextual workspaces (Layer 0 shell + Layer 2 cards)
 - Cards represent interaction
-- Accent colors communicate interaction only
+- Accent colors communicate interaction only (Layer 4)
+- Feedback colors are semantic only (Layer 5)
 - Borders provide structure
 - Shadows remain minimal
 - Future modules reuse the existing hierarchy
@@ -491,13 +482,14 @@ No new surface colors should be required.
 
 ## Acceptance criteria
 
-1. Every component maps to one of the four surface levels.
+1. Every component maps to one of Layer 0–5.
 2. No custom dark backgrounds exist outside the design tokens.
-3. Chrome never competes with user content.
+3. Navigation chrome never competes with user content.
 4. Every page has a clearly identifiable visual hero.
 5. The Workspace Drawer supports contextual work without replacing primary pages.
 6. New modules integrate without introducing new surface categories.
 7. Hierarchy is communicated through layout, spacing, typography, and restrained elevation rather than decorative effects.
+8. Focus/hero tab chrome never uses canvas `bg-background` as a permanent hole in Layer 3.
 
 ---
 

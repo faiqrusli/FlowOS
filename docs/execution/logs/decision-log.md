@@ -36,6 +36,14 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-10 — Layer 0–5 freeze; Sessions 1–5 visual baseline
+
+**Context:** VDS Sessions 6–14 darkened Focus (tabs on `bg-background`) and drifted from the founder-preferred Sessions 1–5 Today + navigation look. Founder rejected that lineage and needs a single hierarchy for all future UI (including Tasks).  
+**Decision:** Reset `main` to Sessions **1–5** tip (`33928bb`). Freeze **Layer 0–5** in [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md): Navigation → Workspace → Standard surfaces → Hero → Interactive → Feedback. Sessions 1–5 Today + nav are the visual source of truth. Discard Sessions 6–14 product commits and related branches.  
+**Alternatives rejected:** Keep Sessions 6–14 on `main`; treat whisper Focus + deep navy as optional; continue four-token-only naming without hero/interactive/feedback layers.  
+**Outcome:** `main` at Session 5 baseline + Layer 0–5 docs; later VDS page sessions treated as never shipped.  
+**Related:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · tip `33928bb`
+
 ### 2026-07-10 — Workspace Drawer: content on `--card`, chrome on `--surface`
 
 **Context:** Notes/Reflection/Details panels put editable content directly on drawer chrome, so writing felt like editing the application frame. Expanding the drawer must not invent a new elevation.  

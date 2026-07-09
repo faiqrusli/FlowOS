@@ -22,6 +22,19 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-10 — Visual baseline reset to VDS Sessions 1–5
+
+**Shipped:**
+- `main` hard-reset to `33928bb` (drawer + Session 5 chrome; Today Focus tabs intact)
+- DESIGN_SYSTEM Layer 0–5 freeze; Sessions 1–5 Today + navigation = source for future UI
+- Sessions 6–14 product work discarded from `main`; related branches removed
+
+**Decision:** [decision-log.md](./decision-log.md) — Layer 0–5 freeze; Sessions 1–5 visual baseline
+
+**Production:** Redeploy from reset `main` — spot-check Today Focus + left/right chrome.
+
+---
+
 ## 2026-07-04 — M2 Session 1 + docs reorganization
 
 **Shipped (product):**
