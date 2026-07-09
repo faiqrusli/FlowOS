@@ -36,6 +36,14 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-09 — Remove Today's note card from Today grid
+
+**Context:** Full-density Workplace still showed a persistent "Today's note" card under Focus, competing with the Notes sidebar and leaving Focus short while Habits stayed bottom-left.  
+**Decision:** Remove the Workplace daily-note card from the Today grid. Focus spans the habits row (`row-span-2`) so it fills the right column; Habits stays in the bottom-left cell. Daily notes remain via Notes sidebar / `Ctrl+Shift+D`.  
+**Alternatives rejected:** Keep the card Full-density only (still clutter); move Habits up into the vacated cell (breaks the familiar Tasks-over-Habits stack).  
+**Outcome:** Merged to `main` via `tweak/remove-workplace-daily-note`.  
+**Related:** [FEATURE_INVENTORY.md](../../foundation/FEATURE_INVENTORY.md)
+
 ### 2026-07-08 — Four-level surface hierarchy (content first, chrome second)
 
 **Context:** FlowOS reads as dashboard-like: the right panel uses card elevation while the left uses sidebar surface, the workspace uses a separate `--surface-page` / `--timeline-surface`, and the dark theme defines seven surface levels (L0–L6) with gradients and inner highlights. Founder documented a content-first visual language: workspace not dashboard, chrome second, four elevation tokens only.  

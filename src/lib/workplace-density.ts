@@ -6,7 +6,6 @@ export type WorkplaceDensityModule =
   | "tasks"
   | "habits"
   | "quick-add"
-  | "daily-note"
   | "focus";
 
 const STORAGE_KEY = "flowos.workplace.density";
@@ -49,10 +48,6 @@ export function isWorkplaceModuleShown(
 ): boolean {
   if (density === "focus") {
     return module === "focus";
-  }
-
-  if (module === "daily-note") {
-    return density === "full";
   }
 
   return true;
