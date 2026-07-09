@@ -8,6 +8,7 @@ import {
   fetchTodayReflection,
   saveReflection,
 } from "@/lib/reflection-storage";
+import { drawerCardStackClass } from "@/lib/theme/surface-classes";
 import type { CustomEntry, ReflectionKanban } from "@/types/reflection";
 
 export function SidebarReflectionPanel() {
@@ -82,47 +83,47 @@ export function SidebarReflectionPanel() {
 
   return (
     <div className="h-full min-h-0 overflow-y-auto">
-      <div className="space-y-4 p-3">
-      {error && (
-        <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
-          {error}
-        </p>
-      )}
+      {/* Modular cards on chrome — no single outer wrap (DESIGN_SYSTEM v2). */}
+      <div className={drawerCardStackClass}>
+        {error && (
+          <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+            {error}
+          </p>
+        )}
 
-      <ReflectionQuestionsCard
-        wentWell={wentWell}
-        wentWrong={wentWrong}
-        onWentWellChange={(value) => {
-          setWentWell(value);
-          setDirty(true);
-        }}
-        onWentWrongChange={(value) => {
-          setWentWrong(value);
-          setDirty(true);
-        }}
-        disabled={saving}
-        hideTitle
-        compact
-      />
+        <ReflectionQuestionsCard
+          wentWell={wentWell}
+          wentWrong={wentWrong}
+          onWentWellChange={(value) => {
+            setWentWell(value);
+            setDirty(true);
+          }}
+          onWentWrongChange={(value) => {
+            setWentWrong(value);
+            setDirty(true);
+          }}
+          disabled={saving}
+          hideTitle
+        />
 
-      <CustomEntriesSection
-        entries={customEntries}
-        onChange={(entries) => {
-          setCustomEntries(entries);
-          setDirty(true);
-        }}
-        disabled={saving}
-      />
+        <CustomEntriesSection
+          entries={customEntries}
+          onChange={(entries) => {
+            setCustomEntries(entries);
+            setDirty(true);
+          }}
+          disabled={saving}
+        />
 
-      <ReflectionKanbanSection
-        kanbans={customKanbans}
-        onChange={(kanbans) => {
-          setCustomKanbans(kanbans);
-          setDirty(true);
-        }}
-        disabled={saving}
-        compact
-      />
+        <ReflectionKanbanSection
+          kanbans={customKanbans}
+          onChange={(kanbans) => {
+            setCustomKanbans(kanbans);
+            setDirty(true);
+          }}
+          disabled={saving}
+          compact
+        />
       </div>
     </div>
   );

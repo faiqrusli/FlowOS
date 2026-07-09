@@ -49,7 +49,7 @@ export function CustomEntriesSection({
   }
 
   return (
-    <Card>
+    <Card className="border-border/50 shadow-none">
       <CardHeader className="flex flex-row items-center justify-between gap-4">
         <CardTitle>Custom entries</CardTitle>
         <Button

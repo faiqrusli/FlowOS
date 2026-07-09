@@ -1,6 +1,6 @@
 # M2 — Surface Hierarchy Runbook
 
-**Scope:** M2 only — implements the four-level visual design system in [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md). Does not add, remove, or weaken any M2 exit criterion.  
+**Scope:** M2 only — implements the four-level visual design system. Authoritative architecture: [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) (v2.0). This runbook executed the v1 surface contract preserved in [DESIGN_SYSTEM_v1.md](../../foundation/DESIGN_SYSTEM_v1.md). Does not add, remove, or weaken any M2 exit criterion.  
 **Authority:** [decision-log.md](../logs/decision-log.md) 2026-07-08 "Four-level surface hierarchy (content first, chrome second)" is the product decision. This runbook does not re-litigate it.  
 **Repo root:** repository root (Next.js app).  
 **Production baseline:** https://flowos-sage.vercel.app  

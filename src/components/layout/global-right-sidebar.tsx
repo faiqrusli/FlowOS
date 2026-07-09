@@ -56,6 +56,15 @@ function GlobalRightSidebarBody({
   }
 }
 
+/** Expanded header title — rail keeps short "Details" label. */
+function panelHeaderTitle(activePanel: GlobalRightSidebarPanel): string {
+  if (activePanel === "details") {
+    // Habit Details when a habit drawer path exists; tasks use Task Details.
+    return "Task Details";
+  }
+  return PANEL_ITEMS.find((item) => item.id === activePanel)?.label ?? "";
+}
+
 export function GlobalRightSidebar() {
   const {
     activePanel,
@@ -100,6 +109,7 @@ export function GlobalRightSidebar() {
         />
       )}
 
+      {/* Level 1 chrome (`--surface`): width-only on expand/resize — never swap bg. */}
       <aside
         className={cn(
           "relative flex h-full shrink-0 overflow-hidden border-l border-sidebar-border bg-sidebar text-sidebar-foreground",
@@ -136,12 +146,12 @@ export function GlobalRightSidebar() {
           >
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-sidebar-border px-3 py-2.5">
               <h2 className="text-sm font-semibold tracking-tight">
-                {PANEL_ITEMS.find((item) => item.id === activePanel)?.label}
+                {panelHeaderTitle(activePanel)}
               </h2>
               {activePanel === "reflection" ? (
                 <Link
                   href="/reflection"
-                  className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-muted/50 hover:text-muted-foreground"
+                  className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-surface-hover hover:text-muted-foreground"
                   aria-label="Open reflection page"
                   title="Open reflection page"
                 >

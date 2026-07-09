@@ -19,25 +19,27 @@ export function SidebarDetailsPanel() {
   }
 
   return (
-    <TaskDetailFields
-      task={task}
-      groups={taskDetailSource.groups}
-      todayViewDate={taskDetailSource.todayViewDate}
-      onChange={(updates) => taskDetailSource.onUpdate(task.id, updates)}
-      onMoveToGroup={(groupId) =>
-        taskDetailSource.onMoveToGroup(task.id, groupId)
-      }
-      onPlanningStateChange={
-        taskDetailSource.onPlanningStateChange
-          ? (planningState) =>
-              taskDetailSource.onPlanningStateChange?.(task.id, planningState)
-          : undefined
-      }
-      onToggleComplete={
-        taskDetailSource.onToggleComplete
-          ? () => taskDetailSource.onToggleComplete?.(task)
-          : undefined
-      }
-    />
+    <div className="h-full min-h-0 overflow-y-auto">
+      <TaskDetailFields
+        task={task}
+        groups={taskDetailSource.groups}
+        todayViewDate={taskDetailSource.todayViewDate}
+        onChange={(updates) => taskDetailSource.onUpdate(task.id, updates)}
+        onMoveToGroup={(groupId) =>
+          taskDetailSource.onMoveToGroup(task.id, groupId)
+        }
+        onPlanningStateChange={
+          taskDetailSource.onPlanningStateChange
+            ? (planningState) =>
+                taskDetailSource.onPlanningStateChange?.(task.id, planningState)
+            : undefined
+        }
+        onToggleComplete={
+          taskDetailSource.onToggleComplete
+            ? () => taskDetailSource.onToggleComplete?.(task)
+            : undefined
+        }
+      />
+    </div>
   );
 }

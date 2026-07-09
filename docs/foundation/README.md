@@ -16,7 +16,7 @@ Product truth documents — vision, features, architecture.
 | [PRODUCT_VISION.md](./PRODUCT_VISION.md) | North star, positioning, non-goals, target user |
 | [FEATURE_INVENTORY.md](./FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
 | [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt, deployment |
-| [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) | Surface hierarchy, chrome treatment, elevation model |
+| [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) | Visual architecture v2.0 (surfaces, chrome, workspace hierarchy). Historical: [v1.0](./DESIGN_SYSTEM_v1.md) |
 
 **Metrics and release gates:** [governance/GATES.md](./governance/GATES.md) (WAD, D7, alpha/beta thresholds)
 

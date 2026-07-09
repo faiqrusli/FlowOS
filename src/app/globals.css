@@ -17,12 +17,15 @@
   /* Surface hierarchy */
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
+  --color-surface-focus: var(--surface-focus);
+  --color-surface-focus-hover: var(--surface-focus-hover);
   --color-surface-sidebar: var(--surface-sidebar);
   --color-surface-page: var(--surface-page);
   --color-surface-card: var(--surface-card);
   --color-surface-elevated: var(--surface-elevated);
   --color-surface-dialog: var(--surface-dialog);
   --color-timeline: var(--timeline-surface);
+  --color-border-focus: var(--border-focus);
 
   /* Semantic */
   --color-selected: var(--selected);
@@ -91,6 +94,9 @@
 
   --surface: oklch(0.975 0.005 265);
   --surface-hover: oklch(0.955 0.012 265);
+  /* Today Focus workspace — subtle lift above card (light) */
+  --surface-focus: oklch(0.997 0.002 265);
+  --surface-focus-hover: oklch(0.985 0.006 265);
 
   --background: var(--surface-app);
   --foreground: oklch(0.205 0.02 265);
@@ -120,6 +126,7 @@
   --warning-muted: oklch(0.62 0.14 75 / 12%);
 
   --border: oklch(0.88 0.008 265);
+  --border-focus: oklch(0.78 0.012 265);
   --divider: oklch(0.205 0.02 265 / 7%);
   --input: oklch(0.91 0.008 265);
   --ring: oklch(0.58 0.1 265);
@@ -159,11 +166,15 @@
 .dark {
   color-scheme: dark;
 
-  /* Level 0–3 — canonical */
-  --background: #0e111b;
-  --surface: #121826;
-  --card: #1a2133;
-  --surface-hover: #232d45;
+  /* Deep navy chrome (matches pre–July-8 Night depths the founder prefers).
+     Four roles only — sidebar recessed below canvas; cards float above. */
+  --background: oklch(0.171 0.030 268); /* #0a0f1d — app canvas */
+  --surface: oklch(0.148 0.032 268); /* #060a18 — nav / chrome (darker than canvas) */
+  --card: oklch(0.229 0.032 268); /* #161c2c — standard cards */
+  --surface-hover: oklch(0.262 0.034 268); /* #1d2435 — temporary hover */
+  /* Today Focus — whisper lift above --card */
+  --surface-focus: color-mix(in oklab, var(--card) 92%, white 8%);
+  --surface-focus-hover: color-mix(in oklab, var(--card) 88%, white 12%);
 
   /* Legacy aliases */
   --surface-app: var(--background);
@@ -204,9 +215,10 @@
   --warning: oklch(0.780 0.120 82);
   --warning-muted: oklch(0.780 0.120 82 / 13%);
 
-  --border: rgba(255, 255, 255, 0.05);
-  --divider: rgba(255, 255, 255, 0.04);
-  --input: rgba(255, 255, 255, 0.08);
+  --border: oklch(0.90 0.030 268 / 9%);
+  --border-focus: oklch(0.90 0.030 268 / 14%);
+  --divider: oklch(0.90 0.030 268 / 7%);
+  --input: oklch(0.90 0.030 268 / 12%);
   --ring: oklch(0.575 0.205 272 / 55%);
 
   --selected: oklch(0.575 0.205 272 / 16%);
@@ -232,9 +244,9 @@
   --sidebar-foreground: oklch(0.870 0.014 268);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--surface-hover);
+  --sidebar-accent: oklch(0.212 0.032 268);
   --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: rgba(255, 255, 255, 0.05);
+  --sidebar-border: oklch(0.90 0.030 268 / 9%);
   --sidebar-ring: oklch(0.575 0.205 272 / 45%);
 }
 
@@ -258,6 +270,17 @@
   .flow-panel {
     @apply rounded-2xl border border-border bg-card text-card-foreground;
     box-shadow: var(--shadow-card, var(--shadow-xs));
+  }
+
+  /* Today Focus — subtle permanent lift above --card (see DESIGN_SYSTEM.md) */
+  .flow-surface-focus {
+    @apply rounded-2xl border border-border-focus bg-surface-focus text-card-foreground;
+    box-shadow: var(--shadow-card, var(--shadow-xs));
+  }
+
+  .flow-surface-focus:hover {
+    background-color: var(--surface-focus-hover);
+    border-color: color-mix(in oklab, var(--border-focus) 80%, white 20%);
   }
 
   /* Level 3 — raised / active card (same surface, slightly stronger shadow) */

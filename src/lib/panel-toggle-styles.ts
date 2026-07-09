@@ -32,13 +32,13 @@ export function panelToggleHoverIconClass(size: "sm" | "md" = "md") {
   );
 }
 
-/** Neutral global sidebar rail — matches panel icon hover/active. */
+/** Neutral global sidebar rail — temporary hover/active on chrome. */
 export function globalRailButtonClass(active = false) {
   return cn(
     "inline-flex size-10 items-center justify-center rounded-lg transition-colors",
     active
-      ? "bg-muted text-foreground"
-      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      ? "bg-surface-hover text-foreground"
+      : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
   );
 }
 

@@ -1,11 +1,32 @@
-# FlowOS Visual Design System
+# FlowOS Visual Design System v2.0
 
-**Date:** July 8, 2026  
-**Status:** Implemented — Sessions 1–5 complete (2026-07-08)  
-**Scope:** Application-wide surface hierarchy, chrome treatment, and elevation model  
-**Related:** [globals.css](../../src/app/globals.css), [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md), [PRINCIPLES.md](./governance/PRINCIPLES.md)  
-**Decision:** [decision-log.md](../execution/logs/decision-log.md) — 2026-07-08 "Four-level surface hierarchy"  
-**Implementation:** [m2-surface-hierarchy.md](../execution/runbooks/m2-surface-hierarchy.md)
+| | |
+|---|---|
+| **Version** | 2.0 |
+| **Status** | ✅ Frozen |
+| **Owner** | FlowOS Product |
+| **Date** | July 10, 2026 |
+| **Supersedes** | [Visual Design System v1.0](./DESIGN_SYSTEM_v1.md) |
+| **Tokens** | [globals.css](../../src/app/globals.css) |
+| **Related** | [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md) · [PRINCIPLES.md](./governance/PRINCIPLES.md) · [decision-log.md](../execution/logs/decision-log.md) |
+
+---
+
+## Purpose
+
+Defines the visual architecture of FlowOS.
+
+This document is the single source of truth for:
+
+- Color hierarchy
+- Surface hierarchy
+- Application chrome
+- Workspace hierarchy
+- Information hierarchy
+- Elevation
+- Visual focus
+
+Every future UI component must conform to this document.
 
 ---
 
@@ -13,140 +34,314 @@
 
 FlowOS should feel like a **workspace**, not a dashboard.
 
-The UI should quietly disappear while the user's work becomes the primary visual focus.
+The interface should quietly disappear while the user's work becomes the primary visual focus.
 
-Navigation exists to support productivity, not compete with it.
+Navigation exists to support productivity.
 
-The interface should communicate hierarchy through **elevation, spacing, typography, and subtle surface differences**, rather than obvious color blocks.
+**Content is the product. Chrome supports the product.**
 
-### Core philosophy
+---
 
-**Content first. Chrome second.**
+## Product philosophy
 
-Every design decision in this document supports that principle.
+FlowOS is not a collection of pages.
+
+It is a productivity operating system.
+
+The interface should reinforce the user's workflow:
+
+```
+Capture → Plan → Execute → Reflect
+```
+
+Every screen should communicate that workflow through hierarchy rather than decoration.
+
+---
+
+## Core principles
+
+### Content first
+
+The user's work should always receive the greatest visual attention.
+
+The application itself should fade into the background.
+
+### Chrome second
+
+Navigation should never compete with content.
+
+Chrome frames work. It does not become the work.
+
+### One visual hero
+
+Every screen should have exactly one visual hero.
+
+| Screen | Hero |
+|--------|------|
+| Today | Focus |
+| Schedule | Timeline |
+| Notes | Document |
+| Reflection | Reflection editor |
+| Analytics | Primary visualization |
+
+When multiple components compete for attention, the interface becomes noisy.
+
+### Hierarchy through structure
+
+FlowOS communicates importance using:
+
+- Layout
+- Spacing
+- Typography
+- Elevation
+- Subtle surfaces
+
+Avoid using bright colors or heavy decoration to create hierarchy.
 
 ---
 
 ## Design goals
 
-### Primary goals
+FlowOS should:
 
-- Maximize focus on user content
+- Maximize focus
 - Reduce visual noise
-- Make the application feel larger than it is
-- Create premium software aesthetics
-- Build a scalable design language for future modules
+- Feel larger than it is
+- Feel premium
+- Scale to future workspaces
 
-### Avoid
+Avoid:
 
 - Heavy dashboard appearance
-- Large visible UI seams
 - Multiple unrelated background colors
-- Chrome attracting more attention than user data
+- Decorative glows
 - Artificial visual complexity
+- Chrome competing with content
 
 ---
 
 ## Surface hierarchy
 
-FlowOS should use **only four elevation surfaces**.
+FlowOS uses **only four surface levels**.
 
-No additional background colors should be introduced unless there is a clear semantic reason.
+No additional background colors should be introduced without a semantic reason.
 
-| Level | Token | Color | Purpose |
-|-------|-------|-------|---------|
-| **0** | `--background` | `#0E111B` | Application background — the infinite workspace |
-| **1** | `--surface` | `#121826` | Application chrome — sidebars, drawers, command palette |
-| **2** | `--card` | `#1A2133` | Interactive content — cards, modals, widgets |
-| **3** | `--surface-hover` | `#232D45` | Temporary interaction feedback — never permanent |
+| Level | Token | Purpose |
+|-------|-------|---------|
+| **0** | `--background` | Infinite workspace canvas |
+| **1** | `--surface` | Application chrome |
+| **2** | `--card` | Interactive content |
+| **3** | `--surface-hover` | Temporary interaction only |
 
-### Level 0 — Application background
+This hierarchy should remain stable across the entire application.
 
-**Purpose:** The infinite workspace. Everything lives on top of this.
+### Current dark values (implementation)
 
-**Characteristics:** Darkest workspace. Calm. Minimal. Never draws attention.
+Canonical values live in [globals.css](../../src/app/globals.css). As of 2026-07-10:
 
-**Used by:** Main canvas, empty areas, scroll regions, behind cards.
+| Level | Token | Value |
+|-------|-------|-------|
+| 0 | `--background` | `oklch(0.171 0.030 268)` ≈ `#0A0F1D` |
+| 1 | `--surface` | `oklch(0.148 0.032 268)` ≈ `#060A18` |
+| 2 | `--card` | `oklch(0.229 0.032 268)` ≈ `#161C2C` |
+| 3 | `--surface-hover` | `oklch(0.262 0.034 268)` ≈ `#1D2435` |
 
-### Level 1 — Application surface
-
-**Purpose:** Application chrome.
-
-**Characteristics:** Very subtle elevation above the background. Users should barely notice it.
-
-**Used by:** Left sidebar, right sidebar, future top bar, command palette background, drawer backgrounds.
-
-### Level 2 — Card surface
-
-**Purpose:** Interactive content.
-
-**Characteristics:** Cards should always appear visually above the application surface.
-
-**Used by:** Task card, habit card, timeline card, reflection, focus card, dashboard widgets, modals.
-
-### Level 3 — Interactive hover
-
-**Purpose:** Temporary interaction feedback.
-
-**Used by:** Hover, selected state, pressed state, drop target, keyboard focus.
-
-**Rule:** Never use hover color as a permanent background.
+Chrome is recessed (darker than the canvas) so navigation stays behind content. Do not reintroduce a seven-level stack or decorative glows.
 
 ---
 
-## Layout regions
+## Surface responsibilities
+
+### Level 0 — Background
+
+**Purpose:** The infinite workspace.
+
+**Used by:** Application canvas, empty layout, gutters, behind all cards.
+
+**Rules:**
+
+- Always darkest relative to content (canvas role)
+- Never interactive
+- Never contains user content
+
+### Level 1 — Chrome
+
+**Purpose:** Application infrastructure.
+
+Chrome frames work. It never becomes the work.
+
+**Chrome includes:**
+
+- Left sidebar
+- Workspace drawer
+- Top navigation
+- Command palette
+- Inspector
+- Future AI drawer
+
+**Rules:**
+
+- Darker than content
+- Never brighter than cards
+- Never used for editing
+
+### Level 2 — Cards
+
+**Purpose:** Units of interaction.
+
+**Examples:** Tasks, habits, Focus, dashboard widgets, dialogs, forms.
+
+Cards always appear above chrome.
+
+Cards should share one common surface.
+
+Avoid feature-specific card colors.
+
+**Today Focus (whisper lift):** The Focus card may use `--surface-focus` — a subtle `color-mix` of `--card` toward white so Focus reads slightly above peer cards without changing the navy page cast. Border: `--border-focus` barely above `--border`. Same restrained card shadow; no glow, no blue fill, no elevated shadow. Hover: `--surface-focus-hover` (temporary). This is not a fifth surface level — it is a hero treatment within Level 2. Edit this note when adjusting; do not add a parallel hierarchy document.
+
+### Level 3 — Hover
+
+**Purpose:** Temporary interaction.
+
+**Examples:** Hover, drag target, keyboard focus, selected state.
+
+Never use as a permanent background. Never use `--surface-hover` as the permanent Focus fill.
+
+---
+
+## Information hierarchy
+
+FlowOS organizes information in layers:
+
+```
+Application
+  ↓
+Workspace
+  ↓
+Card
+  ↓
+Component
+  ↓
+Interaction
+```
+
+Every feature should naturally fit this structure.
+
+---
+
+## UI responsibilities
+
+Each visual layer has one responsibility.
+
+| Layer | Responsibility |
+|-------|----------------|
+| Background | Provides breathing room |
+| Chrome | Provides navigation |
+| Workspace | Provides context |
+| Cards | Provide interaction |
+| Components | Provide functionality |
+| Accent | Communicates state |
+
+---
+
+## Workspace architecture
+
+FlowOS distinguishes between **pages** and **contextual workspaces**.
+
+### Pages
+
+Pages are destinations.
+
+**Examples:** Today, Tasks, Habits, Schedule, Focus.
+
+Pages own the user's primary workflow.
+
+### Workspace drawer
+
+The Workspace Drawer is not another sidebar.
+
+It is contextual workspace.
+
+**Examples:** Notes, Reflection, Kanban, future AI, Calendar, References.
+
+Users can continue working without leaving the current page.
+
+The drawer should feel secondary to the main workspace while remaining fully functional.
+
+#### Drawer card-on-chrome (frozen)
+
+```
+Workspace Drawer (`--surface`)
+└── Content cards (`--card`)
+```
+
+| Rule | Detail |
+|------|--------|
+| Drawer background | Always `--surface` / `bg-sidebar`, at every width |
+| Expand / resize | Changes **layout only** — never elevation or background color |
+| Primary content | Lives on `--card`, never directly on drawer chrome |
+| Card spacing | 24–32px vertical gap between cards (`gap-6`–`gap-8`) |
+| Card styling | Shared padding, radius, border — no feature-specific card colors |
+
+**Module patterns**
+
+| Module | Structure |
+|--------|-----------|
+| **Notes** | One editor document card (title, metadata, toolbar, markdown) |
+| **Reflection** | Multiple modular cards (questions, custom entries, kanban) — **no** single outer wrap |
+| **Task Details** | Section cards (task, organization, schedule) — scannable form |
+
+Implementation runbook: [m2-visual-design-v2.md](../execution/runbooks/m2-visual-design-v2.md).
+
+---
+
+## Navigation philosophy
+
+Navigation should always remain behind user content.
+
+Navigation exists to answer: **"Where am I?"**
+
+Content answers: **"What am I doing?"**
+
+The user should naturally spend most of their time inside workspaces rather than navigation.
 
 ### Top bar
 
-The top bar should **not** be treated as another floating surface. Instead, it should visually merge into the workspace. The application should feel like one continuous environment.
+The top bar should visually merge into the canvas.
 
-**Instead of:**
+Avoid creating another floating layer.
 
-```
-Top Bar
-──────────────
-Main Content
-```
-
-**Use:**
+**Preferred:**
 
 ```
 Continuous Workspace
 ────────────────────────────────
-Top controls
+Controls
 Content
-Cards
 ```
 
-The user perceives one uninterrupted canvas.
+**Avoid:**
+
+```
+Top Bar
+──────────
+Content
+```
 
 | Property | Value | Reason |
 |----------|-------|--------|
 | Background | `var(--background)` | Navigation should not compete with content |
-| **Not** | `var(--surface)` | — |
-| Divider | `border-bottom: 1px solid rgba(255,255,255,.04)` | Alignment without a visible seam — should almost disappear |
+| **Not** | `var(--surface)` | Would create a floating chrome band |
+| Divider | `border-bottom: 1px solid rgba(255,255,255,.04)` | Alignment without a visible seam |
 
-### Left sidebar
-
-**Purpose:** Persistent navigation.
+### Left sidebar / workspace drawer
 
 | Property | Value |
 |----------|-------|
 | Background | `var(--surface)` |
-| Border | `border-right: 1px solid rgba(255,255,255,.05)` |
+| Outer border | `1px solid rgba(255,255,255,.05)` |
 
 No shadows. No gradients. No glassmorphism.
-
-### Right sidebar
-
-The right sidebar should match the left sidebar.
-
-| Property | Value |
-|----------|-------|
-| Background | `var(--surface)` |
-| Border | `border-left: 1px solid rgba(255,255,255,.05)` |
-
-This creates symmetry. The current implementation makes the right panel appear disconnected because it uses a different elevation.
 
 ### Main workspace
 
@@ -158,80 +353,70 @@ No borders. No artificial containers. Cards provide all structure.
 
 ---
 
-## Card hierarchy and visual weight
+## Card philosophy
 
-Cards should become the **strongest visual objects**.
+Cards represent work.
 
-```
-Background
-  ↓
-Sidebar
-  ↓
-Cards
-  ↓
-Hover
-  ↓
-Dropdown
-  ↓
-Modal
-```
+Cards should be:
 
-Users naturally look at the cards first. This is desirable.
+- Consistent
+- Quiet
+- Readable
 
-### Visual importance order
+Hierarchy should come from:
 
-```
-Cards
-  ↓
-Focused interaction
-  ↓
-Navigation
-  ↓
-Application frame
-  ↓
-Background
-```
+- Placement
+- Size
+- Spacing
 
-**Never:**
+Not arbitrary color changes.
 
-```
-Navigation
-  ↓
-Background
-  ↓
-Cards
-```
+### Focus card
+
+The Focus card is the hero of the Today page.
+
+Its importance comes primarily from:
+
+- Location
+- Size
+- Typography
+- Timer
+- Surrounding whitespace
+
+Surface changes should remain subtle.
+
+**Avoid:** Blue backgrounds, glows, exaggerated shadows.
 
 ---
 
 ## Borders
 
-Borders replace color differences. Instead of changing backgrounds dramatically, use subtle separators.
+Borders define structure. They do not create depth.
+
+Depth comes from surfaces.
+
+Borders should remain soft and unobtrusive.
 
 **Recommended:**
 
 - `rgba(255,255,255,.05)`
 - `rgba(255,255,255,.04)`
 
-**Avoid:**
-
-- Heavy outlines
-- Bright borders
-- Double borders
-- Nested borders
+**Avoid:** Heavy outlines, bright borders, double borders, nested borders.
 
 ---
 
 ## Shadows
 
-Very restrained.
+Use only restrained shadows.
 
 | Element | Shadow |
 |---------|--------|
-| Cards | `0 2px 12px rgba(0,0,0,.18)` |
-| Modals | `0 12px 48px rgba(0,0,0,.35)` |
-| Sidebars | None |
-| Top bar | None |
+| Cards | Small — `0 2px 12px rgba(0,0,0,.18)` |
+| Modals | Medium — `0 12px 48px rgba(0,0,0,.35)` |
+| Navigation | None |
+
+Never use shadows as decoration.
 
 ---
 
@@ -245,7 +430,7 @@ Dropdown
 Tooltip
 Hover
 Cards
-Sidebar
+Sidebar / drawer (chrome)
 Background
 ```
 
@@ -253,70 +438,73 @@ Each level should feel intentional. Do not create random intermediate elevations
 
 ---
 
-## Future components
+## Accent philosophy
 
-| Component | Background | Content |
-|-----------|------------|---------|
-| **Command palette** | Card | Backdrop: `rgba(0,0,0,.45)` |
-| **AI assistant** | Surface | Conversation: card; response blocks: nested cards |
-| **Calendar** | Background (canvas) | Events: cards; selection: hover |
-| **Analytics** | Background | Charts: cards; metrics: cards; filters: surface |
+Accent colors communicate interaction.
 
----
+Primary blue is reserved for:
 
-## Why this works
+- Active navigation
+- Buttons
+- Timer
+- Links
+- Selection
 
-This hierarchy creates three important psychological effects.
-
-### 1. Larger workspace
-
-Without a heavy top bar seam, the interface feels taller. Users perceive more working area.
-
-### 2. Reduced cognitive load
-
-The eye doesn't stop at artificial divisions. Attention naturally flows toward content.
-
-### 3. Premium feeling
-
-Most modern premium productivity software relies on:
-
-- Small elevation changes
-- Minimal borders
-- Consistent spacing
-- Restrained colors
-
-…rather than dramatic contrast.
+Never use accent colors as permanent surfaces.
 
 ---
 
-## Inspiration
+## Future compatibility
 
-The design language aligns with principles seen in products such as:
+This architecture must support future modules without new surface categories.
 
-Linear · Raycast · Arc Browser · Notion Calendar · Craft · Superhuman · Figma · Vercel Dashboard
+**Examples:** AI, Goals, Analytics, Calendar, Whiteboard, Files, Reading, References.
 
-The goal is **not** to imitate any one product, but to adopt the common principles behind interfaces that feel calm, polished, and content-focused.
+| Module | Canvas | Content |
+|--------|--------|---------|
+| Command palette | Card | Backdrop: `rgba(0,0,0,.45)` |
+| AI assistant | Surface (drawer) | Conversation: card; response blocks: nested cards |
+| Calendar | Background | Events: cards; selection: hover |
+| Analytics | Background | Charts / metrics: cards; filters: surface |
 
----
+Every module should naturally fit into the existing hierarchy.
 
-## Migration plan
-
-| Phase | Work |
-|-------|------|
-| **1** | Standardize colors: background, surface, card, hover |
-| **2** | Make both sidebars identical — remove the lighter right sidebar |
-| **3** | Convert the top bar to use the application background — remove the visible seam, add only a subtle divider |
-| **4** | Audit every component — every UI element should map to one of the four surface tokens; no custom dark colors |
-| **5** | Update design tokens (`--background`, `--surface`, `--card`, `--surface-hover`) so all components consume these variables |
+No new surface colors should be required.
 
 ---
 
-## Final design principles
+## Frozen decisions
 
-1. **Content is the product.** Navigation supports it but never dominates it.
-2. **Use elevation, not color, to express hierarchy.**
-3. **Keep the workspace visually continuous.** Avoid unnecessary seams and hard section breaks.
-4. **Limit the palette.** Four surface tokens are enough for almost the entire application.
-5. **Maintain consistency.** Every new component should fit into the same elevation system instead of introducing new shades or visual treatments.
+- Four surface levels only
+- Content is brighter than chrome
+- Chrome frames work
+- Every screen has one visual hero
+- Pages own workflows
+- Workspace Drawer owns contextual workspaces
+- Cards represent interaction
+- Accent colors communicate interaction only
+- Borders provide structure
+- Shadows remain minimal
+- Future modules reuse the existing hierarchy
 
-Following these principles will give FlowOS a cohesive, premium visual identity that can scale from today's dashboard into a much larger productivity platform without feeling fragmented or visually noisy.
+---
+
+## Acceptance criteria
+
+1. Every component maps to one of the four surface levels.
+2. No custom dark backgrounds exist outside the design tokens.
+3. Chrome never competes with user content.
+4. Every page has a clearly identifiable visual hero.
+5. The Workspace Drawer supports contextual work without replacing primary pages.
+6. New modules integrate without introducing new surface categories.
+7. Hierarchy is communicated through layout, spacing, typography, and restrained elevation rather than decorative effects.
+
+---
+
+## Why v2.0
+
+v1.0 froze the four-token surface model and chrome treatment ([DESIGN_SYSTEM_v1.md](./DESIGN_SYSTEM_v1.md)).
+
+v2.0 keeps that surface contract and elevates the document from a color/elevation spec into the **visual architecture** authority: product philosophy, one-hero rule, pages vs workspace drawer, information hierarchy, and acceptance criteria for every future UI decision.
+
+Token depths may be refined in `globals.css` without a new major version, as long as the four roles and frozen decisions above hold.

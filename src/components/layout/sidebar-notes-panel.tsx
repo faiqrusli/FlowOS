@@ -54,6 +54,11 @@ import {
   upsertSidebarNoteInCache,
 } from "@/lib/sidebar-notes-cache";
 import { cn } from "@/lib/utils";
+import {
+  drawerCardClass,
+  interactiveHoverClass,
+  surfaceHoverClass,
+} from "@/lib/theme/surface-classes";
 import type { GrowthAreaWithCounts, Note } from "@/types/notes";
 
 export function SidebarNotesPanel() {
@@ -249,8 +254,10 @@ export function SidebarNotesPanel() {
       <li key={note.id}>
         <div
           className={cn(
-            "group relative rounded-md transition-colors",
-            selectedNoteId === note.id ? "bg-muted" : "hover:bg-muted/50"
+            "group relative rounded-md",
+            selectedNoteId === note.id
+              ? surfaceHoverClass
+              : interactiveHoverClass
           )}
           onContextMenu={(event) => {
             event.preventDefault();
@@ -312,8 +319,8 @@ export function SidebarNotesPanel() {
 
   if (selected) {
     return (
-      <div className="flex h-full min-h-0 flex-col">
-        <div className="flex shrink-0 items-center border-b border-border/30 px-3 py-2">
+      <div className="flex h-full min-h-0 flex-col gap-3 p-3">
+        <div className="flex shrink-0 items-center">
           <Button
             type="button"
             variant="outline"
@@ -325,59 +332,66 @@ export function SidebarNotesPanel() {
           </Button>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 border-b border-border/30 px-4 py-2.5">
-          <input
-            ref={titleInputRef}
-            value={selected.title}
-            onChange={(event) =>
-              updateLocal(selected.id, { title: event.target.value })
-            }
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                event.preventDefault();
-                titleInputRef.current?.blur();
+        {/* Document card on chrome — toolbar lives inside the card. */}
+        <div className={cn(drawerCardClass, "min-h-0 flex-1 overflow-hidden p-0")}>
+          <div className="flex shrink-0 items-center gap-2 border-b border-border/40 px-4 py-3">
+            <input
+              ref={titleInputRef}
+              value={selected.title}
+              onChange={(event) =>
+                updateLocal(selected.id, { title: event.target.value })
               }
-            }}
-            onBlur={() => {
-              if (!selected.title.trim()) {
-                updateLocal(selected.id, { title: "Untitled" });
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  titleInputRef.current?.blur();
+                }
+              }}
+              onBlur={() => {
+                if (!selected.title.trim()) {
+                  updateLocal(selected.id, { title: "Untitled" });
+                }
+              }}
+              className="min-w-0 flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-muted-foreground"
+              placeholder="Note title"
+            />
+            <button
+              type="button"
+              onClick={() => void handleToggleMenuPin(selected)}
+              className={cn(
+                "flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground",
+                selected.is_menu_pinned && "text-foreground"
+              )}
+              aria-label={
+                selected.is_menu_pinned ? "Unpin from menu" : "Pin to menu"
               }
-            }}
-            className="min-w-0 flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-muted-foreground"
-            placeholder="Note title"
-          />
-          <button
-            type="button"
-            onClick={() => void handleToggleMenuPin(selected)}
-            className={cn(
-              "flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-              selected.is_menu_pinned && "text-foreground"
-            )}
-            aria-label={selected.is_menu_pinned ? "Unpin from menu" : "Pin to menu"}
-            title={selected.is_menu_pinned ? "Unpin from menu" : "Pin to menu"}
-          >
-            {selected.is_menu_pinned ? (
-              <PinOff className="size-4" />
-            ) : (
-              <Pin className="size-4" />
-            )}
-          </button>
-          <span className="shrink-0 text-xs text-muted-foreground">
-            {saveState === "saving"
-              ? "Saving..."
-              : saveState === "saved"
-                ? "Saved"
-                : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
-          </span>
-        </div>
+              title={
+                selected.is_menu_pinned ? "Unpin from menu" : "Pin to menu"
+              }
+            >
+              {selected.is_menu_pinned ? (
+                <PinOff className="size-4" />
+              ) : (
+                <Pin className="size-4" />
+              )}
+            </button>
+            <span className="shrink-0 text-xs text-muted-foreground">
+              {saveState === "saving"
+                ? "Saving..."
+                : saveState === "saved"
+                  ? "Saved"
+                  : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
+            </span>
+          </div>
 
-        <MarkdownEditor
-          value={selected.content}
-          onChange={(content) => updateLocal(selected.id, { content })}
-          preview={preview}
-          onPreviewChange={setPreview}
-          className="min-h-0 flex-1"
-        />
+          <MarkdownEditor
+            value={selected.content}
+            onChange={(content) => updateLocal(selected.id, { content })}
+            preview={preview}
+            onPreviewChange={setPreview}
+            className="min-h-0 flex-1"
+          />
+        </div>
 
         <NoteMoveDialog
           open={moveNoteId !== null}
@@ -421,7 +435,7 @@ export function SidebarNotesPanel() {
           <button
             type="button"
             onClick={() => void handleOpenToday()}
-            className="flex w-full items-center gap-2 rounded-lg border border-border/40 bg-muted/15 px-2.5 py-1.5 text-left transition-colors hover:bg-muted/35"
+            className="flex w-full items-center gap-2 rounded-lg border border-border/40 bg-muted/15 px-2.5 py-1.5 text-left transition-colors hover:bg-surface-hover"
           >
             <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
@@ -456,7 +470,7 @@ export function SidebarNotesPanel() {
                     <button
                       type="button"
                       onClick={() => toggleAreaCollapsed(area.id)}
-                      className="flex w-full items-center gap-1.5 rounded-md px-2 py-1 text-left transition-colors hover:bg-muted/40"
+                      className="flex w-full items-center gap-1.5 rounded-md px-2 py-1 text-left transition-colors hover:bg-surface-hover"
                     >
                       <span className="text-sm leading-none">{area.emoji}</span>
                       <h3 className="min-w-0 flex-1 truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">

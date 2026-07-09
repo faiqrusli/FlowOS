@@ -26,6 +26,7 @@ This folder is the index for **how FlowOS ships right now**. Strategy lives in t
 | M1 — Deployed & Secure | [m1-ship-gate.md](./runbooks/m1-ship-gate.md) | **Complete** — RLS verified, production live |
 | M2 — Founder Daily Driver | [m2-founder-daily-driver.md](./runbooks/m2-founder-daily-driver.md) | **In progress** — Sessions 1–6 shipped |
 | M2 — Surface hierarchy | [m2-surface-hierarchy.md](./runbooks/m2-surface-hierarchy.md) | **Complete** — Sessions 1–5 (2026-07-08) |
+| M2 — Visual Design v2.0 | [m2-visual-design-v2.md](./runbooks/m2-visual-design-v2.md) | **In progress** — drawer + all pages |
 | M2 — Today UX polish | [m2-today-ux-polish.md](./runbooks/m2-today-ux-polish.md) | **Complete** — production sign-off 2026-07-05 |
 | M3 — First Strangers | (masterplan Step 2) | Not started — recruiting prep underway |
 

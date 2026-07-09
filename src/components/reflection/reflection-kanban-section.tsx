@@ -71,46 +71,23 @@ export function ReflectionKanbanSection({
   }
 
   return (
-    <Card
-      className={cn(
-        "",
-        compact && "border-0 bg-transparent shadow-none ring-0"
-      )}
-    >
-      {!compact && (
-        <CardHeader className="flex flex-row items-center justify-between gap-4 pb-3">
-          <CardTitle>Custom kanban</CardTitle>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={disabled}
-            onClick={() => setAddingBoard(true)}
-            className="gap-1"
-          >
-            <Plus className="size-4" />
-            Add kanban
-          </Button>
-        </CardHeader>
-      )}
+    <Card className="border-border/50 shadow-none">
+      <CardHeader className="flex flex-row items-center justify-between gap-4 pb-3">
+        <CardTitle>Custom kanban</CardTitle>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={disabled}
+          onClick={() => setAddingBoard(true)}
+          className="gap-1"
+        >
+          <Plus className="size-4" />
+          Add kanban
+        </Button>
+      </CardHeader>
 
-      <CardContent className={cn("space-y-3", compact && "p-0")}>
-        {compact && (
-          <div className="flex justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={disabled}
-              onClick={() => setAddingBoard(true)}
-              className="gap-1"
-            >
-              <Plus className="size-4" />
-              Add kanban
-            </Button>
-          </div>
-        )}
-
+      <CardContent className="space-y-3">
         {addingBoard && (
           <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-muted/10 p-2">
             <Input

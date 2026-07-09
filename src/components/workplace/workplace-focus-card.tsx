@@ -31,7 +31,7 @@ import { useWorkplaceFocusTask } from "@/contexts/workplace-focus-task-context";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { getDateKeyInTimezone, getTodayDateString, formatNowTimeInAppTimezone } from "@/lib/date-utils";
 import { formatDuration, getSessionFocusSeconds } from "@/lib/focus-utils";
-import { workplacePanelSectionClassName } from "@/lib/workplace-panel-appearance";
+import { workplaceFocusSectionClassName } from "@/lib/workplace-panel-appearance";
 import { shouldPromptFocusReflection } from "@/lib/focus-reflection";
 import { computeTodayStats, fetchFocusSessions } from "@/lib/focus-storage";
 import {
@@ -520,8 +520,6 @@ export function WorkplaceFocusCard({
     setFocusTaskMenu(null);
   }, [setActiveFocusTarget]);
 
-  const isFocusTab = tab === "focus";
-
   return (
     <>
       <section
@@ -531,10 +529,8 @@ export function WorkplaceFocusCard({
           dropActive && habitDropBlocked
             ? "border-warning/45 bg-warning-muted/40"
             : dropActive
-              ? "border-primary/40 bg-card shadow-md"
-              : isFocusTab
-                ? workplacePanelSectionClassName
-                : "border-border bg-card shadow-xs hover:bg-surface-hover"
+              ? "border-border-focus bg-surface-focus-hover"
+              : workplaceFocusSectionClassName
         )}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}

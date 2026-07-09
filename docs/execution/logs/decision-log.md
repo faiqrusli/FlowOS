@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 8, 2026
+**Last updated:** July 10, 2026
 
 ---
 
@@ -35,6 +35,38 @@ When making a significant product decision:
 ---
 
 ## 2026 decisions
+
+### 2026-07-10 — Workspace Drawer: content on `--card`, chrome on `--surface`
+
+**Context:** Notes/Reflection/Details panels put editable content directly on drawer chrome, so writing felt like editing the application frame. Expanding the drawer must not invent a new elevation.  
+**Decision:** Workspace Drawer background is always `--surface`. Primary content (documents, form sections, reflection modules) lives on `--card` with 24–32px gaps. Notes = one document card (toolbar inside). Reflection = modular cards (no mega-wrap). Task Details = section cards; expanded header “Task Details” / “Habit Details”. Implementation: [m2-visual-design-v2.md](../runbooks/m2-visual-design-v2.md).  
+**Alternatives rejected:** Card-colored drawer background; single outer Reflection wrap; one continuous Details form on chrome.  
+**Outcome:** Principle frozen in DESIGN_SYSTEM v2.0; runbook Sessions 1–4 implement.  
+**Related:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · [m2-visual-design-v2.md](../runbooks/m2-visual-design-v2.md)
+
+### 2026-07-10 — Visual Design System v2.0 (content-first architecture)
+
+**Context:** v1.0 froze the four-token surface model and chrome treatment, but UI decisions still needed a broader authority — product philosophy, one-hero rule, pages vs workspace drawer, information hierarchy, and acceptance criteria. Overwriting v1 would erase why the surface model was first frozen.  
+**Decision:** Keep [DESIGN_SYSTEM_v1.md](../../foundation/DESIGN_SYSTEM_v1.md) as historical context. Make [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) **v2.0 Frozen** the single source of truth for visual architecture. Preserve the four surface levels; document workspace architecture (pages vs drawer), one visual hero per screen, and frozen decisions / acceptance criteria. Token depths may refine in `globals.css` without a new major version while the four roles hold.  
+**Alternatives rejected:** Overwrite v1 in place (loses change history); keep v1 as authority and add a parallel “architecture” doc (splits the single source of truth).  
+**Outcome:** v2.0 published; v1 retained as superseded.  
+**Related:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · [DESIGN_SYSTEM_v1.md](../../foundation/DESIGN_SYSTEM_v1.md)
+
+### 2026-07-09 — Today Focus card: subtle lift within design system
+
+**Context:** Founder wanted Focus slightly more prominent on Today without a separate visual-hierarchy spec. A strong Focus fill shifted the page cast; pixel comparison later showed the preferred “last” Today look used deeper navy chrome (sidebar ≈ `#060A18`, canvas ≈ `#0A0F1D`), not the lighter July 8 hexes.  
+**Decision:** Keep [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) as the single visual authority. Restore deep-navy four-token depths (sidebar recessed below canvas). Focus card may use a **whisper** `--surface-focus` lift — edit DESIGN_SYSTEM when adjusting; do not add parallel hierarchy specs.  
+**Alternatives rejected:** Separate Today visual-hierarchy spec/runbook; strong Focus Surface 2 that shifts page cast; keeping lighter `#0E111B`/`#121826` chrome when founder preferred the deeper navy.  
+**Outcome:** Hierarchy docs removed; deep navy chrome + subtle Focus lift live in DESIGN_SYSTEM + tokens.  
+**Related:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · [m2-surface-hierarchy.md](../runbooks/m2-surface-hierarchy.md)
+
+### 2026-07-09 — Global navigation: Home + Workspace workflow
+
+**Context:** FlowOS is a Capture → Plan → Execute → Reflect workflow. The M2 Session 3 five-item sidebar demoted Schedule and Notes so users had to return to Today to reach them. That conflicted with “every first-class feature is globally accessible.” The Schedule page was still labeled Timeline in the Today shortcut even though the route and metadata already say Schedule.
+**Decision:** Primary sidebar uses two groups — **Home** (Today only) and **Workspace** (Tasks, Habits, Schedule, Focus, Notes, Reflection) in workflow order. Icons: LayoutDashboard, CheckSquare, Repeat, CalendarDays, Timer, BookOpen, NotebookPen. User-facing page name is Schedule (not Timeline); internal `TimelinePlanner` / Quick Schedule unchanged. Today keeps Schedule ↗ and Notes ↗ as optional shortcuts only.
+**Alternatives rejected:** Keep flat five-item Productivity list; demote Schedule/Notes behind Today; use Home icon for Today; use Sparkles for Reflection; rename TimelinePlanner or Quick Schedule; add a third Review group in V1.
+**Outcome:** Runbook ready — [m2-global-navigation.md](../runbooks/m2-global-navigation.md). Supersedes primary-nav demotion in [m2-founder-daily-driver.md](../runbooks/m2-founder-daily-driver.md) Session 3.
+**Related:** [FEATURE_INVENTORY.md](../../foundation/FEATURE_INVENTORY.md)
 
 ### 2026-07-09 — Remove Today's note card from Today grid
 

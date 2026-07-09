@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { drawerWritingFieldClass } from "@/lib/theme/surface-classes";
 
 type ReflectionQuestionsCardProps = {
   wentWell: string;
@@ -9,6 +11,7 @@ type ReflectionQuestionsCardProps = {
   onWentWrongChange: (value: string) => void;
   disabled?: boolean;
   hideTitle?: boolean;
+  /** @deprecated Drawer no longer strips card chrome — ignored. */
   compact?: boolean;
 };
 
@@ -19,22 +22,15 @@ export function ReflectionQuestionsCard({
   onWentWrongChange,
   disabled,
   hideTitle = false,
-  compact = false,
 }: ReflectionQuestionsCardProps) {
   return (
-    <Card
-      className={
-        compact
-          ? "border-border/40 bg-transparent shadow-none ring-0"
-          : ""
-      }
-    >
+    <Card className="border-border/50 shadow-none">
       {hideTitle ? null : (
         <CardHeader>
           <CardTitle>Reflection</CardTitle>
         </CardHeader>
       )}
-      <CardContent className={hideTitle ? "space-y-6 p-0" : "space-y-6"}>
+      <CardContent className={cn("space-y-6", hideTitle && "pt-4")}>
         <div className="space-y-2">
           <Label htmlFor="went-well">What went well today?</Label>
           <Textarea
@@ -44,7 +40,7 @@ export function ReflectionQuestionsCard({
             placeholder="Celebrate wins, progress, and positive moments…"
             rows={4}
             disabled={disabled}
-            className="min-h-24 resize-y bg-muted/35"
+            className={cn("min-h-24 resize-y", drawerWritingFieldClass)}
           />
         </div>
         <div className="space-y-2">
@@ -56,7 +52,7 @@ export function ReflectionQuestionsCard({
             placeholder="Note challenges, distractions, or lessons…"
             rows={4}
             disabled={disabled}
-            className="min-h-24 resize-y bg-muted/35"
+            className={cn("min-h-24 resize-y", drawerWritingFieldClass)}
           />
         </div>
       </CardContent>

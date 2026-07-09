@@ -45,7 +45,7 @@ Read each phase in order: **review → spec → implementation → post-review**
 | [today-v3-greenfield-design.md](./today-v3-greenfield-design.md) | `flowos-today-v3-greenfield-design.canvas.tsx` | First-principles Day Engine design (Concept B: NOW + NEXT + rest) |
 | [schedule-break-modal-spec.md](./schedule-break-modal-spec.md) | — | Schedule Break modal for quick focus — user-initiated reminders, not Pomodoro |
 
-**Authoritative visual system:** [../../foundation/DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) — four-level surface hierarchy, chrome philosophy, migration plan.
+**Authoritative visual system:** [../../foundation/DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) (v2.0) — content-first visual architecture. Historical: [DESIGN_SYSTEM_v1.md](../../foundation/DESIGN_SYSTEM_v1.md).
 
 **Git anchors:** Phase 0 `5fc780a` · Phase 1 `04fe227` · Phase 2 `9f7e7c4`
 
