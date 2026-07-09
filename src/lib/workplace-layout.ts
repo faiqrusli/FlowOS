@@ -7,7 +7,7 @@ export const WORKPLACE_TIMELINE_RIGHT_GAP_PX = 8;
 /** @deprecated Use WORKPLACE_TIMELINE_WIDTH_PX */
 export const WORKPLACE_TIMELINE_WIDTH_EXTRA_PX = 0;
 
-/** Main dashboard grid: left narrower, focus wider. */
+/** Main dashboard grid: left narrower; focus spans the habits row on the right. */
 export const WORKPLACE_DASHBOARD_GRID_CLASS =
   "grid min-h-0 min-w-0 flex-1 grid-cols-[minmax(0,0.32fr)_minmax(0,0.68fr)] grid-rows-[auto_minmax(0,1fr)_minmax(0,0.56fr)] gap-2";
 

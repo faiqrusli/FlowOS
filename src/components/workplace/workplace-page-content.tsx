@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, forwardRef, type RefObject } from "react";
 import { TimelinePlanner, type TimelinePlannerProps } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";
-import { WorkplaceDailyNoteCard } from "@/components/workplace/workplace-daily-note-card";
 import { WorkplaceFocusCard } from "@/components/workplace/workplace-focus-card";
 import { WorkplaceHabitsCard, type WorkplaceHabitsCardHandle } from "@/components/workplace/workplace-habits-card";
 import { WorkplaceNotificationHost } from "@/components/workplace/workplace-notification-host";
@@ -493,7 +492,7 @@ export function WorkplacePageContent({
         style={{ paddingRight: WORKPLACE_TIMELINE_RIGHT_GAP_PX }}
       >
         <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS} py-1`}>
-          {Array.from({ length: 6 }).map((_, index) => (
+          {Array.from({ length: 5 }).map((_, index) => (
             <div
               key={index}
               className="min-h-[4rem] animate-pulse rounded-xl bg-muted/20"
@@ -560,7 +559,7 @@ export function WorkplacePageContent({
               </div>
               <div
                 className={cn(
-                  "flex min-h-0 min-w-0 flex-col",
+                  "row-span-2 flex h-full min-h-0 min-w-0 flex-col",
                   !isWorkplaceModuleShown("focus", density) && "hidden"
                 )}
               >
@@ -587,13 +586,6 @@ export function WorkplacePageContent({
                   todayViewDate={todayViewDate}
                   onToggleComplete={(habit) => void handleToggleHabitComplete(habit)}
                 />
-              </div>
-              <div
-                className={cn(
-                  !isWorkplaceModuleShown("daily-note", density) && "hidden"
-                )}
-              >
-                <WorkplaceDailyNoteCard />
               </div>
             </div>
 

@@ -2,7 +2,7 @@
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 8, 2026 (Schedule Break shipped)
+**Last updated:** July 9, 2026 (Schedule Break shipped; Workplace daily note card removed)
 
 ---
 
@@ -99,7 +99,7 @@ Productivity
 | Timeline embed | Shipped | Third scheduling surface — Phase 3.4 simplification |
 | Today's tasks card | Shipped | Primary task execution on Workplace |
 | Habits card | Shipped | Daily habit completion |
-| Daily note card | Shipped | Overlaps Notes module |
+| Daily note card | **Removed** | Dropped from Today grid; use Notes sidebar / `Ctrl+Shift+D` |
 | Quick add card | Shipped | Inline Enter capture (optimistic queue); icon strip; `ListPlus` full form |
 | Workplace density presets | Shipped | `full` \| `work` (default) \| `focus` — `workplace-density.ts` |
 | Today status rail | Shipped | Compact chrome on `/`; Full density inline KPI + smart Next Action |
