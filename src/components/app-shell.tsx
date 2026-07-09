@@ -30,6 +30,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <QuickCaptureDialog />
           <GlobalFloatingNotes />
 
+          {/* Continuous canvas (`--background`); left/right chrome stay on `--surface`. */}
           <div className="flex h-dvh overflow-hidden bg-background">
             <AppSidebar
               mobileOpen={mobileNavOpen}

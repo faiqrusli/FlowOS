@@ -46,11 +46,12 @@ function SidebarToggleIcon({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-background shadow-xs",
+        // Stay on chrome — do not use canvas `bg-background` inside the sidebar.
+        "flex size-7 shrink-0 items-center justify-center rounded-md border border-sidebar-border bg-sidebar-accent/60",
         className
       )}
     >
-      <PanelLeft className="size-4 stroke-[1.5] text-foreground/70" />
+      <PanelLeft className="size-4 stroke-[1.5] text-sidebar-foreground/70" />
     </div>
   );
 }
@@ -159,7 +160,7 @@ function SidebarNav({
                       "group/nav relative flex h-9 items-center rounded-lg text-[13.5px] transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
                       collapsed ? "justify-center px-0" : "gap-2.5 px-2.5",
                       isActive
-                        ? "bg-primary font-medium text-primary-foreground shadow-sm dark:shadow-[var(--shadow-primary)]"
+                        ? "bg-primary font-medium text-primary-foreground"
                         : "font-normal text-foreground/58 hover:bg-sidebar-accent hover:text-foreground/92"
                     )}
                   >
@@ -208,6 +209,7 @@ function SidebarPanel({
 }: SidebarPanelProps) {
   const width = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
 
+  // Level 1 chrome (`--surface`): left nav frames work; never brighter than cards.
   return (
     <aside
       style={{ width }}
@@ -390,12 +392,13 @@ type MobileSidebarTriggerProps = {
 
 export function MobileSidebarTrigger({ onOpen }: MobileSidebarTriggerProps) {
   return (
+    // Merges into canvas — `--background`, not a floating `--surface` band.
     <header className="flex h-14 shrink-0 items-center gap-3 border-b border-divider bg-background px-4 lg:hidden">
       <button
         type="button"
         onClick={onOpen}
         aria-label="Open navigation menu"
-        className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+        className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-surface-hover hover:text-foreground"
       >
         <Menu className="size-4 stroke-[1.5]" />
       </button>

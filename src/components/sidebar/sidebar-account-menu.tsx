@@ -51,15 +51,15 @@ export function SidebarAccountMenu({
         <DropdownMenuTrigger
           aria-label={compact ? displayName : undefined}
           className={cn(
-            "group/account relative flex items-center rounded-xl border border-border bg-card text-left shadow-xs transition-[background-color,border-color,box-shadow] duration-150",
-            "hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_12%)] hover:bg-surface-hover hover:shadow-sm aria-expanded:border-border aria-expanded:bg-surface-hover",
+            // Quiet on chrome — menu popover carries card elevation, not the trigger.
+            "group/account relative flex items-center rounded-xl text-left transition-colors duration-150",
             compact
-              ? "mx-auto size-9 justify-center border-transparent bg-transparent p-0 shadow-none hover:bg-sidebar-accent hover:shadow-none"
-              : "w-full gap-2.5 px-2.5 py-2"
+              ? "mx-auto size-9 justify-center border-transparent bg-transparent p-0 hover:bg-sidebar-accent"
+              : "w-full gap-2.5 border border-sidebar-border bg-transparent px-2.5 py-2 hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent"
           )}
         >
           <div
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/85 to-primary/60 text-[11px] font-semibold text-primary-foreground shadow-xs"
+            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground"
             aria-hidden
           >
             {initials}
