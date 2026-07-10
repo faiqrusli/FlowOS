@@ -127,11 +127,11 @@ export const TASK_GROUP_SWATCH_CLASS: Record<TaskGroupColorKey, string> = {
  * below `--card` / Focus hero. Shared for all group colors (accent stays on dots/edges).
  */
 export const TASK_GROUP_COLUMN_BODY_CLASS =
-  "border-border-board bg-surface-board shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
+  "border-border-board/55 bg-surface-board shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
 
 /** Column header strip — barely brighter than column body for scanability. */
 export const TASK_GROUP_COLUMN_HEADER_CLASS =
-  "border-b border-border-board/80 bg-surface-board-header";
+  "border-b border-border-board/45 bg-surface-board-header";
 
 /** @deprecated Prefer TASK_GROUP_COLUMN_BODY_CLASS — kept for colorKey map call sites. */
 export const TASK_GROUP_COLUMN_SURFACE_CLASS: Record<TaskGroupColorKey, string> = {

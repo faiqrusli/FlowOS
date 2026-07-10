@@ -36,6 +36,14 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-10 — Kanban cards on `--card`; shared soft board borders with Tasks groups
+
+**Context:** After board-token polish, Kanban cards used `--surface-kanban-card` and looked flatter than production’s older `bg-card` units. Tasks group column borders were also stronger (`border-board` full / header `/80`) than the softened Kanban list borders.  
+**Decision:** Kanban cards use standard Layer 2 `--card` with soft `border-border/30` on the `--surface-board` well. Tasks group columns and Kanban lists share outer `border-board/55` and header divider `/45`. Tasks board **rows** stay as-is (no card chrome).  
+**Alternatives rejected:** Keep `--surface-kanban-card` for Kanban units; paint Tasks rows as Kanban cards; leave Tasks group borders at full opacity.  
+**Outcome:** Shipped on `tweak/kanban-cards-standard-card` → `main`.  
+**Related:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · [surface-classes.ts](../../../src/lib/theme/surface-classes.ts) · [task-group-appearance.ts](../../../src/lib/task-group-appearance.ts)
+
 ### 2026-07-10 — Layer 0–5 freeze; Sessions 1–5 visual baseline
 
 **Context:** VDS Sessions 6–14 darkened Focus (tabs on `bg-background`) and drifted from the founder-preferred Sessions 1–5 Today + navigation look. Founder rejected that lineage and needs a single hierarchy for all future UI (including Tasks).  

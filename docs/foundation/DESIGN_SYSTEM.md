@@ -178,7 +178,19 @@ Navigation (Layer 0) is recessed below the workspace canvas (Layer 1). Do not re
 
 **Rules:** Share one common `--card` surface. No feature-specific permanent card colors. Content in the drawer lives on Layer 2 over Layer 0 chrome.
 
-**Tasks board columns (workspace lift, not hero):** Task group columns use `--surface-board` — a ~2–4% lift above `--background` toward `--card`, with `--border-board` (~10–15% stronger edge than default border) and a whisper header `--surface-board-header`. This is **not** Layer 3 / `--surface-focus`. Columns should read as independent workspaces, not floating cards and not Focus-hero surfaces.
+**Tasks board columns (workspace lift, not hero):** Task group columns use `--surface-board` — a ~2–4% lift above `--background` toward `--card`, with a whisper header `--surface-board-header`. This is **not** Layer 3 / `--surface-focus`. Columns should read as independent workspaces, not floating cards and not Focus-hero surfaces.
+
+**Shared board chrome (Tasks groups + Notes/Reflection Kanban lists):**
+
+| Element | Token / class | Notes |
+|---------|---------------|-------|
+| Column / list fill | `--surface-board` | Same well for Tasks groups and Kanban lists |
+| Outer border | `--border-board` at **55%** opacity (`border-border-board/55`) | Softened vs full board border |
+| Header divider | `--border-board` at **45%** (`border-border-board/45`) | Quieter than outer edge |
+| Kanban cards | `--card` + `border-border/30` | Standard Layer 2 units on the board well |
+| Tasks rows | Unchanged (transparent resting; hover muted) | Not Kanban card chrome |
+
+Helpers: [surface-classes.ts](../../src/lib/theme/surface-classes.ts) (`kanbanColumnBodyClass`, `kanbanCardClass`), [task-group-appearance.ts](../../src/lib/task-group-appearance.ts) (`TASK_GROUP_COLUMN_*`).
 
 ### Layer 3 — Hero surfaces
 
@@ -476,7 +488,8 @@ No new surface colors should be required.
 - Cards represent interaction
 - Accent colors communicate interaction only (Layer 4)
 - Feedback colors are semantic only (Layer 5)
-- Borders provide structure
+- Borders provide structure — Tasks group + Kanban list outer borders share `border-board/55`; header dividers `/45`
+- Kanban cards use standard `--card` (not `--surface-kanban-card`); Tasks board rows stay hover-only chrome
 - Shadows remain minimal
 - Future modules reuse the existing hierarchy
 

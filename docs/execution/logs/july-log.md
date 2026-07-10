@@ -22,6 +22,24 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-10 — Kanban cards on `--card`; shared soft board borders
+
+**Shipped:**
+- Branch `tweak/kanban-cards-standard-card` → `main`
+- Kanban list cards: `--card` + soft `border/30` (deploy-like elevation on `--surface-board` well)
+- Tasks group + Kanban list borders aligned: outer `border-board/55`, header `/45`
+- Tasks board rows unchanged
+
+**Build/lint:** pass on branch before merge.
+
+**Production:** https://flowos-sage.vercel.app — spot-check Reflection/Notes Kanban + Tasks groups.
+
+**Documented:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) Layer 2 board chrome table.
+
+**Decision:** [decision-log.md](./decision-log.md) — Kanban cards + shared soft board borders
+
+---
+
 ## 2026-07-10 — Visual polish: surfaces, padding, workspace chrome
 
 **Shipped:**

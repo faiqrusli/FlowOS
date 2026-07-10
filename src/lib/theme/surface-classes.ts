@@ -27,19 +27,22 @@ export const surfaceBackgroundClass = "bg-background";
 export const surfaceBoardClass = "bg-surface-board border-border-board";
 
 /**
- * Kanban / board column well — recessed relative to a `--card` shell so cards
- * on `--card` read as the primary units. Same tokens as Tasks group columns.
+ * Kanban list well — Layer 1.5 `--surface-board` (quieter than cards).
+ * Same board tokens as Tasks columns; cards sit on standard `--card` above.
  */
 export const kanbanColumnBodyClass =
-  "border-border-board bg-surface-board shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
+  "border-border-board/55 bg-surface-board shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
 
 /** Kanban column header — barely brighter than the column well. */
 export const kanbanColumnHeaderClass =
-  "border-b border-border-board/80 bg-surface-board-header";
+  "border-b border-border-board/45 bg-surface-board-header";
 
-/** Kanban card unit — ~2% above column / card so units separate without floating. */
+/**
+ * Kanban card unit — standard Layer 2 `--card` (deploy look), on board well.
+ * Prefer `--card` over `--surface-kanban-card` so cards read clearly elevated.
+ */
 export const kanbanCardClass =
-  "rounded-lg border border-border/55 bg-surface-kanban-card shadow-sm";
+  "rounded-lg border border-border/30 bg-card shadow-sm";
 
 /** Level 1 — application chrome (sidebars, drawers) */
 export const surfaceChromeClass = "bg-sidebar text-sidebar-foreground";
