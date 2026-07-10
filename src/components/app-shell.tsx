@@ -41,7 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <MobileSidebarTrigger onOpen={() => setMobileNavOpen(true)} />
 
               <main className="flow-workspace min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
-                <div className="w-full space-y-6 p-6 pr-0 lg:py-8 lg:pl-10 lg:pr-0">
+                <div className="w-full space-y-6 p-10 pr-0">
                   {children}
                 </div>
               </main>

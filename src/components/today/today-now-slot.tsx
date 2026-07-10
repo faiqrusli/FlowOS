@@ -135,7 +135,7 @@ export function TodayNowSlot({
 
   if (loading) {
     return (
-      <div className="px-6 lg:pl-10" aria-busy="true">
+      <div className="px-10" aria-busy="true">
         <div className="min-h-[4.5rem] py-2">
           <div className="h-5 w-48 max-w-full rounded bg-muted/40" />
         </div>
@@ -175,7 +175,7 @@ export function TodayNowSlot({
 
   return (
     <section
-      className="px-6 lg:pl-10"
+      className="px-10"
       role="status"
       aria-live="polite"
       aria-label="Current recommendation"

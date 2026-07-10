@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function WeeklyReflectionPage() {
   return (
-    <div className="mx-auto w-full max-w-[1600px] px-4 py-6">
+    <div className="mx-auto w-full max-w-[1600px]">
       <WeeklyReflectionPageContent />
     </div>
   );

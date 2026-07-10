@@ -23,8 +23,30 @@ export const surfaceModalClass = "flow-surface-modal";
 /** Level 0 — workspace canvas */
 export const surfaceBackgroundClass = "bg-background";
 
+/** Tasks / Kanban column — whisper above canvas, below card (not Focus hero). */
+export const surfaceBoardClass = "bg-surface-board border-border-board";
+
+/**
+ * Kanban / board column well — recessed relative to a `--card` shell so cards
+ * on `--card` read as the primary units. Same tokens as Tasks group columns.
+ */
+export const kanbanColumnBodyClass =
+  "border-border-board bg-surface-board shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
+
+/** Kanban column header — barely brighter than the column well. */
+export const kanbanColumnHeaderClass =
+  "border-b border-border-board/80 bg-surface-board-header";
+
+/** Kanban card unit — ~2% above column / card so units separate without floating. */
+export const kanbanCardClass =
+  "rounded-lg border border-border/55 bg-surface-kanban-card shadow-sm";
+
 /** Level 1 — application chrome (sidebars, drawers) */
 export const surfaceChromeClass = "bg-sidebar text-sidebar-foreground";
+
+/** Right workspace rail — 15% lift above page canvas. */
+export const workspaceRailBackgroundClass =
+  "bg-[color-mix(in_oklab,var(--background)_85%,var(--card)_15%)]";
 
 /**
  * Workspace Drawer content card — primary interaction on `--card` over chrome.

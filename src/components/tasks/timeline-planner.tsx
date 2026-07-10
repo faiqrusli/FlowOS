@@ -46,6 +46,7 @@ import {
   type WorkplaceModuleVisibility,
 } from "@/lib/workplace-module-visibility";
 import { workplaceTimelineEdgeClassName } from "@/lib/workplace-panel-appearance";
+import { workspaceRailBackgroundClass } from "@/lib/theme/surface-classes";
 import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
@@ -1527,9 +1528,9 @@ export function TimelinePlanner({
     <Root
       {...{ [TIMELINE_SCHEDULER_ATTR]: "" }}
       className={cn(
-        "flex h-full min-h-0 flex-col bg-card",
+        "flex h-full min-h-0 flex-col",
         isFullscreen
-          ? "w-full"
+          ? "w-full bg-background"
           : isWorkplace
             ? cn(
                 "group/timeline relative h-full w-full overflow-hidden bg-timeline",
@@ -1546,7 +1547,7 @@ export function TimelinePlanner({
           "relative shrink-0 border-b",
           isFullscreen
             ? "flex items-center gap-2 border-divider px-4 py-3"
-            : "border-divider bg-background px-2 py-1.5"
+            : cn("border-divider px-2 py-1.5", isDrawer && workspaceRailBackgroundClass)
         )}
       >
         {isDrawer ? (
@@ -1666,9 +1667,15 @@ export function TimelinePlanner({
           className={cn(
             "flex min-h-0 flex-col",
             isDrawer
-              ? "shrink-0 overflow-hidden border-r border-border/30 bg-gradient-to-b from-muted/25 to-muted/10"
+              ? cn(
+                  "shrink-0 overflow-hidden border-r border-border/30",
+                  workspaceRailBackgroundClass
+                )
               : isFullscreen
-                ? "min-w-0 flex-[2.5] border-r border-border/30"
+                ? cn(
+                    "min-w-0 flex-[2.5] border-r border-border/30",
+                    workspaceRailBackgroundClass
+                  )
                 : "min-w-0 flex-1"
           )}
             style={
@@ -1710,7 +1717,7 @@ export function TimelinePlanner({
           >
             <div
               className={cn(
-                "inline-flex max-w-full items-center gap-0.5 rounded-md bg-muted/35 p-0.5",
+                "inline-flex max-w-full items-center gap-0.5 rounded-md border border-border/45 bg-card p-0.5",
                 "mb-1"
               )}
             >

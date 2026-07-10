@@ -48,7 +48,7 @@ export function TodayStatusRail({
   const showStatsRow = stats?.showKpiStats && !loading;
 
   return (
-    <header className="shrink-0 space-y-0.5 px-6 lg:pl-10">
+    <header className="shrink-0 space-y-0.5 px-10">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 py-1 text-[13px] text-muted-foreground">
         <span className="font-medium text-foreground">{dateLabel}</span>
         <span aria-hidden className="text-muted-foreground/50">

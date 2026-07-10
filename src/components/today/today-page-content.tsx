@@ -380,7 +380,7 @@ export function TodayPageContent() {
         />
 
         {error ? (
-          <div className="px-6 lg:pl-10">
+          <div className="px-10">
             <ErrorBanner message={error} />
           </div>
         ) : null}

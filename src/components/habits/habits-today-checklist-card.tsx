@@ -94,7 +94,7 @@ export function HabitsTodayChecklistCard({
   const completed = habits.filter((h) => h.completed).length;
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader className="space-y-0.5 pb-3">
         <CardTitle className="text-base">
           Today&apos;s habits {completed}/{habits.length}

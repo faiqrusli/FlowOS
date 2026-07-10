@@ -8,7 +8,6 @@ import {
   useState,
 } from "react";
 import {
-  CalendarDays,
   ChevronDown,
   ExternalLink,
   FolderInput,
@@ -57,7 +56,6 @@ import { cn } from "@/lib/utils";
 import {
   drawerCardClass,
   interactiveHoverClass,
-  surfaceHoverClass,
 } from "@/lib/theme/surface-classes";
 import type { GrowthAreaWithCounts, Note } from "@/types/notes";
 
@@ -254,9 +252,9 @@ export function SidebarNotesPanel() {
       <li key={note.id}>
         <div
           className={cn(
-            "group relative rounded-md",
+            "group relative rounded-md transition-[background-color,box-shadow]",
             selectedNoteId === note.id
-              ? surfaceHoverClass
+              ? "flow-selected"
               : interactiveHoverClass
           )}
           onContextMenu={(event) => {
@@ -409,7 +407,8 @@ export function SidebarNotesPanel() {
   return (
     <>
       <div className="flex h-full min-h-0 flex-col">
-        <div className="shrink-0 space-y-2 border-b border-border/30 p-3">
+        {/* Search / Today header region — separated from the folder list. */}
+        <div className="shrink-0 space-y-2.5 border-b border-sidebar-border px-3 pt-3 pb-3">
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -435,31 +434,48 @@ export function SidebarNotesPanel() {
           <button
             type="button"
             onClick={() => void handleOpenToday()}
-            className="flex w-full items-center gap-2 rounded-lg border border-border/40 bg-muted/15 px-2.5 py-1.5 text-left transition-colors hover:bg-surface-hover"
+            className={cn(
+              "flex w-full items-center gap-2.5 rounded-xl border border-border-board bg-surface-board px-3 py-2 text-left shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)] transition-colors",
+              todayDailyNoteId && selectedNoteId === todayDailyNoteId
+                ? "ring-1 ring-primary/30"
+                : "hover:bg-surface-board-header"
+            )}
           >
-            <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              {formatSidebarDateHeading(todayKey)}
-            </p>
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-board-header text-base leading-none">
+              📅
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold text-foreground">
+                Today
+              </span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {formatSidebarDateHeading(todayKey)}
+              </span>
+            </span>
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto p-1.5">
+        <div className="min-h-0 flex-1 overflow-y-auto px-1.5 py-2">
           {menuPinnedNotes.length === 0 && grouped.length === 0 ? (
             <p className="px-2 py-6 text-center text-sm text-muted-foreground">
               {search.trim() ? "No matching notes" : "No notes yet"}
             </p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {menuPinnedNotes.length > 0 && (
                 <section>
-                  <div className="flex items-center gap-1.5 px-2 py-1">
-                    <Pin className="size-3 text-muted-foreground" />
-                    <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  <div className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5">
+                    <Pin className="size-3.5 shrink-0 text-muted-foreground" />
+                    <h3 className="min-w-0 flex-1 truncate text-sm font-medium text-foreground/85">
                       Pinned
                     </h3>
+                    <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                      ({menuPinnedNotes.length})
+                    </span>
                   </div>
-                  <ul className="space-y-0">{menuPinnedNotes.map(renderNoteItem)}</ul>
+                  <ul className="space-y-0 pl-3">
+                    {menuPinnedNotes.map(renderNoteItem)}
+                  </ul>
                 </section>
               )}
 
@@ -470,21 +486,29 @@ export function SidebarNotesPanel() {
                     <button
                       type="button"
                       onClick={() => toggleAreaCollapsed(area.id)}
-                      className="flex w-full items-center gap-1.5 rounded-md px-2 py-1 text-left transition-colors hover:bg-surface-hover"
+                      className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-surface-hover"
                     >
-                      <span className="text-sm leading-none">{area.emoji}</span>
-                      <h3 className="min-w-0 flex-1 truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        {area.name}
-                      </h3>
                       <ChevronDown
                         className={cn(
-                          "size-3 shrink-0 text-muted-foreground/70 transition-transform",
+                          "size-3.5 shrink-0 text-muted-foreground transition-transform",
                           isCollapsed && "-rotate-90"
                         )}
+                        aria-hidden
                       />
+                      <span className="shrink-0 text-sm leading-none">
+                        {area.emoji}
+                      </span>
+                      <h3 className="min-w-0 flex-1 truncate text-sm font-medium text-foreground/85">
+                        {area.name}
+                      </h3>
+                      <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                        ({areaNotes.length})
+                      </span>
                     </button>
                     {!isCollapsed && (
-                      <ul className="space-y-0">{areaNotes.map(renderNoteItem)}</ul>
+                      <ul className="space-y-0 pl-3">
+                        {areaNotes.map(renderNoteItem)}
+                      </ul>
                     )}
                   </section>
                 );

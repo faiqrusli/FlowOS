@@ -28,6 +28,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  kanbanCardClass,
+  kanbanColumnBodyClass,
+  kanbanColumnHeaderClass,
+} from "@/lib/theme/surface-classes";
+import { cn } from "@/lib/utils";
+import {
   cardBodyDraft,
   cardDragTargetsEqual,
   cardText,
@@ -65,7 +71,6 @@ import {
   updateKanbanCard,
   updateKanbanColumn,
 } from "@/lib/kanban";
-import { cn } from "@/lib/utils";
 import type {
   KanbanBoardWithColumns,
   KanbanCard,
@@ -871,7 +876,8 @@ export function KanbanBoardView({
                 onDragStart={(e) => handleColumnDragStart(column.id, e)}
                 onDragEnd={handleColumnDragEnd}
                 className={cn(
-                  "flex w-11 shrink-0 cursor-grab flex-col items-center rounded-xl border border-border/40 bg-muted/30 py-2 active:cursor-grabbing",
+                  "flex w-11 shrink-0 cursor-grab flex-col items-center rounded-xl border py-2 active:cursor-grabbing",
+                  kanbanColumnBodyClass,
                   isSourceColumn && "opacity-40"
                 )}
               >
@@ -898,13 +904,17 @@ export function KanbanBoardView({
             <div
               data-kanban-column={column.id}
               className={cn(
-                "flex h-full max-h-full w-[min(100%,280px)] min-w-[260px] max-w-[280px] shrink-0 flex-col rounded-xl border border-border/40 bg-muted/15",
+                "flex h-full max-h-full w-[min(100%,280px)] min-w-[260px] max-w-[280px] shrink-0 flex-col rounded-xl border",
+                kanbanColumnBodyClass,
                 isSourceColumn && "opacity-40"
               )}
               onDragOver={(e) => handleColumnBodyDragOver(e, column.id)}
             >
               <div
-                className="flex shrink-0 items-center gap-1 border-b border-border/30 px-2 py-2"
+                className={cn(
+                  "flex shrink-0 items-center gap-1 rounded-t-xl px-2 py-2",
+                  kanbanColumnHeaderClass
+                )}
                 draggable={editingColumnId !== column.id}
                 onDragStart={(event) => {
                   const target = event.target as HTMLElement;
@@ -1423,8 +1433,9 @@ const KanbanCardRow = memo(function KanbanCardRow({
     <div
       data-kanban-card={card.id}
       className={cn(
-        "group relative min-w-0 touch-none overflow-hidden rounded-lg border border-border/45 bg-card shadow-sm",
-        card.is_archived && "border-border/30 bg-muted/20 opacity-90",
+        "group relative min-w-0 touch-none overflow-hidden",
+        kanbanCardClass,
+        card.is_archived && "border-border/30 bg-muted/25 opacity-90",
         !isEditing && "cursor-grab active:cursor-grabbing",
         isDragging && "pointer-events-none opacity-0"
       )}

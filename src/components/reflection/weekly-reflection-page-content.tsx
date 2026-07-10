@@ -29,6 +29,11 @@ import {
   type WeeklyReflectionBoardCard,
   type WeeklyReflectionDayBundle,
 } from "@/lib/weekly-reflection-data";
+import {
+  kanbanCardClass,
+  kanbanColumnBodyClass,
+  kanbanColumnHeaderClass,
+} from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
 import type {
   WeeklyReflectionCardPlacement,
@@ -269,12 +274,18 @@ export function WeeklyReflectionPageContent() {
                 return (
                   <div
                     key={colId}
-                    className="rounded-xl border border-border/40 bg-muted/10"
+                    className={cn(
+                      "rounded-xl border",
+                      kanbanColumnBodyClass
+                    )}
                   >
                     <button
                       type="button"
                       onClick={() => toggleColumnCollapsed(bundle.dateKey, column.key)}
-                      className="flex w-full items-center gap-1 border-b border-border/30 px-2 py-2 text-left"
+                      className={cn(
+                        "flex w-full items-center gap-1 rounded-t-xl px-2 py-2 text-left",
+                        kanbanColumnHeaderClass
+                      )}
                     >
                       {isCollapsed ? (
                         <ChevronRight className="size-3.5 text-muted-foreground" />
@@ -312,7 +323,8 @@ export function WeeklyReflectionPageContent() {
                               onDragStart={() => setDragCardId(card.id)}
                               onDragEnd={() => setDragCardId(null)}
                               className={cn(
-                                "rounded-lg border border-border/45 bg-card px-3 py-2 shadow-sm",
+                                "px-3 py-2",
+                                kanbanCardClass,
                                 dragCardId === card.id && "opacity-50"
                               )}
                             >

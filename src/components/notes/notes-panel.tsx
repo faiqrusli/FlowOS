@@ -293,10 +293,10 @@ export function NotesPanel({
               <li key={note.id}>
                 <div
                   className={cn(
-                    "group relative flex items-center rounded-xl transition-colors",
+                    "group relative flex items-center rounded-xl transition-[background-color,box-shadow]",
                     selectedId === note.id
-                      ? "bg-muted"
-                      : "hover:bg-muted/50"
+                      ? "flow-selected"
+                      : "hover:bg-surface-hover/70"
                   )}
                   onContextMenu={(event) => {
                     if (renamingId === note.id) return;

@@ -172,9 +172,9 @@ export function GrowthAreaSidebar({
     <aside
       style={{ width }}
       className={cn(
-        "flex max-h-full shrink-0 flex-col self-start overflow-visible rounded-2xl border border-border/40 bg-card shadow-sm",
+        "flex max-h-full shrink-0 flex-col self-start overflow-visible rounded-2xl border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-none",
         animateWidth && "transition-[width] duration-200 ease-out",
-        isNarrowLayout && expanded && "absolute top-0 left-0 z-30 h-full max-h-full shadow-lg"
+        isNarrowLayout && expanded && "absolute top-0 left-0 z-30 h-full max-h-full shadow-md"
       )}
     >
       <div
@@ -249,8 +249,8 @@ export function GrowthAreaSidebar({
                 className={cn(
                   "flex size-10 shrink-0 items-center justify-center rounded-xl text-lg leading-none transition-[background-color,box-shadow]",
                   active
-                    ? "bg-selected shadow-sm"
-                    : "hover:bg-muted/60 dark:hover:bg-muted/40"
+                    ? "bg-surface-hover text-foreground shadow-sm ring-1 ring-border/50"
+                    : "hover:bg-surface-hover/70"
                 )}
               >
                 {area.emoji}
@@ -291,8 +291,8 @@ export function GrowthAreaSidebar({
                   className={cn(
                     "flex min-w-0 flex-1 items-center gap-2 rounded-xl py-2 pr-8 pl-1 text-left transition-[background-color,box-shadow]",
                     active
-                      ? "bg-selected shadow-sm"
-                      : "hover:bg-muted/50 dark:hover:bg-muted/35"
+                      ? "bg-surface-hover text-foreground shadow-sm ring-1 ring-border/40"
+                      : "hover:bg-surface-hover/70"
                   )}
                 >
                   <span className="flex w-6 shrink-0 items-center justify-center text-lg leading-none">
