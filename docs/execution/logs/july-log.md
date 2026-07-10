@@ -22,6 +22,20 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-10 — Visual polish: surfaces, padding, workspace chrome
+
+**Shipped:**
+- Branch `tweak/tasks-group-surface-lift` → `main` (`435f0ee`, merge `554c56b`)
+- Board/kanban surface lift, 40px page padding (Tasks full-bleed + header inset only)
+- Right rail + Quick Schedule header/Unscheduled panel at 85/15 canvas→card mix
+- Reflection drawer flat sections; Notes drawer polish; selection/kanban tweaks
+
+**Build/lint:** pass on `main` before push.
+
+**Production:** https://flowos-sage.vercel.app — spot-check Tasks, Today, Quick Schedule, right drawer.
+
+---
+
 ## 2026-07-10 — Visual baseline reset to VDS Sessions 1–5
 
 **Shipped:**
