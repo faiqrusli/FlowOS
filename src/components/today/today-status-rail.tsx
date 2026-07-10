@@ -62,7 +62,7 @@ export function TodayStatusRail({
           href="/schedule"
           className="h-7 rounded-full px-2.5 text-[13px]"
         >
-          Timeline
+          Schedule
         </TodayEscapeLink>
         <span aria-hidden className="text-muted-foreground/50">
           ·

@@ -1,6 +1,8 @@
 import {
+  BookOpen,
+  CalendarDays,
   CheckSquare,
-  LayoutTemplate,
+  LayoutDashboard,
   NotebookPen,
   Repeat,
   Timer,
@@ -18,15 +20,24 @@ export type SidebarNavSection = {
   items: SidebarNavItem[];
 };
 
-/** Primary app navigation — five items per M2 IA. */
+/**
+ * Primary app navigation — Home + Workspace workflow.
+ * Capture → Plan → Execute → Reflect; every workspace one click from anywhere.
+ * Ordered array of sections so future groups (Goals, AI, …) append without redesign.
+ */
 export const sidebarSections: SidebarNavSection[] = [
   {
-    label: "Productivity",
+    label: "Home",
+    items: [{ label: "Today", href: "/", icon: LayoutDashboard }],
+  },
+  {
+    label: "Workspace",
     items: [
-      { label: "Today", href: "/", icon: LayoutTemplate },
       { label: "Tasks", href: "/tasks", icon: CheckSquare },
       { label: "Habits", href: "/habits", icon: Repeat },
+      { label: "Schedule", href: "/schedule", icon: CalendarDays },
       { label: "Focus", href: "/focus", icon: Timer },
+      { label: "Notes", href: "/notes", icon: BookOpen },
       { label: "Reflection", href: "/reflection", icon: NotebookPen },
     ],
   },
