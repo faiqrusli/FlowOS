@@ -8,7 +8,7 @@ Milestone-specific operating manuals. **New runbook:** copy [RUNBOOK_TEMPLATE.md
 | [m2-founder-daily-driver.md](./m2-founder-daily-driver.md) | M2 — Founder Daily Driver | In progress |
 | [m2-surface-hierarchy.md](./m2-surface-hierarchy.md) | M2 — Surface hierarchy (visual system) | **Complete** — Sessions 1–5 |
 | [m2-visual-design-v2.md](./m2-visual-design-v2.md) | M2 — Visual Design System v2.0 | **Baseline Sessions 1–5 only** — 6–14 discarded |
-| [m2-global-navigation.md](./m2-global-navigation.md) | M2 — Global navigation IA | **In progress** — branch `m2/session-1-global-nav` (queue P1) |
+| [m2-global-navigation.md](./m2-global-navigation.md) | M2 — Global navigation IA | **Complete** — on `main` 2026-07-10 |
 | [m2-today-v3-day-engine.md](./m2-today-v3-day-engine.md) | M2 — Today V3 Day Engine | **S1–5 on main**; S6–12 queued (P2–P5) — re-cut, do not merge old tips |
 | [m2-today-ux-polish.md](./m2-today-ux-polish.md) | M2 — Today UX polish (inbox) | **Complete** — production sign-off 2026-07-05 |
 | [m2-schedule-break.md](./m2-schedule-break.md) | M2 — Schedule Break | **Complete** — on `main` |

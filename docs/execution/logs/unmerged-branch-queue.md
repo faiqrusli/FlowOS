@@ -13,8 +13,8 @@
 
 | P# | Item | Branch tip(s) | Relevance | How to land on `main` | Status |
 |----|------|---------------|-----------|----------------------|--------|
-| **1** | Global nav B1 (Home + Workspace + Schedule naming + Reflection icon parity) | `m2/session-1-global-nav` (`eb4114e` + **uncommitted** NotebookPen on right rail + Today quick-add) | **Ship now** — decision 2026-07-09; runbook complete | Commit icon polish → build/lint → founder merge approve → push `main` → july-log | **NEXT** |
-| **2** | Today V3 Phase C — Session 6 (habits in NEXT) | Reference: `m2/session-6-today-v3-unified-queue` (`d2f71d5`) | **Product-relevant** — S1–5 already on `main`; Phase C is the Day Engine gap | **Do not merge old tip.** Re-cut `m2/session-6-today-v3-…` from current `main`; use old branch as reference. **Blocked** on decision-log Phase C appendix approval (#1, #3, #5) | Queued |
+| **1** | Global nav B1 (Home + Workspace + Schedule naming + Reflection icon parity) | `m2/session-1-global-nav` (`eb4114e`, `dc922d7`) | **Ship now** — decision 2026-07-09; runbook complete | Merged to `main` 2026-07-10 | **Done** |
+| **2** | Today V3 Phase C — Session 6 (habits in NEXT) | Reference: `m2/session-6-today-v3-unified-queue` (`d2f71d5`) | **Product-relevant** — S1–5 already on `main`; Phase C is the Day Engine gap | **Do not merge old tip.** Re-cut `m2/session-6-today-v3-…` from current `main`; use old branch as reference. **Blocked** on decision-log Phase C appendix approval (#1, #3, #5) | **NEXT** |
 | **3** | Today V3 Phase C — Sessions 7–8 (focus morph + ambient rail) | Reference commits: `0d67e2b` (on S9–12 branches). Local `m2/session-7-8-…` tip is **stale** (still `d2f71d5`) | Same runbook; depends on S6 + Phase C approvals | Re-cut from `main` after P2 merges; do not fast-forward old branches | Queued |
 | **4** | Today V3 Phase C — Session 9 (close-day) | Reference: `m2/session-9-today-v3-close-day` (`1e37dc6`) | Same | Re-cut after P2–P3 | Queued |
 | **5** | Today V3 Phase D — Sessions 10–12 (typography, migration, metrics) | Reference: `…-10` / `…-11` / `…-12` (`f47fd28` → `3f080b7`) | Same; ends Day Engine runbook | Re-cut after Phase C on `main` | Queued |
@@ -34,27 +34,13 @@
 
 ---
 
-## P1 — Global nav (start here)
+## P1 — Global nav (Done)
 
-**Runbook:** [m2-global-navigation.md](../runbooks/m2-global-navigation.md)  
-**Branch:** `m2/session-1-global-nav`  
-**Committed:** sidebar Home + Workspace; Today shortcut Timeline → Schedule; FEATURE_INVENTORY + Session 3 supersession note.  
-**Not committed yet:**
-
-- Right rail Reflection: `Sparkles` → `NotebookPen` (`global-right-sidebar.tsx`)
-- Today quick-add Reflection: `Sparkles` → `NotebookPen` (`workplace-quick-add-row.tsx`)
-
-**Founder lead steps**
-
-1. Review sidebar + Today shortcut + icons on localhost.  
-2. Say **commit + merge** (or request changes).  
-3. After merge: production smoke (runbook manual matrix) → [july-log.md](./july-log.md).
-
-**Merge ask:** Bundle **B1 — Global nav** (sessions 1–2 + icon parity).
+**Shipped 2026-07-10** on `main`. See [july-log.md](./july-log.md).
 
 ---
 
-## P2–P5 — Today V3 Day Engine (after P1)
+## P2–P5 — Today V3 Day Engine (start here next)
 
 **Runbook:** [m2-today-v3-day-engine.md](../runbooks/m2-today-v3-day-engine.md)  
 **On `main` today:** Sessions **1–5** only (Phase A/B).  
@@ -77,7 +63,7 @@ Only if founder explicitly wants them after P1–P5 (or instead of pausing Day E
 | Date | P# | Action |
 |------|----|--------|
 | 2026-07-10 | — | Queue created from unmerged-branch audit |
-| 2026-07-10 | 1 | Ready — uncommitted icon parity on branch; awaiting founder lead |
+| 2026-07-10 | 1 | Merged to `main` — global nav B1 + NotebookPen parity + queue doc |
 
 ---
 

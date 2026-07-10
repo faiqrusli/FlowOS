@@ -22,6 +22,27 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-10 — Global nav B1 (Home + Workspace)
+
+**Shipped:**
+- Branch `m2/session-1-global-nav` → `main` (`eb4114e`, `dc922d7`, merge)
+- Sidebar: HOME (Today) + WORKSPACE (Tasks → Habits → Schedule → Focus → Notes → Reflection)
+- Icons: LayoutDashboard / CalendarDays / BookOpen / NotebookPen (no Sparkles/Home)
+- Today shortcut: Timeline → Schedule ↗; Notes ↗ unchanged
+- Reflection icon parity: left nav, right rail, Today quick-add
+- FEATURE_INVENTORY IA updated; founder-daily-driver Session 3 demotion marked superseded
+- Unmerged branch queue doc added (P2+ = Today V3 Phase C)
+
+**Build/lint:** pass on branch and on `main` after merge.
+
+**Production:** https://flowos-sage.vercel.app — smoke runbook matrix (groups, Schedule/Notes from any page, Today shortcuts).
+
+**Decision:** [decision-log.md](./decision-log.md) — Global navigation: Home + Workspace workflow (2026-07-09)
+
+**Runbook:** [m2-global-navigation.md](../runbooks/m2-global-navigation.md) B1 complete.
+
+---
+
 ## 2026-07-10 — Kanban cards on `--card`; shared soft board borders
 
 **Shipped:**
