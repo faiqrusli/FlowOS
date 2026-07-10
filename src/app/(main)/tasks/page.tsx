@@ -8,7 +8,8 @@ export const metadata: Metadata = {
 
 export default function TasksPage() {
   return (
-    <div className="-mt-3 flex h-[calc(100dvh-6.5rem)] min-h-0 flex-col overflow-hidden lg:-mt-4 lg:h-[calc(100dvh-4rem)]">
+    // Full-bleed board — shell pad cancelled; header owns the only inset.
+    <div className="-m-10 flex h-[calc(100dvh-3.5rem)] min-h-0 flex-col overflow-hidden lg:h-[calc(100dvh-3rem)]">
       <TasksPageContent />
     </div>
   );

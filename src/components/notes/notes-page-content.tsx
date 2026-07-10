@@ -161,7 +161,7 @@ export function NotesPageContent() {
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
-      <div className="flex shrink-0 items-center gap-3 border-b border-border/30 px-3 py-2 sm:px-4">
+      <div className="flex shrink-0 items-center gap-3 border-b border-border/30 py-2">
         <BackToTodayLink />
         <div className="min-w-0">
           <h1 className="text-base font-semibold leading-tight text-foreground">
@@ -207,7 +207,7 @@ export function NotesPageContent() {
             <div className="h-full min-h-0 animate-pulse rounded-2xl bg-muted/30" />
           ) : (
             selectedArea && (
-              <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-border/40 bg-card shadow-sm">
+              <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm">
                 <GrowthAreaHeader
                   area={selectedArea}
                   tab={tab}

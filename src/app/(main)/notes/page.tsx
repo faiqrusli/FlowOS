@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function NotesPage() {
   return (
-    <div className="-ml-2 flex h-[calc(100dvh-6.5rem)] min-h-0 flex-col overflow-hidden lg:-ml-4 lg:h-[calc(100dvh-4rem)]">
+    <div className="-mt-10 -mb-10 flex h-[calc(100dvh-3.5rem)] min-h-0 flex-col overflow-hidden lg:h-[calc(100dvh-3rem)]">
       <NotesPageContent />
     </div>
   );

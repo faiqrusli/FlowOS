@@ -1,11 +1,11 @@
-/** Horizontal inset for main workspace surfaces (Sunsama-style balanced gutters). */
-export const WORKSPACE_GUTTER_X_PX = 20;
+/** Horizontal inset for main workspace surfaces — 40px standard. */
+export const WORKSPACE_GUTTER_X_PX = 40;
 
-export const WORKSPACE_GUTTER_CLASS = "px-5 sm:px-6";
+export const WORKSPACE_GUTTER_CLASS = "px-10";
 
-export const WORKSPACE_GUTTER_LEFT_CLASS = "pl-5 sm:pl-6";
+export const WORKSPACE_GUTTER_LEFT_CLASS = "pl-10";
 
-export const WORKSPACE_GUTTER_RIGHT_CLASS = "pr-5 sm:pr-6";
+export const WORKSPACE_GUTTER_RIGHT_CLASS = "pr-10";
 
 /** Narrower gutters inside Quick Schedule drawer. */
 export const WORKSPACE_GUTTER_COMPACT_CLASS = "px-3";

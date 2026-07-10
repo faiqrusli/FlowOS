@@ -488,7 +488,7 @@ export function WorkplacePageContent({
   if (loading) {
     return (
       <div
-        className="flex h-full min-h-0 gap-2 pl-6 lg:pl-10"
+        className="flex h-full min-h-0 gap-2 pl-10"
         style={{ paddingRight: WORKPLACE_TIMELINE_RIGHT_GAP_PX }}
       >
         <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS} py-1`}>
@@ -516,14 +516,14 @@ export function WorkplacePageContent({
           viewDate={todayViewDate}
         >
           <div
-            className="relative flex h-full min-h-0 gap-2 pl-6 lg:pl-10"
+            className="relative flex h-full min-h-0 gap-2 pl-10"
             style={{
               paddingRight:
                 timelineWidthPx + WORKPLACE_TIMELINE_RIGHT_GAP_PX,
             }}
           >
             {error ? (
-              <div className="absolute left-6 right-0 top-2 z-10 lg:left-10">
+              <div className="absolute left-10 right-0 top-2 z-10">
                 <ErrorBanner message={error} />
               </div>
             ) : null}

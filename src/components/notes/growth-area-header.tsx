@@ -32,17 +32,17 @@ export function GrowthAreaHeader({
           </h2>
         </div>
 
-        <div className="inline-flex shrink-0 rounded-md border border-border/40 bg-muted/30 p-0.5">
+        <div className="inline-flex shrink-0 rounded-lg border border-border/50 bg-background/60 p-0.5">
           {(["notes", "kanban"] as const).map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => onTabChange(item)}
               className={cn(
-                "rounded px-3 py-1 text-sm font-medium transition-all",
+                "rounded-md px-3 py-1 text-sm font-medium transition-[background-color,color,box-shadow]",
                 tab === item
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-surface-hover text-foreground shadow-sm ring-1 ring-border/40"
+                  : "text-muted-foreground hover:bg-surface-hover/50 hover:text-foreground"
               )}
             >
               {item === "notes" ? "Notes" : "Kanban"}

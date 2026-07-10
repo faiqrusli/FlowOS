@@ -28,6 +28,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { normalizeCardInput } from "@/lib/kanban-drag-utils";
+import {
+  kanbanCardClass,
+  kanbanColumnBodyClass,
+  kanbanColumnHeaderClass,
+} from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
 import type { ReflectionKanban, ReflectionKanbanCard } from "@/types/reflection";
 
@@ -36,6 +41,8 @@ type ReflectionKanbanSectionProps = {
   onChange: (kanbans: ReflectionKanban[]) => void;
   disabled?: boolean;
   compact?: boolean;
+  /** Drawer: no outer card — content sits on chrome. */
+  flat?: boolean;
 };
 
 export function ReflectionKanbanSection({
@@ -43,6 +50,7 @@ export function ReflectionKanbanSection({
   onChange,
   disabled,
   compact,
+  flat = false,
 }: ReflectionKanbanSectionProps) {
   const [titleDraft, setTitleDraft] = useState("");
   const [addingBoard, setAddingBoard] = useState(false);
@@ -70,6 +78,91 @@ export function ReflectionKanbanSection({
     setAddingBoard(false);
   }
 
+  const header = (
+    <div className="flex flex-row items-center justify-between gap-4">
+      <h3 className="text-sm font-semibold tracking-tight text-foreground">
+        Custom kanban
+      </h3>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled={disabled}
+        onClick={() => setAddingBoard(true)}
+        className="gap-1"
+      >
+        <Plus className="size-4" />
+        Add kanban
+      </Button>
+    </div>
+  );
+
+  const body = (
+    <div className="space-y-3">
+      {addingBoard && (
+        <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-muted/10 p-2">
+          <Input
+            value={titleDraft}
+            onChange={(event) => setTitleDraft(event.target.value)}
+            placeholder="Kanban title"
+            autoFocus
+            disabled={disabled}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") handleAddKanban();
+              if (event.key === "Escape") {
+                setAddingBoard(false);
+                setTitleDraft("");
+              }
+            }}
+          />
+          <Button
+            type="button"
+            size="sm"
+            disabled={disabled || !titleDraft.trim()}
+            onClick={handleAddKanban}
+          >
+            Done
+          </Button>
+        </div>
+      )}
+
+      {kanbans.length === 0 && !addingBoard ? (
+        <p className="text-sm text-muted-foreground">
+          Add kanban boards for weight, mood, insights, and more.
+        </p>
+      ) : (
+        <div
+          className={cn(
+            "flex gap-3 overflow-x-auto pb-1",
+            compact ? "flex-col overflow-visible" : "kanban-board-scroll"
+          )}
+        >
+          {kanbans.map((kanban) => (
+            <ReflectionKanbanColumn
+              key={kanban.id}
+              kanban={kanban}
+              disabled={disabled}
+              compact={compact}
+              onChange={(next) => updateKanban(kanban.id, () => next)}
+              onDelete={() =>
+                onChange(kanbans.filter((item) => item.id !== kanban.id))
+              }
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  if (flat) {
+    return (
+      <section className="space-y-3">
+        {header}
+        {body}
+      </section>
+    );
+  }
+
   return (
     <Card className="border-border/50 shadow-none">
       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-3">
@@ -86,61 +179,7 @@ export function ReflectionKanbanSection({
           Add kanban
         </Button>
       </CardHeader>
-
-      <CardContent className="space-y-3">
-        {addingBoard && (
-          <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-muted/10 p-2">
-            <Input
-              value={titleDraft}
-              onChange={(event) => setTitleDraft(event.target.value)}
-              placeholder="Kanban title"
-              autoFocus
-              disabled={disabled}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") handleAddKanban();
-                if (event.key === "Escape") {
-                  setAddingBoard(false);
-                  setTitleDraft("");
-                }
-              }}
-            />
-            <Button
-              type="button"
-              size="sm"
-              disabled={disabled || !titleDraft.trim()}
-              onClick={handleAddKanban}
-            >
-              Done
-            </Button>
-          </div>
-        )}
-
-        {kanbans.length === 0 && !addingBoard ? (
-          <p className="text-sm text-muted-foreground">
-            Add kanban boards for weight, mood, insights, and more.
-          </p>
-        ) : (
-          <div
-            className={cn(
-              "flex gap-3 overflow-x-auto pb-1",
-              compact ? "flex-col overflow-visible" : "kanban-board-scroll"
-            )}
-          >
-            {kanbans.map((kanban) => (
-              <ReflectionKanbanColumn
-                key={kanban.id}
-                kanban={kanban}
-                disabled={disabled}
-                compact={compact}
-                onChange={(next) => updateKanban(kanban.id, () => next)}
-                onDelete={() =>
-                  onChange(kanbans.filter((item) => item.id !== kanban.id))
-                }
-              />
-            ))}
-          </div>
-        )}
-      </CardContent>
+      <CardContent>{body}</CardContent>
     </Card>
   );
 }
@@ -215,11 +254,17 @@ function ReflectionKanbanColumn({
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col rounded-xl border border-border/40 bg-muted/15",
+        "flex shrink-0 flex-col rounded-xl border",
+        kanbanColumnBodyClass,
         compact ? "w-full" : "w-[min(100%,280px)] min-w-[240px] max-w-[280px]"
       )}
     >
-      <div className="flex shrink-0 items-center gap-1 border-b border-border/30 px-2 py-2">
+      <div
+        className={cn(
+          "flex shrink-0 items-center gap-1 rounded-t-xl px-2 py-2",
+          kanbanColumnHeaderClass
+        )}
+      >
         <button
           type="button"
           onClick={() => onChange({ ...kanban, collapsed: !collapsed })}
@@ -260,7 +305,10 @@ function ReflectionKanbanColumn({
             return (
               <div
                 key={card.id}
-                className="group relative rounded-lg border border-border/45 bg-card px-3 py-2 shadow-sm"
+                className={cn(
+                  "group relative px-3 py-2",
+                  kanbanCardClass
+                )}
                 onDoubleClick={() => {
                   if (disabled) return;
                   setEditingCardId(card.id);

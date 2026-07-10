@@ -30,6 +30,7 @@ import {
   panelWidthTransitionStyle,
 } from "@/lib/panel-layout-animation";
 import { cn } from "@/lib/utils";
+import { workspaceRailBackgroundClass } from "@/lib/theme/surface-classes";
 
 const PANEL_ITEMS: {
   id: GlobalRightSidebarPanel;
@@ -63,6 +64,13 @@ function panelHeaderTitle(activePanel: GlobalRightSidebarPanel): string {
     return "Task Details";
   }
   return PANEL_ITEMS.find((item) => item.id === activePanel)?.label ?? "";
+}
+
+/** Full-page destination for drawer panels that have a matching route. */
+function panelPageHref(activePanel: GlobalRightSidebarPanel): string | null {
+  if (activePanel === "notes") return "/notes";
+  if (activePanel === "reflection") return "/reflection";
+  return null;
 }
 
 export function GlobalRightSidebar() {
@@ -109,10 +117,11 @@ export function GlobalRightSidebar() {
         />
       )}
 
-      {/* Level 1 chrome (`--surface`): width-only on expand/resize — never swap bg. */}
+      {/* Quiet lift above page canvas — 15% toward card. */}
       <aside
         className={cn(
-          "relative flex h-full shrink-0 overflow-hidden border-l border-sidebar-border bg-sidebar text-sidebar-foreground",
+          "relative flex h-full shrink-0 overflow-hidden border-l border-sidebar-border text-foreground",
+          workspaceRailBackgroundClass,
             workplaceHoverMode && "fixed inset-y-0 right-0 z-40",
             !sidebarVisible && workplaceHoverMode && "pointer-events-none opacity-0"
         )}
@@ -148,12 +157,12 @@ export function GlobalRightSidebar() {
               <h2 className="text-sm font-semibold tracking-tight">
                 {panelHeaderTitle(activePanel)}
               </h2>
-              {activePanel === "reflection" ? (
+              {panelPageHref(activePanel) ? (
                 <Link
-                  href="/reflection"
+                  href={panelPageHref(activePanel)!}
                   className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-surface-hover hover:text-muted-foreground"
-                  aria-label="Open reflection page"
-                  title="Open reflection page"
+                  aria-label={`Open ${panelHeaderTitle(activePanel).toLowerCase()} page`}
+                  title={`Open ${panelHeaderTitle(activePanel).toLowerCase()} page`}
                 >
                   <ExternalLink className="size-4" />
                 </Link>
@@ -166,7 +175,11 @@ export function GlobalRightSidebar() {
           </div>
 
           <div
-            className="flex h-full shrink-0 flex-col items-center border-l border-sidebar-border px-1 py-3"
+            className={cn(
+              "flex h-full shrink-0 flex-col items-center px-1 py-3",
+              // One edge only when collapsed (match left nav). Internal divider only when expanded.
+              expanded && "border-l border-sidebar-border"
+            )}
             style={{ width: GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX }}
           >
             <button

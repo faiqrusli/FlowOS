@@ -2,7 +2,8 @@
 
 import { Check, Crosshair, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   formatDaysOfWeek,
   isHabitScheduledToday,
@@ -40,7 +41,7 @@ export function HabitCard({
   const daysLabel = formatDaysOfWeek(habit.days_of_week);
 
   return (
-    <Card>
+    <Card className="border-border/45 shadow-none">
       <CardContent className="space-y-4 py-4">
         <div className="flex items-start gap-3">
           <div className="min-w-0 flex-1 space-y-2">

@@ -122,19 +122,31 @@ export const TASK_GROUP_SWATCH_CLASS: Record<TaskGroupColorKey, string> = {
   later: "bg-chart-3",
 };
 
+/**
+ * Tasks board column body — Layer 1.5 workspace: slightly above `--background`,
+ * below `--card` / Focus hero. Shared for all group colors (accent stays on dots/edges).
+ */
+export const TASK_GROUP_COLUMN_BODY_CLASS =
+  "border-border-board bg-surface-board shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
+
+/** Column header strip — barely brighter than column body for scanability. */
+export const TASK_GROUP_COLUMN_HEADER_CLASS =
+  "border-b border-border-board/80 bg-surface-board-header";
+
+/** @deprecated Prefer TASK_GROUP_COLUMN_BODY_CLASS — kept for colorKey map call sites. */
 export const TASK_GROUP_COLUMN_SURFACE_CLASS: Record<TaskGroupColorKey, string> = {
-  sky: "border-border/50 bg-muted/20",
-  blue: "border-border/50 bg-muted/20",
-  indigo: "border-border/50 bg-muted/20",
-  violet: "border-border/50 bg-muted/20",
-  emerald: "border-border/50 bg-muted/20",
-  teal: "border-border/50 bg-muted/20",
-  amber: "border-border/50 bg-muted/20",
-  orange: "border-border/50 bg-muted/20",
-  rose: "border-border/50 bg-muted/20",
-  slate: "border-border/50 bg-muted/20",
-  inbox: "border-border/50 bg-muted/20",
-  later: "border-border/50 bg-muted/20",
+  sky: TASK_GROUP_COLUMN_BODY_CLASS,
+  blue: TASK_GROUP_COLUMN_BODY_CLASS,
+  indigo: TASK_GROUP_COLUMN_BODY_CLASS,
+  violet: TASK_GROUP_COLUMN_BODY_CLASS,
+  emerald: TASK_GROUP_COLUMN_BODY_CLASS,
+  teal: TASK_GROUP_COLUMN_BODY_CLASS,
+  amber: TASK_GROUP_COLUMN_BODY_CLASS,
+  orange: TASK_GROUP_COLUMN_BODY_CLASS,
+  rose: TASK_GROUP_COLUMN_BODY_CLASS,
+  slate: TASK_GROUP_COLUMN_BODY_CLASS,
+  inbox: TASK_GROUP_COLUMN_BODY_CLASS,
+  later: TASK_GROUP_COLUMN_BODY_CLASS,
 };
 
 const SYSTEM_TASK_GROUP_COLOR_KEYS: TaskGroupColorKey[] = ["inbox", "later"];

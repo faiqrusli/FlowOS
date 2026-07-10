@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { WORKSPACE_GUTTER_LEFT_CLASS } from "@/lib/workspace-layout";
-import { cn } from "@/lib/utils";
 import { TimelineDrawer, TimelineDrawerToggle } from "@/components/tasks/timeline-drawer";
 import { TasksBoardView } from "@/components/tasks/tasks-board-view";
 import { ErrorBanner } from "@/components/shared/error-banner";
@@ -800,20 +798,15 @@ export function TasksPageContent() {
 
   return (
     <div className="relative flex h-full min-h-0">
-      <div
-        className={cn(
-          "flex min-h-0 min-w-0 flex-1 flex-col pb-3 pt-2",
-          WORKSPACE_GUTTER_LEFT_CLASS
-        )}
-      >
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col pb-3 pt-2">
         {error && (
-          <div className="mb-3 shrink-0">
+          <div className="mb-3 shrink-0 px-10">
             <ErrorBanner message={error} />
           </div>
         )}
 
         {hint && (
-          <div className="mb-3 shrink-0">
+          <div className="mb-3 shrink-0 px-10">
             <p
               className="rounded-lg border border-sky-200/80 bg-sky-50/90 px-3 py-2 text-sm text-sky-950 dark:border-sky-400/30 dark:bg-sky-500/12 dark:text-sky-100"
               role="status"

@@ -19,6 +19,10 @@
   --color-surface-hover: var(--surface-hover);
   --color-surface-focus: var(--surface-focus);
   --color-surface-focus-hover: var(--surface-focus-hover);
+  --color-surface-board: var(--surface-board);
+  --color-surface-board-header: var(--surface-board-header);
+  --color-surface-kanban-card: var(--surface-kanban-card);
+  --color-border-board: var(--border-board);
   --color-surface-sidebar: var(--surface-sidebar);
   --color-surface-page: var(--surface-page);
   --color-surface-card: var(--surface-card);
@@ -97,6 +101,11 @@
   /* Today Focus workspace — subtle lift above card (light) */
   --surface-focus: oklch(0.997 0.002 265);
   --surface-focus-hover: oklch(0.985 0.006 265);
+  /* Tasks board columns — whisper above page, below card (light) */
+  --surface-board: color-mix(in oklab, var(--background) 78%, var(--card) 22%);
+  --surface-board-header: color-mix(in oklab, var(--surface-board) 90%, white 10%);
+  --border-board: oklch(0.205 0.02 265 / 14%);
+  --surface-kanban-card: color-mix(in oklab, var(--card) 96%, black 4%);
 
   --background: var(--surface-app);
   --foreground: oklch(0.205 0.02 265);
@@ -175,6 +184,12 @@
   /* Today Focus — whisper lift above --card */
   --surface-focus: color-mix(in oklab, var(--card) 92%, white 8%);
   --surface-focus-hover: color-mix(in oklab, var(--card) 88%, white 12%);
+  /* Tasks board columns — ~2–4% lift above canvas; never hero / --surface-focus */
+  --surface-board: color-mix(in oklab, var(--background) 78%, var(--card) 22%);
+  --surface-board-header: color-mix(in oklab, var(--surface-board) 94%, white 6%);
+  --border-board: oklch(0.90 0.030 268 / 20%);
+  /* Kanban cards — ~2% above column / card so units separate without floating */
+  --surface-kanban-card: color-mix(in oklab, var(--card) 94%, white 6%);
 
   /* Legacy aliases */
   --surface-app: var(--background);
@@ -215,9 +230,9 @@
   --warning: oklch(0.780 0.120 82);
   --warning-muted: oklch(0.780 0.120 82 / 13%);
 
-  --border: oklch(0.90 0.030 268 / 9%);
+  --border: oklch(0.90 0.030 268 / 8%);
   --border-focus: oklch(0.90 0.030 268 / 14%);
-  --divider: oklch(0.90 0.030 268 / 7%);
+  --divider: oklch(0.90 0.030 268 / 6%);
   --input: oklch(0.90 0.030 268 / 12%);
   --ring: oklch(0.575 0.205 272 / 55%);
 
@@ -246,7 +261,8 @@
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: oklch(0.212 0.032 268);
   --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: oklch(0.90 0.030 268 / 9%);
+  /* Quieter chrome edge — workspace first, divider second (~15% softer than prior 9%). */
+  --sidebar-border: oklch(0.90 0.030 268 / 7.5%);
   --sidebar-ring: oklch(0.575 0.205 272 / 45%);
 }
 

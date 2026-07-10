@@ -8,7 +8,6 @@ import {
   fetchTodayReflection,
   saveReflection,
 } from "@/lib/reflection-storage";
-import { drawerCardStackClass } from "@/lib/theme/surface-classes";
 import type { CustomEntry, ReflectionKanban } from "@/types/reflection";
 
 export function SidebarReflectionPanel() {
@@ -83,8 +82,7 @@ export function SidebarReflectionPanel() {
 
   return (
     <div className="h-full min-h-0 overflow-y-auto">
-      {/* Modular cards on chrome — no single outer wrap (DESIGN_SYSTEM v2). */}
-      <div className={drawerCardStackClass}>
+      <div className="flex flex-col gap-6 p-3">
         {error && (
           <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
             {error}
@@ -104,6 +102,7 @@ export function SidebarReflectionPanel() {
           }}
           disabled={saving}
           hideTitle
+          flat
         />
 
         <CustomEntriesSection
@@ -113,6 +112,7 @@ export function SidebarReflectionPanel() {
             setDirty(true);
           }}
           disabled={saving}
+          flat
         />
 
         <ReflectionKanbanSection
@@ -123,6 +123,7 @@ export function SidebarReflectionPanel() {
           }}
           disabled={saving}
           compact
+          flat
         />
       </div>
     </div>

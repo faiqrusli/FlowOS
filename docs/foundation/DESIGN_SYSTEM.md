@@ -178,6 +178,8 @@ Navigation (Layer 0) is recessed below the workspace canvas (Layer 1). Do not re
 
 **Rules:** Share one common `--card` surface. No feature-specific permanent card colors. Content in the drawer lives on Layer 2 over Layer 0 chrome.
 
+**Tasks board columns (workspace lift, not hero):** Task group columns use `--surface-board` — a ~2–4% lift above `--background` toward `--card`, with `--border-board` (~10–15% stronger edge than default border) and a whisper header `--surface-board-header`. This is **not** Layer 3 / `--surface-focus`. Columns should read as independent workspaces, not floating cards and not Focus-hero surfaces.
+
 ### Layer 3 — Hero surfaces
 
 **Purpose:** The one primary workspace on a screen (Today = Focus).

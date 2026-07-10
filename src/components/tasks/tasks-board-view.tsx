@@ -167,7 +167,12 @@ import {
   clearTaskDropReveal,
 } from "@/lib/task-drop-reveal";
 import { formatTaskScheduleCompact } from "@/lib/tasks";
-import { getTaskGroupAppearance, getGroupDotClass, TASK_GROUP_COLUMN_SURFACE_CLASS } from "@/lib/task-group-appearance";
+import {
+  getTaskGroupAppearance,
+  getGroupDotClass,
+  TASK_GROUP_COLUMN_BODY_CLASS,
+  TASK_GROUP_COLUMN_HEADER_CLASS,
+} from "@/lib/task-group-appearance";
 import {
   canAcceptActiveDropTarget,
   isSameGroupActiveReorderAttempt,
@@ -2064,7 +2069,7 @@ function TasksBoardViewContent({
             groupId={group.id}
             className={cn(
               "flex w-11 shrink-0 flex-col items-center rounded-xl border py-2 shadow-sm transition-[box-shadow,background-color,border-color] duration-150",
-              TASK_GROUP_COLUMN_SURFACE_CLASS[groupAppearance.colorKey]
+              TASK_GROUP_COLUMN_BODY_CLASS
             )}
           >
             <button
@@ -2118,14 +2123,19 @@ function TasksBoardViewContent({
         <GroupColumnDragShell
           groupId={group.id}
           className={cn(
-            "flex h-full max-h-full w-full shrink-0 flex-col rounded-xl border shadow-[0_1px_3px_0_rgba(15,23,42,0.04)] transition-[box-shadow,background-color,border-color] duration-150",
-            TASK_GROUP_COLUMN_SURFACE_CLASS[groupAppearance.colorKey],
+            "flex h-full max-h-full w-full shrink-0 flex-col rounded-xl border transition-[box-shadow,background-color,border-color] duration-150",
+            TASK_GROUP_COLUMN_BODY_CLASS,
             isToday &&
               plannerActive &&
               "ring-2 ring-primary/25 shadow-md shadow-primary/10"
           )}
         >
-          <div className="group/column-header flex h-11 shrink-0 items-center gap-0 border-b border-border/25 px-1.5 transition-colors duration-150 hover:bg-muted/25">
+          <div
+            className={cn(
+              "group/column-header flex h-11 shrink-0 items-center gap-0 rounded-t-xl px-1.5 transition-colors duration-150 hover:bg-surface-hover/40",
+              TASK_GROUP_COLUMN_HEADER_CLASS
+            )}
+          >
             {isToday ? (
               <>
                 <SystemViewInfoMenu
@@ -2443,7 +2453,7 @@ function TasksBoardViewContent({
     <TaskBoardActionsProvider actions={boardActions}>
     <>
       <div className="flex h-full min-h-0 flex-col gap-3">
-      <div className="relative flex w-full shrink-0 items-center pr-5 sm:pr-6">
+      <div className="relative flex w-full shrink-0 items-center px-10">
         <h1 className={cn(type.pageTitle, "min-w-0 shrink-0")}>Tasks</h1>
 
         {onToggleQuickPlanner ? (
