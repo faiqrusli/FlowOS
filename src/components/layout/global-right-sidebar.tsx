@@ -4,9 +4,9 @@ import {
   BookOpen,
   ClipboardList,
   ExternalLink,
+  NotebookPen,
   PanelRightClose,
   PanelRightOpen,
-  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -39,7 +39,7 @@ const PANEL_ITEMS: {
 }[] = [
   { id: "details", label: "Details", icon: ClipboardList },
   { id: "notes", label: "Notes", icon: BookOpen },
-  { id: "reflection", label: "Reflection", icon: Sparkles },
+  { id: "reflection", label: "Reflection", icon: NotebookPen },
 ];
 
 function GlobalRightSidebarBody({

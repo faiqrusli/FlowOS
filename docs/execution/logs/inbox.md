@@ -48,7 +48,8 @@ inbox (scratch)
 
 | Idea | Runbook / spec | Session / WP |
 |------|----------------|--------------|
-| Schedule Break modal — future break reminders on quick focus (not Pomodoro) | [schedule-break-modal-spec.md](../../review/design/schedule-break-modal-spec.md) | Not scoped to runbook yet |
+| Unmerged branch queue (founder-led P1→P7) | [unmerged-branch-queue.md](./unmerged-branch-queue.md) | **P1 next:** global nav |
+| Schedule Break modal — future break reminders on quick focus (not Pomodoro) | [schedule-break-modal-spec.md](../../review/design/schedule-break-modal-spec.md) | Shipped core; review follow-ups only |
 | _None — 2026-07-05 Today UX polish complete on `main`_ | [m2-today-ux-polish.md](../runbooks/m2-today-ux-polish.md) | B4 `9685c02` |
 
 ---

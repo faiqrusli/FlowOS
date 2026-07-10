@@ -8,6 +8,7 @@ Append-only evidence, capture, and decision records.
 | [friction-log.md](./friction-log.md) | Daily dogfood evidence — what / when / cost |
 | [july-log.md](./july-log.md) | July session narrative (after runbook chunks ship) |
 | [decision-log.md](./decision-log.md) | Product-level decisions |
+| [unmerged-branch-queue.md](./unmerged-branch-queue.md) | Founder-led priority queue of unfinished branches still worth landing on `main` |
 
 **Pipeline:** inbox → runbook → july-log → [review/SRAI](../../review/README.md)
 

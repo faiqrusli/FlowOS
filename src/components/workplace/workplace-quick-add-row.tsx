@@ -11,8 +11,8 @@ import {
 import {
   BookOpen,
   ListPlus,
+  NotebookPen,
   Plus,
-  Sparkles,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -174,7 +174,7 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
             className={iconActionClass}
             aria-label="Reflection"
           >
-            <Sparkles className="size-3.5 shrink-0" />
+            <NotebookPen className="size-3.5 shrink-0" />
           </button>
         </QuickAddHint>
       </div>
