@@ -180,6 +180,8 @@ git status -sb   # clean after commit
 
 ### Session 3 — Nav reduction (5 items)
 
+> **Superseded for primary nav:** Schedule/Notes demotion was reversed by [m2-global-navigation.md](./m2-global-navigation.md) (Home + Workspace). Leave this session’s historical steps intact; do not re-demote.
+
 **Goal:** Sidebar reduced to **5 items:** Today, Tasks, Habits, Focus (history), Reflection. Schedule and Notes remain routes but demoted — reachable from Today ("Open full timeline") and secondary links. Dashboard nav item removed. No `/overview` page.  
 **Time:** 2–3 hours  
 **Prerequisites:** Session 1 on production (Today at `/`). Session 2 recommended complete (KPI strip in-place behavior).  

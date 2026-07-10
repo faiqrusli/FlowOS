@@ -2,7 +2,7 @@
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 10, 2026 (Kanban `--card` units + shared soft board borders with Tasks groups)
+**Last updated:** July 10, 2026 (Global nav: Home + Workspace; Schedule/Notes primary again)
 
 **Visual surfaces:** Board chrome (Tasks groups + Kanban) → [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) Layer 2. Helpers: `src/lib/theme/surface-classes.ts`, `src/lib/task-group-appearance.ts`.
 
@@ -20,48 +20,49 @@ For SRS future enhancements (FE-1–FE-13), see [../archive/project/03-future-en
 
 ### Current navigation
 
-Eight sidebar items with **equal visual weight**. Source: `src/config/sidebar-navigation.tsx`
+Home + Workspace workflow. Source: `src/config/sidebar-navigation.tsx`. Product decision 2026-07-09; runbook [m2-global-navigation.md](../execution/runbooks/m2-global-navigation.md).
 
 ```
-Overview
-  └── Dashboard (/)          ← default landing (read-only intelligence)
+HOME
+  └── Today          (/)              LayoutDashboard
 
-Productivity
-  ├── Workplace (/workplace) ← primary execution surface
-  ├── Schedule (/schedule)
-  ├── Tasks (/tasks)
-  ├── Habits (/habits)
-  ├── Focus (/focus)
-  ├── Reflection (/reflection)
-  └── Notes (/notes)
+WORKSPACE
+  ├── Tasks          (/tasks)         CheckSquare
+  ├── Habits         (/habits)        Repeat
+  ├── Schedule       (/schedule)      CalendarDays
+  ├── Focus          (/focus)         Timer
+  ├── Notes          (/notes)         BookOpen
+  └── Reflection     (/reflection)    NotebookPen
 ```
 
-**Known problems (M2 addressing):** Dashboard at `/` vs execution at `/workplace`; eight equal nav items; three scheduling surfaces; focus as a destination page; no command layer. Diagnosis: [../archive/design/july-3/ux-friction-review.md](../archive/design/july-3/ux-friction-review.md).
+**Supersedes:** M2 Session 3 “sidebar ≤ 5 / demote Schedule & Notes” for primary nav only — Schedule and Notes are first-class Workspace items again. Today shortcuts remain convenience; sidebar is the source of truth.
+
+**Still open (M2/M3):** three scheduling surfaces; focus as destination vs mode; no command layer. Diagnosis history: [../archive/design/july-3/ux-friction-review.md](../archive/design/july-3/ux-friction-review.md).
 
 ### Target navigation (post M2/M3)
 
 | Tier | Modules |
 |------|---------|
-| **Primary** | Today (`/`) — execution + inline intelligence; focus as overlay mode |
-| **Secondary** | Overview (`/overview`), Tasks, Habits, Focus (history/analytics), Reflection |
-| **Tertiary** | Schedule (fullscreen planner), Notes |
+| **Home** | Today (`/`) — execution + inline intelligence; focus as overlay mode |
+| **Workspace** | Tasks, Habits, Schedule, Focus, Notes, Reflection (global one-click) |
+| **Later sections** | Goals, Projects, Analytics, AI — append to `sidebarSections` when evidenced |
 
-**Target flow:** Open → Today → inline capture / execute / focus → evening reflection. Command palette (`Cmd+K`) for search and jump.
+**Target flow:** Open → Today → plan (Schedule) / execute / focus → evening reflection. Command palette (`Cmd+K`) for search and jump (post-M2).
 
-### Module roles (target state)
+### Module roles (current + near-term)
 
 | Module | Route | Verdict |
 |--------|-------|---------|
-| Dashboard | `/` | Demote to `/overview`; merge KPIs into Today |
-| Workplace | `/workplace` | Become default home Today |
-| Tasks | `/tasks` | Keep; secondary via palette + inline capture |
-| Schedule | `/schedule` | Tertiary — "open fullscreen timeline" from Today |
-| Habits | `/habits` | Keep; primary completion on Today |
-| Focus | `/focus` | Mode on Today; page = history/analytics only |
-| Reflection | `/reflection` | Keep; unify save behavior; evening nudge |
-| Notes | `/notes` | Keep secondary; no kanban expansion until loop proven |
+| Today | `/` | Default home — execution + inline intelligence |
+| Tasks | `/tasks` | Primary Workspace nav; inline capture on Today |
+| Habits | `/habits` | Primary Workspace nav; primary completion on Today |
+| Schedule | `/schedule` | Primary Workspace nav — fullscreen planner (not demoted) |
+| Focus | `/focus` | Primary Workspace nav; long-term: mode on Today, page = history |
+| Notes | `/notes` | Primary Workspace nav (not demoted); no kanban expansion until loop proven |
+| Reflection | `/reflection` | Primary Workspace nav; unify save behavior; evening nudge |
+| Overview | `/overview` | Not built — do not create in M2 |
 
-**M2 MVP bundle:** Today as home, next-action stays on Today, sidebar ≤ 5 items, inline capture, visible focus controls. Full plan: [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md).
+**M2 MVP bundle:** Today as home, next-action stays on Today, Home + Workspace global nav, inline capture, visible focus controls. Full plan: [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md).
 
 ---
 
@@ -69,14 +70,13 @@ Productivity
 
 | Module | Route | Status | SRL phase | Phase 3 impact |
 |--------|-------|--------|-----------|----------------|
-| Dashboard | `/` | **Shipped** — wrong default home | Performance (monitor) | Merge intelligence into Today; demote to `/overview` |
-| Workplace | `/workplace` | **Shipped** — true execution surface | Performance | Become default home `/` |
-| Schedule | `/schedule` | **Shipped** | Forethought | Demote to "open fullscreen timeline" action |
+| Today | `/` | **Shipped** — default home (execution + intelligence) | Performance | Keep; focus as mode long-term |
+| Schedule | `/schedule` | **Shipped** — primary Workspace nav | Forethought | Keep global; simplify third scheduling surface later |
 | Tasks | `/tasks` | **Shipped** | Forethought | Keep; secondary access via command palette + inline capture |
 | Habits | `/habits` | **Shipped** | Forethought + Performance | Keep; inline on Today |
 | Focus | `/focus` | **Shipped** | Performance | Reframe page as history/analytics; focus becomes mode |
 | Reflection | `/reflection` | **Shipped** | Self-reflection | Keep; unify save behavior; evening nudge |
-| Notes | `/notes` | **Shipped** (beyond original MVP) | Self-reflection (supplementary) | Keep secondary; no kanban expansion in Phase 3 |
+| Notes | `/notes` | **Shipped** — primary Workspace nav | Self-reflection (supplementary) | Keep global; no kanban expansion in Phase 3 |
 
 ---
 
