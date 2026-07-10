@@ -2,7 +2,9 @@
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 9, 2026 (Schedule Break shipped; Workplace daily note card removed)
+**Last updated:** July 10, 2026 (Kanban `--card` units + shared soft board borders with Tasks groups)
+
+**Visual surfaces:** Board chrome (Tasks groups + Kanban) → [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) Layer 2. Helpers: `src/lib/theme/surface-classes.ts`, `src/lib/task-group-appearance.ts`.
 
 ---
 
