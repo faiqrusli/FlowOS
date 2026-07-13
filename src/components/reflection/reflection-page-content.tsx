@@ -113,7 +113,7 @@ export function ReflectionPageContent() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-3xl space-y-8">
       <PageHeader
         title="Reflection"
         description="Review your day, capture insights, and build a calm evening ritual."
@@ -122,7 +122,7 @@ export function ReflectionPageContent() {
       {error && <ErrorBanner message={error} />}
       {savedMessage && (
         <p
-          className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800"
+          className="rounded-lg border border-border-subtle bg-surface-base px-3 py-2 text-sm text-foreground"
           role="status"
         >
           {savedMessage}

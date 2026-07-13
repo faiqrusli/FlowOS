@@ -22,7 +22,7 @@ export function ReflectionCollapsibleSection({
   return (
     <details
       className={cn(
-        "group rounded-lg border border-border/50 bg-card",
+        "group rounded-lg border border-border-subtle bg-surface-base",
         className
       )}
       open={defaultOpen}

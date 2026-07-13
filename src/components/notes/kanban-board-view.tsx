@@ -1230,7 +1230,7 @@ export function KanbanBoardView({
 function CardDropLine() {
   return (
     <div
-      className="my-1 h-0.5 rounded-full bg-sky-500/85"
+      className="my-1 h-0.5 rounded-full bg-primary-medium"
       aria-hidden
     />
   );
@@ -1239,7 +1239,7 @@ function CardDropLine() {
 function ColumnDropMarker() {
   return (
     <div
-      className="mx-0.5 w-0.5 shrink-0 self-stretch rounded-full bg-sky-500/70"
+      className="mx-0.5 w-0.5 shrink-0 self-stretch rounded-full bg-primary"
       aria-hidden
     />
   );

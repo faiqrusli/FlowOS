@@ -82,7 +82,7 @@ export function SidebarReflectionPanel() {
 
   return (
     <div className="h-full min-h-0 overflow-y-auto">
-      <div className="flex flex-col gap-6 p-3">
+      <div className="flex flex-col gap-8 p-4">
         {error && (
           <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
             {error}

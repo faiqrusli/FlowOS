@@ -108,7 +108,7 @@ export function ReflectionHistory({
                     onView={() => setViewing(todayReflection)}
                   />
                 ) : (
-                  <p className="rounded-lg border border-dashed border-border/50 bg-card px-4 py-6 text-center text-sm text-muted-foreground">
+                  <p className="rounded-lg border border-dashed border-border-subtle bg-surface-base px-4 py-6 text-center text-sm text-muted-foreground">
                     No reflection saved for today yet. Fill in your notes above
                     and click Save reflection.
                   </p>
@@ -187,7 +187,7 @@ function ReflectionHistoryItem({
   const isToday = reflection.reflection_date === todayDate;
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border/40 bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-lg border border-border-subtle bg-surface-base px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-medium text-foreground">

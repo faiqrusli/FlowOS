@@ -60,7 +60,7 @@ export function ReflectionQuestionsCard({
   }
 
   return (
-    <Card className="border-border/50 shadow-none">
+    <Card className="border-border-subtle shadow-none">
       {hideTitle ? null : (
         <CardHeader>
           <CardTitle>Reflection</CardTitle>

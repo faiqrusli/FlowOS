@@ -60,7 +60,7 @@ export function FocusCurrentSessionCard() {
 
   return (
     <>
-      <Card className="flow-surface-focus border-border-focus shadow-none">
+      <Card className="flow-surface-base border-border-subtle shadow-none">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Current focus</CardTitle>
         </CardHeader>

@@ -207,7 +207,7 @@ export function NotesPageContent() {
             <div className="h-full min-h-0 animate-pulse rounded-2xl bg-muted/30" />
           ) : (
             selectedArea && (
-              <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm">
+              <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border-subtle bg-surface-base shadow-none">
                 <GrowthAreaHeader
                   area={selectedArea}
                   tab={tab}

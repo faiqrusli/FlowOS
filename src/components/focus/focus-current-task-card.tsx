@@ -51,7 +51,7 @@ function CurrentTaskMenu({
       >
         <button
           type="button"
-          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-surface-hover"
           onClick={() => run(onCompleteTask)}
         >
           <Check className="size-3.5 text-muted-foreground" />
@@ -59,7 +59,7 @@ function CurrentTaskMenu({
         </button>
         <button
           type="button"
-          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-surface-hover"
           onClick={() => run(onSkipFocus)}
         >
           <SkipForward className="size-3.5 text-muted-foreground" />
@@ -98,7 +98,7 @@ export function FocusCurrentTaskCard({
 
   if (!task) {
     return (
-      <section className="mt-2 shrink-0 rounded-lg border border-border/55 bg-card/35 px-3 py-2.5 text-left">
+      <section className="flow-surface-base mt-2 shrink-0 px-3 py-2.5 text-left">
         <p className="text-[13px] font-semibold text-foreground/90">
           Focus task
         </p>
@@ -134,7 +134,7 @@ export function FocusCurrentTaskCard({
   return (
     <>
       <section
-        className="animate-in fade-in slide-in-from-bottom-1 mt-2 shrink-0 rounded-lg border border-border-focus/65 bg-card/45 px-3 py-2.5 text-left duration-200"
+        className="flow-surface-raised animate-in fade-in slide-in-from-bottom-1 mt-2 shrink-0 px-3 py-2.5 text-left duration-200"
         onContextMenu={handleContextMenu}
       >
         <div className="flex items-start justify-between gap-2">
@@ -151,7 +151,7 @@ export function FocusCurrentTaskCard({
             <button
               type="button"
               onClick={() => onOpenTask(task)}
-              className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/65 hover:text-foreground"
+              className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
               aria-label={`Open details for ${task.title}`}
               title="Task details"
             >
@@ -163,7 +163,7 @@ export function FocusCurrentTaskCard({
                 const rect = event.currentTarget.getBoundingClientRect();
                 setMenuPoint({ x: rect.left, y: rect.bottom + 4 });
               }}
-              className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/65 hover:text-foreground"
+              className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
               aria-label={`More actions for ${task.title}`}
             >
               <MoreHorizontal className="size-4" />
@@ -172,7 +172,7 @@ export function FocusCurrentTaskCard({
         </div>
 
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-          <span className="rounded-full border border-border/60 bg-muted/35 px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+          <span className="rounded-full border border-border-subtle bg-surface-base px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
             {statusLabel}
           </span>
           {group && appearance ? (

@@ -101,9 +101,9 @@ export function NextUpQueueItem({
         tabIndex={0}
         aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"
         className={cn(
-          "flex items-center gap-1.5 rounded-md border border-border/45 bg-muted/25 px-1.5 py-1.5 transition-[background-color,border-color] duration-150",
+          "flex items-center gap-1.5 rounded-md border border-border-subtle bg-surface-base px-1.5 py-1.5 transition-[background-color,border-color] duration-150",
           !completed &&
-            "cursor-grab active:cursor-grabbing hover:border-border/70 hover:bg-muted/45",
+            "cursor-grab active:cursor-grabbing hover:border-border-strong hover:bg-surface-hover",
           completed && "cursor-default opacity-70"
         )}
       >
@@ -165,7 +165,7 @@ export function NextUpQueueItem({
           type="button"
           data-no-dnd
           onClick={() => onStartFocus(task)}
-          className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+          className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
           aria-label={`Start focus on ${task.title}`}
           title="Start focus"
         >
@@ -175,7 +175,7 @@ export function NextUpQueueItem({
           type="button"
           data-no-dnd
           onClick={() => onRemove(task.id)}
-          className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+          className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
           aria-label={`Remove ${task.title} from Next Up`}
           title="Remove from Next Up"
         >

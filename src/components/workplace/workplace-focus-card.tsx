@@ -538,7 +538,7 @@ export function WorkplaceFocusCard({
                 className="size-4 shrink-0 text-muted-foreground"
                 aria-hidden
               />
-              <div className="inline-flex rounded-lg border border-border/60 bg-muted/40 p-0.5">
+              <div className="inline-flex rounded-lg border border-border-subtle bg-surface-base p-0.5">
               {(["focus", "pomodoro"] as const).map((item) => (
                 <button
                   key={item}
@@ -547,7 +547,7 @@ export function WorkplaceFocusCard({
                   className={cn(
                     "rounded-md px-2.5 py-0.5 text-[14px] font-medium capitalize transition-[background-color,color,box-shadow] duration-150",
                     tab === item
-                      ? "bg-card text-foreground shadow-xs"
+                      ? "bg-surface-raised text-foreground shadow-xs"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >

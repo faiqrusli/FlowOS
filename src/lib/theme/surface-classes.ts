@@ -78,8 +78,8 @@ export const surfaceInsetClass =
 /** Writing fields slightly lighter than surrounding card */
 export const drawerWritingFieldClass = "bg-muted/35";
 
-/** Timeline column — Canvas until Phase 6 migrates to Base */
-export const surfaceTimelineClass = "bg-surface-canvas text-foreground";
+/** Timeline column — Base organisational grid on Canvas shell */
+export const surfaceTimelineClass = "bg-surface-base text-foreground";
 
 /** Subtle hover for list rows & chips */
 export const interactiveHoverClass =

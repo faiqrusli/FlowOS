@@ -164,7 +164,7 @@ export function ReflectionKanbanSection({
   }
 
   return (
-    <Card className="border-border/50 shadow-none">
+    <Card className="border-border-subtle shadow-none">
       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-3">
         <CardTitle>Custom kanban</CardTitle>
         <Button
@@ -268,7 +268,7 @@ function ReflectionKanbanColumn({
         <button
           type="button"
           onClick={() => onChange({ ...kanban, collapsed: !collapsed })}
-          className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
+          className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover"
           aria-label={collapsed ? `Expand ${kanban.title}` : `Collapse ${kanban.title}`}
         >
           {collapsed ? (
@@ -280,7 +280,7 @@ function ReflectionKanbanColumn({
         <h3 className="min-w-0 flex-1 truncate text-sm font-semibold">{kanban.title}</h3>
         <DropdownMenu>
           <DropdownMenuTrigger
-            className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
+            className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover"
             aria-label={`${kanban.title} options`}
           >
             <MoreHorizontal className="size-3.5" />

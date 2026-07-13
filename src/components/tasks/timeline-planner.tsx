@@ -1347,8 +1347,8 @@ export function TimelinePlanner({
       className={cn(
         "relative min-h-0 flex-1",
         isWorkplace
-          ? "workplace-timeline-scroll overflow-y-scroll bg-background pr-1.5 pt-8 transition-opacity duration-200"
-          : "overflow-y-auto bg-background",
+          ? "workplace-timeline-scroll overflow-y-scroll bg-surface-base pr-1.5 pt-8 transition-opacity duration-200"
+          : "overflow-y-auto bg-surface-base",
         isWorkplace &&
           (timelineRevealActive
             ? "opacity-100"
@@ -1443,9 +1443,9 @@ export function TimelinePlanner({
                 className="pointer-events-none absolute inset-x-1 z-30 flex items-center gap-1.5"
                 style={{ top: nowLineTopPx }}
               >
-                <span className="size-[5px] shrink-0 rounded-full bg-red-500 shadow-[0_0_0_2.5px_oklch(0.665_0.165_25/22%)]" />
-                <div className="h-px flex-1 bg-gradient-to-r from-red-500/75 to-transparent" />
-                <span className="shrink-0 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-medium tabular-nums text-white shadow-sm">
+                <span className="size-[5px] shrink-0 rounded-full bg-primary shadow-[0_0_0_2.5px_color-mix(in_oklab,var(--primary)_22%,transparent)]" />
+                <div className="h-px flex-1 bg-gradient-to-r from-primary/75 to-transparent" />
+                <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[10px] font-medium tabular-nums text-primary-foreground shadow-sm">
                   {formatNowTimeInAppTimezone()}
                 </span>
               </div>
@@ -2485,8 +2485,8 @@ function TimelineScheduledBlock({
         groupAccentClass && "border-l-[3px]",
         groupAccentClass,
         useCleanLayout
-          ? "border-border bg-card/95 backdrop-blur-[1px] hover:border-border hover:bg-card"
-          : "border-border bg-card/90 hover:bg-card",
+          ? "border-border-strong bg-surface-raised hover:border-border-strong hover:bg-surface-raised"
+          : "border-border-subtle bg-surface-raised hover:bg-surface-hover",
         !isDragging && "hover:z-20 hover:shadow-sm",
         useCleanLayout
           ? compact
