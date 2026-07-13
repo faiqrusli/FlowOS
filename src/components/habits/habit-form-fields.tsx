@@ -87,7 +87,7 @@ export function HabitFormFields({
       </div>
       <label
         className={cn(
-          "flex cursor-pointer items-start gap-3 rounded-lg border border-border/50 px-3 py-2.5",
+          "flex cursor-pointer items-start gap-3 rounded-lg border border-border-subtle px-3 py-2.5",
           disabled && "cursor-not-allowed opacity-60"
         )}
       >

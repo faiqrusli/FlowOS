@@ -4,13 +4,13 @@ import { cn } from "@/lib/utils";
 export const TIMELINE_HABIT_ACCENT_CLASS =
   "border-l-[3px] border-l-warning/50";
 
-/** Scheduled habit block surface (timeline body). */
+/** Scheduled habit block surface (timeline body) — Base. */
 export const TIMELINE_HABIT_BLOCK_SURFACE_CLASS =
-  "border-border/50 bg-card";
+  "border-border-subtle bg-surface-base";
 
 /** Unscheduled / pool habit chip surface. */
 export const TIMELINE_HABIT_CHIP_SURFACE_CLASS =
-  "border-border/45 bg-muted/30";
+  "border-border-subtle/70 bg-muted/30";
 
 export function timelineHabitBlockClassNames(extra?: string): string {
   return cn(

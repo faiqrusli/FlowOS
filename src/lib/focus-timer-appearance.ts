@@ -1,9 +1,9 @@
-/** Focus hero palette — ring accents; surfaces use design tokens. */
+/** Focus hero palette — ring accents from v3 primary tokens; no hardcoded hex. */
 export const FOCUS_TIMER_COLORS = {
-  ringTrack: "color-mix(in oklch, var(--border) 55%, var(--foreground) 12%)",
-  ringProgress: "#4f6ef7",
-  ringProgressDeep: "#3d5ad4",
-  ringDot: "#6b8fff",
+  ringTrack: "color-mix(in oklab, var(--border-subtle) 55%, var(--text-primary) 12%)",
+  ringProgress: "var(--primary)",
+  ringProgressDeep: "color-mix(in oklab, var(--primary) 78%, black 22%)",
+  ringDot: "color-mix(in oklab, var(--primary) 70%, white 30%)",
   labelFocus: "var(--accent-text)",
 } as const;
 

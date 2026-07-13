@@ -48,7 +48,7 @@ function HabitOccurrenceRow({
   );
 
   return (
-    <li className="flex items-start gap-2 text-sm">
+    <li className="flex items-start gap-2 rounded-md px-1 py-0.5 text-sm transition-colors hover:bg-surface-hover">
       <button
         type="button"
         disabled={disabled}
@@ -94,7 +94,7 @@ export function HabitsTodayChecklistCard({
   const completed = habits.filter((h) => h.completed).length;
 
   return (
-    <Card className="shadow-sm">
+    <Card className="border-border-subtle shadow-none">
       <CardHeader className="space-y-0.5 pb-3">
         <CardTitle className="text-base">
           Today&apos;s habits {completed}/{habits.length}

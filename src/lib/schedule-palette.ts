@@ -10,12 +10,12 @@ export type ChannelStyle = {
   projection: string;
 };
 
-const NEUTRAL_BLOCK_BG = "bg-card";
-const NEUTRAL_BLOCK_BORDER = "border-border/50";
+const NEUTRAL_BLOCK_BG = "bg-surface-base";
+const NEUTRAL_BLOCK_BORDER = "border-border-subtle";
 const NEUTRAL_BLOCK_TEXT = "text-foreground";
-const NEUTRAL_BLOCK_HOVER = "hover:bg-muted/45";
+const NEUTRAL_BLOCK_HOVER = "hover:bg-surface-hover";
 const NEUTRAL_PROJECTION =
-  "border border-dashed border-border/60 bg-muted/20";
+  "border border-dashed border-border-subtle/70 bg-muted/20";
 
 export const PRIORITY_CHANNEL: Record<TaskPriority, ChannelStyle> = {
   high: {

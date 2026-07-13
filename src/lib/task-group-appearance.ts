@@ -38,7 +38,7 @@ export const TASK_GROUP_COLOR_KEYS: TaskGroupColorKey[] = [
 
 /** Neutral chip chrome until Task 3 migrates consumers to dot + label. */
 const NEUTRAL_PILL_CLASS =
-  "border-border/50 bg-muted/30 text-foreground shadow-xs";
+  "border-border-subtle/60 bg-muted/30 text-foreground shadow-xs";
 
 const GROUP_DOT_CLASS: Record<TaskGroupColorKey, string> = {
   sky: "size-2 shrink-0 rounded-full bg-chart-1",
@@ -123,15 +123,15 @@ export const TASK_GROUP_SWATCH_CLASS: Record<TaskGroupColorKey, string> = {
 };
 
 /**
- * Tasks board column body — Layer 1.5 workspace: slightly above `--background`,
- * below `--card` / Focus hero. Shared for all group colors (accent stays on dots/edges).
+ * Tasks board column body — Base organisational panel (v3).
+ * Accent stays on dots/edges only.
  */
 export const TASK_GROUP_COLUMN_BODY_CLASS =
-  "border-border-board/55 bg-surface-board shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
+  "border-border-subtle/80 bg-surface-base shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
 
 /** Column header strip — barely brighter than column body for scanability. */
 export const TASK_GROUP_COLUMN_HEADER_CLASS =
-  "border-b border-border-board/45 bg-surface-board-header";
+  "border-b border-border-subtle/70 bg-surface-board-header";
 
 /** @deprecated Prefer TASK_GROUP_COLUMN_BODY_CLASS — kept for colorKey map call sites. */
 export const TASK_GROUP_COLUMN_SURFACE_CLASS: Record<TaskGroupColorKey, string> = {

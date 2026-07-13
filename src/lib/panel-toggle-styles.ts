@@ -7,7 +7,7 @@ export function panelToggleButtonClass(
   ...extra: (string | false | null | undefined)[]
 ) {
   return cn(
-    "group/panel-toggle relative flex items-center justify-center border text-accent-text transition-colors hover:border-border/40 hover:bg-muted/60",
+    "group/panel-toggle relative flex items-center justify-center border text-accent-text transition-colors hover:border-border-subtle/60 hover:bg-surface-hover",
     ...extra
   );
 }

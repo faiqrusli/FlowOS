@@ -1532,13 +1532,13 @@ export function TimelinePlanner({
       className={cn(
         "flex h-full min-h-0 flex-col",
         isFullscreen
-          ? "w-full bg-background"
+          ? "w-full bg-surface-canvas"
           : isWorkplace
             ? cn(
-                "group/timeline relative h-full w-full overflow-hidden bg-timeline",
+                "group/timeline relative h-full w-full overflow-hidden bg-surface-canvas",
                 workplaceTimelineEdgeClassName
               )
-            : "h-full w-full border-l border-divider bg-timeline animate-in slide-in-from-right-4 duration-200"
+            : "h-full w-full border-l border-border-strong bg-surface-overlay animate-in slide-in-from-right-4 duration-200"
       )}
       onMouseEnter={isWorkplace ? () => setTimelineHovered(true) : undefined}
       onMouseLeave={isWorkplace ? () => setTimelineHovered(false) : undefined}
@@ -1549,7 +1549,7 @@ export function TimelinePlanner({
           "relative shrink-0 border-b",
           isFullscreen
             ? "flex items-center gap-2 border-divider px-4 py-3"
-            : cn("border-divider px-2 py-1.5", isDrawer && workspaceRailBackgroundClass)
+            : cn("border-border-subtle px-2 py-1.5", isDrawer && "bg-surface-overlay")
         )}
       >
         {isDrawer ? (
@@ -1670,12 +1670,11 @@ export function TimelinePlanner({
             "flex min-h-0 flex-col",
             isDrawer
               ? cn(
-                  "shrink-0 overflow-hidden border-r border-border/30",
-                  workspaceRailBackgroundClass
+                  "shrink-0 overflow-hidden border-r border-border-subtle/50 bg-surface-overlay"
                 )
               : isFullscreen
                 ? cn(
-                    "min-w-0 flex-[2.5] border-r border-border/30",
+                    "min-w-0 flex-[2.5] border-r border-border-subtle/50",
                     workspaceRailBackgroundClass
                   )
                 : "min-w-0 flex-1"
