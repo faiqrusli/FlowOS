@@ -31,6 +31,25 @@ export type FocusSessionInsert = Omit<
   user_id?: string | null;
 };
 
+export type FocusSessionTaskTotal = {
+  id: string;
+  user_id: string;
+  focus_session_id: string;
+  task_id: string;
+  focused_seconds: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type FocusSessionTaskTotalInsert = Omit<
+  FocusSessionTaskTotal,
+  "id" | "created_at" | "updated_at"
+> & {
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type TodayFocusStats = {
   totalFocusSeconds: number;
   totalBreakSeconds: number;

@@ -160,15 +160,13 @@ export function getNextActionRecommendation(
 ): NextAction {
   const forToday = options?.forToday ?? false;
 
-  if (options?.hasActiveFocus) {
+  if (options?.hasActiveFocus && !forToday) {
     return {
       title: "Continue your focus session",
       description: "You're in the zone — pick up where you left off.",
-      href: forToday ? "#" : "/focus",
+      href: "/focus",
       actionLabel: "Return to Focus",
       type: "focus",
-      inPlaceAction: forToday ? "continue-focus" : undefined,
-      scrollTargetId: forToday ? TODAY_FOCUS_ANCHOR_ID : undefined,
     };
   }
 

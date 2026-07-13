@@ -13,6 +13,7 @@ import {
   Check,
   ClipboardList,
   Clock,
+  ListPlus,
   Play,
   Trash2,
 } from "lucide-react";
@@ -39,6 +40,7 @@ type WorkplaceTimelineTaskMenuProps = {
   anchorRect: DOMRect;
   onClose: () => void;
   onOpenDetail: () => void;
+  onAddToNextUp: () => void;
   onClearTime?: () => void;
   onStartFocus: () => void;
   onToggleComplete: () => void;
@@ -127,6 +129,7 @@ export function WorkplaceTimelineTaskMenu({
   anchorRect,
   onClose,
   onOpenDetail,
+  onAddToNextUp,
   onClearTime,
   onStartFocus,
   onToggleComplete,
@@ -222,6 +225,16 @@ export function WorkplaceTimelineTaskMenu({
             <ClipboardList className="size-3.5 shrink-0 text-muted-foreground" />
             Open details
           </button>
+          {!completed ? (
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+              onClick={onAddToNextUp}
+            >
+              <ListPlus className="size-3.5 shrink-0 text-muted-foreground" />
+              Add to Queue
+            </button>
+          ) : null}
           {!completed && onClearTime ? (
             <button
               type="button"

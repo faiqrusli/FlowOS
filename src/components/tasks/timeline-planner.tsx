@@ -26,6 +26,7 @@ import {
   Eye,
   EyeOff,
   GripVertical,
+  ListPlus,
   PanelRightClose,
   Play,
   Trash2,
@@ -83,6 +84,7 @@ import {
 import { formatTodayColumnTitle, isInboxGroup, isTodayGroup, taskBelongsInLaterView } from "@/lib/task-groups";
 import { getTaskGroupAppearance, TASK_GROUP_ACCENT_BORDER_CLASS } from "@/lib/task-group-appearance";
 import { normalizeTaskPriority } from "@/lib/task-priority";
+import { appendTaskToNextUp, isEligibleForNextUp } from "@/lib/task-next-up";
 import {
   buildScheduledSlots,
   buildTimelineBlocks,
@@ -2064,6 +2066,10 @@ export function TimelinePlanner({
             onOpenDetail(contextMenu.task.id);
             setContextMenu(null);
           }}
+          onAddToNextUp={() => {
+            void appendTaskToNextUp(contextMenu.task.id);
+            setContextMenu(null);
+          }}
           onClearTime={
             !contextMenu.task.completed && contextMenu.task.scheduled_time
               ? () => {
@@ -2119,6 +2125,14 @@ export function TimelinePlanner({
                     scheduled_date: getTodayDateString(),
                     planning_state: "none",
                   });
+                  setContextMenu(null);
+                }
+              : undefined
+          }
+          onAddToNextUp={
+            isEligibleForNextUp(contextMenu.task)
+              ? () => {
+                  void appendTaskToNextUp(contextMenu.task.id);
                   setContextMenu(null);
                 }
               : undefined
@@ -2861,6 +2875,7 @@ function TimelineContextMenu({
   onOpenDetail,
   onClearTime,
   onAddToToday,
+  onAddToNextUp,
   onSetPlanningState,
   onDuplicate,
   onDelete,
@@ -2873,6 +2888,7 @@ function TimelineContextMenu({
   onOpenDetail: () => void;
   onClearTime?: () => void;
   onAddToToday?: () => void;
+  onAddToNextUp?: () => void;
   onSetPlanningState?: (planningState: PlanningState) => void;
   onDuplicate: () => void;
   onDelete: () => void;
@@ -2931,6 +2947,19 @@ function TimelineContextMenu({
         >
           <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
           Add to Today
+        </button>
+      ) : null}
+      {onAddToNextUp ? (
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+          onClick={(event) => {
+            event.stopPropagation();
+            onAddToNextUp();
+          }}
+        >
+          <ListPlus className="size-3.5 shrink-0 text-muted-foreground" />
+          Add to Queue
         </button>
       ) : null}
       {onSetPlanningState ? (

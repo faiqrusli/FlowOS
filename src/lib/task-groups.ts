@@ -943,6 +943,7 @@ export async function persistTaskBoardLayout(
       scheduled_date: string | null;
       scheduled_time: string | null;
       planning_state: PlanningState;
+      queue_order?: number | null;
     }
   >();
 
@@ -984,6 +985,7 @@ export async function persistTaskBoardLayout(
           : (existing?.sort_order ?? task.sort_order ?? index),
         completed: task.completed,
         ...LATER_PLANNING_TASK_UPDATES,
+        queue_order: null,
       });
     });
   }
@@ -1017,6 +1019,9 @@ export async function persistTaskBoardLayout(
           scheduled_date: item.scheduled_date,
           scheduled_time: item.scheduled_time,
           planning_state: item.planning_state,
+          ...(item.queue_order !== undefined
+            ? { queue_order: item.queue_order }
+            : {}),
         })
         .eq("id", item.id)
         .eq("user_id", userId)
@@ -1102,6 +1107,7 @@ export async function persistTaskBoardDiff(
     changed.map((task) => {
       const scheduledDate =
         dateByTaskId.get(task.id) ?? task.scheduled_date ?? null;
+      const planningState = normalizePlanningState(task.planning_state);
       return supabase
         .from("tasks")
         .update({
@@ -1110,7 +1116,8 @@ export async function persistTaskBoardDiff(
           completed: task.completed,
           scheduled_date: scheduledDate,
           scheduled_time: task.scheduled_time ?? null,
-          planning_state: normalizePlanningState(task.planning_state),
+          planning_state: planningState,
+          ...(planningState === "later" ? { queue_order: null } : {}),
         })
         .eq("id", task.id)
         .eq("user_id", userId);

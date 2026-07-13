@@ -17,6 +17,7 @@
   /* Surface hierarchy */
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
+  --color-surface-card-hover: var(--surface-card-hover);
   --color-surface-focus: var(--surface-focus);
   --color-surface-focus-hover: var(--surface-focus-hover);
   --color-surface-board: var(--surface-board);
@@ -98,6 +99,7 @@
 
   --surface: oklch(0.975 0.005 265);
   --surface-hover: oklch(0.955 0.012 265);
+  --surface-card-hover: color-mix(in oklab, var(--card) 98%, black 2%);
   /* Today Focus workspace — subtle lift above card (light) */
   --surface-focus: oklch(0.997 0.002 265);
   --surface-focus-hover: oklch(0.985 0.006 265);
@@ -180,10 +182,12 @@
   --background: oklch(0.171 0.030 268); /* #0a0f1d — app canvas */
   --surface: oklch(0.148 0.032 268); /* #060a18 — nav / chrome (darker than canvas) */
   --card: oklch(0.229 0.032 268); /* #161c2c — standard cards */
-  --surface-hover: oklch(0.262 0.034 268); /* #1d2435 — temporary hover */
+  --surface-hover: oklch(0.262 0.034 268); /* #1d2435 — temporary hover (Focus + shared) */
+  /* Today / standard cards — whisper hover above --card (not Focus) */
+  --surface-card-hover: color-mix(in oklab, var(--card) 98%, white 2%);
   /* Today Focus — whisper lift above --card */
-  --surface-focus: color-mix(in oklab, var(--card) 92%, white 8%);
-  --surface-focus-hover: color-mix(in oklab, var(--card) 88%, white 12%);
+  --surface-focus: color-mix(in oklab, var(--card) 94%, white 6%);
+  --surface-focus-hover: color-mix(in oklab, var(--card) 92%, white 8%);
   /* Tasks board columns — ~2–4% lift above canvas; never hero / --surface-focus */
   --surface-board: color-mix(in oklab, var(--background) 78%, var(--card) 22%);
   --surface-board-header: color-mix(in oklab, var(--surface-board) 94%, white 6%);
@@ -230,8 +234,8 @@
   --warning: oklch(0.780 0.120 82);
   --warning-muted: oklch(0.780 0.120 82 / 13%);
 
-  --border: oklch(0.90 0.030 268 / 8%);
-  --border-focus: oklch(0.90 0.030 268 / 14%);
+  --border: oklch(0.90 0.030 268 / 5%);
+  --border-focus: oklch(0.90 0.030 268 / 8%);
   --divider: oklch(0.90 0.030 268 / 6%);
   --input: oklch(0.90 0.030 268 / 12%);
   --ring: oklch(0.575 0.205 272 / 55%);
@@ -296,7 +300,7 @@
 
   .flow-surface-focus:hover {
     background-color: var(--surface-focus-hover);
-    border-color: color-mix(in oklab, var(--border-focus) 80%, white 20%);
+    border-color: color-mix(in oklab, var(--border-focus) 90%, white 10%);
   }
 
   /* Level 3 — raised / active card (same surface, slightly stronger shadow) */
@@ -319,26 +323,23 @@
 
   .flow-interactive,
   .flow-card-interactive {
-    transition-property: background-color, border-color, color, box-shadow, transform, opacity;
+    transition-property: background-color, border-color, color, box-shadow, opacity;
     transition-duration: 160ms;
     transition-timing-function: var(--ease-premium);
   }
 
-  /* Hover-lift for cards that represent tappable/draggable units
-     (task cards, module cards, list rows). Clear but calm: 1px rise,
-     brighter edge, deeper shadow. */
+  /* Hover for cards that represent tappable/draggable units
+     (task cards, module cards, list rows). Color/shadow only — no translate. */
   .flow-card-interactive {
     cursor: pointer;
   }
 
   .flow-card-interactive:hover {
-    transform: translateY(-1px);
-    border-color: color-mix(in oklch, var(--border), var(--foreground) 14%);
+    border-color: color-mix(in oklch, var(--border), var(--foreground) 8%);
     box-shadow: var(--shadow-sm);
   }
 
   .flow-card-interactive:active {
-    transform: translateY(0);
     transition-duration: 80ms;
   }
 

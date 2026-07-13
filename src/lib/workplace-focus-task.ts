@@ -9,6 +9,7 @@ import {
 } from "@/lib/timeline-layout";
 import type { Task } from "@/types/task";
 
+/** Returns the task whose scheduled window contains `now`, if any. Auto-promotion is gated in `WorkplaceFocusTaskProvider` when Next Up has queue items. */
 export function findTaskAtNow(
   tasks: Task[],
   viewDate: string,

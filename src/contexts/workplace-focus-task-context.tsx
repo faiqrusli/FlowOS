@@ -16,6 +16,8 @@ import {
   findNextScheduledTask,
   findTaskAtNow,
 } from "@/lib/workplace-focus-task";
+import { NEXT_UP_UPDATED_EVENT } from "@/lib/next-up-events";
+import { fetchNextUpTasks } from "@/lib/task-next-up";
 import type { FocusTargetType } from "@/types/focus";
 import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
@@ -58,6 +60,7 @@ export function WorkplaceFocusTaskProvider({
   children: ReactNode;
 }) {
   const [activeTarget, setActiveTargetState] = useState<FocusTarget | null>(null);
+  const [hasNextUpTasks, setHasNextUpTasks] = useState(false);
   const activeSourceRef = useRef<ActiveTargetSource>("auto");
 
   const taskById = useMemo(
@@ -123,6 +126,19 @@ export function WorkplaceFocusTaskProvider({
     setActiveTargetState(autoTask ? { type: "task", id: autoTask.id } : null);
   }, [tasks, viewDate]);
 
+  useEffect(() => {
+    const refreshQueueState = () => {
+      void fetchNextUpTasks()
+        .then((queue) => setHasNextUpTasks(queue.length > 0))
+        .catch(() => setHasNextUpTasks(false));
+    };
+
+    refreshQueueState();
+    window.addEventListener(NEXT_UP_UPDATED_EVENT, refreshQueueState);
+    return () =>
+      window.removeEventListener(NEXT_UP_UPDATED_EVENT, refreshQueueState);
+  }, []);
+
   const notifyTaskCompleted = useCallback(
     (taskId: string) => {
       setActiveTargetState((current) => {
@@ -146,6 +162,7 @@ export function WorkplaceFocusTaskProvider({
 
   useEffect(() => {
     if (activeSourceRef.current !== "auto") return;
+    if (hasNextUpTasks) return;
 
     const sync = () => {
       const autoTask = findTaskAtNow(tasks, viewDate);
@@ -162,7 +179,7 @@ export function WorkplaceFocusTaskProvider({
     sync();
     const timer = window.setInterval(sync, 30_000);
     return () => window.clearInterval(timer);
-  }, [tasks, viewDate]);
+  }, [hasNextUpTasks, tasks, viewDate]);
 
   const activeTask =
     activeTarget?.type === "task"

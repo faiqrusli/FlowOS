@@ -9,13 +9,26 @@ import {
 import { cn } from "@/lib/utils";
 
 export const FOCUS_TIMER_RING_SIZE = 188;
-const RING_SIZE = FOCUS_TIMER_RING_SIZE;
-const TRACK_STROKE = 3.5;
-const PROGRESS_STROKE = 5.5;
-const PROGRESS_DOT_RADIUS = 4;
-const RADIUS = (RING_SIZE - PROGRESS_STROKE) / 2;
-const CENTER = RING_SIZE / 2;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+/** Compact ring for the workplace dashboard focus card. */
+export const WORKPLACE_FOCUS_TIMER_RING_SIZE = 148;
+
+function getRingMetrics(size: number) {
+  const scale = size / FOCUS_TIMER_RING_SIZE;
+  const trackStroke = 3.5 * scale;
+  const progressStroke = 5.5 * scale;
+  const progressDotRadius = 4 * scale;
+  const radius = (size - progressStroke) / 2;
+  const center = size / 2;
+  const circumference = 2 * Math.PI * radius;
+  return {
+    trackStrokeWidth: trackStroke,
+    progressStrokeWidth: progressStroke,
+    progressDotRadius,
+    radius,
+    center,
+    circumference,
+  };
+}
 
 type FocusTimerRingProps = {
   clock: string;
@@ -23,6 +36,7 @@ type FocusTimerRingProps = {
   isActive: boolean;
   statusLabel: string;
   statusTone?: "focus" | "break" | "muted";
+  size?: number;
   className?: string;
   children?: React.ReactNode;
 };
@@ -33,47 +47,57 @@ export function FocusTimerRing({
   isActive,
   statusLabel,
   statusTone = "focus",
+  size = FOCUS_TIMER_RING_SIZE,
   className,
   children,
 }: FocusTimerRingProps) {
+  const {
+    trackStrokeWidth,
+    progressStrokeWidth,
+    progressDotRadius,
+    radius,
+    center,
+    circumference,
+  } = getRingMetrics(size);
+  const compact = size < FOCUS_TIMER_RING_SIZE;
   const ring = getFocusRingVisualState(focusSeconds);
-  const dashOffset = CIRCUMFERENCE * (1 - ring.progress);
-  const dot = getFocusRingPoint(CENTER, RADIUS, ring.progress);
-  const trackStroke = getFocusRingTrackColor(ring.lap);
-  const progressStroke = getFocusRingProgressColor(ring.isDeepLap);
+  const dashOffset = circumference * (1 - ring.progress);
+  const dot = getFocusRingPoint(center, radius, ring.progress);
+  const trackColor = getFocusRingTrackColor(ring.lap);
+  const progressColor = getFocusRingProgressColor(ring.isDeepLap);
 
   return (
     <div
       className={cn("relative inline-flex items-center justify-center", className)}
-      style={{ width: RING_SIZE, height: RING_SIZE }}
+      style={{ width: size, height: size }}
     >
       <svg
-        width={RING_SIZE}
-        height={RING_SIZE}
-        viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`}
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
         className="absolute inset-0"
         aria-hidden
       >
         <circle
-          cx={CENTER}
-          cy={CENTER}
-          r={RADIUS}
+          cx={center}
+          cy={center}
+          r={radius}
           fill="none"
-          stroke={trackStroke}
-          strokeWidth={TRACK_STROKE}
+          stroke={trackColor}
+          strokeWidth={trackStrokeWidth}
         />
         {isActive && ring.progress > 0 ? (
           <circle
-            cx={CENTER}
-            cy={CENTER}
-            r={RADIUS}
+            cx={center}
+            cy={center}
+            r={radius}
             fill="none"
-            stroke={progressStroke}
-            strokeWidth={PROGRESS_STROKE}
+            stroke={progressColor}
+            strokeWidth={progressStrokeWidth}
             strokeLinecap="round"
-            strokeDasharray={CIRCUMFERENCE}
+            strokeDasharray={circumference}
             strokeDashoffset={dashOffset}
-            transform={`rotate(-90 ${CENTER} ${CENTER})`}
+            transform={`rotate(-90 ${center} ${center})`}
             className="transition-[stroke-dashoffset] duration-1000 ease-linear"
           />
         ) : null}
@@ -81,7 +105,7 @@ export function FocusTimerRing({
           <circle
             cx={dot.x}
             cy={dot.y}
-            r={PROGRESS_DOT_RADIUS}
+            r={progressDotRadius}
             fill={FOCUS_TIMER_COLORS.ringDot}
             className="transition-[cx,cy] duration-1000 ease-linear"
           />
@@ -90,14 +114,16 @@ export function FocusTimerRing({
 
       <div
         className={cn(
-          "relative z-[1] flex flex-col items-center justify-center px-4 text-center transition-opacity duration-200",
+          "relative z-[1] flex flex-col items-center justify-center text-center transition-opacity duration-200",
+          compact ? "px-2" : "px-4",
           "group-hover/timer:pointer-events-none group-hover/timer:opacity-0",
           "group-focus-within/timer:pointer-events-none group-focus-within/timer:opacity-0"
         )}
       >
         <p
           className={cn(
-            "font-mono text-[2.65rem] font-semibold leading-none tabular-nums tracking-tight text-white",
+            "font-mono font-semibold leading-none tabular-nums tracking-tight text-white",
+            compact ? "text-[2rem]" : "text-[2.65rem]",
             !isActive && "text-white/35"
           )}
         >
@@ -106,7 +132,8 @@ export function FocusTimerRing({
         {statusLabel ? (
           <p
             className={cn(
-              "mt-2 text-[11px] font-semibold uppercase tracking-[0.22em]",
+              "font-semibold uppercase tracking-[0.22em]",
+              compact ? "mt-1 text-[10px]" : "mt-2 text-[11px]",
               statusTone === "break" && "text-warning",
               statusTone === "muted" && "text-muted-foreground"
             )}
@@ -117,7 +144,7 @@ export function FocusTimerRing({
             {statusLabel}
           </p>
         ) : null}
-        {children ? <div className="mt-3">{children}</div> : null}
+        {children ? <div className={compact ? "mt-2" : "mt-3"}>{children}</div> : null}
       </div>
     </div>
   );

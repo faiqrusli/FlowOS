@@ -335,10 +335,9 @@ export function TodayPageContent() {
   const showNowSlot =
     density !== "focus" &&
     !isNextActionDismissed &&
-    (dashboardActive.isActive ||
-      shouldShowTodayNextAction(density, nextAction, {
-        hasActiveFocus: false,
-      }));
+    shouldShowTodayNextAction(density, nextAction, {
+      hasActiveFocus: dashboardActive.isActive,
+    });
 
   return (
     <div className="flex h-full min-h-0 flex-col">

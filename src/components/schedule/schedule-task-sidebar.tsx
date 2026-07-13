@@ -79,7 +79,7 @@ function DraggableTaskRow({
       className={cn(
         "group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-200",
         channel.border,
-        !task.completed && "cursor-grab hover:-translate-y-px hover:shadow-md active:cursor-grabbing",
+        !task.completed && "cursor-grab hover:shadow-md active:cursor-grabbing",
         task.completed && "opacity-55"
       )}
     >
@@ -140,7 +140,7 @@ function DraggableHabitRow({
       className={cn(
         "group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-200",
         channel.border,
-        !habit.completed && "cursor-grab hover:-translate-y-px hover:shadow-md active:cursor-grabbing",
+        !habit.completed && "cursor-grab hover:shadow-md active:cursor-grabbing",
         habit.completed && "opacity-55"
       )}
     >

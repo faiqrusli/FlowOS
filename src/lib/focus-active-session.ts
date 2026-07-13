@@ -1,6 +1,7 @@
 import { parseTimestamp } from "@/lib/date-utils";
 import { formatTimerClock } from "@/lib/focus-utils";
 import type { FocusTargetType, PomodoroPhase, QuickFocusPhase } from "@/types/focus";
+import type { NextUpItem } from "@/types/next-up";
 
 export const FOCUS_ACTIVE_SESSION_KEY = "flowos.focus.active";
 
@@ -22,12 +23,22 @@ export type StoredActiveFocusSession = {
   label: string;
   target_type?: FocusTargetType | null;
   target_id?: string | null;
+  /** Stable client id that groups durable per-task totals for one active session. */
+  task_focus_session_id?: string;
+  /** Finalized task-focused seconds keyed by task id. */
+  task_focus_totals?: Record<string, number>;
+  /** Current task-focus segment start; null during pause, break, or no task target. */
+  task_focus_started_at?: string | null;
   /** Total accumulated focus minutes at which the break reminder should fire. Quick focus only. */
   breakAtMinutes?: number | null;
   /** Break length (minutes) used both as the modal's field and the break-finished threshold. */
   breakLengthMinutes?: number | null;
   /** Focus seconds elapsed when the schedule was last saved — audit / snooze baseline. */
   scheduledAtFocusTime?: number | null;
+  /** Legacy V1 session queue data; no longer read by the product UI. */
+  nextUpItems?: NextUpItem[] | null;
+  /** Legacy V1 scheduled-suggestion snooze map. */
+  nextUpDismissedSuggestions?: Record<string, string> | null;
 };
 
 export function readActiveSession(): StoredActiveFocusSession | null {
@@ -48,7 +59,9 @@ export function readActiveSession(): StoredActiveFocusSession | null {
       return null;
     }
 
-    return parsed;
+    return {
+      ...parsed,
+    };
   } catch {
     return null;
   }
@@ -137,6 +150,104 @@ export function computeQuickFocusSeconds(
   return { focus, break: breakSeconds };
 }
 
+function createTaskFocusSessionId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getTrackedTaskId(session: StoredActiveFocusSession): string | null {
+  return session.target_type === "task" && session.target_id
+    ? session.target_id
+    : null;
+}
+
+function getElapsedSince(iso: string, now = Date.now()): number {
+  const elapsed = now - parseTimestamp(iso).getTime();
+  return Number.isFinite(elapsed) && elapsed > 0
+    ? Math.floor(elapsed / 1000)
+    : 0;
+}
+
+export function getTaskFocusTotals(
+  session: StoredActiveFocusSession,
+  now = Date.now()
+): Record<string, number> {
+  const totals = { ...(session.task_focus_totals ?? {}) };
+  const taskId = getTrackedTaskId(session);
+  const startedAt = session.task_focus_started_at;
+
+  if (
+    taskId &&
+    startedAt &&
+    session.timer_type === "quick" &&
+    session.mode === "focus" &&
+    session.session_status === "in_progress"
+  ) {
+    totals[taskId] = (totals[taskId] ?? 0) + getElapsedSince(startedAt, now);
+  }
+
+  return totals;
+}
+
+export function getTaskFocusedSeconds(
+  session: StoredActiveFocusSession,
+  taskId: string,
+  now = Date.now()
+): number {
+  return getTaskFocusTotals(session, now)[taskId] ?? 0;
+}
+
+/** Freeze the active task segment so a pause, break, switch, or stop cannot misattribute it. */
+export function finalizeCurrentTaskFocus(
+  session: StoredActiveFocusSession,
+  now = Date.now()
+): StoredActiveFocusSession {
+  return {
+    ...session,
+    task_focus_session_id:
+      session.task_focus_session_id ?? createTaskFocusSessionId(),
+    task_focus_totals: getTaskFocusTotals(session, now),
+    task_focus_started_at: null,
+  };
+}
+
+function beginCurrentTaskFocus(
+  session: StoredActiveFocusSession,
+  now = new Date().toISOString()
+): StoredActiveFocusSession {
+  return {
+    ...session,
+    task_focus_session_id:
+      session.task_focus_session_id ?? createTaskFocusSessionId(),
+    task_focus_totals: session.task_focus_totals ?? {},
+    task_focus_started_at:
+      session.timer_type === "quick" &&
+      session.mode === "focus" &&
+      session.session_status === "in_progress" &&
+      getTrackedTaskId(session)
+        ? now
+        : null,
+  };
+}
+
+export function setQuickFocusTarget(
+  session: StoredActiveFocusSession,
+  target: { type: FocusTargetType; id: string; label?: string } | null
+): StoredActiveFocusSession {
+  const finalized = finalizeCurrentTaskFocus(session);
+  const next: StoredActiveFocusSession = {
+    ...finalized,
+    target_type: target?.type ?? null,
+    target_id: target?.id ?? null,
+    label: target?.label ?? finalized.label,
+  };
+
+  return beginCurrentTaskFocus(next);
+}
+
 export function createQuickFocusSession(options?: {
   target_type?: FocusTargetType | null;
   target_id?: string | null;
@@ -159,6 +270,10 @@ export function createQuickFocusSession(options?: {
     label: options?.label ?? "Quick Focus",
     target_type: options?.target_type ?? null,
     target_id: options?.target_id ?? null,
+    task_focus_session_id: createTaskFocusSessionId(),
+    task_focus_totals: {},
+    task_focus_started_at:
+      options?.target_type === "task" && options.target_id ? now : null,
   };
 }
 
@@ -198,8 +313,9 @@ export function pauseSession(
     };
   }
 
+  const finalized = finalizeCurrentTaskFocus(session);
   return {
-    ...session,
+    ...finalized,
     session_status: "paused",
     paused_segment_seconds: getSegmentElapsedSeconds(session),
     phase_started_at: null,
@@ -221,12 +337,13 @@ export function resumeSession(
   }
 
   const elapsed = session.paused_segment_seconds;
-  return {
+  const next: StoredActiveFocusSession = {
     ...session,
     session_status: "in_progress",
     phase_started_at: new Date(Date.now() - elapsed * 1000).toISOString(),
     paused_segment_seconds: 0,
   };
+  return beginCurrentTaskFocus(next);
 }
 
 export function quickStartBreak(
@@ -234,9 +351,10 @@ export function quickStartBreak(
 ): StoredActiveFocusSession {
   const focusSegment = getSegmentElapsedSeconds(session);
   const now = new Date().toISOString();
+  const finalized = finalizeCurrentTaskFocus(session);
 
   return {
-    ...session,
+    ...finalized,
     mode: "break",
     session_status: "in_progress",
     accumulated_focus_seconds:
@@ -252,7 +370,7 @@ export function quickResumeFocus(
   const breakSegment = getSegmentElapsedSeconds(session);
   const now = new Date().toISOString();
 
-  return {
+  const next: StoredActiveFocusSession = {
     ...session,
     mode: "focus",
     session_status: "in_progress",
@@ -261,6 +379,7 @@ export function quickResumeFocus(
     phase_started_at: now,
     paused_segment_seconds: 0,
   };
+  return beginCurrentTaskFocus(next, now);
 }
 
 export function pomodoroCompleteFocusPhase(

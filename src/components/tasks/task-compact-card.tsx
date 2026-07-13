@@ -39,8 +39,8 @@ export function TaskCompactCard({
   return (
     <article
       className={cn(
-        "group flex min-h-[90px] max-h-[120px] gap-3 rounded-xl border border-border bg-card px-3.5 py-3 shadow-xs transition-[border-color,box-shadow,background-color,transform] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:border-border hover:shadow-sm",
-        isCompleted && "border-border/70 bg-muted/25 opacity-70 hover:translate-y-0 hover:shadow-xs",
+        "group flex min-h-[90px] max-h-[120px] gap-3 rounded-xl border border-border bg-card px-3.5 py-3 shadow-xs transition-[border-color,box-shadow,background-color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-border hover:shadow-sm",
+        isCompleted && "border-border/70 bg-muted/25 opacity-70 hover:shadow-xs",
         overdue &&
           !isCompleted &&
           "border-l-[3px] border-l-warning/50"

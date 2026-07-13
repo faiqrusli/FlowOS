@@ -1,6 +1,6 @@
 "use client";
 
-import type { LucideIcon } from "lucide-react";
+import { useState } from "react";
 import {
   Bell,
   CalendarDays,
@@ -10,6 +10,8 @@ import {
   Clock,
   Flag,
   Folder,
+  ListPlus,
+  type LucideIcon,
 } from "lucide-react";
 import {
   GlobalAccessPanel,
@@ -39,6 +41,7 @@ import {
   PLANNING_STATES,
   PLAN_SECTION_LABEL,
 } from "@/lib/task-planning";
+import { appendTaskToNextUp, isEligibleForNextUp } from "@/lib/task-next-up";
 import { cn } from "@/lib/utils";
 import {
   drawerCardClass,
@@ -147,6 +150,21 @@ export function TaskDetailFields({
   onToggleComplete?: () => void;
 }) {
   const planningState = normalizePlanningState(task.planning_state);
+  const [addingToNextUp, setAddingToNextUp] = useState(false);
+  const [addedTaskId, setAddedTaskId] = useState<string | null>(null);
+  const addedToNextUp = task.queue_order !== null || addedTaskId === task.id;
+  const canAddToNextUp = isEligibleForNextUp(task) && !addedToNextUp;
+
+  const handleAddToNextUp = async () => {
+    if (!canAddToNextUp) return;
+    setAddingToNextUp(true);
+    try {
+      await appendTaskToNextUp(task.id);
+      setAddedTaskId(task.id);
+    } finally {
+      setAddingToNextUp(false);
+    }
+  };
 
   return (
     <div className={drawerCardStackClass}>
@@ -180,6 +198,17 @@ export function TaskDetailFields({
             aria-label="Task title"
             className="min-w-0 flex-1"
           />
+          {canAddToNextUp || addedToNextUp ? (
+            <button
+              type="button"
+              onClick={() => void handleAddToNextUp()}
+              disabled={!canAddToNextUp || addingToNextUp}
+              className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md border border-border/60 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:cursor-default disabled:opacity-60"
+            >
+              <ListPlus className="size-3.5" />
+              {addedToNextUp ? "In Next Up" : "Add to Queue"}
+            </button>
+          ) : null}
         </div>
 
         <div className="mt-3 space-y-1.5">

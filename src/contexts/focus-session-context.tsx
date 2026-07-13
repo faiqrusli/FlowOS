@@ -32,10 +32,13 @@ import {
   quickStartBreak,
   readActiveSession,
   resumeSession,
+  setQuickFocusTarget,
+  finalizeCurrentTaskFocus,
   writeActiveSession,
   type StoredActiveFocusSession,
 } from "@/lib/focus-active-session";
 import { persistFocusSessionEnd } from "@/lib/focus-session-persist";
+import { persistFocusTaskTotals } from "@/lib/focus-task-totals";
 import {
   playAlertSound,
   showBrowserNotification,
@@ -99,6 +102,9 @@ type FocusSessionContextValue = {
     cancelScheduledBreak: () => void;
     snoozeBreakReady: (minutes?: number) => void;
     snoozeBreakFinished: (minutes?: number) => void;
+    setFocusTarget: (
+      target: { type: FocusTargetType; id: string; label?: string } | null
+    ) => void;
   };
   pomodoro: {
     phase: PomodoroPhase;
@@ -169,6 +175,9 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
 
       if (next) {
         writeActiveSession(next);
+        void persistFocusTaskTotals(next).catch((error: unknown) => {
+          console.warn("[focus] task focus totals sync failed", error);
+        });
       } else {
         clearActiveSession();
       }
@@ -368,10 +377,25 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     [updateSession]
   );
 
+  const quickSetFocusTarget = useCallback(
+    (target: { type: FocusTargetType; id: string; label?: string } | null) => {
+      const current = sessionRef.current;
+      if (!current || current.timer_type !== "quick") return;
+      updateSession(setQuickFocusTarget(current, target));
+    },
+    [updateSession]
+  );
+
   const quickStop = useCallback(async () => {
     const current = sessionRef.current;
     if (!current || current.timer_type !== "quick") return;
-    await endSession(buildStopPayload(current));
+    const finalized = finalizeCurrentTaskFocus(current);
+    try {
+      await persistFocusTaskTotals(finalized);
+    } catch (error) {
+      console.warn("[focus] final task focus totals sync failed", error);
+    }
+    await endSession(buildStopPayload(finalized));
   }, [endSession]);
 
   const pomodoroStart = useCallback(() => {
@@ -489,12 +513,12 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
           quickPhase === "idle"
             ? "Ready"
             : quickPhase === "focus"
-              ? "Focus started"
+              ? "Focusing"
               : quickPhase === "focus_paused"
-                ? "Focus paused"
+                ? "Paused"
                 : quickPhase === "break"
                   ? "On break"
-                  : "Break paused",
+                  : "Paused on break",
         isActive: quickPhase !== "idle",
         isIdle: quickPhase === "idle",
         isOnBreak: quickPhase === "break" || quickPhase === "break_paused",
@@ -520,6 +544,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
         cancelScheduledBreak: cancelScheduledBreakAction,
         snoozeBreakReady: snoozeBreakReadyAction,
         snoozeBreakFinished: snoozeBreakFinishedAction,
+        setFocusTarget: quickSetFocusTarget,
       },
       pomodoro: {
         phase: pomodoroPhase,
@@ -568,6 +593,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     cancelScheduledBreakAction,
     snoozeBreakReadyAction,
     snoozeBreakFinishedAction,
+    quickSetFocusTarget,
     pomodoroStart,
     pomodoroPause,
     pomodoroResume,
