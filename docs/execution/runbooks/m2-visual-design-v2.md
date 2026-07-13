@@ -1,8 +1,10 @@
 # M2 — Visual Design System v2.0 Implementation
 
-**Status:** **Baseline complete at Sessions 1–5 only** (`33928bb`). Sessions 6–14 were discarded from `main` (2026-07-10). Do not resume 6–14 as written — future page work follows Layer 0–5 + the Sessions 1–5 Today/nav look.  
-**Scope:** M2 only — implement [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) (v2.0) Layer 0–5. Does **not** add modules, command palette, or new permanent surfaces.  
-**Authority:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · [decision-log.md](../logs/decision-log.md) 2026-07-10 “Layer 0–5 freeze; Sessions 1–5 visual baseline”. Historical: [DESIGN_SYSTEM_v1.md](../../foundation/DESIGN_SYSTEM_v1.md) · [m2-surface-hierarchy.md](./m2-surface-hierarchy.md).  
+> **Historical runbook.** Implements the superseded [Visual Design System v2.0](../../foundation/DESIGN_SYSTEM_v2.md) baseline only. It is not an implementation plan for [v3.0](../../foundation/DESIGN_SYSTEM.md).
+
+**Status:** **Baseline complete at Sessions 1–5 only** (`33928bb`). Sessions 6–14 were discarded from `main` (2026-07-10). Do not resume 6–14 as written.
+**Scope:** M2 only — implement [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md) Layer 0–5. Does **not** add modules, command palette, or new permanent surfaces.
+**Authority:** [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md) · [decision-log.md](../logs/decision-log.md) 2026-07-10 “Layer 0–5 freeze; Sessions 1–5 visual baseline”. Historical: [DESIGN_SYSTEM_v1.md](../../foundation/DESIGN_SYSTEM_v1.md) · [m2-surface-hierarchy.md](./m2-surface-hierarchy.md).
 **Repo root:** repository root (Next.js app).  
 **Production baseline:** https://flowos-sage.vercel.app  
 **Docs path:** `docs/` (tracked in VCS)  

@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For current implementation snapshot, also see [../archive/design/july-3/project-state-july-2026.md](../archive/design/july-3/project-state-july-2026.md).
+Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For the active visual contract and its implementation status, see [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md); the July 3 project-state document is historical only.
 
 ---
 
@@ -99,7 +99,9 @@ Types: `flowos/src/types/database.ts`
 
 ---
 
-## Central design libraries (Phase 2)
+## Central design libraries
+
+Visual semantics are specified by [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md). Its v3 migration is pending, so these remain the current implementation helpers:
 
 | Library | Purpose |
 |---------|---------|

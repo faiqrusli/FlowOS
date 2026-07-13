@@ -36,6 +36,40 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-13 — Visual Design System v3.0: global semantic visual contract
+
+**Context:** Visual Design System v2.0 established the Layer 0–5 architecture and Sessions 1–5 baseline, but it did not define a complete reusable system for typography, spacing, primitive variants, temporary UI, state distinctions, accessibility, or the full product surface. Existing implementation remains partially v2 and must not be represented as a completed v3 migration.
+
+**Decision:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) is now Visual Design System v3.0, the sole authority for new visual work. It defines dark-only Canvas, Navigation, Base, Raised, Overlay, and Hover semantics; exact v3 surface, border, primary, text, spacing, radius, shadow, state, component, and workspace rules. [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md) preserves the former frozen Sessions 1–5 contract as historical context. No product or code behaviour changes are approved by this documentation decision; a separate runbook must govern the phased implementation.
+
+**Alternatives rejected:** Revise v2.0 in place (would erase a decision baseline); keep v2.0 and a separate parallel global system (would split authority); perform a one-shot visual rewrite without a runbook (unnecessary regression risk).
+
+**Outcome:** v3.0 specification and [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md) published; code migration not started.
+
+**Related:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md) · [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md) · [CODE_STANDARDS.md](../../foundation/governance/CODE_STANDARDS.md)
+
+### 2026-07-10 — Next Up V2: persistent task execution queue
+
+**Context:** The original M2 Next Up design stored a mixed task/habit queue inside the active focus session. That made the queue disappear when a session ended and allowed planning controls into an execution surface. The founder approved V2 to make Next Up a durable, task-only expression of execution intent.
+
+**Decision:** Next Up is an ordered list of task references stored on `tasks.queue_order`. It contains incomplete tasks scheduled for Today or unscheduled tasks only, persists independently of focus sessions, and is ordered solely by `queue_order`. Completing a task or moving it to Tomorrow/Later removes it immediately; moving it back to Today never restores it automatically. Queue UI provides only add, reorder, remove, complete, open task details, and optional start focus. The V1 session-scoped task/habit queue and its queue-specific scheduled suggestions are superseded.
+
+**Alternatives rejected:** Retain the localStorage focus-session queue (loses execution intent between sessions); make Next Up a second task manager with planning controls; queue habits; automatically re-add tasks when they return to Today.
+
+**Outcome:** V2 implementation in progress on `tweak/recover-next-up-queue`.
+
+**Related:** [next-up-queue-spec.md](../../review/design/next-up-queue-spec.md) · [m2-next-up-queue.md](../runbooks/m2-next-up-queue.md)
+
+### 2026-07-10 — Next Up interaction and task focus attribution
+
+**Context:** The persistent task-only queue established intent, but did not distinguish intentional immediate focus from queueing and incorrectly displayed session-wide time as task-specific focus after a target switch.
+
+**Decision:** A task drag exposes explicit **Add to Next Up** and **Start focus** destinations. Queue drops preserve the timer and insert at the indicated position; start is intentional and never silently replaces an actively focused task. Starting a queued task removes it from the future queue. Task focus is attributed only while the quick timer is in focus mode and persisted by active-session/task totals, so pauses and breaks do not inflate it.
+
+**Alternatives rejected:** Auto-start every drop; a queue-only drop surface with a hidden start path; local-only task timing; reintroducing habits or session-scoped queue data.
+
+**Outcome:** Implementation in progress on `tweak/recover-next-up-queue`.
+
 ### 2026-07-10 — Kanban cards on `--card`; shared soft board borders with Tasks groups
 
 **Context:** After board-token polish, Kanban cards used `--surface-kanban-card` and looked flatter than production’s older `bg-card` units. Tasks group column borders were also stronger (`border-board` full / header `/80`) than the softened Kanban list borders.  

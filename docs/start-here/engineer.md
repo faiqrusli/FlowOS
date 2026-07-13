@@ -10,6 +10,7 @@
 |------|-----|
 | [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | What's shipped, partial, and deferred |
 | [TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) | Stack, data model, auth, known debt |
+| [DESIGN_SYSTEM.md](../foundation/DESIGN_SYSTEM.md) | Active visual contract; [v3 migration runbook](../execution/runbooks/design-system-v3-migration.md) |
 | [execution/README.md](../execution/README.md) | Current milestone and runbooks |
 
 **Do not use alone:** [archive/design/july-3/project-state-july-2026.md](../archive/design/july-3/project-state-july-2026.md) — frozen at July 3 (Phase 2). Use feature inventory + execution index instead.

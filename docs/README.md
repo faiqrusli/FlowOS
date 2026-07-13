@@ -39,14 +39,15 @@ When documents conflict, this order wins:
 | [strategy/](./strategy/) | Execution masterplan | **Active** |
 | [execution/](./execution/) | Runbooks, logs, ops | **Active** |
 | [review/](./review/) | SRAI after each phase/milestone | **Active** |
-| [foundation/](./foundation/) | Vision, features, architecture (3 files) | **Active** |
+| [design/](./design/) | Living feature design specifications | **Active** |
+| [foundation/](./foundation/) | Vision, features, architecture, design system (4 files) | **Active** |
 | [foundation/governance/](./foundation/governance/) | 5 rule docs (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS) | **Reference** |
 | [archive/](./archive/) | Thesis, design history, superseded plans | **Archive** |
 | [meta/](./meta/document-map.md) | Full doc inventory | Meta |
 
 **Operational docs outside `docs/`:** [supabase/APPLIED_STATE.md](../supabase/APPLIED_STATE.md)
 
-**Legacy redirects:** `foundation/LAUNCH_PLAN.md` stub → [archive/planning/](./archive/planning/). Design history: [archive/design/july-3/](./archive/design/july-3/) (no top-level `docs/design/`).
+**Legacy redirects:** `foundation/LAUNCH_PLAN.md` stub → [archive/planning/](./archive/planning/). Historical design work remains in [archive/design/july-3/](./archive/design/july-3/); current living feature specifications live in [design/](./design/).
 
 ---
 
@@ -78,8 +79,10 @@ When documents conflict, this order wins:
 
 | Document | Purpose |
 |----------|---------|
+| [design/focus/next-up.md](./design/focus/next-up.md) | Living Focus Next Up design, behavior, integrations, and guardrails |
 | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
 | [TECHNICAL_ARCHITECTURE.md](./foundation/TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt |
+| [DESIGN_SYSTEM.md](./foundation/DESIGN_SYSTEM.md) | Active global visual system; [migration runbook](./execution/runbooks/design-system-v3-migration.md) |
 | [governance/GATES.md](./foundation/governance/GATES.md) | Launch gates, WAD, D7 definitions |
 | [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | North star and non-goals |
 

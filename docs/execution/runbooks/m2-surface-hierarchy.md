@@ -1,6 +1,8 @@
 # M2 — Surface Hierarchy Runbook
 
-**Scope:** M2 only — implements the four-level visual design system. Authoritative architecture: [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) (v2.0). This runbook executed the v1 surface contract preserved in [DESIGN_SYSTEM_v1.md](../../foundation/DESIGN_SYSTEM_v1.md). Does not add, remove, or weaken any M2 exit criterion.  
+> **Historical runbook.** This records implementation of the [Visual Design System v1.0](../../foundation/DESIGN_SYSTEM_v1.md) surface contract. It is not an implementation plan for [v3.0](../../foundation/DESIGN_SYSTEM.md).
+
+**Scope:** M2 only — implements the four-level v1 visual design system. Authoritative historical architecture: [DESIGN_SYSTEM_v1.md](../../foundation/DESIGN_SYSTEM_v1.md). Does not add, remove, or weaken any M2 exit criterion.
 **Authority:** [decision-log.md](../logs/decision-log.md) 2026-07-08 "Four-level surface hierarchy (content first, chrome second)" is the product decision. This runbook does not re-litigate it.  
 **Repo root:** repository root (Next.js app).  
 **Production baseline:** https://flowos-sage.vercel.app  
@@ -76,7 +78,7 @@ Ad-hoc follow-up tweaks: branch `tweak/surface-{description}` from `main` — sa
 **Goal:** Dark theme defines the four canonical surface tokens and maps existing shadcn/Tailwind aliases to them.  
 **Time:** 2–3 hours  
 **Prerequisites:** M1 ship gate complete.  
-**Maps to:** DESIGN_SYSTEM.md migration Phase 1 + Phase 5 (token definitions)  
+**Maps to:** `DESIGN_SYSTEM_v1.md` migration Phase 1 + Phase 5 (token definitions)
 **Merge bundle:** B1
 
 ### Current code reality
@@ -86,7 +88,7 @@ Ad-hoc follow-up tweaks: branch `tweak/surface-{description}` from `main` — sa
 | Dark surfaces | `src/app/globals.css` `.dark` | Seven levels: `--surface-app`, `--surface-sidebar`, `--surface-page`, `--timeline-surface`, `--surface-card`, `--surface-elevated`, `--surface-popover`, `--surface-dialog` |
 | Tailwind bridge | `src/app/globals.css` `@theme inline` | `--color-surface-sidebar`, `--color-surface-page`, etc. |
 | Theme reference | `src/lib/theme/tokens.ts` | Documents old token names |
-| Spec targets | [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) | Four tokens: `#0E111B`, `#121826`, `#1A2133`, `#232D45` |
+| Spec targets | [DESIGN_SYSTEM_v1.md](../../foundation/DESIGN_SYSTEM_v1.md) | Four tokens: `#0E111B`, `#121826`, `#1A2133`, `#232D45` |
 
 ### Numbered steps
 
@@ -129,10 +131,10 @@ git status -sb
 ## Session 2 — Sidebar parity
 
 **Type:** `engineering`  
-**Goal:** Left and right sidebars use identical surface treatment per DESIGN_SYSTEM.md.  
+**Goal:** Left and right sidebars use identical surface treatment per `DESIGN_SYSTEM_v1.md`.
 **Time:** 2 hours  
 **Prerequisites:** Session 1 on `main`.  
-**Maps to:** DESIGN_SYSTEM.md migration Phase 2  
+**Maps to:** `DESIGN_SYSTEM_v1.md` migration Phase 2
 **Merge bundle:** B2
 
 ### Current code reality
@@ -171,7 +173,7 @@ git status -sb
 **Goal:** Top bar and main workspace merge into one continuous canvas.  
 **Time:** 2 hours  
 **Prerequisites:** Session 1 on `main`.  
-**Maps to:** DESIGN_SYSTEM.md migration Phase 3  
+**Maps to:** `DESIGN_SYSTEM_v1.md` migration Phase 3
 **Merge bundle:** B2
 
 ### Current code reality
@@ -210,7 +212,7 @@ git status -sb
 **Goal:** Shell-adjacent and highest-traffic surfaces use the four-token model — no stray dark hex or extra elevation layers.  
 **Time:** 3 hours  
 **Prerequisites:** Sessions 2 and 3 on `main`.  
-**Maps to:** DESIGN_SYSTEM.md migration Phase 4 (scoped to shell + Today/Tasks/Workplace)  
+**Maps to:** `DESIGN_SYSTEM_v1.md` migration Phase 4 (scoped to shell + Today/Tasks/Workplace)
 **Merge bundle:** B3
 
 ### Audit scope (in order)
@@ -250,7 +252,7 @@ git status -sb
 **Goal:** TypeScript theme helpers and docs reflect the four-token system; no stale references to seven levels.  
 **Time:** 2 hours  
 **Prerequisites:** Session 4 on `main`.  
-**Maps to:** DESIGN_SYSTEM.md migration Phase 5  
+**Maps to:** `DESIGN_SYSTEM_v1.md` migration Phase 5
 **Merge bundle:** B3
 
 ### Numbered steps
@@ -259,7 +261,7 @@ git status -sb
 |---|------|
 | 1 | Update `src/lib/theme/tokens.ts` to export `background`, `surface`, `card`, `surfaceHover` as canonical; mark legacy names deprecated or alias-only. |
 | 2 | Update `src/lib/theme/surface-classes.ts` comments to match four-level model; add `surfaceHoverClass` if needed for shared hover rows. |
-| 3 | Update [CODE_STANDARDS.md](../../foundation/governance/CODE_STANDARDS.md) styling section with one-line pointer to DESIGN_SYSTEM.md (docs-only cross-ref). |
+| 3 | Update [CODE_STANDARDS.md](../../foundation/governance/CODE_STANDARDS.md) styling section with one-line pointer to `DESIGN_SYSTEM_v1.md` (historical cross-reference). |
 | 4 | Final `rg` pass: zero unexplained custom dark backgrounds in `src/components` (semantic accents like schedule palette exempt). |
 | 5 | `npm run build && npm run lint` → commit → push → ask founder merge approval. |
 
@@ -278,7 +280,7 @@ git status -sb
 ## Out of scope
 
 - Light theme token rewrite (product is dark-only)
-- Command palette, AI assistant, analytics modules (future — DESIGN_SYSTEM.md maps them only)
+- Command palette, AI assistant, analytics modules (future — `DESIGN_SYSTEM_v1.md` maps them only)
 - `fable5` prototype routes
 - dnd-kit migration, monolith splits, new modules
 - Changing primary indigo accent system (CTA color is separate from surface hierarchy)

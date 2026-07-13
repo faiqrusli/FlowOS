@@ -3,9 +3,9 @@
 Product truth documents — vision, features, architecture.
 
 **Current execution:** [../execution/README.md](../execution/README.md) — M2 in progress  
-**Governance (4 files):** [governance/README.md](./governance/README.md)
+**Governance (5 files):** [governance/README.md](./governance/README.md)
 
-**Last updated:** July 4, 2026 (Pass 5 — 3 active foundation files)
+**Last updated:** July 13, 2026 (Visual Design System v3.0)
 
 ---
 
@@ -16,13 +16,13 @@ Product truth documents — vision, features, architecture.
 | [PRODUCT_VISION.md](./PRODUCT_VISION.md) | North star, positioning, non-goals, target user |
 | [FEATURE_INVENTORY.md](./FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
 | [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt, deployment |
-| [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) | Visual architecture v2.0 (surfaces, chrome, workspace hierarchy). Historical: [v1.0](./DESIGN_SYSTEM_v1.md) |
+| [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) | Visual Design System v3.0 — global semantic visual contract; [migration runbook](../execution/runbooks/design-system-v3-migration.md). Historical: [v2.0](./DESIGN_SYSTEM_v2.md), [v1.0](./DESIGN_SYSTEM_v1.md) |
 
 **Metrics and release gates:** [governance/GATES.md](./governance/GATES.md) (WAD, D7, alpha/beta thresholds)
 
 ---
 
-## Governance (active)
+## Governance (5 active documents)
 
 | File | Purpose |
 |------|------|

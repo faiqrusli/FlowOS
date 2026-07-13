@@ -2,9 +2,9 @@
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 10, 2026 (Global nav: Home + Workspace; Schedule/Notes primary again)
+**Last updated:** July 13, 2026 (Visual Design System v3.0 published; persistent Next Up V2 in progress)
 
-**Visual surfaces:** Board chrome (Tasks groups + Kanban) → [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) Layer 2. Helpers: `src/lib/theme/surface-classes.ts`, `src/lib/task-group-appearance.ts`.
+**Visual system:** [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) v3.0 is the active visual authority. Its code migration is pending; current surface helpers remain `src/lib/theme/surface-classes.ts` and `src/lib/task-group-appearance.ts`.
 
 ---
 
@@ -149,6 +149,7 @@ Logic: `flowos/src/lib/dashboard-command.ts`
 | Habit focus tracking | Shipped | Requires `track_with_focus` opt-in per habit |
 | Reflection on session end | Shipped | Modal on Workplace |
 | Schedule Break (modal + Next Break strip + break notifications) | **Shipped** | Quick-focus tab on Workplace focus card; preset/custom duration picker; spec: [schedule-break-modal-spec.md](../review/design/schedule-break-modal-spec.md) |
+| Next Up queue (Focus execution layer) | **In progress** | V2: persistent task-only ordered queue (`tasks.queue_order`), positional drop insertion, intentional start-focus handoff, and per-task active-session focus attribution; see [decision log](../execution/logs/decision-log.md#2026-07-10--next-up-v2-persistent-task-execution-queue) |
 
 ---
 
@@ -238,17 +239,13 @@ Full detail: [../archive/project/03-future-enhancements.md](../archive/project/0
 
 ---
 
-## Design system (not features, but shipped)
+## Design system (not features)
 
-| Phase | Status | Commit |
-|-------|--------|--------|
-| Design Audit | Complete | — |
-| Phase 0 — Foundation | Complete | `5fc780a` |
-| Phase 1 — Interaction | Complete | `04fe227` |
-| Phase 2 — Accent language | Complete | `9f7e7c4` |
-| Phase 3 — Daily loop | **Not started** | — |
-
-Source: [../archive/design/july-3/project-state-july-2026.md](../archive/design/july-3/project-state-july-2026.md)
+| System | Status | Source |
+|--------|--------|--------|
+| Visual Design System v3.0 | **Approved; migration runbook ready** | [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) · [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md) |
+| Visual Design System v2.0 | Historical Sessions 1–5 baseline | [DESIGN_SYSTEM_v2.md](./DESIGN_SYSTEM_v2.md) |
+| Design audit / Phases 0–2 | Historical | [archive/design/july-3/](../archive/design/july-3/) |
 
 ---
 

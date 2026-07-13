@@ -22,6 +22,20 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-13 — Visual Design System v3.0 + migration runbook
+
+**Shipped:**
+- [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) v3.0 — global semantic visual contract (Canvas, Navigation, Base, Raised, Overlay, Hover)
+- [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md) preserved as historical Sessions 1–5 baseline
+- [design-system-v3-migration.md](../runbooks/design-system-v3-migration.md) — Phases 1–11 execution runbook
+- Foundation and execution indexes updated; historical v2 runbooks marked superseded
+
+**Build/lint:** docs-only — not required.
+
+**Decision:** [decision-log.md](./decision-log.md) — Visual Design System v3.0 (2026-07-13)
+
+---
+
 ## 2026-07-10 — Global nav B1 (Home + Workspace)
 
 **Shipped:**

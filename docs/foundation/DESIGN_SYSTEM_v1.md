@@ -1,6 +1,6 @@
 ﻿# FlowOS Visual Design System v1.0
 
-> **Historical.** Superseded by [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) (v2.0) on 2026-07-10.
+> **Historical.** Superseded by [DESIGN_SYSTEM_v2.md](./DESIGN_SYSTEM_v2.md) (v2.0) on 2026-07-10.
 > Kept for context on why the surface model was first frozen — do not use for new UI decisions.
 
 **Version:** 1.0  
@@ -10,7 +10,7 @@
 **Related:** [globals.css](../../src/app/globals.css), [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md), [PRINCIPLES.md](./governance/PRINCIPLES.md)  
 **Decision:** [decision-log.md](../execution/logs/decision-log.md) — 2026-07-08 "Four-level surface hierarchy"  
 **Implementation:** [m2-surface-hierarchy.md](../execution/runbooks/m2-surface-hierarchy.md)  
-**Superseded by:** [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) (v2.0)
+**Superseded by:** [DESIGN_SYSTEM_v2.md](./DESIGN_SYSTEM_v2.md) (v2.0)
 
 ---
 

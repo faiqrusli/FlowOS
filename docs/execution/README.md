@@ -25,8 +25,10 @@ This folder is the index for **how FlowOS ships right now**. Strategy lives in t
 | M0 — Custody | (covered in masterplan) | Complete |
 | M1 — Deployed & Secure | [m1-ship-gate.md](./runbooks/m1-ship-gate.md) | **Complete** — RLS verified, production live |
 | M2 — Founder Daily Driver | [m2-founder-daily-driver.md](./runbooks/m2-founder-daily-driver.md) | **In progress** — Sessions 1–6 shipped |
-| M2 — Surface hierarchy | [m2-surface-hierarchy.md](./runbooks/m2-surface-hierarchy.md) | **Complete** — Sessions 1–5 (2026-07-08) |
-| M2 — Visual Design v2.0 | [m2-visual-design-v2.md](./runbooks/m2-visual-design-v2.md) | **Baseline Sessions 1–5** — later sessions discarded; Layer 0–5 in DESIGN_SYSTEM |
+| M2 — Surface hierarchy | [m2-surface-hierarchy.md](./runbooks/m2-surface-hierarchy.md) | **Complete** — historical Sessions 1–5 baseline (2026-07-08) |
+| Visual Design System v2.0 | [DESIGN_SYSTEM_v2.md](../foundation/DESIGN_SYSTEM_v2.md) | Historical baseline; superseded |
+| Visual Design System v3.0 | [DESIGN_SYSTEM.md](../foundation/DESIGN_SYSTEM.md) | **Approved** — [design-system-v3-migration.md](./runbooks/design-system-v3-migration.md) ready |
+| M2 — Visual Design v2.0 | [m2-visual-design-v2.md](./runbooks/m2-visual-design-v2.md) | Historical baseline runbook; later sessions discarded |
 | M2 — Global navigation | [m2-global-navigation.md](./runbooks/m2-global-navigation.md) | Ready — deferred |
 | M2 — Today UX polish | [m2-today-ux-polish.md](./runbooks/m2-today-ux-polish.md) | **Complete** — production sign-off 2026-07-05 |
 | M3 — First Strangers | (masterplan Step 2) | Not started — recruiting prep underway |

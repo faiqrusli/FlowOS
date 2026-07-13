@@ -1,517 +1,745 @@
-# FlowOS Visual Design System v2.0
+# FlowOS Visual Design System v3.0
 
-| | |
-|---|---|
-| **Version** | 2.0 |
-| **Status** | ✅ Frozen |
-| **Owner** | FlowOS Product |
-| **Date** | July 10, 2026 |
-| **Supersedes** | [Visual Design System v1.0](./DESIGN_SYSTEM_v1.md) |
-| **Tokens** | [globals.css](../../src/app/globals.css) |
-| **Related** | [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md) · [PRINCIPLES.md](./governance/PRINCIPLES.md) · [decision-log.md](../execution/logs/decision-log.md) |
 
----
+|                           |                                                                                                                                                          |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Version**               | 3.0                                                                                                                                                      |
+| **Status**                | Approved implementation contract — migration pending                                                                                                     |
+| **Owner**                 | FlowOS Product                                                                                                                                           |
+| **Date**                  | July 13, 2026                                                                                                                                            |
+| **Supersedes**            | [Visual Design System v2.0](./DESIGN_SYSTEM_v2.md)                                                                                                       |
+| **Implementation source** | [globals.css](../../src/app/globals.css) after the dedicated migration                                                                                   |
+| **Related**               | [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md) · [PRINCIPLES.md](./governance/PRINCIPLES.md) · [decision-log.md](../execution/logs/decision-log.md) |
 
-## Purpose
-
-Defines the visual architecture of FlowOS.
-
-This document is the single source of truth for:
-
-- Color hierarchy
-- Surface hierarchy
-- Application chrome
-- Workspace hierarchy
-- Information hierarchy
-- Elevation
-- Visual focus
-
-Every future UI component must conform to this document.
 
 ---
 
-## Vision
+## 1. Purpose and scope
 
-FlowOS should feel like a **workspace**, not a dashboard.
+FlowOS is a premium, desktop-first productivity operating system for tasks, habits, focus, schedule, reflection, and notes. Its visual system must make every route, rail, drawer, overlay, and temporary control feel like one calm workspace:
 
-The interface should quietly disappear while the user's work becomes the primary visual focus.
+- calm, focused, minimal, structured, and modern
+- dense where organising work benefits from density
+- spacious where focus and writing benefit from breathing room
+- visually quiet enough that the workspace disappears behind the user's work
 
-Navigation exists to support productivity.
+This document is the visual authority for the whole product: Today, Tasks, Habits, Schedule, Focus, Reflection, Notes, Kanban, Timeline, navigation, drawers, overlays, modals, popovers, and context menus.
 
-**Content is the product. Chrome supports the product.**
+It governs visual styling only. It does **not** change product behaviour, business logic, data, routing, feature architecture, or working layouts unless a visual replacement requires it.
+
+### Non-goals
+
+- A page-specific visual system or a Today-only redesign
+- Generic colourful SaaS styling, decorative glows, or blue-as-decoration
+- Nested-card hierarchy, arbitrary greys, or a container around every element
+- New modules, command interfaces, or layout rewrites presented as design work
+- A one-shot destructive CSS rewrite
+
+### Current implementation status
+
+The repository still implements the v2 token contract. The exact v3 tokens and component variants below are **target requirements**, not a claim that they are already shipped. The dedicated migration runbook will define phases, verification, compatibility aliases, and removal of legacy token names. Until then, `globals.css` remains code truth and this document remains design truth.
+
+FlowOS is dark-only by product policy. Existing light-theme code is legacy implementation debt to be retired through the migration; it is not a second v3 visual system.
 
 ---
 
-## Product philosophy
-
-FlowOS is not a collection of pages.
-
-It is a productivity operating system.
-
-The interface should reinforce the user's workflow:
-
-```
-Capture → Plan → Execute → Reflect
-```
-
-Every screen should communicate that workflow through hierarchy rather than decoration.
-
----
-
-## Core principles
+## 2. Core principles
 
 ### Content first
 
-The user's work should always receive the greatest visual attention.
-
-The application itself should fade into the background.
-
-### Chrome second
-
-Navigation should never compete with content.
-
-Chrome frames work. It does not become the work.
-
-### One visual hero
-
-Every screen should have exactly one visual hero.
-
-| Screen | Hero |
-|--------|------|
-| Today | Focus |
-| Schedule | Timeline |
-| Notes | Document |
-| Reflection | Reflection editor |
-| Analytics | Primary visualization |
-
-When multiple components compete for attention, the interface becomes noisy.
+The user's work receives the strongest visual attention. Chrome frames it without becoming the subject.
 
 ### Hierarchy through structure
 
-FlowOS communicates importance using:
+Create hierarchy in this order:
 
-- Layout
-- Spacing
-- Typography
-- Elevation
-- Subtle surfaces
+1. Surface depth
+2. Typography
+3. Spacing
+4. Scale
+5. State
+6. Restrained accent colour
 
-Avoid using bright colors or heavy decoration to create hierarchy.
+Do not create hierarchy by nesting increasingly raised cards.
 
----
+### One clear current context
 
-## Design goals
+Each workspace must make these questions answerable at a glance:
 
-FlowOS should:
+1. Where am I?
+2. What am I doing now?
+3. What should I do next?
+4. What can I interact with?
 
-- Maximize focus
-- Reduce visual noise
-- Feel larger than it is
-- Feel premium
-- Scale to future workspaces
+### Purposeful density
 
-Avoid:
-
-- Heavy dashboard appearance
-- Multiple unrelated background colors
-- Decorative glows
-- Artificial visual complexity
-- Chrome competing with content
+Task lists, habit lists, queue rows, note lists, Kanban cards, and timeline metadata are compact. Focus timers, current-task descriptions, reflection writing, notes editors, and empty workspaces receive more air.
 
 ---
 
-## Surface hierarchy (Layer 0–5)
+## 3. Semantic surface system
 
-**Canonical visual source:** VDS Sessions **1–5** tip (`33928bb`) — Workspace Drawer card-on-chrome, quiet left nav, and the Today page (including Focus tabs on `bg-muted/40` / active `bg-card`). All future UI (Tasks and beyond) must match that look.
+Every permanent major surface belongs to one of four levels. Navigation is persistent chrome outside that stack; hover is temporary state only.
 
-FlowOS uses **six layers**. Do not invent new permanent background colors outside this stack.
 
-| Layer | Role | Token / signal | Purpose |
-|-------|------|----------------|---------|
-| **0** | Navigation | `--surface` | Darkest — left nav, workspace drawer chrome |
-| **1** | Workspace | `--background` | Page / canvas behind cards |
-| **2** | Standard surfaces | `--card` | Cards, lists, panels, dialogs |
-| **3** | Hero surfaces | `--surface-focus` | Current Focus / primary workspace hero |
-| **4** | Interactive | `--primary`, selected | Buttons, selected, blue accent |
-| **5** | Feedback | `--success`, `--warning`, `--destructive` | Success, warning, danger |
+| Role       | Token               | Value     | Purpose                                                    |
+| ---------- | ------------------- | --------- | ---------------------------------------------------------- |
+| Canvas     | `--surface-canvas`  | `#080E1B` | Page background and cardless work area                     |
+| Navigation | `--surface-nav`     | `#070C18` | Persistent left/right rails and sidebar chrome             |
+| Base       | `--surface-base`    | `#0D1423` | Organisational panels, groups, lists, sections             |
+| Raised     | `--surface-raised`  | `#121B2C` | Current, selected, or attention-worthy functional surfaces |
+| Overlay    | `--surface-overlay` | `#151E30` | Temporary UI above the workspace                           |
+| Hover      | `--surface-hover`   | `#1A2437` | Pointer, keyboard-row, or drag-candidate feedback only     |
 
-Temporary hover uses `--surface-hover` (and Focus hover variants). It is **not** a permanent layer — never ship hover as a resting fill.
 
-### Current dark values (implementation)
+### Surface responsibilities
 
-Canonical values live in [globals.css](../../src/app/globals.css). Frozen to Sessions 1–5:
+**Canvas** is the lowest depth. Use it for the application workspace, empty page space, and the cardless Focus timer. Never use it for floating UI.
 
-| Layer | Token | Value |
-|-------|-------|-------|
-| 0 | `--surface` | `oklch(0.148 0.032 268)` ≈ `#060A18` |
-| 1 | `--background` | `oklch(0.171 0.030 268)` ≈ `#0A0F1D` |
-| 2 | `--card` | `oklch(0.229 0.032 268)` ≈ `#161C2C` |
-| 3 | `--surface-focus` | `color-mix(in oklab, var(--card) 92%, white 8%)` |
-| 4 | `--primary` | `oklch(0.575 0.205 272)` (indigo accent) |
-| 5 | semantic | success / warning / destructive tokens |
+**Navigation** is slightly darker than the canvas. It frames the workspace without competing with it; it is not a content or editor surface.
 
-Navigation (Layer 0) is recessed below the workspace canvas (Layer 1). Do not reintroduce decorative glows or a seven-level stack.
+**Base** is quiet organisation: task and habit groups, normal panels, notes lists, reflection sections, Kanban columns, timeline base, schedule groups, and secondary drawer content.
 
----
+**Raised** means “this deserves attention now”: Current Focus Task, Quick Capture, selected detail, active queue item, or an active editor context. If every card is raised, none is.
 
-## Surface responsibilities
+**Overlay** is temporary context: queue overlay, picker, quick drawer opened over another workspace, dialog, popover, dropdown, command interface, and context menu. It separates from the workspace with depth, border, and restrained shadow—never glow.
 
-### Layer 0 — Navigation
+**Hover** is never a permanent card fill.
 
-**Purpose:** Application chrome — darkest frame.
+### Surface mapping rules
 
-**Includes:** Left sidebar, workspace drawer shell, future AI drawer chrome.
-
-**Rules:** Darker than workspace and cards. Never used for editing. Expand/resize changes width only — never elevation.
-
-### Layer 1 — Workspace
-
-**Purpose:** Page background / infinite canvas.
-
-**Includes:** Main content area, gutters, top bar (merged into canvas).
-
-**Rules:** Never interactive content. Never brighter than cards.
-
-### Layer 2 — Standard surfaces
-
-**Purpose:** Units of work — cards, lists, panels, forms, dialogs.
-
-**Rules:** Share one common `--card` surface. No feature-specific permanent card colors. Content in the drawer lives on Layer 2 over Layer 0 chrome.
-
-**Tasks board columns (workspace lift, not hero):** Task group columns use `--surface-board` — a ~2–4% lift above `--background` toward `--card`, with a whisper header `--surface-board-header`. This is **not** Layer 3 / `--surface-focus`. Columns should read as independent workspaces, not floating cards and not Focus-hero surfaces.
-
-**Shared board chrome (Tasks groups + Notes/Reflection Kanban lists):**
-
-| Element | Token / class | Notes |
-|---------|---------------|-------|
-| Column / list fill | `--surface-board` | Same well for Tasks groups and Kanban lists |
-| Outer border | `--border-board` at **55%** opacity (`border-border-board/55`) | Softened vs full board border |
-| Header divider | `--border-board` at **45%** (`border-border-board/45`) | Quieter than outer edge |
-| Kanban cards | `--card` + `border-border/30` | Standard Layer 2 units on the board well |
-| Tasks rows | Unchanged (transparent resting; hover muted) | Not Kanban card chrome |
-
-Helpers: [surface-classes.ts](../../src/lib/theme/surface-classes.ts) (`kanbanColumnBodyClass`, `kanbanCardClass`), [task-group-appearance.ts](../../src/lib/task-group-appearance.ts) (`TASK_GROUP_COLUMN_*`).
-
-### Layer 3 — Hero surfaces
-
-**Purpose:** The one primary workspace on a screen (Today = Focus).
-
-**Rules:** Use `--surface-focus` whisper lift above `--card`. Border `--border-focus`. No glow, no blue fill, no elevated shadow as permanent hero treatment. Focus/Pomodoro tab chrome stays on card/muted — **never** `bg-background` holes in the hero.
-
-### Layer 4 — Interactive
-
-**Purpose:** Buttons, selected states, blue accent, active nav.
-
-**Rules:** Primary indigo is the loud voice. Selected uses `--selected` / primary tints. Do not paint whole panels with primary.
-
-### Layer 5 — Feedback
-
-**Purpose:** Success, warning, danger.
-
-**Rules:** Semantic only — status, validation, destructive actions. Never as page or card resting backgrounds.
+- Prefer surface contrast before adding a border.
+- Task, note, habit, and queue rows are flat within their parent surface unless their object role requires a card, as in Kanban.
+- Do not create a separate permanent grey for one page.
+- Preserve compatibility aliases during migration so existing Tailwind and shadcn primitives can move incrementally to the new semantic names.
 
 ---
 
-## Information hierarchy
+## 4. Colour, borders, and text
 
-FlowOS organizes information in layers:
+### Borders
 
-```
-Application
-  ↓
-Workspace
-  ↓
-Card
-  ↓
-Component
-  ↓
-Interaction
-```
 
-Every feature should naturally fit this structure.
+| Token             | Value     | Use                                                                                |
+| ----------------- | --------- | ---------------------------------------------------------------------------------- |
+| `--border-subtle` | `#202B3D` | Base surfaces, quiet dividers, normal inputs, group boundaries, timeline structure |
+| `--border-strong` | `#303C51` | Raised surfaces, overlays, active major containers, selected major surfaces        |
 
----
 
-## UI responsibilities
+Borders provide structure, not primary hierarchy. Do not use strong borders on every task row or build a stack of card → card → bordered row → bordered badge.
 
-Each visual layer has one responsibility.
+### Primary accent
 
-| Layer | Responsibility |
-|-------|----------------|
-| 0 Navigation | Frames the app (darkest) |
-| 1 Workspace | Provides page breathing room |
-| 2 Standard surfaces | Hold lists, panels, forms |
-| 3 Hero | One primary workspace per screen |
-| 4 Interactive | Buttons, selected, blue accent |
-| 5 Feedback | Success, warning, danger |
 
----
+| Token              | Value                      |
+| ------------------ | -------------------------- |
+| `--primary`        | `#586CF6`                  |
+| `--primary-subtle` | `rgba(88, 108, 246, 0.08)` |
+| `--primary-soft`   | `rgba(88, 108, 246, 0.12)` |
+| `--primary-medium` | `rgba(88, 108, 246, 0.20)` |
 
-## Workspace architecture
 
-FlowOS distinguishes between **pages** and **contextual workspaces**.
+Indigo identifies primary actions, selected navigation, current Focus state, active controls, timeline Now, selected tabs, drag targets, active progress, and accessible focus where appropriate. The interface must remain useful without it; use it to direct attention, not decorate normal borders, icons, text, badges, dividers, or all buttons.
 
-### Pages
 
-Pages are destinations.
+| Variant          | Meaning                                      |
+| ---------------- | -------------------------------------------- |
+| `primary-subtle` | Quiet selected background or current context |
+| `primary-soft`   | Selected row or secondary active navigation  |
+| `primary-medium` | Drag/drop zone or strong active interaction  |
 
-**Examples:** Today, Tasks, Habits, Schedule, Focus.
 
-Pages own the user's primary workflow.
+### Text hierarchy
 
-### Workspace drawer
 
-The Workspace Drawer is not another sidebar.
+| Token              | Value     | Use                                                         |
+| ------------------ | --------- | ----------------------------------------------------------- |
+| `--text-primary`   | `#F9FAFB` | Titles, important numbers, active values, modal titles      |
+| `--text-secondary` | `#94A3B8` | Descriptions, moderate-importance metadata                  |
+| `--text-muted`     | `#64748B` | Empty states, helper copy, inactive tabs, historical values |
+| `--text-disabled`  | `#475569` | Disabled or unavailable controls only                       |
 
-It is contextual workspace.
 
-**Examples:** Notes, Reflection, Kanban, future AI, Calendar, References.
+Do not use pure white by default or disabled text for ordinary metadata.
 
-Users can continue working without leaving the current page.
+### Semantic status colour
 
-The drawer should feel secondary to the main workspace while remaining fully functional.
-
-#### Drawer card-on-chrome (frozen)
-
-```
-Workspace Drawer (`--surface`)
-└── Content cards (`--card`)
-```
-
-| Rule | Detail |
-|------|--------|
-| Drawer background | Always `--surface` / `bg-sidebar`, at every width |
-| Expand / resize | Changes **layout only** — never elevation or background color |
-| Primary content | Lives on `--card`, never directly on drawer chrome |
-| Card spacing | 24–32px vertical gap between cards (`gap-6`–`gap-8`) |
-| Card styling | Shared padding, radius, border — no feature-specific card colors |
-
-**Module patterns**
-
-| Module | Structure |
-|--------|-----------|
-| **Notes** | One editor document card (title, metadata, toolbar, markdown) |
-| **Reflection** | Multiple modular cards (questions, custom entries, kanban) — **no** single outer wrap |
-| **Task Details** | Section cards (task, organization, schedule) — scannable form |
-
-Implementation runbook: [m2-visual-design-v2.md](../execution/runbooks/m2-visual-design-v2.md).
+Semantic red, amber, green, and purple remain available only when they communicate meaning. Priority colour belongs on a flag, small badge, or indicator—not an entire task row. State badges are consistent globally: Focusing uses indigo, Next a subtle primary treatment, Completed recedes, and Missed is distinct without becoming aggressive red unless action is required.
 
 ---
 
-## Navigation philosophy
+## 5. Typography, spacing, shape, and depth
 
-Navigation should always remain behind user content.
+### Typography
 
-Navigation exists to answer: **"Where am I?"**
+Use the shared typography vocabulary in `[src/lib/typography.ts](../../src/lib/typography.ts)`. Do not invent a page-specific scale.
 
-Content answers: **"What am I doing?"**
 
-The user should naturally spend most of their time inside workspaces rather than navigation.
+| Level         | Usage                                                                                                          |
+| ------------- | -------------------------------------------------------------------------------------------------------------- |
+| Page title    | Routes such as Tasks, Habits, Notes, Reflection, Focus, Schedule; compact semibold/bold, never marketing-sized |
+| Section title | Today’s Tasks, Current Focus, Next Up, Daily Review, History; medium/semibold                                  |
+| Item title    | Task, habit, note, queue, and Kanban titles; visually above metadata                                           |
+| Metadata      | Duration, date, group, count, timestamps; deliberately recessive                                               |
+| Micro label   | FOCUSING, TODAY, PINNED, NEXT; sparing uppercase only                                                          |
+
+
+### Spacing
+
+Use the 4px rhythm: **4, 8, 12, 16, 20, 24, 32px**. Use arbitrary values only when layout geometry requires them. Compact rows preserve scan speed; thinking and focus surfaces use larger gaps and vertical breathing room.
+
+### Radius
+
+
+| Token / role | Value | Use                                                    |
+| ------------ | ----- | ------------------------------------------------------ |
+| Small        | 6px   | Badges and compact controls                            |
+| Medium       | 8px   | Inputs, rows, buttons                                  |
+| Large        | 12px  | Functional cards and drawers                           |
+| Extra large  | 16px  | Major overlays and major workspace surfaces, sparingly |
+
+
+Do not mix `rounded-xl`, `rounded-2xl`, and `rounded-3xl` without semantic purpose.
+
+### Shadows and elevation
+
+
+| Surface | Shadow                                                 |
+| ------- | ------------------------------------------------------ |
+| Base    | None                                                   |
+| Raised  | Very subtle only when surface contrast is insufficient |
+| Overlay | Restrained separation shadow                           |
+| Modal   | Strongest allowed shadow                               |
+
+
+No blue glow, ambient glow, neon shadow, or decorative shadow. Surface contrast supplies most depth.
+
+### Motion and scroll
+
+- Fast interaction: 100–150ms
+- Normal state change: 150–200ms
+- Drawer or overlay: 200–250ms
+- Motion serves hover, selection, collapse, overlay opening, and drag feedback—not static text, cards, or backgrounds.
+- Respect `prefers-reduced-motion`.
+- Use one thin, quiet dark scrollbar globally; increase contrast on hover.
+- Limit internal scroll to genuinely constrained content such as the Notes drawer, queue overlay, long current-task description, or Kanban workspace. Avoid nested scrolling.
+
+---
+
+## 6. Shared component contract
+
+Update shared primitives before page-level components. Existing `src/components/ui/` primitives and appearance helpers remain the implementation API; do not create an unrelated parallel component taxonomy.
+
+### Buttons
+
+
+| Variant     | Use                                                                          | Treatment                                            |
+| ----------- | ---------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Primary     | Save Reflection, Start Focus, confirmation, critical forward action          | Indigo fill, strong contrast, medium radius, no glow |
+| Secondary   | Pomodoro, Focus Reflection, Open today’s note, View Full Timeline, New Group | Quiet surface and subtle border                      |
+| Ghost       | Toolbars, icon controls, collapse, visibility, overflow                      | Quiet at rest; background appears on hover           |
+| Destructive | Delete, Clear All, irreversible actions                                      | Semantic destructive colour only                     |
+
+
+Only one dominant primary action normally exists in a local context.
+
+### Inputs
+
+Text, search, textarea, number, date, and Quick Capture share the same states:
+
+
+| State    | Treatment                                 |
+| -------- | ----------------------------------------- |
+| Normal   | Quiet surface and subtle border           |
+| Hover    | Slightly stronger border contrast         |
+| Focus    | Primary border or accessible primary ring |
+| Disabled | Muted and clearly unavailable             |
+
+
+Quick Capture is a raised, immediately actionable surface—not a glowing panel.
+
+### Icons, badges, and labels
+
+- Use the existing icon library consistently.
+- Standard sizes: 14px micro metadata, 16px compact row controls, 18px navigation/toolbars, 20px major controls.
+- Icons inherit semantic text colour; no arbitrary per-icon greys.
+- Group badges identify category without overpowering item titles.
+- Badge and state variants must be shared by primitives, not recreated per page.
+
+### Temporary UI
+
+Dialogs, drawers, popovers, dropdown menus, tooltips, task pickers, quick-schedule UI, and context menus use Overlay. Modals trap focus; Escape closes an overlay when appropriate; icon-only buttons require accessible labels.
+
+### Drag and drop
+
+All drag interactions share one language:
+
+
+| State           | Treatment                                                                |
+| --------------- | ------------------------------------------------------------------------ |
+| Dragging item   | Slightly elevated overlay-like surface, strong border, restrained shadow |
+| Drag source     | Reduced opacity                                                          |
+| Drop target     | `primary-medium` background and primary border                           |
+| Insertion point | Primary indicator line                                                   |
+
+
+Tasks, Habits, Queue, and Kanban must not use unrelated drag colours. Provide keyboard alternatives where the interaction supports them.
+
+### State distinction
+
+
+| State       | Meaning                          | Visual treatment                    |
+| ----------- | -------------------------------- | ----------------------------------- |
+| Hover       | Temporary pointer feedback       | `surface-hover`                     |
+| Selected    | User-selected object             | `primary-subtle` or `primary-soft`  |
+| Active      | Operating control or tab         | Primary indicator and stronger text |
+| Current     | System’s present context         | Strategic primary accent            |
+| Drag target | Accepted insertion/drop location | `primary-medium`                    |
+
+
+Selected, active, current, and hover must never collapse into one indistinguishable treatment.
+
+---
+
+## 7. Application shell
+
+### Navigation
+
+Left navigation and the right utility rail use Navigation. Inactive items are secondary/muted with no resting card background; hover uses `surface-hover`.
+
+Active navigation uses a primary indicator, `primary-soft` background, and primary or high-contrast text. Collapsed navigation preserves aligned icons, obvious active state, stable layout, and hover tooltips.
+
+The right rail follows the same hierarchy. An active drawer has a raised or soft-selected state; inactive utilities remain muted.
 
 ### Top bar
 
-The top bar should visually merge into the canvas.
+The top bar stays compact and usually one line. It presents context, not a dashboard:
 
-Avoid creating another floating layer.
-
-**Preferred:**
-
-```
-Continuous Workspace
-────────────────────────────────
-Controls
-Content
+```text
+Monday, 13 July · 40% on track · Schedule ↗ · Notes ↗
+0/3 Tasks · 4/7 Habits · 25m Focus · Pending Reflection
 ```
 
-**Avoid:**
+Do not introduce a large greeting header unless a page explicitly needs it.
 
-```
-Top Bar
-──────────
-Content
-```
+### Viewport behaviour
 
-| Property | Value | Reason |
-|----------|-------|--------|
-| Background | `var(--background)` | Navigation should not compete with content |
-| **Not** | `var(--surface)` | Would create a floating chrome band |
-| Divider | `border-bottom: 1px solid rgba(255,255,255,.04)` | Alignment without a visible seam |
-
-### Left sidebar / workspace drawer
-
-| Property | Value |
-|----------|-------|
-| Background | `var(--surface)` |
-| Outer border | `1px solid rgba(255,255,255,.05)` |
-
-No shadows. No gradients. No glassmorphism.
-
-### Main workspace
-
-| Property | Value |
-|----------|-------|
-| Background | `var(--background)` |
-
-No borders. No artificial containers. Cards provide all structure.
+At desktop widths, retain a clear workspace structure without over-stretching prose. At narrower widths, collapse navigation and overlay utility drawers while preserving the central execution workspace. Adapt layout; do not solve responsiveness by shrinking all typography.
 
 ---
 
-## Card philosophy
+## 8. Workspace patterns
 
-Cards represent work.
+### Today
 
-Cards should be:
+Today is the execution workspace. Priority is:
 
-- Consistent
-- Quiet
-- Readable
+1. Current Focus state
+2. Current Focus Task
+3. Next Up
+4. Today’s Tasks and Habits
+5. Timeline
+6. Secondary utilities
 
-Hierarchy should come from:
+The Focus timer is cardless on Canvas. Its hierarchy comes from scale, whitespace, indigo state, and typography.
 
-- Placement
-- Size
-- Spacing
+Current Focus Task is Raised and is the strongest functional card in the central workspace. Show task title, priority, group, task details, overflow, focused duration, goal duration, and a visible-by-default collapsible description. The description has a fixed maximum height and its own scroll so it cannot push Next Up away.
 
-Not arbitrary color changes.
+Next Up is a compact Base or raised-adjacent preview of exactly one next task with group and optional duration, followed by “(N more).” The full queue is an Overlay for reorder, removal, task detail access, and clear queue. It is an execution sequence, not a second task manager: inline date, duration, and priority editing do not belong in queue rows.
 
-### Focus card
+### Tasks and Habits
 
-The Focus card is the hero of the Today page.
+Tasks and Habits are dense organisation workspaces: Canvas page, Base groups, subtle borders, consistent headers, and mostly flat rows. Selected items use a primary subtle/soft state. Quick Schedule is Overlay when open. Habits share this structure and state hierarchy; habit identity may use small semantic accents but not a second surface system.
 
-Its importance comes primarily from:
+### Notes
 
-- Location
-- Size
-- Typography
-- Timer
-- Surrounding whitespace
+Notes is a thinking workspace with more air. The Canvas supports a Base list and rail; the editor is continuous rather than over-carded, becoming Raised only where hierarchy genuinely requires it. Selected notes use `primary-subtle`.
 
-Surface changes should remain subtle.
+When opened over another page, the Notes drawer is Overlay. It remains a flat navigator structured by muted section labels (Pinned, Mindset, Daily Notes, growth areas), spacing, selection, and hover—not a card gallery. Selected rows use `primary-soft`.
 
-**Avoid:** Blue backgrounds, glows, exaggerated shadows.
+### Kanban
 
----
+Kanban is the intentional repeated-card exception: board/columns are Base; movable cards are Raised with subtle borders. Selected cards use a primary subtle treatment or primary border. Drag targets use `primary-medium`. Do not give every column a blue border.
 
-## Borders
+### Reflection
 
-Borders define structure. They do not create depth.
+Reflection is calm and spacious: Canvas with Base Daily Review, writing, Custom Entries, and History surfaces. Inputs are quiet darker or raised surfaces. Save Reflection is the local primary action. Empty custom Kanban states are purposeful and do not resemble unfinished feature cards.
 
-Depth comes from surfaces.
+### Focus
 
-Borders should remain soft and unobtrusive.
+The dedicated Focus route shares Today’s Focus language: cardless timer where possible, Raised current task, Base history, and strategic indigo session states. Break states receive calm semantic distinction. Focus must not split into two unrelated visual systems.
 
-**Recommended:**
+### Schedule and Timeline
 
-- `rgba(255,255,255,.05)`
-- `rgba(255,255,255,.04)`
-
-**Avoid:** Heavy outlines, bright borders, double borders, nested borders.
+Timeline base is Base; events are Raised or contextually elevated rows. Time-grid lines use subtle borders. Current time and Now marker use primary. Scheduled items use semantic indicators sparingly. The full-height Today timeline anchors the right side without making every line strong.
 
 ---
 
-## Shadows
+## 9. Empty, accessible, and resilient UI
 
-Use only restrained shadows.
+### Empty states
 
-| Element | Shadow |
-|---------|--------|
-| Cards | Small — `0 2px 12px rgba(0,0,0,.18)` |
-| Modals | Medium — `0 12px 48px rgba(0,0,0,.35)` |
-| Navigation | None |
+Empty states are quiet: muted text and an optional simple icon. A dashed border means an interactive drop or add target only:
 
-Never use shadows as decoration.
+- “No tasks here” does not require a dashed box.
+- “Drop tasks or habits here” does.
 
----
+### Accessibility
 
-## Elevation model
-
-Stack order (top to bottom):
-
-```
-Modal
-Dropdown
-Tooltip
-Hover
-Cards
-Sidebar / drawer (chrome)
-Background
-```
-
-Each level should feel intentional. Do not create random intermediate elevations.
+- Keyboard focus is visible and has sufficient contrast.
+- Buttons have accessible labels; icon-only controls expose `aria-label`.
+- Selected state is not colour-only.
+- Modals trap focus and overlays close with Escape where appropriate.
+- Drag interactions expose keyboard alternatives where supported.
+- Reduced motion is respected.
+- Minimalism never hides a critical control.
 
 ---
 
-## Accent philosophy
+## 10. Implementation architecture
 
-Accent colors communicate interaction.
+### Token and primitive ownership
 
-Primary blue is reserved for:
+The migration must:
 
-- Active navigation
-- Buttons
-- Timer
-- Links
-- Selection
+- Audit `globals.css`, Tailwind theme bridges, and all current theme tokens.
+- Map hardcoded backgrounds, borders, text greys, repeated Tailwind combinations, arbitrary colour utilities, and page-specific shadows to semantic visual roles.
+- Define the FlowOS v3 semantic tokens and required compatibility aliases centrally.
+- Update shared primitives, semantic recipes, and appearance helpers before feature-page migration.
+- Migrate feature components before integration workspaces that consume those components.
+- Avoid duplicating semantic styling logic directly in page JSX.
+- Preserve feature behaviour throughout the visual migration.
 
-Never use accent colors as permanent surfaces.
+Expected migration ownership:
+
+| Area | Primary location |
+|---|---|
+| CSS variables and Tailwind bridge | `src/app/globals.css` |
+| Surface class recipes | `src/lib/theme/surface-classes.ts` |
+| Typography | `src/lib/typography.ts` |
+| Domain semantic colours | `src/lib/*-appearance.ts`, `schedule-palette.ts` |
+| Shared controls and primitives | `src/components/ui/` |
+| Shared domain components | `src/components/{feature}/` |
+| Page composition | page-level routes and workspace components |
+
+A `Surface` component or semantic utilities such as:
+
+- `surface-canvas`
+- `surface-nav`
+- `surface-base`
+- `surface-raised`
+- `surface-overlay`
+
+are acceptable only when they extend the existing FlowOS architecture and reduce repeated styling.
+
+Do not introduce a universal `Surface` abstraction merely to wrap every container.
+
+Semantic surface ownership may remain in existing component variants when that produces a simpler architecture.
+
+### Styling ownership rule
+
+Visual decisions should be owned at the lowest reusable semantic level.
+
+Examples:
+
+- Button appearance belongs to the shared Button primitive.
+- Input appearance belongs to shared input primitives.
+- Task row appearance belongs to the shared Task row component or Task appearance helper.
+- Habit state appearance belongs to the Habit appearance system.
+- Timeline event appearance belongs to Schedule/Timeline appearance helpers.
+- Overlay depth belongs to shared overlay primitives.
+- Today page owns composition and visual priority, not duplicated Task or Habit styling.
+
+Page-level JSX must not redefine a visual system already owned by a primitive or feature component.
+
+### Migration boundary
+
+The future migration follows this dependency-aware order.
+
+This defines migration boundaries and ownership. It is not the detailed execution runbook. See [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md).
+
+#### Phase 1 — Global Tokens and Theme Bridge
+
+- Define semantic colour tokens.
+- Define text hierarchy tokens.
+- Define border tokens.
+- Define radius, shadow, and motion rules where required.
+- Update Tailwind/theme bridges.
+- Add temporary compatibility aliases for existing tokens where necessary.
+
+No feature redesign occurs in this phase.
+
+#### Phase 2 — Shared Primitives and Semantic Recipes
+
+Migrate shared UI foundations:
+
+- Button
+- Input
+- Textarea
+- Badge
+- Tabs
+- Dialog
+- Drawer
+- Popover
+- DropdownMenu
+- ContextMenu
+- Tooltip
+- shared focus states
+- shared scrollbar treatment
+- semantic surface recipes
+
+This phase establishes the visual language consumed by feature components.
+
+#### Phase 3 — Navigation and Application Shell
+
+Migrate:
+
+- left navigation
+- collapsed navigation
+- right utility rail
+- application canvas
+- global page boundaries
+- compact top navigation
+- persistent shell controls
+
+Establish the global Canvas → Navigation relationship before migrating feature workspaces.
+
+#### Phase 4 — Shared Domain Appearance Systems
+
+Audit and normalise semantic appearance ownership for:
+
+- tasks
+- habits
+- focus states
+- schedule and timeline events
+- priorities
+- groups
+- queue states
+- notes
+- reflection states
+
+Preserve legitimate semantic colours.
+
+Do not collapse all domain meaning into the primary indigo token.
+
+This phase should remove conflicting page-specific appearance logic before feature migration.
+
+#### Phase 5 — Tasks and Habits
+
+Migrate Tasks and Habits first because their components are reused throughout FlowOS.
+
+Establish:
+
+- task group surfaces
+- habit group surfaces
+- Task row hierarchy
+- Habit row hierarchy
+- selected state
+- hover state
+- completed state
+- missed state
+- group and priority indicators
+- drag states
+
+Today must later consume these established visual rules.
+
+#### Phase 6 — Focus and Schedule / Timeline
+
+Migrate the core execution systems.
+
+Establish:
+
+- cardless Focus timer language
+- current Focus state
+- Current Focus Task raised hierarchy
+- Focus metadata
+- break states
+- timeline base
+- timeline grid
+- event surfaces
+- Now marker
+- scheduled Task/Habit appearance
+
+Today must later reuse these Focus and Timeline semantics.
+
+#### Phase 7 — Notes and Kanban
+
+Migrate:
+
+- Notes workspace
+- growth area navigation
+- note list
+- note editor
+- Notes navigation hierarchy
+- Kanban workspace
+- Kanban columns
+- Kanban cards
+- Kanban drag states
+
+Preserve the distinction between the flat Notes navigation model and the object-based Kanban card model.
+
+#### Phase 8 — Reflection
+
+Migrate Reflection after writing and organisational surface patterns have been established.
+
+Establish:
+
+- Daily Review hierarchy
+- Reflection writing surfaces
+- Custom Entries
+- Reflection History
+- Reflection empty states
+- local primary Save action
+
+Reflection should intentionally use lower density and more breathing room than Tasks.
+
+#### Phase 9 — Today Integration Workspace
+
+Migrate Today after its major domain dependencies have established their visual language.
+
+Today is an integration workspace.
+
+It must compose existing semantic systems for:
+
+- Tasks
+- Habits
+- Focus
+- Current Focus Task
+- Next Up
+- Timeline
+- Notes
+- Reflection
+- Quick Capture
+
+Today owns:
+
+- page composition
+- execution hierarchy
+- spatial priority
+- current-state emphasis
+- responsive workspace behaviour
+
+Today does NOT independently redefine:
+
+- Task row styling
+- Habit row styling
+- Timeline event styling
+- priority colours
+- group badges
+- Focus semantic states
+
+The final Today hierarchy should make the following immediately understandable:
+
+1. What am I doing now?
+2. What should I do next?
+3. What else is relevant today?
+4. What is happening on my timeline?
+
+#### Phase 10 — Feature Drawers and Complex Overlays
+
+Audit feature-level temporary contexts:
+
+- Next Up Queue overlay
+- Task picker
+- Habit picker
+- Notes quick drawer
+- Reflection quick drawer
+- Quick Schedule
+- task detail overlays
+- contextual feature panels
+
+Shared overlay primitives were established in Phase 2.
+
+This phase migrates complex feature compositions that use those primitives.
+
+Do not defer basic Dialog, Drawer, Popover, DropdownMenu, or ContextMenu styling until this phase.
+
+#### Phase 11 — Global Consistency Audit
+
+Audit the entire FlowOS application.
+
+Search for:
+
+- hardcoded background hex values
+- hardcoded border colours
+- arbitrary slate/gray utilities
+- conflicting blue utilities
+- repeated Tailwind style combinations
+- page-specific shadows
+- unnecessary borders
+- unnecessary cards
+- one-off radius values
+- inconsistent hover states
+- inconsistent selected states
+
+For every major surface, identify:
+
+- Canvas
+- Navigation
+- Base
+- Raised
+- Overlay
+
+Any surface that cannot be intentionally classified must be reviewed.
+
+Remove compatibility aliases only when all consumers have migrated safely.
+
+### Verification per phase
+
+Every implementation phase must run:
+
+1. lint
+2. TypeScript/type checking
+3. production build verification
+4. manual smoke testing of changed flows
+5. visual inspection of changed surfaces
+6. keyboard interaction checks for changed interactive primitives
+
+Visual migration must not alter:
+
+- feature behaviour
+- persistence
+- database behaviour
+- routing
+- drag-and-drop semantics
+- Focus session logic
+- Task scheduling rules
+- Queue behaviour
+
+Any behavioural change discovered during migration must be treated as a separate issue unless the visual migration directly caused the regression.
 
 ---
 
-## Future compatibility
+## 11. Acceptance and consistency audit
 
-This architecture must support future modules without new surface categories.
+Before a migrated surface is accepted, answer:
 
-**Examples:** AI, Goals, Analytics, Calendar, Whiteboard, Files, Reading, References.
+1. What is the page canvas?
+2. Which surfaces organise work?
+3. Which deserve Raised attention?
+4. Which are temporary Overlays?
+5. Is indigo reserved for meaningful action and current state?
+6. Are there unnecessary borders or containers?
+7. Are hover and selected states distinct?
+8. Is text hierarchy consistent?
+9. Does spacing follow the system?
+10. Are radius and shadow values consistent?
+11. Does the page belong visually to FlowOS?
+12. Does it introduce an undefined one-off grey?
 
-| Module | Canvas | Content |
-|--------|--------|---------|
-| Command palette | Card | Backdrop: `rgba(0,0,0,.45)` |
-| AI assistant | Surface (drawer) | Conversation: card; response blocks: nested cards |
-| Calendar | Background | Events: cards; selection: hover |
-| Analytics | Background | Charts / metrics: cards; filters: surface |
-
-Every module should naturally fit into the existing hierarchy.
-
-No new surface colors should be required.
-
----
-
-## Frozen decisions
-
-- Layer 0–5 only (Navigation → Workspace → Standard → Hero → Interactive → Feedback)
-- Sessions 1–5 Today + navigation are the visual source of truth for future UI
-- Content is brighter than navigation chrome
-- Chrome frames work
-- Every screen has one visual hero (Layer 3)
-- Pages own workflows
-- Workspace Drawer owns contextual workspaces (Layer 0 shell + Layer 2 cards)
-- Cards represent interaction
-- Accent colors communicate interaction only (Layer 4)
-- Feedback colors are semantic only (Layer 5)
-- Borders provide structure — Tasks group + Kanban list outer borders share `border-board/55`; header dividers `/45`
-- Kanban cards use standard `--card` (not `--surface-kanban-card`); Tasks board rows stay hover-only chrome
-- Shadows remain minimal
-- Future modules reuse the existing hierarchy
+The final audit searches for hardcoded surface/border/text hexes, arbitrary slate/gray classes, conflicting blue utilities, and page-specific shadows. Do not blindly replace semantic status colours.
 
 ---
 
-## Acceptance criteria
+## 12. Frozen v3 decisions
 
-1. Every component maps to one of Layer 0–5.
-2. No custom dark backgrounds exist outside the design tokens.
-3. Navigation chrome never competes with user content.
-4. Every page has a clearly identifiable visual hero.
-5. The Workspace Drawer supports contextual work without replacing primary pages.
-6. New modules integrate without introducing new surface categories.
-7. Hierarchy is communicated through layout, spacing, typography, and restrained elevation rather than decorative effects.
-8. Focus/hero tab chrome never uses canvas `bg-background` as a permanent hole in Layer 3.
-
----
-
-## Why v2.0
-
-v1.0 froze the four-token surface model and chrome treatment ([DESIGN_SYSTEM_v1.md](./DESIGN_SYSTEM_v1.md)).
-
-v2.0 keeps that surface contract and elevates the document from a color/elevation spec into the **visual architecture** authority: product philosophy, one-hero rule, pages vs workspace drawer, information hierarchy, and acceptance criteria for every future UI decision.
-
-Token depths may be refined in `globals.css` without a new major version, as long as the four roles and frozen decisions above hold.
+- Canvas is for work; Base is for organisation; Raised is for attention; Overlay is for temporary context.
+- Navigation is persistent recessed chrome, not a content surface.
+- Indigo is the scarce primary action and current-state signal.
+- Typography and spacing create more hierarchy than borders.
+- Cards are purposeful, not default wrappers.
+- Focus timer remains cardless.
+- Repeated Kanban cards are a valid object-representation exception.
+- The UI is desktop-first, dark-only, accessible, and precise rather than playful.
+- v2.0 remains available as historical context; v3.0 is the sole visual authority for new work.
+- Code migration follows [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md).
