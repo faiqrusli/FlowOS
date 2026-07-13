@@ -1,4 +1,9 @@
-import type { FocusSession, FocusSessionInsert } from "@/types/focus";
+import type {
+  FocusSession,
+  FocusSessionInsert,
+  FocusSessionTaskTotal,
+  FocusSessionTaskTotalInsert,
+} from "@/types/focus";
 import type { ReflectionEntry, ReflectionKanban } from "@/types/reflection";
 import type { Habit, HabitInsert, HabitUpdate } from "@/types/habit";
 import type { Task, TaskGroup, TaskGroupInsert, TaskInsert } from "@/types/task";
@@ -82,6 +87,12 @@ export type Database = {
         Row: FocusSession;
         Insert: FocusSessionInsert;
         Update: Partial<FocusSessionInsert>;
+        Relationships: [];
+      };
+      focus_session_task_totals: {
+        Row: FocusSessionTaskTotal;
+        Insert: FocusSessionTaskTotalInsert;
+        Update: Partial<FocusSessionTaskTotalInsert>;
         Relationships: [];
       };
       reflections: {
@@ -205,6 +216,10 @@ export type Database = {
     Functions: {
       batch_update_task_manual_orders: {
         Args: { p_user_id: string; p_updates: { id: string; sort_order: number }[] };
+        Returns: undefined;
+      };
+      batch_update_task_queue_orders: {
+        Args: { p_updates: { id: string; queue_order: number | null }[] };
         Returns: undefined;
       };
     };

@@ -103,23 +103,25 @@ export function FocusCurrentSessionCard() {
               </div>
 
               {showQuickScheduleBreak && quick.breakPrompt ? (
-                <FocusBreakNotification
-                  kind={quick.breakPrompt}
-                  breakAtMinutes={quick.breakAtMinutes}
-                  onPrimaryAction={
-                    quick.breakPrompt === "ready"
-                      ? quick.startBreak
-                      : quick.resumeFocus
-                  }
-                  onSnooze={() =>
-                    quick.breakPrompt === "ready"
-                      ? quick.snoozeBreakReady()
-                      : quick.snoozeBreakFinished()
-                  }
-                />
+                <div className="flex justify-center">
+                  <FocusBreakNotification
+                    kind={quick.breakPrompt}
+                    breakAtMinutes={quick.breakAtMinutes}
+                    onPrimaryAction={
+                      quick.breakPrompt === "ready"
+                        ? quick.startBreak
+                        : quick.resumeFocus
+                    }
+                    onSnooze={() =>
+                      quick.breakPrompt === "ready"
+                        ? quick.snoozeBreakReady()
+                        : quick.snoozeBreakFinished()
+                    }
+                  />
+                </div>
               ) : null}
 
-              {showQuickScheduleBreak && quick.hasScheduledBreak ? (
+              {showQuickScheduleBreak && quick.hasScheduledBreak && !quick.breakPrompt ? (
                 <FocusNextBreakStrip
                   breakAtMinutes={quick.breakAtMinutes}
                   breakLengthMinutes={quick.breakLengthMinutes}

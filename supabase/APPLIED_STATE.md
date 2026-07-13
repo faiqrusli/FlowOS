@@ -55,6 +55,15 @@ No `Allow public access to *` or `Allow all *` policies remain on core tables.
 
 All core rows have non-null `user_id` (verified before RLS lockdown).
 
+## Pending migration apply
+
+| File | Required before release | Purpose |
+|------|--------------------------|---------|
+| `tasks_next_up_queue.sql` | Yes | Persistent task-only Next Up order and reorder RPC |
+| `focus_session_task_totals.sql` | Yes | RLS-protected per-task focus attribution during a quick-focus session |
+
+These migrations are committed as SQL but have **not** been applied from this workspace: the Supabase CLI is not installed or linked here. Apply both in the project SQL editor or a linked Supabase CLI session, then update this record and repeat the two-account RLS test for `focus_session_task_totals`.
+
 ## Two-account test (2026-07-04)
 
 **Method:** Manual browser test on https://flowos-sage.vercel.app — Account A (`faiqrusli9@gmail.com`) created `RLS-TEST-A`; Account B (`faiqrusli12@gmail.com`) in separate browser could not see A's data.

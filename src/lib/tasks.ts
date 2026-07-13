@@ -15,6 +15,7 @@ import {
   type TaskPriority,
 } from "@/lib/task-priority";
 import { normalizePlanningState } from "@/lib/task-planning";
+import { notifyNextUpUpdated } from "@/lib/next-up-events";
 import type { Task, TaskInsert, TaskUpdate } from "@/types/task";
 
 export class TasksError extends Error {
@@ -198,6 +199,7 @@ function normalizeTaskFromDb(task: Task): Task {
     ...task,
     notification_lead_minutes: task.notification_lead_minutes ?? null,
     planning_state: normalizePlanningState(task.planning_state),
+    queue_order: task.queue_order ?? null,
     updated_at: task.updated_at ?? task.created_at,
     completed_at: task.completed_at ?? null,
   });
@@ -252,6 +254,15 @@ export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
   if (payload.sort_order !== undefined) {
     payload.sort_order = resolveManualOrderForCreate(payload.sort_order);
   }
+  const leavesNextUp =
+    payload.completed === true ||
+    payload.planning_state === "later" ||
+    ("scheduled_date" in payload &&
+      payload.scheduled_date !== null &&
+      payload.scheduled_date !== getTodayDateString());
+  if (leavesNextUp) {
+    payload.queue_order = null;
+  }
 
   const { data, error } = await supabase
     .from("tasks")
@@ -265,7 +276,9 @@ export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
     throw new TasksError(error.message);
   }
 
-  return normalizeTaskFromDb(data);
+  const updated = normalizeTaskFromDb(data);
+  if (leavesNextUp) notifyNextUpUpdated({ kind: "changed" });
+  return updated;
 }
 
 /** Single RPC round-trip to persist manual order changes after drop. */
@@ -293,6 +306,7 @@ export async function toggleTaskComplete(task: Task): Promise<Task> {
     .update({
       completed: nextCompleted,
       completed_at: nextCompleted ? new Date().toISOString() : null,
+      ...(nextCompleted ? { queue_order: null } : {}),
     })
     .eq("id", task.id)
     .eq("user_id", userId)
@@ -303,7 +317,9 @@ export async function toggleTaskComplete(task: Task): Promise<Task> {
     throw new TasksError(error.message);
   }
 
-  return normalizeTaskFromDb(data);
+  const updated = normalizeTaskFromDb(data);
+  if (nextCompleted) notifyNextUpUpdated({ kind: "changed" });
+  return updated;
 }
 
 export async function deleteTask(id: string): Promise<void> {

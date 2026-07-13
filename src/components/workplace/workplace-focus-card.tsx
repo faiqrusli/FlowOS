@@ -3,8 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CalendarClock,
-  Check,
-  ChevronDown,
   Coffee,
   Pause,
   Play,
@@ -15,51 +13,60 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { TaskGroupPill } from "@/components/tasks/task-group-pill";
-import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import { FocusBreakNotification } from "@/components/focus/focus-break-notification";
+import { FocusCurrentTaskCard } from "@/components/focus/focus-current-task-card";
 import { FocusNextBreakStrip } from "@/components/focus/focus-next-break-strip";
+import { NextUpDrawer } from "@/components/focus/next-up-drawer";
+import { NextUpPreview } from "@/components/focus/next-up-preview";
 import {
-  FOCUS_TIMER_RING_SIZE,
+  WORKPLACE_FOCUS_TIMER_RING_SIZE,
   FocusTimerRing,
 } from "@/components/focus/focus-timer-ring";
 import { ScheduleBreakModal } from "@/components/focus/schedule-break-modal";
 import { WorkplaceFocusInlineReflection } from "@/components/workplace/workplace-focus-inline-reflection";
 import { WorkplaceFocusReflectionModal } from "@/components/workplace/workplace-focus-reflection-modal";
-import { WorkplaceFocusTaskMenu } from "@/components/workplace/workplace-focus-task-menu";
 import { useWorkplaceFocusTask } from "@/contexts/workplace-focus-task-context";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { getDateKeyInTimezone, getTodayDateString, formatNowTimeInAppTimezone } from "@/lib/date-utils";
+import { getTaskFocusedSeconds } from "@/lib/focus-active-session";
 import { formatDuration, getSessionFocusSeconds } from "@/lib/focus-utils";
+import {
+  NEXT_UP_UPDATED_EVENT,
+  type NextUpUpdateDetail,
+} from "@/lib/next-up-events";
+import {
+  fetchNextUpTasks,
+  getDisplayNextUpTasks,
+  insertTaskToNextUp,
+  persistNextUpOrder,
+  removeTaskFromNextUp,
+  reorderNextUpTasks,
+} from "@/lib/task-next-up";
 import { workplaceFocusSectionClassName } from "@/lib/workplace-panel-appearance";
 import { shouldPromptFocusReflection } from "@/lib/focus-reflection";
 import { computeTodayStats, fetchFocusSessions } from "@/lib/focus-storage";
-import {
-  formatTaskFocusSchedule,
-  getTaskFocusTimingTone,
-} from "@/lib/task-focus-display";
-import { normalizeTaskPriority } from "@/lib/task-priority";
-import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
-import { getHabitDurationMinutes } from "@/lib/schedule-durations";
-import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
 import { TODAY_FOCUS_ANCHOR_ID } from "@/lib/today-in-place";
-import { TimelineHabitLabel } from "@/components/tasks/timeline-habit-label";
 import {
   getActiveTimelineDrag,
-  TIMELINE_DRAG_ID_MIME,
-  TIMELINE_DRAG_KIND_MIME,
 } from "@/lib/timeline-drag";
+import {
+  acceptNextUpScheduleDrag,
+  isNextUpReorderDrag,
+  isScheduleKindDrag,
+  parseScheduleDrop,
+} from "@/lib/next-up-drag";
 import { cn } from "@/lib/utils";
 import type { FocusSession } from "@/types/focus";
-import type { Habit } from "@/types/habit";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 type FocusTab = "focus" | "pomodoro";
 
+/** Hide Next Up preview/drawer on Workplace until product decides to ship it. */
+const NEXT_UP_WORKPLACE_UI_ENABLED = true;
+
 type WorkplaceFocusCardProps = {
   groups: TaskGroupWithTasks[];
   onToggleComplete: (task: Task, markComplete?: boolean) => void;
-  onToggleHabitComplete: (habit: Habit) => void;
   onOpenDetail: (taskId: string) => void;
   onContinueLater: (task: Task) => void;
   onContinueTomorrow: (task: Task) => void;
@@ -96,195 +103,9 @@ function TimerHoverControls({
   );
 }
 
-function TaskFocusRow({
-  label,
-  task,
-  groups,
-  descriptionExpanded,
-  onToggleDescription,
-  onToggleComplete,
-  onOpenDetail,
-  onStart,
-  showStartOnHover,
-  donePending,
-  isPrimary,
-  onContextMenu,
-}: {
-  label?: string;
-  task: Task;
-  groups: TaskGroupWithTasks[];
-  descriptionExpanded?: boolean;
-  onToggleDescription?: () => void;
-  onToggleComplete: () => void;
-  onOpenDetail: () => void;
-  onStart?: () => void;
-  showStartOnHover?: boolean;
-  donePending?: boolean;
-  isPrimary?: boolean;
-  onContextMenu?: (event: React.MouseEvent<HTMLDivElement>) => void;
-}) {
-  const hasDescription = Boolean(task.description?.trim());
-  const priority = normalizeTaskPriority(task.priority);
-  const scheduleLabel = formatTaskFocusSchedule(task);
-  const timingTone = isPrimary ? getTaskFocusTimingTone(task) : "neutral";
-  const group = groups.find((item) => item.id === task.group_id);
-  const groupAppearance = group ? getTaskGroupAppearance(group) : null;
-
-  return (
-    <div
-      onContextMenu={onContextMenu}
-      className={cn(
-        "rounded-md border border-border/50 transition-colors duration-500",
-        isPrimary && timingTone === "before" && "bg-success-muted/60",
-        isPrimary && timingTone === "during-or-after" && "bg-red-500/[0.06] dark:bg-red-400/[0.08]",
-        !isPrimary && "bg-muted/30",
-        donePending && "translate-y-1 scale-[0.985] opacity-0"
-      )}
-    >
-      {label ? (
-        <p className="px-2 pt-1.5 text-[13px] font-semibold uppercase tracking-wider text-muted-foreground/75">
-          {label}
-        </p>
-      ) : null}
-      <div className="flex items-center gap-1.5 px-2 py-1.5">
-        {hasDescription && onToggleDescription ? (
-          <button
-            type="button"
-            onClick={onToggleDescription}
-            className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/60"
-            aria-expanded={descriptionExpanded}
-          >
-            <ChevronDown
-              className={cn(
-                "size-3.5 transition-transform",
-                !descriptionExpanded && "-rotate-90"
-              )}
-            />
-          </button>
-        ) : (
-          <span className="size-6 shrink-0" />
-        )}
-        <TaskPriorityFlagIcon priority={priority} className="size-3.5 shrink-0" />
-        <button
-          type="button"
-          onClick={onOpenDetail}
-          className="min-w-0 flex-1 truncate text-left text-[14px] font-medium leading-none text-foreground hover:underline"
-        >
-          {task.title}
-        </button>
-        <div className="flex shrink-0 items-center gap-1">
-          {group && groupAppearance ? (
-            <TaskGroupPill
-              icon={groupAppearance.icon}
-              name={group.title}
-              appearance={groupAppearance}
-              className="max-w-[5.5rem] shrink-0 text-[12px]"
-            />
-          ) : null}
-          <span className="shrink-0 text-[13px] tabular-nums text-muted-foreground">
-            {scheduleLabel}
-          </span>
-        </div>
-        <div className="flex w-[4.75rem] shrink-0 justify-end">
-          {showStartOnHover && onStart ? (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className="h-6 w-full px-2 text-[13px]"
-              onClick={onStart}
-            >
-              <Play className="size-3" />
-              Start
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className={cn(
-                "h-6 w-full px-2 text-[13px] transition-colors",
-                donePending &&
-                  "border-success/55 bg-success-muted text-success hover:bg-success-muted"
-              )}
-              disabled={donePending}
-              onClick={onToggleComplete}
-            >
-              <Check className="size-3" />
-              {donePending ? "Completed" : "Done"}
-            </Button>
-          )}
-        </div>
-      </div>
-      {hasDescription && descriptionExpanded ? (
-        <div className="max-h-24 overflow-y-auto border-t border-divider px-2 py-1.5">
-          <p className="text-[12px] leading-relaxed whitespace-pre-wrap text-muted-foreground">
-            {task.description}
-          </p>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function HabitFocusRow({
-  habit,
-  donePending,
-  onToggleComplete,
-}: {
-  habit: Habit;
-  donePending?: boolean;
-  onToggleComplete: () => void;
-}) {
-  const scheduleLabel = formatHabitTimeRangeWithDuration(
-    habit.scheduled_time,
-    getHabitDurationMinutes(habit.id)
-  );
-
-  return (
-    <div
-      className={cn(
-        "rounded-md border border-border/50 border-l-[3px] border-l-warning/50 bg-muted/30 transition-all duration-500",
-        donePending && "translate-y-1 scale-[0.985] opacity-0"
-      )}
-    >
-      <div className="flex items-center gap-1.5 px-2 py-1.5">
-        <span className="size-6 shrink-0" />
-        <TimelineHabitLabel compact trackWithFocus={habit.track_with_focus} />
-        <p className="min-w-0 flex-1 truncate text-[14px] font-medium leading-none text-foreground">
-          {habit.name}
-        </p>
-        {scheduleLabel ? (
-          <span className="shrink-0 text-[13px] tabular-nums text-muted-foreground">
-            {scheduleLabel}
-          </span>
-        ) : null}
-        <div className="flex w-[4.75rem] shrink-0 justify-end">
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className={cn(
-              "h-6 w-full px-2 text-[13px] transition-colors",
-              donePending &&
-                "border-success/55 bg-success-muted text-success hover:bg-success-muted"
-            )}
-            disabled={donePending}
-            onClick={onToggleComplete}
-          >
-            <Check className="size-3" />
-            {donePending ? "Completed" : "Done"}
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function WorkplaceFocusCard({
   groups,
   onToggleComplete,
-  onToggleHabitComplete,
   onOpenDetail,
   onContinueLater,
   onContinueTomorrow,
@@ -293,7 +114,6 @@ export function WorkplaceFocusCard({
   const [tab, setTab] = useState<FocusTab>("focus");
   const [reflectionOpen, setReflectionOpen] = useState(false);
   const [scheduleBreakOpen, setScheduleBreakOpen] = useState(false);
-  const [descriptionExpanded, setDescriptionExpanded] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
   const [todayFocusSeconds, setTodayFocusSeconds] = useState(0);
   const [todayBreakSeconds, setTodayBreakSeconds] = useState(0);
@@ -303,30 +123,32 @@ export function WorkplaceFocusCard({
   const [habitDropNotice, setHabitDropNotice] = useState<string | null>(null);
   const dragDepthRef = useRef(0);
   const habitDropBlockedRef = useRef(false);
-  const [completingTaskId, setCompletingTaskId] = useState<string | null>(null);
-  const [focusTaskMenu, setFocusTaskMenu] = useState<{
-    task: Task;
-    x: number;
-    y: number;
-  } | null>(null);
-  const [completingHabitId, setCompletingHabitId] = useState<string | null>(null);
-  const [promotedNextId, setPromotedNextId] = useState<string | null>(null);
   const [clockLabel, setClockLabel] = useState(formatNowTimeInAppTimezone());
   const [inlineReflectionSession, setInlineReflectionSession] =
     useState<FocusSession | null>(null);
   const pendingInlineReflectionRef = useRef(false);
+  const [nextUpDrawerOpen, setNextUpDrawerOpen] = useState(false);
+  const nextUpDrawerScrollTopRef = useRef(0);
+  const nextUpDrawerListRef = useRef<HTMLDivElement>(null);
+  const [nextUpTasks, setNextUpTasks] = useState<Task[]>([]);
+  const [nextUpDropBeforeId, setNextUpDropBeforeId] = useState<string | null>(
+    null
+  );
+  const [pendingFocusTask, setPendingFocusTask] = useState<Task | null>(null);
 
   const {
     activeTask,
     activeHabit,
-    nextTask,
     setActiveTaskId,
-    setActiveHabitId,
-    setActiveFocusTarget,
-    notifyTaskCompleted,
     isFocusableHabit,
   } = useWorkplaceFocusTask();
-  const { quick, pomodoro, prepareFocusTarget, lastSavedSession } =
+  const {
+    activeSession,
+    quick,
+    pomodoro,
+    prepareFocusTarget,
+    lastSavedSession,
+  } =
     useFocusSessionContext();
 
   const pomodoroDisabled = quick.isActive;
@@ -342,6 +164,25 @@ export function WorkplaceFocusCard({
     tab,
     todaySessionCount,
   ]);
+
+  const currentFocusTask = useMemo(() => {
+    if (quick.isIdle) return null;
+    if (activeSession?.target_type === "task" && activeSession.target_id) {
+      return (
+        groups
+          .flatMap((group) => group.tasks)
+          .find((task) => task.id === activeSession.target_id && !task.completed) ??
+        null
+      );
+    }
+    if (activeSession?.target_type === "habit") return null;
+    return activeTask;
+  }, [activeSession, activeTask, groups, quick.isIdle]);
+
+  const displayedNextUpTasks = useMemo(
+    () => getDisplayNextUpTasks(nextUpTasks, currentFocusTask?.id ?? null),
+    [currentFocusTask?.id, nextUpTasks]
+  );
 
   const loadStats = useCallback(async () => {
     setStatsLoading(true);
@@ -361,9 +202,40 @@ export function WorkplaceFocusCard({
     }
   }, []);
 
+  const refreshNextUpTasks = useCallback(async () => {
+    try {
+      setNextUpTasks(await fetchNextUpTasks());
+    } catch {
+      setNextUpTasks([]);
+    }
+  }, []);
+
   useEffect(() => {
     void loadStats();
   }, [loadStats, quick.isIdle, pomodoro.isIdle]);
+
+  useEffect(() => {
+    void refreshNextUpTasks();
+  }, [groups, refreshNextUpTasks]);
+
+  useEffect(() => {
+    const onNextUpUpdated = (event: Event) => {
+      const detail = (event as CustomEvent<NextUpUpdateDetail>).detail;
+      if (detail?.kind === "added") {
+        setNextUpTasks((current) => {
+          if (current.some((task) => task.id === detail.task.id)) return current;
+          return [...current, detail.task].sort(
+            (a, b) => (a.queue_order ?? 0) - (b.queue_order ?? 0)
+          );
+        });
+        return;
+      }
+      void refreshNextUpTasks();
+    };
+
+    window.addEventListener(NEXT_UP_UPDATED_EVENT, onNextUpUpdated);
+    return () => window.removeEventListener(NEXT_UP_UPDATED_EVENT, onNextUpUpdated);
+  }, [refreshNextUpTasks]);
 
   useEffect(() => {
     const tick = () => setClockLabel(formatNowTimeInAppTimezone());
@@ -371,20 +243,6 @@ export function WorkplaceFocusCard({
     const timer = window.setInterval(tick, 30_000);
     return () => window.clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    if (!activeTask || completingTaskId !== activeTask.id) return;
-    const timer = window.setTimeout(() => {
-      setCompletingTaskId(null);
-    }, 1200);
-    return () => window.clearTimeout(timer);
-  }, [activeTask, completingTaskId]);
-
-  useEffect(() => {
-    if (!promotedNextId) return;
-    const timer = window.setTimeout(() => setPromotedNextId(null), 700);
-    return () => window.clearTimeout(timer);
-  }, [promotedNextId]);
 
   const handleQuickStop = useCallback(() => {
     pendingInlineReflectionRef.current = shouldPromptFocusReflection(
@@ -401,55 +259,56 @@ export function WorkplaceFocusCard({
     }
   }, [lastSavedSession]);
 
-  const handleDoneWithAnimation = useCallback(
-    (task: Task) => {
-      if (completingTaskId === task.id) return;
-      const upcomingNextId = nextTask?.id ?? null;
-      setCompletingTaskId(task.id);
-      window.setTimeout(() => {
-        onToggleComplete(task, true);
-        notifyTaskCompleted(task.id);
-        if (upcomingNextId) setPromotedNextId(upcomingNextId);
-      }, 1000);
-    },
-    [completingTaskId, nextTask?.id, notifyTaskCompleted, onToggleComplete]
-  );
-
-  const handleDrop = useCallback(
-    (event: React.DragEvent) => {
+  const handleScheduleDrop = useCallback(
+    (event: React.DragEvent, beforeTaskId: string | null = null) => {
       event.preventDefault();
+      event.stopPropagation();
+
       setDropActive(false);
+      setNextUpDropBeforeId(null);
       setHabitDropBlocked(false);
       habitDropBlockedRef.current = false;
       dragDepthRef.current = 0;
-      const kind = event.dataTransfer.getData(TIMELINE_DRAG_KIND_MIME);
-      const id = event.dataTransfer.getData(TIMELINE_DRAG_ID_MIME);
-      if (!id) return;
 
-      if (kind === "task") {
-        setHabitDropNotice(null);
-        setActiveTaskId(id, "manual");
+      if (isNextUpReorderDrag(event)) return;
+
+      const payload = parseScheduleDrop(event);
+      if (!payload) return;
+
+      if (payload.kind === "habit") {
+        setHabitDropNotice("Next Up only supports tasks.");
         return;
       }
 
-      if (kind === "habit") {
-        if (isFocusableHabit(id)) {
-          setHabitDropNotice(null);
-          setActiveHabitId(id, "manual");
-          return;
-        }
+      setHabitDropNotice(null);
 
-        setHabitDropNotice(
-          "This habit can't be focused yet. Turn on Track with Focus in habit settings to use it here."
-        );
+      if (payload.kind === "task" && NEXT_UP_WORKPLACE_UI_ENABLED) {
+        void insertTaskToNextUp(payload.id, beforeTaskId)
+          .then(refreshNextUpTasks)
+          .catch((error: unknown) => {
+            setHabitDropNotice(
+              error instanceof Error
+                ? error.message
+                : "Couldn't add this task to Next Up."
+            );
+          });
+        return;
       }
+
+      setActiveTaskId(payload.id, "manual");
     },
-    [isFocusableHabit, setActiveHabitId, setActiveTaskId]
+    [
+      refreshNextUpTasks,
+      setActiveTaskId,
+    ]
   );
+
+  const handleDrop = handleScheduleDrop;
 
   const handleDragEnter = useCallback(
     (event: React.DragEvent) => {
-      if (!event.dataTransfer.types.includes(TIMELINE_DRAG_KIND_MIME)) {
+      if (isNextUpReorderDrag(event)) return;
+      if (!isScheduleKindDrag(event)) {
         return;
       }
 
@@ -472,11 +331,13 @@ export function WorkplaceFocusCard({
   );
 
   const handleDragOver = useCallback((event: React.DragEvent) => {
-    if (!event.dataTransfer.types.includes(TIMELINE_DRAG_KIND_MIME)) {
+    if (isNextUpReorderDrag(event)) return;
+    if (!isScheduleKindDrag(event)) {
       return;
     }
 
     event.preventDefault();
+    acceptNextUpScheduleDrag(event);
   }, []);
 
   const handleDragLeave = useCallback(() => {
@@ -484,6 +345,7 @@ export function WorkplaceFocusCard({
     if (dragDepthRef.current > 0) return;
 
     setDropActive(false);
+    setNextUpDropBeforeId(null);
     habitDropBlockedRef.current = false;
     setHabitDropBlocked(false);
   }, []);
@@ -507,25 +369,157 @@ export function WorkplaceFocusCard({
     quick.startFocus();
   }, [activeHabit, activeTask, prepareFocusTarget, quick]);
 
-  const handleFocusTaskContextMenu = useCallback(
-    (task: Task) => (event: React.MouseEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      setFocusTaskMenu({ task, x: event.clientX, y: event.clientY });
+  const closeNextUpDrawer = useCallback(() => {
+    if (nextUpDrawerListRef.current) {
+      nextUpDrawerScrollTopRef.current = nextUpDrawerListRef.current.scrollTop;
+    }
+    setNextUpDrawerOpen(false);
+  }, []);
+
+  const openNextUpDrawer = useCallback(() => {
+    setNextUpDrawerOpen(true);
+  }, []);
+
+  const toggleNextUpDrawer = useCallback(() => {
+    if (nextUpDrawerOpen) {
+      closeNextUpDrawer();
+      return;
+    }
+    openNextUpDrawer();
+  }, [closeNextUpDrawer, nextUpDrawerOpen, openNextUpDrawer]);
+
+  const activateFocusTask = useCallback(
+    (task: Task) => {
+      setActiveTaskId(task.id, "manual");
+      setNextUpTasks((current) => current.filter((item) => item.id !== task.id));
+      setNextUpDrawerOpen(false);
+      void removeTaskFromNextUp(task.id).catch(() => {
+        void refreshNextUpTasks();
+      });
+
+      const target = {
+        type: "task" as const,
+        id: task.id,
+        label: task.title,
+      };
+      if (quick.isIdle) {
+        prepareFocusTarget(target);
+        quick.startFocus();
+      } else {
+        quick.setFocusTarget(target);
+      }
     },
-    []
+    [prepareFocusTarget, quick, refreshNextUpTasks, setActiveTaskId]
   );
 
-  const clearFocusAfterPlanning = useCallback(() => {
-    setActiveFocusTarget(null, "auto");
-    setFocusTaskMenu(null);
-  }, [setActiveFocusTarget]);
+  const requestStartFocus = useCallback(
+    (task: Task) => {
+      if (
+        quick.phase === "focus" &&
+        currentFocusTask &&
+        currentFocusTask.id !== task.id
+      ) {
+        setPendingFocusTask(task);
+        return;
+      }
+      activateFocusTask(task);
+    },
+    [activateFocusTask, currentFocusTask, quick.phase]
+  );
+
+  const handleStartFocusDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setDropActive(false);
+      setNextUpDropBeforeId(null);
+
+      const payload = parseScheduleDrop(event);
+      if (!payload) return;
+      if (payload.kind !== "task") {
+        setHabitDropNotice("Next Up and Focus start only support tasks.");
+        return;
+      }
+
+      const task = groups
+        .flatMap((group) => group.tasks)
+        .find((item) => item.id === payload.id);
+      if (task) requestStartFocus(task);
+    },
+    [groups, requestStartFocus]
+  );
+
+  const handleReorderQueue = useCallback(
+    (fromIndex: number, toIndex: number) => {
+      const reordered = reorderNextUpTasks(nextUpTasks, fromIndex, toIndex);
+      if (reordered === nextUpTasks) return;
+      setNextUpTasks(reordered);
+      void persistNextUpOrder(reordered).catch(() => {
+        void refreshNextUpTasks();
+      });
+    },
+    [nextUpTasks, refreshNextUpTasks]
+  );
+
+  const handleRemoveQueueTask = useCallback(
+    (taskId: string) => {
+      setNextUpTasks((current) => current.filter((task) => task.id !== taskId));
+      void removeTaskFromNextUp(taskId).catch(() => {
+        void refreshNextUpTasks();
+      });
+    },
+    [refreshNextUpTasks]
+  );
+
+  const handleCompleteQueueTask = useCallback(
+    (task: Task) => {
+      onToggleComplete(task, true);
+      setNextUpTasks((current) => current.filter((item) => item.id !== task.id));
+    },
+    [onToggleComplete]
+  );
+
+  const handleCompleteCurrentTask = useCallback(
+    (task: Task) => {
+      setActiveTaskId(null, "manual");
+      quick.setFocusTarget(null);
+      onToggleComplete(task, true);
+      setNextUpTasks((current) => current.filter((item) => item.id !== task.id));
+    },
+    [onToggleComplete, quick, setActiveTaskId]
+  );
+
+  const handleSkipCurrentFocus = useCallback(() => {
+    setActiveTaskId(null, "manual");
+    quick.setFocusTarget(null);
+  }, [quick, setActiveTaskId]);
+
+  useEffect(() => {
+    if (!nextUpDrawerOpen) return;
+    const list = nextUpDrawerListRef.current;
+    if (!list) return;
+    list.scrollTop = nextUpDrawerScrollTopRef.current;
+  }, [nextUpDrawerOpen]);
+
+  useEffect(() => {
+    if (!nextUpDrawerOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeNextUpDrawer();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [closeNextUpDrawer, nextUpDrawerOpen]);
+
+  const showNextUpDrawer = NEXT_UP_WORKPLACE_UI_ENABLED && nextUpDrawerOpen;
 
   return (
     <>
       <section
         id={TODAY_FOCUS_ANCHOR_ID}
         className={cn(
-          "relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border transition-[border-color,background-color,box-shadow] duration-150",
+          "relative flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border transition-[border-color,background-color,box-shadow] duration-150",
           dropActive && habitDropBlocked
             ? "border-warning/45 bg-warning-muted/40"
             : dropActive
@@ -537,7 +531,7 @@ export function WorkplaceFocusCard({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <div className="shrink-0 space-y-2 px-3.5 py-3">
+        <div className="shrink-0 space-y-1.5 px-3 py-2">
           <div className="flex items-center justify-between gap-2">
             <div className="flex min-w-0 items-center gap-1.5">
               <Timer
@@ -562,19 +556,21 @@ export function WorkplaceFocusCard({
               ))}
               </div>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-7 rounded-md px-2.5 text-[13px]"
-              onClick={() => setReflectionOpen(true)}
-            >
-              Focus Reflection
-            </Button>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-7 rounded-md px-2.5 text-[13px]"
+                onClick={() => setReflectionOpen(true)}
+              >
+                Focus Reflection
+              </Button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-end justify-between gap-4 text-[14px]">
-            <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap items-end justify-between gap-2 text-[13px]">
+            <div className="flex flex-wrap gap-4">
               <div>
                 <p className="text-muted-foreground">Today&apos;s focus</p>
                 <p className="mt-0.5 font-semibold tabular-nums text-foreground">
@@ -588,13 +584,13 @@ export function WorkplaceFocusCard({
                 </p>
               </div>
             </div>
-            <p className="text-[17px] font-semibold tabular-nums text-muted-foreground">
+            <p className="text-[15px] font-semibold tabular-nums text-muted-foreground">
               {clockLabel}
             </p>
           </div>
         </div>
 
-        <div className="relative flex min-h-0 flex-1 flex-col px-3.5 pb-3.5">
+        <div className="relative flex min-h-0 flex-1 flex-col px-3 pb-2.5">
           {dropActive && habitDropBlocked ? (
             <div className="pointer-events-none absolute inset-x-3.5 top-2 z-10 rounded-md border border-dashed border-warning/50 bg-warning-muted/90 px-3 py-2 text-center text-[13px] leading-snug text-warning shadow-sm">
               Enable <span className="font-medium">Track with Focus</span> on this
@@ -606,9 +602,60 @@ export function WorkplaceFocusCard({
               {habitDropNotice}
             </div>
           ) : null}
+          {dropActive && !habitDropBlocked ? (
+            <div className="absolute inset-x-3.5 top-2 z-20 grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-2">
+              <div
+                className="rounded-md border border-primary/65 bg-primary/15 px-3 py-3 text-center text-[13px] font-medium text-foreground"
+                onDragOver={handleDragOver}
+                onDrop={handleScheduleDrop}
+              >
+                Add to Next Up
+                <span className="ml-1 font-normal text-muted-foreground">
+                  Drop to insert
+                </span>
+              </div>
+              <div
+                className="rounded-md border border-border-focus/65 bg-card/95 px-3 py-3 text-center text-[13px] font-medium text-foreground"
+                onDragOver={handleDragOver}
+                onDrop={handleStartFocusDrop}
+              >
+                Start focus
+              </div>
+            </div>
+          ) : null}
+          {pendingFocusTask ? (
+            <div className="absolute inset-x-3.5 bottom-2 z-30 flex flex-wrap items-center justify-between gap-2 rounded-md border border-border-focus/65 bg-card px-3 py-2 text-[13px]">
+              <span className="min-w-0 truncate">
+                Switch focus to <strong>{pendingFocusTask.title}</strong>?
+              </span>
+              <div className="flex shrink-0 gap-1.5">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 px-2 text-[12px]"
+                  onClick={() => setPendingFocusTask(null)}
+                >
+                  Keep current
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  className="h-7 px-2 text-[12px]"
+                  onClick={() => {
+                    activateFocusTask(pendingFocusTask);
+                    setPendingFocusTask(null);
+                  }}
+                >
+                  Switch focus
+                </Button>
+              </div>
+            </div>
+          ) : null}
           {tab === "focus" ? (
-            <>
-              <div className="relative flex shrink-0 flex-col items-center justify-center py-2 text-center">
+            <div className="relative min-h-0 flex-1">
+              <div className="flex h-full min-h-0 min-w-0 flex-col overflow-y-auto">
+              <div className="relative flex shrink-0 flex-col items-center justify-center py-1 text-center">
                 {quick.isIdle ? (
                   inlineReflectionSession ? (
                     <WorkplaceFocusInlineReflection
@@ -616,13 +663,19 @@ export function WorkplaceFocusCard({
                       onDismiss={() => setInlineReflectionSession(null)}
                     />
                   ) : (
-                  <div className="flex w-full flex-col items-center gap-4">
-                    <FocusTimerRing clock="00:00" focusSeconds={0} isActive={false} statusLabel="">
+                  <div className="flex w-full flex-col items-center gap-3">
+                    <FocusTimerRing
+                      clock="00:00"
+                      focusSeconds={0}
+                      isActive={false}
+                      statusLabel=""
+                      size={WORKPLACE_FOCUS_TIMER_RING_SIZE}
+                    >
                       <Button
                         type="button"
                         disabled={quickStartDisabled}
                         onClick={handleStartFocus}
-                        className="h-9 rounded-full px-8 text-sm"
+                        className="h-8 rounded-full px-6 text-sm"
                       >
                         <Play className="size-4" data-icon="inline-start" />
                         Start Focus
@@ -633,27 +686,28 @@ export function WorkplaceFocusCard({
                 ) : (
                   <>
                     <div className="flex w-full flex-col items-center text-center">
-                      <p className="mb-2 text-[14px] font-medium text-muted-foreground">
+                      <p className="mb-1 text-[12px] font-medium text-muted-foreground">
                         Session {sessionNumber}
                       </p>
                       <div className="relative">
                         <div
                           className="group/timer relative mx-auto"
                           style={{
-                            width: FOCUS_TIMER_RING_SIZE,
-                            height: FOCUS_TIMER_RING_SIZE,
+                            width: WORKPLACE_FOCUS_TIMER_RING_SIZE,
+                            height: WORKPLACE_FOCUS_TIMER_RING_SIZE,
                           }}
                         >
                           <FocusTimerRing
                             clock={quick.clock}
                             focusSeconds={quick.currentFocusSeconds}
                             isActive={!quick.isIdle}
+                            size={WORKPLACE_FOCUS_TIMER_RING_SIZE}
                             statusLabel={
                               quick.isOnBreak
                                 ? "On Break"
                                 : quick.isPaused
                                   ? "Paused"
-                                  : "In Focus"
+                                  : "Focusing"
                             }
                             statusTone={
                               quick.isOnBreak
@@ -748,7 +802,7 @@ export function WorkplaceFocusCard({
                       </div>
                       {(quick.currentFocusSeconds > 0 ||
                         quick.currentBreakSeconds > 0) && (
-                        <p className="mt-3 text-[13px] text-muted-foreground">
+                        <p className="mt-1.5 text-[12px] text-muted-foreground">
                           Focus {formatDuration(quick.currentFocusSeconds)} · Break{" "}
                           {formatDuration(quick.currentBreakSeconds)}
                         </p>
@@ -759,7 +813,7 @@ export function WorkplaceFocusCard({
               </div>
 
               {!quick.isIdle && quick.breakPrompt ? (
-                <div className="mt-2 shrink-0">
+                <div className="mt-2 flex shrink-0 justify-center px-1">
                   <FocusBreakNotification
                     kind={quick.breakPrompt}
                     breakAtMinutes={quick.breakAtMinutes}
@@ -777,7 +831,7 @@ export function WorkplaceFocusCard({
                 </div>
               ) : null}
 
-              {quick.hasScheduledBreak && !quick.isIdle ? (
+              {quick.hasScheduledBreak && !quick.isIdle && !quick.breakPrompt ? (
                 <div className="mt-2 flex shrink-0 justify-center px-1">
                   <FocusNextBreakStrip
                     breakAtMinutes={quick.breakAtMinutes}
@@ -790,84 +844,62 @@ export function WorkplaceFocusCard({
                 </div>
               ) : null}
 
-              <div className="mt-1 min-h-[4.5rem] space-y-2">
-                {activeTask ? (
-                  <div
-                    key={activeTask.id}
-                    className="animate-in fade-in slide-in-from-bottom-2 duration-300"
-                  >
-                    <TaskFocusRow
-                      task={activeTask}
-                      groups={groups}
-                      isPrimary
-                      descriptionExpanded={descriptionExpanded}
-                      onToggleDescription={() =>
-                        setDescriptionExpanded((value) => !value)
-                      }
-                      onToggleComplete={() => handleDoneWithAnimation(activeTask)}
-                      onOpenDetail={() => onOpenDetail(activeTask.id)}
-                      onContextMenu={handleFocusTaskContextMenu(activeTask)}
-                      donePending={completingTaskId === activeTask.id}
-                    />
-                  </div>
-                ) : activeHabit ? (
-                  <div
-                    key={activeHabit.id}
-                    className="animate-in fade-in slide-in-from-bottom-2 duration-300"
-                  >
-                    <HabitFocusRow
-                      habit={activeHabit}
-                      donePending={completingHabitId === activeHabit.id}
-                      onToggleComplete={() => {
-                        if (completingHabitId === activeHabit.id) return;
-                        setCompletingHabitId(activeHabit.id);
-                        window.setTimeout(() => {
-                          onToggleHabitComplete(activeHabit);
-                          setCompletingHabitId(null);
-                          setActiveFocusTarget(null, "auto");
-                        }, 1000);
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className="flow-empty px-2.5 py-2.5 text-center text-[12px] text-muted-foreground/85">
-                    {dropActive
-                      ? "Drop to focus"
-                      : "Hover timeline to drag a task or focus habit here"}
-                  </div>
-                )}
+              <FocusCurrentTaskCard
+                key={quick.isIdle ? "idle" : currentFocusTask?.id ?? "no-task"}
+                task={currentFocusTask}
+                groups={groups}
+                statusLabel={quick.statusLabel}
+                focusedSeconds={
+                  currentFocusTask && activeSession
+                    ? getTaskFocusedSeconds(activeSession, currentFocusTask.id)
+                    : 0
+                }
+                onOpenTask={(task) => onOpenDetail(task.id)}
+                onCompleteTask={handleCompleteCurrentTask}
+                onSkipFocus={handleSkipCurrentFocus}
+                onChooseFromQueue={openNextUpDrawer}
+              />
 
-                {nextTask ? (
-                  <div
-                    key={nextTask.id}
-                    className={cn(
-                      "group/row transition-all duration-500",
-                      promotedNextId === nextTask.id &&
-                        "animate-in fade-in slide-in-from-bottom-3 duration-500"
-                    )}
-                  >
-                    <TaskFocusRow
-                      label="Next"
-                      task={nextTask}
-                      groups={groups}
-                      onToggleComplete={() => onToggleComplete(nextTask, true)}
-                      onOpenDetail={() => onOpenDetail(nextTask.id)}
-                      onStart={() => {
-                        prepareFocusTarget({
-                          type: "task",
-                          id: nextTask.id,
-                          label: nextTask.title,
-                        });
-                        setActiveTaskId(nextTask.id, "manual");
-                        quick.startFocus();
-                      }}
-                      onContextMenu={handleFocusTaskContextMenu(nextTask)}
-                      showStartOnHover
-                    />
-                  </div>
-                ) : null}
+              {NEXT_UP_WORKPLACE_UI_ENABLED && !showNextUpDrawer ? (
+                <NextUpPreview
+                  tasks={displayedNextUpTasks}
+                  groups={groups}
+                  onHeaderClick={toggleNextUpDrawer}
+                  onViewAll={openNextUpDrawer}
+                  dropActive={dropActive && !habitDropBlocked}
+                  dropBeforeTaskId={nextUpDropBeforeId}
+                  onExternalDragOver={setNextUpDropBeforeId}
+                  onExternalDrop={handleScheduleDrop}
+                />
+              ) : null}
               </div>
-            </>
+
+              {showNextUpDrawer ? (
+                <NextUpDrawer
+                  tasks={displayedNextUpTasks}
+                  groups={groups}
+                  currentTask={currentFocusTask}
+                  onClose={closeNextUpDrawer}
+                  onStartFocus={requestStartFocus}
+                  onOpenDetail={(task) => onOpenDetail(task.id)}
+                  onRemove={handleRemoveQueueTask}
+                  onReorder={handleReorderQueue}
+                  onToggleComplete={handleCompleteQueueTask}
+                  listRef={nextUpDrawerListRef}
+                  onListScroll={() => {
+                    if (nextUpDrawerListRef.current) {
+                      nextUpDrawerScrollTopRef.current =
+                        nextUpDrawerListRef.current.scrollTop;
+                    }
+                  }}
+                  dropZoneActive={dropActive && !habitDropBlocked}
+                  onDropZoneDrop={handleScheduleDrop}
+                  externalDropBeforeId={nextUpDropBeforeId}
+                  onExternalDragOver={setNextUpDropBeforeId}
+                  onExternalDrop={handleScheduleDrop}
+                />
+              ) : null}
+            </div>
           ) : (
             <div className="group/timer relative flex flex-1 flex-col items-center justify-center gap-3 py-4">
               {pomodoro.isIdle ? (
@@ -994,27 +1026,6 @@ export function WorkplaceFocusCard({
         open={scheduleBreakOpen}
         onOpenChange={setScheduleBreakOpen}
       />
-
-      {focusTaskMenu ? (
-        <WorkplaceFocusTaskMenu
-          x={focusTaskMenu.x}
-          y={focusTaskMenu.y}
-          completed={focusTaskMenu.task.completed}
-          onClose={() => setFocusTaskMenu(null)}
-          onContinueLater={() => {
-            onContinueLater(focusTaskMenu.task);
-            clearFocusAfterPlanning();
-          }}
-          onContinueTomorrow={() => {
-            onContinueTomorrow(focusTaskMenu.task);
-            clearFocusAfterPlanning();
-          }}
-          onPlanLater={() => {
-            onPlanLater(focusTaskMenu.task);
-            clearFocusAfterPlanning();
-          }}
-        />
-      ) : null}
     </>
   );
 }

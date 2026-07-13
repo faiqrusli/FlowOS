@@ -35,6 +35,8 @@ export type Task = {
   group_id: string | null;
   /** Persistent manualOrder — always a positive integer (stored as sort_order). */
   sort_order: number;
+  /** Persistent execution order for the task-only Next Up queue. */
+  queue_order: number | null;
   duration_minutes: number | null;
   notification_enabled: boolean;
   notification_lead_minutes: number | null;
@@ -58,6 +60,7 @@ export type TaskInsert = {
   user_id?: string | null;
   group_id?: string | null;
   sort_order?: number;
+  queue_order?: number | null;
   duration_minutes?: number | null;
   notification_enabled?: boolean;
   notification_lead_minutes?: number | null;

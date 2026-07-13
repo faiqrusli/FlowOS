@@ -17,6 +17,7 @@ import { TaskBoardGroupsProvider } from "@/components/tasks/task-board-groups-co
 import {
   useGlobalRightSidebar,
 } from "@/contexts/global-right-sidebar-context";
+import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { WorkplaceFocusTaskProvider, useWorkplaceFocusTask } from "@/contexts/workplace-focus-task-context";
 import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
 import { getTodayDateString, getTomorrowDateString } from "@/lib/date-utils";
@@ -38,6 +39,7 @@ import {
 } from "@/lib/task-groups";
 import { moveTaskInBoard } from "@/lib/task-drag-utils";
 import { normalizePlanningState } from "@/lib/task-planning";
+import { appendTaskToNextUp, removeTaskFromNextUp } from "@/lib/task-next-up";
 import { setQuickScheduleOpen } from "@/lib/timeline-drag";
 import { collectAllBoardTasks } from "@/lib/timeline-layout";
 import {
@@ -491,7 +493,7 @@ export function WorkplacePageContent({
         className="flex h-full min-h-0 gap-2 pl-10"
         style={{ paddingRight: WORKPLACE_TIMELINE_RIGHT_GAP_PX }}
       >
-        <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS} py-1`}>
+        <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS}`}>
           {Array.from({ length: 5 }).map((_, index) => (
             <div
               key={index}
@@ -528,7 +530,7 @@ export function WorkplacePageContent({
               </div>
             ) : null}
 
-            <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS} min-h-0 py-1`}>
+            <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS} min-h-0`}>
               <div
                 className={cn(
                   "row-span-2 flex h-full min-h-0 flex-col overflow-hidden",
@@ -568,9 +570,6 @@ export function WorkplacePageContent({
                   onToggleComplete={(task, markComplete) =>
                     void handleToggleComplete(task, markComplete)
                   }
-                  onToggleHabitComplete={(habit) =>
-                    void handleToggleHabitComplete(habit)
-                  }
                   onOpenDetail={(taskId) => selectTask(taskId)}
                   onContinueLater={(task) => void handleContinueLater(task)}
                   onContinueTomorrow={(task) => void handleContinueTomorrow(task)}
@@ -578,7 +577,9 @@ export function WorkplacePageContent({
                 />
               </div>
               <div
-                className={cn(!isWorkplaceModuleShown("habits", density) && "hidden")}
+                className={cn(
+                  !isWorkplaceModuleShown("habits", density) && "hidden"
+                )}
               >
                 <WorkplaceHabitsCardWithFocus
                   ref={habitsTabRef}
@@ -629,6 +630,10 @@ export function WorkplacePageContent({
                 onClose={() => setTaskContextMenu(null)}
                 onOpenDetail={() => {
                   selectTask(taskContextMenu.task.id);
+                  setTaskContextMenu(null);
+                }}
+                onAddToNextUp={() => {
+                  void appendTaskToNextUp(taskContextMenu.task.id);
                   setTaskContextMenu(null);
                 }}
                 onMoveToTomorrow={() => {
@@ -705,6 +710,7 @@ function WorkplaceTodayTaskContextMenu({
   anchorRect,
   onClose,
   onOpenDetail,
+  onAddToNextUp,
   onMoveToTomorrow,
   onPlanLater,
   onToggleComplete,
@@ -715,12 +721,14 @@ function WorkplaceTodayTaskContextMenu({
   anchorRect: DOMRect;
   onClose: () => void;
   onOpenDetail: () => void;
+  onAddToNextUp: () => void;
   onMoveToTomorrow: () => void;
   onPlanLater: () => void;
   onToggleComplete: () => void;
   onDelete: () => void;
 }) {
   const { setActiveTaskId } = useWorkplaceFocusTask();
+  const { prepareFocusTarget, quick } = useFocusSessionContext();
 
   return (
     <WorkplaceTodayTaskMenu
@@ -731,9 +739,22 @@ function WorkplaceTodayTaskContextMenu({
       onClose={onClose}
       onStartFocus={() => {
         setActiveTaskId(task.id, "manual");
+        const target = {
+          type: "task" as const,
+          id: task.id,
+          label: task.title,
+        };
+        void removeTaskFromNextUp(task.id);
+        if (quick.isIdle) {
+          prepareFocusTarget(target);
+          quick.startFocus();
+        } else {
+          quick.setFocusTarget(target);
+        }
         onClose();
       }}
       onOpenDetail={onOpenDetail}
+      onAddToNextUp={onAddToNextUp}
       onMoveToTomorrow={onMoveToTomorrow}
       onPlanLater={onPlanLater}
       onToggleComplete={onToggleComplete}
