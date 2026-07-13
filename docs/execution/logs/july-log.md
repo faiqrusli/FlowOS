@@ -22,17 +22,20 @@ Low ceremony — bullets are fine.
 
 ---
 
-## 2026-07-13 — Visual Design System v3.0 + migration runbook
+## 2026-07-13 — Next Up V2 + Visual Design System v3.0
 
 **Shipped:**
-- [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) v3.0 — global semantic visual contract (Canvas, Navigation, Base, Raised, Overlay, Hover)
-- [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md) preserved as historical Sessions 1–5 baseline
-- [design-system-v3-migration.md](../runbooks/design-system-v3-migration.md) — Phases 1–11 execution runbook
-- Foundation and execution indexes updated; historical v2 runbooks marked superseded
+- Branch `tweak/recover-next-up-queue-ship` → `main` (`0e524b0`, merge)
+- Next Up V2: persistent task-only queue on `tasks.queue_order`; Focus card preview + drawer; intentional Start focus vs Add to Next Up; per-task active-session focus totals
+- SQL: `supabase/tasks_next_up_queue.sql`, `supabase/focus_session_task_totals.sql` (apply on production if not already)
+- Living design: [next-up.md](../../design/focus/next-up.md); historical runbook/spec retained
+- [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) v3.0 + [design-system-v3-migration.md](../runbooks/design-system-v3-migration.md) (already on `main` earlier today)
 
-**Build/lint:** docs-only — not required.
+**Build/lint:** pass on ship branch (0 errors; existing warnings only).
 
-**Decision:** [decision-log.md](./decision-log.md) — Visual Design System v3.0 (2026-07-13)
+**Production:** https://flowos-sage.vercel.app — verify Focus Next Up after deploy; confirm SQL applied.
+
+**Decision:** [decision-log.md](./decision-log.md) — Next Up V2 (2026-07-10) · Visual Design System v3.0 (2026-07-13)
 
 ---
 

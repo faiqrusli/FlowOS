@@ -2,7 +2,7 @@
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 13, 2026 (Visual Design System v3.0 published; persistent Next Up V2 in progress)
+**Last updated:** July 13, 2026 (Visual Design System v3.0 published; Next Up V2 shipped)
 
 **Visual system:** [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) v3.0 is the active visual authority. Its code migration is pending; current surface helpers remain `src/lib/theme/surface-classes.ts` and `src/lib/task-group-appearance.ts`.
 
@@ -149,7 +149,7 @@ Logic: `flowos/src/lib/dashboard-command.ts`
 | Habit focus tracking | Shipped | Requires `track_with_focus` opt-in per habit |
 | Reflection on session end | Shipped | Modal on Workplace |
 | Schedule Break (modal + Next Break strip + break notifications) | **Shipped** | Quick-focus tab on Workplace focus card; preset/custom duration picker; spec: [schedule-break-modal-spec.md](../review/design/schedule-break-modal-spec.md) |
-| Next Up queue (Focus execution layer) | **In progress** | V2: persistent task-only ordered queue (`tasks.queue_order`), positional drop insertion, intentional start-focus handoff, and per-task active-session focus attribution; see [decision log](../execution/logs/decision-log.md#2026-07-10--next-up-v2-persistent-task-execution-queue) |
+| Next Up queue (Focus execution layer) | **Shipped** | V2: persistent task-only ordered queue (`tasks.queue_order`), positional drop insertion, intentional start-focus handoff, and per-task active-session focus attribution; see [decision log](../execution/logs/decision-log.md#2026-07-10--next-up-v2-persistent-task-execution-queue) · [next-up.md](../design/focus/next-up.md) |
 
 ---
 

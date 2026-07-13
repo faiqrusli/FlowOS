@@ -56,7 +56,7 @@ When making a significant product decision:
 
 **Alternatives rejected:** Retain the localStorage focus-session queue (loses execution intent between sessions); make Next Up a second task manager with planning controls; queue habits; automatically re-add tasks when they return to Today.
 
-**Outcome:** V2 implementation in progress on `tweak/recover-next-up-queue`.
+**Outcome:** Shipped to `main` via `tweak/recover-next-up-queue-ship` (2026-07-13).
 
 **Related:** [next-up-queue-spec.md](../../review/design/next-up-queue-spec.md) · [m2-next-up-queue.md](../runbooks/m2-next-up-queue.md)
 
@@ -68,7 +68,7 @@ When making a significant product decision:
 
 **Alternatives rejected:** Auto-start every drop; a queue-only drop surface with a hidden start path; local-only task timing; reintroducing habits or session-scoped queue data.
 
-**Outcome:** Implementation in progress on `tweak/recover-next-up-queue`.
+**Outcome:** Shipped to `main` via `tweak/recover-next-up-queue-ship` (2026-07-13).
 
 ### 2026-07-10 — Kanban cards on `--card`; shared soft board borders with Tasks groups
 
