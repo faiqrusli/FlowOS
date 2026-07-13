@@ -1,12 +1,12 @@
-﻿# Visual Design System v3.0 â€” Global Migration
+﻿# Visual Design System v3.0 - Global Migration
 
-**Status:** Ready â€” not started
-**Scope:** Application-wide visual migration only. Implements [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) v3.0. Does **not** change product behaviour, persistence, routing, database logic, or feature architecture unless a visual replacement requires it.
-**Authority:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) Â§10 Â· [decision-log.md](../logs/decision-log.md) 2026-07-13 â€œVisual Design System v3.0â€. Historical baseline: [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md).
-**Repo root:** repository root (Next.js app).
-**Production baseline:** https://flowos-sage.vercel.app
-**Docs path:** `docs/` (tracked in VCS)
-**Idea capture:** [inbox.md](../logs/inbox.md) â†’ this runbook â†’ [july-log.md](../logs/july-log.md) after merge to `main`.
+**Status:** Ready - not started  
+**Scope:** Application-wide visual migration only. Implements [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) v3.0. Does **not** change product behaviour, persistence, routing, database logic, or feature architecture unless a visual replacement requires it.  
+**Authority:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) section 10 · [decision-log.md](../logs/decision-log.md) 2026-07-13 "Visual Design System v3.0". Historical baseline: [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md).  
+**Repo root:** repository root (Next.js app).  
+**Production baseline:** https://flowos-sage.vercel.app  
+**Docs path:** `docs/` (tracked in VCS)  
+**Idea capture:** [inbox.md](../logs/inbox.md) -> this runbook -> [july-log.md](../logs/july-log.md) after merge to `main`.
 
 **Non-goals:** Command palette, new modules, monolith refactors, layout rewrites, light-theme polish, behaviour changes disguised as visual work.
 
@@ -14,7 +14,7 @@
 
 ## 1. Product understanding
 
-**In plain terms:** FlowOS already has partial surface tokens and feature-specific appearance helpers from v1/v2. v3.0 defines a single global semantic system â€” Canvas, Navigation, Base, Raised, Overlay, Hover â€” plus shared typography, spacing, states, primitives, and domain appearance ownership. The migration replaces one-off page styling with reusable semantic recipes so every route feels like one productivity OS.
+**In plain terms:** FlowOS already has partial surface tokens and feature-specific appearance helpers from v1/v2. v3.0 defines a single global semantic system - Canvas, Navigation, Base, Raised, Overlay, Hover - plus shared typography, spacing, states, primitives, and domain appearance ownership. The migration replaces one-off page styling with reusable semantic recipes so every route feels like one productivity OS.
 
 **Styling ownership rule (non-negotiable)**
 
@@ -23,20 +23,20 @@ Visual decisions belong at the lowest reusable semantic level:
 - Primitives own Button, Input, Dialog, Popover, and overlay depth.
 - Domain helpers own task rows, habit states, timeline events, priorities, and groups.
 - Feature components own their row/card variants.
-- Page composition owns hierarchy and spacing â€” not duplicated row styling.
+- Page composition owns hierarchy and spacing - not duplicated row styling.
 
-**Today is last among major workspaces** because it composes Tasks, Habits, Focus, Timeline, Notes, Reflection, and Quick Capture. Do not migrate Today before Phases 5â€“8 establish the systems it consumes.
+**Today is last among major workspaces** because it composes Tasks, Habits, Focus, Timeline, Notes, Reflection, and Quick Capture. Do not migrate Today before Phases 5-8 establish the systems it consumes.
 
 ---
 
 ## Acceptance test
 
-When Phases 1â€“11 are complete on production:
+When Phases 1-11 are complete on production:
 
 1. Every major surface maps intentionally to Canvas, Navigation, Base, Raised, or Overlay.
 2. `globals.css` exposes v3 semantic tokens with documented compatibility aliases only where still required.
-3. Shared primitives (`src/components/ui/`) and surface recipes (`surface-classes.ts`) consume v3 tokens â€” not page-specific hex or arbitrary slate/gray stacks.
-4. Tasks, Habits, Focus, Schedule/Timeline, Notes, Kanban, Reflection, and Today each follow DESIGN_SYSTEM Â§8 without page-specific grey hierarchies.
+3. Shared primitives (`src/components/ui/`) and surface recipes (`surface-classes.ts`) consume v3 tokens - not page-specific hex or arbitrary slate/gray stacks.
+4. Tasks, Habits, Focus, Schedule/Timeline, Notes, Kanban, Reflection, and Today each follow DESIGN_SYSTEM section 8 without page-specific grey hierarchies.
 5. Focus timer remains cardless on Canvas; Current Focus Task is Raised; Next Up and complex overlays use Overlay.
 6. Hover, selected, active, current, and drag-target states are distinguishable globally.
 7. Primary indigo is scarce and meaningful; semantic status colours remain where they communicate meaning.
@@ -49,7 +49,7 @@ When Phases 1â€“11 are complete on production:
 
 | Step | Action |
 |------|--------|
-| 1 | **Stop** at the phase stop/fail condition â€” do not skip dependency order. |
+| 1 | **Stop** at the phase stop/fail condition - do not skip dependency order. |
 | 2 | **Record blocker** in [decision-log.md](../logs/decision-log.md): date, phase #, symptom, files touched, next action. |
 | 3 | **Git:** commit WIP on the **phase branch** or `git stash`. Do **not** merge to `main` without founder approval. |
 | 4 | **Resume** the same phase when unblocked. |
@@ -61,17 +61,17 @@ When Phases 1â€“11 are complete on production:
 
 | Phase | Depends on (must be on `main`) | Blocks |
 |-------|--------------------------------|--------|
-| 1 â€” Global tokens and theme bridge | v3.0 spec + runbook published | 2â€“11 |
-| 2 â€” Shared primitives and semantic recipes | 1 | 3â€“11 |
-| 3 â€” Navigation and application shell | 2 | 5â€“11 |
-| 4 â€” Shared domain appearance systems | 2 | 5â€“11 |
-| 5 â€” Tasks and Habits | 3, 4 | 9 |
-| 6 â€” Focus and Schedule / Timeline | 3, 4 | 9 |
-| 7 â€” Notes and Kanban | 3, 4 | 9 |
-| 8 â€” Reflection | 3, 4, 7 preferred | 9 |
-| 9 â€” Today integration workspace | 5, 6, 7, 8 | 10 |
-| 10 â€” Feature drawers and complex overlays | 2, 9 | 11 |
-| 11 â€” Global consistency audit | 10 | â€” |
+| 1 - Global tokens and theme bridge | v3.0 spec + runbook published | 2-11 |
+| 2 - Shared primitives and semantic recipes | 1 | 3-11 |
+| 3 - Navigation and application shell | 2 | 5-11 |
+| 4 - Shared domain appearance systems | 2 | 5-11 |
+| 5 - Tasks and Habits | 3, 4 | 9 |
+| 6 - Focus and Schedule / Timeline | 3, 4 | 9 |
+| 7 - Notes and Kanban | 3, 4 | 9 |
+| 8 - Reflection | 3, 4, 7 preferred | 9 |
+| 9 - Today integration workspace | 5, 6, 7, 8 | 10 |
+| 10 - Feature drawers and complex overlays | 2, 9 | 11 |
+| 11 - Global consistency audit | 10 | - |
 
 ---
 
@@ -81,21 +81,21 @@ Full rules: [GIT_WORKFLOW.md](../../foundation/governance/GIT_WORKFLOW.md).
 
 | Step | Rule |
 |------|------|
-| **Start phase** | `git checkout main && git pull` â†’ `git checkout -b m2/session-N-v3-phase-{N}-short-name` |
+| **Start phase** | `git checkout main && git pull` -> `git checkout -b m2/session-N-v3-phase-{N}-short-name` |
 | **During phase** | Commit on branch; `git push -u origin HEAD` |
-| **End phase** | Run verification checklist â†’ report merge bundle â†’ **ask founder to approve merge to `main`** |
-| **After merge** | Verify production â†’ append [july-log.md](../logs/july-log.md) |
+| **End phase** | Run verification checklist -> report merge bundle -> **ask founder to approve merge to `main`** |
+| **After merge** | Verify production -> append [july-log.md](../logs/july-log.md) |
 
 **Suggested merge bundles**
 
 | Bundle | Phases | Remind merge when |
 |--------|--------|-------------------|
-| B1 â€” Token foundation | 1â€“2 | Primitives render correctly in isolation |
-| B2 â€” Shell + domain recipes | 3â€“4 | Nav/rails/canvas + appearance helpers aligned |
-| B3 â€” Core workspaces | 5â€“6 | Tasks, Habits, Focus, Schedule/Timeline smoke clean |
-| B4 â€” Thinking workspaces | 7â€“8 | Notes, Kanban, Reflection smoke clean |
-| B5 â€” Integration + overlays | 9â€“10 | Today composes without local row redefinition |
-| B6 â€” Audit closure | 11 | Global grep audit passes; aliases removed where safe |
+| B1 - Token foundation | 1-2 | Primitives render correctly in isolation |
+| B2 - Shell + domain recipes | 3-4 | Nav/rails/canvas + appearance helpers aligned |
+| B3 - Core workspaces | 5-6 | Tasks, Habits, Focus, Schedule/Timeline smoke clean |
+| B4 - Thinking workspaces | 7-8 | Notes, Kanban, Reflection smoke clean |
+| B5 - Integration + overlays | 9-10 | Today composes without local row redefinition |
+| B6 - Audit closure | 11 | Global grep audit passes; aliases removed where safe |
 
 Ad-hoc visual fixes during migration: `tweak/v3-short-description` from `main`.
 
@@ -114,10 +114,10 @@ Plus manual smoke on every changed flow and visual inspection of touched surface
 
 ---
 
-## Phase 1 â€” Global Tokens and Theme Bridge
+## Phase 1 - Global Tokens and Theme Bridge
 
-**Goal:** Centralise v3 semantic tokens and compatibility aliases in `globals.css` without redesigning features.
-**Maps to:** DESIGN_SYSTEM Â§3â€“5, Â§10 Phase 1
+**Goal:** Centralise v3 semantic tokens and compatibility aliases in `globals.css` without redesigning features.  
+**Maps to:** DESIGN_SYSTEM sections 3-5, section 10 Phase 1  
 **Merge bundle:** B1
 
 ### Current code reality
@@ -147,7 +147,7 @@ Plus manual smoke on every changed flow and visual inspection of touched surface
 | Text muted | `--text-muted` | `#64748B` |
 | Text disabled | `--text-disabled` | `#475569` |
 
-Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/motion tokens, and **compatibility aliases** mapping existing shadcn/Tailwind consumers (`--background` â†’ canvas, `--surface` â†’ nav, `--card` â†’ base/raised contexts as documented) until later phases migrate consumers.
+Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/motion tokens, and **compatibility aliases** mapping existing shadcn/Tailwind consumers (`--background` -> canvas, `--surface` -> nav, `--card` -> base/raised contexts as documented) until later phases migrate consumers.
 
 ### Steps
 
@@ -167,11 +167,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 ---
 
-## Phase 2 â€” Shared Primitives and Semantic Recipes
+## Phase 2 - Shared Primitives and Semantic Recipes
 
-**Goal:** Establish the visual language all feature components will consume.
-**Maps to:** DESIGN_SYSTEM Â§6, Â§10 Phase 2
-**Merge bundle:** B1
+**Goal:** Establish the visual language all feature components will consume.  
+**Maps to:** DESIGN_SYSTEM section 6, section 10 Phase 2  
+**Merge bundle:** B1  
 **Depends on:** Phase 1
 
 ### Primary files
@@ -194,7 +194,7 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 | # | Step |
 |---|------|
 | 1 | Map each primitive variant to v3 tokens: primary/secondary/ghost/destructive buttons; input states; overlay surfaces. |
-| 2 | Remove or gate dark-specific glow/shadow exceptions that violate Â§5 (e.g. primary button neon shadow) where primitives own them. |
+| 2 | Remove or gate dark-specific glow/shadow exceptions that violate section 5 (e.g. primary button neon shadow) where primitives own them. |
 | 3 | Add or extend semantic utilities: `surface-canvas`, `surface-nav`, `surface-base`, `surface-raised`, `surface-overlay` in `surface-classes.ts` only if they reduce duplication. |
 | 4 | Standardise shared focus ring, scrollbar, and empty/dashed drop target classes. |
 | 5 | Do **not** migrate feature pages in this phase. |
@@ -207,11 +207,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 ---
 
-## Phase 3 â€” Navigation and Application Shell
+## Phase 3 - Navigation and Application Shell
 
-**Goal:** Establish Canvas â†’ Navigation relationship globally before feature workspaces.
-**Maps to:** DESIGN_SYSTEM Â§7, Â§10 Phase 3
-**Merge bundle:** B2
+**Goal:** Establish Canvas -> Navigation relationship globally before feature workspaces.  
+**Maps to:** DESIGN_SYSTEM section 7, section 10 Phase 3  
+**Merge bundle:** B2  
 **Depends on:** Phase 2
 
 ### Primary files
@@ -243,11 +243,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 ---
 
-## Phase 4 â€” Shared Domain Appearance Systems
+## Phase 4 - Shared Domain Appearance Systems
 
-**Goal:** Normalise semantic ownership before feature-page migration.
-**Maps to:** DESIGN_SYSTEM Â§6, Â§10 Phase 4
-**Merge bundle:** B2
+**Goal:** Normalise semantic ownership before feature-page migration.  
+**Maps to:** DESIGN_SYSTEM section 6, section 10 Phase 4  
+**Merge bundle:** B2  
 **Depends on:** Phase 2
 
 ### Primary files
@@ -269,7 +269,7 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 | 2 | Move repeated styling into the appropriate `*-appearance.ts` helper or shared component variant. |
 | 3 | Preserve semantic status colours (priority red/amber/green, schedule channels, habit accents). |
 | 4 | Replace inline `text-[13px]` and arbitrary greys in touched helpers with typography tokens where the helper owns the style. |
-| 5 | Do **not** migrate full pages yet â€” only shared recipes and conflicting page-local duplicates that would block Phases 5â€“8. |
+| 5 | Do **not** migrate full pages yet - only shared recipes and conflicting page-local duplicates that would block Phases 5-8. |
 | 6 | Run verification checklist. |
 
 ### Stop/fail if
@@ -279,11 +279,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 ---
 
-## Phase 5 â€” Tasks and Habits
+## Phase 5 - Tasks and Habits
 
-**Goal:** Establish row, group, state, and drag language reused by Today.
-**Maps to:** DESIGN_SYSTEM Â§8 (Tasks, Habits)
-**Merge bundle:** B3
+**Goal:** Establish row, group, state, and drag language reused by Today.  
+**Maps to:** DESIGN_SYSTEM section 8 (Tasks, Habits)  
+**Merge bundle:** B3  
 **Depends on:** Phases 3, 4
 
 ### Primary files
@@ -300,7 +300,7 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 | # | Step |
 |---|------|
-| 1 | Page canvas â†’ Canvas; task/habit groups â†’ Base with subtle border. |
+| 1 | Page canvas -> Canvas; task/habit groups -> Base with subtle border. |
 | 2 | Rows flat within groups; hover `surface-hover`; selected `primary-subtle` / `primary-soft`. |
 | 3 | Priority on flag/badge only; group badges restrained. |
 | 4 | Drag source, drop target, insertion line per global DnD contract. |
@@ -314,11 +314,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 ---
 
-## Phase 6 â€” Focus and Schedule / Timeline
+## Phase 6 - Focus and Schedule / Timeline
 
-**Goal:** Establish execution-system visuals Today will compose.
-**Maps to:** DESIGN_SYSTEM Â§8 (Focus, Schedule)
-**Merge bundle:** B3
+**Goal:** Establish execution-system visuals Today will compose.  
+**Maps to:** DESIGN_SYSTEM section 8 (Focus, Schedule)  
+**Merge bundle:** B3  
 **Depends on:** Phases 3, 4
 
 ### Primary files
@@ -336,10 +336,10 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 | # | Step |
 |---|------|
 | 1 | Cardless Focus timer on Canvas; typography + whitespace hierarchy. |
-| 2 | Current Focus Task â†’ Raised; metadata recessive; description scroll cap preserved. |
+| 2 | Current Focus Task -> Raised; metadata recessive; description scroll cap preserved. |
 | 3 | Focus session/break states: strategic primary + calm break distinction. |
-| 4 | Timeline base â†’ Base; events â†’ Raised; grid subtle; Now marker primary. |
-| 5 | Align `/focus` hub with Today Focus language â€” one system, not two. |
+| 4 | Timeline base -> Base; events -> Raised; grid subtle; Now marker primary. |
+| 5 | Align `/focus` hub with Today Focus language - one system, not two. |
 | 6 | Run verification checklist on `/focus`, `/schedule`, and timeline embed. |
 
 ### Stop/fail if
@@ -349,11 +349,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 ---
 
-## Phase 7 â€” Notes and Kanban
+## Phase 7 - Notes and Kanban
 
-**Goal:** Migrate thinking workspace and object-card exception.
-**Maps to:** DESIGN_SYSTEM Â§8 (Notes, Kanban)
-**Merge bundle:** B4
+**Goal:** Migrate thinking workspace and object-card exception.  
+**Maps to:** DESIGN_SYSTEM section 8 (Notes, Kanban)  
+**Merge bundle:** B4  
 **Depends on:** Phases 3, 4
 
 ### Primary files
@@ -369,19 +369,19 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 | # | Step |
 |---|------|
-| 1 | Notes canvas â†’ Canvas; list/rail â†’ Base; editor continuous, Raised only if needed. |
-| 2 | Notes drawer â†’ Overlay when above another page; flat rows, `primary-soft` selected. |
-| 3 | Kanban columns â†’ Base; cards â†’ Raised; drag â†’ `primary-medium`. |
+| 1 | Notes canvas -> Canvas; list/rail -> Base; editor continuous, Raised only if needed. |
+| 2 | Notes drawer -> Overlay when above another page; flat rows, `primary-soft` selected. |
+| 3 | Kanban columns -> Base; cards -> Raised; drag -> `primary-medium`. |
 | 4 | Preserve flat navigator vs movable card distinction. |
 | 5 | Run verification checklist on `/notes` and Kanban boards. |
 
 ---
 
-## Phase 8 â€” Reflection
+## Phase 8 - Reflection
 
-**Goal:** Calm, spacious writing workspace.
-**Maps to:** DESIGN_SYSTEM Â§8 (Reflection)
-**Merge bundle:** B4
+**Goal:** Calm, spacious writing workspace.  
+**Maps to:** DESIGN_SYSTEM section 8 (Reflection)  
+**Merge bundle:** B4  
 **Depends on:** Phases 3, 4; Phase 7 preferred
 
 ### Primary files
@@ -403,11 +403,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 ---
 
-## Phase 9 â€” Today Integration Workspace
+## Phase 9 - Today Integration Workspace
 
-**Goal:** Compose established domain systems without redefining them.
-**Maps to:** DESIGN_SYSTEM Â§8 (Today)
-**Merge bundle:** B5
+**Goal:** Compose established domain systems without redefining them.  
+**Maps to:** DESIGN_SYSTEM section 8 (Today)  
+**Merge bundle:** B5  
 **Depends on:** Phases 5, 6, 7, 8
 
 ### Primary files
@@ -424,11 +424,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 | # | Step |
 |---|------|
-| 1 | Canvas page background; compose Tasks/Habits/Focus/Timeline modules using Phase 5â€“6 components â€” no local row restyling. |
+| 1 | Canvas page background; compose Tasks/Habits/Focus/Timeline modules using Phase 5-6 components - no local row restyling. |
 | 2 | Focus timer cardless; Current Focus Task Raised; Next Up compact preview. |
-| 3 | Establish execution hierarchy: now â†’ next â†’ today lists â†’ timeline. |
+| 3 | Establish execution hierarchy: now -> next -> today lists -> timeline. |
 | 4 | Quick Capture Raised and immediately actionable. |
-| 5 | Verify four questions from DESIGN_SYSTEM Â§10 Phase 9 are obvious on `/`. |
+| 5 | Verify four questions from DESIGN_SYSTEM section 10 Phase 9 are obvious on `/`. |
 | 6 | Run full Today smoke: density presets, focus session, task/habit completion, timeline. |
 
 ### Stop/fail if
@@ -438,11 +438,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 ---
 
-## Phase 10 â€” Feature Drawers and Complex Overlays
+## Phase 10 - Feature Drawers and Complex Overlays
 
-**Goal:** Migrate feature compositions built on Phase 2 overlay primitives.
-**Maps to:** DESIGN_SYSTEM Â§10 Phase 10
-**Merge bundle:** B5
+**Goal:** Migrate feature compositions built on Phase 2 overlay primitives.  
+**Maps to:** DESIGN_SYSTEM section 10 Phase 10  
+**Merge bundle:** B5  
 **Depends on:** Phases 2, 9
 
 ### Primary targets
@@ -467,11 +467,11 @@ Add `--primary-subtle`, `--primary-soft`, `--primary-medium`, radius/shadow/moti
 
 ---
 
-## Phase 11 â€” Global Consistency Audit
+## Phase 11 - Global Consistency Audit
 
-**Goal:** Remove accidental one-off styling and retire safe compatibility aliases.
-**Maps to:** DESIGN_SYSTEM Â§11, Â§10 Phase 11
-**Merge bundle:** B6
+**Goal:** Remove accidental one-off styling and retire safe compatibility aliases.  
+**Maps to:** DESIGN_SYSTEM section 11, section 10 Phase 11  
+**Merge bundle:** B6  
 **Depends on:** Phase 10
 
 ### Grep targets
@@ -485,7 +485,7 @@ rg "shadow-\[" src/components
 
 ### Audit questions (every route)
 
-1. Canvas, Navigation, Base, Raised, Overlay â€” classified?
+1. Canvas, Navigation, Base, Raised, Overlay - classified?
 2. Primary indigo scarce and meaningful?
 3. Unnecessary borders/cards?
 4. Hover vs selected vs active vs current distinct?
@@ -497,7 +497,7 @@ rg "shadow-\[" src/components
 | # | Step |
 |---|------|
 | 1 | Run grep audit; file list of remaining violations. |
-| 2 | Fix high-traffic violations only â€” no drive-by refactors outside audit list. |
+| 2 | Fix high-traffic violations only - no drive-by refactors outside audit list. |
 | 3 | Remove compatibility aliases only when zero consumers remain. |
 | 4 | Update `tokens.ts` and `FEATURE_INVENTORY.md` design-system status to **shipped**. |
 | 5 | Append outcome to [decision-log.md](../logs/decision-log.md) and [july-log.md](../logs/july-log.md). |
@@ -518,9 +518,9 @@ rg "shadow-\[" src/components
 
 ## Related documents
 
-- [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) â€” v3.0 authority
-- [CODE_STANDARDS.md](../../foundation/governance/CODE_STANDARDS.md) â€” styling rules
-- [m2-surface-hierarchy.md](./m2-surface-hierarchy.md) â€” historical v1 implementation
-- [m2-visual-design-v2.md](./m2-visual-design-v2.md) â€” historical v2 baseline
+- [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) - v3.0 authority
+- [CODE_STANDARDS.md](../../foundation/governance/CODE_STANDARDS.md) - styling rules
+- [m2-surface-hierarchy.md](./m2-surface-hierarchy.md) - historical v1 implementation
+- [m2-visual-design-v2.md](./m2-visual-design-v2.md) - historical v2 baseline
 
 *End of runbook. Do not change phase order without a decision-log entry.*
