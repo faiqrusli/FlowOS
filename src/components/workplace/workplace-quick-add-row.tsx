@@ -56,7 +56,7 @@ function QuickAddHint({
 }
 
 const iconActionClass =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-xs transition-colors hover:bg-muted/40";
+  "inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border-subtle bg-surface-base text-foreground transition-colors hover:bg-surface-hover";
 
 export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRowProps) {
   const { createNewNote, openDailyNote, openReflection, notifyWorkplaceTaskCreated } =
@@ -120,7 +120,7 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
             onKeyDown={handleKeyDown}
             placeholder="Add a task…"
             title="Type a task and press Enter to add to Today"
-            className="h-8 min-w-0 flex-1 border-border/50 bg-background/80 px-2.5 text-[13px] shadow-none"
+            className="h-8 min-w-0 flex-1 border-border-subtle bg-surface-raised px-2.5 text-[13px] shadow-none"
           />
           <QuickAddHint label="Quick capture — full task form · Ctrl+Shift+A">
             <Button

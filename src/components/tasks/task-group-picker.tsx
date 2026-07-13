@@ -74,7 +74,7 @@ export function TaskGroupPicker({
                 onSelect(group.id);
                 setOpen(false);
               }}
-              className={cn("py-2", selected && "bg-muted")}
+              className={cn("py-2", selected && "bg-primary-soft")}
             >
               <TaskGroupPill
                 variant="plain"

@@ -48,7 +48,7 @@ function InlineStatChip({
   );
 
   const className =
-    "inline-flex items-baseline gap-1 rounded-md px-1 py-0.5 transition-colors hover:bg-muted/40";
+    "inline-flex items-baseline gap-1 rounded-md px-1 py-0.5 transition-colors hover:bg-surface-hover";
 
   if (onClick) {
     return (

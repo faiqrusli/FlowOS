@@ -117,10 +117,10 @@ export function GlobalRightSidebar() {
         />
       )}
 
-      {/* Quiet lift above page canvas — 15% toward card. */}
+      {/* Navigation chrome — same token as left nav. */}
       <aside
         className={cn(
-          "relative flex h-full shrink-0 overflow-hidden border-l border-sidebar-border text-foreground",
+          "relative flex h-full shrink-0 overflow-hidden border-l border-border-subtle text-foreground",
           workspaceRailBackgroundClass,
             workplaceHoverMode && "fixed inset-y-0 right-0 z-40",
             !sidebarVisible && workplaceHoverMode && "pointer-events-none opacity-0"

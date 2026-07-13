@@ -8,7 +8,7 @@ import {
   writeModuleVisibility,
   type WorkplaceModuleVisibility,
 } from "@/lib/workplace-module-visibility";
-import { workplacePanelSectionClassName } from "@/lib/workplace-panel-appearance";
+import { surfaceRaisedClass } from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
 
 type WorkplaceQuickAddCardProps = {
@@ -40,7 +40,7 @@ export function WorkplaceQuickAddCard({
   return (
     <section
       className={cn(
-        workplacePanelSectionClassName,
+        surfaceRaisedClass,
         "group/qa flex shrink-0 items-center px-2 py-1",
         !showChrome &&
           "border-transparent bg-transparent shadow-none hover:border-transparent hover:bg-transparent hover:shadow-none"
@@ -59,7 +59,7 @@ export function WorkplaceQuickAddCard({
         type="button"
         onClick={toggleVisibility}
         className={cn(
-          "ml-1 flex size-5 shrink-0 items-center justify-center rounded-md text-muted-foreground/55 transition-[opacity,colors] duration-200 hover:bg-muted/50 hover:text-muted-foreground",
+          "ml-1 flex size-5 shrink-0 items-center justify-center rounded-md text-muted-foreground/55 transition-[opacity,colors] duration-200 hover:bg-surface-hover hover:text-muted-foreground",
           showChrome ? "opacity-100" : "opacity-0"
         )}
         aria-label={

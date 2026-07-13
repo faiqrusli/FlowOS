@@ -4,7 +4,7 @@
 |                           |                                                                                                                                                          |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Version**               | 3.0                                                                                                                                                      |
-| **Status**                | Approved implementation contract — migration pending                                                                                                     |
+| **Status**                | Shipped — migration sessions 1–4 complete (merge pending)                                                                                                     |
 | **Owner**                 | FlowOS Product                                                                                                                                           |
 | **Date**                  | July 13, 2026                                                                                                                                            |
 | **Supersedes**            | [Visual Design System v2.0](./DESIGN_SYSTEM_v2.md)                                                                                                       |

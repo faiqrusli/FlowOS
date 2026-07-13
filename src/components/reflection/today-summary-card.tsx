@@ -9,7 +9,7 @@ type TodaySummaryCardProps = {
 
 export function TodaySummaryCard({ review, loading }: TodaySummaryCardProps) {
   return (
-    <Card className="shadow-sm">
+    <Card className="border-border-subtle shadow-none">
       <CardHeader>
         <CardTitle>Daily review</CardTitle>
       </CardHeader>

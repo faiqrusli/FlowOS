@@ -256,10 +256,10 @@ export function NotesPanel({
       <div
         className={cn(
           "flex h-full min-h-0 flex-row overflow-hidden",
-          embedded ? "" : "rounded-2xl border border-border/40 bg-card shadow-sm"
+          embedded ? "" : "rounded-xl border border-border-subtle bg-surface-base shadow-none"
         )}
       >
-        <div className="flex h-full min-h-0 w-[min(200px,34vw)] shrink-0 flex-col border-r border-border/30 xl:w-[216px]">
+        <div className="flex h-full min-h-0 w-[min(200px,34vw)] shrink-0 flex-col border-r border-border-subtle bg-surface-base xl:w-[216px]">
           <div className="shrink-0 border-b border-border/30 p-2.5">
             <div className="flex items-center gap-2">
               <Button

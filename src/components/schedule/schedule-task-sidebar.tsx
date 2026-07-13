@@ -77,9 +77,9 @@ function DraggableTaskRow({
         event.dataTransfer.effectAllowed = "move";
       }}
       className={cn(
-        "group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-200",
+        "group relative overflow-hidden rounded-lg border border-border-subtle bg-surface-base transition-colors duration-150",
         channel.border,
-        !task.completed && "cursor-grab hover:shadow-md active:cursor-grabbing",
+        !task.completed && "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
         task.completed && "opacity-55"
       )}
     >
@@ -138,9 +138,9 @@ function DraggableHabitRow({
         event.dataTransfer.effectAllowed = "move";
       }}
       className={cn(
-        "group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-200",
+        "group relative overflow-hidden rounded-lg border border-border-subtle bg-surface-base transition-colors duration-150",
         channel.border,
-        !habit.completed && "cursor-grab hover:shadow-md active:cursor-grabbing",
+        !habit.completed && "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
         habit.completed && "opacity-55"
       )}
     >
@@ -217,8 +217,8 @@ export function ScheduleTaskSidebar({
     filteredUnscheduled.length + filteredLater.length + filteredHabits.length;
 
   return (
-    <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-2xl border border-border/40 bg-card shadow-sm xl:sticky xl:top-6 xl:max-h-[calc(100vh-8rem)] xl:basis-[24%] xl:max-w-[300px]">
-      <div className="space-y-3 border-b border-border/30 bg-muted/20 px-3 py-3">
+    <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-xl border border-border-subtle bg-surface-base xl:sticky xl:top-6 xl:max-h-[calc(100vh-8rem)] xl:basis-[24%] xl:max-w-[300px]">
+      <div className="space-y-3 border-b border-border-subtle bg-surface-base px-3 py-3">
         <div className="flex items-center justify-between gap-2">
           <div>
             <h2 className="text-sm font-semibold text-foreground">Later</h2>
@@ -230,7 +230,7 @@ export function ScheduleTaskSidebar({
             <button
               type="button"
               onClick={onAutoscheduleAll}
-              className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-secondary px-2.5 py-1.5 text-[11px] font-medium text-secondary-foreground transition-colors hover:border-border hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_6%)]"
+              className="inline-flex items-center gap-1 rounded-lg border border-border-subtle bg-secondary px-2.5 py-1.5 text-[11px] font-medium text-secondary-foreground transition-colors hover:border-border-strong hover:bg-surface-hover"
             >
               <Sparkles className="size-3" />
               Auto
@@ -242,20 +242,20 @@ export function ScheduleTaskSidebar({
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Search tasks..."
-          className="h-8 border-border/50 bg-background text-sm shadow-none"
+          className="h-8 border-border-subtle bg-surface-base text-sm shadow-none"
         />
 
-        <div className="flex gap-1">
+        <div className="flex gap-1 rounded-md border border-border-subtle bg-surface-base p-0.5">
           {FILTER_TABS.map((tab) => (
             <button
               key={tab.id}
               type="button"
               onClick={() => setFilter(tab.id)}
               className={cn(
-                "rounded-lg px-2.5 py-1 text-xs font-medium transition-colors",
+                "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
                 filter === tab.id
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-primary-soft text-foreground"
+                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
               )}
             >
               {tab.label}

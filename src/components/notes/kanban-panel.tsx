@@ -393,7 +393,7 @@ export function KanbanPanel({
 function BoardDropLine() {
   return (
     <div
-      className="mx-0.5 h-6 w-0.5 shrink-0 rounded-full bg-foreground/75"
+      className="mx-0.5 h-6 w-0.5 shrink-0 rounded-full bg-primary/70"
       aria-hidden
     />
   );

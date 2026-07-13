@@ -36,7 +36,7 @@ export function TaskPriorityPicker({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border/50 bg-background px-2 py-1 text-xs font-medium outline-none transition-colors hover:bg-muted/50",
+          "inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border-subtle bg-surface-base px-2 py-1 text-xs font-medium outline-none transition-colors hover:bg-surface-hover",
           className
         )}
         aria-label={`Priority: ${currentConfig.label}`}
@@ -61,7 +61,7 @@ export function TaskPriorityPicker({
                 "gap-2 py-2 text-xs",
                 selected && option === "high" && "bg-destructive-muted font-medium text-destructive",
                 selected && option === "medium" && "bg-warning-muted font-medium text-warning",
-                selected && option === "low" && "bg-muted font-medium text-foreground"
+                selected && option === "low" && "bg-primary-soft font-medium text-foreground"
               )}
             >
               <TaskPriorityFlagIcon priority={option} />

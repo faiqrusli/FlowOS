@@ -497,12 +497,12 @@ export function WorkplacePageContent({
           {Array.from({ length: 5 }).map((_, index) => (
             <div
               key={index}
-              className="min-h-[4rem] animate-pulse rounded-xl bg-muted/20"
+              className="min-h-[4rem] animate-pulse rounded-xl bg-surface-base/40"
             />
           ))}
         </div>
         <div
-          className="shrink-0 animate-pulse rounded-l-xl border-l border-border/30 bg-muted/15"
+          className="shrink-0 animate-pulse rounded-l-xl border-l border-border-subtle bg-surface-base/30"
           style={{ width: timelineWidthPx }}
         />
       </div>

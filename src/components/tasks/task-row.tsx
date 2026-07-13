@@ -69,6 +69,7 @@ import {
   type TaskDetailMenuAnchor,
 } from "@/lib/task-detail-menu-coordinator";
 import { cn } from "@/lib/utils";
+import { type as typographyType } from "@/lib/typography";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 import { useOptionalTaskBoardActions } from "@/components/tasks/task-board-actions-context";
 import { useOptionalTaskBoardGroups } from "@/components/tasks/task-board-groups-context";
@@ -1006,12 +1007,11 @@ export const TaskRow = memo(function TaskRow({
       className={cn(
         "group relative mx-0.5 flex min-w-0 select-none items-center gap-0 rounded-md border border-transparent py-1 pl-0.5 pr-0.5 transition-[background-color,border-color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
         dragEnabled &&
-          "cursor-grab hover:border-border/60 hover:bg-muted/45 active:cursor-grabbing",
+          "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
         scheduleOpen && "z-20",
         detailMenuOpen && "z-20",
         flagMenuOpen && "z-20",
-        isSelected &&
-          "bg-selected shadow-[inset_0_0_0_1px_var(--selected-border)]",
+        isSelected && "flow-selected",
         isCompleted && "opacity-[0.45] hover:opacity-[0.62]"
       )}
     >
@@ -1052,9 +1052,9 @@ export const TaskRow = memo(function TaskRow({
               }
             }}
             className={cn(
-              "min-w-0 rounded border border-primary/30 bg-background px-1 py-0 font-[520] text-foreground outline-none ring-primary/20 select-text focus:ring-1",
+              "min-w-0 rounded border border-primary/30 bg-surface-canvas px-1 py-0 font-[520] text-foreground outline-none ring-primary/20 select-text focus:ring-1",
               isCompleted
-                ? "text-[13px] leading-[16px]"
+                ? typographyType.contentDense
                 : "text-sm leading-[18px]",
               isCompleted && "line-through"
             )}
@@ -1075,7 +1075,7 @@ export const TaskRow = memo(function TaskRow({
               className={cn(
                 "min-w-0 w-full truncate font-[520] text-foreground",
                 isCompleted
-                  ? "text-[13px] leading-[16px]"
+                  ? typographyType.contentDense
                   : "text-sm leading-[18px]",
                 isCompleted && "line-through"
               )}

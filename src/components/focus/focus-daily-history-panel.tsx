@@ -23,7 +23,7 @@ export function FocusDailyHistoryPanel({
   const history = useMemo(() => buildDailyFocusHistory(sessions), [sessions]);
 
   return (
-    <Card className="border-border/40 bg-card/90">
+    <Card className="border-border-subtle bg-surface-base shadow-none">
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Focus history</CardTitle>
       </CardHeader>
@@ -42,8 +42,8 @@ export function FocusDailyHistoryPanel({
                   type="button"
                   onClick={() => onSelectDate(day.date)}
                   className={cn(
-                    "flex w-full items-center justify-between gap-3 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-muted/40",
-                    selectedDate === day.date && "bg-muted/50"
+                    "flex w-full items-center justify-between gap-3 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-surface-hover",
+                    selectedDate === day.date && "flow-selected"
                   )}
                 >
                   <div>

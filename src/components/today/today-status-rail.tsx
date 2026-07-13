@@ -78,7 +78,7 @@ export function TodayStatusRail({
           <DropdownMenu>
             <DropdownMenuTrigger
               className={cn(
-                "inline-flex h-7 items-center gap-1.5 rounded-full border border-border/60 bg-muted/30 px-2.5 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                "inline-flex h-7 items-center gap-1.5 rounded-full border border-border-subtle bg-surface-base px-2.5 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
               )}
               aria-label={`Workspace density: ${DENSITY_LABELS[density]}`}
               title="Workspace density"
@@ -93,7 +93,7 @@ export function TodayStatusRail({
                   onClick={() => onDensityChange(preset)}
                   className={cn(
                     "text-[13px]",
-                    preset === density && "bg-muted font-medium"
+                    preset === density && "bg-primary-soft font-medium"
                   )}
                 >
                   {DENSITY_LABELS[preset]}

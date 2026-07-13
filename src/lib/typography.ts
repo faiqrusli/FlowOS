@@ -24,6 +24,8 @@ export const type = {
 
   contentPrimary: "text-sm font-semibold text-foreground",
   contentPrimaryLg: "text-base font-semibold text-foreground",
+  /** Dense task/habit row title when completed or compact. */
+  contentDense: "text-[13px] leading-4 font-[520] text-foreground",
 
   body: "text-sm leading-relaxed text-foreground",
   bodyMuted: "text-sm leading-relaxed text-muted-foreground",

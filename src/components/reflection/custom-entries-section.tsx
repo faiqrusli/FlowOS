@@ -81,7 +81,7 @@ export function CustomEntriesSection({
           {entries.map((entry) => (
             <li
               key={entry.id}
-              className="flex items-start justify-between gap-3 rounded-lg border border-border/50 bg-card px-4 py-3"
+              className="flex items-start justify-between gap-3 rounded-lg border border-border-subtle bg-surface-base px-4 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground">
@@ -145,7 +145,7 @@ export function CustomEntriesSection({
   }
 
   return (
-    <Card className="border-border/50 shadow-none">
+    <Card className="border-border-subtle shadow-none">
       <CardHeader className="flex flex-row items-center justify-between gap-4">
         <CardTitle>Custom entries</CardTitle>
         <Button

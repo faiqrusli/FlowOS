@@ -335,6 +335,98 @@ export function findOverlappingEntryIds(blocks: TimelineBlock[]): Set<string> {
   return overlapping;
 }
 
+/** One banner id per overlap pair — avoids stacked duplicate labels. */
+export function findOverlapBannerEntryIds(blocks: TimelineBlock[]): Set<string> {
+  const banners = new Set<string>();
+
+  for (let i = 0; i < blocks.length; i++) {
+    for (let j = i + 1; j < blocks.length; j++) {
+      const a = blocks[i];
+      const b = blocks[j];
+      if (!(a.startMinutes < b.endMinutes && b.startMinutes < a.endMinutes)) {
+        continue;
+      }
+      if (a.startMinutes !== b.startMinutes) {
+        banners.add(a.startMinutes < b.startMinutes ? a.id : b.id);
+      } else if (a.endMinutes !== b.endMinutes) {
+        banners.add(a.endMinutes <= b.endMinutes ? a.id : b.id);
+      } else {
+        banners.add(a.id < b.id ? a.id : b.id);
+      }
+    }
+  }
+
+  return banners;
+}
+
+export type TimelineOverlapStack = {
+  index: number;
+  size: number;
+};
+
+/**
+ * Pack overlapping entries into a small horizontal cascade so each stays
+ * visible and draggable (instead of fully covering siblings).
+ */
+export function buildTimelineOverlapStacks(
+  blocks: TimelineBlock[]
+): Map<string, TimelineOverlapStack> {
+  const stacks = new Map<string, TimelineOverlapStack>();
+  if (blocks.length === 0) return stacks;
+
+  const sorted = [...blocks].sort((a, b) => {
+    if (a.startMinutes !== b.startMinutes) return a.startMinutes - b.startMinutes;
+    if (a.endMinutes !== b.endMinutes) return a.endMinutes - b.endMinutes;
+    return a.id.localeCompare(b.id);
+  });
+
+  const parent = new Map<string, string>();
+  const find = (id: string): string => {
+    const p = parent.get(id) ?? id;
+    if (p !== id) {
+      const root = find(p);
+      parent.set(id, root);
+      return root;
+    }
+    return id;
+  };
+  const union = (a: string, b: string) => {
+    const ra = find(a);
+    const rb = find(b);
+    if (ra !== rb) parent.set(ra, rb);
+  };
+
+  for (const block of sorted) parent.set(block.id, block.id);
+
+  for (let i = 0; i < sorted.length; i++) {
+    for (let j = i + 1; j < sorted.length; j++) {
+      const a = sorted[i];
+      const b = sorted[j];
+      if (b.startMinutes >= a.endMinutes) break;
+      if (a.startMinutes < b.endMinutes && b.startMinutes < a.endMinutes) {
+        union(a.id, b.id);
+      }
+    }
+  }
+
+  const groups = new Map<string, TimelineBlock[]>();
+  for (const block of sorted) {
+    const root = find(block.id);
+    const list = groups.get(root);
+    if (list) list.push(block);
+    else groups.set(root, [block]);
+  }
+
+  for (const group of groups.values()) {
+    if (group.length < 2) continue;
+    group.forEach((block, index) => {
+      stacks.set(block.id, { index, size: group.length });
+    });
+  }
+
+  return stacks;
+}
+
 /** @deprecated Use findOverlappingEntryIds */
 export function findOverlappingTaskIds(blocks: TimelineBlock[]): Set<string> {
   return findOverlappingEntryIds(blocks);

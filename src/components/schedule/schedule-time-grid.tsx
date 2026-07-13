@@ -230,7 +230,7 @@ export function ScheduleTimeGrid({
             height: TIMELINE_HEIGHT_PX,
           }}
         >
-          <div className="relative border-r border-divider bg-background">
+          <div className="relative border-r border-divider bg-surface-base">
             {hourLabels.slice(0, -1).map((label, index) => (
               <div
                 key={label}
@@ -248,7 +248,7 @@ export function ScheduleTimeGrid({
             {Array.from({ length: hourLabels.length - 1 }).map((_, index) => (
               <div
                 key={index}
-                className="absolute right-0 left-0 border-t border-border/25"
+                className="absolute right-0 left-0 border-t border-border-subtle"
                 style={{ top: index * HOUR_HEIGHT_PX }}
               />
             ))}

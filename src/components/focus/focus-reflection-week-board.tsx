@@ -47,7 +47,7 @@ export function FocusReflectionWeekBoard({
   }, [reflections]);
 
   return (
-    <Card className="border-border/40 bg-card/90">
+    <Card className="border-border-subtle bg-surface-base shadow-none">
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Focus reflection history</CardTitle>
       </CardHeader>

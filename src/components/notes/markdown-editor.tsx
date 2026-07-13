@@ -163,7 +163,7 @@ export function MarkdownEditor({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="min-h-0 flex-1 resize-none overflow-y-auto bg-muted/20 px-5 py-4 text-[15px] leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/60"
+          className="min-h-0 flex-1 resize-none overflow-y-auto bg-surface-base px-5 py-4 text-[15px] leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/60"
         />
       )}
     </div>

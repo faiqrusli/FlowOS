@@ -56,7 +56,7 @@ function NextUpPreviewRow({
       <button
         type="button"
         onClick={onClick}
-        className="flex w-full min-w-0 items-center gap-2 rounded-md py-1 text-left hover:bg-muted/35"
+        className="flex w-full min-w-0 items-center gap-2 rounded-md py-1 text-left hover:bg-surface-hover"
       >
         <span aria-hidden className="w-3 shrink-0 text-center text-[13px] leading-none text-muted-foreground/80">
           {isNext ? "●" : "○"}
@@ -130,7 +130,7 @@ export function NextUpPreview({
               "flex min-h-20 items-center justify-center rounded-md border border-dashed px-3 text-center text-[13px] transition-colors",
               dropActive
                 ? "border-primary/60 bg-primary/10 text-foreground"
-                : "border-border/60 bg-muted/20 text-muted-foreground/85"
+                : "border-border-subtle bg-surface-base text-muted-foreground/85"
             )}
             onDragOver={(event) => {
               event.preventDefault();

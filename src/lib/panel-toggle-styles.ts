@@ -7,7 +7,7 @@ export function panelToggleButtonClass(
   ...extra: (string | false | null | undefined)[]
 ) {
   return cn(
-    "group/panel-toggle relative flex items-center justify-center border text-accent-text transition-colors hover:border-border/40 hover:bg-muted/60",
+    "group/panel-toggle relative flex items-center justify-center border text-accent-text transition-colors hover:border-border-subtle/60 hover:bg-surface-hover",
     ...extra
   );
 }
@@ -37,7 +37,7 @@ export function globalRailButtonClass(active = false) {
   return cn(
     "inline-flex size-10 items-center justify-center rounded-lg transition-colors",
     active
-      ? "bg-surface-hover text-foreground"
+      ? "bg-primary-soft text-foreground"
       : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
   );
 }

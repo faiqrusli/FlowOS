@@ -42,7 +42,9 @@ import {
   removeTaskFromNextUp,
   reorderNextUpTasks,
 } from "@/lib/task-next-up";
-import { workplaceFocusSectionClassName } from "@/lib/workplace-panel-appearance";
+import {
+  workplaceFocusCanvasClassName,
+} from "@/lib/workplace-panel-appearance";
 import { shouldPromptFocusReflection } from "@/lib/focus-reflection";
 import { computeTodayStats, fetchFocusSessions } from "@/lib/focus-storage";
 import { TODAY_FOCUS_ANCHOR_ID } from "@/lib/today-in-place";
@@ -519,12 +521,12 @@ export function WorkplaceFocusCard({
       <section
         id={TODAY_FOCUS_ANCHOR_ID}
         className={cn(
-          "relative flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border transition-[border-color,background-color,box-shadow] duration-150",
+          "relative flex h-full min-h-0 flex-1 flex-col overflow-hidden transition-[border-color,background-color,box-shadow] duration-150",
           dropActive && habitDropBlocked
-            ? "border-warning/45 bg-warning-muted/40"
+            ? "rounded-xl border border-warning/45 bg-warning-muted/40"
             : dropActive
-              ? "border-border-focus bg-surface-focus-hover"
-              : workplaceFocusSectionClassName
+              ? "rounded-xl border border-border-strong bg-surface-hover"
+              : workplaceFocusCanvasClassName
         )}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
@@ -538,7 +540,7 @@ export function WorkplaceFocusCard({
                 className="size-4 shrink-0 text-muted-foreground"
                 aria-hidden
               />
-              <div className="inline-flex rounded-lg border border-border/60 bg-muted/40 p-0.5">
+              <div className="inline-flex rounded-lg border border-border-subtle bg-surface-base p-0.5">
               {(["focus", "pomodoro"] as const).map((item) => (
                 <button
                   key={item}
@@ -547,7 +549,7 @@ export function WorkplaceFocusCard({
                   className={cn(
                     "rounded-md px-2.5 py-0.5 text-[14px] font-medium capitalize transition-[background-color,color,box-shadow] duration-150",
                     tab === item
-                      ? "bg-card text-foreground shadow-xs"
+                      ? "bg-surface-raised text-foreground shadow-xs"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
@@ -615,7 +617,7 @@ export function WorkplaceFocusCard({
                 </span>
               </div>
               <div
-                className="rounded-md border border-border-focus/65 bg-card/95 px-3 py-3 text-center text-[13px] font-medium text-foreground"
+                className="rounded-md border border-border-strong bg-surface-raised px-3 py-3 text-center text-[13px] font-medium text-foreground"
                 onDragOver={handleDragOver}
                 onDrop={handleStartFocusDrop}
               >
@@ -624,7 +626,7 @@ export function WorkplaceFocusCard({
             </div>
           ) : null}
           {pendingFocusTask ? (
-            <div className="absolute inset-x-3.5 bottom-2 z-30 flex flex-wrap items-center justify-between gap-2 rounded-md border border-border-focus/65 bg-card px-3 py-2 text-[13px]">
+            <div className="absolute inset-x-3.5 bottom-2 z-30 flex flex-wrap items-center justify-between gap-2 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-[13px]">
               <span className="min-w-0 truncate">
                 Switch focus to <strong>{pendingFocusTask.title}</strong>?
               </span>

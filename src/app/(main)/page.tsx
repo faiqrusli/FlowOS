@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="-m-10 flex h-[calc(100dvh-3.5rem)] min-h-0 flex-col overflow-hidden bg-background lg:h-[calc(100dvh-3rem)]">
+    <div className="-m-10 flex h-[calc(100dvh-3.5rem)] min-h-0 flex-col overflow-hidden bg-surface-canvas lg:h-[calc(100dvh-3rem)]">
       <TodayPageContent />
     </div>
   );

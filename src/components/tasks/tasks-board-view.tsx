@@ -2079,7 +2079,7 @@ function TasksBoardViewContent({
               onDragEnd={() => void handleGroupDragEnd()}
               onMouseDown={(event) => event.stopPropagation()}
               className={cn(
-                "mb-1 flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/80",
+                "mb-1 flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover",
                 isPinned
                   ? "cursor-default opacity-40"
                   : "cursor-grab active:cursor-grabbing"
@@ -2092,7 +2092,7 @@ function TasksBoardViewContent({
             <button
               type="button"
               onClick={() => toggleCollapsed(group.id)}
-              className="mb-2 flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/80"
+              className="mb-2 flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover"
               aria-label={`Expand ${displayTitle}`}
             >
               <ChevronRight className="size-3.5" />
@@ -2151,7 +2151,7 @@ function TasksBoardViewContent({
                     onClick={() =>
                       onTodayViewDateChange(shiftDateKey(todayViewDate, -1))
                     }
-                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-foreground hover:bg-muted/80"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-foreground hover:bg-surface-hover"
                     aria-label="Previous day"
                   >
                     <ChevronRight className="size-4 rotate-180" />
@@ -2203,7 +2203,7 @@ function TasksBoardViewContent({
                     onClick={() =>
                       onTodayViewDateChange(shiftDateKey(todayViewDate, 1))
                     }
-                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-foreground hover:bg-muted/80"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-foreground hover:bg-surface-hover"
                     aria-label="Next day"
                   >
                     <ChevronRight className="size-4" />
@@ -2250,7 +2250,7 @@ function TasksBoardViewContent({
                     <button
                       type="button"
                       onClick={() => toggleCollapsed(group.id)}
-                      className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/80"
+                      className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover"
                       aria-label={`Collapse ${displayTitle}`}
                     >
                       <ChevronDown className="size-3.5" />
@@ -2588,7 +2588,7 @@ function TasksBoardViewContent({
 function LaterViewIcon({ className }: { className?: string }) {
   return (
     <CalendarClock
-      className={cn("size-4 shrink-0 text-[#8A7358]", className)}
+      className={cn("size-4 shrink-0 text-muted-foreground", className)}
       aria-hidden
     />
   );
@@ -2632,7 +2632,7 @@ function SystemViewInfoMenu({
     <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex shrink-0 items-center justify-center rounded-sm px-0.5 text-[11px] leading-none text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+          "inline-flex shrink-0 items-center justify-center rounded-sm px-0.5 text-[11px] leading-none text-muted-foreground hover:bg-surface-hover hover:text-foreground",
           triggerClassName
         )}
         aria-label={`About ${info.title}`}
@@ -2691,7 +2691,7 @@ function GroupHeaderDragHandle({
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
           onMouseDown={(event) => event.stopPropagation()}
-          className="flex size-7 cursor-grab items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-150 hover:bg-muted/80 hover:text-foreground active:cursor-grabbing group-hover/column-header:opacity-100 focus-visible:opacity-100"
+          className="flex size-7 cursor-grab items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-150 hover:bg-surface-hover hover:text-foreground active:cursor-grabbing group-hover/column-header:opacity-100 focus-visible:opacity-100"
           aria-label={`Move ${label}`}
         >
           <GripVertical className="size-3.5" />
@@ -2718,7 +2718,7 @@ function GroupHeaderOptionsMenu({
     <div className="flex size-7 shrink-0 items-center justify-center">
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex size-7 items-center justify-center rounded-md text-muted-foreground opacity-0 outline-none transition-opacity duration-150 hover:bg-muted/80 hover:text-foreground focus-visible:opacity-100 data-[state=open]:bg-muted/70 data-[state=open]:opacity-100 data-[state=open]:text-foreground group-hover/column-header:opacity-100"
+          className="flex size-7 items-center justify-center rounded-md text-muted-foreground opacity-0 outline-none transition-opacity duration-150 hover:bg-surface-hover hover:text-foreground focus-visible:opacity-100 data-[state=open]:bg-muted/70 data-[state=open]:opacity-100 data-[state=open]:text-foreground group-hover/column-header:opacity-100"
           aria-label={`${displayTitle} options`}
         >
           <MoreHorizontal className="size-4" />
@@ -2752,7 +2752,7 @@ function GroupHeaderAddButton({ onClick }: { onClick: () => void }) {
         event.stopPropagation();
         onClick();
       }}
-      className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted/80 hover:text-foreground"
+      className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-surface-hover hover:text-foreground"
       aria-label="Add a task"
     >
       <Plus className="size-3.5" />

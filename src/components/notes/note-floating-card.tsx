@@ -129,7 +129,7 @@ export function NoteFloatingCard({
   return createPortal(
     <div
       ref={cardRef}
-      className="fixed z-[100] flex w-[min(92vw,360px)] flex-col overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl will-change-[left,top]"
+      className="fixed z-[100] flex w-[min(92vw,360px)] flex-col overflow-hidden rounded-xl border border-border-strong bg-surface-raised shadow-lg will-change-[left,top]"
       style={{
         left: positionRef.current.x,
         top: positionRef.current.y,

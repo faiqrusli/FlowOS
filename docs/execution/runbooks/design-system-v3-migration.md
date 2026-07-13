@@ -1,6 +1,6 @@
 ﻿# Visual Design System v3.0 - Global Migration
 
-**Status:** Ready - not started  
+**Status:** Sessions 1–4 complete on branch — merge to `main` pending founder approval  
 **Scope:** Application-wide visual migration only. Implements [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) v3.0. Does **not** change product behaviour, persistence, routing, database logic, or feature architecture unless a visual replacement requires it.  
 **Authority:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) section 10 · [decision-log.md](../logs/decision-log.md) 2026-07-13 "Visual Design System v3.0". Historical baseline: [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md).  
 **Repo root:** repository root (Next.js app).  

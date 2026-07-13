@@ -27,6 +27,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
 import {
   kanbanCardClass,
   kanbanColumnBodyClass,
@@ -1228,18 +1229,13 @@ export function KanbanBoardView({
 }
 
 function CardDropLine() {
-  return (
-    <div
-      className="my-1 h-0.5 rounded-full bg-sky-500/85"
-      aria-hidden
-    />
-  );
+  return <TaskBoardInsertLine className="my-0.5" />;
 }
 
 function ColumnDropMarker() {
   return (
     <div
-      className="mx-0.5 w-0.5 shrink-0 self-stretch rounded-full bg-sky-500/70"
+      className="mx-0.5 w-0.5 shrink-0 self-stretch rounded-full bg-primary/70"
       aria-hidden
     />
   );

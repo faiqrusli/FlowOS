@@ -66,9 +66,9 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
       onDragEnd={handleDragEnd}
       onContextMenu={onContextMenu}
       className={cn(
-        "flex items-center gap-1.5 rounded-md border border-border/45 bg-muted/25 px-1.5 py-1 transition-[background-color,border-color] duration-150 hover:border-border/70 hover:bg-muted/45",
+        "flex items-center gap-1.5 rounded-md border border-transparent px-1.5 py-1 transition-[background-color,border-color] duration-150 hover:bg-surface-hover",
         !task.completed && "cursor-grab active:cursor-grabbing",
-        task.completed && "cursor-default opacity-70 hover:bg-muted/25",
+        task.completed && "cursor-default opacity-70 hover:bg-transparent",
         accentClass && "border-l-2",
         accentClass
       )}

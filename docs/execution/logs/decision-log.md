@@ -36,6 +36,14 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-13 — Visual Design System v3.0 migration sessions 1–4 complete
+
+**Context:** v3.0 contract approved; runbook [design-system-v3-migration.md](../runbooks/design-system-v3-migration.md) defines phases 1–11.  
+**Decision:** Implement migration in four founder-checked sessions (1–3 tokens/shell; 4–5 domain+Tasks/Habits; 6–8 Focus/Schedule/Notes/Reflection; 9–11 Today/overlays/audit). Behaviour unchanged; visual ownership via tokens, primitives, and appearance helpers.  
+**Alternatives rejected:** One-shot CSS rewrite; Today-first redesign before domain recipes.  
+**Outcome:** Complete on branches `m2/session-1-v3-phases-1-3` → `m2/session-4-v3-phases-9-11`. Merge to `main` pending founder approval.  
+**Related:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) · FEATURE_INVENTORY design-system status.
+
 ### 2026-07-13 — Visual Design System v3.0: global semantic visual contract
 
 **Context:** Visual Design System v2.0 established the Layer 0–5 architecture and Sessions 1–5 baseline, but it did not define a complete reusable system for typography, spacing, primitive variants, temporary UI, state distinctions, accessibility, or the full product surface. Existing implementation remains partially v2 and must not be represented as a completed v3 migration.

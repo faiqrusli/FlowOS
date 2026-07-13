@@ -41,7 +41,7 @@ export function HabitCard({
   const daysLabel = formatDaysOfWeek(habit.days_of_week);
 
   return (
-    <Card className="border-border/45 shadow-none">
+    <Card className="border-border-subtle shadow-none">
       <CardContent className="space-y-4 py-4">
         <div className="flex items-start gap-3">
           <div className="min-w-0 flex-1 space-y-2">
@@ -123,7 +123,7 @@ export function HabitCard({
         </div>
 
         {showTodayStatus && scheduledToday ? (
-          <div className="rounded-lg border border-border/50/80 bg-card px-3 py-3">
+          <div className="rounded-lg border border-border-subtle/80 bg-surface-base px-3 py-3">
             <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
               Today&apos;s status
             </p>
@@ -165,7 +165,7 @@ export function HabitCard({
             )}
           </div>
         ) : showTodayStatus ? (
-          <p className="rounded-lg border border-dashed border-border/50 bg-card/60 px-3 py-2 text-xs text-muted-foreground">
+          <p className="rounded-lg border border-dashed border-border-subtle bg-surface-base/60 px-3 py-2 text-xs text-muted-foreground">
             Not scheduled today. Manage the routine above — no checkbox needed.
           </p>
         ) : null}

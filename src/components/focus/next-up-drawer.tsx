@@ -52,11 +52,11 @@ export function NextUpDrawer({
       aria-label="Next Up queue"
       aria-modal="false"
       className={cn(
-        "fixed inset-0 z-30 flex h-full w-full flex-col overflow-hidden bg-card text-card-foreground sm:absolute sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:w-[38%] sm:min-w-80 sm:rounded-none sm:border-y-0 sm:border-r-0 sm:border-l sm:border-border/60",
+        "fixed inset-0 z-30 flex h-full w-full flex-col overflow-hidden bg-surface-overlay text-foreground sm:absolute sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:w-[38%] sm:min-w-80 sm:rounded-none sm:border-y-0 sm:border-r-0 sm:border-l sm:border-border-strong",
         className
       )}
     >
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border/50 px-3 py-2">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border-subtle px-3 py-2">
         <h3 className="truncate text-[13px] font-semibold text-foreground/90">
           Next Up ({tasks.length})
         </h3>
@@ -64,7 +64,7 @@ export function NextUpDrawer({
           type="button"
           onClick={onClose}
           aria-label="Close Next Up"
-          className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+          className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
         >
           <X className="size-4" />
         </button>
