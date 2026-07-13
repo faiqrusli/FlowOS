@@ -78,7 +78,7 @@ export function WorkplaceFocusTaskMenu({
       >
         <button
           type="button"
-          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-surface-hover"
           onClick={onContinueLater}
         >
           <Clock className="size-3.5 shrink-0 text-muted-foreground" />
@@ -86,7 +86,7 @@ export function WorkplaceFocusTaskMenu({
         </button>
         <button
           type="button"
-          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-surface-hover"
           onClick={onContinueTomorrow}
         >
           <CalendarDays className="size-3.5 shrink-0 text-muted-foreground" />
@@ -94,7 +94,7 @@ export function WorkplaceFocusTaskMenu({
         </button>
         <button
           type="button"
-          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-muted"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-surface-hover"
           onClick={onPlanLater}
         >
           <CalendarClock className="size-3.5 shrink-0 text-muted-foreground" />

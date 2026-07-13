@@ -2,6 +2,7 @@
 
 import { memo, useSyncExternalStore, type DragEvent, type ReactNode } from "react";
 import { TaskRow } from "@/components/tasks/task-row";
+import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
 import {
   isExternalTaskDragActive,
   isSortedColumnDropHighlight,
@@ -21,12 +22,7 @@ import { cn } from "@/lib/utils";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 function TaskDropLine() {
-  return (
-    <div
-      className="mx-0.5 h-0.5 shrink-0 rounded-full bg-primary/70"
-      aria-hidden
-    />
-  );
+  return <TaskBoardInsertLine />;
 }
 
 const ActiveDropLine = memo(function ActiveDropLine({

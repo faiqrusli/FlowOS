@@ -109,7 +109,7 @@ function WorkplaceHabitContextMenu({
         {onStartFocus ? (
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] transition-colors duration-100 hover:bg-muted/70"
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] transition-colors duration-100 hover:bg-surface-hover"
             onClick={onStartFocus}
           >
             <Play className="size-3.5 shrink-0" />

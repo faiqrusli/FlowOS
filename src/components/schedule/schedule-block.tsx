@@ -75,14 +75,15 @@ export function ScheduleBlock({
       draggable={interactive && !isFocus && !item.completed}
       onDragStart={(event) => onDragStart?.(item, event)}
       className={cn(
-        "group absolute right-3 left-3 z-10 overflow-hidden rounded-xl border shadow-sm transition-all duration-200",
+        "group absolute right-3 left-3 z-10 overflow-hidden rounded-lg border transition-colors duration-150",
         channel.bg,
         channel.border,
+        channel.hover,
         interactive &&
           !isFocus &&
           !item.completed &&
-          "cursor-grab hover:shadow-md active:cursor-grabbing",
-        isCurrent && "ring-2 ring-foreground/10 shadow-md",
+          "cursor-grab active:cursor-grabbing",
+        isCurrent && "ring-1 ring-primary/40 bg-primary-soft",
         item.completed && "opacity-60"
       )}
       style={{ top: topPx, height: heightPx }}
@@ -105,7 +106,7 @@ export function ScheduleBlock({
                 "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors",
                 item.completed
                   ? "border-foreground bg-foreground text-background"
-                  : "border-foreground/25 bg-background/60 hover:border-foreground/50",
+                  : "border-muted-foreground/40 bg-surface-base hover:border-foreground/50",
                 disabled && "opacity-50"
               )}
               aria-label={`Mark ${item.title} complete`}
@@ -161,7 +162,7 @@ export function ScheduleBlock({
             <>
               <Link
                 href="/focus"
-                className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-background/80 hover:text-foreground"
+                className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
                 aria-label={`Start focus on ${item.title}`}
               >
                 <Timer className="size-3.5" />
@@ -170,7 +171,7 @@ export function ScheduleBlock({
                 <button
                   type="button"
                   onClick={() => onToggleNotification(item)}
-                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-background/80 hover:text-foreground"
+                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
                   aria-label={notifyOn ? "Notifications on" : "Notifications off"}
                 >
                   {notifyOn ? (

@@ -38,8 +38,9 @@ export function ScheduleHabitStrip({
         "group absolute right-3 left-3 z-10 flex items-center gap-2 overflow-hidden rounded-lg border px-3 py-1 shadow-none transition-all",
         channel.bg,
         channel.border,
-        interactive && !item.completed && "cursor-grab hover:shadow-sm active:cursor-grabbing",
-        isCurrent && "ring-1 ring-primary/35",
+        channel.hover,
+        interactive && !item.completed && "cursor-grab active:cursor-grabbing",
+        isCurrent && "ring-1 ring-primary/40 bg-primary-soft",
         item.completed && "opacity-60"
       )}
       style={{ top: topPx, height: heightPx }}
@@ -68,7 +69,7 @@ export function ScheduleHabitStrip({
           <button
             type="button"
             onClick={() => onToggleNotification(item)}
-            className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-background/70"
+            className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover"
             aria-label={notifyOn ? "Notifications on" : "Notifications off"}
           >
             {notifyOn ? (

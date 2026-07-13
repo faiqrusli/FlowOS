@@ -56,18 +56,18 @@ const GROUP_DOT_CLASS: Record<TaskGroupColorKey, string> = {
 };
 
 const GROUP_EDGE_CLASS: Record<TaskGroupColorKey, string> = {
-  sky: "border-l-[3px] border-l-chart-1/35",
-  blue: "border-l-[3px] border-l-chart-1/35",
-  indigo: "border-l-[3px] border-l-chart-1/35",
-  violet: "border-l-[3px] border-l-chart-1/35",
-  emerald: "border-l-[3px] border-l-chart-2/35",
-  teal: "border-l-[3px] border-l-chart-2/35",
-  amber: "border-l-[3px] border-l-chart-3/35",
-  orange: "border-l-[3px] border-l-chart-3/35",
-  rose: "border-l-[3px] border-l-chart-4/35",
-  slate: "border-l-[3px] border-l-chart-5/35",
-  inbox: "border-l-[3px] border-l-chart-1/35",
-  later: "border-l-[3px] border-l-chart-3/35",
+  sky: "border-l-[3px] border-l-chart-1/70",
+  blue: "border-l-[3px] border-l-chart-1/70",
+  indigo: "border-l-[3px] border-l-chart-1/70",
+  violet: "border-l-[3px] border-l-chart-1/70",
+  emerald: "border-l-[3px] border-l-chart-2/70",
+  teal: "border-l-[3px] border-l-chart-2/70",
+  amber: "border-l-[3px] border-l-chart-3/70",
+  orange: "border-l-[3px] border-l-chart-3/70",
+  rose: "border-l-[3px] border-l-chart-4/70",
+  slate: "border-l-[3px] border-l-chart-5/70",
+  inbox: "border-l-[3px] border-l-chart-1/70",
+  later: "border-l-[3px] border-l-chart-3/70",
 };
 
 export function getGroupDotClass(colorKey: TaskGroupColorKey): string {

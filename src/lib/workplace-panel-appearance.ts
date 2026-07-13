@@ -9,7 +9,11 @@ export const workplacePanelSectionClassName = [
   "hover:border-border-strong/60",
 ].join(" ");
 
-/** Focus card — Raised attention surface (DESIGN_SYSTEM.md). */
+/** Focus execution zone — cardless on Canvas (timer hierarchy via typography). */
+export const workplaceFocusCanvasClassName =
+  "border-transparent bg-transparent shadow-none";
+
+/** @deprecated Prefer workplaceFocusCanvasClassName for Today Focus shell */
 export const workplaceFocusSectionClassName = [
   surfaceFocusClass,
   "transition-[background-color,border-color] duration-200",

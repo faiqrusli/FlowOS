@@ -58,7 +58,7 @@ function DropdownMenuItem({ className, ...props }: Menu.Item.Props) {
     <Menu.Item
       data-slot="dropdown-menu-item"
       className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 outline-none select-none transition-colors duration-100 data-highlighted:bg-muted/70 data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground [&_svg]:transition-colors [&_svg]:duration-100 data-highlighted:[&_svg]:text-foreground",
+        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 outline-none select-none transition-colors duration-100 data-highlighted:bg-surface-hover data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground [&_svg]:transition-colors [&_svg]:duration-100 data-highlighted:[&_svg]:text-foreground",
         className
       )}
       {...props}
@@ -72,7 +72,7 @@ function DropdownMenuLinkItem({ className, ...props }: Menu.LinkItem.Props) {
       data-slot="dropdown-menu-link-item"
       closeOnClick
       className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 no-underline outline-none select-none transition-colors duration-100 data-highlighted:bg-muted/70 data-highlighted:text-foreground [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground data-highlighted:[&_svg]:text-foreground",
+        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 no-underline outline-none select-none transition-colors duration-100 data-highlighted:bg-surface-hover data-highlighted:text-foreground [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground data-highlighted:[&_svg]:text-foreground",
         className
       )}
       {...props}

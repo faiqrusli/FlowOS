@@ -344,7 +344,7 @@ export function GrowthAreaSidebar({
 function AreaDropLine() {
   return (
     <div
-      className="mx-1.5 my-0.5 h-0.5 rounded-full bg-foreground/75"
+      className="mx-1.5 my-0.5 h-0.5 rounded-full bg-primary/70"
       aria-hidden
     />
   );

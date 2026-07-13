@@ -126,8 +126,8 @@ export const WorkplaceHabitsCard = forwardRef<
               className={cn(
                 "rounded-md px-2 py-0.5 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-150",
                 tab === item.id
-                  ? "bg-selected text-foreground shadow-[inset_0_0_0_1px_var(--selected-border)]"
-                  : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                  ? "flow-selected text-foreground"
+                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
               )}
             >
               {item.label} ({counts[item.id]})

@@ -202,7 +202,7 @@ export function WorkplaceTimelineTaskMenu({
           {!completed ? (
             <button
               type="button"
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-surface-hover"
               onClick={onStartFocus}
             >
               <Play className="size-3.5 shrink-0" />
@@ -211,7 +211,7 @@ export function WorkplaceTimelineTaskMenu({
           ) : null}
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-surface-hover"
             onClick={onToggleComplete}
           >
             <Check className="size-3.5 shrink-0 text-muted-foreground" />
@@ -219,7 +219,7 @@ export function WorkplaceTimelineTaskMenu({
           </button>
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-surface-hover"
             onClick={onOpenDetail}
           >
             <ClipboardList className="size-3.5 shrink-0 text-muted-foreground" />
@@ -228,7 +228,7 @@ export function WorkplaceTimelineTaskMenu({
           {!completed ? (
             <button
               type="button"
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-surface-hover"
               onClick={onAddToNextUp}
             >
               <ListPlus className="size-3.5 shrink-0 text-muted-foreground" />
@@ -238,7 +238,7 @@ export function WorkplaceTimelineTaskMenu({
           {!completed && onClearTime ? (
             <button
               type="button"
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-muted"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-surface-hover"
               onClick={onClearTime}
             >
               <Clock className="size-3.5 shrink-0 text-muted-foreground" />

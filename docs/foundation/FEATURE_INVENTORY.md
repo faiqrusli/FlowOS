@@ -2,9 +2,9 @@
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 13, 2026 (Visual Design System v3.0 published; Next Up V2 shipped)
+**Last updated:** July 13, 2026 (Visual Design System v3.0 migration sessions 1–4 complete on branch)
 
-**Visual system:** [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) v3.0 is the active visual authority. Its code migration is pending; current surface helpers remain `src/lib/theme/surface-classes.ts` and `src/lib/task-group-appearance.ts`.
+**Visual system:** [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) v3.0 is the active visual authority. Migration implemented across tokens, primitives, shell, domain helpers, and major workspaces; see [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md). Canonical helpers: `src/lib/theme/surface-classes.ts`, `src/lib/theme/tokens.ts`.
 
 ---
 
@@ -243,7 +243,7 @@ Full detail: [../archive/project/03-future-enhancements.md](../archive/project/0
 
 | System | Status | Source |
 |--------|--------|--------|
-| Visual Design System v3.0 | **Approved; migration runbook ready** | [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) · [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md) |
+| Visual Design System v3.0 | **Shipped (migration sessions 1–4)** | [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) · [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md) |
 | Visual Design System v2.0 | Historical Sessions 1–5 baseline | [DESIGN_SYSTEM_v2.md](./DESIGN_SYSTEM_v2.md) |
 | Design audit / Phases 0–2 | Historical | [archive/design/july-3/](../archive/design/july-3/) |
 

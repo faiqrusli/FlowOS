@@ -71,6 +71,7 @@ export function TimelineDrawer({ open, onClose, ...props }: TimelineDrawerProps)
       aria-hidden={!open}
       className={cn(
         "relative h-full shrink-0 overflow-visible",
+        open ? "z-30" : "z-0",
         !open && "pointer-events-none"
       )}
       style={{
@@ -86,12 +87,15 @@ export function TimelineDrawer({ open, onClose, ...props }: TimelineDrawerProps)
         />
       ) : null}
       <div
-        className="relative h-full shrink-0 overflow-hidden"
+        className={cn(
+          "relative h-full shrink-0",
+          open && "shadow-[-12px_0_28px_rgba(0,0,0,0.38)]"
+        )}
         style={{ width: `min(100%, ${TIMELINE_DRAWER_WIDTH_PX}px)` }}
       >
         <div
           className={cn(
-            "relative h-full",
+            "relative h-full overflow-hidden",
             open
               ? "translate-x-0 opacity-100"
               : "pointer-events-none translate-x-5 opacity-0"
