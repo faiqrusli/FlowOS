@@ -22,6 +22,21 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-13 — Visual Design System v3.0 migration (Sessions 1–4)
+
+**Shipped:**
+- Branches `m2/session-1-v3-phases-1-3` → `m2/session-2-v3-phases-4-5` → `m2/session-3-v3-phases-6-8` → `m2/session-4-v3-phases-9-11` merged to `main` (`cd647ba`)
+- Phases 1–11: tokens/primitives/shell, domain appearance, Focus/Timeline/Notes/Reflection, Today/overlays polish
+- Follow-ups on Session 4: shared Kanban/Tasks insert line, Schedule timeline parity with Quick Schedule/Today (group accents, selection, overlap cascade), Quick Schedule drawer depth without blocking board drag
+
+**Build/lint:** pass on `main` after merge.
+
+**Production:** https://flowos-sage.vercel.app — smoke Today, Tasks + Quick Schedule, Schedule, Notes Kanban after deploy.
+
+**Decision:** [decision-log.md](./decision-log.md) — Visual Design System v3.0 (2026-07-13)
+
+---
+
 ## 2026-07-13 — Next Up V2 + Visual Design System v3.0
 
 **Shipped:**
