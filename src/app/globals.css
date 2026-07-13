@@ -14,7 +14,23 @@
     Consolas, monospace;
   --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 
-  /* Surface hierarchy */
+  /* v3 semantic surfaces */
+  --color-surface-canvas: var(--surface-canvas);
+  --color-surface-nav: var(--surface-nav);
+  --color-surface-base: var(--surface-base);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-disabled: var(--text-disabled);
+  --color-primary-subtle: var(--primary-subtle);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-medium: var(--primary-medium);
+
+  /* Surface hierarchy (legacy + v3 bridge) */
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
   --color-surface-card-hover: var(--surface-card-hover);
@@ -84,9 +100,25 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ─── Light theme (calm workspace) ─── */
+/* ─── Light theme (legacy — product is dark-only; retire separately) ─── */
 :root {
   color-scheme: light;
+
+  /* v3 names stubbed to light L0–L6 so utilities resolve if .dark is absent */
+  --surface-canvas: oklch(0.985 0.004 265);
+  --surface-nav: oklch(0.975 0.005 265);
+  --surface-base: oklch(1 0 0);
+  --surface-raised: oklch(1 0 0);
+  --surface-overlay: oklch(1 0 0);
+  --border-subtle: oklch(0.88 0.008 265);
+  --border-strong: oklch(0.78 0.012 265);
+  --text-primary: oklch(0.205 0.02 265);
+  --text-secondary: oklch(0.42 0.02 265);
+  --text-muted: oklch(0.52 0.018 265);
+  --text-disabled: oklch(0.72 0.012 265);
+  --primary-subtle: oklch(0.58 0.1 265 / 8%);
+  --primary-soft: oklch(0.58 0.1 265 / 12%);
+  --primary-medium: oklch(0.58 0.1 265 / 20%);
 
   /* Level 0–5 */
   --surface-app: oklch(0.985 0.004 265);
@@ -171,103 +203,117 @@
   --sidebar-ring: oklch(0.58 0.1 265);
 }
 
-/* ─── Dark theme: four-level surface stack ───
-   Canonical tokens per DESIGN_SYSTEM.md — content first, chrome second.
-   Legacy L0–L6 names alias below for incremental migration (Sessions 4–5). */
+/* ─── Dark theme: Visual Design System v3.0 ───
+   Canonical tokens: DESIGN_SYSTEM.md §§3–5.
+   Legacy names alias to v3 roles so existing consumers keep working. */
 .dark {
   color-scheme: dark;
 
-  /* Deep navy chrome (matches pre–July-8 Night depths the founder prefers).
-     Four roles only — sidebar recessed below canvas; cards float above. */
-  --background: oklch(0.171 0.030 268); /* #0a0f1d — app canvas */
-  --surface: oklch(0.148 0.032 268); /* #060a18 — nav / chrome (darker than canvas) */
-  --card: oklch(0.229 0.032 268); /* #161c2c — standard cards */
-  --surface-hover: oklch(0.262 0.034 268); /* #1d2435 — temporary hover (Focus + shared) */
-  /* Today / standard cards — whisper hover above --card (not Focus) */
-  --surface-card-hover: color-mix(in oklab, var(--card) 98%, white 2%);
-  /* Today Focus — whisper lift above --card */
-  --surface-focus: color-mix(in oklab, var(--card) 94%, white 6%);
-  --surface-focus-hover: color-mix(in oklab, var(--card) 92%, white 8%);
-  /* Tasks board columns — ~2–4% lift above canvas; never hero / --surface-focus */
-  --surface-board: color-mix(in oklab, var(--background) 78%, var(--card) 22%);
-  --surface-board-header: color-mix(in oklab, var(--surface-board) 94%, white 6%);
-  --border-board: oklch(0.90 0.030 268 / 20%);
-  /* Kanban cards — ~2% above column / card so units separate without floating */
-  --surface-kanban-card: color-mix(in oklab, var(--card) 94%, white 6%);
+  /* v3 semantic surfaces */
+  --surface-canvas: #080e1b;
+  --surface-nav: #070c18;
+  --surface-base: #0d1423;
+  --surface-raised: #121b2c;
+  --surface-overlay: #151e30;
+  --surface-hover: #1a2437;
 
-  /* Legacy aliases */
-  --surface-app: var(--background);
-  --surface-sidebar: var(--surface);
-  --surface-page: var(--background);
-  --timeline-surface: var(--background);
-  --surface-card: var(--card);
-  --surface-elevated: var(--surface-hover);
-  --surface-popover: var(--card);
-  --surface-dialog: var(--card);
+  --border-subtle: #202b3d;
+  --border-strong: #303c51;
 
-  --foreground: oklch(0.935 0.010 268);
-  --foreground-secondary: oklch(0.760 0.018 268);
-  --foreground-disabled: oklch(0.480 0.020 268);
-  --card-foreground: var(--foreground);
-  --popover: var(--card);
-  --popover-foreground: var(--foreground);
+  --text-primary: #f9fafb;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-disabled: #475569;
 
-  /* Primary — a confident, saturated indigo. The one loud voice in the
-     room: CTAs, focus rings, selection, the active nav item. */
-  --primary: oklch(0.575 0.205 272);
-  --primary-hover: oklch(0.630 0.205 272);
-  --primary-foreground: oklch(0.985 0.008 272);
-  --primary-glow: oklch(0.575 0.205 272 / 35%);
-  --accent-text: oklch(0.760 0.140 272);       /* readable indigo for links/icons */
+  --primary: #586cf6;
+  --primary-hover: color-mix(in oklab, #586cf6 88%, white 12%);
+  --primary-foreground: #f9fafb;
+  --primary-subtle: rgba(88, 108, 246, 0.08);
+  --primary-soft: rgba(88, 108, 246, 0.12);
+  --primary-medium: rgba(88, 108, 246, 0.2);
+  /* Kept for residual consumers; primitives no longer apply glow. */
+  --primary-glow: rgba(88, 108, 246, 0.28);
+  --accent-text: color-mix(in oklab, #586cf6 72%, white 28%);
 
-  --secondary: oklch(0.252 0.032 268);
-  --secondary-foreground: oklch(0.885 0.014 268);
-  --muted: oklch(0.226 0.030 268);
-  --muted-foreground: oklch(0.640 0.024 268);
-  --accent: oklch(0.278 0.036 268);
-  --accent-foreground: var(--foreground);
+  /* Compatibility aliases — map legacy shadcn/Tailwind names to v3 roles */
+  --background: var(--surface-canvas);
+  --surface: var(--surface-nav);
+  --card: var(--surface-base);
+  --surface-app: var(--surface-canvas);
+  --surface-sidebar: var(--surface-nav);
+  --surface-page: var(--surface-canvas);
+  --timeline-surface: var(--surface-canvas);
+  --surface-card: var(--surface-base);
+  --surface-elevated: var(--surface-raised);
+  --surface-popover: var(--surface-overlay);
+  --surface-dialog: var(--surface-overlay);
 
-  --destructive: oklch(0.680 0.175 22);
-  --destructive-muted: oklch(0.680 0.175 22 / 14%);
-  --success: oklch(0.720 0.130 158);
-  --success-muted: oklch(0.720 0.130 158 / 13%);
-  --warning: oklch(0.780 0.120 82);
-  --warning-muted: oklch(0.780 0.120 82 / 13%);
+  /* Feature extensions still used until later phases migrate consumers */
+  --surface-card-hover: color-mix(in oklab, var(--surface-base) 96%, white 4%);
+  --surface-focus: var(--surface-raised);
+  --surface-focus-hover: color-mix(in oklab, var(--surface-raised) 92%, white 8%);
+  --surface-board: var(--surface-base);
+  --surface-board-header: color-mix(in oklab, var(--surface-base) 94%, white 6%);
+  --border-board: color-mix(in oklab, var(--border-subtle) 80%, transparent);
+  --surface-kanban-card: var(--surface-raised);
 
-  --border: oklch(0.90 0.030 268 / 5%);
-  --border-focus: oklch(0.90 0.030 268 / 8%);
-  --divider: oklch(0.90 0.030 268 / 6%);
-  --input: oklch(0.90 0.030 268 / 12%);
-  --ring: oklch(0.575 0.205 272 / 55%);
+  --foreground: var(--text-primary);
+  --foreground-secondary: var(--text-secondary);
+  --foreground-disabled: var(--text-disabled);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-overlay);
+  --popover-foreground: var(--text-primary);
 
-  --selected: oklch(0.575 0.205 272 / 16%);
-  --selected-border: oklch(0.620 0.190 272 / 42%);
+  --secondary: color-mix(in oklab, var(--surface-base) 88%, white 12%);
+  --secondary-foreground: var(--text-primary);
+  --muted: color-mix(in oklab, var(--surface-base) 92%, white 8%);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--surface-hover);
+  --accent-foreground: var(--text-primary);
 
-  --chart-1: oklch(0.660 0.180 272);
-  --chart-2: oklch(0.720 0.130 158);
-  --chart-3: oklch(0.780 0.120 82);
-  --chart-4: oklch(0.680 0.175 22);
-  --chart-5: oklch(0.600 0.050 268);
+  --destructive: oklch(0.68 0.175 22);
+  --destructive-muted: oklch(0.68 0.175 22 / 14%);
+  --success: oklch(0.72 0.13 158);
+  --success-muted: oklch(0.72 0.13 158 / 13%);
+  --warning: oklch(0.78 0.12 82);
+  --warning-muted: oklch(0.78 0.12 82 / 13%);
 
-  /* Elevation — restrained per DESIGN_SYSTEM.md */
-  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.18);
-  --shadow-modal: 0 12px 48px rgba(0, 0, 0, 0.35);
-  --shadow-xs: var(--shadow-card);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.22);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --border: var(--border-subtle);
+  --border-focus: color-mix(in oklab, var(--border-subtle) 70%, var(--border-strong) 30%);
+  --divider: color-mix(in oklab, var(--border-subtle) 55%, transparent);
+  --input: color-mix(in oklab, var(--border-subtle) 75%, transparent);
+  --ring: color-mix(in oklab, var(--primary) 55%, transparent);
+
+  --selected: var(--primary-soft);
+  --selected-border: color-mix(in oklab, var(--primary) 42%, transparent);
+
+  --chart-1: var(--primary);
+  --chart-2: var(--success);
+  --chart-3: var(--warning);
+  --chart-4: var(--destructive);
+  --chart-5: var(--text-muted);
+
+  /* Elevation — surface contrast first; no neon / primary glow shadows */
+  --shadow-card: none;
+  --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.22);
+  --shadow-overlay: 0 8px 28px rgba(0, 0, 0, 0.32);
+  --shadow-modal: 0 12px 48px rgba(0, 0, 0, 0.4);
+  --shadow-xs: var(--shadow-raised);
+  --shadow-sm: var(--shadow-raised);
+  --shadow-md: var(--shadow-overlay);
   --shadow-lg: var(--shadow-modal);
-  --shadow-primary: 0 2px 12px -2px var(--primary-glow);
+  --shadow-primary: none;
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --radius: 0.5rem; /* 8px medium default */
 
-  --sidebar: var(--surface);
-  --sidebar-foreground: oklch(0.870 0.014 268);
+  --sidebar: var(--surface-nav);
+  --sidebar-foreground: var(--text-secondary);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.212 0.032 268);
-  --sidebar-accent-foreground: var(--foreground);
-  /* Quieter chrome edge — workspace first, divider second (~15% softer than prior 9%). */
-  --sidebar-border: oklch(0.90 0.030 268 / 7.5%);
-  --sidebar-ring: oklch(0.575 0.205 272 / 45%);
+  --sidebar-accent: var(--surface-hover);
+  --sidebar-accent-foreground: var(--text-primary);
+  --sidebar-border: var(--border-subtle);
+  --sidebar-ring: color-mix(in oklab, var(--primary) 45%, transparent);
 }
 
 @layer base {
@@ -285,66 +331,76 @@
 }
 
 @layer components {
-  /* Level 3 — standard card */
-  .flow-surface-card,
-  .flow-panel {
-    @apply rounded-2xl border border-border bg-card text-card-foreground;
-    box-shadow: var(--shadow-card, var(--shadow-xs));
+  /* v3 surface recipes — Canvas / Nav / Base / Raised / Overlay */
+  .flow-surface-canvas {
+    background: var(--surface-canvas);
+    color: var(--text-primary);
   }
 
-  /* Today Focus — subtle permanent lift above --card (see DESIGN_SYSTEM.md) */
+  .flow-surface-nav {
+    background: var(--surface-nav);
+    color: var(--text-secondary);
+  }
+
+  .flow-surface-base {
+    @apply rounded-xl border border-border-subtle bg-surface-base text-foreground;
+  }
+
+  /* Base organisational panels (groups, lists) — no permanent shadow */
+  .flow-surface-card,
+  .flow-panel {
+    @apply rounded-xl border border-border-subtle bg-surface-base text-card-foreground;
+    box-shadow: none;
+  }
+
+  /* Raised — attention surfaces; subtle shadow only when needed */
+  .flow-surface-raised {
+    @apply rounded-xl border border-border-strong bg-surface-raised text-card-foreground;
+    box-shadow: var(--shadow-raised);
+  }
+
+  /* Today Focus legacy class → Raised */
   .flow-surface-focus {
-    @apply rounded-2xl border border-border-focus bg-surface-focus text-card-foreground;
-    box-shadow: var(--shadow-card, var(--shadow-xs));
+    @apply rounded-xl border border-border-strong bg-surface-raised text-card-foreground;
+    box-shadow: var(--shadow-raised);
   }
 
   .flow-surface-focus:hover {
     background-color: var(--surface-focus-hover);
-    border-color: color-mix(in oklab, var(--border-focus) 90%, white 10%);
   }
 
-  /* Level 3 — raised / active card (same surface, slightly stronger shadow) */
-  .flow-surface-raised {
-    @apply rounded-2xl border border-border bg-card text-card-foreground;
-    box-shadow: var(--shadow-sm);
-  }
-
-  /* Level 4 — dropdowns, menus, context menus */
+  /* Overlay — temporary UI above workspace */
   .flow-surface-elevated {
-    @apply rounded-lg border border-border bg-popover text-popover-foreground;
-    box-shadow: var(--shadow-md);
+    @apply rounded-lg border border-border-strong bg-surface-overlay text-popover-foreground;
+    box-shadow: var(--shadow-overlay);
   }
 
-  /* Level 6 — modals & dialogs, the most prominent surface in the app */
   .flow-surface-modal {
-    @apply rounded-2xl border border-border bg-surface-dialog text-popover-foreground;
-    box-shadow: var(--shadow-modal, var(--shadow-lg));
+    @apply rounded-xl border border-border-strong bg-surface-overlay text-popover-foreground;
+    box-shadow: var(--shadow-modal);
   }
 
   .flow-interactive,
   .flow-card-interactive {
     transition-property: background-color, border-color, color, box-shadow, opacity;
-    transition-duration: 160ms;
+    transition-duration: 150ms;
     transition-timing-function: var(--ease-premium);
   }
 
-  /* Hover for cards that represent tappable/draggable units
-     (task cards, module cards, list rows). Color/shadow only — no translate. */
   .flow-card-interactive {
     cursor: pointer;
   }
 
   .flow-card-interactive:hover {
-    border-color: color-mix(in oklch, var(--border), var(--foreground) 8%);
-    box-shadow: var(--shadow-sm);
+    background-color: var(--surface-hover);
   }
 
   .flow-card-interactive:active {
-    transition-duration: 80ms;
+    transition-duration: 100ms;
   }
 
   .flow-selected {
-    background: var(--selected);
+    background: var(--primary-soft);
     box-shadow: inset 0 0 0 1px var(--selected-border);
   }
 
@@ -352,17 +408,16 @@
     border-color: var(--divider);
   }
 
-  /* Empty states / drop zones — a quiet dashed frame with an indigo
-     whisper so empty areas feel intentional, not dead. */
+  /* Empty / drop zones — dashed only when interactive */
   .flow-empty {
-    @apply rounded-xl border border-dashed;
-    border-color: color-mix(in oklch, var(--border), var(--primary) 18%);
-    background: color-mix(in oklch, transparent, var(--primary) 3%);
+    @apply rounded-lg border border-dashed;
+    border-color: color-mix(in oklab, var(--border-subtle), var(--primary) 18%);
+    background: var(--primary-subtle);
   }
 
   /* Workspace canvas — continuous with application background */
   .flow-workspace {
-    background: var(--background);
+    background: var(--surface-canvas);
   }
 }
 

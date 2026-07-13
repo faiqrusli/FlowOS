@@ -9,13 +9,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover hover:shadow-md dark:shadow-[var(--shadow-primary)] dark:hover:shadow-[0_4px_16px_-2px_var(--primary-glow),inset_0_1px_0_0_oklch(1_0_0/22%)]",
+          "bg-primary text-primary-foreground hover:bg-primary-hover",
         outline:
-          "border-border bg-background text-foreground/85 hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] hover:bg-muted/55 hover:text-foreground aria-expanded:bg-muted/70 aria-expanded:text-foreground dark:bg-card/60 dark:shadow-[inset_0_1px_0_0_oklch(1_0_0/4%)] dark:hover:bg-muted/60",
+          "border-border-subtle bg-surface-base text-foreground/85 hover:border-border-strong hover:bg-surface-hover hover:text-foreground aria-expanded:bg-surface-hover aria-expanded:text-foreground",
         secondary:
-          "border border-border/60 bg-secondary text-secondary-foreground hover:border-border hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_6%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground dark:shadow-[inset_0_1px_0_0_oklch(1_0_0/5%)]",
+          "border border-border-subtle bg-secondary text-secondary-foreground hover:border-border-strong hover:bg-surface-hover aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:
-          "text-foreground/80 hover:bg-muted/70 hover:text-foreground aria-expanded:bg-muted/85 aria-expanded:text-foreground dark:hover:bg-accent/70",
+          "text-foreground/80 hover:bg-surface-hover hover:text-foreground aria-expanded:bg-surface-hover aria-expanded:text-foreground",
         destructive:
           "bg-destructive-muted text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/25 dark:hover:bg-destructive/25",
         link: "text-accent-text underline-offset-4 hover:underline",

@@ -1,23 +1,50 @@
 /**
  * FlowOS theme token reference — values live in globals.css (:root / .dark).
- * Use Tailwind utilities (bg-card, text-muted-foreground) or surface-classes.ts helpers.
+ * Use Tailwind utilities (bg-surface-canvas, bg-card) or surface-classes.ts helpers.
+ *
+ * v3 semantic roles are canonical. Legacy names remain as compatibility aliases
+ * until later migration phases retire consumers.
  */
 export const themeTokens = {
-  /** Canonical four-level surface stack — see DESIGN_SYSTEM.md */
+  /** Canonical v3 semantic surface stack — see DESIGN_SYSTEM.md §3 */
   surface: {
-    background: "--background",
-    surface: "--surface",
-    card: "--card",
-    surfaceHover: "--surface-hover",
+    canvas: "--surface-canvas",
+    nav: "--surface-nav",
+    base: "--surface-base",
+    raised: "--surface-raised",
+    overlay: "--surface-overlay",
+    hover: "--surface-hover",
   },
-  /** Legacy aliases — map to canonical tokens in globals.css; prefer canonical in new code */
+  border: {
+    subtle: "--border-subtle",
+    strong: "--border-strong",
+  },
+  text: {
+    primary: "--text-primary",
+    secondary: "--text-secondary",
+    muted: "--text-muted",
+    disabled: "--text-disabled",
+  },
+  primary: {
+    default: "--primary",
+    subtle: "--primary-subtle",
+    soft: "--primary-soft",
+    medium: "--primary-medium",
+  },
+  /**
+   * Compatibility aliases — map to v3 roles in globals.css.
+   * Prefer semantic names in new code; do not remove until Phase 11 audit.
+   */
   surfaceLegacy: {
+    background: "--background", // → canvas
+    surface: "--surface", // → nav
+    card: "--card", // → base
     app: "--surface-app",
     sidebar: "--surface-sidebar",
     page: "--surface-page",
-    card: "--surface-card",
-    elevated: "--surface-elevated",
+    elevated: "--surface-elevated", // → raised
     timeline: "--timeline-surface",
+    dialog: "--surface-dialog", // → overlay
   },
   semantic: {
     selected: "--selected",

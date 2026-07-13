@@ -37,7 +37,7 @@ export function globalRailButtonClass(active = false) {
   return cn(
     "inline-flex size-10 items-center justify-center rounded-lg transition-colors",
     active
-      ? "bg-surface-hover text-foreground"
+      ? "bg-primary-soft text-foreground"
       : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
   );
 }

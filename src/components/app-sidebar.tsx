@@ -160,16 +160,16 @@ function SidebarNav({
                       "group/nav relative flex h-9 items-center rounded-lg text-[13.5px] transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
                       collapsed ? "justify-center px-0" : "gap-2.5 px-2.5",
                       isActive
-                        ? "bg-primary font-medium text-primary-foreground"
-                        : "font-normal text-foreground/58 hover:bg-sidebar-accent hover:text-foreground/92"
+                        ? "bg-primary-soft font-medium text-foreground shadow-[inset_3px_0_0_0_var(--primary)]"
+                        : "font-normal text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                     )}
                   >
                     <Icon
                       className={cn(
                         "size-[17px] shrink-0 stroke-[1.75] transition-colors duration-150",
                         isActive
-                          ? "text-primary-foreground"
-                          : "text-foreground/40 group-hover/nav:text-foreground/75"
+                          ? "text-primary"
+                          : "text-muted-foreground group-hover/nav:text-foreground/75"
                       )}
                     />
                     {!collapsed && (
@@ -209,12 +209,12 @@ function SidebarPanel({
 }: SidebarPanelProps) {
   const width = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
 
-  // Level 1 chrome (`--surface`): left nav frames work; never brighter than cards.
+  // Navigation chrome — darker than canvas; never a content surface.
   return (
     <aside
       style={{ width }}
       className={cn(
-        "flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground",
+        "flex h-full shrink-0 flex-col border-r border-border-subtle bg-surface-nav text-sidebar-foreground",
         animateWidth &&
           "transition-[width] duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
         collapsed && "overflow-visible",
