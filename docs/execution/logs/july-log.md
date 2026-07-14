@@ -31,6 +31,20 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-14 — Today Sunsama-style top bar + timeline rail polish
+
+**Shipped:**
+- Branch `tweak/today-sunsama-top-bar` merged to `main` (`2449230`)
+- Lean Today status rail (date · on track · Tasks/Habits/Focus); remove Now slot, density picker, Schedule/Notes escape links
+- Live focus-time truth for rail + Focus card; quiet demotion while focusing
+- Right rail: collapsed strip always in layout on Today; expand overlays
+- Timeline spacing vs scrollbar/right nav; opaque selected block fill shared across Today / Quick Schedule / Schedule
+- Fix Today/Tasks `-mr-10` overflow under right nav (no horizontal scroll)
+
+**Production:** https://flowos-sage.vercel.app — smoke Today top bar, timeline zoom chips, Quick Schedule vs right rail.
+
+---
+
 ## 2026-07-13 — Visual Design System v3.0 migration (Sessions 1–4)
 
 **Shipped:**
