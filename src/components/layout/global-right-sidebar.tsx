@@ -6,6 +6,7 @@ import {
   ClipboardList,
   ExternalLink,
   NotebookPen,
+  PanelRightOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -214,11 +215,13 @@ function UtilityRailColumn({
   activePanel,
   expanded,
   onCollapse,
+  onExpand,
   onOpenPanel,
 }: {
   activePanel: GlobalRightSidebarPanel;
   expanded: boolean;
   onCollapse: () => void;
+  onExpand: () => void;
   onOpenPanel: (panel: GlobalRightSidebarPanel) => void;
 }) {
   return (
@@ -230,12 +233,9 @@ function UtilityRailColumn({
       )}
       style={{ width: SHELL_UTILITY_RAIL_WIDTH_PX }}
     >
-      {/* Shared 68px header band — collapse control only when panel is open */}
+      {/* Shared 68px header — expand when closed, collapse when open */}
       <div
-        className={cn(
-          "flex shrink-0 items-center justify-center",
-          expanded && "border-b border-border-subtle"
-        )}
+        className="flex shrink-0 items-center justify-center border-b border-border-subtle"
         style={{
           height: SHELL_HEADER_HEIGHT_PX,
           width: "100%",
@@ -255,7 +255,21 @@ function UtilityRailColumn({
               style={globalRailIconStyle()}
             />
           </button>
-        ) : null}
+        ) : (
+          <button
+            type="button"
+            onClick={onExpand}
+            className={globalRailCollapseButtonClass()}
+            style={globalRailCollapseButtonStyle()}
+            aria-label="Expand utility panel"
+            aria-expanded={false}
+          >
+            <PanelRightOpen
+              className={GLOBAL_RAIL_ICON_CLASS}
+              style={globalRailIconStyle()}
+            />
+          </button>
+        )}
       </div>
       <div
         className="flex flex-col items-center"
@@ -394,6 +408,7 @@ export function GlobalRightSidebar() {
             activePanel={activePanel}
             expanded={expanded}
             onCollapse={toggleExpanded}
+            onExpand={toggleExpanded}
             onOpenPanel={openPanel}
           />
         </div>
