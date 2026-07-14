@@ -22,6 +22,15 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-14 — Dark-only theme lock
+
+**Shipped:**
+- `main` `e165533` — remove light/system theme switching; Settings Appearance shows Dark only; force `.dark` on `<html>`
+
+**Production:** https://flowos-sage.vercel.app — confirm Settings → Appearance and that surfaces stay dark after deploy.
+
+---
+
 ## 2026-07-13 — Visual Design System v3.0 migration (Sessions 1–4)
 
 **Shipped:**
