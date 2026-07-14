@@ -38,8 +38,8 @@ export const SHELL_BRAND_LOGO_PX = 36;
 export const SHELL_BRAND_GAP_PX = 12;
 
 /** Left nav vertical rhythm */
-export const SHELL_NAV_TOP_PADDING_PX = 14;
-export const SHELL_NAV_SECTION_GAP_PX = 14;
+export const SHELL_NAV_TOP_PADDING_PX = 18;
+export const SHELL_NAV_SECTION_GAP_PX = 18;
 export const SHELL_NAV_ROW_PX = 48;
 export const SHELL_NAV_ITEM_GAP_PX = 8;
 export const SHELL_NAV_RADIUS_PX = 12;

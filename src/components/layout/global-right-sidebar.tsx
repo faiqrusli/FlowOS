@@ -205,9 +205,7 @@ function UtilityPanelHeader({
             strokeWidth={1.75}
           />
         </UtilityHeaderAction>
-      ) : (
-        <span className="size-8 shrink-0" aria-hidden />
-      )}
+      ) : null}
     </header>
   );
 }
@@ -228,12 +226,16 @@ function UtilityRailColumn({
       className={cn(
         "flex h-full shrink-0 flex-col items-center",
         workspaceRailBackgroundClass,
-        expanded && "border-l border-border-subtle/60"
+        expanded ? "border-l border-border-subtle/60" : undefined
       )}
       style={{ width: SHELL_UTILITY_RAIL_WIDTH_PX }}
     >
+      {/* Shared 68px header band — collapse control only when panel is open */}
       <div
-        className="flex shrink-0 items-center justify-center border-b border-border-subtle"
+        className={cn(
+          "flex shrink-0 items-center justify-center",
+          expanded && "border-b border-border-subtle"
+        )}
         style={{
           height: SHELL_HEADER_HEIGHT_PX,
           width: "100%",
@@ -274,6 +276,10 @@ function UtilityRailColumn({
 
 /**
  * Unified right utility sidebar — persistent rail + optional elevated panel.
+ *
+ * Only the spacer participates in the AppShell flex row. The visual shell is
+ * `position: fixed` inside a zero-size flex slot so its width is not reserved twice
+ * (that double-count caused the black gap / restricted main workspace).
  */
 export function GlobalRightSidebar() {
   const {
@@ -338,56 +344,59 @@ export function GlobalRightSidebar() {
         aria-hidden
       />
 
-      <div
-        ref={shellRef}
-        className={cn(
-          "fixed inset-y-0 right-0 z-[21] flex overflow-hidden",
-          expanded && "relative",
-          !expanded && cn("border-l border-border-subtle", workspaceRailBackgroundClass)
-        )}
-        style={{
-          width: shellWidth,
-          transition: widthTransition,
-        }}
-      >
-        {expanded ? (
-          <SidebarResizeHandle
-            onResizeStart={() => setIsResizing(true)}
-            onResizeDelta={adjustWidthByDelta}
-            onResizeEnd={() => {
-              setIsResizing(false);
-              persistSidebarWidth();
-            }}
-          />
-        ) : null}
+      {/* Zero-size flex item — fixed shell must not consume a second flex width */}
+      <div className="pointer-events-none relative h-0 w-0 shrink-0 overflow-visible">
+        <div
+          ref={shellRef}
+          className={cn(
+            "pointer-events-auto fixed inset-y-0 right-0 z-[21] flex overflow-hidden",
+            !expanded &&
+              cn("border-l border-border-subtle", workspaceRailBackgroundClass)
+          )}
+          style={{
+            width: shellWidth,
+            transition: widthTransition,
+          }}
+        >
+          {expanded ? (
+            <SidebarResizeHandle
+              onResizeStart={() => setIsResizing(true)}
+              onResizeDelta={adjustWidthByDelta}
+              onResizeEnd={() => {
+                setIsResizing(false);
+                persistSidebarWidth();
+              }}
+            />
+          ) : null}
 
-        {expanded ? (
-          <div
-            className={cn(
-              "flow-shell-right-drawer flex min-h-0 min-w-0 flex-1 flex-col",
-              workspaceDrawerPanelClass,
-              showBody ? "opacity-100" : "opacity-0"
-            )}
-            style={{
-              width: contentWidthPx,
-              transition: isResizing ? "none" : panelSlideTransitionStyle(),
-            }}
-          >
-            <UtilityPanelHeader activePanel={activePanel} />
-            <div className="min-h-0 flex-1 overflow-hidden">
-              {showBody ? (
-                <GlobalRightSidebarBody activePanel={activePanel} />
-              ) : null}
+          {expanded ? (
+            <div
+              className={cn(
+                "flow-shell-right-drawer relative flex min-h-0 min-w-0 flex-1 flex-col",
+                workspaceDrawerPanelClass,
+                showBody ? "opacity-100" : "opacity-0"
+              )}
+              style={{
+                width: contentWidthPx,
+                transition: isResizing ? "none" : panelSlideTransitionStyle(),
+              }}
+            >
+              <UtilityPanelHeader activePanel={activePanel} />
+              <div className="min-h-0 flex-1 overflow-hidden">
+                {showBody ? (
+                  <GlobalRightSidebarBody activePanel={activePanel} />
+                ) : null}
+              </div>
             </div>
-          </div>
-        ) : null}
+          ) : null}
 
-        <UtilityRailColumn
-          activePanel={activePanel}
-          expanded={expanded}
-          onCollapse={toggleExpanded}
-          onOpenPanel={openPanel}
-        />
+          <UtilityRailColumn
+            activePanel={activePanel}
+            expanded={expanded}
+            onCollapse={toggleExpanded}
+            onOpenPanel={openPanel}
+          />
+        </div>
       </div>
     </>
   );

@@ -191,7 +191,7 @@ function SidebarNav({
   return (
     <nav
       className={cn(
-        "min-h-0 flex-1",
+        "relative min-h-0 flex-1",
         sidebarNavGeometryTransitionClass(),
         collapsed ? "overflow-visible" : "overflow-y-auto"
       )}
@@ -208,7 +208,17 @@ function SidebarNav({
           {!collapsed && (
             <p
               className="pointer-events-none absolute left-5 right-3 truncate text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/75"
-              style={{ bottom: "100%", marginBottom: 4 }}
+              style={
+                sectionIndex === 0
+                  ? {
+                      /* Sit inside nav top padding, below brand divider — not through it */
+                      top: -SHELL_NAV_TOP_PADDING_PX + 2,
+                    }
+                  : {
+                      /* Sit inside the section gap above workspace items */
+                      top: -SHELL_NAV_SECTION_GAP_PX + 2,
+                    }
+              }
             >
               {section.label}
             </p>
@@ -237,9 +247,7 @@ function SidebarNav({
                     className={cn(
                       "group/nav relative flex items-center text-sm ease-[cubic-bezier(0.22,1,0.36,1)]",
                       sidebarNavGeometryTransitionClass(),
-                      collapsed
-                        ? "justify-center"
-                        : "font-normal",
+                      collapsed ? "justify-center" : "font-normal",
                       isActive
                         ? NAV_ACTIVE_ROW
                         : "font-normal text-muted-foreground hover:bg-surface-hover hover:text-foreground"
@@ -261,7 +269,9 @@ function SidebarNav({
                           }
                     }
                   >
-                    {isActive ? <NavActiveIndicator collapsed={collapsed} /> : null}
+                    {isActive ? (
+                      <NavActiveIndicator collapsed={collapsed} />
+                    ) : null}
                     <Icon
                       className={cn(
                         NAV_ICON_CLASS,
