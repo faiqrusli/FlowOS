@@ -17,6 +17,13 @@ const NEUTRAL_BLOCK_HOVER = "hover:bg-surface-hover";
 const NEUTRAL_PROJECTION =
   "border border-dashed border-border-subtle/70 bg-muted/20";
 
+/**
+ * Selected / current block fill — opaque mix so hour lines don’t show through.
+ * Shared by Schedule, Quick Schedule, and Today timeline.
+ */
+export const SCHEDULE_BLOCK_CURRENT_CLASS =
+  "border-primary/40 bg-[color-mix(in_oklab,var(--surface-raised)_86%,var(--primary)_14%)] ring-1 ring-inset ring-primary/30";
+
 export const PRIORITY_CHANNEL: Record<TaskPriority, ChannelStyle> = {
   high: {
     accent: "bg-destructive",

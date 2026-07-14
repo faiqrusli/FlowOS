@@ -150,6 +150,34 @@ export function computeQuickFocusSeconds(
   return { focus, break: breakSeconds };
 }
 
+/** Live focus seconds in the unsaved active session (mirrors stop payload). */
+export function getActiveSessionFocusSeconds(
+  session: StoredActiveFocusSession
+): number {
+  if (session.timer_type === "quick") {
+    return computeQuickFocusSeconds(session).focus;
+  }
+
+  const phaseTotal = getPomodoroPhaseTotalSeconds(session);
+  const remaining = getPomodoroRemainingSeconds(session);
+  const elapsedInPhase = Math.max(0, phaseTotal - remaining);
+
+  let focusSeconds = session.accumulated_focus_seconds;
+  if (session.mode === "focus") {
+    focusSeconds += elapsedInPhase;
+  }
+  return focusSeconds;
+}
+
+/** Persisted today focus + live active-session focus for display (rail / Today’s focus). */
+export function getTodayFocusDisplaySeconds(
+  persistedSeconds: number,
+  activeSession: StoredActiveFocusSession | null
+): number {
+  if (!activeSession) return persistedSeconds;
+  return persistedSeconds + getActiveSessionFocusSeconds(activeSession);
+}
+
 function createTaskFocusSessionId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();

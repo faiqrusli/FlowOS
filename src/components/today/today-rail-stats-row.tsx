@@ -3,13 +3,10 @@
 import type { KpiCellKey } from "@/components/dashboard/dashboard-kpi-strip";
 import { formatDuration } from "@/lib/focus-utils";
 import { type } from "@/lib/typography";
-import { cn } from "@/lib/utils";
 import type { TodayProgress } from "@/types/dashboard";
-import type { Reflection } from "@/types/reflection";
 
 type TodayRailStatsRowProps = {
   progress: TodayProgress;
-  reflection: Reflection | null;
   onCellAction: (cell: KpiCellKey) => void;
 };
 
@@ -26,21 +23,14 @@ function InlineStatChip({
   value,
   label,
   onClick,
-  valueClassName,
 }: {
   value: string;
   label: string;
   onClick?: () => void;
-  valueClassName?: string;
 }) {
   const content = (
     <>
-      <span
-        className={cn(
-          "text-sm font-semibold tabular-nums text-foreground",
-          valueClassName
-        )}
-      >
+      <span className="text-sm font-semibold tabular-nums text-foreground">
         {value}
       </span>
       <span className={type.meta}>{label}</span>
@@ -61,15 +51,13 @@ function InlineStatChip({
   return <span className={className}>{content}</span>;
 }
 
+/** Inline Tasks / Habits / Focus chips for the Today status rail (no Reflection). */
 export function TodayRailStatsRow({
   progress,
-  reflection,
   onCellAction,
 }: TodayRailStatsRowProps) {
-  const reflectionDone = Boolean(reflection);
-
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 py-0.5 text-[13px] text-muted-foreground">
+    <span className="inline-flex flex-wrap items-center gap-x-3 gap-y-1">
       <InlineStatChip
         value={`${progress.tasksCompleted}/${progress.tasksTotal}`}
         label="Tasks"
@@ -87,13 +75,6 @@ export function TodayRailStatsRow({
         label="Focus"
         onClick={() => onCellAction("focus")}
       />
-      <RailDivider />
-      <InlineStatChip
-        value={reflectionDone ? "Done" : "Pending"}
-        label="Reflection"
-        onClick={() => onCellAction("reflection")}
-        valueClassName={reflectionDone ? "text-success" : undefined}
-      />
-    </div>
+    </span>
   );
 }

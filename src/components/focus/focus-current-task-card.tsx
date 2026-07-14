@@ -134,7 +134,7 @@ export function FocusCurrentTaskCard({
   return (
     <>
       <section
-        className="flow-surface-raised animate-in fade-in slide-in-from-bottom-1 mt-2 shrink-0 px-3 py-2.5 text-left duration-200"
+        className="flow-surface-raised animate-in fade-in slide-in-from-bottom-1 mt-2 shrink-0 border border-primary/35 px-3 py-2.5 text-left shadow-[0_0_0_1px_rgba(88,108,246,0.12)] duration-200"
         onContextMenu={handleContextMenu}
       >
         <div className="flex items-start justify-between gap-2">

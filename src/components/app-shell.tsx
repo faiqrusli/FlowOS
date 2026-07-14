@@ -40,8 +40,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-surface-canvas">
               <MobileSidebarTrigger onOpen={() => setMobileNavOpen(true)} />
 
-              <main className="flow-workspace min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
-                <div className="w-full space-y-6 p-10 pr-0">
+              <main className="flow-workspace min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain">
+                <div className="w-full min-w-0 space-y-6 p-10 pr-0">
                   {children}
                 </div>
               </main>

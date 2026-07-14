@@ -78,21 +78,13 @@ export function GlobalRightSidebar() {
     activePanel,
     expanded,
     width,
-    hoverRevealed,
-    setHoverRevealed,
     workplaceHoverMode,
-    visibleWidthPx,
     openPanel,
     toggleExpanded,
     setWidth,
   } = useGlobalRightSidebar();
 
   const [showBody, setShowBody] = useState(expanded);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (expanded) {
@@ -104,35 +96,31 @@ export function GlobalRightSidebar() {
     return () => window.clearTimeout(timer);
   }, [expanded]);
 
-  const sidebarVisible =
-    expanded || !workplaceHoverMode || hoverRevealed;
-  const renderedWidth = mounted && sidebarVisible ? visibleWidthPx : 0;
+  // Today/workplace: always fixed overlay + permanent collapsed-width spacer
+  // so expand/collapse never reflows the page. Expanded panel covers content.
+  const overlayMode = workplaceHoverMode;
+  const railWidth = expanded
+    ? width
+    : GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX;
 
   return (
     <>
-      {workplaceHoverMode && !expanded && (
+      {overlayMode ? (
         <div
-          className="fixed inset-y-0 right-0 z-30 w-3"
-          onMouseEnter={() => setHoverRevealed(true)}
+          className="h-full shrink-0"
+          style={{ width: GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX }}
+          aria-hidden
         />
-      )}
-
-      {/* Navigation chrome — same token as left nav. */}
+      ) : null}
       <aside
         className={cn(
-          "relative flex h-full shrink-0 overflow-hidden border-l border-border-subtle text-foreground",
+          "flex h-full shrink-0 overflow-hidden border-l border-border-subtle text-foreground",
           workspaceRailBackgroundClass,
-            workplaceHoverMode && "fixed inset-y-0 right-0 z-40",
-            !sidebarVisible && workplaceHoverMode && "pointer-events-none opacity-0"
+          overlayMode ? "fixed inset-y-0 right-0 z-40" : "relative"
         )}
         style={{
-          width: renderedWidth,
+          width: railWidth,
           transition: panelWidthTransitionStyle(),
-        }}
-        onMouseLeave={() => {
-          if (workplaceHoverMode && !expanded) {
-            setHoverRevealed(false);
-          }
         }}
       >
         <div className="flex h-full w-full min-w-0">

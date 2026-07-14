@@ -2,7 +2,7 @@
 export const WORKPLACE_TIMELINE_WIDTH_PX = 368;
 
 /** Gap between the workplace timeline and the global right sidebar (px). */
-export const WORKPLACE_TIMELINE_RIGHT_GAP_PX = 8;
+export const WORKPLACE_TIMELINE_RIGHT_GAP_PX = 0;
 
 /** @deprecated Use WORKPLACE_TIMELINE_WIDTH_PX */
 export const WORKPLACE_TIMELINE_WIDTH_EXTRA_PX = 0;

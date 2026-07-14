@@ -116,6 +116,7 @@ import {
   type TimelineZoom,
 } from "@/lib/timeline-layout";
 import { formatDurationLabel } from "@/lib/schedule-layout";
+import { SCHEDULE_BLOCK_CURRENT_CLASS } from "@/lib/schedule-palette";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import {
   timelineHabitBlockClassNames,
@@ -211,8 +212,7 @@ type DragItem = { kind: TimelineEntryKind; id: string };
 const TIMELINE_EDGE_SCROLL_ZONE = 56;
 const TIMELINE_EDGE_SCROLL_SPEED = 14;
 const TIMELINE_TASK_ELEVATION = "shadow-none";
-const TIMELINE_TASK_SELECTED =
-  "border-primary/40 bg-primary-soft ring-1 ring-inset ring-primary/30";
+const TIMELINE_TASK_SELECTED = SCHEDULE_BLOCK_CURRENT_CLASS;
 const TIMELINE_DROP_PREVIEW =
   "rounded-lg border border-dashed border-primary/50 bg-primary-medium";
 const QUICK_SCHEDULE_INBOX_DROP_HIGHLIGHT =
@@ -1369,7 +1369,7 @@ export function TimelinePlanner({
       className={cn(
         "relative min-h-0 flex-1",
         isWorkplace
-          ? "workplace-timeline-scroll overflow-y-scroll bg-surface-base pr-1.5 pt-8 transition-opacity duration-200"
+          ? "workplace-timeline-scroll overflow-y-auto bg-surface-base pr-0 pt-8 transition-opacity duration-200"
           : "overflow-y-auto bg-surface-base",
         isWorkplace &&
           (timelineRevealActive
@@ -1390,7 +1390,9 @@ export function TimelinePlanner({
         <div
           className={cn(
             "absolute inset-0 flex",
-            timelineGridGutterClass(useDrawerTimeline)
+            timelineGridGutterClass(useDrawerTimeline, {
+              flushRight: isWorkplace,
+            })
           )}
         >
           <div
@@ -1462,11 +1464,14 @@ export function TimelinePlanner({
 
             {nowLineTopPx !== null && (
               <div
-                className="pointer-events-none absolute inset-x-1 z-30 flex items-center gap-1.5"
+                className={cn(
+                  "pointer-events-none absolute z-30 flex items-center gap-1.5",
+                  isWorkplace ? "left-1 right-0" : "inset-x-1.5"
+                )}
                 style={{ top: nowLineTopPx }}
               >
                 <span className="size-[5px] shrink-0 rounded-full bg-primary shadow-[0_0_0_2.5px_color-mix(in_oklab,var(--primary)_22%,transparent)]" />
-                <div className="h-px flex-1 bg-gradient-to-r from-primary/75 to-transparent" />
+                <div className="h-px min-w-0 flex-1 bg-gradient-to-r from-primary/75 to-transparent" />
                 <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[10px] font-medium tabular-nums text-primary-foreground shadow-sm">
                   {formatNowTimeInAppTimezone()}
                 </span>
@@ -1479,6 +1484,7 @@ export function TimelinePlanner({
                 block={block}
                 groups={groups}
                 viewDate={viewDate}
+                rightInsetPx={isWorkplace ? 0 : 4}
                 selected={
                   block.kind === "task"
                     ? selectedTaskId === block.id
@@ -1647,7 +1653,7 @@ export function TimelinePlanner({
               : "opacity-0"
           )}
         >
-          <div className="flex w-full items-center gap-2 pl-0.5 pr-5">
+          <div className="flex w-full items-center gap-2">
             <button
               type="button"
               onClick={() => {
@@ -2432,6 +2438,7 @@ type TimelineScheduledBlockProps = {
   block: TimelineBlock;
   groups: TaskGroupWithTasks[];
   viewDate: string;
+  rightInsetPx?: number;
   selected?: boolean;
   overlapping?: boolean;
   showOverlapLabel?: boolean;
@@ -2450,6 +2457,7 @@ function TimelineScheduledBlock({
   block,
   groups,
   viewDate,
+  rightInsetPx = 4,
   selected,
   overlapping,
   showOverlapLabel = false,
@@ -2530,8 +2538,9 @@ function TimelineScheduledBlock({
       style={{
         top: topPx,
         height: heightPx,
-        left: 4 + cascadeOffsetPx,
-        right: 4 + Math.max(0, cascadeWidthInsetPx - cascadeOffsetPx),
+        left: cascadeOffsetPx,
+        right:
+          rightInsetPx + Math.max(0, cascadeWidthInsetPx - cascadeOffsetPx),
         zIndex: isDragging
           ? 40
           : overlapStack

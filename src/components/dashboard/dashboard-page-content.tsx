@@ -5,17 +5,12 @@ import { DashboardCommandHeader } from "@/components/dashboard/dashboard-command
 import { DashboardFocusCard } from "@/components/dashboard/dashboard-focus-card";
 import { DashboardHabitsCard } from "@/components/dashboard/dashboard-habits-card";
 import { DashboardKpiStrip } from "@/components/dashboard/dashboard-kpi-strip";
-import { DashboardNextAction } from "@/components/dashboard/dashboard-next-action";
 import { DashboardReflectionCard } from "@/components/dashboard/dashboard-reflection-card";
 import { DashboardSchedulePreview } from "@/components/dashboard/dashboard-schedule-preview";
 import { DashboardCommandSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { DashboardTasksCard } from "@/components/dashboard/dashboard-tasks-card";
 import { ErrorBanner } from "@/components/shared/error-banner";
-import { useFocusSessionContext } from "@/contexts/focus-session-context";
-import {
-  computeOnTrackStatus,
-  getNextActionRecommendation,
-} from "@/lib/dashboard-command";
+import { computeOnTrackStatus } from "@/lib/dashboard-command";
 import { DashboardError, fetchDashboardData } from "@/lib/dashboard";
 import { toggleHabitComplete } from "@/lib/habits";
 import { toggleTaskComplete } from "@/lib/tasks";
@@ -26,13 +21,11 @@ import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
 
 export function DashboardPageContent() {
-  const { dashboardActive } = useFocusSessionContext();
   const [data, setData] = useState<DashboardData | null>(null);
   const [displayName, setDisplayName] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
-  const [completingNext, setCompletingNext] = useState(false);
 
   const loadDashboard = useCallback(async () => {
     setLoading(true);
@@ -67,44 +60,6 @@ export function DashboardPageContent() {
         : { label: "Fresh start", description: "", percent: 0 },
     [data]
   );
-
-  const nextAction = useMemo(() => {
-    if (!data) {
-      return {
-        title: "",
-        description: "",
-        href: "/tasks",
-        actionLabel: "Add task",
-        type: "empty" as const,
-      };
-    }
-
-    return getNextActionRecommendation(
-      data.tasks,
-      data.habits,
-      data.timeline,
-      data.reflection,
-      data.progress.focusSeconds,
-      { hasActiveFocus: dashboardActive.isActive }
-    );
-  }, [data, dashboardActive.isActive]);
-
-  const nextActionTargetCompleted = useMemo(() => {
-    if (!data || !nextAction.entityId) return false;
-    if (nextAction.type === "task") {
-      return (
-        data.tasks.find((item) => item.id === nextAction.entityId)?.completed ??
-        false
-      );
-    }
-    if (nextAction.type === "habit") {
-      return (
-        data.habits.find((item) => item.id === nextAction.entityId)
-          ?.completed ?? false
-      );
-    }
-    return false;
-  }, [data, nextAction.entityId, nextAction.type]);
 
   async function handleToggleTask(task: Task) {
     setPendingId(task.id);
@@ -170,27 +125,6 @@ export function DashboardPageContent() {
     }
   }
 
-  async function handleQuickCompleteNext() {
-    if (!data || !nextAction.entityId) return;
-
-    setCompletingNext(true);
-    setError(null);
-
-    try {
-      if (nextAction.type === "task") {
-        const task = data.tasks.find((item) => item.id === nextAction.entityId);
-        if (task) await handleToggleTask(task);
-      } else if (nextAction.type === "habit") {
-        const habit = data.habits.find(
-          (item) => item.id === nextAction.entityId
-        );
-        if (habit) await handleToggleHabit(habit);
-      }
-    } finally {
-      setCompletingNext(false);
-    }
-  }
-
   return (
     <div className="mx-auto max-w-5xl space-y-4">
       <DashboardCommandHeader displayName={displayName} loading={loading} />
@@ -205,18 +139,6 @@ export function DashboardPageContent() {
             progress={data.progress}
             reflection={data.reflection}
             onTrack={onTrack}
-          />
-
-          <DashboardNextAction
-            action={nextAction}
-            onQuickComplete={
-              nextAction.entityId &&
-              (nextAction.type === "task" || nextAction.type === "habit") &&
-              !nextActionTargetCompleted
-                ? handleQuickCompleteNext
-                : undefined
-            }
-            completing={completingNext}
           />
 
           <div className="grid gap-3 sm:grid-cols-2">

@@ -46,6 +46,8 @@ type WorkplaceTasksCardProps = {
   tasks: Task[];
   groups: TaskGroupWithTasks[];
   todayViewDate: string;
+  /** Quiet empty / Later chrome while Focus owns the page. */
+  demoted?: boolean;
   onOpenDetail: (taskId: string) => void;
   onToggleComplete: (task: Task) => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
@@ -55,6 +57,7 @@ type WorkplaceTasksCardProps = {
 function TaskList({
   list,
   groups,
+  demoted = false,
   onOpenDetail,
   onToggleComplete,
   onUpdateTask,
@@ -62,6 +65,7 @@ function TaskList({
 }: {
   list: Task[];
   groups: TaskGroupWithTasks[];
+  demoted?: boolean;
   onOpenDetail: (taskId: string) => void;
   onToggleComplete: (task: Task) => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
@@ -73,6 +77,13 @@ function TaskList({
   };
 
   if (list.length === 0) {
+    if (demoted) {
+      return (
+        <p className="mx-1 my-0.5 px-2 py-1.5 text-center text-[12px] text-muted-foreground/45">
+          No tasks in queue
+        </p>
+      );
+    }
     return (
       <p className="flow-empty mx-1 my-1.5 px-2 py-4 text-center text-[13px] text-muted-foreground/70">
         No tasks here
@@ -107,6 +118,7 @@ export const WorkplaceTasksCard = forwardRef<
     tasks,
     groups,
     todayViewDate,
+    demoted = false,
     onOpenDetail,
     onToggleComplete,
     onUpdateTask,
@@ -119,6 +131,10 @@ export const WorkplaceTasksCard = forwardRef<
     Set<Exclude<WorkplaceTaskTab, "queue">>
   >(() => new Set());
   const pendingScrollIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (demoted) setExpandedDisclosures(new Set());
+  }, [demoted]);
 
   const sections = useMemo(
     () => partitionWorkplaceTasks(tasks, todayViewDate),
@@ -207,6 +223,7 @@ export const WorkplaceTasksCard = forwardRef<
           <TaskList
             list={visibleQueue}
             groups={groups}
+            demoted={demoted}
             onOpenDetail={onOpenDetail}
             onToggleComplete={onToggleComplete}
             onUpdateTask={onUpdateTask}
@@ -229,6 +246,23 @@ export const WorkplaceTasksCard = forwardRef<
 
             const expanded = expandedDisclosures.has(disclosure.id);
             const isMissed = disclosure.id === "missed";
+
+            if (demoted && !expanded) {
+              return (
+                <button
+                  key={disclosure.id}
+                  type="button"
+                  onClick={() => toggleDisclosure(disclosure.id)}
+                  className="mx-1 flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-[12px] font-medium text-muted-foreground/55 transition-colors hover:bg-muted/40 hover:text-muted-foreground"
+                >
+                  <span>
+                    {disclosure.label}
+                    <span className="ml-1 tabular-nums">({count})</span>
+                  </span>
+                  <ChevronDown className="size-3.5 shrink-0" aria-hidden />
+                </button>
+              );
+            }
 
             return (
               <div key={disclosure.id} className="mx-1">
@@ -260,6 +294,7 @@ export const WorkplaceTasksCard = forwardRef<
                     <TaskList
                       list={sections[disclosure.id]}
                       groups={groups}
+                      demoted={demoted}
                       onOpenDetail={onOpenDetail}
                       onToggleComplete={onToggleComplete}
                       onUpdateTask={onUpdateTask}

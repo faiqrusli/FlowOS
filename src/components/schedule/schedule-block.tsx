@@ -8,7 +8,10 @@ import {
   SNAP_MINUTES,
   type ScheduleBlockLayout,
 } from "@/lib/schedule-layout";
-import { getChannelStyle } from "@/lib/schedule-palette";
+import {
+  getChannelStyle,
+  SCHEDULE_BLOCK_CURRENT_CLASS,
+} from "@/lib/schedule-palette";
 import { cn } from "@/lib/utils";
 import type { ScheduleItem } from "@/types/schedule";
 
@@ -83,7 +86,7 @@ export function ScheduleBlock({
           !isFocus &&
           !item.completed &&
           "cursor-grab active:cursor-grabbing",
-        isCurrent && "ring-1 ring-primary/40 bg-primary-soft",
+        isCurrent && SCHEDULE_BLOCK_CURRENT_CLASS,
         item.completed && "opacity-60"
       )}
       style={{ top: topPx, height: heightPx }}
