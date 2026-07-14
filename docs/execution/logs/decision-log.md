@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 10, 2026
+**Last updated:** July 14, 2026
 
 ---
 
@@ -35,6 +35,21 @@ When making a significant product decision:
 ---
 
 ## 2026 decisions
+
+### 2026-07-14 — Next Up Queue: multi-source references (hierarchy refinement)
+
+**Context:** [today-page-hierarchy-refinement-spec.md](../../review/design/today-page-hierarchy-refinement-spec.md) §12 requires Queue items as references to `task | habit | schedule` (not duplicated payloads). Prior Next Up V2 (2026-07-10) persists a **task-only** queue on `tasks.queue_order`. Session 5 of [m2-today-hierarchy-refinement.md](../runbooks/m2-today-hierarchy-refinement.md) needs a persistence choice before coding.
+
+**Decision:** **Hybrid (extend V2).**  
+1. Keep **task** queue persistence on `tasks.queue_order` (unchanged V2 contract).  
+2. Introduce a reference-shaped `QueueItem` type (`sourceType`, `sourceId`, `position`, `addedAt`) for UI/resolution; task rows map from `queue_order` at render time (titles/durations from live Task entities).  
+3. **Habit** and **schedule** sources may be added in Session 6+ via additive client storage (or a later table) without replacing `queue_order` for tasks. Timeline events stay on the Timeline when queued (reference only).
+
+**Alternatives rejected:** (A) localStorage-only for all sources (regresses durable task queue); (B) new Supabase table replacing `queue_order` in Session 5 (unnecessary migration risk); full multi-source write path in Session 5 before DnD exists.
+
+**Outcome:** Gate cleared for Session 5 on `tweak/today-focus-queue-layout`.
+
+**Related:** [today-page-hierarchy-refinement-spec.md](../../review/design/today-page-hierarchy-refinement-spec.md) · [m2-today-hierarchy-refinement.md](../runbooks/m2-today-hierarchy-refinement.md) · Next Up V2 2026-07-10
 
 ### 2026-07-13 — Visual Design System v3.0 migration sessions 1–4 complete
 

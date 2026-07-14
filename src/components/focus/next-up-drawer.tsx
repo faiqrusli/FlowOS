@@ -4,7 +4,7 @@ import { ChevronLeft, ListOrdered, Plus, X } from "lucide-react";
 import type { DragEvent } from "react";
 import { NextUpQueueList } from "@/components/focus/next-up-queue-list";
 import {
-  WORKPLACE_NEXT_UP_PANEL_PX,
+  WORKPLACE_NEXT_UP_PANEL_WIDTH_CSS,
   WORKPLACE_NEXT_UP_RAIL_PX,
 } from "@/lib/workplace-layout";
 import { cn } from "@/lib/utils";
@@ -65,7 +65,10 @@ export function NextUpDrawer({
     return (
       <aside
         className={cn(
-          "flex h-full shrink-0 flex-col items-center border-l border-border-subtle bg-surface-base/40 py-2",
+          "group/queue-rail flex h-full shrink-0 flex-col items-center border-l border-border-subtle/70 bg-transparent py-2",
+          "opacity-70 transition-[opacity,background-color] duration-150",
+          "hover:bg-surface-base/35 hover:opacity-100 focus-within:bg-surface-base/35 focus-within:opacity-100",
+          dropZoneActive && "bg-primary/10 opacity-100",
           className
         )}
         style={{ width: WORKPLACE_NEXT_UP_RAIL_PX }}
@@ -102,12 +105,12 @@ export function NextUpDrawer({
       role="complementary"
       aria-label="Next Up queue"
       className={cn(
-        "flex h-full shrink-0 flex-col overflow-hidden border-l border-border-strong bg-surface-base text-foreground",
+        "flex h-full min-w-[300px] max-w-[360px] shrink-0 flex-col overflow-hidden border-l border-border-subtle bg-surface-base text-foreground",
         className
       )}
-      style={{ width: WORKPLACE_NEXT_UP_PANEL_PX }}
+      style={{ width: WORKPLACE_NEXT_UP_PANEL_WIDTH_CSS }}
     >
-      <div className="flex shrink-0 items-start justify-between gap-1.5 border-b border-border-subtle px-2.5 py-2">
+      <div className="flex shrink-0 items-start justify-between gap-1.5 border-b border-border-subtle px-3 py-2.5">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">
             <ListOrdered
@@ -118,8 +121,10 @@ export function NextUpDrawer({
               Next Up Queue
             </h3>
           </div>
-          <p className="mt-0.5 text-[10px] leading-snug text-muted-foreground">
-            Drag to reorder. Drop tasks here.
+          <p className="mt-1 text-[11px] leading-snug text-muted-foreground">
+            Your upcoming focus sequence.
+            <br />
+            Drag to reorder.
           </p>
         </div>
         <button
@@ -133,7 +138,7 @@ export function NextUpDrawer({
       </div>
 
       {currentTask ? (
-        <div className="shrink-0 border-b border-border/45 px-2.5 py-1.5">
+        <div className="shrink-0 border-b border-border-subtle/80 px-3 py-1.5">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
             Current
           </p>
@@ -143,7 +148,7 @@ export function NextUpDrawer({
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col px-2 pb-2 pt-1.5">
+      <div className="flex min-h-0 flex-1 flex-col px-2.5 pb-2.5 pt-2">
         <NextUpQueueList
           tasks={tasks}
           groups={groups}
@@ -162,10 +167,10 @@ export function NextUpDrawer({
 
         <div
           className={cn(
-            "mt-1.5 flex shrink-0 flex-col items-center justify-center gap-1 rounded-md border border-dashed px-2 py-3 text-center transition-colors",
+            "mt-2 flex shrink-0 flex-col items-center justify-center gap-1 rounded-lg border border-dashed px-2 py-4 text-center transition-colors",
             dropZoneActive
-              ? "border-primary/50 bg-primary/10 text-foreground"
-              : "border-border/60 bg-surface-canvas/40 text-muted-foreground"
+              ? "border-primary bg-primary/10 text-foreground"
+              : "border-border-subtle bg-surface-canvas/30 text-muted-foreground"
           )}
           onDragOver={(event) => {
             event.preventDefault();
@@ -180,11 +185,11 @@ export function NextUpDrawer({
             )}
           />
           <span className="text-[11px] leading-snug">
-            {dropZoneActive ? "Release to add" : "Drop here to add"}
+            {dropZoneActive ? "Release to add to queue" : "Drop here to add to queue"}
           </span>
         </div>
 
-        <div className="mt-2 flex shrink-0 items-center justify-between gap-2 border-t border-border-subtle pt-1.5 text-[11px]">
+        <div className="mt-2 flex shrink-0 items-center justify-between gap-2 border-t border-border-subtle pt-2 text-[11px]">
           <span className="tabular-nums text-muted-foreground">
             {tasks.length} item{tasks.length === 1 ? "" : "s"}
             {totalMinutes > 0 ? ` · ~${totalMinutes} min` : ""}
