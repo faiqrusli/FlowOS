@@ -215,6 +215,10 @@ export function WorkplacePageContent({
     setOverlay((current) => (current === "habits" ? null : "habits"));
   }, []);
 
+  const launcherDockRef = useRef<HTMLDivElement>(null);
+  const taskLauncherRef = useRef<HTMLButtonElement>(null);
+  const habitLauncherRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
   }, [todayViewDate]);
@@ -603,9 +607,19 @@ export function WorkplacePageContent({
                   onPlanLater={(task) => void handlePlanLaterForTask(task)}
                 />
 
+                {overlay ? (
+                  <button
+                    type="button"
+                    aria-label="Dismiss overlay"
+                    className="absolute inset-0 z-30 cursor-default bg-black/25"
+                    onClick={() => setOverlay(null)}
+                  />
+                ) : null}
+
                 {overlay === "tasks" ? (
                   <div
-                    className="absolute bottom-14 left-2 z-40 flex h-[min(52%,28rem)] w-[min(100%-1rem,22rem)] flex-col overflow-hidden rounded-xl border border-border-strong bg-surface-overlay shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+                    className="absolute bottom-14 left-2 z-40 flex w-[min(760px,calc(100%-1rem))] flex-col overflow-hidden rounded-xl border border-border-strong bg-surface-overlay shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+                    style={{ height: "clamp(380px, 52vh, 520px)" }}
                     role="dialog"
                     aria-label="Today's Tasks"
                   >
@@ -616,6 +630,7 @@ export function WorkplacePageContent({
                       todayViewDate={todayViewDate}
                       demoted={isFocusing}
                       overlay
+                      twoPane
                       onClose={() => setOverlay(null)}
                       onOpenDetail={(taskId) => selectTask(taskId)}
                       onToggleComplete={(task) => void handleToggleComplete(task)}
@@ -631,7 +646,8 @@ export function WorkplacePageContent({
 
                 {overlay === "habits" ? (
                   <div
-                    className="absolute bottom-14 left-2 z-40 flex h-[min(52%,28rem)] w-[min(100%-1rem,20rem)] flex-col overflow-hidden rounded-xl border border-border-strong bg-surface-overlay shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+                    className="absolute bottom-14 left-2 z-40 flex w-[min(760px,calc(100%-1rem))] flex-col overflow-hidden rounded-xl border border-border-strong bg-surface-overlay shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+                    style={{ height: "clamp(380px, 52vh, 520px)" }}
                     role="dialog"
                     aria-label="Today's Habits"
                   >
@@ -640,6 +656,7 @@ export function WorkplacePageContent({
                       habits={todayDisplayHabits}
                       todayViewDate={todayViewDate}
                       overlay
+                      twoPane
                       onClose={() => setOverlay(null)}
                       onToggleComplete={(habit) =>
                         void handleToggleHabitComplete(habit)
@@ -648,8 +665,12 @@ export function WorkplacePageContent({
                   </div>
                 ) : null}
 
-                <div className="absolute bottom-2 left-2 z-30 flex items-center gap-2">
+                <div
+                  ref={launcherDockRef}
+                  className="absolute bottom-2 left-2 z-30 flex items-center gap-2"
+                >
                   <button
+                    ref={taskLauncherRef}
                     type="button"
                     onClick={openTasksOverlay}
                     aria-pressed={overlay === "tasks"}
@@ -664,6 +685,7 @@ export function WorkplacePageContent({
                     Task
                   </button>
                   <button
+                    ref={habitLauncherRef}
                     type="button"
                     onClick={openHabitsOverlay}
                     aria-pressed={overlay === "habits"}
@@ -759,10 +781,11 @@ const WorkplaceHabitsCardWithFocus = forwardRef<
     todayViewDate: string;
     onToggleComplete: (habit: Habit) => void;
     overlay?: boolean;
+    twoPane?: boolean;
     onClose?: () => void;
   }
 >(function WorkplaceHabitsCardWithFocus(
-  { habits, todayViewDate, onToggleComplete, overlay, onClose },
+  { habits, todayViewDate, onToggleComplete, overlay, twoPane, onClose },
   habitsTabRef
 ) {
   const { setActiveHabitId } = useWorkplaceFocusTask();
@@ -773,6 +796,7 @@ const WorkplaceHabitsCardWithFocus = forwardRef<
       habits={habits}
       todayViewDate={todayViewDate}
       overlay={overlay}
+      twoPane={twoPane}
       onClose={onClose}
       onToggleComplete={onToggleComplete}
       onStartFocus={(habit) => setActiveHabitId(habit.id, "manual")}

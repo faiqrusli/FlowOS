@@ -49,6 +49,8 @@ type WorkplaceTasksCardProps = {
   /** Quiet empty / Later chrome while Focus owns the page. */
   demoted?: boolean;
   overlay?: boolean;
+  /** Two-column list + detail for the large Today overlay. */
+  twoPane?: boolean;
   onClose?: () => void;
   onOpenDetail: (taskId: string) => void;
   onToggleComplete: (task: Task) => void;
@@ -60,6 +62,8 @@ function TaskList({
   list,
   groups,
   demoted = false,
+  selectedTaskId,
+  onSelect,
   onOpenDetail,
   onToggleComplete,
   onUpdateTask,
@@ -68,6 +72,8 @@ function TaskList({
   list: Task[];
   groups: TaskGroupWithTasks[];
   demoted?: boolean;
+  selectedTaskId?: string | null;
+  onSelect?: (taskId: string) => void;
   onOpenDetail: (taskId: string) => void;
   onToggleComplete: (task: Task) => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
@@ -96,17 +102,24 @@ function TaskList({
   return (
     <div className="space-y-1">
       {list.map((task) => (
-        <WorkplaceCompactTaskRow
+        <div
           key={task.id}
-          task={task}
-          groups={groups}
-          onOpenDetail={() => onOpenDetail(task.id)}
-          onToggleComplete={() => onToggleComplete(task)}
-          onUpdateDuration={(minutes) =>
-            onUpdateTask(task.id, { duration_minutes: minutes })
-          }
-          onContextMenu={handleContextMenu(task)}
-        />
+          className={cn(
+            selectedTaskId === task.id && "rounded-md ring-1 ring-primary/40"
+          )}
+          onClick={() => onSelect?.(task.id)}
+        >
+          <WorkplaceCompactTaskRow
+            task={task}
+            groups={groups}
+            onOpenDetail={() => onOpenDetail(task.id)}
+            onToggleComplete={() => onToggleComplete(task)}
+            onUpdateDuration={(minutes) =>
+              onUpdateTask(task.id, { duration_minutes: minutes })
+            }
+            onContextMenu={handleContextMenu(task)}
+          />
+        </div>
       ))}
     </div>
   );
@@ -122,6 +135,7 @@ export const WorkplaceTasksCard = forwardRef<
     todayViewDate,
     demoted = false,
     overlay = false,
+    twoPane = false,
     onClose,
     onOpenDetail,
     onToggleComplete,
@@ -134,6 +148,7 @@ export const WorkplaceTasksCard = forwardRef<
   const [expandedDisclosures, setExpandedDisclosures] = useState<
     Set<Exclude<WorkplaceTaskTab, "queue">>
   >(() => new Set());
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const pendingScrollIdRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -162,6 +177,19 @@ export const WorkplaceTasksCard = forwardRef<
   );
   const completedToday = todayTasks.filter((task) => task.completed).length;
   const titleMeta = `${completedToday}/${todayTasks.length}`;
+
+  const selectedTask =
+    tasks.find((task) => task.id === selectedTaskId) ??
+    visibleQueue[0] ??
+    null;
+
+  useEffect(() => {
+    if (!twoPane) return;
+    if (selectedTaskId && tasks.some((task) => task.id === selectedTaskId)) {
+      return;
+    }
+    setSelectedTaskId(visibleQueue[0]?.id ?? tasks[0]?.id ?? null);
+  }, [selectedTaskId, tasks, twoPane, visibleQueue]);
 
   const toggleDisclosure = (id: Exclude<WorkplaceTaskTab, "queue">) => {
     setExpandedDisclosures((prev) => {
@@ -224,12 +252,24 @@ export const WorkplaceTasksCard = forwardRef<
       className="min-h-0 overflow-hidden"
       bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
     >
-      <div className="flex h-full min-h-0 flex-col">
-        <div className="min-h-0 flex-1 space-y-1 overflow-y-auto p-1.5">
+      <div
+        className={cn(
+          "flex h-full min-h-0",
+          twoPane ? "flex-row" : "flex-col"
+        )}
+      >
+        <div
+          className={cn(
+            "min-h-0 flex-1 space-y-1 overflow-y-auto p-1.5",
+            twoPane && "border-r border-border-subtle"
+          )}
+        >
           <TaskList
             list={visibleQueue}
             groups={groups}
             demoted={demoted}
+            selectedTaskId={twoPane ? selectedTask?.id ?? null : null}
+            onSelect={twoPane ? setSelectedTaskId : undefined}
             onOpenDetail={onOpenDetail}
             onToggleComplete={onToggleComplete}
             onUpdateTask={onUpdateTask}
@@ -301,6 +341,8 @@ export const WorkplaceTasksCard = forwardRef<
                       list={sections[disclosure.id]}
                       groups={groups}
                       demoted={demoted}
+                      selectedTaskId={twoPane ? selectedTask?.id ?? null : null}
+                      onSelect={twoPane ? setSelectedTaskId : undefined}
                       onOpenDetail={onOpenDetail}
                       onToggleComplete={onToggleComplete}
                       onUpdateTask={onUpdateTask}
@@ -312,6 +354,46 @@ export const WorkplaceTasksCard = forwardRef<
             );
           })}
         </div>
+
+        {twoPane ? (
+          <div className="flex w-[min(50%,22rem)] shrink-0 flex-col overflow-y-auto p-3">
+            {selectedTask ? (
+              <>
+                <p className="text-[15px] font-semibold text-foreground">
+                  {selectedTask.title}
+                </p>
+                <p className="mt-2 text-[12px] text-muted-foreground">
+                  {selectedTask.duration_minutes
+                    ? `${selectedTask.duration_minutes} min`
+                    : "No duration"}
+                  {selectedTask.scheduled_time
+                    ? ` · ${selectedTask.scheduled_time}`
+                    : ""}
+                </p>
+                {selectedTask.description?.trim() ? (
+                  <p className="mt-3 whitespace-pre-wrap text-[13px] leading-snug text-foreground/85">
+                    {selectedTask.description.trim()}
+                  </p>
+                ) : (
+                  <p className="mt-3 text-[12px] text-muted-foreground">
+                    No description
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onOpenDetail(selectedTask.id)}
+                  className="mt-auto pt-4 text-left text-[12px] font-medium text-primary hover:underline"
+                >
+                  View Task
+                </button>
+              </>
+            ) : (
+              <p className="text-[13px] text-muted-foreground">
+                Select a task to inspect.
+              </p>
+            )}
+          </div>
+        ) : null}
       </div>
     </WorkplaceModuleCard>
   );

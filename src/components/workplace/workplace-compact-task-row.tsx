@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, type DragEvent, type MouseEvent } from "react";
+import { memo, useCallback, useState, type DragEvent, type MouseEvent } from "react";
 import { Check } from "lucide-react";
 import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
@@ -10,7 +10,7 @@ import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
 import { getWorkplaceGroupAccentClass } from "@/lib/workplace-group-accent";
 import { normalizeTaskPriority } from "@/lib/task-priority";
 import { setActiveTaskDragId, setBoardTaskDragData } from "@/lib/timeline-drag";
-import { setDragImageFromElement } from "@/lib/list-drag-utils";
+import { setCompactQueueDragImage } from "@/lib/list-drag-utils";
 import { cn } from "@/lib/utils";
 import { todayTaskAnchorId } from "@/lib/today-in-place";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
@@ -44,18 +44,26 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
     ? getWorkplaceGroupAccentClass(appearance.colorKey)
     : null;
   const scheduleLabel = formatTaskFocusSchedule(task);
+  const [dragging, setDragging] = useState(false);
+
+  const durationLabel =
+    task.duration_minutes != null && task.duration_minutes > 0
+      ? `${task.duration_minutes} min`
+      : null;
 
   const handleDragStart = useCallback(
     (event: DragEvent<HTMLDivElement>) => {
       setBoardTaskDragData(event, task.id);
       event.dataTransfer.effectAllowed = "move";
-      setDragImageFromElement(event, event.currentTarget, 12, 12);
+      setCompactQueueDragImage(event, task.title, durationLabel);
+      setDragging(true);
     },
-    [task.id]
+    [durationLabel, task.id, task.title]
   );
 
   const handleDragEnd = useCallback(() => {
     setActiveTaskDragId(null);
+    setDragging(false);
   }, []);
 
   return (
@@ -66,9 +74,10 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
       onDragEnd={handleDragEnd}
       onContextMenu={onContextMenu}
       className={cn(
-        "flex items-center gap-1.5 rounded-md border border-transparent px-1.5 py-1 transition-[background-color,border-color] duration-150 hover:bg-surface-hover",
+        "flex items-center gap-1.5 rounded-md border border-transparent px-1.5 py-1 transition-[background-color,border-color,opacity] duration-150 hover:bg-surface-hover",
         !task.completed && "cursor-grab active:cursor-grabbing",
         task.completed && "cursor-default opacity-70 hover:bg-transparent",
+        dragging && "opacity-40",
         accentClass && "border-l-2",
         accentClass
       )}

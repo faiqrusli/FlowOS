@@ -53,8 +53,16 @@ import {
   isScheduleKindDrag,
   parseScheduleDrop,
 } from "@/lib/next-up-drag";
+import {
+  fetchHabitQueueRefs,
+  insertHabitQueueRef,
+  pruneHabitQueueRefs,
+  removeHabitQueueRef,
+  clearHabitQueueRefs,
+} from "@/lib/queue-ref-storage";
 import { cn } from "@/lib/utils";
 import type { FocusSession } from "@/types/focus";
+import type { QueueItem } from "@/types/queue-item";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 type FocusTab = "focus" | "pomodoro";
@@ -162,9 +170,15 @@ export function WorkplaceFocusCard({
     useState<FocusSession | null>(null);
   const pendingInlineReflectionRef = useRef(false);
   const [nextUpDrawerOpen, setNextUpDrawerOpen] = useState(false);
+  /** Tracks whether the queue was opened by the user or by an eligible drag. */
+  const queueOpenModeRef = useRef<"closed" | "manual" | "drag">("closed");
+  const dragAutoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   const nextUpDrawerScrollTopRef = useRef(0);
   const nextUpDrawerListRef = useRef<HTMLDivElement>(null);
   const [nextUpTasks, setNextUpTasks] = useState<Task[]>([]);
+  const [habitQueueRefs, setHabitQueueRefs] = useState<QueueItem[]>([]);
   const [nextUpDropBeforeId, setNextUpDropBeforeId] = useState<string | null>(
     null
   );
@@ -173,6 +187,7 @@ export function WorkplaceFocusCard({
   const {
     activeTask,
     activeHabit,
+    habits,
     setActiveTaskId,
     isFocusableHabit,
   } = useWorkplaceFocusTask();
@@ -259,6 +274,22 @@ export function WorkplaceFocusCard({
   }, [groups, refreshNextUpTasks]);
 
   useEffect(() => {
+    setHabitQueueRefs(pruneHabitQueueRefs(habits));
+  }, [habits]);
+
+  useEffect(() => {
+    const onHabitQueueUpdated = () => {
+      setHabitQueueRefs(fetchHabitQueueRefs());
+    };
+    window.addEventListener("flowos:habit-queue-updated", onHabitQueueUpdated);
+    return () =>
+      window.removeEventListener(
+        "flowos:habit-queue-updated",
+        onHabitQueueUpdated
+      );
+  }, []);
+
+  useEffect(() => {
     const onNextUpUpdated = (event: Event) => {
       const detail = (event as CustomEvent<NextUpUpdateDetail>).detail;
       if (detail?.kind === "added") {
@@ -315,8 +346,29 @@ export function WorkplaceFocusCard({
       const payload = parseScheduleDrop(event);
       if (!payload) return;
 
+      const finishDragAutoClose = () => {
+        if (queueOpenModeRef.current !== "drag") return;
+        if (dragAutoCloseTimerRef.current) {
+          clearTimeout(dragAutoCloseTimerRef.current);
+        }
+        dragAutoCloseTimerRef.current = setTimeout(() => {
+          if (queueOpenModeRef.current === "drag") {
+            queueOpenModeRef.current = "closed";
+            setNextUpDrawerOpen(false);
+          }
+        }, 750);
+      };
+
       if (payload.kind === "habit") {
-        setHabitDropNotice("Next Up only supports tasks.");
+        if (!isFocusableHabit(payload.id)) {
+          setHabitDropNotice(
+            "Enable Track with Focus on this habit to add it to Next Up."
+          );
+          return;
+        }
+        setHabitDropNotice(null);
+        setHabitQueueRefs(insertHabitQueueRef(payload.id));
+        finishDragAutoClose();
         return;
       }
 
@@ -324,7 +376,10 @@ export function WorkplaceFocusCard({
 
       if (payload.kind === "task" && NEXT_UP_WORKPLACE_UI_ENABLED) {
         void insertTaskToNextUp(payload.id, beforeTaskId)
-          .then(refreshNextUpTasks)
+          .then(() => {
+            void refreshNextUpTasks();
+            finishDragAutoClose();
+          })
           .catch((error: unknown) => {
             setHabitDropNotice(
               error instanceof Error
@@ -337,10 +392,7 @@ export function WorkplaceFocusCard({
 
       setActiveTaskId(payload.id, "manual");
     },
-    [
-      refreshNextUpTasks,
-      setActiveTaskId,
-    ]
+    [isFocusableHabit, refreshNextUpTasks, setActiveTaskId]
   );
 
   const handleDrop = handleScheduleDrop;
@@ -413,10 +465,22 @@ export function WorkplaceFocusCard({
     if (nextUpDrawerListRef.current) {
       nextUpDrawerScrollTopRef.current = nextUpDrawerListRef.current.scrollTop;
     }
+    if (dragAutoCloseTimerRef.current) {
+      clearTimeout(dragAutoCloseTimerRef.current);
+      dragAutoCloseTimerRef.current = null;
+    }
+    queueOpenModeRef.current = "closed";
     setNextUpDrawerOpen(false);
   }, []);
 
-  const openNextUpDrawer = useCallback(() => {
+  const openNextUpDrawer = useCallback((mode: "manual" | "drag" = "manual") => {
+    if (dragAutoCloseTimerRef.current) {
+      clearTimeout(dragAutoCloseTimerRef.current);
+      dragAutoCloseTimerRef.current = null;
+    }
+    if (mode === "manual" || queueOpenModeRef.current !== "manual") {
+      queueOpenModeRef.current = mode;
+    }
     setNextUpDrawerOpen(true);
   }, []);
 
@@ -425,8 +489,29 @@ export function WorkplaceFocusCard({
       closeNextUpDrawer();
       return;
     }
-    openNextUpDrawer();
+    openNextUpDrawer("manual");
   }, [closeNextUpDrawer, nextUpDrawerOpen, openNextUpDrawer]);
+
+  useEffect(() => {
+    const onDragStart = (event: DragEvent) => {
+      if (!NEXT_UP_WORKPLACE_UI_ENABLED) return;
+      if (!event.dataTransfer) return;
+      if (!isScheduleKindDrag(event as unknown as React.DragEvent)) return;
+      if (isNextUpReorderDrag(event as unknown as React.DragEvent)) return;
+      if (queueOpenModeRef.current !== "closed") return;
+      openNextUpDrawer("drag");
+    };
+    window.addEventListener("dragstart", onDragStart);
+    return () => window.removeEventListener("dragstart", onDragStart);
+  }, [openNextUpDrawer]);
+
+  useEffect(() => {
+    return () => {
+      if (dragAutoCloseTimerRef.current) {
+        clearTimeout(dragAutoCloseTimerRef.current);
+      }
+    };
+  }, []);
 
   const activateFocusTask = useCallback(
     (task: Task) => {
@@ -512,8 +597,10 @@ export function WorkplaceFocusCard({
 
   const handleClearNextUpQueue = useCallback(() => {
     const ids = displayedNextUpTasks.map((task) => task.id);
-    if (ids.length === 0) return;
     setNextUpTasks([]);
+    clearHabitQueueRefs();
+    setHabitQueueRefs([]);
+    if (ids.length === 0) return;
     void Promise.all(ids.map((id) => removeTaskFromNextUp(id))).catch(() => {
       void refreshNextUpTasks();
     });
@@ -883,7 +970,7 @@ export function WorkplaceFocusCard({
                 onOpenTask={(task) => onOpenDetail(task.id)}
                 onCompleteTask={handleCompleteCurrentTask}
                 onSkipFocus={handleSkipCurrentFocus}
-                onChooseFromQueue={openNextUpDrawer}
+                onChooseFromQueue={() => openNextUpDrawer("manual")}
               />
 
               {NEXT_UP_WORKPLACE_UI_ENABLED ? (
@@ -892,7 +979,7 @@ export function WorkplaceFocusCard({
                   groups={groups}
                   demoted={quick.isActive || pomodoro.isRunning || pomodoro.isPaused}
                   onHeaderClick={toggleNextUpDrawer}
-                  onViewAll={openNextUpDrawer}
+                  onViewAll={() => openNextUpDrawer("manual")}
                   dropActive={dropActive && !habitDropBlocked}
                   dropBeforeTaskId={nextUpDropBeforeId}
                   onExternalDragOver={setNextUpDropBeforeId}
@@ -1022,13 +1109,18 @@ export function WorkplaceFocusCard({
         <NextUpDrawer
           tasks={displayedNextUpTasks}
           groups={groups}
+          habits={habits}
+          habitRefs={habitQueueRefs}
           currentTask={currentFocusTask}
           open={nextUpDrawerOpen}
-          onOpen={openNextUpDrawer}
+          onOpen={() => openNextUpDrawer("manual")}
           onClose={closeNextUpDrawer}
           onStartFocus={requestStartFocus}
           onOpenDetail={(task) => onOpenDetail(task.id)}
           onRemove={handleRemoveQueueTask}
+          onRemoveHabit={(habitId) => {
+            setHabitQueueRefs(removeHabitQueueRef(habitId));
+          }}
           onReorder={handleReorderQueue}
           onToggleComplete={handleCompleteQueueTask}
           onClearAll={handleClearNextUpQueue}
@@ -1040,7 +1132,13 @@ export function WorkplaceFocusCard({
             }
           }}
           dropZoneActive={dropActive && !habitDropBlocked}
-          onDropZoneDrop={handleScheduleDrop}
+          dropInsertPosition={
+            nextUpDropBeforeId
+              ? displayedNextUpTasks.findIndex((t) => t.id === nextUpDropBeforeId) +
+                1
+              : displayedNextUpTasks.length + habitQueueRefs.length + 1
+          }
+          onDropZoneDrop={(event) => handleScheduleDrop(event, null)}
           externalDropBeforeId={nextUpDropBeforeId}
           onExternalDragOver={setNextUpDropBeforeId}
           onExternalDrop={handleScheduleDrop}

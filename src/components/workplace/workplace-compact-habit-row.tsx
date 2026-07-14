@@ -15,7 +15,7 @@ import { createPortal } from "react-dom";
 import { TimelineHabitLabel } from "@/components/tasks/timeline-habit-label";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { getHabitDurationMinutes } from "@/lib/schedule-durations";
-import { setDragImageFromElement } from "@/lib/list-drag-utils";
+import { setCompactQueueDragImage } from "@/lib/list-drag-utils";
 import {
   setActiveTimelineDrag,
   TIMELINE_DRAG_ID_MIME,
@@ -131,6 +131,7 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(
     null
   );
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     return registerContextMenuCloser(() => setContextMenu(null));
@@ -141,6 +142,8 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
   );
   const streakLabel = formatStreak(streak);
   const focusDraggable = habit.track_with_focus && !habit.completed;
+  const durationMinutes = getHabitDurationMinutes(habit.id);
+  const durationLabel = durationMinutes > 0 ? `${durationMinutes} min` : null;
 
   const handleDragStart = useCallback(
     (event: DragEvent<HTMLDivElement>) => {
@@ -149,13 +152,15 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
       event.dataTransfer.setData(TIMELINE_DRAG_ID_MIME, habit.id);
       event.dataTransfer.setData("text/plain", habit.id);
       event.dataTransfer.effectAllowed = "move";
-      setDragImageFromElement(event, event.currentTarget, 12, 12);
+      setCompactQueueDragImage(event, habit.name, durationLabel);
+      setDragging(true);
     },
-    [habit.id]
+    [durationLabel, habit.id, habit.name]
   );
 
   const handleDragEnd = useCallback(() => {
     setActiveTimelineDrag(null);
+    setDragging(false);
   }, []);
 
   return (
@@ -175,10 +180,11 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
             : "Enable Track with Focus to drag into focus"
         }
         className={cn(
-          "flex items-center gap-1.5 rounded-md border px-1.5 py-1",
+          "flex items-center gap-1.5 rounded-md border px-1.5 py-1 transition-opacity duration-150",
           focusDraggable
             ? "cursor-grab active:cursor-grabbing"
             : "cursor-default",
+          dragging && "opacity-40",
           timelineHabitChipClassNames()
         )}
       >

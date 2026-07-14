@@ -1,18 +1,23 @@
 "use client";
 
-import { ChevronLeft, ListOrdered, Plus, X } from "lucide-react";
+import { ChevronLeft, ListOrdered, Plus, Repeat, X } from "lucide-react";
 import type { DragEvent } from "react";
 import { NextUpQueueList } from "@/components/focus/next-up-queue-list";
 import {
   WORKPLACE_NEXT_UP_PANEL_WIDTH_CSS,
   WORKPLACE_NEXT_UP_RAIL_PX,
 } from "@/lib/workplace-layout";
+import { getHabitDurationMinutes } from "@/lib/schedule-durations";
 import { cn } from "@/lib/utils";
+import type { QueueItem } from "@/types/queue-item";
+import type { Habit } from "@/types/habit";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 type NextUpDrawerProps = {
   tasks: Task[];
   groups: TaskGroupWithTasks[];
+  habits?: Habit[];
+  habitRefs?: QueueItem[];
   currentTask: Task | null;
   open: boolean;
   onOpen: () => void;
@@ -20,26 +25,38 @@ type NextUpDrawerProps = {
   onStartFocus: (task: Task) => void;
   onOpenDetail: (task: Task) => void;
   onRemove: (id: string) => void;
+  onRemoveHabit?: (habitId: string) => void;
   onReorder: (fromIndex: number, toIndex: number) => void;
   onToggleComplete: (task: Task) => void;
   onClearAll?: () => void;
   listRef?: React.RefObject<HTMLDivElement | null>;
   onListScroll?: () => void;
   dropZoneActive?: boolean;
-  onDropZoneDrop?: (event: DragEvent<HTMLDivElement>) => void;
+  dropInsertPosition?: number;
+  onDropZoneDrop?: (event: DragEvent) => void;
   externalDropBeforeId?: string | null;
   onExternalDragOver?: (taskId: string | null) => void;
-  onExternalDrop?: (event: DragEvent<HTMLDivElement>, taskId: string | null) => void;
+  onExternalDrop?: (event: DragEvent, taskId: string | null) => void;
   className?: string;
 };
 
-function totalDurationMinutes(tasks: Task[]): number {
-  return tasks.reduce((sum, task) => sum + (task.duration_minutes ?? 0), 0);
+function totalDurationMinutes(tasks: Task[], habitRefs: QueueItem[]): number {
+  const taskMinutes = tasks.reduce(
+    (sum, task) => sum + (task.duration_minutes ?? 0),
+    0
+  );
+  const habitMinutes = habitRefs.reduce(
+    (sum, item) => sum + getHabitDurationMinutes(item.sourceId),
+    0
+  );
+  return taskMinutes + habitMinutes;
 }
 
 export function NextUpDrawer({
   tasks,
   groups,
+  habits = [],
+  habitRefs = [],
   currentTask,
   open,
   onOpen,
@@ -47,19 +64,25 @@ export function NextUpDrawer({
   onStartFocus,
   onOpenDetail,
   onRemove,
+  onRemoveHabit,
   onReorder,
   onToggleComplete,
   onClearAll,
   listRef,
   onListScroll,
   dropZoneActive = false,
+  dropInsertPosition,
   onDropZoneDrop,
   externalDropBeforeId,
   onExternalDragOver,
   onExternalDrop,
   className,
 }: NextUpDrawerProps) {
-  const totalMinutes = totalDurationMinutes(tasks);
+  const totalMinutes = totalDurationMinutes(tasks, habitRefs);
+  const totalCount = tasks.length + habitRefs.length;
+  const insertPosition =
+    dropInsertPosition ?? totalCount + 1;
+  const habitById = new Map(habits.map((habit) => [habit.id, habit]));
 
   if (!open) {
     return (
@@ -73,6 +96,12 @@ export function NextUpDrawer({
         )}
         style={{ width: WORKPLACE_NEXT_UP_RAIL_PX }}
         aria-label="Next Up queue collapsed"
+        onDragOver={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onExternalDragOver?.(null);
+        }}
+        onDrop={(event) => onDropZoneDrop?.(event)}
       >
         <button
           type="button"
@@ -86,13 +115,13 @@ export function NextUpDrawer({
         <button
           type="button"
           onClick={onOpen}
-          aria-label={`Open Next Up queue, ${tasks.length} items`}
+          aria-label={`Open Next Up queue, ${totalCount} items`}
           className="relative mt-2 flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
         >
           <ListOrdered className="size-4" />
-          {tasks.length > 0 ? (
+          {totalCount > 0 ? (
             <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-primary text-[9px] font-semibold text-primary-foreground">
-              {tasks.length > 9 ? "9+" : tasks.length}
+              {totalCount > 9 ? "9+" : totalCount}
             </span>
           ) : null}
         </button>
@@ -165,6 +194,45 @@ export function NextUpDrawer({
           onExternalDrop={onExternalDrop}
         />
 
+        {habitRefs.length > 0 ? (
+          <div className="mt-2 space-y-1">
+            <p className="px-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Habits
+            </p>
+            {habitRefs.map((item) => {
+              const habit = habitById.get(item.sourceId);
+              const duration = getHabitDurationMinutes(item.sourceId);
+              return (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-2 rounded-md border border-border-subtle bg-card px-2 py-1.5"
+                >
+                  <Repeat className="size-3.5 shrink-0 text-success" aria-hidden />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[12px] font-medium text-foreground">
+                      {habit?.name ?? "Habit"}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Habit
+                      {duration > 0 ? ` · ${duration} min` : ""}
+                    </p>
+                  </div>
+                  {onRemoveHabit ? (
+                    <button
+                      type="button"
+                      onClick={() => onRemoveHabit(item.sourceId)}
+                      className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                      aria-label="Remove from queue"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+
         <div
           className={cn(
             "mt-2 flex shrink-0 flex-col items-center justify-center gap-1 rounded-lg border border-dashed px-2 py-4 text-center transition-colors",
@@ -175,6 +243,7 @@ export function NextUpDrawer({
           onDragOver={(event) => {
             event.preventDefault();
             event.stopPropagation();
+            onExternalDragOver?.(null);
           }}
           onDrop={onDropZoneDrop}
         >
@@ -184,17 +253,19 @@ export function NextUpDrawer({
               dropZoneActive ? "text-primary" : "text-muted-foreground/70"
             )}
           />
-          <span className="text-[11px] leading-snug">
-            {dropZoneActive ? "Release to add to queue" : "Drop here to add to queue"}
+          <span className="text-[11px] font-medium leading-snug">
+            {dropZoneActive
+              ? `RELEASE TO ADD · Position ${Math.max(1, insertPosition)}`
+              : "Drop here to add to queue"}
           </span>
         </div>
 
         <div className="mt-2 flex shrink-0 items-center justify-between gap-2 border-t border-border-subtle pt-2 text-[11px]">
           <span className="tabular-nums text-muted-foreground">
-            {tasks.length} item{tasks.length === 1 ? "" : "s"}
+            {totalCount} item{totalCount === 1 ? "" : "s"}
             {totalMinutes > 0 ? ` · ~${totalMinutes} min` : ""}
           </span>
-          {tasks.length > 0 && onClearAll ? (
+          {totalCount > 0 && onClearAll ? (
             <button
               type="button"
               onClick={onClearAll}

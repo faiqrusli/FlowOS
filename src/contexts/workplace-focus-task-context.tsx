@@ -33,6 +33,7 @@ type WorkplaceFocusTaskContextValue = {
   activeTarget: FocusTarget | null;
   activeTask: Task | null;
   activeHabit: Habit | null;
+  habits: Habit[];
   nextTask: Task | null;
   setActiveTaskId: (taskId: string | null, source?: ActiveTargetSource) => void;
   setActiveHabitId: (habitId: string | null, source?: ActiveTargetSource) => void;
@@ -219,6 +220,7 @@ export function WorkplaceFocusTaskProvider({
       activeTarget: resolvedTarget,
       activeTask: resolvedActiveTask,
       activeHabit: resolvedActiveHabit,
+      habits,
       nextTask,
       setActiveTaskId,
       setActiveHabitId,
@@ -231,6 +233,7 @@ export function WorkplaceFocusTaskProvider({
       resolvedTarget,
       resolvedActiveTask,
       resolvedActiveHabit,
+      habits,
       nextTask,
       setActiveTaskId,
       setActiveHabitId,
