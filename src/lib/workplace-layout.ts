@@ -20,6 +20,12 @@ export const WORKPLACE_NEXT_UP_PANEL_PX = 320;
 export const WORKPLACE_NEXT_UP_PANEL_WIDTH_CSS = "clamp(300px, 22vw, 360px)";
 
 /**
+ * Below this width, open Queue becomes an overlay drawer (Focus > Queue > Timeline).
+ * Spec §20 / Session 9.
+ */
+export const WORKPLACE_QUEUE_OVERLAY_MAX_PX = 1100;
+
+/**
  * @deprecated Today uses a focus-first flex column + Next Up side panel.
  * Kept for any residual references.
  */

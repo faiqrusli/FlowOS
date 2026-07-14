@@ -71,3 +71,25 @@ export function getNextUpTask(
     ) ?? null
   );
 }
+
+/** Drop in-memory queue rows that are no longer eligible (completed, later, deleted). */
+export function pruneNextUpTasks(
+  queued: Task[],
+  liveTasks: Task[],
+  todayKey = getTodayDateString()
+): { kept: Task[]; removedIds: string[] } {
+  const byId = new Map(liveTasks.map((task) => [task.id, task]));
+  const kept: Task[] = [];
+  const removedIds: string[] = [];
+
+  for (const task of queued) {
+    const live = byId.get(task.id);
+    if (!live || !isEligibleForNextUp(live, todayKey)) {
+      removedIds.push(task.id);
+      continue;
+    }
+    kept.push(live.queue_order != null ? live : task);
+  }
+
+  return { kept, removedIds };
+}

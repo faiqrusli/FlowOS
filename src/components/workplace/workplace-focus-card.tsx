@@ -20,6 +20,10 @@ import { NextUpDrawer } from "@/components/focus/next-up-drawer";
 import { NextUpPreview } from "@/components/focus/next-up-preview";
 import { ScheduleBreakModal } from "@/components/focus/schedule-break-modal";
 import { WorkplaceFocusInlineReflection } from "@/components/workplace/workplace-focus-inline-reflection";
+import {
+  WorkplaceFocusSessionComplete,
+  type SessionCompleteQueueHead,
+} from "@/components/workplace/workplace-focus-session-complete";
 import { WorkplaceFocusReflectionModal } from "@/components/workplace/workplace-focus-reflection-modal";
 import { useWorkplaceFocusTask } from "@/contexts/workplace-focus-task-context";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
@@ -33,14 +37,18 @@ import {
 import {
   fetchNextUpTasks,
   getDisplayNextUpTasks,
+  getNextUpTask,
   insertTaskToNextUp,
   persistNextUpOrder,
+  pruneNextUpTasks,
   removeTaskFromNextUp,
   reorderNextUpTasks,
 } from "@/lib/task-next-up";
+import { getHabitDurationMinutes } from "@/lib/schedule-durations";
 import {
   workplaceFocusCanvasClassName,
 } from "@/lib/workplace-panel-appearance";
+import { WORKPLACE_QUEUE_OVERLAY_MAX_PX } from "@/lib/workplace-layout";
 import { shouldPromptFocusReflection } from "@/lib/focus-reflection";
 import { computeTodayStats, fetchFocusSessions } from "@/lib/focus-storage";
 import { TODAY_FOCUS_ANCHOR_ID } from "@/lib/today-in-place";
@@ -63,6 +71,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { FocusSession } from "@/types/focus";
 import type { QueueItem } from "@/types/queue-item";
+import type { Habit } from "@/types/habit";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 type FocusTab = "focus" | "pomodoro";
@@ -169,6 +178,9 @@ export function WorkplaceFocusCard({
   const [inlineReflectionSession, setInlineReflectionSession] =
     useState<FocusSession | null>(null);
   const pendingInlineReflectionRef = useRef(false);
+  const pendingSessionEndRef = useRef(false);
+  const [sessionCompleteSession, setSessionCompleteSession] =
+    useState<FocusSession | null>(null);
   const [nextUpDrawerOpen, setNextUpDrawerOpen] = useState(false);
   /** Tracks whether the queue was opened by the user or by an eligible drag. */
   const queueOpenModeRef = useRef<"closed" | "manual" | "drag">("closed");
@@ -179,6 +191,8 @@ export function WorkplaceFocusCard({
   const nextUpDrawerListRef = useRef<HTMLDivElement>(null);
   const [nextUpTasks, setNextUpTasks] = useState<Task[]>([]);
   const [habitQueueRefs, setHabitQueueRefs] = useState<QueueItem[]>([]);
+  const [nextUpFetchError, setNextUpFetchError] = useState<string | null>(null);
+  const [queueOverlayMode, setQueueOverlayMode] = useState(false);
   const [nextUpDropBeforeId, setNextUpDropBeforeId] = useState<string | null>(
     null
   );
@@ -189,6 +203,7 @@ export function WorkplaceFocusCard({
     activeHabit,
     habits,
     setActiveTaskId,
+    setActiveHabitId,
     isFocusableHabit,
   } = useWorkplaceFocusTask();
   const {
@@ -260,9 +275,21 @@ export function WorkplaceFocusCard({
   const refreshNextUpTasks = useCallback(async () => {
     try {
       setNextUpTasks(await fetchNextUpTasks());
+      setNextUpFetchError(null);
     } catch {
       setNextUpTasks([]);
+      setNextUpFetchError("Couldn't load Next Up. Retry by refreshing.");
     }
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia(
+      `(max-width: ${WORKPLACE_QUEUE_OVERLAY_MAX_PX}px)`
+    );
+    const sync = () => setQueueOverlayMode(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
   }, []);
 
   useEffect(() => {
@@ -271,6 +298,20 @@ export function WorkplaceFocusCard({
 
   useEffect(() => {
     void refreshNextUpTasks();
+  }, [groups, refreshNextUpTasks]);
+
+  useEffect(() => {
+    const liveTasks = groups.flatMap((group) => group.tasks);
+    setNextUpTasks((current) => {
+      const { kept, removedIds } = pruneNextUpTasks(current, liveTasks);
+      if (removedIds.length === 0) return current;
+      void Promise.all(removedIds.map((id) => removeTaskFromNextUp(id))).catch(
+        () => {
+          void refreshNextUpTasks();
+        }
+      );
+      return kept;
+    });
   }, [groups, refreshNextUpTasks]);
 
   useEffect(() => {
@@ -319,6 +360,7 @@ export function WorkplaceFocusCard({
     pendingInlineReflectionRef.current = shouldPromptFocusReflection(
       quick.currentFocusSeconds
     );
+    pendingSessionEndRef.current = true;
     quick.stopSession();
   }, [quick]);
 
@@ -329,6 +371,38 @@ export function WorkplaceFocusCard({
       setInlineReflectionSession(lastSavedSession);
     }
   }, [lastSavedSession]);
+
+  const resolveQueueHead = useCallback((): SessionCompleteQueueHead | null => {
+    const nextTask = getNextUpTask(nextUpTasks, null);
+    if (nextTask) {
+      return {
+        kind: "task",
+        id: nextTask.id,
+        title: nextTask.title,
+        durationMinutes: nextTask.duration_minutes,
+      };
+    }
+    for (const ref of habitQueueRefs) {
+      if (!isFocusableHabit(ref.sourceId)) continue;
+      const habit = habits.find((item) => item.id === ref.sourceId);
+      if (!habit || habit.completed) continue;
+      return {
+        kind: "habit",
+        id: habit.id,
+        title: habit.name,
+        durationMinutes: getHabitDurationMinutes(habit.id) || null,
+      };
+    }
+    return null;
+  }, [habitQueueRefs, habits, isFocusableHabit, nextUpTasks]);
+
+  useEffect(() => {
+    if (!lastSavedSession || !pendingSessionEndRef.current) return;
+    pendingSessionEndRef.current = false;
+    if (resolveQueueHead()) {
+      setSessionCompleteSession(lastSavedSession);
+    }
+  }, [lastSavedSession, resolveQueueHead]);
 
   const handleScheduleDrop = useCallback(
     (event: React.DragEvent, beforeTaskId: string | null = null) => {
@@ -534,6 +608,76 @@ export function WorkplaceFocusCard({
       }
     },
     [prepareFocusTarget, quick, refreshNextUpTasks, setActiveTaskId]
+  );
+
+  const activateFocusHabit = useCallback(
+    (habit: Habit) => {
+      setActiveHabitId(habit.id, "manual");
+      setHabitQueueRefs(removeHabitQueueRef(habit.id));
+      const target = {
+        type: "habit" as const,
+        id: habit.id,
+        label: habit.name,
+      };
+      if (quick.isIdle) {
+        prepareFocusTarget(target);
+        quick.startFocus();
+      } else {
+        quick.setFocusTarget(target);
+      }
+    },
+    [prepareFocusTarget, quick, setActiveHabitId]
+  );
+
+  const handleStartNext = useCallback(() => {
+    const head = resolveQueueHead();
+    setSessionCompleteSession(null);
+    if (!head) return;
+    if (head.kind === "task") {
+      const task = nextUpTasks.find((item) => item.id === head.id);
+      if (task) activateFocusTask(task);
+      return;
+    }
+    const habit = habits.find((item) => item.id === head.id);
+    if (habit) activateFocusHabit(habit);
+  }, [
+    activateFocusHabit,
+    activateFocusTask,
+    habits,
+    nextUpTasks,
+    resolveQueueHead,
+  ]);
+
+  const handleChooseAnother = useCallback(() => {
+    setSessionCompleteSession(null);
+  }, []);
+
+  const completedSessionTitle = useMemo(() => {
+    if (!sessionCompleteSession) return "Focus session";
+    if (
+      sessionCompleteSession.target_type === "task" &&
+      sessionCompleteSession.target_id
+    ) {
+      const task = groups
+        .flatMap((group) => group.tasks)
+        .find((item) => item.id === sessionCompleteSession.target_id);
+      return task?.title ?? "Task";
+    }
+    if (
+      sessionCompleteSession.target_type === "habit" &&
+      sessionCompleteSession.target_id
+    ) {
+      const habit = habits.find(
+        (item) => item.id === sessionCompleteSession.target_id
+      );
+      return habit?.name ?? "Habit";
+    }
+    return "Focus session";
+  }, [groups, habits, sessionCompleteSession]);
+
+  const sessionCompleteQueueHead = useMemo(
+    () => (sessionCompleteSession ? resolveQueueHead() : null),
+    [resolveQueueHead, sessionCompleteSession]
   );
 
   const requestStartFocus = useCallback(
@@ -791,25 +935,38 @@ export function WorkplaceFocusCard({
               <div className="flex h-full min-h-0 min-w-0 flex-col overflow-y-auto">
               <div className="relative flex shrink-0 flex-col items-center justify-center py-1 text-center">
                 {quick.isIdle ? (
-                  inlineReflectionSession ? (
-                    <WorkplaceFocusInlineReflection
-                      session={inlineReflectionSession}
-                      onDismiss={() => setInlineReflectionSession(null)}
-                    />
-                  ) : (
                   <div className="flex w-full flex-col items-center gap-3 py-2">
-                    <WorkplaceFocusClock clock="00:00" idle />
-                    <Button
-                      type="button"
-                      disabled={quickStartDisabled}
-                      onClick={handleStartFocus}
-                      className="h-8 rounded-full px-6 text-sm"
-                    >
-                      <Play className="size-4" data-icon="inline-start" />
-                      Start Focus
-                    </Button>
+                    {inlineReflectionSession ? (
+                      <WorkplaceFocusInlineReflection
+                        session={inlineReflectionSession}
+                        onDismiss={() => setInlineReflectionSession(null)}
+                      />
+                    ) : null}
+                    {sessionCompleteSession && sessionCompleteQueueHead ? (
+                      <WorkplaceFocusSessionComplete
+                        session={sessionCompleteSession}
+                        completedTitle={completedSessionTitle}
+                        queueHead={sessionCompleteQueueHead}
+                        onStartNext={handleStartNext}
+                        onChooseAnother={handleChooseAnother}
+                      />
+                    ) : null}
+                    {!inlineReflectionSession &&
+                    !(sessionCompleteSession && sessionCompleteQueueHead) ? (
+                      <>
+                        <WorkplaceFocusClock clock="00:00" idle />
+                        <Button
+                          type="button"
+                          disabled={quickStartDisabled}
+                          onClick={handleStartFocus}
+                          className="h-8 rounded-full px-6 text-sm"
+                        >
+                          <Play className="size-4" data-icon="inline-start" />
+                          Start Focus
+                        </Button>
+                      </>
+                    ) : null}
                   </div>
-                  )
                 ) : (
                   <>
                     <div className="flex w-full flex-col items-center text-center">
@@ -1113,6 +1270,8 @@ export function WorkplaceFocusCard({
           habitRefs={habitQueueRefs}
           currentTask={currentFocusTask}
           open={nextUpDrawerOpen}
+          overlayMode={queueOverlayMode && nextUpDrawerOpen}
+          fetchError={nextUpFetchError}
           onOpen={() => openNextUpDrawer("manual")}
           onClose={closeNextUpDrawer}
           onStartFocus={requestStartFocus}

@@ -36,6 +36,13 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-14 — Next Up Queue: keyboard reorder deferred to polish follow-up
+
+**Context:** Hierarchy refinement Session 9 allows move up/down as a11y alternative to DnD, or documented deferral.  
+**Decision:** Defer keyboard reorder buttons; Escape + rail focus remain. Ship DnD reorder only for B4.  
+**Alternatives rejected:** Blocking B4 on full keyboard DnD pattern.  
+**Related:** [m2-today-hierarchy-refinement.md](../runbooks/m2-today-hierarchy-refinement.md) Session 9 decision point #3
+
 ### 2026-07-14 — Next Up Queue: multi-source references (hierarchy refinement)
 
 **Context:** [today-page-hierarchy-refinement-spec.md](../../review/design/today-page-hierarchy-refinement-spec.md) §12 requires Queue items as references to `task | habit | schedule` (not duplicated payloads). Prior Next Up V2 (2026-07-10) persists a **task-only** queue on `tasks.queue_order`. Session 5 of [m2-today-hierarchy-refinement.md](../runbooks/m2-today-hierarchy-refinement.md) needs a persistence choice before coding.

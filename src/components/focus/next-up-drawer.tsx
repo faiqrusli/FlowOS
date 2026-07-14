@@ -20,6 +20,9 @@ type NextUpDrawerProps = {
   habitRefs?: QueueItem[];
   currentTask: Task | null;
   open: boolean;
+  /** When true, open panel is a fixed overlay (narrow viewports). */
+  overlayMode?: boolean;
+  fetchError?: string | null;
   onOpen: () => void;
   onClose: () => void;
   onStartFocus: (task: Task) => void;
@@ -59,6 +62,8 @@ export function NextUpDrawer({
   habitRefs = [],
   currentTask,
   open,
+  overlayMode = false,
+  fetchError = null,
   onOpen,
   onClose,
   onStartFocus,
@@ -83,6 +88,7 @@ export function NextUpDrawer({
   const insertPosition =
     dropInsertPosition ?? totalCount + 1;
   const habitById = new Map(habits.map((habit) => [habit.id, habit]));
+  const isEmpty = totalCount === 0;
 
   if (!open) {
     return (
@@ -130,15 +136,27 @@ export function NextUpDrawer({
   }
 
   return (
-    <aside
-      role="complementary"
-      aria-label="Next Up queue"
-      className={cn(
-        "flex h-full min-w-[300px] max-w-[360px] shrink-0 flex-col overflow-hidden border-l border-border-subtle bg-surface-base text-foreground",
-        className
-      )}
-      style={{ width: WORKPLACE_NEXT_UP_PANEL_WIDTH_CSS }}
-    >
+    <>
+      {overlayMode ? (
+        <button
+          type="button"
+          aria-label="Dismiss Next Up queue"
+          className="fixed inset-0 z-40 cursor-default bg-black/30 animate-in fade-in-0 duration-150"
+          onClick={onClose}
+        />
+      ) : null}
+      <aside
+        role="complementary"
+        aria-label="Next Up queue"
+        className={cn(
+          "flex min-w-[300px] max-w-[360px] flex-col overflow-hidden border-l border-border-subtle bg-surface-base text-foreground transition-[transform,opacity] duration-200",
+          overlayMode
+            ? "fixed inset-y-0 right-0 z-50 h-full shadow-[0_0_40px_rgba(0,0,0,0.45)] animate-in slide-in-from-right-4 duration-200"
+            : "h-full shrink-0",
+          className
+        )}
+        style={{ width: WORKPLACE_NEXT_UP_PANEL_WIDTH_CSS }}
+      >
       <div className="flex shrink-0 items-start justify-between gap-1.5 border-b border-border-subtle px-3 py-2.5">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">
@@ -155,6 +173,9 @@ export function NextUpDrawer({
             <br />
             Drag to reorder.
           </p>
+          {fetchError ? (
+            <p className="mt-1 text-[11px] text-destructive">{fetchError}</p>
+          ) : null}
         </div>
         <button
           type="button"
@@ -178,6 +199,12 @@ export function NextUpDrawer({
       ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col px-2.5 pb-2.5 pt-2">
+        {isEmpty && !dropZoneActive ? (
+          <p className="mb-2 px-1 text-center text-[12px] text-muted-foreground">
+            Queue is empty. Drag a task or habit here to commit what’s next.
+          </p>
+        ) : null}
+
         <NextUpQueueList
           tasks={tasks}
           groups={groups}
@@ -277,5 +304,6 @@ export function NextUpDrawer({
         </div>
       </div>
     </aside>
+    </>
   );
 }
