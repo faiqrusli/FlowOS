@@ -28,7 +28,7 @@ import { WorkplaceFocusReflectionModal } from "@/components/workplace/workplace-
 import { useWorkplaceFocusTask } from "@/contexts/workplace-focus-task-context";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { getDateKeyInTimezone, getTodayDateString, formatNowTimeInAppTimezone } from "@/lib/date-utils";
-import { getTaskFocusedSeconds } from "@/lib/focus-active-session";
+import { getTaskFocusedSeconds, getTodayFocusDisplaySeconds } from "@/lib/focus-active-session";
 import { formatDuration, getSessionFocusSeconds } from "@/lib/focus-utils";
 import {
   NEXT_UP_UPDATED_EVENT,
@@ -150,11 +150,17 @@ export function WorkplaceFocusCard({
     pomodoro,
     prepareFocusTarget,
     lastSavedSession,
+    tick,
   } =
     useFocusSessionContext();
 
   const pomodoroDisabled = quick.isActive;
   const quickStartDisabled = pomodoro.isRunning || pomodoro.isPaused;
+
+  const displayTodayFocusSeconds = useMemo(() => {
+    void tick;
+    return getTodayFocusDisplaySeconds(todayFocusSeconds, activeSession);
+  }, [activeSession, tick, todayFocusSeconds]);
 
   const sessionNumber = useMemo(() => {
     const active = tab === "focus" ? quick.isActive : pomodoro.isRunning || pomodoro.isPaused;
@@ -576,7 +582,7 @@ export function WorkplaceFocusCard({
               <div>
                 <p className="text-muted-foreground">Today&apos;s focus</p>
                 <p className="mt-0.5 font-semibold tabular-nums text-foreground">
-                  {statsLoading ? "—" : formatDuration(todayFocusSeconds)}
+                  {statsLoading ? "—" : formatDuration(displayTodayFocusSeconds)}
                 </p>
               </div>
               <div>
@@ -866,6 +872,7 @@ export function WorkplaceFocusCard({
                 <NextUpPreview
                   tasks={displayedNextUpTasks}
                   groups={groups}
+                  demoted={quick.isActive || pomodoro.isRunning || pomodoro.isPaused}
                   onHeaderClick={toggleNextUpDrawer}
                   onViewAll={openNextUpDrawer}
                   dropActive={dropActive && !habitDropBlocked}

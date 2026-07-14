@@ -61,22 +61,15 @@ import {
 } from "@/lib/workplace-layout";
 import { fetchWorkplaceData, WorkplaceError } from "@/lib/workplace-data";
 import { registerContextMenuCloser } from "@/lib/task-detail-menu-coordinator";
-import {
-  isWorkplaceModuleShown,
-  type WorkplaceDensity,
-} from "@/lib/workplace-density";
-import { cn } from "@/lib/utils";
 import type { Habit } from "@/types/habit";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
 type WorkplacePageContentProps = {
-  density?: WorkplaceDensity;
   tasksTabRef?: RefObject<WorkplaceTasksCardHandle | null>;
   habitsTabRef?: RefObject<WorkplaceHabitsCardHandle | null>;
 };
 
 export function WorkplacePageContent({
-  density = "work",
   tasksTabRef,
   habitsTabRef,
 }: WorkplacePageContentProps = {}) {
@@ -86,6 +79,8 @@ export function WorkplacePageContent({
     requestQuickCapture,
     registerWorkplaceTaskHandler,
   } = useGlobalRightSidebar();
+  const { dashboardActive } = useFocusSessionContext();
+  const isFocusing = dashboardActive.isActive;
   const timelineWidthPx = WORKPLACE_TIMELINE_WIDTH_PX;
   const [groups, setGroups] = useState<TaskGroupWithTasks[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -531,17 +526,13 @@ export function WorkplacePageContent({
             ) : null}
 
             <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS} min-h-0`}>
-              <div
-                className={cn(
-                  "row-span-2 flex h-full min-h-0 flex-col overflow-hidden",
-                  !isWorkplaceModuleShown("tasks", density) && "hidden"
-                )}
-              >
+              <div className="row-span-2 flex h-full min-h-0 flex-col overflow-hidden">
                 <WorkplaceTasksCard
                   ref={tasksTabRef}
                   tasks={allTasks}
                   groups={groups}
                   todayViewDate={todayViewDate}
+                  demoted={isFocusing}
                   onOpenDetail={(taskId) => selectTask(taskId)}
                   onToggleComplete={(task) => void handleToggleComplete(task)}
                   onUpdateTask={(taskId, updates) =>
@@ -552,19 +543,10 @@ export function WorkplacePageContent({
                   }
                 />
               </div>
-              <div
-                className={cn(
-                  !isWorkplaceModuleShown("quick-add", density) && "hidden"
-                )}
-              >
+              <div>
                 <WorkplaceQuickAddCard onOpenTaskDetails={requestQuickCapture} />
               </div>
-              <div
-                className={cn(
-                  "row-span-2 flex h-full min-h-0 min-w-0 flex-col",
-                  !isWorkplaceModuleShown("focus", density) && "hidden"
-                )}
-              >
+              <div className="row-span-2 flex h-full min-h-0 min-w-0 flex-col">
                 <WorkplaceFocusCard
                   groups={groups}
                   onToggleComplete={(task, markComplete) =>
@@ -576,11 +558,7 @@ export function WorkplacePageContent({
                   onPlanLater={(task) => void handlePlanLaterForTask(task)}
                 />
               </div>
-              <div
-                className={cn(
-                  !isWorkplaceModuleShown("habits", density) && "hidden"
-                )}
-              >
+              <div>
                 <WorkplaceHabitsCardWithFocus
                   ref={habitsTabRef}
                   habits={todayDisplayHabits}

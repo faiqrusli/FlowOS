@@ -305,14 +305,13 @@ export function GlobalRightSidebarProvider({
     workplaceTaskHandlerRef.current?.(task);
   }, []);
 
-  const sidebarVisible =
-    expanded || !workplaceHoverMode || hoverRevealed;
-
-  const visibleWidthPx = sidebarVisible
-    ? expanded
+  // Today/workplace: always reserve collapsed rail width in layout so
+  // expand/collapse overlay does not reflow the page. Other routes consume full width.
+  const visibleWidthPx = workplaceHoverMode
+    ? GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX
+    : expanded
       ? width
-      : GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX
-    : 0;
+      : GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX;
 
   const value = useMemo<GlobalRightSidebarContextValue>(
     () => ({

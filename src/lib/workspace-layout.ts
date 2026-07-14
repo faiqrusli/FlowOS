@@ -12,6 +12,13 @@ export const WORKSPACE_GUTTER_COMPACT_CLASS = "px-3";
 
 export const TIMELINE_TIME_COLUMN_CLASS = "w-[3.25rem]";
 
-export function timelineGridGutterClass(drawerMode: boolean): string {
-  return drawerMode ? "px-2" : "px-0";
+/** Drawer keeps a compact inset; workplace uses a slightly roomier gutter. */
+export function timelineGridGutterClass(
+  drawerMode: boolean,
+  options?: { flushRight?: boolean }
+): string {
+  if (!drawerMode) return "px-0";
+  // Workplace: even inset so lines/cards/zoom clear the scrollbar slightly.
+  if (options?.flushRight) return "px-1";
+  return "px-2";
 }

@@ -1,7 +1,10 @@
 "use client";
 
 import { Bell, BellOff, Check } from "lucide-react";
-import { getChannelStyle } from "@/lib/schedule-palette";
+import {
+  getChannelStyle,
+  SCHEDULE_BLOCK_CURRENT_CLASS,
+} from "@/lib/schedule-palette";
 import type { ScheduleBlockLayout } from "@/lib/schedule-layout";
 import { cn } from "@/lib/utils";
 import type { ScheduleItem } from "@/types/schedule";
@@ -40,7 +43,7 @@ export function ScheduleHabitStrip({
         channel.border,
         channel.hover,
         interactive && !item.completed && "cursor-grab active:cursor-grabbing",
-        isCurrent && "ring-1 ring-primary/40 bg-primary-soft",
+        isCurrent && SCHEDULE_BLOCK_CURRENT_CLASS,
         item.completed && "opacity-60"
       )}
       style={{ top: topPx, height: heightPx }}

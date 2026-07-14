@@ -15,6 +15,8 @@ export const NEXT_UP_PREVIEW_CAP = 3;
 type NextUpPreviewProps = {
   tasks: Task[];
   groups: TaskGroupWithTasks[];
+  /** Shrink empty drop zone while an active focus session owns attention. */
+  demoted?: boolean;
   onViewAll?: () => void;
   onHeaderClick?: () => void;
   dropActive?: boolean;
@@ -96,6 +98,7 @@ function NextUpPreviewRow({
 export function NextUpPreview({
   tasks,
   groups,
+  demoted = false,
   onViewAll,
   onHeaderClick,
   dropActive = false,
@@ -127,10 +130,13 @@ export function NextUpPreview({
         {isEmpty ? (
           <div
             className={cn(
-              "flex min-h-20 items-center justify-center rounded-md border border-dashed px-3 text-center text-[13px] transition-colors",
+              "flex items-center justify-center rounded-md border border-dashed px-3 text-center text-[13px] transition-colors",
+              demoted ? "min-h-10 py-1.5" : "min-h-20",
               dropActive
                 ? "border-primary/60 bg-primary/10 text-foreground"
-                : "border-border-subtle bg-surface-base text-muted-foreground/85"
+                : demoted
+                  ? "border-border-subtle/70 bg-transparent text-muted-foreground/60"
+                  : "border-border-subtle bg-surface-base text-muted-foreground/85"
             )}
             onDragOver={(event) => {
               event.preventDefault();
@@ -139,7 +145,11 @@ export function NextUpPreview({
             }}
             onDrop={(event) => onExternalDrop?.(event, null)}
           >
-            {dropActive ? "Release to add to Next Up" : "Drag a task here to decide what’s next."}
+            {dropActive
+              ? "Release to add to Next Up"
+              : demoted
+                ? "Drop a task for what’s next"
+                : "Drag a task here to decide what’s next."}
           </div>
         ) : (
           <div className="space-y-0.5">
