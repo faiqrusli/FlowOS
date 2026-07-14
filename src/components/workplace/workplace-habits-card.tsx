@@ -39,6 +39,8 @@ export type WorkplaceHabitsCardHandle = {
 type WorkplaceHabitsCardProps = {
   habits: Habit[];
   todayViewDate: string;
+  overlay?: boolean;
+  onClose?: () => void;
   onToggleComplete: (habit: Habit) => void;
   onStartFocus?: (habit: Habit) => void;
 };
@@ -47,7 +49,7 @@ export const WorkplaceHabitsCard = forwardRef<
   WorkplaceHabitsCardHandle,
   WorkplaceHabitsCardProps
 >(function WorkplaceHabitsCard(
-  { habits, todayViewDate, onToggleComplete, onStartFocus },
+  { habits, todayViewDate, overlay = false, onClose, onToggleComplete, onStartFocus },
   ref
 ) {
   const [tab, setTab] = useState<WorkplaceHabitTab>("incomplete");
@@ -113,6 +115,8 @@ export const WorkplaceHabitsCard = forwardRef<
       title="Today's Habits"
       titleIcon={Repeat}
       titleMeta={titleMeta}
+      overlay={overlay}
+      onClose={onClose}
       className="min-h-0 overflow-hidden"
       bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
     >

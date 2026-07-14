@@ -513,7 +513,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
           quickPhase === "idle"
             ? "Ready"
             : quickPhase === "focus"
-              ? "Focusing"
+              ? "In Focus"
               : quickPhase === "focus_paused"
                 ? "Paused"
                 : quickPhase === "break"

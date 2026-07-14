@@ -526,5 +526,5 @@ export function getActiveSessionStatusLabel(
     return session.mode === "focus" ? "Focus paused" : "Break paused";
   }
 
-  return session.mode === "focus" ? "Focusing" : "On break";
+  return session.mode === "focus" ? "In Focus" : "On break";
 }

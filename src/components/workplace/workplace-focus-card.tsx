@@ -18,10 +18,6 @@ import { FocusCurrentTaskCard } from "@/components/focus/focus-current-task-card
 import { FocusNextBreakStrip } from "@/components/focus/focus-next-break-strip";
 import { NextUpDrawer } from "@/components/focus/next-up-drawer";
 import { NextUpPreview } from "@/components/focus/next-up-preview";
-import {
-  WORKPLACE_FOCUS_TIMER_RING_SIZE,
-  FocusTimerRing,
-} from "@/components/focus/focus-timer-ring";
 import { ScheduleBreakModal } from "@/components/focus/schedule-break-modal";
 import { WorkplaceFocusInlineReflection } from "@/components/workplace/workplace-focus-inline-reflection";
 import { WorkplaceFocusReflectionModal } from "@/components/workplace/workplace-focus-reflection-modal";
@@ -78,11 +74,9 @@ type WorkplaceFocusCardProps = {
 function TimerHoverControls({
   children,
   alwaysVisible = false,
-  compact = false,
 }: {
   children: React.ReactNode;
   alwaysVisible?: boolean;
-  compact?: boolean;
 }) {
   return (
     <div
@@ -93,14 +87,52 @@ function TimerHoverControls({
           : "pointer-events-none opacity-0 group-hover/timer:pointer-events-auto group-hover/timer:opacity-100 group-focus-within/timer:pointer-events-auto group-focus-within/timer:opacity-100"
       )}
     >
-      <div
-        className={cn(
-          "flex items-center justify-center",
-          compact ? "flex-col gap-2 px-3" : "flex-wrap gap-3"
-        )}
-      >
+      <div className="flex flex-wrap items-center justify-center gap-2 px-2">
         {children}
       </div>
+    </div>
+  );
+}
+
+function WorkplaceFocusClock({
+  clock,
+  statusLabel,
+  statusTone = "focus",
+  idle = false,
+}: {
+  clock: string;
+  statusLabel?: string;
+  statusTone?: "focus" | "break" | "muted";
+  idle?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative z-[1] flex flex-col items-center justify-center text-center transition-opacity duration-200",
+        "group-hover/timer:pointer-events-none group-hover/timer:opacity-0",
+        "group-focus-within/timer:pointer-events-none group-focus-within/timer:opacity-0"
+      )}
+    >
+      <p
+        className={cn(
+          "font-mono text-[clamp(64px,5vw,88px)] font-semibold leading-none tracking-[-0.03em] tabular-nums",
+          idle ? "text-foreground/30" : "text-foreground"
+        )}
+      >
+        {clock}
+      </p>
+      {statusLabel ? (
+        <p
+          className={cn(
+            "mt-2 text-[11px] font-semibold uppercase tracking-[0.22em]",
+            statusTone === "break" && "text-warning",
+            statusTone === "muted" && "text-muted-foreground",
+            statusTone === "focus" && "text-primary"
+          )}
+        >
+          {statusLabel}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -400,7 +432,6 @@ export function WorkplaceFocusCard({
     (task: Task) => {
       setActiveTaskId(task.id, "manual");
       setNextUpTasks((current) => current.filter((item) => item.id !== task.id));
-      setNextUpDrawerOpen(false);
       void removeTaskFromNextUp(task.id).catch(() => {
         void refreshNextUpTasks();
       });
@@ -479,6 +510,15 @@ export function WorkplaceFocusCard({
     [refreshNextUpTasks]
   );
 
+  const handleClearNextUpQueue = useCallback(() => {
+    const ids = displayedNextUpTasks.map((task) => task.id);
+    if (ids.length === 0) return;
+    setNextUpTasks([]);
+    void Promise.all(ids.map((id) => removeTaskFromNextUp(id))).catch(() => {
+      void refreshNextUpTasks();
+    });
+  }, [displayedNextUpTasks, refreshNextUpTasks]);
+
   const handleCompleteQueueTask = useCallback(
     (task: Task) => {
       onToggleComplete(task, true);
@@ -520,14 +560,13 @@ export function WorkplaceFocusCard({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [closeNextUpDrawer, nextUpDrawerOpen]);
 
-  const showNextUpDrawer = NEXT_UP_WORKPLACE_UI_ENABLED && nextUpDrawerOpen;
-
   return (
     <>
+      <div className="flex h-full min-h-0 min-w-0 flex-1">
       <section
         id={TODAY_FOCUS_ANCHOR_ID}
         className={cn(
-          "relative flex h-full min-h-0 flex-1 flex-col overflow-hidden transition-[border-color,background-color,box-shadow] duration-150",
+          "relative flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden transition-[border-color,background-color,box-shadow] duration-150",
           dropActive && habitDropBlocked
             ? "rounded-xl border border-warning/45 bg-warning-muted/40"
             : dropActive
@@ -546,7 +585,7 @@ export function WorkplaceFocusCard({
                 className="size-4 shrink-0 text-muted-foreground"
                 aria-hidden
               />
-              <div className="inline-flex rounded-lg border border-border-subtle bg-surface-base p-0.5">
+              <div className="inline-flex rounded-lg border border-border-subtle/60 bg-transparent p-0.5">
               {(["focus", "pomodoro"] as const).map((item) => (
                 <button
                   key={item}
@@ -555,7 +594,7 @@ export function WorkplaceFocusCard({
                   className={cn(
                     "rounded-md px-2.5 py-0.5 text-[14px] font-medium capitalize transition-[background-color,color,box-shadow] duration-150",
                     tab === item
-                      ? "bg-surface-raised text-foreground shadow-xs"
+                      ? "bg-surface-base/80 text-foreground"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
@@ -577,28 +616,28 @@ export function WorkplaceFocusCard({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-end justify-between gap-2 text-[13px]">
+          <div className="flex flex-wrap items-end justify-between gap-2 text-[12px]">
             <div className="flex flex-wrap gap-4">
               <div>
                 <p className="text-muted-foreground">Today&apos;s focus</p>
-                <p className="mt-0.5 font-semibold tabular-nums text-foreground">
+                <p className="mt-0.5 font-medium tabular-nums text-muted-foreground">
                   {statsLoading ? "—" : formatDuration(displayTodayFocusSeconds)}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Today&apos;s break</p>
-                <p className="mt-0.5 font-semibold tabular-nums text-foreground">
+                <p className="mt-0.5 font-medium tabular-nums text-muted-foreground">
                   {statsLoading ? "—" : formatDuration(todayBreakSeconds)}
                 </p>
               </div>
             </div>
-            <p className="text-[15px] font-semibold tabular-nums text-muted-foreground">
+            <p className="text-[13px] font-medium tabular-nums text-muted-foreground/80">
               {clockLabel}
             </p>
           </div>
         </div>
 
-        <div className="relative flex min-h-0 flex-1 flex-col px-3 pb-2.5">
+        <div className="relative flex min-h-0 flex-1 flex-col px-3 pb-14">
           {dropActive && habitDropBlocked ? (
             <div className="pointer-events-none absolute inset-x-3.5 top-2 z-10 rounded-md border border-dashed border-warning/50 bg-warning-muted/90 px-3 py-2 text-center text-[13px] leading-snug text-warning shadow-sm">
               Enable <span className="font-medium">Track with Focus</span> on this
@@ -671,147 +710,126 @@ export function WorkplaceFocusCard({
                       onDismiss={() => setInlineReflectionSession(null)}
                     />
                   ) : (
-                  <div className="flex w-full flex-col items-center gap-3">
-                    <FocusTimerRing
-                      clock="00:00"
-                      focusSeconds={0}
-                      isActive={false}
-                      statusLabel=""
-                      size={WORKPLACE_FOCUS_TIMER_RING_SIZE}
+                  <div className="flex w-full flex-col items-center gap-3 py-2">
+                    <WorkplaceFocusClock clock="00:00" idle />
+                    <Button
+                      type="button"
+                      disabled={quickStartDisabled}
+                      onClick={handleStartFocus}
+                      className="h-8 rounded-full px-6 text-sm"
                     >
-                      <Button
-                        type="button"
-                        disabled={quickStartDisabled}
-                        onClick={handleStartFocus}
-                        className="h-8 rounded-full px-6 text-sm"
-                      >
-                        <Play className="size-4" data-icon="inline-start" />
-                        Start Focus
-                      </Button>
-                    </FocusTimerRing>
+                      <Play className="size-4" data-icon="inline-start" />
+                      Start Focus
+                    </Button>
                   </div>
                   )
                 ) : (
                   <>
                     <div className="flex w-full flex-col items-center text-center">
-                      <p className="mb-1 text-[12px] font-medium text-muted-foreground">
-                        Session {sessionNumber}
-                      </p>
-                      <div className="relative">
-                        <div
-                          className="group/timer relative mx-auto"
-                          style={{
-                            width: WORKPLACE_FOCUS_TIMER_RING_SIZE,
-                            height: WORKPLACE_FOCUS_TIMER_RING_SIZE,
-                          }}
-                        >
-                          <FocusTimerRing
-                            clock={quick.clock}
-                            focusSeconds={quick.currentFocusSeconds}
-                            isActive={!quick.isIdle}
-                            size={WORKPLACE_FOCUS_TIMER_RING_SIZE}
-                            statusLabel={
-                              quick.isOnBreak
-                                ? "On Break"
-                                : quick.isPaused
-                                  ? "Paused"
-                                  : "Focusing"
-                            }
-                            statusTone={
-                              quick.isOnBreak
-                                ? "break"
-                                : quick.isPaused
-                                  ? "muted"
-                                  : "focus"
-                            }
-                          />
-                          <TimerHoverControls compact>
-                            {quick.isFocusing ? (
-                              <>
-                                {quick.isPaused ? (
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    onClick={quick.resume}
-                                    className="h-8 rounded-full px-4"
-                                  >
-                                    <Play className="size-3.5" />
-                                    Resume
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={quick.pause}
-                                    className="h-8 px-3.5"
-                                  >
-                                    <Pause className="size-3.5" />
-                                    Pause
-                                  </Button>
-                                )}
-                                {!quick.isPaused ? (
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={quick.startBreak}
-                                    className="h-8 px-3.5"
-                                  >
-                                    <Coffee className="size-3.5" />
-                                    Break
-                                  </Button>
-                                ) : null}
+                      <div className="group/timer relative mx-auto flex min-h-[5.5rem] w-full max-w-lg items-center justify-center py-1">
+                        <WorkplaceFocusClock
+                          clock={quick.clock}
+                          statusLabel={
+                            quick.isOnBreak
+                              ? "On Break"
+                              : quick.isPaused
+                                ? "Paused"
+                                : "In Focus"
+                          }
+                          statusTone={
+                            quick.isOnBreak
+                              ? "break"
+                              : quick.isPaused
+                                ? "muted"
+                                : "focus"
+                          }
+                        />
+                        <TimerHoverControls>
+                          {quick.isFocusing ? (
+                            <>
+                              {quick.isPaused ? (
                                 <Button
                                   type="button"
                                   size="sm"
-                                  variant="outline"
-                                  onClick={() => setScheduleBreakOpen(true)}
-                                  className="h-8 gap-1.5 px-3.5"
-                                >
-                                  <CalendarClock className="size-3.5" />
-                                  Schedule Break
-                                </Button>
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={handleQuickStop}
-                                  className="h-8 px-3.5"
-                                >
-                                  <Square className="size-3.5" />
-                                  Stop
-                                </Button>
-                              </>
-                            ) : null}
-                            {quick.isOnBreak ? (
-                              <>
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  onClick={quick.resumeFocus}
+                                  onClick={quick.resume}
                                   className="h-8 rounded-full px-4"
                                 >
-                                  Resume Focus
+                                  <Play className="size-3.5" />
+                                  Resume
                                 </Button>
+                              ) : (
                                 <Button
                                   type="button"
                                   size="sm"
                                   variant="outline"
-                                  onClick={handleQuickStop}
+                                  onClick={quick.pause}
                                   className="h-8 px-3.5"
                                 >
-                                  Stop
+                                  <Pause className="size-3.5" />
+                                  Pause
                                 </Button>
-                              </>
-                            ) : null}
-                          </TimerHoverControls>
-                        </div>
+                              )}
+                              {!quick.isPaused ? (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={quick.startBreak}
+                                  className="h-8 px-3.5"
+                                >
+                                  <Coffee className="size-3.5" />
+                                  Break
+                                </Button>
+                              ) : null}
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setScheduleBreakOpen(true)}
+                                className="h-8 gap-1.5 px-3.5"
+                              >
+                                <CalendarClock className="size-3.5" />
+                                Schedule Break
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={handleQuickStop}
+                                className="h-8 px-3.5"
+                              >
+                                <Square className="size-3.5" />
+                                Stop
+                              </Button>
+                            </>
+                          ) : null}
+                          {quick.isOnBreak ? (
+                            <>
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={quick.resumeFocus}
+                                className="h-8 rounded-full px-4"
+                              >
+                                Resume Focus
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={handleQuickStop}
+                                className="h-8 px-3.5"
+                              >
+                                Stop
+                              </Button>
+                            </>
+                          ) : null}
+                        </TimerHoverControls>
                       </div>
                       {(quick.currentFocusSeconds > 0 ||
                         quick.currentBreakSeconds > 0) && (
-                        <p className="mt-1.5 text-[12px] text-muted-foreground">
-                          Focus {formatDuration(quick.currentFocusSeconds)} · Break{" "}
+                        <p className="mt-1.5 text-[11px] text-muted-foreground/80">
+                          Focused {formatDuration(quick.currentFocusSeconds)} · Break{" "}
                           {formatDuration(quick.currentBreakSeconds)}
                         </p>
                       )}
@@ -868,7 +886,7 @@ export function WorkplaceFocusCard({
                 onChooseFromQueue={openNextUpDrawer}
               />
 
-              {NEXT_UP_WORKPLACE_UI_ENABLED && !showNextUpDrawer ? (
+              {NEXT_UP_WORKPLACE_UI_ENABLED ? (
                 <NextUpPreview
                   tasks={displayedNextUpTasks}
                   groups={groups}
@@ -882,32 +900,6 @@ export function WorkplaceFocusCard({
                 />
               ) : null}
               </div>
-
-              {showNextUpDrawer ? (
-                <NextUpDrawer
-                  tasks={displayedNextUpTasks}
-                  groups={groups}
-                  currentTask={currentFocusTask}
-                  onClose={closeNextUpDrawer}
-                  onStartFocus={requestStartFocus}
-                  onOpenDetail={(task) => onOpenDetail(task.id)}
-                  onRemove={handleRemoveQueueTask}
-                  onReorder={handleReorderQueue}
-                  onToggleComplete={handleCompleteQueueTask}
-                  listRef={nextUpDrawerListRef}
-                  onListScroll={() => {
-                    if (nextUpDrawerListRef.current) {
-                      nextUpDrawerScrollTopRef.current =
-                        nextUpDrawerListRef.current.scrollTop;
-                    }
-                  }}
-                  dropZoneActive={dropActive && !habitDropBlocked}
-                  onDropZoneDrop={handleScheduleDrop}
-                  externalDropBeforeId={nextUpDropBeforeId}
-                  onExternalDragOver={setNextUpDropBeforeId}
-                  onExternalDrop={handleScheduleDrop}
-                />
-              ) : null}
             </div>
           ) : (
             <div className="group/timer relative flex flex-1 flex-col items-center justify-center gap-3 py-4">
@@ -1025,6 +1017,36 @@ export function WorkplaceFocusCard({
           )}
         </div>
       </section>
+
+      {NEXT_UP_WORKPLACE_UI_ENABLED ? (
+        <NextUpDrawer
+          tasks={displayedNextUpTasks}
+          groups={groups}
+          currentTask={currentFocusTask}
+          open={nextUpDrawerOpen}
+          onOpen={openNextUpDrawer}
+          onClose={closeNextUpDrawer}
+          onStartFocus={requestStartFocus}
+          onOpenDetail={(task) => onOpenDetail(task.id)}
+          onRemove={handleRemoveQueueTask}
+          onReorder={handleReorderQueue}
+          onToggleComplete={handleCompleteQueueTask}
+          onClearAll={handleClearNextUpQueue}
+          listRef={nextUpDrawerListRef}
+          onListScroll={() => {
+            if (nextUpDrawerListRef.current) {
+              nextUpDrawerScrollTopRef.current =
+                nextUpDrawerListRef.current.scrollTop;
+            }
+          }}
+          dropZoneActive={dropActive && !habitDropBlocked}
+          onDropZoneDrop={handleScheduleDrop}
+          externalDropBeforeId={nextUpDropBeforeId}
+          onExternalDragOver={setNextUpDropBeforeId}
+          onExternalDrop={handleScheduleDrop}
+        />
+      ) : null}
+      </div>
 
       <WorkplaceFocusReflectionModal
         open={reflectionOpen}

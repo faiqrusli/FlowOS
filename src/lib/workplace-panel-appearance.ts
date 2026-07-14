@@ -1,5 +1,14 @@
 import { surfaceCardClass, surfaceFocusClass } from "@/lib/theme/surface-classes";
 
+/**
+ * Today hierarchy surface map (spec §4 → existing v3 tokens):
+ * Level 0 canvas → --background (--surface-canvas)
+ * Level 1 chrome → --surface (--surface-nav)
+ * Level 2 content → --card (--surface-base) — Current Focus, queue/timeline items
+ * Level 3 elevated → --surface-elevated (--surface-raised) — overlays only
+ * Hover → --surface-hover (temporary interaction, never permanent fill)
+ */
+
 /** Shared workplace dashboard panel surface (tasks, habits, supporting cards). */
 export const workplacePanelSectionClassName = [
   surfaceCardClass,

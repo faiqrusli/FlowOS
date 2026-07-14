@@ -48,6 +48,8 @@ type WorkplaceTasksCardProps = {
   todayViewDate: string;
   /** Quiet empty / Later chrome while Focus owns the page. */
   demoted?: boolean;
+  overlay?: boolean;
+  onClose?: () => void;
   onOpenDetail: (taskId: string) => void;
   onToggleComplete: (task: Task) => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
@@ -119,6 +121,8 @@ export const WorkplaceTasksCard = forwardRef<
     groups,
     todayViewDate,
     demoted = false,
+    overlay = false,
+    onClose,
     onOpenDetail,
     onToggleComplete,
     onUpdateTask,
@@ -215,6 +219,8 @@ export const WorkplaceTasksCard = forwardRef<
       title="Today's Tasks"
       titleIcon={CheckSquare}
       titleMeta={titleMeta}
+      overlay={overlay}
+      onClose={onClose}
       className="min-h-0 overflow-hidden"
       bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
     >

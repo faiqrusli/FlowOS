@@ -1,6 +1,7 @@
 "use client";
 
 import type { DragEvent } from "react";
+import { ChevronRight, Clock } from "lucide-react";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
@@ -44,6 +45,13 @@ function NextUpPreviewRow({
 }) {
   const group = groups.find((item) => item.id === task.group_id) ?? null;
   const appearance = group ? getTaskGroupAppearance(group) : null;
+  const schedule = formatTaskFocusSchedule(task);
+  const durationLabel =
+    task.duration_minutes != null && task.duration_minutes > 0
+      ? `${task.duration_minutes} min`
+      : schedule !== "—"
+        ? schedule
+        : null;
 
   return (
     <div
@@ -58,18 +66,28 @@ function NextUpPreviewRow({
       <button
         type="button"
         onClick={onClick}
-        className="flex w-full min-w-0 items-center gap-2 rounded-md py-1 text-left hover:bg-surface-hover"
+        className={cn(
+          "flex w-full min-w-0 items-center gap-2 rounded-md px-1.5 py-1.5 text-left transition-colors hover:bg-surface-hover",
+          isNext && "bg-surface-base/50"
+        )}
       >
-        <span aria-hidden className="w-3 shrink-0 text-center text-[13px] leading-none text-muted-foreground/80">
+        <span
+          aria-hidden
+          className={cn(
+            "w-3 shrink-0 text-center text-[11px] leading-none",
+            isNext ? "text-primary" : "text-muted-foreground/70"
+          )}
+        >
           {isNext ? "●" : "○"}
         </span>
-        <span className="min-w-0 flex-1 truncate text-[14px] font-medium leading-snug text-foreground">
+        <span className="min-w-0 flex-1 truncate text-[13px] font-medium leading-snug text-foreground">
           {task.title}
         </span>
-        {isNext ? (
-          <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-            Next
-          </span>
+        {task.priority ? (
+          <TaskPriorityFlagIcon
+            priority={normalizeTaskPriority(task.priority)}
+            className="size-3.5"
+          />
         ) : null}
         {group && appearance ? (
           <TaskGroupPill
@@ -79,17 +97,12 @@ function NextUpPreviewRow({
             className="max-w-24 shrink text-[11px]"
           />
         ) : null}
-        {formatTaskFocusSchedule(task) !== "—" ? (
-          <span className="shrink-0 text-[12px] tabular-nums text-muted-foreground">
-            {formatTaskFocusSchedule(task)}
+        {durationLabel ? (
+          <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground">
+            {durationLabel}
           </span>
         ) : null}
-        {task.priority ? (
-          <TaskPriorityFlagIcon
-            priority={normalizeTaskPriority(task.priority)}
-            className="size-3.5"
-          />
-        ) : null}
+        {isNext ? <ChevronRight className="size-3.5 shrink-0 text-muted-foreground" /> : null}
       </button>
     </div>
   );
@@ -109,34 +122,54 @@ export function NextUpPreview({
   const previewTasks = tasks.slice(0, NEXT_UP_PREVIEW_CAP);
   const overflowCount = Math.max(0, tasks.length - NEXT_UP_PREVIEW_CAP);
   const isEmpty = tasks.length === 0;
+  const nextTask = previewTasks[0] ?? null;
 
   return (
-    <div className="mt-1 shrink-0 overflow-hidden pt-2">
-      <div className="flex items-center gap-2">
+    <div className="mt-1 shrink-0 overflow-hidden rounded-lg border border-border-subtle bg-surface-base/40 pt-0">
+      <div className="flex items-center gap-2 border-b border-border-subtle/70 px-2.5 py-1.5">
+        <Clock className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
         <button
           type="button"
           onClick={onHeaderClick}
           disabled={!onHeaderClick}
           className={cn(
-            "text-[13px] font-semibold text-foreground/90",
+            "text-[12px] font-semibold uppercase tracking-wide text-foreground/90",
             onHeaderClick && "hover:text-foreground"
           )}
         >
-          Next Up{tasks.length > 0 ? ` (${tasks.length})` : ""}
+          Next Up
+          {tasks.length > 0 ? (
+            <span className="ml-1 font-medium normal-case tracking-normal text-muted-foreground">
+              ({tasks.length})
+            </span>
+          ) : null}
         </button>
+        {nextTask && !isEmpty ? (
+          <button
+            type="button"
+            onClick={onViewAll}
+            disabled={!onViewAll}
+            className="ml-auto flex min-w-0 max-w-[55%] items-center gap-1.5 text-left"
+          >
+            <span className="truncate text-[12px] font-medium text-foreground/85">
+              {nextTask.title}
+            </span>
+            <ChevronRight className="size-3.5 shrink-0 text-muted-foreground" />
+          </button>
+        ) : null}
       </div>
 
-      <div className="mt-1.5">
+      <div className="px-1.5 py-1">
         {isEmpty ? (
           <div
             className={cn(
-              "flex items-center justify-center rounded-md border border-dashed px-3 text-center text-[13px] transition-colors",
-              demoted ? "min-h-10 py-1.5" : "min-h-20",
+              "flex items-center justify-center rounded-md border border-dashed px-3 text-center text-[12px] transition-colors",
+              demoted ? "min-h-9 py-1.5" : "min-h-14",
               dropActive
                 ? "border-primary/60 bg-primary/10 text-foreground"
                 : demoted
                   ? "border-border-subtle/70 bg-transparent text-muted-foreground/60"
-                  : "border-border-subtle bg-surface-base text-muted-foreground/85"
+                  : "border-border-subtle bg-surface-canvas/30 text-muted-foreground/85"
             )}
             onDragOver={(event) => {
               event.preventDefault();
@@ -178,11 +211,11 @@ export function NextUpPreview({
           onClick={onViewAll}
           disabled={!onViewAll}
           className={cn(
-            "mt-1.5 text-[13px] text-primary/90",
-            onViewAll ? "hover:text-primary" : "cursor-default opacity-80"
+            "w-full border-t border-border-subtle/70 px-2.5 py-1.5 text-left text-[12px] text-primary/90",
+            onViewAll ? "hover:bg-surface-hover hover:text-primary" : "cursor-default opacity-80"
           )}
         >
-          ({overflowCount} more →)
+          {overflowCount} more →
         </button>
       ) : null}
     </div>

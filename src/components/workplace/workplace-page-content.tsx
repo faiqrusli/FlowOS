@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, forwardRef, type RefObject } from "react";
+import { CheckSquare, Repeat } from "lucide-react";
 import { TimelinePlanner, type TimelinePlannerProps } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { WorkplaceFocusCard } from "@/components/workplace/workplace-focus-card";
@@ -55,14 +56,21 @@ import {
   withHabitScheduleForDate,
 } from "@/lib/habit-daily-schedule-store";
 import {
-  WORKPLACE_DASHBOARD_GRID_CLASS,
   WORKPLACE_TIMELINE_RIGHT_GAP_PX,
   WORKPLACE_TIMELINE_WIDTH_PX,
 } from "@/lib/workplace-layout";
 import { fetchWorkplaceData, WorkplaceError } from "@/lib/workplace-data";
 import { registerContextMenuCloser } from "@/lib/task-detail-menu-coordinator";
+import {
+  scrollToTodayTargetDeferred,
+  TODAY_HABITS_SECTION_ID,
+  TODAY_TASKS_SECTION_ID,
+} from "@/lib/today-in-place";
+import { cn } from "@/lib/utils";
 import type { Habit } from "@/types/habit";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
+
+type WorkplaceOverlay = "tasks" | "habits" | null;
 
 type WorkplacePageContentProps = {
   tasksTabRef?: RefObject<WorkplaceTasksCardHandle | null>;
@@ -88,11 +96,14 @@ export function WorkplacePageContent({
   const [error, setError] = useState<string | null>(null);
   const [todayViewDate] = useState(getTodayDateString);
   const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
+  const [overlay, setOverlay] = useState<WorkplaceOverlay>(null);
   const [taskContextMenu, setTaskContextMenu] = useState<{
     task: Task;
     anchorRect: DOMRect;
   } | null>(null);
   const taskContextMenuRef = useRef<HTMLDivElement>(null);
+  const tasksCardRef = useRef<WorkplaceTasksCardHandle>(null);
+  const habitsCardRef = useRef<WorkplaceHabitsCardHandle>(null);
   const updateTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
     new Map()
   );
@@ -145,6 +156,63 @@ export function WorkplacePageContent({
 
   useEffect(() => {
     return registerContextMenuCloser(() => setTaskContextMenu(null));
+  }, []);
+
+  useEffect(() => {
+    if (!tasksTabRef) return;
+    tasksTabRef.current = {
+      ensureTaskVisible(taskId: string) {
+        setOverlay("tasks");
+        requestAnimationFrame(() => {
+          if (taskId) {
+            void tasksCardRef.current?.ensureTaskVisible(taskId);
+          } else {
+            scrollToTodayTargetDeferred(TODAY_TASKS_SECTION_ID);
+          }
+        });
+        return true;
+      },
+    };
+    return () => {
+      tasksTabRef.current = null;
+    };
+  }, [tasksTabRef]);
+
+  useEffect(() => {
+    if (!habitsTabRef) return;
+    habitsTabRef.current = {
+      ensureHabitVisible(habitId: string) {
+        setOverlay("habits");
+        requestAnimationFrame(() => {
+          if (habitId) {
+            void habitsCardRef.current?.ensureHabitVisible(habitId);
+          } else {
+            scrollToTodayTargetDeferred(TODAY_HABITS_SECTION_ID);
+          }
+        });
+        return true;
+      },
+    };
+    return () => {
+      habitsTabRef.current = null;
+    };
+  }, [habitsTabRef]);
+
+  useEffect(() => {
+    if (!overlay) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOverlay(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [overlay]);
+
+  const openTasksOverlay = useCallback(() => {
+    setOverlay((current) => (current === "tasks" ? null : "tasks"));
+  }, []);
+
+  const openHabitsOverlay = useCallback(() => {
+    setOverlay((current) => (current === "habits" ? null : "habits"));
   }, []);
 
   useEffect(() => {
@@ -488,13 +556,9 @@ export function WorkplacePageContent({
         className="flex h-full min-h-0 gap-2 pl-10"
         style={{ paddingRight: WORKPLACE_TIMELINE_RIGHT_GAP_PX }}
       >
-        <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS}`}>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div
-              key={index}
-              className="min-h-[4rem] animate-pulse rounded-xl bg-surface-base/40"
-            />
-          ))}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
+          <div className="h-10 shrink-0 animate-pulse rounded-xl bg-surface-base/40" />
+          <div className="min-h-0 flex-1 animate-pulse rounded-xl bg-surface-base/40" />
         </div>
         <div
           className="shrink-0 animate-pulse rounded-l-xl border-l border-border-subtle bg-surface-base/30"
@@ -525,28 +589,9 @@ export function WorkplacePageContent({
               </div>
             ) : null}
 
-            <div className={`${WORKPLACE_DASHBOARD_GRID_CLASS} min-h-0`}>
-              <div className="row-span-2 flex h-full min-h-0 flex-col overflow-hidden">
-                <WorkplaceTasksCard
-                  ref={tasksTabRef}
-                  tasks={allTasks}
-                  groups={groups}
-                  todayViewDate={todayViewDate}
-                  demoted={isFocusing}
-                  onOpenDetail={(taskId) => selectTask(taskId)}
-                  onToggleComplete={(task) => void handleToggleComplete(task)}
-                  onUpdateTask={(taskId, updates) =>
-                    void handleUpdateTask(taskId, updates)
-                  }
-                  onTaskContextMenu={(task, anchorRect) =>
-                    setTaskContextMenu({ task, anchorRect })
-                  }
-                />
-              </div>
-              <div>
-                <WorkplaceQuickAddCard onOpenTaskDetails={requestQuickCapture} />
-              </div>
-              <div className="row-span-2 flex h-full min-h-0 min-w-0 flex-col">
+            <div className="relative flex min-h-0 min-w-0 flex-1 flex-col gap-2">
+              <WorkplaceQuickAddCard onOpenTaskDetails={requestQuickCapture} />
+              <div className="relative min-h-0 min-w-0 flex-1">
                 <WorkplaceFocusCard
                   groups={groups}
                   onToggleComplete={(task, markComplete) =>
@@ -557,14 +602,82 @@ export function WorkplacePageContent({
                   onContinueTomorrow={(task) => void handleContinueTomorrow(task)}
                   onPlanLater={(task) => void handlePlanLaterForTask(task)}
                 />
-              </div>
-              <div>
-                <WorkplaceHabitsCardWithFocus
-                  ref={habitsTabRef}
-                  habits={todayDisplayHabits}
-                  todayViewDate={todayViewDate}
-                  onToggleComplete={(habit) => void handleToggleHabitComplete(habit)}
-                />
+
+                {overlay === "tasks" ? (
+                  <div
+                    className="absolute bottom-14 left-2 z-40 flex h-[min(52%,28rem)] w-[min(100%-1rem,22rem)] flex-col overflow-hidden rounded-xl border border-border-strong bg-surface-overlay shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+                    role="dialog"
+                    aria-label="Today's Tasks"
+                  >
+                    <WorkplaceTasksCard
+                      ref={tasksCardRef}
+                      tasks={allTasks}
+                      groups={groups}
+                      todayViewDate={todayViewDate}
+                      demoted={isFocusing}
+                      overlay
+                      onClose={() => setOverlay(null)}
+                      onOpenDetail={(taskId) => selectTask(taskId)}
+                      onToggleComplete={(task) => void handleToggleComplete(task)}
+                      onUpdateTask={(taskId, updates) =>
+                        void handleUpdateTask(taskId, updates)
+                      }
+                      onTaskContextMenu={(task, anchorRect) =>
+                        setTaskContextMenu({ task, anchorRect })
+                      }
+                    />
+                  </div>
+                ) : null}
+
+                {overlay === "habits" ? (
+                  <div
+                    className="absolute bottom-14 left-2 z-40 flex h-[min(52%,28rem)] w-[min(100%-1rem,20rem)] flex-col overflow-hidden rounded-xl border border-border-strong bg-surface-overlay shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+                    role="dialog"
+                    aria-label="Today's Habits"
+                  >
+                    <WorkplaceHabitsCardWithFocus
+                      ref={habitsCardRef}
+                      habits={todayDisplayHabits}
+                      todayViewDate={todayViewDate}
+                      overlay
+                      onClose={() => setOverlay(null)}
+                      onToggleComplete={(habit) =>
+                        void handleToggleHabitComplete(habit)
+                      }
+                    />
+                  </div>
+                ) : null}
+
+                <div className="absolute bottom-2 left-2 z-30 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={openTasksOverlay}
+                    aria-pressed={overlay === "tasks"}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-[13px] font-medium shadow-sm transition-[background-color,color,box-shadow] duration-150",
+                      overlay === "tasks"
+                        ? "bg-primary/18 text-primary shadow-md shadow-primary/10 ring-1 ring-primary/45"
+                        : "bg-surface-raised text-foreground/80 hover:bg-surface-hover hover:text-foreground hover:shadow-md hover:ring-1 hover:ring-border-strong"
+                    )}
+                  >
+                    <CheckSquare className="size-3.5 shrink-0 opacity-90" aria-hidden />
+                    Task
+                  </button>
+                  <button
+                    type="button"
+                    onClick={openHabitsOverlay}
+                    aria-pressed={overlay === "habits"}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-[13px] font-medium shadow-sm transition-[background-color,color,box-shadow] duration-150",
+                      overlay === "habits"
+                        ? "bg-primary/18 text-primary shadow-md shadow-primary/10 ring-1 ring-primary/45"
+                        : "bg-surface-raised text-foreground/80 hover:bg-surface-hover hover:text-foreground hover:shadow-md hover:ring-1 hover:ring-border-strong"
+                    )}
+                  >
+                    <Repeat className="size-3.5 shrink-0 opacity-90" aria-hidden />
+                    Habit
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -645,9 +758,11 @@ const WorkplaceHabitsCardWithFocus = forwardRef<
     habits: Habit[];
     todayViewDate: string;
     onToggleComplete: (habit: Habit) => void;
+    overlay?: boolean;
+    onClose?: () => void;
   }
 >(function WorkplaceHabitsCardWithFocus(
-  { habits, todayViewDate, onToggleComplete },
+  { habits, todayViewDate, onToggleComplete, overlay, onClose },
   habitsTabRef
 ) {
   const { setActiveHabitId } = useWorkplaceFocusTask();
@@ -657,6 +772,8 @@ const WorkplaceHabitsCardWithFocus = forwardRef<
       ref={habitsTabRef}
       habits={habits}
       todayViewDate={todayViewDate}
+      overlay={overlay}
+      onClose={onClose}
       onToggleComplete={onToggleComplete}
       onStartFocus={(habit) => setActiveHabitId(habit.id, "manual")}
     />

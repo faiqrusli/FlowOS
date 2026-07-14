@@ -15,8 +15,6 @@ import { getTodayFocusDisplaySeconds } from "@/lib/focus-active-session";
 import {
   scrollToTodayTarget,
   TODAY_FOCUS_ANCHOR_ID,
-  TODAY_HABITS_SECTION_ID,
-  TODAY_TASKS_SECTION_ID,
 } from "@/lib/today-in-place";
 import type { DashboardData } from "@/types/dashboard";
 
@@ -91,10 +89,10 @@ export function TodayPageContent() {
     (cell: KpiCellKey) => {
       switch (cell) {
         case "tasks":
-          scrollToTodayTarget(TODAY_TASKS_SECTION_ID);
+          tasksTabRef.current?.ensureTaskVisible("");
           return;
         case "habits":
-          scrollToTodayTarget(TODAY_HABITS_SECTION_ID);
+          habitsTabRef.current?.ensureHabitVisible("");
           return;
         case "focus":
           scrollToTodayTarget(TODAY_FOCUS_ANCHOR_ID);

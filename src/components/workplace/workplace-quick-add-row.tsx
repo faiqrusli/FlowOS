@@ -55,8 +55,8 @@ function QuickAddHint({
   );
 }
 
-const iconActionClass =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border-subtle bg-surface-base text-foreground transition-colors hover:bg-surface-hover";
+const textActionClass =
+  "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground";
 
 export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRowProps) {
   const { createNewNote, openDailyNote, openReflection, notifyWorkplaceTaskCreated } =
@@ -110,38 +110,46 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
     }
   }
 
+  function handleAddClick() {
+    const trimmed = title.trim();
+    if (trimmed) {
+      setTitle("");
+      enqueueInlineTask(trimmed);
+      return;
+    }
+    onOpenTaskDetails();
+  }
+
   return (
     <div className="flex w-full min-w-0 flex-col gap-1">
       <div className="flex w-full min-w-0 flex-nowrap items-center gap-1.5">
-        <div className="flex min-w-0 flex-1 items-center gap-1">
-          <Input
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Add a task…"
-            title="Type a task and press Enter to add to Today"
-            className="h-8 min-w-0 flex-1 border-border-subtle bg-surface-raised px-2.5 text-[13px] shadow-none"
-          />
-          <QuickAddHint label="Quick capture — full task form · Ctrl+Shift+A">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-sm"
-              onClick={onOpenTaskDetails}
-              className="size-8 shrink-0 rounded-lg shadow-xs"
-              aria-label="Quick capture task"
-            >
-              <ListPlus className="size-3.5" />
-            </Button>
-          </QuickAddHint>
-        </div>
+        <Input
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Quick capture… (task, idea, or note)"
+          title="Type a task and press Enter to add to Today"
+          className="h-8 min-w-0 flex-1 border-0 bg-transparent px-1 text-[13px] shadow-none placeholder:text-muted-foreground/70 focus-visible:ring-0"
+        />
+        <QuickAddHint label="Daily reflection in sidebar · Ctrl+Shift+R">
+          <button
+            type="button"
+            onClick={openReflection}
+            className={textActionClass}
+            aria-label="Reflection"
+          >
+            <NotebookPen className="size-3.5 shrink-0" />
+            <span className="hidden sm:inline">Reflection</span>
+          </button>
+        </QuickAddHint>
         <QuickAddHint label="Today's note or blank note in sidebar">
           <DropdownMenu>
             <DropdownMenuTrigger
-              className={cn(iconActionClass, "gap-0")}
+              className={cn(textActionClass, "gap-1.5")}
               aria-label="Notes"
             >
               <BookOpen className="size-3.5 shrink-0" />
+              <span className="hidden sm:inline">Note</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="bottom" align="end" className="min-w-[11rem]">
               <DropdownMenuItem
@@ -167,15 +175,17 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
             </DropdownMenuContent>
           </DropdownMenu>
         </QuickAddHint>
-        <QuickAddHint label="Daily reflection in sidebar · Ctrl+Shift+R">
-          <button
+        <QuickAddHint label="Add task — Enter to quick-add, or open full form · Ctrl+Shift+A">
+          <Button
             type="button"
-            onClick={openReflection}
-            className={iconActionClass}
-            aria-label="Reflection"
+            size="sm"
+            onClick={handleAddClick}
+            className="h-8 shrink-0 gap-1 rounded-lg px-2.5 text-[12px]"
+            aria-label="Add task"
           >
-            <NotebookPen className="size-3.5 shrink-0" />
-          </button>
+            <ListPlus className="size-3.5" />
+            Add
+          </Button>
         </QuickAddHint>
       </div>
       {error ? (
