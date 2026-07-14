@@ -16,6 +16,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSettingsModal } from "@/contexts/settings-modal-context";
+import {
+  SHELL_NAV_RADIUS_PX,
+  SHELL_PROFILE_AVATAR_PX,
+  SHELL_PROFILE_CARD_HEIGHT_PX,
+  SHELL_PROFILE_HIT_PX,
+} from "@/lib/shell-dimensions";
 import type { SettingsModalSection } from "@/types/settings-modal";
 import { cn } from "@/lib/utils";
 
@@ -46,20 +52,32 @@ export function SidebarAccountMenu({
   }
 
   return (
-    <div className={cn("shrink-0 pt-2 pb-3", compact ? "px-2" : "px-3")}>
+    <div className="shrink-0 px-3 pb-3">
       <DropdownMenu>
         <DropdownMenuTrigger
-          aria-label={compact ? displayName : undefined}
+          aria-label={displayName}
           className={cn(
-            // Quiet on chrome — menu popover carries card elevation, not the trigger.
-            "group/account relative flex items-center rounded-xl text-left transition-colors duration-150",
+            "group/account relative flex w-full items-center text-left transition-colors duration-150",
             compact
-              ? "mx-auto size-9 justify-center border-transparent bg-transparent p-0 hover:bg-sidebar-accent"
-              : "w-full gap-2.5 border border-sidebar-border bg-transparent px-2.5 py-2 hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent"
+              ? "mx-auto justify-center border border-transparent bg-transparent p-0 hover:bg-sidebar-accent"
+              : "gap-2.5 rounded-[10px] border border-transparent bg-transparent px-2.5 hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent"
           )}
+          style={
+            compact
+              ? {
+                  width: SHELL_PROFILE_HIT_PX,
+                  height: SHELL_PROFILE_HIT_PX,
+                  borderRadius: SHELL_NAV_RADIUS_PX,
+                }
+              : { height: SHELL_PROFILE_CARD_HEIGHT_PX }
+          }
         >
           <div
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground"
+            className="flex shrink-0 items-center justify-center rounded-full border border-sidebar-border/80 bg-primary text-xs font-semibold text-primary-foreground"
+            style={{
+              width: SHELL_PROFILE_AVATAR_PX,
+              height: SHELL_PROFILE_AVATAR_PX,
+            }}
             aria-hidden
           >
             {initials}
@@ -67,10 +85,10 @@ export function SidebarAccountMenu({
           {!compact && (
             <>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13px] font-semibold leading-tight text-foreground">
+                <p className="truncate text-sm font-semibold leading-tight text-foreground">
                   {displayName}
                 </p>
-                <p className="truncate text-[11px] leading-tight text-muted-foreground">
+                <p className="truncate text-xs leading-tight text-muted-foreground">
                   {userRole}
                 </p>
               </div>
@@ -83,7 +101,7 @@ export function SidebarAccountMenu({
           {compact && (
             <span
               role="tooltip"
-              className="flow-surface-elevated pointer-events-none absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden -translate-y-1/2 scale-95 whitespace-nowrap px-2.5 py-1 text-xs font-medium text-popover-foreground opacity-0 transition-[opacity,transform] duration-150 group-hover/account:block group-hover/account:scale-100 group-hover/account:opacity-100"
+              className="flow-surface-elevated flow-shell-nav-tooltip absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden whitespace-nowrap px-2.5 py-1 text-xs font-medium text-popover-foreground group-hover/account:block"
             >
               {displayName}
             </span>

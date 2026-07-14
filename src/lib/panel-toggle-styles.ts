@@ -1,4 +1,9 @@
 import { cn } from "@/lib/utils";
+import {
+  SHELL_NAV_ICON_PX,
+  SHELL_UTILITY_ACTIVE_RADIUS_PX,
+  SHELL_UTILITY_BUTTON_PX,
+} from "@/lib/shell-dimensions";
 
 /** Shared Quick Schedule / global access panel toggle chrome. */
 export const PANEL_TOGGLE_ICON_CLASS = "text-accent-text";
@@ -13,7 +18,7 @@ export function panelToggleButtonClass(
 }
 
 function panelToggleIconSize(size: "sm" | "md") {
-  return size === "sm" ? "size-3.5" : "size-4";
+  return size === "sm" ? "size-[18px]" : "size-4";
 }
 
 export function panelTogglePrimaryIconClass(size: "sm" | "md" = "md") {
@@ -32,30 +37,59 @@ export function panelToggleHoverIconClass(size: "sm" | "md" = "md") {
   );
 }
 
-/** Neutral global sidebar rail — temporary hover/active on chrome. */
+/** Right utility rail — quiet tool selection, not primary nav. */
 export function globalRailButtonClass(active = false) {
   return cn(
-    "inline-flex size-10 items-center justify-center rounded-lg transition-colors",
+    "inline-flex items-center justify-center transition-[color,background-color] duration-150",
     active
-      ? "bg-primary-soft text-foreground"
-      : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+      ? "bg-primary-subtle text-primary"
+      : "text-muted-foreground hover:bg-surface-hover hover:text-foreground/80"
   );
 }
 
-function globalRailIconSize(size: "sm" | "md") {
-  return size === "sm" ? "size-4" : "size-4.5";
+export function globalRailButtonStyle() {
+  return {
+    width: SHELL_UTILITY_BUTTON_PX,
+    height: SHELL_UTILITY_BUTTON_PX,
+    borderRadius: SHELL_UTILITY_ACTIVE_RADIUS_PX,
+  } as const;
 }
 
-export function globalRailPrimaryIconClass(size: "sm" | "md" = "md") {
+/** 18px optical canvas — matches left nav. */
+export const GLOBAL_RAIL_ICON_CLASS = "shrink-0 stroke-[1.75]";
+
+export function globalRailIconStyle() {
+  return {
+    width: SHELL_NAV_ICON_PX,
+    height: SHELL_NAV_ICON_PX,
+  } as const;
+}
+
+/** Collapsed expand / panel collapse — 40×40, no resting fill. */
+export function globalRailCollapseButtonClass() {
   return cn(
-    globalRailIconSize(size),
+    "inline-flex items-center justify-center text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+  );
+}
+
+export function globalRailCollapseButtonStyle() {
+  return {
+    width: SHELL_UTILITY_BUTTON_PX,
+    height: SHELL_UTILITY_BUTTON_PX,
+    borderRadius: SHELL_UTILITY_ACTIVE_RADIUS_PX,
+  } as const;
+}
+
+export function globalRailPrimaryIconClass(_size: "sm" | "md" = "md") {
+  return cn(
+    GLOBAL_RAIL_ICON_CLASS,
     "text-current transition-opacity duration-150 group-hover/panel-toggle:opacity-0"
   );
 }
 
-export function globalRailHoverIconClass(size: "sm" | "md" = "md") {
+export function globalRailHoverIconClass(_size: "sm" | "md" = "md") {
   return cn(
-    globalRailIconSize(size),
+    GLOBAL_RAIL_ICON_CLASS,
     "absolute text-current opacity-0 transition-opacity duration-150 group-hover/panel-toggle:opacity-100"
   );
 }

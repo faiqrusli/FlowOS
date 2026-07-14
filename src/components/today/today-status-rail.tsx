@@ -4,6 +4,7 @@ import type { KpiCellKey } from "@/components/dashboard/dashboard-kpi-strip";
 import { TodayRailStatsRow } from "@/components/today/today-rail-stats-row";
 import { formatTodayHeading } from "@/lib/date-utils";
 import type { OnTrackStatus } from "@/lib/dashboard-command";
+import { SHELL_HEADER_HEIGHT_PX } from "@/lib/shell-dimensions";
 import type { TodayProgress } from "@/types/dashboard";
 
 type TodayStatusRailProps = {
@@ -25,13 +26,16 @@ export function TodayStatusRail({
   const showStats = Boolean(stats && !loading);
 
   return (
-    <header className="flow-surface-nav shrink-0 border-b border-border-subtle px-10">
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 py-2.5 text-[13px] text-muted-foreground">
-        <span className="font-medium text-foreground">{dateLabel}</span>
+    <header
+      className="flow-surface-nav flow-shell-topbar flex shrink-0 items-center overflow-hidden border-b border-border-subtle px-5"
+      style={{ height: SHELL_HEADER_HEIGHT_PX }}
+    >
+      <div className="flex min-w-0 items-center gap-2 whitespace-nowrap text-sm leading-none text-muted-foreground">
+        <span className="font-semibold text-foreground">{dateLabel}</span>
         <span aria-hidden className="text-muted-foreground/50">
           ·
         </span>
-        <span>{onTrackLabel}</span>
+        <span className="font-normal">{onTrackLabel}</span>
 
         {showStats && stats ? (
           <>

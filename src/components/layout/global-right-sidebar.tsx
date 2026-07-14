@@ -2,14 +2,13 @@
 
 import {
   BookOpen,
+  ChevronLeft,
   ClipboardList,
   ExternalLink,
   NotebookPen,
-  PanelRightClose,
-  PanelRightOpen,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { SidebarDetailsPanel } from "@/components/layout/sidebar-details-panel";
 import { SidebarNotesPanel } from "@/components/layout/sidebar-notes-panel";
 import { SidebarReflectionPanel } from "@/components/layout/sidebar-reflection-panel";
@@ -20,26 +19,54 @@ import {
   type GlobalRightSidebarPanel,
 } from "@/lib/global-right-sidebar-persistence";
 import {
+  GLOBAL_RAIL_ICON_CLASS,
   globalRailButtonClass,
-  globalRailHoverIconClass,
-  globalRailPrimaryIconClass,
+  globalRailButtonStyle,
+  globalRailCollapseButtonClass,
+  globalRailCollapseButtonStyle,
+  globalRailIconStyle,
 } from "@/lib/panel-toggle-styles";
 import {
   PANEL_LAYOUT_MS,
+  panelShellTransitionStyle,
   panelSlideTransitionStyle,
-  panelWidthTransitionStyle,
 } from "@/lib/panel-layout-animation";
+import {
+  SHELL_HEADER_HEIGHT_PX,
+  SHELL_UTILITY_HEADER_ACTION_ICON_PX,
+  SHELL_UTILITY_HEADER_ACTION_PX,
+  SHELL_UTILITY_HEADER_PADDING_PX,
+  SHELL_UTILITY_RAIL_GAP_PX,
+  SHELL_UTILITY_RAIL_TOP_PX,
+  SHELL_UTILITY_RAIL_WIDTH_PX,
+} from "@/lib/shell-dimensions";
 import { cn } from "@/lib/utils";
-import { workspaceRailBackgroundClass } from "@/lib/theme/surface-classes";
+import {
+  workspaceDrawerPanelClass,
+  workspaceRailBackgroundClass,
+} from "@/lib/theme/surface-classes";
+
+const RAIL_WIDTH_PX = GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX;
 
 const PANEL_ITEMS: {
   id: GlobalRightSidebarPanel;
   label: string;
+  openLabel: string;
   icon: typeof ClipboardList;
 }[] = [
-  { id: "details", label: "Details", icon: ClipboardList },
-  { id: "notes", label: "Notes", icon: BookOpen },
-  { id: "reflection", label: "Reflection", icon: NotebookPen },
+  {
+    id: "details",
+    label: "Task Details",
+    openLabel: "Open Task Details",
+    icon: ClipboardList,
+  },
+  { id: "notes", label: "Notes", openLabel: "Open Notes", icon: BookOpen },
+  {
+    id: "reflection",
+    label: "Reflection",
+    openLabel: "Open Reflection",
+    icon: NotebookPen,
+  },
 ];
 
 function GlobalRightSidebarBody({
@@ -57,34 +84,213 @@ function GlobalRightSidebarBody({
   }
 }
 
-/** Expanded header title — rail keeps short "Details" label. */
 function panelHeaderTitle(activePanel: GlobalRightSidebarPanel): string {
-  if (activePanel === "details") {
-    // Habit Details when a habit drawer path exists; tasks use Task Details.
-    return "Task Details";
-  }
   return PANEL_ITEMS.find((item) => item.id === activePanel)?.label ?? "";
 }
 
-/** Full-page destination for drawer panels that have a matching route. */
 function panelPageHref(activePanel: GlobalRightSidebarPanel): string | null {
   if (activePanel === "notes") return "/notes";
   if (activePanel === "reflection") return "/reflection";
   return null;
 }
 
+function UtilityHeaderAction({
+  href,
+  label,
+  onClick,
+  children,
+}: {
+  href?: string;
+  label: string;
+  onClick?: () => void;
+  children: ReactNode;
+}) {
+  const className =
+    "flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground";
+  const style = {
+    width: SHELL_UTILITY_HEADER_ACTION_PX,
+    height: SHELL_UTILITY_HEADER_ACTION_PX,
+  };
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={className}
+        style={style}
+        aria-label={label}
+        title={label}
+      >
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={className}
+      style={style}
+      aria-label={label}
+      title={label}
+    >
+      {children}
+    </button>
+  );
+}
+
+function UtilityRailButtons({
+  activePanel,
+  expanded,
+  onOpenPanel,
+}: {
+  activePanel: GlobalRightSidebarPanel;
+  expanded: boolean;
+  onOpenPanel: (panel: GlobalRightSidebarPanel) => void;
+}) {
+  return (
+    <>
+      {PANEL_ITEMS.map((item) => {
+        const Icon = item.icon;
+        const active = expanded && activePanel === item.id;
+
+        return (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => onOpenPanel(item.id)}
+            className={globalRailButtonClass(active)}
+            style={globalRailButtonStyle()}
+            aria-label={item.openLabel}
+            title={item.label}
+            aria-pressed={active}
+          >
+            <Icon className={GLOBAL_RAIL_ICON_CLASS} style={globalRailIconStyle()} />
+          </button>
+        );
+      })}
+    </>
+  );
+}
+
+function UtilityPanelHeader({
+  activePanel,
+}: {
+  activePanel: GlobalRightSidebarPanel;
+}) {
+  const pageHref = panelPageHref(activePanel);
+
+  return (
+    <header
+      className="flex shrink-0 items-center justify-between gap-3 border-b border-border-subtle"
+      style={{
+        height: SHELL_HEADER_HEIGHT_PX,
+        paddingInline: SHELL_UTILITY_HEADER_PADDING_PX,
+      }}
+    >
+      <h2 className="min-w-0 truncate text-base font-semibold tracking-tight">
+        {panelHeaderTitle(activePanel)}
+      </h2>
+      {pageHref ? (
+        <UtilityHeaderAction
+          href={pageHref}
+          label={`Open ${panelHeaderTitle(activePanel).toLowerCase()} page`}
+        >
+          <ExternalLink
+            style={{
+              width: SHELL_UTILITY_HEADER_ACTION_ICON_PX,
+              height: SHELL_UTILITY_HEADER_ACTION_ICON_PX,
+            }}
+            strokeWidth={1.75}
+          />
+        </UtilityHeaderAction>
+      ) : (
+        <span className="size-8 shrink-0" aria-hidden />
+      )}
+    </header>
+  );
+}
+
+function UtilityRailColumn({
+  activePanel,
+  expanded,
+  onCollapse,
+  onOpenPanel,
+}: {
+  activePanel: GlobalRightSidebarPanel;
+  expanded: boolean;
+  onCollapse: () => void;
+  onOpenPanel: (panel: GlobalRightSidebarPanel) => void;
+}) {
+  return (
+    <aside
+      className={cn(
+        "flex h-full shrink-0 flex-col items-center",
+        workspaceRailBackgroundClass,
+        expanded && "border-l border-border-subtle/60"
+      )}
+      style={{ width: SHELL_UTILITY_RAIL_WIDTH_PX }}
+    >
+      <div
+        className="flex shrink-0 items-center justify-center border-b border-border-subtle"
+        style={{
+          height: SHELL_HEADER_HEIGHT_PX,
+          width: "100%",
+        }}
+      >
+        {expanded ? (
+          <button
+            type="button"
+            onClick={onCollapse}
+            className={globalRailCollapseButtonClass()}
+            style={globalRailCollapseButtonStyle()}
+            aria-label="Collapse utility panel"
+            aria-expanded={true}
+          >
+            <ChevronLeft
+              className={GLOBAL_RAIL_ICON_CLASS}
+              style={globalRailIconStyle()}
+            />
+          </button>
+        ) : null}
+      </div>
+      <div
+        className="flex flex-col items-center"
+        style={{
+          paddingTop: SHELL_UTILITY_RAIL_TOP_PX,
+          gap: SHELL_UTILITY_RAIL_GAP_PX,
+        }}
+      >
+        <UtilityRailButtons
+          activePanel={activePanel}
+          expanded={expanded}
+          onOpenPanel={onOpenPanel}
+        />
+      </div>
+    </aside>
+  );
+}
+
+/**
+ * Unified right utility sidebar — persistent rail + optional elevated panel.
+ */
 export function GlobalRightSidebar() {
   const {
     activePanel,
     expanded,
     width,
-    workplaceHoverMode,
+    overlayMode,
     openPanel,
     toggleExpanded,
-    setWidth,
+    setExpanded,
+    adjustWidthByDelta,
+    persistSidebarWidth,
   } = useGlobalRightSidebar();
 
   const [showBody, setShowBody] = useState(expanded);
+  const [isResizing, setIsResizing] = useState(false);
+  const shellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (expanded) {
@@ -96,134 +302,93 @@ export function GlobalRightSidebar() {
     return () => window.clearTimeout(timer);
   }, [expanded]);
 
-  // Today/workplace: always fixed overlay + permanent collapsed-width spacer
-  // so expand/collapse never reflows the page. Expanded panel covers content.
-  const overlayMode = workplaceHoverMode;
-  const railWidth = expanded
-    ? width
-    : GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX;
+  useEffect(() => {
+    if (!expanded) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      const target = event.target as Node | null;
+      if (target && shellRef.current?.contains(target)) {
+        event.preventDefault();
+        setExpanded(false);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [expanded, setExpanded]);
+
+  const shellWidth = expanded ? width : RAIL_WIDTH_PX;
+  const contentWidthPx = Math.max(0, width - SHELL_UTILITY_RAIL_WIDTH_PX);
+  const widthTransition = isResizing ? "none" : panelShellTransitionStyle();
+  const layoutReservePx = overlayMode
+    ? RAIL_WIDTH_PX
+    : expanded
+      ? width
+      : RAIL_WIDTH_PX;
 
   return (
     <>
-      {overlayMode ? (
-        <div
-          className="h-full shrink-0"
-          style={{ width: GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX }}
-          aria-hidden
-        />
-      ) : null}
-      <aside
+      <div
+        className="h-full shrink-0"
+        style={{
+          width: layoutReservePx,
+          transition: widthTransition,
+        }}
+        aria-hidden
+      />
+
+      <div
+        ref={shellRef}
         className={cn(
-          "flex h-full shrink-0 overflow-hidden border-l border-border-subtle text-foreground",
-          workspaceRailBackgroundClass,
-          overlayMode ? "fixed inset-y-0 right-0 z-40" : "relative"
+          "fixed inset-y-0 right-0 z-[21] flex overflow-hidden",
+          expanded && "relative",
+          !expanded && cn("border-l border-border-subtle", workspaceRailBackgroundClass)
         )}
         style={{
-          width: railWidth,
-          transition: panelWidthTransitionStyle(),
+          width: shellWidth,
+          transition: widthTransition,
         }}
       >
-        <div className="flex h-full w-full min-w-0">
-          {expanded && (
-            <SidebarResizeHandle
-              onResizeDelta={(delta) => setWidth(width + delta)}
-              onResizeEnd={() => undefined}
-            />
-          )}
+        {expanded ? (
+          <SidebarResizeHandle
+            onResizeStart={() => setIsResizing(true)}
+            onResizeDelta={adjustWidthByDelta}
+            onResizeEnd={() => {
+              setIsResizing(false);
+              persistSidebarWidth();
+            }}
+          />
+        ) : null}
 
+        {expanded ? (
           <div
             className={cn(
-              "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
-              expanded ? "opacity-100" : "pointer-events-none w-0 opacity-0"
+              "flow-shell-right-drawer flex min-h-0 min-w-0 flex-1 flex-col",
+              workspaceDrawerPanelClass,
+              showBody ? "opacity-100" : "opacity-0"
             )}
             style={{
-              width: expanded ? Math.max(0, width - GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX) : 0,
-              transition: panelSlideTransitionStyle(),
+              width: contentWidthPx,
+              transition: isResizing ? "none" : panelSlideTransitionStyle(),
             }}
           >
-            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-sidebar-border px-3 py-2.5">
-              <h2 className="text-sm font-semibold tracking-tight">
-                {panelHeaderTitle(activePanel)}
-              </h2>
-              {panelPageHref(activePanel) ? (
-                <Link
-                  href={panelPageHref(activePanel)!}
-                  className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-surface-hover hover:text-muted-foreground"
-                  aria-label={`Open ${panelHeaderTitle(activePanel).toLowerCase()} page`}
-                  title={`Open ${panelHeaderTitle(activePanel).toLowerCase()} page`}
-                >
-                  <ExternalLink className="size-4" />
-                </Link>
+            <UtilityPanelHeader activePanel={activePanel} />
+            <div className="min-h-0 flex-1 overflow-hidden">
+              {showBody ? (
+                <GlobalRightSidebarBody activePanel={activePanel} />
               ) : null}
             </div>
-
-            <div className="min-h-0 flex-1 overflow-hidden">
-              {showBody ? <GlobalRightSidebarBody activePanel={activePanel} /> : null}
-            </div>
           </div>
+        ) : null}
 
-          <div
-            className={cn(
-              "flex h-full shrink-0 flex-col items-center px-1 py-3",
-              // One edge only when collapsed (match left nav). Internal divider only when expanded.
-              expanded && "border-l border-sidebar-border"
-            )}
-            style={{ width: GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX }}
-          >
-            <button
-              type="button"
-              onClick={toggleExpanded}
-              className={cn("group/panel-toggle", globalRailButtonClass())}
-              aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
-              aria-expanded={expanded}
-            >
-              {expanded ? (
-                <>
-                  <PanelRightClose
-                    className={globalRailPrimaryIconClass("sm")}
-                    aria-hidden
-                  />
-                  <PanelRightClose
-                    className={globalRailHoverIconClass("sm")}
-                    aria-hidden
-                  />
-                </>
-              ) : (
-                <>
-                  <PanelRightOpen
-                    className={globalRailPrimaryIconClass("sm")}
-                    aria-hidden
-                  />
-                  <PanelRightOpen
-                    className={globalRailHoverIconClass("sm")}
-                    aria-hidden
-                  />
-                </>
-              )}
-            </button>
-
-            <div className="mt-3 flex w-full flex-col items-center gap-2.5 border-t border-sidebar-border pt-3">
-              {PANEL_ITEMS.map((item) => {
-                const Icon = item.icon;
-                const active = activePanel === item.id;
-
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => openPanel(item.id)}
-                    className={globalRailButtonClass(active)}
-                    aria-label={item.label}
-                    title={item.label}
-                  >
-                    <Icon className="size-4.5" />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </aside>
+        <UtilityRailColumn
+          activePanel={activePanel}
+          expanded={expanded}
+          onCollapse={toggleExpanded}
+          onOpenPanel={openPanel}
+        />
+      </div>
     </>
   );
 }

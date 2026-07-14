@@ -17,6 +17,7 @@
   /* v3 semantic surfaces */
   --color-surface-canvas: var(--surface-canvas);
   --color-surface-nav: var(--surface-nav);
+  --color-surface-drawer: var(--surface-drawer);
   --color-surface-base: var(--surface-base);
   --color-surface-raised: var(--surface-raised);
   --color-surface-overlay: var(--surface-overlay);
@@ -107,6 +108,7 @@
   /* v3 names stubbed to light L0–L6 so utilities resolve if .dark is absent */
   --surface-canvas: oklch(0.985 0.004 265);
   --surface-nav: oklch(0.975 0.005 265);
+  --surface-drawer: color-mix(in oklab, var(--surface-canvas) 97%, black 3%);
   --surface-base: oklch(1 0 0);
   --surface-raised: oklch(1 0 0);
   --surface-overlay: oklch(1 0 0);
@@ -119,6 +121,37 @@
   --primary-subtle: oklch(0.58 0.1 265 / 8%);
   --primary-soft: oklch(0.58 0.1 265 / 12%);
   --primary-medium: oklch(0.58 0.1 265 / 20%);
+
+  /* Application shell — application-shell-navigation-spec */
+  --shell-header-height: 68px;
+  --topbar-height: var(--shell-header-height);
+  --left-rail-width: 88px;
+  --left-sidebar-expanded-width: 260px;
+  --right-rail-width: 64px;
+  --sidebar-header-height: var(--shell-header-height);
+  --nav-row-height: 48px;
+  --nav-row-gap: 8px;
+  --nav-icon-size: 18px;
+  --nav-button-size: 48px;
+  --utility-hit-size: 40px;
+  --utility-active-size: 40px;
+  --utility-panel-width: 500px;
+  --main-workspace-min-width: 720px;
+  --rail-button-gap: 8px;
+  --secondary-control-size: 36px;
+  --brand-logo-size: 36px;
+  --nav-radius: 12px;
+  --active-nav-radius: 12px;
+  --shell-border-width: 1px;
+  --active-indicator-width: 3px;
+  --active-indicator-height: 30px;
+  --shadow-right-drawer: -12px 0 32px rgba(0, 0, 0, 0.18),
+    -2px 0 8px rgba(0, 0, 0, 0.1);
+  /* Legacy aliases */
+  --sidebar-collapsed-width: var(--left-rail-width);
+  --sidebar-expanded-width: var(--left-sidebar-expanded-width);
+  --utility-rail-width: var(--right-rail-width);
+  --collapsed-nav-button-size: var(--nav-button-size);
 
   /* Level 0–5 */
   --surface-app: oklch(0.985 0.004 265);
@@ -212,6 +245,7 @@
   /* v3 semantic surfaces */
   --surface-canvas: #080e1b;
   --surface-nav: #070c18;
+  --surface-drawer: color-mix(in oklab, var(--surface-canvas) 94%, white 6%);
   --surface-base: #0d1423;
   --surface-raised: #121b2c;
   --surface-overlay: #151e30;
@@ -303,6 +337,8 @@
   --shadow-md: var(--shadow-overlay);
   --shadow-lg: var(--shadow-modal);
   --shadow-primary: none;
+  --shadow-right-drawer: -12px 0 32px rgba(0, 0, 0, 0.22),
+    -2px 0 8px rgba(0, 0, 0, 0.12);
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   --radius: 0.5rem; /* 8px medium default */
 
@@ -340,6 +376,49 @@
   .flow-surface-nav {
     background: var(--surface-nav);
     color: var(--text-secondary);
+  }
+
+  .flow-shell-topbar {
+    height: var(--topbar-height);
+    min-height: var(--topbar-height);
+    padding-block: 0;
+  }
+
+  .flow-shell-nav-active-indicator {
+    position: absolute;
+    top: 50%;
+    width: var(--active-indicator-width);
+    height: var(--active-indicator-height);
+    transform: translateY(-50%);
+    border-radius: 0 4px 4px 0;
+    background: var(--primary);
+  }
+
+  /* Persistent utility rail — structural nav surface. */
+  .flow-shell-utility-sidebar {
+    background: var(--surface-nav);
+  }
+
+  /* Elevated utility panel — layered beside the rail. */
+  .flow-shell-right-drawer {
+    background: var(--surface-drawer);
+    border-left: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-right-drawer);
+  }
+
+  .flow-shell-nav-tooltip {
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.95);
+    transition:
+      opacity 150ms ease-out 500ms,
+      transform 150ms ease-out 500ms;
+  }
+
+  .group\/nav:hover .flow-shell-nav-tooltip,
+  .group\/account:hover .flow-shell-nav-tooltip {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
   }
 
   .flow-surface-base {
@@ -415,9 +494,16 @@
     background: var(--primary-subtle);
   }
 
-  /* Workspace canvas — continuous with application background */
+  /* Workspace canvas — continuous with application background; scroll without chrome */
   .flow-workspace {
     background: var(--surface-canvas);
+    scrollbar-width: none;
+  }
+
+  .flow-workspace::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 }
 
@@ -531,11 +617,82 @@
   *::-webkit-scrollbar-button,
   *::-webkit-scrollbar-button:single-button,
   *::-webkit-scrollbar-button:vertical:start:decrement,
-  *::-webkit-scrollbar-button:vertical:end:increment {
-    display: none;
-    width: 0;
-    height: 0;
+  *::-webkit-scrollbar-button:vertical:start:increment,
+  *::-webkit-scrollbar-button:vertical:end:decrement,
+  *::-webkit-scrollbar-button:vertical:end:increment,
+  *::-webkit-scrollbar-button:horizontal:start:decrement,
+  *::-webkit-scrollbar-button:horizontal:start:increment,
+  *::-webkit-scrollbar-button:horizontal:end:decrement,
+  *::-webkit-scrollbar-button:horizontal:end:increment {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+    border: none !important;
   }
+}
+
+/* Scrollable, no visible scrollbar (page / workspace columns). */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Nested panels: thin thumb, hover-revealed, no arrow buttons. */
+.scrollbar-subtle {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.scrollbar-subtle:hover,
+.scrollbar-subtle:focus-within {
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 28%, transparent)
+    transparent;
+}
+
+.scrollbar-subtle::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-subtle::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-subtle::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9999px;
+}
+
+.scrollbar-subtle:hover::-webkit-scrollbar-thumb,
+.scrollbar-subtle:focus-within::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--muted-foreground) 28%, transparent);
+}
+
+.scrollbar-subtle::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--muted-foreground) 42%, transparent);
+}
+
+.scrollbar-subtle::-webkit-scrollbar-button,
+.scrollbar-subtle::-webkit-scrollbar-button:single-button,
+.scrollbar-subtle::-webkit-scrollbar-button:vertical:start:decrement,
+.scrollbar-subtle::-webkit-scrollbar-button:vertical:start:increment,
+.scrollbar-subtle::-webkit-scrollbar-button:vertical:end:decrement,
+.scrollbar-subtle::-webkit-scrollbar-button:vertical:end:increment,
+.scrollbar-subtle::-webkit-scrollbar-button:horizontal:start:decrement,
+.scrollbar-subtle::-webkit-scrollbar-button:horizontal:start:increment,
+.scrollbar-subtle::-webkit-scrollbar-button:horizontal:end:decrement,
+.scrollbar-subtle::-webkit-scrollbar-button:horizontal:end:increment {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 .kanban-board-scroll {
@@ -588,12 +745,17 @@
 
 .workplace-timeline-scroll {
   scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.workplace-timeline-scroll:hover,
+.workplace-timeline-scroll:focus-within {
   scrollbar-color: color-mix(in oklch, var(--muted-foreground) 32%, transparent)
     transparent;
 }
 
 .workplace-timeline-scroll::-webkit-scrollbar {
-  width: 6px;
+  width: 3px;
 }
 
 .workplace-timeline-scroll::-webkit-scrollbar-track {
@@ -601,12 +763,23 @@
 }
 
 .workplace-timeline-scroll::-webkit-scrollbar-thumb {
-  background: color-mix(in oklch, var(--muted-foreground) 28%, transparent);
+  background: transparent;
   border-radius: 9999px;
+}
+
+.workplace-timeline-scroll:hover::-webkit-scrollbar-thumb,
+.workplace-timeline-scroll:focus-within::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--muted-foreground) 28%, transparent);
 }
 
 .workplace-timeline-scroll::-webkit-scrollbar-thumb:hover {
   background: color-mix(in oklch, var(--muted-foreground) 42%, transparent);
+}
+
+.workplace-timeline-scroll::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .time-picker-column {

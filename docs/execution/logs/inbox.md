@@ -48,6 +48,7 @@ inbox (scratch)
 
 | Idea | Runbook / spec | Session / WP |
 |------|----------------|--------------|
+| Application shell: left primary nav + right utility rail + panels | [application-shell-navigation-spec.md](../../review/design/application-shell-navigation-spec.md) · [m2-application-shell-navigation.md](../runbooks/m2-application-shell-navigation.md) | Sessions 1–5 on `tweak/today-focus-queue-layout` |
 | Today visual hierarchy + Next Up Queue (PLAN→COMMIT→EXECUTE) | [today-page-hierarchy-refinement-spec.md](../../review/design/today-page-hierarchy-refinement-spec.md) · [m2-today-hierarchy-refinement.md](../runbooks/m2-today-hierarchy-refinement.md) | Sessions 1–9; founder gate before Session 5 |
 | Unmerged branch queue (founder-led P1→P7) | [unmerged-branch-queue.md](./unmerged-branch-queue.md) | **P1 done;** **P2 next:** Today V3 Session 6 |
 | Schedule Break modal — future break reminders on quick focus (not Pomodoro) | [schedule-break-modal-spec.md](../../review/design/schedule-break-modal-spec.md) | Shipped core; review follow-ups only |

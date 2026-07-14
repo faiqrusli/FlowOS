@@ -31,7 +31,8 @@ This folder is the index for **how FlowOS ships right now**. Strategy lives in t
 | M2 — Visual Design v2.0 | [m2-visual-design-v2.md](./runbooks/m2-visual-design-v2.md) | Historical baseline runbook; later sessions discarded |
 | M2 — Global navigation | [m2-global-navigation.md](./runbooks/m2-global-navigation.md) | Ready — deferred |
 | M2 — Today UX polish | [m2-today-ux-polish.md](./runbooks/m2-today-ux-polish.md) | **Complete** — production sign-off 2026-07-05 |
-| M2 — Today hierarchy refinement | [m2-today-hierarchy-refinement.md](./runbooks/m2-today-hierarchy-refinement.md) | **Ready** — refine current Today (Focus→Queue→Timeline); [spec](../review/design/today-page-hierarchy-refinement-spec.md) |
+| M2 — Today hierarchy refinement | [m2-today-hierarchy-refinement.md](./runbooks/m2-today-hierarchy-refinement.md) | **In progress** — Focus→Queue→Timeline on `tweak/today-focus-queue-layout`; [spec](../review/design/today-page-hierarchy-refinement-spec.md) |
+| M2 — Application shell navigation | [m2-application-shell-navigation.md](./runbooks/m2-application-shell-navigation.md) | **Ready** — left nav + right utility rail/panels; same branch; [spec](../review/design/application-shell-navigation-spec.md) |
 | M3 — First Strangers | (masterplan Step 2) | Not started — recruiting prep underway |
 
 **M2 recruiting:** [recruiting-pipeline.md](./ops/recruiting-pipeline.md)

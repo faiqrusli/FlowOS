@@ -37,6 +37,12 @@ Read each phase in order: **review → spec → implementation → post-review**
 | [AUDIT_HISTORY.md](../../archive/design/july-3/AUDIT_HISTORY.md) | Decision rationale index |
 | [CHANGELOG.md](../../archive/design/july-3/CHANGELOG.md) | Chronological design evolution |
 
+### Application shell (July 2026)
+
+| Document | Source canvas | Role |
+|----------|---------------|------|
+| [application-shell-navigation-spec.md](./application-shell-navigation-spec.md) | — | Final shell: left primary nav + right utility rail + panels — [runbook](../../execution/runbooks/m2-application-shell-navigation.md) |
+
 ### Today page (July 2026)
 
 | Document | Source canvas | Role |

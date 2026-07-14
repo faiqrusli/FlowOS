@@ -10,7 +10,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { usePathname } from "next/navigation";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
   createBlankNoteInDailyNotes,
@@ -19,8 +18,7 @@ import {
 import {
   GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX,
   GLOBAL_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX,
-  GLOBAL_RIGHT_SIDEBAR_MAX_WIDTH_PX,
-  GLOBAL_RIGHT_SIDEBAR_MIN_WIDTH_PX,
+  clampSidebarWidth,
   readPersistedSidebarExpanded,
   readPersistedSidebarPanel,
   readPersistedSidebarWidth,
@@ -29,10 +27,35 @@ import {
   writePersistedSidebarWidth,
   type GlobalRightSidebarPanel,
 } from "@/lib/global-right-sidebar-persistence";
+import { getSidebarCollapsed } from "@/lib/sidebar-preference";
+import {
+  SHELL_MAIN_WORKSPACE_MIN_WIDTH_PX,
+  SHELL_SIDEBAR_COLLAPSED_WIDTH_PX,
+  SHELL_SIDEBAR_EXPANDED_WIDTH_PX,
+} from "@/lib/shell-dimensions";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 import type { Note } from "@/types/notes";
 
 const FLOATING_NOTES_STORAGE_KEY = "flowos.floating-notes";
+export const SHELL_LAYOUT_EVENT = "flowos-shell-layout";
+
+export function dispatchShellLayoutChange() {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(SHELL_LAYOUT_EVENT));
+}
+
+function computeOverlayMode(expanded: boolean, panelWidth: number): boolean {
+  if (typeof window === "undefined") return false;
+  const leftCollapsed = getSidebarCollapsed();
+  const leftWidth = leftCollapsed
+    ? SHELL_SIDEBAR_COLLAPSED_WIDTH_PX
+    : SHELL_SIDEBAR_EXPANDED_WIDTH_PX;
+  const rightReserve = expanded
+    ? panelWidth
+    : GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX;
+  const remaining = window.innerWidth - leftWidth - rightReserve;
+  return remaining < SHELL_MAIN_WORKSPACE_MIN_WIDTH_PX;
+}
 
 export type TaskDetailSource = {
   groups: TaskGroupWithTasks[];
@@ -54,7 +77,9 @@ type GlobalRightSidebarContextValue = {
   width: number;
   hoverRevealed: boolean;
   setHoverRevealed: (value: boolean) => void;
+  /** @deprecated Use overlayMode — responsive min-workspace overlay */
   workplaceHoverMode: boolean;
+  overlayMode: boolean;
   visibleWidthPx: number;
   selectedTaskId: string | null;
   selectedNoteId: string | null;
@@ -65,6 +90,8 @@ type GlobalRightSidebarContextValue = {
   toggleExpanded: () => void;
   setExpanded: (expanded: boolean) => void;
   setWidth: (width: number) => void;
+  adjustWidthByDelta: (delta: number) => void;
+  persistSidebarWidth: () => void;
   selectTask: (taskId: string | null, options?: SelectTaskOptions) => void;
   selectNote: (noteId: string | null, options?: { focusTitle?: boolean }) => void;
   clearFocusTitleNoteId: () => void;
@@ -95,16 +122,13 @@ export function GlobalRightSidebarProvider({
 }: {
   children: ReactNode;
 }) {
-  const pathname = usePathname();
-  const workplaceHoverMode =
-    pathname === "/" || pathname === "/workplace";
-
   const [activePanel, setActivePanel] = useState<GlobalRightSidebarPanel>(
     readPersistedSidebarPanel
   );
   const [expanded, setExpandedState] = useState(readPersistedSidebarExpanded);
   const [width, setWidthState] = useState(GLOBAL_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX);
   const [hoverRevealed, setHoverRevealed] = useState(false);
+  const [overlayMode, setOverlayMode] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [focusTitleNoteId, setFocusTitleNoteId] = useState<string | null>(null);
@@ -115,10 +139,33 @@ export function GlobalRightSidebarProvider({
   const workplaceTaskHandlerRef = useRef<((task: Task) => void) | null>(null);
   const [taskDetailSource, setTaskDetailSource] =
     useState<TaskDetailSource | null>(null);
+  const expandedRef = useRef(expanded);
+  const activePanelRef = useRef(activePanel);
+
+  useEffect(() => {
+    expandedRef.current = expanded;
+  }, [expanded]);
+
+  useEffect(() => {
+    activePanelRef.current = activePanel;
+  }, [activePanel]);
 
   useEffect(() => {
     setWidthState(readPersistedSidebarWidth());
   }, []);
+
+  useEffect(() => {
+    function recompute() {
+      setOverlayMode(computeOverlayMode(expanded, width));
+    }
+    recompute();
+    window.addEventListener("resize", recompute);
+    window.addEventListener(SHELL_LAYOUT_EVENT, recompute);
+    return () => {
+      window.removeEventListener("resize", recompute);
+      window.removeEventListener(SHELL_LAYOUT_EVENT, recompute);
+    };
+  }, [expanded, width]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -144,6 +191,7 @@ export function GlobalRightSidebarProvider({
     setExpandedState(value);
     writePersistedSidebarExpanded(value);
     if (value) setHoverRevealed(false);
+    dispatchShellLayoutChange();
   }, []);
 
   const toggleExpanded = useCallback(() => {
@@ -151,21 +199,36 @@ export function GlobalRightSidebarProvider({
       const next = !previous;
       writePersistedSidebarExpanded(next);
       if (next) setHoverRevealed(false);
+      queueMicrotask(() => dispatchShellLayoutChange());
       return next;
     });
   }, []);
 
   const setWidth = useCallback((nextWidth: number) => {
-    const clamped = Math.min(
-      GLOBAL_RIGHT_SIDEBAR_MAX_WIDTH_PX,
-      Math.max(GLOBAL_RIGHT_SIDEBAR_MIN_WIDTH_PX, nextWidth)
-    );
+    const clamped = clampSidebarWidth(nextWidth);
     setWidthState(clamped);
     writePersistedSidebarWidth(clamped);
+    dispatchShellLayoutChange();
+  }, []);
+
+  const adjustWidthByDelta = useCallback((delta: number) => {
+    setWidthState((previous) => clampSidebarWidth(previous + delta));
+  }, []);
+
+  const persistSidebarWidth = useCallback(() => {
+    setWidthState((current) => {
+      writePersistedSidebarWidth(current);
+      dispatchShellLayoutChange();
+      return current;
+    });
   }, []);
 
   const openPanel = useCallback(
     (panel: GlobalRightSidebarPanel) => {
+      if (expandedRef.current && activePanelRef.current === panel) {
+        setExpanded(false);
+        return;
+      }
       setActivePanel(panel);
       writePersistedSidebarPanel(panel);
       setExpanded(true);
@@ -305,9 +368,8 @@ export function GlobalRightSidebarProvider({
     workplaceTaskHandlerRef.current?.(task);
   }, []);
 
-  // Today/workplace: always reserve collapsed rail width in layout so
-  // expand/collapse overlay does not reflow the page. Other routes consume full width.
-  const visibleWidthPx = workplaceHoverMode
+  // Overlay: reserve rail only. Push: reserve full expanded width.
+  const visibleWidthPx = overlayMode
     ? GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX
     : expanded
       ? width
@@ -320,7 +382,8 @@ export function GlobalRightSidebarProvider({
       width,
       hoverRevealed,
       setHoverRevealed,
-      workplaceHoverMode,
+      workplaceHoverMode: overlayMode,
+      overlayMode,
       visibleWidthPx,
       selectedTaskId,
       selectedNoteId,
@@ -331,6 +394,8 @@ export function GlobalRightSidebarProvider({
       toggleExpanded,
       setExpanded,
       setWidth,
+      adjustWidthByDelta,
+      persistSidebarWidth,
       selectTask,
       selectNote,
       clearFocusTitleNoteId,
@@ -355,7 +420,7 @@ export function GlobalRightSidebarProvider({
       expanded,
       width,
       hoverRevealed,
-      workplaceHoverMode,
+      overlayMode,
       visibleWidthPx,
       selectedTaskId,
       selectedNoteId,
@@ -366,6 +431,8 @@ export function GlobalRightSidebarProvider({
       toggleExpanded,
       setExpanded,
       setWidth,
+      adjustWidthByDelta,
+      persistSidebarWidth,
       selectTask,
       selectNote,
       clearFocusTitleNoteId,
