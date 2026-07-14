@@ -1,4 +1,4 @@
-export type ThemePreference = "light" | "dark" | "system";
+export type ThemePreference = "dark";
 
 export type WeekStart = "monday" | "sunday";
 
@@ -84,15 +84,9 @@ export function saveSettingsPreferences(preferences: SettingsPreferences): void 
 
 const THEME_KEY = "flowos.theme";
 
+/** FlowOS is dark-only — always resolve dark regardless of stored legacy values. */
 export function loadThemePreference(): ThemePreference {
-  if (typeof window === "undefined") return "system";
-
-  const stored = window.localStorage.getItem(THEME_KEY);
-  if (stored === "light" || stored === "dark" || stored === "system") {
-    return stored;
-  }
-
-  return "system";
+  return "dark";
 }
 
 export function saveThemePreference(theme: ThemePreference): void {
@@ -100,12 +94,6 @@ export function saveThemePreference(theme: ThemePreference): void {
   window.localStorage.setItem(THEME_KEY, theme);
 }
 
-export function resolveTheme(theme: ThemePreference): "light" | "dark" {
-  if (theme === "system") {
-    if (typeof window === "undefined") return "light";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  }
-  return theme;
+export function resolveTheme(_theme?: ThemePreference): "dark" {
+  return "dark";
 }

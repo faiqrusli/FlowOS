@@ -6,65 +6,53 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
   type ReactNode,
 } from "react";
-import {
-  loadThemePreference,
-  resolveTheme,
-  saveThemePreference,
-  type ThemePreference,
-} from "@/lib/settings-preferences";
+import { saveThemePreference } from "@/lib/settings-preferences";
 
 type ThemeContextValue = {
-  theme: ThemePreference;
-  resolvedTheme: "light" | "dark";
-  setTheme: (theme: ThemePreference) => void;
+  theme: "dark";
+  resolvedTheme: "dark";
+  setTheme: (theme: "dark") => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function applyThemeClass(resolved: "light" | "dark") {
-  document.documentElement.classList.toggle("dark", resolved === "dark");
+function forceDarkClass() {
+  document.documentElement.classList.add("dark");
+  document.documentElement.classList.remove("light");
 }
 
+/**
+ * FlowOS is dark-only. Keep `.dark` on <html> and ignore legacy light/system prefs
+ * so localhost and production resolve the same surface tokens.
+ */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemePreference>("system");
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
-
   useEffect(() => {
-    const stored = loadThemePreference();
-    setThemeState(stored);
-    const resolved = resolveTheme(stored);
-    setResolvedTheme(resolved);
-    applyThemeClass(resolved);
+    forceDarkClass();
+    try {
+      const stored = window.localStorage.getItem("flowos.theme");
+      if (stored !== "dark") {
+        window.localStorage.setItem("flowos.theme", "dark");
+      }
+    } catch {
+      // ignore storage errors
+    }
   }, []);
 
-  useEffect(() => {
-    if (theme !== "system") return;
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = () => {
-      const resolved = resolveTheme("system");
-      setResolvedTheme(resolved);
-      applyThemeClass(resolved);
-    };
-
-    media.addEventListener("change", handleChange);
-    return () => media.removeEventListener("change", handleChange);
-  }, [theme]);
-
-  const setTheme = useCallback((next: ThemePreference) => {
-    setThemeState(next);
-    saveThemePreference(next);
-    const resolved = resolveTheme(next);
-    setResolvedTheme(resolved);
-    applyThemeClass(resolved);
+  const setTheme = useCallback((_theme: "dark") => {
+    forceDarkClass();
+    saveThemePreference("dark");
   }, []);
 
   const value = useMemo(
-    () => ({ theme, resolvedTheme, setTheme }),
-    [theme, resolvedTheme, setTheme]
+    () =>
+      ({
+        theme: "dark",
+        resolvedTheme: "dark",
+        setTheme,
+      }) satisfies ThemeContextValue,
+    [setTheme]
   );
 
   return (
