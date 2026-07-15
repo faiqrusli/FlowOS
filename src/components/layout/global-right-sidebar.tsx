@@ -24,7 +24,6 @@ import {
   globalRailButtonClass,
   globalRailButtonStyle,
   globalRailCollapseButtonClass,
-  globalRailCollapseButtonStyle,
   globalRailIconStyle,
 } from "@/lib/panel-toggle-styles";
 import {
@@ -34,6 +33,7 @@ import {
 } from "@/lib/panel-layout-animation";
 import {
   SHELL_HEADER_HEIGHT_PX,
+  SHELL_SECONDARY_CONTROL_PX,
   SHELL_UTILITY_HEADER_ACTION_ICON_PX,
   SHELL_UTILITY_HEADER_ACTION_PX,
   SHELL_UTILITY_HEADER_PADDING_PX,
@@ -193,9 +193,11 @@ function UtilityPanelHeader({
 
   return (
     <header
-      className="flex shrink-0 items-center justify-between gap-3 border-b border-border-subtle"
+      className="box-border flex shrink-0 items-center justify-between gap-3 border-b border-border-subtle"
       style={{
         height: SHELL_HEADER_HEIGHT_PX,
+        minHeight: SHELL_HEADER_HEIGHT_PX,
+        maxHeight: SHELL_HEADER_HEIGHT_PX,
         paddingInline: SHELL_UTILITY_HEADER_PADDING_PX,
       }}
     >
@@ -242,11 +244,13 @@ function UtilityRailColumn({
       )}
       style={{ width: SHELL_UTILITY_RAIL_WIDTH_PX }}
     >
-      {/* Shared 68px header — expand when closed, collapse when open */}
+      {/* Shared 64px header — expand when closed, collapse when open */}
       <div
-        className="flex shrink-0 items-center justify-center border-b border-border-subtle"
+        className="box-border flex shrink-0 items-center justify-center border-b border-border-subtle"
         style={{
           height: SHELL_HEADER_HEIGHT_PX,
+          minHeight: SHELL_HEADER_HEIGHT_PX,
+          maxHeight: SHELL_HEADER_HEIGHT_PX,
           width: "100%",
         }}
       >
@@ -255,7 +259,11 @@ function UtilityRailColumn({
             type="button"
             onClick={onCollapse}
             className={globalRailCollapseButtonClass()}
-            style={globalRailCollapseButtonStyle()}
+            style={{
+              width: SHELL_SECONDARY_CONTROL_PX,
+              height: SHELL_SECONDARY_CONTROL_PX,
+              borderRadius: 10,
+            }}
             aria-label="Collapse utility panel"
             aria-expanded={true}
           >
@@ -269,7 +277,11 @@ function UtilityRailColumn({
             type="button"
             onClick={onExpand}
             className={globalRailCollapseButtonClass()}
-            style={globalRailCollapseButtonStyle()}
+            style={{
+              width: SHELL_SECONDARY_CONTROL_PX,
+              height: SHELL_SECONDARY_CONTROL_PX,
+              borderRadius: 10,
+            }}
             aria-label="Expand utility panel"
             aria-expanded={false}
           >

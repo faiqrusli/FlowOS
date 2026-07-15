@@ -24,7 +24,10 @@ import {
 import {
   SHELL_ACTIVE_INDICATOR_HEIGHT_PX,
   SHELL_BRAND_GAP_PX,
+  SHELL_BRAND_LETTER_PX,
   SHELL_BRAND_LOGO_PX,
+  SHELL_BRAND_LOGO_RADIUS_PX,
+  SHELL_BRAND_WORDMARK_PX,
   SHELL_HEADER_HEIGHT_PX,
   SHELL_NAV_ICON_COLUMN_PX,
   SHELL_NAV_ICON_PX,
@@ -72,12 +75,19 @@ function SidebarLogoMark({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-[10px] bg-sidebar-primary",
+        "box-border flex shrink-0 items-center justify-center bg-sidebar-primary",
         className
       )}
-      style={{ width: SHELL_BRAND_LOGO_PX, height: SHELL_BRAND_LOGO_PX }}
+      style={{
+        width: SHELL_BRAND_LOGO_PX,
+        height: SHELL_BRAND_LOGO_PX,
+        borderRadius: SHELL_BRAND_LOGO_RADIUS_PX,
+      }}
     >
-      <span className="text-sm font-semibold tracking-tight text-sidebar-primary-foreground">
+      <span
+        className="font-semibold leading-none tracking-tight text-sidebar-primary-foreground"
+        style={{ fontSize: SHELL_BRAND_LETTER_PX }}
+      >
         F
       </span>
     </div>
@@ -151,11 +161,15 @@ function SidebarBrand({
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center border-b border-border-subtle",
+        "box-border flex shrink-0 items-center border-b border-border-subtle",
         sidebarNavGeometryTransitionClass(),
         !collapsed && "pr-3"
       )}
-      style={{ height: SHELL_HEADER_HEIGHT_PX }}
+      style={{
+        height: SHELL_HEADER_HEIGHT_PX,
+        minHeight: SHELL_HEADER_HEIGHT_PX,
+        maxHeight: SHELL_HEADER_HEIGHT_PX,
+      }}
     >
       <div
         className="flex shrink-0 items-center justify-center"
@@ -165,15 +179,19 @@ function SidebarBrand({
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="group/logo relative flex items-center justify-center rounded-[10px]"
+            className="group/logo relative flex items-center justify-center"
             style={{
               width: SHELL_BRAND_LOGO_PX,
               height: SHELL_BRAND_LOGO_PX,
+              borderRadius: SHELL_BRAND_LOGO_RADIUS_PX,
             }}
             aria-label="Expand sidebar"
           >
             <SidebarLogoMark className="transition-opacity duration-150 group-hover/logo:opacity-0" />
-            <span className="absolute inset-0 flex items-center justify-center rounded-[10px] border border-sidebar-border bg-sidebar-accent/60 opacity-0 transition-opacity duration-150 group-hover/logo:opacity-100">
+            <span
+              className="absolute inset-0 flex items-center justify-center border border-sidebar-border bg-sidebar-accent/60 opacity-0 transition-opacity duration-150 group-hover/logo:opacity-100"
+              style={{ borderRadius: SHELL_BRAND_LOGO_RADIUS_PX }}
+            >
               <SidebarToggleIcon />
             </span>
           </button>
@@ -187,13 +205,16 @@ function SidebarBrand({
           "flex items-center overflow-hidden",
           sidebarNavGeometryTransitionClass(),
           collapsed
-            ? "w-0 min-w-0 flex-none opacity-0 pointer-events-none"
+            ? "pointer-events-none w-0 min-w-0 flex-none opacity-0"
             : "min-w-0 flex-1"
         )}
         style={{ gap: SHELL_BRAND_GAP_PX }}
         aria-hidden={collapsed}
       >
-        <p className="min-w-0 flex-1 truncate text-[19px] font-semibold leading-none tracking-tight text-sidebar-foreground">
+        <p
+          className="min-w-0 flex-1 truncate font-semibold leading-none tracking-tight text-sidebar-foreground"
+          style={{ fontSize: SHELL_BRAND_WORDMARK_PX, fontWeight: 600 }}
+        >
           FlowOS
         </p>
         <button
@@ -574,7 +595,7 @@ export function MobileSidebarTrigger({ onOpen }: MobileSidebarTriggerProps) {
       </button>
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
         <SidebarLogoMark />
-        <span className="truncate text-[19px] font-semibold tracking-tight">
+        <span className="truncate font-semibold tracking-tight" style={{ fontSize: SHELL_BRAND_WORDMARK_PX }}>
           FlowOS
         </span>
       </div>

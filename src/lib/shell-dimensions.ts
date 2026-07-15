@@ -1,7 +1,7 @@
 /** Frozen application shell geometry — application-shell-navigation-spec. */
 
 /** Shared header band across brand cell, main status bar, utility headers. */
-export const SHELL_HEADER_HEIGHT_PX = 68;
+export const SHELL_HEADER_HEIGHT_PX = 64;
 /** @deprecated Use SHELL_HEADER_HEIGHT_PX */
 export const SHELL_TOPBAR_HEIGHT_PX = SHELL_HEADER_HEIGHT_PX;
 /** @deprecated Use SHELL_HEADER_HEIGHT_PX */
@@ -21,7 +21,8 @@ export const SHELL_UTILITY_HEADER_HEIGHT_PX = SHELL_HEADER_HEIGHT_PX;
 export const SHELL_UTILITY_BUTTON_PX = 40;
 export const SHELL_UTILITY_RAIL_GAP_PX = 8;
 export const SHELL_UTILITY_RAIL_TOP_PX = 14;
-export const SHELL_UTILITY_HEADER_ACTION_PX = 32;
+/** Panel header + rail expand/collapse — matches left sidebar secondary control. */
+export const SHELL_UTILITY_HEADER_ACTION_PX = 36;
 export const SHELL_UTILITY_HEADER_ACTION_ICON_PX = 18;
 export const SHELL_UTILITY_HEADER_PADDING_PX = 22;
 export const SHELL_UTILITY_ACTIVE_RADIUS_PX = 10;
@@ -35,7 +36,10 @@ export const SHELL_UTILITY_ACTIVE_PX = SHELL_UTILITY_BUTTON_PX;
 export const SHELL_RAIL_BUTTON_GAP_PX = SHELL_UTILITY_RAIL_GAP_PX;
 export const SHELL_UTILITY_COLLAPSE_AFTER_GAP_PX = SHELL_UTILITY_RAIL_GAP_PX;
 export const SHELL_SECONDARY_CONTROL_PX = 36;
-export const SHELL_BRAND_LOGO_PX = 36;
+export const SHELL_BRAND_LOGO_PX = 40;
+export const SHELL_BRAND_LOGO_RADIUS_PX = 12;
+export const SHELL_BRAND_LETTER_PX = 16;
+export const SHELL_BRAND_WORDMARK_PX = 20;
 export const SHELL_BRAND_GAP_PX = 12;
 
 /** Left nav vertical rhythm — same skeleton collapsed and expanded */

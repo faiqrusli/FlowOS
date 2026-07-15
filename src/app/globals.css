@@ -123,7 +123,7 @@
   --primary-medium: oklch(0.58 0.1 265 / 20%);
 
   /* Application shell — application-shell-navigation-spec */
-  --shell-header-height: 68px;
+  --shell-header-height: 64px;
   --topbar-height: var(--shell-header-height);
   --left-rail-width: 88px;
   --left-sidebar-expanded-width: 288px;
@@ -139,7 +139,7 @@
   --main-workspace-min-width: 720px;
   --rail-button-gap: 8px;
   --secondary-control-size: 36px;
-  --brand-logo-size: 36px;
+  --brand-logo-size: 40px;
   --nav-radius: 12px;
   --active-nav-radius: 12px;
   --shell-border-width: 1px;
@@ -379,8 +379,10 @@
   }
 
   .flow-shell-topbar {
-    height: var(--topbar-height);
-    min-height: var(--topbar-height);
+    box-sizing: border-box;
+    height: var(--shell-header-height);
+    min-height: var(--shell-header-height);
+    max-height: var(--shell-header-height);
     padding-block: 0;
   }
 

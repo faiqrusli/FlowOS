@@ -27,8 +27,12 @@ export function TodayStatusRail({
 
   return (
     <header
-      className="flow-surface-nav flow-shell-topbar flex shrink-0 items-center overflow-hidden border-b border-border-subtle px-5"
-      style={{ height: SHELL_HEADER_HEIGHT_PX }}
+      className="flow-surface-nav flow-shell-topbar box-border flex shrink-0 items-center overflow-hidden border-b border-border-subtle px-5"
+      style={{
+        height: SHELL_HEADER_HEIGHT_PX,
+        minHeight: SHELL_HEADER_HEIGHT_PX,
+        maxHeight: SHELL_HEADER_HEIGHT_PX,
+      }}
     >
       <div className="flex min-w-0 items-center gap-2 whitespace-nowrap text-sm leading-none text-muted-foreground">
         <span className="font-semibold text-foreground">{dateLabel}</span>
