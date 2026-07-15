@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { Menu, PanelLeft, X } from "lucide-react";
+import { useEffect, useMemo, useState, type ComponentType } from "react";
+import { Menu, PanelLeft, X, type LucideProps } from "lucide-react";
 import { sidebarSections } from "@/config/sidebar-navigation";
 import { SidebarAccountMenu } from "@/components/sidebar/sidebar-account-menu";
 import {
@@ -26,8 +26,10 @@ import {
   SHELL_BRAND_GAP_PX,
   SHELL_BRAND_LOGO_PX,
   SHELL_HEADER_HEIGHT_PX,
+  SHELL_NAV_ICON_COLUMN_PX,
   SHELL_NAV_ICON_PX,
   SHELL_NAV_ITEM_GAP_PX,
+  SHELL_NAV_LABEL_SLOT_PX,
   SHELL_NAV_RADIUS_PX,
   SHELL_NAV_ROW_PX,
   SHELL_NAV_SECTION_GAP_PX,
@@ -41,13 +43,12 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 const SIDEBAR_WIDTH_EXPANDED = SHELL_SIDEBAR_EXPANDED_WIDTH_PX;
 const SIDEBAR_WIDTH_COLLAPSED = SHELL_SIDEBAR_COLLAPSED_WIDTH_PX;
-const NAV_ICON_CLASS = "shrink-0 stroke-[1.75]";
 const NAV_ACTIVE_ROW = "bg-primary-soft font-semibold text-foreground";
 
 function NavActiveIndicator({ collapsed }: { collapsed: boolean }) {
   const inset = collapsed
     ? -((SHELL_SIDEBAR_COLLAPSED_WIDTH_PX - SHELL_NAV_ROW_PX) / 2)
-    : -12;
+    : 0;
 
   return (
     <span
@@ -66,20 +67,15 @@ function isNavItemActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function SidebarLogoMark({
-  className,
-  size = SHELL_BRAND_LOGO_PX,
-}: {
-  className?: string;
-  size?: number;
-}) {
+/** Single F mark — identical in collapsed and expanded. */
+function SidebarLogoMark({ className }: { className?: string }) {
   return (
     <div
       className={cn(
         "flex shrink-0 items-center justify-center rounded-[10px] bg-sidebar-primary",
         className
       )}
-      style={{ width: size, height: size }}
+      style={{ width: SHELL_BRAND_LOGO_PX, height: SHELL_BRAND_LOGO_PX }}
     >
       <span className="text-sm font-semibold tracking-tight text-sidebar-primary-foreground">
         F
@@ -92,10 +88,38 @@ function SidebarToggleIcon({ className }: { className?: string }) {
   return (
     <PanelLeft
       className={cn(
-        "size-[18px] stroke-[1.75] text-sidebar-foreground/70",
+        "size-[18px] shrink-0 stroke-[1.75] text-sidebar-foreground/70",
         className
       )}
     />
+  );
+}
+
+/** Fixed 18×18 optical box — prevents SVG viewBox variance. */
+function NavIcon({
+  icon: Icon,
+  active,
+}: {
+  icon: ComponentType<LucideProps>;
+  active: boolean;
+}) {
+  return (
+    <span
+      className="inline-flex shrink-0 items-center justify-center"
+      style={{ width: SHELL_NAV_ICON_PX, height: SHELL_NAV_ICON_PX }}
+      aria-hidden
+    >
+      <Icon
+        className={cn(
+          "shrink-0 stroke-[1.75] transition-colors duration-150",
+          active
+            ? "text-primary"
+            : "text-muted-foreground group-hover/nav:text-foreground/75"
+        )}
+        width={SHELL_NAV_ICON_PX}
+        height={SHELL_NAV_ICON_PX}
+      />
+    </span>
   );
 }
 
@@ -113,6 +137,10 @@ type SidebarPanelProps = {
   className?: string;
 };
 
+/**
+ * Brand row — logo lives in a fixed collapsed-width column so X/Y never change.
+ * Expansion reveals FlowOS + collapse control to the right only.
+ */
 function SidebarBrand({
   collapsed,
   onToggleCollapse,
@@ -125,56 +153,96 @@ function SidebarBrand({
       className={cn(
         "flex shrink-0 items-center border-b border-border-subtle",
         sidebarNavGeometryTransitionClass(),
-        collapsed ? "justify-center" : "px-4"
+        !collapsed && "pr-3"
       )}
       style={{ height: SHELL_HEADER_HEIGHT_PX }}
     >
-      {collapsed ? (
-        <button
-          type="button"
-          onClick={onToggleCollapse}
-          className="group/logo relative flex items-center justify-center rounded-[10px]"
-          style={{
-            width: SHELL_BRAND_LOGO_PX,
-            height: SHELL_BRAND_LOGO_PX,
-          }}
-          aria-label="Expand sidebar"
-        >
-          <SidebarLogoMark
-            className="transition-opacity duration-150 group-hover/logo:opacity-0"
-          />
-          <span className="absolute inset-0 flex items-center justify-center rounded-[10px] border border-sidebar-border bg-sidebar-accent/60 opacity-0 transition-opacity duration-150 group-hover/logo:opacity-100">
-            <SidebarToggleIcon />
-          </span>
-        </button>
-      ) : (
-        <>
-          <SidebarLogoMark />
-          <p
-            className="min-w-0 flex-1 truncate font-semibold tracking-tight text-sidebar-foreground"
-            style={{
-              marginLeft: SHELL_BRAND_GAP_PX,
-              fontSize: 19,
-              lineHeight: 1.2,
-            }}
-          >
-            FlowOS
-          </p>
+      <div
+        className="flex shrink-0 items-center justify-center"
+        style={{ width: SHELL_NAV_ICON_COLUMN_PX }}
+      >
+        {collapsed ? (
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="flex shrink-0 items-center justify-center rounded-[10px] border border-sidebar-border bg-sidebar-accent/60 transition-colors duration-150 hover:bg-sidebar-accent"
+            className="group/logo relative flex items-center justify-center rounded-[10px]"
             style={{
-              width: SHELL_SECONDARY_CONTROL_PX,
-              height: SHELL_SECONDARY_CONTROL_PX,
+              width: SHELL_BRAND_LOGO_PX,
+              height: SHELL_BRAND_LOGO_PX,
             }}
-            aria-label="Collapse sidebar"
-            title="Collapse sidebar"
+            aria-label="Expand sidebar"
           >
-            <SidebarToggleIcon />
+            <SidebarLogoMark className="transition-opacity duration-150 group-hover/logo:opacity-0" />
+            <span className="absolute inset-0 flex items-center justify-center rounded-[10px] border border-sidebar-border bg-sidebar-accent/60 opacity-0 transition-opacity duration-150 group-hover/logo:opacity-100">
+              <SidebarToggleIcon />
+            </span>
           </button>
-        </>
-      )}
+        ) : (
+          <SidebarLogoMark />
+        )}
+      </div>
+
+      <div
+        className={cn(
+          "flex items-center overflow-hidden",
+          sidebarNavGeometryTransitionClass(),
+          collapsed
+            ? "w-0 min-w-0 flex-none opacity-0 pointer-events-none"
+            : "min-w-0 flex-1"
+        )}
+        style={{ gap: SHELL_BRAND_GAP_PX }}
+        aria-hidden={collapsed}
+      >
+        <p className="min-w-0 flex-1 truncate text-[19px] font-semibold leading-none tracking-tight text-sidebar-foreground">
+          FlowOS
+        </p>
+        <button
+          type="button"
+          onClick={onToggleCollapse}
+          className="flex shrink-0 items-center justify-center rounded-[10px] border border-sidebar-border bg-sidebar-accent/60 transition-colors duration-150 hover:bg-sidebar-accent"
+          style={{
+            width: SHELL_SECONDARY_CONTROL_PX,
+            height: SHELL_SECONDARY_CONTROL_PX,
+          }}
+          aria-label="Collapse sidebar"
+          title="Collapse sidebar"
+          tabIndex={collapsed ? -1 : 0}
+        >
+          <SidebarToggleIcon />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Section label slot — always reserved. Text visible only when expanded.
+ * Prevents HOME/WORKSPACE from shifting nav icon Y on expand/collapse.
+ */
+function SidebarSectionLabel({
+  label,
+  collapsed,
+}: {
+  label: string;
+  collapsed: boolean;
+}) {
+  return (
+    <div
+      className="flex shrink-0 items-end"
+      style={{
+        height: SHELL_NAV_LABEL_SLOT_PX,
+        paddingLeft: collapsed ? 0 : 20,
+        paddingRight: collapsed ? 0 : 12,
+      }}
+    >
+      <p
+        className={cn(
+          "w-full truncate text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/75",
+          collapsed && "invisible"
+        )}
+      >
+        {label}
+      </p>
     </div>
   );
 }
@@ -200,32 +268,15 @@ function SidebarNav({
       {sidebarSections.map((section, sectionIndex) => (
         <div
           key={section.label}
-          className={cn("relative", sidebarNavGeometryTransitionClass())}
+          className={sidebarNavGeometryTransitionClass()}
           style={{
-            marginTop: sectionIndex === 1 ? SHELL_NAV_SECTION_GAP_PX : undefined,
+            marginTop: sectionIndex > 0 ? SHELL_NAV_SECTION_GAP_PX : undefined,
           }}
         >
-          {!collapsed && (
-            <p
-              className="pointer-events-none absolute left-5 right-3 truncate text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/75"
-              style={
-                sectionIndex === 0
-                  ? {
-                      /* Sit inside nav top padding, below brand divider — not through it */
-                      top: -SHELL_NAV_TOP_PADDING_PX + 2,
-                    }
-                  : {
-                      /* Sit inside the section gap above workspace items */
-                      top: -SHELL_NAV_SECTION_GAP_PX + 2,
-                    }
-              }
-            >
-              {section.label}
-            </p>
-          )}
+          <SidebarSectionLabel label={section.label} collapsed={collapsed} />
           <ul
             className="flex flex-col"
-            style={{ gap: collapsed ? SHELL_NAV_ITEM_GAP_PX : 0 }}
+            style={{ gap: SHELL_NAV_ITEM_GAP_PX }}
           >
             {section.items.map((item) => {
               const isActive = isNavItemActive(pathname, item.href);
@@ -245,9 +296,8 @@ function SidebarNav({
                     aria-label={item.label}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "group/nav relative flex items-center text-sm ease-[cubic-bezier(0.22,1,0.36,1)]",
+                      "group/nav relative flex items-center text-sm",
                       sidebarNavGeometryTransitionClass(),
-                      collapsed ? "justify-center" : "font-normal",
                       isActive
                         ? NAV_ACTIVE_ROW
                         : "font-normal text-muted-foreground hover:bg-surface-hover hover:text-foreground"
@@ -258,43 +308,40 @@ function SidebarNav({
                             width: SHELL_NAV_ROW_PX,
                             height: SHELL_NAV_ROW_PX,
                             borderRadius: SHELL_NAV_RADIUS_PX,
+                            justifyContent: "center",
                           }
                         : {
                             height: SHELL_NAV_ROW_PX,
-                            marginInline: 12,
-                            paddingLeft: 15,
-                            paddingRight: 16,
-                            gap: 14,
                             borderRadius: SHELL_NAV_RADIUS_PX,
+                            marginRight: 12,
                           }
                     }
                   >
                     {isActive ? (
                       <NavActiveIndicator collapsed={collapsed} />
                     ) : null}
-                    <Icon
-                      className={cn(
-                        NAV_ICON_CLASS,
-                        "transition-colors duration-150",
-                        isActive
-                          ? "text-primary"
-                          : "text-muted-foreground group-hover/nav:text-foreground/75"
-                      )}
-                      style={{
-                        width: SHELL_NAV_ICON_PX,
-                        height: SHELL_NAV_ICON_PX,
-                      }}
-                    />
-                    {!collapsed && (
-                      <span
-                        className={cn(
-                          "min-w-0 truncate",
-                          isActive ? "font-semibold" : "font-normal"
-                        )}
-                      >
-                        {item.label}
-                      </span>
+
+                    {collapsed ? (
+                      <NavIcon icon={Icon} active={isActive} />
+                    ) : (
+                      <>
+                        <span
+                          className="inline-flex shrink-0 items-center justify-center"
+                          style={{ width: SHELL_NAV_ICON_COLUMN_PX }}
+                        >
+                          <NavIcon icon={Icon} active={isActive} />
+                        </span>
+                        <span
+                          className={cn(
+                            "min-w-0 flex-1 truncate pr-3",
+                            isActive ? "font-semibold" : "font-normal"
+                          )}
+                        >
+                          {item.label}
+                        </span>
+                      </>
                     )}
+
                     {collapsed && (
                       <span
                         role="tooltip"
@@ -336,7 +383,7 @@ function SidebarPanel({
         transition: animateWidth ? sidebarWidthTransitionStyle() : undefined,
       }}
       className={cn(
-        "flex h-full shrink-0 flex-col border-r border-border-subtle bg-surface-nav text-sidebar-foreground",
+        "flex h-full min-w-0 shrink-0 flex-col overflow-hidden border-r border-border-subtle bg-surface-nav text-sidebar-foreground",
         collapsed && "overflow-visible",
         className
       )}
@@ -345,7 +392,7 @@ function SidebarPanel({
 
       <div
         className={cn(
-          "flex min-h-0 flex-1 flex-col",
+          "flex min-h-0 min-w-0 flex-1 flex-col",
           collapsed ? "overflow-visible" : "overflow-hidden"
         )}
       >

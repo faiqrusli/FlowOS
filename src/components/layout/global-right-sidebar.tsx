@@ -167,7 +167,16 @@ function UtilityRailButtons({
             title={item.label}
             aria-pressed={active}
           >
-            <Icon className={GLOBAL_RAIL_ICON_CLASS} style={globalRailIconStyle()} />
+            <span
+              className="inline-flex shrink-0 items-center justify-center"
+              style={globalRailIconStyle()}
+              aria-hidden
+            >
+              <Icon
+                className={GLOBAL_RAIL_ICON_CLASS}
+                style={globalRailIconStyle()}
+              />
+            </span>
           </button>
         );
       })}

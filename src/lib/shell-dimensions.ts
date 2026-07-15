@@ -10,7 +10,8 @@ export const SHELL_SIDEBAR_EXPANDED_HEADER_PX = SHELL_HEADER_HEIGHT_PX;
 export const SHELL_SIDEBAR_HEADER_HEIGHT_PX = SHELL_HEADER_HEIGHT_PX;
 
 export const SHELL_SIDEBAR_COLLAPSED_WIDTH_PX = 88;
-export const SHELL_SIDEBAR_EXPANDED_WIDTH_PX = 260;
+/** Comfortable expanded width — room for profile row without clipping. */
+export const SHELL_SIDEBAR_EXPANDED_WIDTH_PX = 288;
 
 export const SHELL_UTILITY_RAIL_WIDTH_PX = 64;
 export const SHELL_UTILITY_SIDEBAR_EXPANDED_WIDTH_PX = 500;
@@ -23,7 +24,7 @@ export const SHELL_UTILITY_RAIL_TOP_PX = 14;
 export const SHELL_UTILITY_HEADER_ACTION_PX = 32;
 export const SHELL_UTILITY_HEADER_ACTION_ICON_PX = 18;
 export const SHELL_UTILITY_HEADER_PADDING_PX = 22;
-export const SHELL_UTILITY_ACTIVE_RADIUS_PX = 11;
+export const SHELL_UTILITY_ACTIVE_RADIUS_PX = 10;
 
 export const SHELL_NAV_ICON_PX = 18;
 export const SHELL_NAV_BUTTON_PX = 48;
@@ -37,9 +38,10 @@ export const SHELL_SECONDARY_CONTROL_PX = 36;
 export const SHELL_BRAND_LOGO_PX = 36;
 export const SHELL_BRAND_GAP_PX = 12;
 
-/** Left nav vertical rhythm */
-export const SHELL_NAV_TOP_PADDING_PX = 18;
-export const SHELL_NAV_SECTION_GAP_PX = 18;
+/** Left nav vertical rhythm — same skeleton collapsed and expanded */
+export const SHELL_NAV_LABEL_SLOT_PX = 20;
+export const SHELL_NAV_TOP_PADDING_PX = 8;
+export const SHELL_NAV_SECTION_GAP_PX = 4;
 export const SHELL_NAV_ROW_PX = 48;
 export const SHELL_NAV_ITEM_GAP_PX = 8;
 export const SHELL_NAV_RADIUS_PX = 12;

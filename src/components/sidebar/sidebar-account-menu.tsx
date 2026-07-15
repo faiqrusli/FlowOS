@@ -52,15 +52,20 @@ export function SidebarAccountMenu({
   }
 
   return (
-    <div className="shrink-0 px-3 pb-3">
+    <div
+      className={cn(
+        "min-w-0 shrink-0 overflow-hidden pb-3",
+        compact ? "px-0" : "px-3"
+      )}
+    >
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={displayName}
           className={cn(
-            "group/account relative flex w-full items-center text-left transition-colors duration-150",
+            "group/account relative flex min-w-0 items-center overflow-hidden text-left transition-colors duration-150",
             compact
               ? "mx-auto justify-center border border-transparent bg-transparent p-0 hover:bg-sidebar-accent"
-              : "gap-2.5 rounded-[10px] border border-transparent bg-transparent px-2.5 hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent"
+              : "w-full max-w-full gap-2.5 rounded-[10px] border border-transparent bg-transparent px-2 hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent"
           )}
           style={
             compact
@@ -84,7 +89,7 @@ export function SidebarAccountMenu({
           </div>
           {!compact && (
             <>
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 overflow-hidden">
                 <p className="truncate text-sm font-semibold leading-tight text-foreground">
                   {displayName}
                 </p>
@@ -95,6 +100,7 @@ export function SidebarAccountMenu({
               <ChevronDown
                 className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-aria-expanded:rotate-180"
                 strokeWidth={2}
+                aria-hidden
               />
             </>
           )}
