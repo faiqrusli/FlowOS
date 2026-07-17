@@ -18,6 +18,11 @@ import {
 import { useSettingsModal } from "@/contexts/settings-modal-context";
 import type { SettingsModalSection } from "@/types/settings-modal";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type SidebarAccountMenuProps = {
   displayName: string;
@@ -28,6 +33,8 @@ type SidebarAccountMenuProps = {
   onNavigate?: () => void;
   compact?: boolean;
 };
+
+const NAV_TOOLTIP_DELAY_MS = 500;
 
 export function SidebarAccountMenu({
   displayName,
@@ -46,26 +53,46 @@ export function SidebarAccountMenu({
   }
 
   return (
-    <div className={cn("shrink-0 pt-2 pb-3", compact ? "px-2" : "px-3")}>
+    <div className="shrink-0 px-2 pt-2 pb-3">
       <DropdownMenu>
-        <DropdownMenuTrigger
-          aria-label={compact ? displayName : undefined}
-          className={cn(
-            // Quiet on chrome — menu popover carries card elevation, not the trigger.
-            "group/account relative flex items-center rounded-xl text-left transition-colors duration-150",
-            compact
-              ? "mx-auto size-9 justify-center border-transparent bg-transparent p-0 hover:bg-sidebar-accent"
-              : "w-full gap-2.5 border border-sidebar-border bg-transparent px-2.5 py-2 hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent"
-          )}
-        >
-          <div
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground"
-            aria-hidden
+        <Tooltip>
+          <TooltipTrigger
+            delay={NAV_TOOLTIP_DELAY_MS}
+            disabled={!compact}
+            closeOnClick
+            render={
+              <DropdownMenuTrigger
+                aria-label={compact ? displayName : undefined}
+                className={cn(
+                  // Quiet on chrome — menu popover carries card elevation, not the trigger.
+                  "group/account relative flex h-11 w-full items-center overflow-hidden rounded-xl text-left transition-colors duration-150",
+                  compact
+                    ? "border-transparent bg-transparent hover:bg-sidebar-accent"
+                    : "border border-sidebar-border bg-transparent hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent",
+                )}
+              />
+            }
           >
-            {initials}
-          </div>
-          {!compact && (
-            <>
+            <div
+              className="flex h-full shrink-0 items-center justify-center"
+              style={{ width: 40 }}
+            >
+              <div
+                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground"
+                aria-hidden
+              >
+                {initials}
+              </div>
+            </div>
+            <div
+              className={cn(
+                "flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden pr-2.5 transition-opacity duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+                compact
+                  ? "pointer-events-none opacity-0"
+                  : "opacity-100",
+              )}
+              aria-hidden={compact}
+            >
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[13px] font-semibold leading-tight text-foreground">
                   {displayName}
@@ -78,17 +105,18 @@ export function SidebarAccountMenu({
                 className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-aria-expanded:rotate-180"
                 strokeWidth={2}
               />
-            </>
-          )}
-          {compact && (
-            <span
-              role="tooltip"
-              className="flow-surface-elevated pointer-events-none absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden -translate-y-1/2 scale-95 whitespace-nowrap px-2.5 py-1 text-xs font-medium text-popover-foreground opacity-0 transition-[opacity,transform] duration-150 group-hover/account:block group-hover/account:scale-100 group-hover/account:opacity-100"
+            </div>
+          </TooltipTrigger>
+          {compact ? (
+            <TooltipContent
+              side="right"
+              sideOffset={8}
+              className="px-2.5 py-1 font-medium whitespace-nowrap text-popover-foreground"
             >
               {displayName}
-            </span>
-          )}
-        </DropdownMenuTrigger>
+            </TooltipContent>
+          ) : null}
+        </Tooltip>
 
         <DropdownMenuContent
           className="w-[15rem] rounded-xl p-1.5"

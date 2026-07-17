@@ -16,14 +16,15 @@ import {
   parseDurationTimeInput,
 } from "@/lib/task-duration-options";
 import { cn } from "@/lib/utils";
+import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 
 const TASK_DURATION_MENU_COLLISION = {
   side: "shift",
   align: "shift",
 } as const;
 const TASK_DURATION_COMPACT_TRIGGER_CLASS =
-  "size-6 justify-center rounded-md hover:bg-muted/80";
-const TASK_DURATION_COMPACT_TRIGGER_OPEN_CLASS = "bg-muted/80";
+  "size-6 justify-center rounded-md hover:bg-surface-hover/80";
+const TASK_DURATION_COMPACT_TRIGGER_OPEN_CLASS = "bg-surface-raised";
 const TASK_DURATION_COMPACT_MENU_CLASS =
   "max-h-64 min-w-0 w-36 overflow-y-auto rounded-xl border-border/50 p-0 shadow-md";
 const TASK_DURATION_DETAIL_MENU_CLASS =
@@ -67,9 +68,7 @@ export function TaskDurationPicker({
       : "No duration";
   const hasDuration = Boolean(durationMinutes && durationMinutes > 0);
   const timelineDurationLabel =
-    isTimeline && hasDuration
-      ? formatDurationMinutes(durationMinutes!)
-      : null;
+    isTimeline && hasDuration ? formatDurationMinutes(durationMinutes!) : null;
 
   function tryCommitCustomValue() {
     if (!customDirtyRef.current) return;
@@ -88,7 +87,7 @@ export function TaskDurationPicker({
       setCustomValue(
         durationMinutes && durationMinutes > 0
           ? formatDurationTimeInput(durationMinutes)
-          : "0:30"
+          : "0:30",
       );
     }
     setOpen(nextOpen);
@@ -120,23 +119,23 @@ export function TaskDurationPicker({
                 open && TASK_DURATION_COMPACT_TRIGGER_OPEN_CLASS,
                 isTaskRow
                   ? hasDuration
-                    ? "text-sky-600"
+                    ? "text-primary"
                     : "text-muted-foreground/70"
-                  : "text-muted-foreground/70"
+                  : "text-muted-foreground/70",
               )
             : isDetail
-                ? cn(
-                    "h-9 w-full justify-between gap-2 rounded-lg border border-border/50 bg-background px-2 text-sm hover:bg-muted/20",
-                    open && "ring-1 ring-ring/30",
-                    !durationMinutes && "text-muted-foreground"
-                  )
-                : cn(
-                    "justify-center rounded text-muted-foreground hover:bg-muted/60 hover:text-foreground",
-                    compact
-                      ? "h-4 min-w-[1.25rem] px-0.5 text-[9px]"
-                      : "h-5 min-w-[1.5rem] px-0.5 text-[10px]"
-                  ),
-          className
+              ? cn(
+                  "w-full justify-between gap-2 px-2",
+                  compactControlTriggerClass,
+                  !durationMinutes && "text-muted-foreground",
+                )
+              : cn(
+                  "justify-center rounded text-muted-foreground hover:bg-surface-hover/60 hover:text-foreground",
+                  compact
+                    ? "h-4 min-w-[1.25rem] px-0.5 text-[9px]"
+                    : "h-5 min-w-[1.5rem] px-0.5 text-[10px]",
+                ),
+          className,
         )}
         id={isDetail ? "task-detail-duration" : undefined}
         aria-label={
@@ -159,7 +158,7 @@ export function TaskDurationPicker({
             <span
               className={cn(
                 "shrink-0 font-medium tabular-nums leading-none text-foreground/55",
-                compact ? "text-[10px]" : "text-[11px]"
+                compact ? "text-[10px]" : "text-[11px]",
               )}
             >
               {timelineDurationLabel}
@@ -172,7 +171,7 @@ export function TaskDurationPicker({
         ) : (
           <Clock
             className={cn(
-              isTaskRow ? "size-3.5" : compact ? "size-2.5" : "size-3"
+              isTaskRow ? "size-3.5" : compact ? "size-2.5" : "size-3",
             )}
             strokeWidth={1.75}
           />
@@ -187,7 +186,9 @@ export function TaskDurationPicker({
             : undefined
         }
         className={cn(
-          isDetail ? TASK_DURATION_DETAIL_MENU_CLASS : TASK_DURATION_COMPACT_MENU_CLASS
+          isDetail
+            ? TASK_DURATION_DETAIL_MENU_CLASS
+            : TASK_DURATION_COMPACT_MENU_CLASS,
         )}
         onClick={(event) => event.stopPropagation()}
         onPointerDown={(event) => event.stopPropagation()}
@@ -196,10 +197,18 @@ export function TaskDurationPicker({
           type="button"
           onClick={(event) => {
             event.stopPropagation();
-            (event.currentTarget.querySelector("input") as HTMLInputElement | null)?.focus();
-            (event.currentTarget.querySelector("input") as HTMLInputElement | null)?.select();
+            (
+              event.currentTarget.querySelector(
+                "input",
+              ) as HTMLInputElement | null
+            )?.focus();
+            (
+              event.currentTarget.querySelector(
+                "input",
+              ) as HTMLInputElement | null
+            )?.select();
           }}
-          className="flex w-full border-b border-border/60 px-2 py-1.5 hover:bg-muted/40"
+          className="flex w-full border-b border-border/60 px-2 py-1.5 hover:bg-surface-hover"
         >
           <input
             type="text"
@@ -221,7 +230,7 @@ export function TaskDurationPicker({
               }
             }}
             onClick={(event) => event.stopPropagation()}
-            className="w-full rounded-md bg-muted/35 px-2 py-1 text-center text-sm tabular-nums outline-none transition-colors focus:bg-muted/55 focus:ring-1 focus:ring-sky-400/25"
+            className="w-full rounded-md bg-surface-raised px-2 py-1 text-center text-sm tabular-nums outline-none transition-colors focus:bg-surface-raised focus:ring-1 focus:ring-primary/40"
             placeholder="0:30"
             aria-label="Custom duration"
           />

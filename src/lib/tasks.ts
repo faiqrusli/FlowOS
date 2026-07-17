@@ -8,7 +8,11 @@ import {
 } from "@/lib/manual-order";
 import { supabase } from "@/lib/supabase";
 import { requireUserId } from "@/lib/auth";
-import { formatTimeShort, formatRelativeDateLabel, getTodayDateString } from "@/lib/date-utils";
+import {
+  formatTimeShort,
+  formatRelativeDateLabel,
+  getTodayDateString,
+} from "@/lib/date-utils";
 import {
   normalizeTaskPriority,
   TASK_PRIORITY_CONFIG,
@@ -50,14 +54,14 @@ export function computeTodayTaskProgress(today: Task[]): TodayTaskProgress {
 
 export function isTaskToday(
   task: Task,
-  todayKey = getTodayDateString()
+  todayKey = getTodayDateString(),
 ): boolean {
   return task.scheduled_date === todayKey;
 }
 
 export function isTaskMissed(
   task: Task,
-  todayKey = getTodayDateString()
+  todayKey = getTodayDateString(),
 ): boolean {
   return (
     !task.completed &&
@@ -69,7 +73,7 @@ export type TaskScheduleDateTone = "none" | "today" | "overdue" | "future";
 
 export function getTaskScheduleDateTone(
   task: Pick<Task, "scheduled_date" | "completed">,
-  todayKey: string
+  todayKey: string,
 ): TaskScheduleDateTone {
   if (!task.scheduled_date) return "none";
   if (task.scheduled_date === todayKey) return "today";
@@ -78,13 +82,13 @@ export function getTaskScheduleDateTone(
 }
 
 export function getTaskScheduleDateColorClass(
-  tone: TaskScheduleDateTone
+  tone: TaskScheduleDateTone,
 ): string {
   switch (tone) {
     case "today":
-      return "text-sky-600";
+      return "text-primary";
     case "overdue":
-      return "text-red-600";
+      return "text-destructive";
     case "none":
     case "future":
     default:
@@ -94,7 +98,7 @@ export function getTaskScheduleDateColorClass(
 
 function sortBySchedule(a: Task, b: Task): number {
   const dateCompare = (a.scheduled_date ?? "").localeCompare(
-    b.scheduled_date ?? ""
+    b.scheduled_date ?? "",
   );
   if (dateCompare !== 0) return dateCompare;
 
@@ -113,7 +117,7 @@ function sortTodayTasks(a: Task, b: Task): number {
 
 export function partitionTasks(
   tasks: Task[],
-  todayKey = getTodayDateString()
+  todayKey = getTodayDateString(),
 ): TaskBuckets {
   const today: Task[] = [];
   const missed: Task[] = [];
@@ -144,7 +148,7 @@ export function partitionTasks(
   upcoming.sort(sortBySchedule);
   completedPast.sort((a, b) => {
     const dateCompare = (b.scheduled_date ?? "").localeCompare(
-      a.scheduled_date ?? ""
+      a.scheduled_date ?? "",
     );
     if (dateCompare !== 0) return dateCompare;
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -163,7 +167,9 @@ export function partitionTasks(
   };
 }
 
-export async function fetchTodayTasks(dateKey = getTodayDateString()): Promise<Task[]> {
+export async function fetchTodayTasks(
+  dateKey = getTodayDateString(),
+): Promise<Task[]> {
   const userId = await requireUserId();
   const { data, error } = await supabase
     .from("tasks")
@@ -206,12 +212,14 @@ function normalizeTaskFromDb(task: Task): Task {
 }
 
 /** Repair and persist tasks missing a valid manualOrder. Returns normalized tasks. */
-export async function repairMissingManualOrders(tasks: Task[]): Promise<Task[]> {
+export async function repairMissingManualOrders(
+  tasks: Task[],
+): Promise<Task[]> {
   const normalized = tasks.map((task) =>
     normalizeTaskManualOrder({
       ...task,
       planning_state: normalizePlanningState(task.planning_state),
-    })
+    }),
   );
   const repairs = computeManualOrderRepairs(normalized);
   if (repairs.length === 0) return normalized;
@@ -224,7 +232,7 @@ export async function createTask(input: TaskInsert): Promise<Task> {
   const userId = await requireUserId();
   const sort_order = resolveManualOrderForCreate(
     input.sort_order,
-    MANUAL_ORDER_INITIAL
+    MANUAL_ORDER_INITIAL,
   );
 
   const { data, error } = await supabase
@@ -283,7 +291,7 @@ export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
 
 /** Single RPC round-trip to persist manual order changes after drop. */
 export async function batchUpdateManualOrders(
-  updates: ManualOrderUpdate[]
+  updates: ManualOrderUpdate[],
 ): Promise<void> {
   if (updates.length === 0) return;
 
@@ -338,7 +346,7 @@ export async function deleteTask(id: string): Promise<void> {
 export async function duplicateTask(
   task: Task,
   groupId: string,
-  sortOrder: number
+  sortOrder: number,
 ): Promise<Task> {
   return createTask({
     title: task.title,
@@ -361,7 +369,7 @@ export function getTaskPriority(task: Task): TaskPriority {
 
 export function formatTaskCardMeta(
   task: Task,
-  variant: "today" | "upcoming" | "completed"
+  variant: "today" | "upcoming" | "completed",
 ): string | null {
   const priority = TASK_PRIORITY_CONFIG[getTaskPriority(task)].label;
 
@@ -407,7 +415,7 @@ export function formatTaskScheduleCompact(task: Task): string | null {
 
 function formatTaskScheduleParts(
   task: Task,
-  { includeYear }: { includeYear: boolean }
+  { includeYear }: { includeYear: boolean },
 ): string | null {
   const parts: string[] = [];
 
@@ -421,9 +429,9 @@ function formatTaskScheduleParts(
               month: "short",
               day: "numeric",
               year: "numeric",
-            }
+            },
           )
-        : formatRelativeDateLabel(task.scheduled_date)
+        : formatRelativeDateLabel(task.scheduled_date),
     );
   }
 

@@ -43,6 +43,7 @@ Read each phase in order: **review → spec → implementation → post-review**
 |----------|---------------|------|
 | [today-executive-review.md](./today-executive-review.md) | `flowos-today-executive-review.canvas.tsx` | ChatGPT proposal vs shipped Today — audit, gap analysis, V2 convergence, 80/20 plan |
 | [today-v3-greenfield-design.md](./today-v3-greenfield-design.md) | `flowos-today-v3-greenfield-design.canvas.tsx` | First-principles Day Engine design (Concept B: NOW + NEXT + rest) |
+| [today-page-hierarchy-refinement-spec.md](./today-page-hierarchy-refinement-spec.md) | — | Visual hierarchy + PLAN→COMMIT→EXECUTE refinement of current Today (not a rebuild) |
 | [schedule-break-modal-spec.md](./schedule-break-modal-spec.md) | — | Schedule Break modal for quick focus — user-initiated reminders, not Pomodoro |
 
 **Authoritative visual system:** [../../foundation/DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) (v3.0) — global semantic visual contract; implementation via [design-system-v3-migration.md](../../execution/runbooks/design-system-v3-migration.md). Historical: [v2.0](../../foundation/DESIGN_SYSTEM_v2.md), [v1.0](../../foundation/DESIGN_SYSTEM_v1.md).

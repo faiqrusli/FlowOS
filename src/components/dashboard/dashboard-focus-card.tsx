@@ -45,7 +45,7 @@ export function DashboardFocusCard({ stats }: DashboardFocusCardProps) {
   return (
     <DashboardPanel title="Focus" href="/focus" actionLabel="Open">
       {dashboardActive.isActive && (
-        <div className="rounded-md border border-border/60 bg-muted/30 px-3 py-2.5">
+        <div className="rounded-md border border-border/60 bg-surface-raised px-3 py-2.5">
           <p className={cn(type.contentPrimary, "text-foreground")}>
             {dashboardActive.label}
           </p>

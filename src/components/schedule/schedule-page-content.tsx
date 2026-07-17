@@ -4,9 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { setQuickScheduleOpen } from "@/lib/timeline-drag";
 import { TimelinePlanner } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";
-import {
-  useGlobalRightSidebar,
-} from "@/contexts/global-right-sidebar-context";
+import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
@@ -49,7 +47,7 @@ export function SchedulePageContent() {
   const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
   const [todayViewDate, setTodayViewDate] = useState(getTodayDateString);
   const updateTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
-    new Map()
+    new Map(),
   );
 
   const getTask = useCallback(
@@ -60,7 +58,7 @@ export function SchedulePageContent() {
       }
       return null;
     },
-    [groups]
+    [groups],
   );
 
   const loadBoard = useCallback(async () => {
@@ -80,7 +78,7 @@ export function SchedulePageContent() {
           err instanceof TasksError ||
           err instanceof HabitsError
           ? err.message
-          : "Failed to load schedule."
+          : "Failed to load schedule.",
       );
       setGroups([]);
       setHabits([]);
@@ -116,8 +114,8 @@ export function SchedulePageContent() {
         prev,
         taskId,
         (task) => ({ ...task, ...updates }),
-        todayViewDate
-      )
+        todayViewDate,
+      ),
     );
 
     const existing = updateTimers.current.get(taskId);
@@ -132,11 +130,11 @@ export function SchedulePageContent() {
           setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
         } catch (err) {
           setError(
-            err instanceof TasksError ? err.message : "Failed to save task."
+            err instanceof TasksError ? err.message : "Failed to save task.",
           );
           void loadBoard();
         }
-      }, 350)
+      }, 350),
     );
   }
 
@@ -145,7 +143,8 @@ export function SchedulePageContent() {
     updates: {
       scheduled_date: string;
       scheduled_time: string | null;
-    }
+      duration_minutes?: number | null;
+    },
   ) {
     setError(null);
     setGroups((prev) =>
@@ -153,8 +152,8 @@ export function SchedulePageContent() {
         prev,
         taskId,
         (task) => ({ ...task, ...updates }),
-        todayViewDate
-      )
+        todayViewDate,
+      ),
     );
 
     try {
@@ -162,7 +161,7 @@ export function SchedulePageContent() {
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to schedule task."
+        err instanceof TasksError ? err.message : "Failed to schedule task.",
       );
       void loadBoard();
     }
@@ -171,10 +170,14 @@ export function SchedulePageContent() {
   async function handleScheduleHabit(
     habitId: string,
     updates: { scheduled_time: string | null },
-    scheduleDate: string
+    scheduleDate: string,
   ) {
     setError(null);
-    setHabitDailyScheduleOverride(habitId, scheduleDate, updates.scheduled_time);
+    setHabitDailyScheduleOverride(
+      habitId,
+      scheduleDate,
+      updates.scheduled_time,
+    );
   }
 
   async function handleUpdateTask(taskId: string, updates: Partial<Task>) {
@@ -192,8 +195,8 @@ export function SchedulePageContent() {
         prev,
         taskId,
         (task) => ({ ...task, ...updates }),
-        todayViewDate
-      )
+        todayViewDate,
+      ),
     );
 
     try {
@@ -201,7 +204,7 @@ export function SchedulePageContent() {
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to update task."
+        err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
     }
@@ -225,7 +228,7 @@ export function SchedulePageContent() {
         laterGroupId: laterGroup?.id,
         inboxGroupId: inboxGroup?.id,
         todayViewDate,
-      }
+      },
     );
 
     setGroups(next);
@@ -234,9 +237,7 @@ export function SchedulePageContent() {
       await persistTaskBoardLayout(next, { todayViewDate });
     } catch (err) {
       setError(
-        err instanceof TaskGroupsError
-          ? err.message
-          : "Failed to move task."
+        err instanceof TaskGroupsError ? err.message : "Failed to move task.",
       );
       void loadBoard();
     }
@@ -244,7 +245,7 @@ export function SchedulePageContent() {
 
   async function handleSetPlanningState(
     taskId: string,
-    planningState: PlanningState
+    planningState: PlanningState,
   ) {
     const task = groups
       .flatMap((group) => group.tasks)
@@ -284,7 +285,7 @@ export function SchedulePageContent() {
           laterGroupId: laterGroup.id,
           inboxGroupId: inboxGroup?.id,
           todayViewDate,
-        }
+        },
       );
       return nextBoard;
     });
@@ -295,7 +296,7 @@ export function SchedulePageContent() {
       setError(
         err instanceof TaskGroupsError
           ? err.message
-          : "Failed to move task to Later."
+          : "Failed to move task to Later.",
       );
       void loadBoard();
     }
@@ -308,8 +309,8 @@ export function SchedulePageContent() {
         prev,
         taskId,
         (task) => ({ ...task, planning_state: "none" }),
-        todayViewDate
-      )
+        todayViewDate,
+      ),
     );
 
     try {
@@ -317,7 +318,7 @@ export function SchedulePageContent() {
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to update task."
+        err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
     }
@@ -333,8 +334,8 @@ export function SchedulePageContent() {
           ...item,
           completed: !item.completed,
         }),
-        todayViewDate
-      )
+        todayViewDate,
+      ),
     );
 
     try {
@@ -342,7 +343,7 @@ export function SchedulePageContent() {
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to update task."
+        err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
     }
@@ -352,18 +353,18 @@ export function SchedulePageContent() {
     setError(null);
     setHabits((prev) =>
       prev.map((item) =>
-        item.id === habit.id ? { ...item, completed: !item.completed } : item
-      )
+        item.id === habit.id ? { ...item, completed: !item.completed } : item,
+      ),
     );
 
     try {
       const updated = await toggleHabitComplete(habit);
       setHabits((prev) =>
-        prev.map((item) => (item.id === updated.id ? updated : item))
+        prev.map((item) => (item.id === updated.id ? updated : item)),
       );
     } catch (err) {
       setError(
-        err instanceof HabitsError ? err.message : "Failed to update habit."
+        err instanceof HabitsError ? err.message : "Failed to update habit.",
       );
       void loadBoard();
     }
@@ -381,7 +382,7 @@ export function SchedulePageContent() {
       setGroups((prev) => addTaskToBoard(prev, duplicated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to duplicate task."
+        err instanceof TasksError ? err.message : "Failed to duplicate task.",
       );
     }
   }
@@ -397,7 +398,7 @@ export function SchedulePageContent() {
       await deleteTask(taskId);
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to delete task."
+        err instanceof TasksError ? err.message : "Failed to delete task.",
       );
       void loadBoard();
     }
@@ -412,7 +413,7 @@ export function SchedulePageContent() {
       onMoveToGroup: handleMoveTask,
       onPlanningStateChange: handleSetPlanningState,
     },
-    [groups, todayViewDate, getTask]
+    [groups, todayViewDate, getTask],
   );
 
   if (loading) {

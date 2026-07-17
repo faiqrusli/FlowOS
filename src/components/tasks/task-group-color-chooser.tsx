@@ -46,9 +46,9 @@ export function TaskGroupColorChooser({
                 onOpenChange(false);
               }}
               className={cn(
-                "flex aspect-square items-center justify-center rounded-xl border border-border/50 bg-muted/20 shadow-sm transition-transform hover:scale-105",
+                "flex aspect-square items-center justify-center rounded-xl border border-border/50 bg-surface-raised shadow-sm transition-transform hover:scale-105",
                 value === colorKey &&
-                  "ring-2 ring-foreground ring-offset-2 ring-offset-background"
+                  "ring-2 ring-foreground ring-offset-2 ring-offset-background",
               )}
             >
               <span className={getGroupDotClass(colorKey)} aria-hidden />

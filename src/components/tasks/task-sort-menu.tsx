@@ -22,7 +22,7 @@ export function TaskSortMenu({ sortMode, onSortModeChange }: TaskSortMenuProps) 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-muted/80 hover:text-foreground data-[state=open]:bg-muted/70 data-[state=open]:text-foreground"
+        className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-surface-hover/80 hover:text-foreground data-[state=open]:bg-surface-raised data-[state=open]:text-foreground"
         aria-label="Sort tasks"
       >
         <ArrowUpDown className="size-3.5" />

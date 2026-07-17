@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
   ExternalLink,
@@ -35,10 +29,7 @@ import {
   groupNotesByArea,
   searchSidebarNotes,
 } from "@/lib/daily-notes";
-import {
-  formatSidebarDateHeading,
-  getTodayDateString,
-} from "@/lib/date-utils";
+import { formatSidebarDateHeading, getTodayDateString } from "@/lib/date-utils";
 import { formatRelativeTime } from "@/lib/notes-utils";
 import {
   deleteNote,
@@ -75,14 +66,14 @@ export function SidebarNotesPanel() {
 
   const cached = getSidebarNotesCache();
   const [areas, setAreas] = useState<GrowthAreaWithCounts[]>(
-    cached?.areas ?? []
+    cached?.areas ?? [],
   );
   const [notes, setNotes] = useState<Note[]>(cached?.notes ?? []);
   const [refreshing, setRefreshing] = useState(!cached);
   const [search, setSearch] = useState("");
   const [preview, setPreview] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">(
-    "idle"
+    "idle",
   );
   const [todayDailyNoteId, setTodayDailyNoteId] = useState<string | null>(null);
   const [collapsedAreas, setCollapsedAreas] = useState<Set<string>>(new Set());
@@ -92,21 +83,24 @@ export function SidebarNotesPanel() {
   const titleInputRef = useRef<HTMLInputElement>(null);
   const todayKey = getTodayDateString();
 
-  const loadNotes = useCallback(async (background = false) => {
-    if (!background) setRefreshing(true);
-    try {
-      const [data, todayNote] = await Promise.all([
-        fetchSidebarNotesData(),
-        getDailyNoteByDate(todayKey),
-      ]);
-      setAreas(data.areas);
-      setNotes(data.notes);
-      setSidebarNotesCache(data.areas, data.notes);
-      setTodayDailyNoteId(todayNote?.id ?? null);
-    } finally {
-      setRefreshing(false);
-    }
-  }, [todayKey]);
+  const loadNotes = useCallback(
+    async (background = false) => {
+      if (!background) setRefreshing(true);
+      try {
+        const [data, todayNote] = await Promise.all([
+          fetchSidebarNotesData(),
+          getDailyNoteByDate(todayKey),
+        ]);
+        setAreas(data.areas);
+        setNotes(data.notes);
+        setSidebarNotesCache(data.areas, data.notes);
+        setTodayDailyNoteId(todayNote?.id ?? null);
+      } finally {
+        setRefreshing(false);
+      }
+    },
+    [todayKey],
+  );
 
   useEffect(() => {
     const snapshot = getSidebarNotesCache();
@@ -115,7 +109,7 @@ export function SidebarNotesPanel() {
 
   const selected = useMemo(
     () => notes.find((note) => note.id === selectedNoteId) ?? null,
-    [notes, selectedNoteId]
+    [notes, selectedNoteId],
   );
 
   useEffect(() => {
@@ -131,7 +125,7 @@ export function SidebarNotesPanel() {
 
   const filteredNotes = useMemo(
     () => searchSidebarNotes(notes, areas, search),
-    [notes, areas, search]
+    [notes, areas, search],
   );
 
   const menuPinnedNotes = useMemo(
@@ -140,9 +134,9 @@ export function SidebarNotesPanel() {
         .filter((note) => note.is_menu_pinned)
         .sort(
           (a, b) =>
-            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
         ),
-    [filteredNotes]
+    [filteredNotes],
   );
 
   const grouped = useMemo(() => {
@@ -152,7 +146,7 @@ export function SidebarNotesPanel() {
 
   const floatingNoteIds = useMemo(
     () => new Set(floatingNotes.map((note) => note.id)),
-    [floatingNotes]
+    [floatingNotes],
   );
 
   useEffect(() => {
@@ -170,7 +164,7 @@ export function SidebarNotesPanel() {
         const updated = await updateNote(id, patch);
         setNotes((current) => {
           const next = current.map((note) =>
-            note.id === updated.id ? updated : note
+            note.id === updated.id ? updated : note,
           );
           setSidebarNotesCache(areas, next);
           return next;
@@ -182,10 +176,13 @@ export function SidebarNotesPanel() {
         setSaveState("idle");
       }
     },
-    [areas, updateFloatingNote]
+    [areas, updateFloatingNote],
   );
 
-  function scheduleSave(id: string, patch: { title?: string; content?: string }) {
+  function scheduleSave(
+    id: string,
+    patch: { title?: string; content?: string },
+  ) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       void persistNote(id, patch);
@@ -195,7 +192,7 @@ export function SidebarNotesPanel() {
   function updateLocal(id: string, patch: Partial<Note>) {
     setNotes((current) => {
       const next = current.map((note) =>
-        note.id === id ? { ...note, ...patch } : note
+        note.id === id ? { ...note, ...patch } : note,
       );
       setSidebarNotesCache(areas, next);
       return next;
@@ -207,7 +204,7 @@ export function SidebarNotesPanel() {
     const updated = await setNoteMenuPinned(note.id, !note.is_menu_pinned);
     upsertSidebarNoteInCache(updated);
     setNotes((current) =>
-      current.map((item) => (item.id === updated.id ? updated : item))
+      current.map((item) => (item.id === updated.id ? updated : item)),
     );
     updateFloatingNote(updated);
   }
@@ -223,7 +220,7 @@ export function SidebarNotesPanel() {
     const updated = await moveNote(noteId, targetAreaId);
     upsertSidebarNoteInCache(updated);
     setNotes((current) =>
-      current.map((note) => (note.id === updated.id ? updated : note))
+      current.map((note) => (note.id === updated.id ? updated : note)),
     );
     setMoveNoteId(null);
   }
@@ -255,7 +252,7 @@ export function SidebarNotesPanel() {
             "group relative rounded-md transition-[background-color,box-shadow]",
             selectedNoteId === note.id
               ? "flow-selected"
-              : interactiveHoverClass
+              : interactiveHoverClass,
           )}
           onContextMenu={(event) => {
             event.preventDefault();
@@ -276,7 +273,9 @@ export function SidebarNotesPanel() {
             open={openMenuNoteId === note.id}
             onOpenChange={(open) => setOpenMenuNoteId(open ? note.id : null)}
           >
-            <DropdownMenuTrigger className="sr-only">Note menu</DropdownMenuTrigger>
+            <DropdownMenuTrigger className="sr-only">
+              Note menu
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="rounded-xl">
               <DropdownMenuItem onClick={() => void handleToggleMenuPin(note)}>
                 {note.is_menu_pinned ? (
@@ -331,7 +330,9 @@ export function SidebarNotesPanel() {
         </div>
 
         {/* Document card on chrome — toolbar lives inside the card. */}
-        <div className={cn(drawerCardClass, "min-h-0 flex-1 overflow-hidden p-0")}>
+        <div
+          className={cn(drawerCardClass, "min-h-0 flex-1 overflow-hidden p-0")}
+        >
           <div className="flex shrink-0 items-center gap-2 border-b border-border/40 px-4 py-3">
             <input
               ref={titleInputRef}
@@ -358,7 +359,7 @@ export function SidebarNotesPanel() {
               onClick={() => void handleToggleMenuPin(selected)}
               className={cn(
                 "flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground",
-                selected.is_menu_pinned && "text-foreground"
+                selected.is_menu_pinned && "text-foreground",
               )}
               aria-label={
                 selected.is_menu_pinned ? "Unpin from menu" : "Pin to menu"
@@ -435,10 +436,10 @@ export function SidebarNotesPanel() {
             type="button"
             onClick={() => void handleOpenToday()}
             className={cn(
-              "flex w-full items-center gap-2.5 rounded-xl border border-border-board bg-surface-board px-3 py-2 text-left shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)] transition-colors",
+              "flex w-full items-center gap-2.5 rounded-xl border border-border-board bg-surface-board px-3 py-2 text-left transition-colors",
               todayDailyNoteId && selectedNoteId === todayDailyNoteId
                 ? "ring-1 ring-primary/30"
-                : "hover:bg-surface-board-header"
+                : "hover:bg-surface-board-header",
             )}
           >
             <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-board-header text-base leading-none">
@@ -491,7 +492,7 @@ export function SidebarNotesPanel() {
                       <ChevronDown
                         className={cn(
                           "size-3.5 shrink-0 text-muted-foreground transition-transform",
-                          isCollapsed && "-rotate-90"
+                          isCollapsed && "-rotate-90",
                         )}
                         aria-hidden
                       />

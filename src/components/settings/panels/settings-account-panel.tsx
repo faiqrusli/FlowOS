@@ -38,7 +38,7 @@ export function SettingsAccountPanel() {
     <div className="space-y-5">
       {feedback && (
         <p
-          className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-900"
+          className="rounded-lg border border-selected-border bg-primary-soft px-3 py-2 text-xs text-foreground"
           role="status"
         >
           {feedback}

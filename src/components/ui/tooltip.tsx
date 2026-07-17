@@ -26,7 +26,7 @@ function TooltipContent({
       <TooltipPrimitive.Positioner
         side={side}
         sideOffset={sideOffset}
-        className="z-50 outline-none"
+        className="z-[70] outline-none"
         {...props}
       >
         <TooltipPrimitive.Popup
@@ -34,7 +34,7 @@ function TooltipContent({
           className={cn(
             "flow-surface-elevated max-w-64 px-3 py-2 text-xs leading-relaxed text-foreground/90 outline-none",
             "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-97 data-open:duration-150 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-97 data-closed:duration-100",
-            className
+            className,
           )}
         >
           {children}

@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   type DragEvent,
+  type MouseEvent,
 } from "react";
 import { registerContextMenuCloser } from "@/lib/task-detail-menu-coordinator";
 import { Check, Clock, Play } from "lucide-react";
@@ -15,7 +16,7 @@ import { createPortal } from "react-dom";
 import { TimelineHabitLabel } from "@/components/tasks/timeline-habit-label";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { getHabitDurationMinutes } from "@/lib/schedule-durations";
-import { setDragImageFromElement } from "@/lib/list-drag-utils";
+import { setCompactQueueDragImage } from "@/lib/list-drag-utils";
 import {
   setActiveTimelineDrag,
   TIMELINE_DRAG_ID_MIME,
@@ -98,11 +99,13 @@ function WorkplaceHabitContextMenu({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="border-b border-divider px-2 py-1.5">
-          <p className="truncate text-xs font-medium text-foreground">{habit.name}</p>
+          <p className="truncate text-xs font-medium text-foreground">
+            {habit.name}
+          </p>
           <p className="mt-0.5 text-[10px] text-muted-foreground">
             {formatHabitTimeRangeWithDuration(
               habit.scheduled_time,
-              getHabitDurationMinutes(habit.id)
+              getHabitDurationMinutes(habit.id),
             ) ?? "No time set"}
           </p>
         </div>
@@ -118,7 +121,7 @@ function WorkplaceHabitContextMenu({
         ) : null}
       </div>
     </>,
-    document.body
+    document.body,
   );
 }
 
@@ -128,68 +131,103 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
   onToggleComplete,
   onStartFocus,
 }: WorkplaceCompactHabitRowProps) {
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(
-    null
-  );
+  const rowRef = useRef<HTMLDivElement>(null);
+  const suppressDragRef = useRef(false);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     return registerContextMenuCloser(() => setContextMenu(null));
   }, []);
   const time = formatHabitTimeRangeWithDuration(
     habit.scheduled_time,
-    getHabitDurationMinutes(habit.id)
+    getHabitDurationMinutes(habit.id),
   );
   const streakLabel = formatStreak(streak);
   const focusDraggable = habit.track_with_focus && !habit.completed;
+  const durationMinutes = getHabitDurationMinutes(habit.id);
+  const durationLabel = durationMinutes > 0 ? `${durationMinutes} min` : null;
+
+  const restoreDraggable = useCallback(() => {
+    suppressDragRef.current = false;
+    if (rowRef.current) {
+      rowRef.current.draggable = focusDraggable;
+    }
+  }, [focusDraggable]);
+
+  const handleRowMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+    const blockDrag = Boolean(
+      event.target instanceof Element && event.target.closest("[data-no-dnd]"),
+    );
+    suppressDragRef.current = blockDrag;
+    if (rowRef.current) {
+      rowRef.current.draggable = focusDraggable && !blockDrag;
+    }
+  };
 
   const handleDragStart = useCallback(
     (event: DragEvent<HTMLDivElement>) => {
+      if (
+        suppressDragRef.current ||
+        (event.target instanceof Element &&
+          event.target.closest("[data-no-dnd]"))
+      ) {
+        event.preventDefault();
+        restoreDraggable();
+        return;
+      }
       setActiveTimelineDrag({ kind: "habit", id: habit.id });
       event.dataTransfer.setData(TIMELINE_DRAG_KIND_MIME, "habit");
       event.dataTransfer.setData(TIMELINE_DRAG_ID_MIME, habit.id);
       event.dataTransfer.setData("text/plain", habit.id);
       event.dataTransfer.effectAllowed = "move";
-      setDragImageFromElement(event, event.currentTarget, 12, 12);
+      setCompactQueueDragImage(event, habit.name, durationLabel);
+      setDragging(true);
     },
-    [habit.id]
+    [durationLabel, habit.id, habit.name, restoreDraggable],
   );
 
   const handleDragEnd = useCallback(() => {
     setActiveTimelineDrag(null);
-  }, []);
+    setDragging(false);
+    restoreDraggable();
+  }, [restoreDraggable]);
 
   return (
     <>
       <div
+        ref={rowRef}
         id={todayHabitAnchorId(habit.id)}
         draggable={focusDraggable}
+        onMouseDown={handleRowMouseDown}
+        onMouseUp={restoreDraggable}
         onDragStart={focusDraggable ? handleDragStart : undefined}
         onDragEnd={focusDraggable ? handleDragEnd : undefined}
         onContextMenu={(event) => {
           event.preventDefault();
           setContextMenu({ x: event.clientX, y: event.clientY });
         }}
-        title={
-          habit.track_with_focus
-            ? "Track with Focus enabled"
-            : "Enable Track with Focus to drag into focus"
-        }
         className={cn(
-          "flex items-center gap-1.5 rounded-md border px-1.5 py-1",
+          "flex items-center gap-1.5 rounded-md border px-1.5 py-1 transition-opacity duration-150",
           focusDraggable
             ? "cursor-grab active:cursor-grabbing"
             : "cursor-default",
-          timelineHabitChipClassNames()
+          dragging && "opacity-40",
+          timelineHabitChipClassNames(),
         )}
       >
         <button
           type="button"
+          data-no-dnd
           onClick={onToggleComplete}
           className={cn(
             "flex size-4 shrink-0 items-center justify-center rounded-sm border transition-colors",
             habit.completed
               ? "border-warning bg-warning text-background"
-              : "border-warning/45 hover:border-warning"
+              : "border-warning/45 hover:border-warning",
           )}
           aria-label={`Mark "${habit.name}" complete`}
         >
@@ -203,14 +241,16 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
         <span
           className={cn(
             "min-w-0 flex-1 truncate text-[13px] font-medium leading-none text-foreground",
-            habit.completed && "line-through opacity-60"
+            habit.completed && "line-through opacity-60",
           )}
         >
           {habit.name}
         </span>
 
         {streakLabel ? (
-          <span className="shrink-0 text-[11px] text-warning">{streakLabel}</span>
+          <span className="shrink-0 text-[11px] text-warning">
+            {streakLabel}
+          </span>
         ) : null}
 
         {time ? (

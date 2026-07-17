@@ -12,7 +12,7 @@ const PLACEHOLDERS = [
 
 export function FocusFuturePlaceholders() {
   return (
-    <Card className="border-dashed border-border/40 bg-muted/10">
+    <Card className="border-dashed border-border/40 bg-surface-raised">
       <CardHeader className="pb-3">
         <CardTitle className="text-base text-muted-foreground">
           Coming soon

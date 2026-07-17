@@ -62,7 +62,7 @@ function KpiCell({
   );
 
   const cellClassName =
-    "min-w-0 flex-1 px-4 py-3 transition-colors hover:bg-muted/30";
+    "min-w-0 flex-1 px-4 py-3 transition-colors hover:bg-surface-hover/30";
 
   if (onAction) {
     return (

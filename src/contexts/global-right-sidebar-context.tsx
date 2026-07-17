@@ -17,7 +17,7 @@ import {
   getOrCreateDailyNote,
 } from "@/lib/daily-notes";
 import {
-  GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX,
+  GLOBAL_RIGHT_SIDEBAR_LAYOUT_RESERVE_PX,
   GLOBAL_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX,
   GLOBAL_RIGHT_SIDEBAR_MAX_WIDTH_PX,
   GLOBAL_RIGHT_SIDEBAR_MIN_WIDTH_PX,
@@ -307,11 +307,7 @@ export function GlobalRightSidebarProvider({
 
   // Today/workplace: always reserve collapsed rail width in layout so
   // expand/collapse overlay does not reflow the page. Other routes consume full width.
-  const visibleWidthPx = workplaceHoverMode
-    ? GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX
-    : expanded
-      ? width
-      : GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX;
+  const visibleWidthPx = GLOBAL_RIGHT_SIDEBAR_LAYOUT_RESERVE_PX;
 
   const value = useMemo<GlobalRightSidebarContextValue>(
     () => ({

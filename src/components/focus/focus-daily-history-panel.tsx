@@ -43,7 +43,7 @@ export function FocusDailyHistoryPanel({
                   onClick={() => onSelectDate(day.date)}
                   className={cn(
                     "flex w-full items-center justify-between gap-3 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-surface-hover",
-                    selectedDate === day.date && "flow-selected"
+                    selectedDate === day.date && "flow-selected",
                   )}
                 >
                   <div>
@@ -73,7 +73,7 @@ export function FocusDailyHistoryPanel({
 
 export function useFocusSelectedDate(
   sessions: FocusSession[],
-  initialDate: string | null = null
+  initialDate: string | null = null,
 ) {
   const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
 

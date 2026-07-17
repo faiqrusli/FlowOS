@@ -12,6 +12,7 @@ import {
 import { getGroupDisplayTitle, isLaterGroup, isTodayGroup } from "@/lib/task-groups";
 import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
 import { cn } from "@/lib/utils";
+import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 import type { TaskGroup } from "@/types/task";
 
 type TaskGroupPickerProps = {
@@ -49,12 +50,14 @@ export function TaskGroupPicker({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex max-w-full items-center gap-1 rounded-md outline-none hover:opacity-90",
-          className
+          "max-w-full justify-between gap-1.5 px-2 font-medium",
+          compactControlTriggerClass,
+          className,
         )}
         aria-label={`Group: ${currentName}`}
       >
         <TaskGroupPill
+          variant="plain"
           icon={currentAppearance.icon}
           name={currentName}
           appearance={currentAppearance}

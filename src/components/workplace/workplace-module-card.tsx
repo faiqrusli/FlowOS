@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff, type LucideIcon } from "lucide-react";
+import { Eye, EyeOff, X, type LucideIcon } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   readModuleVisibility,
@@ -21,6 +21,9 @@ type WorkplaceModuleCardProps = {
   className?: string;
   headerExtra?: ReactNode;
   bodyClassName?: string;
+  /** Floating overlay mode — hide hover-visibility toggle; optional close. */
+  overlay?: boolean;
+  onClose?: () => void;
 };
 
 export function WorkplaceModuleCard({
@@ -34,15 +37,19 @@ export function WorkplaceModuleCard({
   className,
   headerExtra,
   bodyClassName,
+  overlay = false,
+  onClose,
 }: WorkplaceModuleCardProps) {
-  const [visibility, setVisibility] = useState<WorkplaceModuleVisibility>("always");
+  const [visibility, setVisibility] =
+    useState<WorkplaceModuleVisibility>("always");
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
+    if (overlay) return;
     setVisibility(readModuleVisibility(moduleId));
-  }, [moduleId]);
+  }, [moduleId, overlay]);
 
-  const hoverReveal = visibility === "hover";
+  const hoverReveal = !overlay && visibility === "hover";
   const contentVisible = !hoverReveal || hovered;
   const cardVisible = !hoverReveal || hovered;
 
@@ -58,11 +65,15 @@ export function WorkplaceModuleCard({
     <section
       id={anchorId}
       className={cn(
-        workplacePanelSectionClassName,
-        "group/module flex min-h-0 flex-col overflow-hidden",
-        !cardVisible &&
-          "border-transparent bg-transparent shadow-none hover:border-transparent hover:bg-transparent hover:shadow-none",
-        className
+        overlay
+          ? "flex min-h-0 flex-col overflow-hidden border-0 bg-transparent shadow-none"
+          : cn(
+              workplacePanelSectionClassName,
+              "group/module flex min-h-0 flex-col overflow-hidden",
+              !cardVisible &&
+                "border-transparent bg-transparent shadow-none hover:border-transparent hover:bg-transparent hover:shadow-none",
+            ),
+        className,
       )}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -70,7 +81,7 @@ export function WorkplaceModuleCard({
       <header
         className={cn(
           "flex shrink-0 items-center justify-between gap-2 border-b border-divider px-2.5 py-2 transition-opacity duration-150",
-          !cardVisible && "pointer-events-none opacity-0"
+          !overlay && !cardVisible && "pointer-events-none opacity-0",
         )}
       >
         <div className="flex min-w-0 items-center gap-1.5">
@@ -95,30 +106,42 @@ export function WorkplaceModuleCard({
         </div>
         <div className="flex items-center gap-1.5">
           {headerExtra}
-          <button
-            type="button"
-            onClick={toggleVisibility}
-            className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-muted/50 hover:text-muted-foreground"
-            aria-label={
-              hoverReveal
-                ? "Show on hover — click for always visible"
-                : "Always visible — click for show on hover"
-            }
-            title={hoverReveal ? "Show on hover" : "Always visible"}
-          >
-            {hoverReveal ? (
-              <EyeOff className="size-4" />
-            ) : (
-              <Eye className="size-4" />
-            )}
-          </button>
+          {overlay && onClose ? (
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex size-6 items-center justify-center rounded-md text-muted-foreground/70 transition-colors hover:bg-surface-hover hover:text-foreground"
+              aria-label={`Close ${title}`}
+            >
+              <X className="size-3.5" />
+            </button>
+          ) : null}
+          {!overlay ? (
+            <button
+              type="button"
+              onClick={toggleVisibility}
+              className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-surface-hover hover:text-muted-foreground"
+              aria-label={
+                hoverReveal
+                  ? "Show on hover — click for always visible"
+                  : "Always visible — click for show on hover"
+              }
+              title={hoverReveal ? "Show on hover" : "Always visible"}
+            >
+              {hoverReveal ? (
+                <EyeOff className="size-4" />
+              ) : (
+                <Eye className="size-4" />
+              )}
+            </button>
+          ) : null}
         </div>
       </header>
       <div
         className={cn(
           "min-h-0 flex-1 overflow-hidden transition-opacity duration-150",
           !contentVisible && "pointer-events-none opacity-0",
-          bodyClassName
+          bodyClassName,
         )}
       >
         {children}

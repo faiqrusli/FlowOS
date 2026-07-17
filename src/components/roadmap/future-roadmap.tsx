@@ -18,20 +18,28 @@ function statusBadgeClass(status: RoadmapStatus): string {
     case "in-development":
       return "border-violet-200 bg-violet-50 text-violet-800 dark:border-violet-400/30 dark:bg-violet-500/12 dark:text-violet-200";
     case "researching":
-      return "border-sky-200 bg-sky-50 text-sky-800 dark:border-sky-400/30 dark:bg-sky-500/12 dark:text-sky-200";
+      return "border-selected-border bg-primary-soft text-foreground";
     default:
-      return "border-border/50 bg-muted/35 text-foreground/85";
+      return "border-border/50 bg-surface-raised text-foreground/85";
   }
 }
 
-function RoadmapRow({ item, compact }: { item: FutureRoadmapItem; compact?: boolean }) {
+function RoadmapRow({
+  item,
+  compact,
+}: {
+  item: FutureRoadmapItem;
+  compact?: boolean;
+}) {
   const Icon = item.icon;
 
   return (
     <li
       className={cn(
         "flex gap-3",
-        compact ? "py-2.5" : "rounded-lg border border-border/60 bg-muted/20 px-3 py-3"
+        compact
+          ? "py-2.5"
+          : "rounded-lg border border-border/60 bg-surface-raised px-3 py-3",
       )}
     >
       <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-background ring-1 ring-border/60">
@@ -61,7 +69,12 @@ export function FutureRoadmap({
   className,
 }: FutureRoadmapProps) {
   return (
-    <ul className={cn(compact ? "divide-y divide-border/60" : "space-y-2", className)}>
+    <ul
+      className={cn(
+        compact ? "divide-y divide-border/60" : "space-y-2",
+        className,
+      )}
+    >
       {items.map((item) => (
         <RoadmapRow key={item.id} item={item} compact={compact} />
       ))}

@@ -1,8 +1,7 @@
 "use client";
 
 import type { KpiCellKey } from "@/components/dashboard/dashboard-kpi-strip";
-import { formatDuration } from "@/lib/focus-utils";
-import { type } from "@/lib/typography";
+import { formatDurationCompact } from "@/lib/focus-utils";
 import type { TodayProgress } from "@/types/dashboard";
 
 type TodayRailStatsRowProps = {
@@ -12,10 +11,9 @@ type TodayRailStatsRowProps = {
 
 function RailDivider() {
   return (
-    <span
-      aria-hidden
-      className="hidden h-3 w-px shrink-0 bg-border/60 sm:block"
-    />
+    <span aria-hidden className="text-muted-foreground/50">
+      ·
+    </span>
   );
 }
 
@@ -30,15 +28,15 @@ function InlineStatChip({
 }) {
   const content = (
     <>
-      <span className="text-sm font-semibold tabular-nums text-foreground">
+      <span className="font-semibold tabular-nums text-foreground">
         {value}
       </span>
-      <span className={type.meta}>{label}</span>
+      <span className="text-muted-foreground">{label}</span>
     </>
   );
 
   const className =
-    "inline-flex items-baseline gap-1 rounded-md px-1 py-0.5 transition-colors hover:bg-surface-hover";
+    "inline-flex items-baseline gap-1 rounded-md px-0.5 py-0.5 transition-colors hover:bg-surface-hover";
 
   if (onClick) {
     return (
@@ -51,13 +49,13 @@ function InlineStatChip({
   return <span className={className}>{content}</span>;
 }
 
-/** Inline Tasks / Habits / Focus chips for the Today status rail (no Reflection). */
+/** Inline Tasks │ Habits │ Focus │ Break chips for the Today status rail. */
 export function TodayRailStatsRow({
   progress,
   onCellAction,
 }: TodayRailStatsRowProps) {
   return (
-    <span className="inline-flex flex-wrap items-center gap-x-3 gap-y-1">
+    <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
       <InlineStatChip
         value={`${progress.tasksCompleted}/${progress.tasksTotal}`}
         label="Tasks"
@@ -71,8 +69,14 @@ export function TodayRailStatsRow({
       />
       <RailDivider />
       <InlineStatChip
-        value={formatDuration(progress.focusSeconds)}
+        value={formatDurationCompact(progress.focusSeconds)}
         label="Focus"
+        onClick={() => onCellAction("focus")}
+      />
+      <RailDivider />
+      <InlineStatChip
+        value={formatDurationCompact(progress.breakSeconds)}
+        label="Break"
         onClick={() => onCellAction("focus")}
       />
     </span>

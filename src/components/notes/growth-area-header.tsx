@@ -27,7 +27,12 @@ export function GrowthAreaHeader({
           title={area.description?.trim() || undefined}
         >
           <span className="text-xl leading-none">{area.emoji}</span>
-          <h2 className={cn(type.sectionTitle, "truncate text-base leading-tight")}>
+          <h2
+            className={cn(
+              type.sectionTitle,
+              "truncate text-base leading-tight",
+            )}
+          >
             {area.name}
           </h2>
         </div>
@@ -42,7 +47,7 @@ export function GrowthAreaHeader({
                 "rounded-md px-3 py-1 text-sm font-medium transition-[background-color,color,box-shadow]",
                 tab === item
                   ? "bg-surface-hover text-foreground shadow-sm ring-1 ring-border/40"
-                  : "text-muted-foreground hover:bg-surface-hover/50 hover:text-foreground"
+                  : "text-muted-foreground hover:bg-surface-hover/50 hover:text-foreground",
               )}
             >
               {item === "notes" ? "Notes" : "Kanban"}

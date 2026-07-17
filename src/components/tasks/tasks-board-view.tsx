@@ -27,7 +27,10 @@ import {
   Smile,
   Trash2,
 } from "lucide-react";
-import { CalendarPanel, CALENDAR_PANEL_WIDTH_CLASS } from "@/components/ui/calendar-panel";
+import {
+  CalendarPanel,
+  CALENDAR_PANEL_WIDTH_CLASS,
+} from "@/components/ui/calendar-panel";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskGroupColorChooser } from "@/components/tasks/task-group-color-chooser";
 import {
@@ -195,8 +198,7 @@ const LATER_GROUP_CHANGE_BLOCKED_HINT =
   "🚫 Groups can't be changed from Later.";
 const TODAY_GROUP_CHANGE_BLOCKED_HINT =
   "🚫 Groups can't be changed from Today.";
-const SYSTEM_VIEW_REORDER_BLOCKED_HINT =
-  "🚫 System views can't be reordered.";
+const SYSTEM_VIEW_REORDER_BLOCKED_HINT = "🚫 System views can't be reordered.";
 
 type SystemViewInfoKey = "today" | "later" | "inbox";
 
@@ -229,7 +231,7 @@ const SYSTEM_VIEW_INFO: Record<
 function buildTaskDragPreviewBadges(
   sourceGroup: TaskGroupWithTasks | undefined,
   orgGroup: TaskGroupWithTasks | undefined,
-  todayViewDate: string
+  todayViewDate: string,
 ): TaskDragPreviewBadge[] {
   const badges: TaskDragPreviewBadge[] = [];
   if (sourceGroup) {
@@ -269,7 +271,10 @@ type TasksBoardViewProps = {
   onCreateTask: (
     groupId: string,
     title: string,
-    options?: { scheduledDate?: string | null; planningState?: "none" | "later" }
+    options?: {
+      scheduledDate?: string | null;
+      planningState?: "none" | "later";
+    },
   ) => Promise<void>;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onToggleComplete: (task: Task) => Promise<void>;
@@ -279,12 +284,15 @@ type TasksBoardViewProps = {
   onCreateGroup: (input: TaskGroupCreateInput) => Promise<string>;
   onCreateGroupAndMoveTask: (
     input: TaskGroupCreateInput,
-    taskId: string
+    taskId: string,
   ) => Promise<string>;
   onRenameGroup: (groupId: string, title: string) => Promise<void>;
   onUpdateGroupIcon: (groupId: string, icon: string) => Promise<void>;
   onUpdateGroupColor: (groupId: string, color: string) => Promise<void>;
-  onUpdateGroupSortMode: (groupId: string, sortMode: TaskSortMode) => Promise<void>;
+  onUpdateGroupSortMode: (
+    groupId: string,
+    sortMode: TaskSortMode,
+  ) => Promise<void>;
   onDeleteGroup: (groupId: string) => Promise<void>;
   onPersistLayout: (
     groups: TaskGroupWithTasks[],
@@ -292,21 +300,26 @@ type TasksBoardViewProps = {
       todayViewDate?: string;
       previousBoard?: TaskGroupWithTasks[];
       taskDateAssignments?: { taskId: string; scheduledDate: string }[];
-    }
+    },
   ) => Promise<void>;
   onPersistGroupOrder: (
     previous: TaskGroupWithTasks[],
-    next: TaskGroupWithTasks[]
+    next: TaskGroupWithTasks[],
   ) => Promise<void>;
   onPersistManualOrder: (updates: ManualOrderUpdate[]) => Promise<void>;
   onShowHint?: (message: string) => void;
-  onSetPlanningState?: (taskId: string, planningState: PlanningState) => Promise<void>;
+  onSetPlanningState?: (
+    taskId: string,
+    planningState: PlanningState,
+  ) => Promise<void>;
 };
 
 type DragKind = "task" | "group" | null;
 
 function movableGroupIds(groupList: TaskGroupWithTasks[]) {
-  return groupList.filter((group) => !isPinnedTaskGroup(group)).map((group) => group.id);
+  return groupList
+    .filter((group) => !isPinnedTaskGroup(group))
+    .map((group) => group.id);
 }
 
 function boardGroupIds(groupList: TaskGroupWithTasks[]) {
@@ -317,7 +330,7 @@ function findBoardGroupColumnAtPoint(
   board: HTMLElement,
   clientX: number,
   clientY: number,
-  stickyColumnId?: string | null
+  stickyColumnId?: string | null,
 ): HTMLElement | null {
   return (
     findBoardColumnAtPoint(board, clientX, clientY, stickyColumnId)?.element ??
@@ -330,7 +343,7 @@ function resolveGroupReorderBlockState(
   board: HTMLElement,
   clientX: number,
   clientY: number,
-  beforeId: DropBeforeId
+  beforeId: DropBeforeId,
 ): { blocked: boolean; pinnedTargetId: string | null } {
   const column = findBoardGroupColumnAtPoint(board, clientX, clientY);
   const hoveredGroupId = column?.getAttribute("data-task-group") ?? null;
@@ -400,7 +413,9 @@ function TasksBoardViewContent({
   const inboxGroupIdRef = useRef<string | null>(null);
   const plannerActiveRef = useRef(plannerActive);
 
-  const [externalTaskDragId, setExternalTaskDragId] = useState<string | null>(null);
+  const [externalTaskDragId, setExternalTaskDragId] = useState<string | null>(
+    null,
+  );
   const selectedTaskIdRef = useRef(selectedTaskId);
   const taskDropTargetRef = useRef<TaskDragTarget | null>(null);
   const commitDropTargetRef = useRef<TaskDragTarget | null>(null);
@@ -426,14 +441,14 @@ function TasksBoardViewContent({
   const groupDragInitialBeforeIdRef = useRef<DropBeforeId>(null);
 
   const [iconChooserGroupId, setIconChooserGroupId] = useState<string | null>(
-    null
+    null,
   );
   const [colorChooserGroupId, setColorChooserGroupId] = useState<string | null>(
-    null
+    null,
   );
   const [newGroupDialogOpen, setNewGroupDialogOpen] = useState(false);
   const [newGroupMoveTaskId, setNewGroupMoveTaskId] = useState<string | null>(
-    null
+    null,
   );
   const newGroupMoveTaskIdRef = useRef<string | null>(null);
   const [todayTitleOpen, setTodayTitleOpen] = useState(false);
@@ -456,12 +471,12 @@ function TasksBoardViewContent({
       { key: getTodayDateString(), label: "Today" },
       { key: getTomorrowDateString(), label: "Tomorrow" },
     ],
-    []
+    [],
   );
 
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [completedExpanded, setCompletedExpanded] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const completedExpandedRef = useRef(completedExpanded);
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
@@ -469,7 +484,7 @@ function TasksBoardViewContent({
 
   const [composingGroupId, setComposingGroupId] = useState<string | null>(null);
   const [composePlacement, setComposePlacement] = useState<"top" | "bottom">(
-    "bottom"
+    "bottom",
   );
   const [composeText, setComposeText] = useState("");
   const composeRef = useRef<HTMLTextAreaElement>(null);
@@ -519,7 +534,9 @@ function TasksBoardViewContent({
     if (!pending) return;
     if (!groups.some((group) => group.id === pending.groupId)) return;
     pendingNewGroupAnimationRef.current = null;
-    animateGroupDropLayout(pending.snapshot, { droppedGroupId: pending.groupId });
+    animateGroupDropLayout(pending.snapshot, {
+      droppedGroupId: pending.groupId,
+    });
   }, [groups]);
 
   useEffect(() => {
@@ -653,9 +670,9 @@ function TasksBoardViewContent({
                   getDisplayedActiveTasks(
                     sourceGroup,
                     sourceGroup.tasks.filter((task) => task.id !== taskId),
-                    todayViewDateRef.current
+                    todayViewDateRef.current,
                   ).map((task) => task.id),
-                  taskId
+                  taskId,
                 ),
                 zone: "active",
                 showInsertionLine: true,
@@ -680,7 +697,7 @@ function TasksBoardViewContent({
   function handleTaskPointerDragStart(
     taskId: string,
     groupId: string,
-    coords: { clientX: number; clientY: number }
+    coords: { clientX: number; clientY: number },
   ) {
     window.getSelection()?.removeAllRanges();
     clearTaskDropReveal();
@@ -706,12 +723,12 @@ function TasksBoardViewContent({
           badges: buildTaskDragPreviewBadges(
             sourceGroup,
             orgGroup,
-            todayViewDateRef.current
+            todayViewDateRef.current,
           ),
         },
         rowEl.getBoundingClientRect(),
         coords.clientX,
-        coords.clientY
+        coords.clientY,
       );
     }
 
@@ -750,14 +767,18 @@ function TasksBoardViewContent({
   function isDragFromLaterColumn(): boolean {
     const sourceId = dragOriginalSourceGroupIdRef.current;
     if (!sourceId) return false;
-    const sourceGroup = groupsRef.current.find((group) => group.id === sourceId);
+    const sourceGroup = groupsRef.current.find(
+      (group) => group.id === sourceId,
+    );
     return sourceGroup ? isLaterGroup(sourceGroup) : false;
   }
 
   function isDragFromTodayColumn(): boolean {
     const sourceId = dragOriginalSourceGroupIdRef.current;
     if (!sourceId) return false;
-    const sourceGroup = groupsRef.current.find((group) => group.id === sourceId);
+    const sourceGroup = groupsRef.current.find(
+      (group) => group.id === sourceId,
+    );
     return sourceGroup ? isTodayGroup(sourceGroup) : false;
   }
 
@@ -784,7 +805,7 @@ function TasksBoardViewContent({
   function isBlockedPlanningQueueDrop(
     clientX: number,
     clientY: number,
-    groupId?: string
+    groupId?: string,
   ): boolean {
     if (!isLaterOriginatedTaskDrag() && !isTodayOriginatedTaskDrag()) {
       return false;
@@ -816,7 +837,7 @@ function TasksBoardViewContent({
   function updatePlanningQueueDragFeedback(
     clientX: number,
     clientY: number,
-    groupId?: string
+    groupId?: string,
   ): boolean {
     if (isBlockedPlanningQueueDrop(clientX, clientY, groupId)) {
       showPlanningQueueDragTooltip(clientX, clientY);
@@ -834,7 +855,7 @@ function TasksBoardViewContent({
       !canAcceptActiveDropTarget(
         groupsRef.current,
         dragSourceGroupIdRef.current,
-        target
+        target,
       )
     );
   }
@@ -849,9 +870,13 @@ function TasksBoardViewContent({
   function setTaskReorderBlockedState(
     blocked: boolean,
     clientX?: number,
-    clientY?: number
+    clientY?: number,
   ) {
-    if (!blocked && !taskReorderBlockedRef.current && !taskReorderBlockedUiRef.current) {
+    if (
+      !blocked &&
+      !taskReorderBlockedRef.current &&
+      !taskReorderBlockedUiRef.current
+    ) {
       return;
     }
 
@@ -883,7 +908,9 @@ function TasksBoardViewContent({
   }
 
   function isCrossGroupMoveAttempt(taskId: string, targetGroupId: string) {
-    const targetGroup = groupsRef.current.find((group) => group.id === targetGroupId);
+    const targetGroup = groupsRef.current.find(
+      (group) => group.id === targetGroupId,
+    );
     if (!targetGroup || isTodayGroup(targetGroup)) return false;
 
     const task = findTaskInBoard(taskId);
@@ -891,12 +918,15 @@ function TasksBoardViewContent({
     return task.group_id !== targetGroupId;
   }
 
-  function targetGroupIdAtPoint(clientX: number, clientY: number): string | null {
+  function targetGroupIdAtPoint(
+    clientX: number,
+    clientY: number,
+  ): string | null {
     const board = boardRef.current;
     if (!board) return null;
     return (
       findBoardGroupColumnAtPoint(board, clientX, clientY)?.getAttribute(
-        "data-task-group"
+        "data-task-group",
       ) ?? null
     );
   }
@@ -904,7 +934,7 @@ function TasksBoardViewContent({
   function notifyGroupChangeBlockedIfNeeded(
     taskId: string | null,
     clientX: number,
-    clientY: number
+    clientY: number,
   ) {
     if (!taskId || !isTimelineOriginatedTaskDrag()) return;
 
@@ -988,7 +1018,7 @@ function TasksBoardViewContent({
 
   function syncBoardTaskDropTargetFromPointer(
     clientX: number,
-    clientY: number
+    clientY: number,
   ) {
     const taskId = getActiveTaskDragIdForDrop();
     const board = boardRef.current;
@@ -999,7 +1029,7 @@ function TasksBoardViewContent({
       board,
       clientX,
       clientY,
-      stickyColumnId
+      stickyColumnId,
     );
 
     if (!targetColumn) {
@@ -1010,7 +1040,7 @@ function TasksBoardViewContent({
         setTaskReorderBlockedState(false);
         applyStickyColumnTarget(
           columnStickyDropRef.current.columnId,
-          columnStickyDropRef.current.target
+          columnStickyDropRef.current.target,
         );
         return;
       }
@@ -1048,7 +1078,7 @@ function TasksBoardViewContent({
       todayViewDateRef.current,
       clientX,
       clientY,
-      taskId
+      taskId,
     );
 
     if (resolved.kind === "none") {
@@ -1211,7 +1241,7 @@ function TasksBoardViewContent({
         if (targetGroupId && isPlanningColumnTarget(targetGroupId)) {
           syncBoardTaskDropTargetFromPointer(event.clientX, event.clientY);
           setExternalTaskDragId((current) =>
-            externalTaskId === current ? current : externalTaskId
+            externalTaskId === current ? current : externalTaskId,
           );
           if (event.dataTransfer) {
             event.dataTransfer.dropEffect = "move";
@@ -1220,11 +1250,7 @@ function TasksBoardViewContent({
           return;
         }
 
-        notifyGroupChangeBlockedIfNeeded(
-          taskId,
-          event.clientX,
-          event.clientY
-        );
+        notifyGroupChangeBlockedIfNeeded(taskId, event.clientX, event.clientY);
         if (
           taskId &&
           isCrossGroupMoveAttempt(taskId, targetGroupId) &&
@@ -1275,14 +1301,14 @@ function TasksBoardViewContent({
       "data-task-group-column",
       clientX,
       "x",
-      dragIdRef.current
+      dragIdRef.current,
     );
     const { blocked, pinnedTargetId } = resolveGroupReorderBlockState(
       groupsRef.current,
       boardRef.current,
       clientX,
       clientY,
-      beforeId
+      beforeId,
     );
 
     groupReorderBlockedRef.current = blocked;
@@ -1342,7 +1368,7 @@ function TasksBoardViewContent({
       boardGroupIds(groupsRef.current),
       groupId,
       groupDragInitialBeforeIdRef.current,
-      dropBeforeGroupIdRef.current
+      dropBeforeGroupIdRef.current,
     );
 
     resetDrag();
@@ -1382,7 +1408,7 @@ function TasksBoardViewContent({
 
   function canCommitBoardTaskDrop(
     activeDragId: string | null,
-    target: TaskDragTarget | null
+    target: TaskDragTarget | null,
   ): boolean {
     if (!activeDragId || !target) return false;
     if (taskReorderBlockedRef.current) return false;
@@ -1423,7 +1449,7 @@ function TasksBoardViewContent({
         target.groupId,
         activeDragId,
         target.beforeTaskId,
-        todayViewDateRef.current
+        todayViewDateRef.current,
       );
       return updates.length > 0;
     }
@@ -1449,15 +1475,15 @@ function TasksBoardViewContent({
       () => {
         resetDrag();
       },
-      getTaskDragSessionSnapshot().sourceGroupId
+      getTaskDragSessionSnapshot().sourceGroupId,
     );
   }
 
-  async function commitTaskDropIfNeeded(
-    explicit?: { activeDragId: string; target: TaskDragTarget }
-  ) {
-    const activeDragId =
-      explicit?.activeDragId ?? getActiveTaskDragIdForDrop();
+  async function commitTaskDropIfNeeded(explicit?: {
+    activeDragId: string;
+    target: TaskDragTarget;
+  }) {
+    const activeDragId = explicit?.activeDragId ?? getActiveTaskDragIdForDrop();
     const previewTarget = taskDropTargetRef.current;
     const target =
       explicit?.target ??
@@ -1503,7 +1529,7 @@ function TasksBoardViewContent({
         target.groupId,
         activeDragId,
         target.beforeTaskId,
-        todayViewDateRef.current
+        todayViewDateRef.current,
       );
 
       if (updates.length === 0) return false;
@@ -1520,7 +1546,7 @@ function TasksBoardViewContent({
     const previousBoard = groupsRef.current;
 
     const destinationGroup = previousBoard.find(
-      (group) => group.id === target.groupId
+      (group) => group.id === target.groupId,
     );
     const isCrossGroupManualInsert =
       target.zone === "active" &&
@@ -1532,7 +1558,7 @@ function TasksBoardViewContent({
       const destinationDisplayedIds = getDisplayedActiveTasks(
         destinationGroup,
         destinationGroup.tasks,
-        todayViewDateRef.current
+        todayViewDateRef.current,
       ).map((task) => task.id);
 
       beginCrossGroupManualTrace({
@@ -1600,7 +1626,7 @@ function TasksBoardViewContent({
     setExternalTaskDragId(null);
     const beforeId = initialDropBeforeId(
       movableGroupIds(groupsRef.current),
-      groupId
+      groupId,
     );
     dropBeforeGroupIdRef.current = beforeId;
     groupDragInitialBeforeIdRef.current = beforeId;
@@ -1634,7 +1660,7 @@ function TasksBoardViewContent({
         notifyGroupChangeBlockedIfNeeded(
           getActiveTaskDragIdForDrop(),
           pointerXRef.current,
-          pointerYRef.current
+          pointerYRef.current,
         );
       }
       destroyTaskDragPreview();
@@ -1646,12 +1672,16 @@ function TasksBoardViewContent({
       cancelPointerTargetSync();
       syncBoardTaskDropTargetFromPointer(
         pointerXRef.current,
-        pointerYRef.current
+        pointerYRef.current,
       );
       const activeDragId = getActiveTaskDragIdForDrop();
       const target = taskDropTargetRef.current;
 
-      if (activeDragId && target && canCommitBoardTaskDrop(activeDragId, target)) {
+      if (
+        activeDragId &&
+        target &&
+        canCommitBoardTaskDrop(activeDragId, target)
+      ) {
         const sourceGroupId = dragOriginalSourceGroupIdRef.current;
         const layoutSnapshot = captureTaskSlotLayout([
           sourceGroupId,
@@ -1688,7 +1718,7 @@ function TasksBoardViewContent({
         notifyGroupChangeBlockedIfNeeded(
           getActiveTaskDragIdForDrop(),
           event.clientX,
-          event.clientY
+          event.clientY,
         );
       }
       resetDrag();
@@ -1702,7 +1732,10 @@ function TasksBoardViewContent({
     resetDrag();
   }
 
-  function handleGroupDragStart(groupId: string, event: DragEvent<HTMLButtonElement>) {
+  function handleGroupDragStart(
+    groupId: string,
+    event: DragEvent<HTMLButtonElement>,
+  ) {
     const group = groupsRef.current.find((item) => item.id === groupId);
     if (group && isPinnedTaskGroup(group)) return;
 
@@ -1711,7 +1744,7 @@ function TasksBoardViewContent({
     beginGroupDrag(groupId);
 
     const column = event.currentTarget.closest(
-      "[data-task-group-column]"
+      "[data-task-group-column]",
     ) as HTMLElement | null;
     if (column) setDragImageFromElement(event, column, 24, 24);
 
@@ -1726,11 +1759,15 @@ function TasksBoardViewContent({
     const activeDragId = dragIdRef.current;
     const beforeId = dropBeforeGroupIdRef.current;
 
-    if (dragKindRef.current === "group" && activeDragId && !groupReorderBlockedRef.current) {
+    if (
+      dragKindRef.current === "group" &&
+      activeDragId &&
+      !groupReorderBlockedRef.current
+    ) {
       const previousBoard = groupsRef.current;
       const next = moveGroupInBoard(previousBoard, activeDragId, beforeId);
       const orderChanged = boardGroupIds(previousBoard).some(
-        (id, index) => id !== boardGroupIds(next)[index]
+        (id, index) => id !== boardGroupIds(next)[index],
       );
       const layoutSnapshot = orderChanged ? captureGroupColumnLayout() : null;
 
@@ -1738,7 +1775,9 @@ function TasksBoardViewContent({
       resetDrag();
 
       if (orderChanged && layoutSnapshot) {
-        animateGroupDropLayout(layoutSnapshot, { droppedGroupId: activeDragId });
+        animateGroupDropLayout(layoutSnapshot, {
+          droppedGroupId: activeDragId,
+        });
       }
 
       void onPersistGroupOrder(previousBoard, next).catch(() => {
@@ -1753,7 +1792,11 @@ function TasksBoardViewContent({
   function handleBoardDragOver(event: DragEvent<HTMLDivElement>) {
     pointerXRef.current = event.clientX;
 
-    if (dragKindRef.current === "group" && dragIdRef.current && boardRef.current) {
+    if (
+      dragKindRef.current === "group" &&
+      dragIdRef.current &&
+      boardRef.current
+    ) {
       event.preventDefault();
       scheduleGroupDragFeedback(event.clientX, event.clientY);
       event.dataTransfer.dropEffect = groupReorderBlockedRef.current
@@ -1766,7 +1809,10 @@ function TasksBoardViewContent({
     return isTimelineOriginatedTaskDrag();
   }
 
-  function handleActiveBodyDragOver(event: DragEvent<HTMLElement>, groupId: string) {
+  function handleActiveBodyDragOver(
+    event: DragEvent<HTMLElement>,
+    groupId: string,
+  ) {
     if (!isTimelineTaskDrag()) return;
     if (isTimelineOriginatedTaskDrag() && !isPlanningColumnTarget(groupId)) {
       return;
@@ -1793,7 +1839,7 @@ function TasksBoardViewContent({
 
   function handleGroupDropZoneDragOver(
     event: DragEvent<HTMLElement>,
-    groupId: string
+    groupId: string,
   ) {
     if (!isTimelineTaskDrag()) return;
     handleActiveBodyDragOver(event, groupId);
@@ -1807,7 +1853,7 @@ function TasksBoardViewContent({
 
   function handleCompletedBodyDragOver(
     event: DragEvent<HTMLElement>,
-    groupId: string
+    groupId: string,
   ) {
     if (!isTimelineTaskDrag()) return;
     if (isTimelineOriginatedTaskDrag() && !isPlanningColumnTarget(groupId)) {
@@ -1943,7 +1989,7 @@ function TasksBoardViewContent({
     const canReorder = canReorderTasksInGroup(group);
     const { active, completed } = getCachedColumnDisplayedTasks(
       group,
-      todayViewDate
+      todayViewDate,
     );
     const isComposing = composingGroupId === group.id;
     const isComposingTop = isComposing && composePlacement === "top";
@@ -1976,64 +2022,65 @@ function TasksBoardViewContent({
       </div>
     );
 
-    const groupTitleCluster = editingGroupId === group.id ? (
-      <input
-        value={groupTitleDraft}
-        onChange={(event) => setGroupTitleDraft(event.target.value)}
-        onBlur={() => void saveGroupTitle(group.id)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") void saveGroupTitle(group.id);
-          if (event.key === "Escape") setEditingGroupId(null);
-        }}
-        className="min-w-0 flex-1 rounded-md border border-border/50 bg-background px-2 py-1 text-sm font-semibold outline-none"
-        autoFocus
-      />
-    ) : isLater ? (
-      <div className="flex min-w-0 items-center gap-1">
-        <LaterViewIcon />
-        <span className="min-w-0 truncate text-sm font-semibold text-foreground">
-          {displayTitle}
-        </span>
-        <SystemViewInfoMenu
-          view="later"
-          open={systemViewInfoOpen === "later"}
-          onOpenChange={(open) =>
-            setSystemViewInfoOpen(open ? "later" : null)
-          }
+    const groupTitleCluster =
+      editingGroupId === group.id ? (
+        <input
+          value={groupTitleDraft}
+          onChange={(event) => setGroupTitleDraft(event.target.value)}
+          onBlur={() => void saveGroupTitle(group.id)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") void saveGroupTitle(group.id);
+            if (event.key === "Escape") setEditingGroupId(null);
+          }}
+          className="min-w-0 flex-1 rounded-md border border-border/50 bg-surface-base px-2 py-1 text-sm font-semibold outline-none"
+          autoFocus
         />
-      </div>
-    ) : isInboxGroup(group) ? (
-      <div className="flex min-w-0 items-center gap-1">
-        <TaskGroupPill
-          icon={groupAppearance.icon}
-          name={displayTitle}
-          appearance={groupAppearance}
-          variant="plain"
-          className="min-w-0 font-semibold"
-        />
-        <SystemViewInfoMenu
-          view="inbox"
-          open={systemViewInfoOpen === "inbox"}
-          onOpenChange={(open) =>
-            setSystemViewInfoOpen(open ? "inbox" : null)
-          }
-        />
-      </div>
-    ) : (
-      <button
-        type="button"
-        onDoubleClick={() => startRenameGroup(group)}
-        className="min-w-0 truncate text-left"
-      >
-        <TaskGroupPill
-          icon={groupAppearance.icon}
-          name={displayTitle}
-          appearance={groupAppearance}
-          variant="plain"
-          className="font-semibold"
-        />
-      </button>
-    );
+      ) : isLater ? (
+        <div className="flex min-w-0 items-center gap-1">
+          <LaterViewIcon />
+          <span className="min-w-0 truncate text-sm font-semibold text-foreground">
+            {displayTitle}
+          </span>
+          <SystemViewInfoMenu
+            view="later"
+            open={systemViewInfoOpen === "later"}
+            onOpenChange={(open) =>
+              setSystemViewInfoOpen(open ? "later" : null)
+            }
+          />
+        </div>
+      ) : isInboxGroup(group) ? (
+        <div className="flex min-w-0 items-center gap-1">
+          <TaskGroupPill
+            icon={groupAppearance.icon}
+            name={displayTitle}
+            appearance={groupAppearance}
+            variant="plain"
+            className="min-w-0 font-semibold"
+          />
+          <SystemViewInfoMenu
+            view="inbox"
+            open={systemViewInfoOpen === "inbox"}
+            onOpenChange={(open) =>
+              setSystemViewInfoOpen(open ? "inbox" : null)
+            }
+          />
+        </div>
+      ) : (
+        <button
+          type="button"
+          onDoubleClick={() => startRenameGroup(group)}
+          className="min-w-0 truncate text-left"
+        >
+          <TaskGroupPill
+            icon={groupAppearance.icon}
+            name={displayTitle}
+            appearance={groupAppearance}
+            variant="plain"
+            className="font-semibold"
+          />
+        </button>
+      );
 
     const composeInput = (
       <div
@@ -2069,7 +2116,8 @@ function TasksBoardViewContent({
             groupId={group.id}
             className={cn(
               "flex w-11 shrink-0 flex-col items-center rounded-xl border py-2 shadow-sm transition-[box-shadow,background-color,border-color] duration-150",
-              TASK_GROUP_COLUMN_BODY_CLASS
+              TASK_GROUP_COLUMN_BODY_CLASS,
+              "bg-surface-base",
             )}
           >
             <button
@@ -2082,7 +2130,7 @@ function TasksBoardViewContent({
                 "mb-1 flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover",
                 isPinned
                   ? "cursor-default opacity-40"
-                  : "cursor-grab active:cursor-grabbing"
+                  : "cursor-grab active:cursor-grabbing",
               )}
               aria-label={`Move ${displayTitle}`}
               aria-disabled={isPinned}
@@ -2101,7 +2149,10 @@ function TasksBoardViewContent({
               <LaterViewIcon className="mb-2" />
             ) : (
               <span
-                className={cn("mb-2", getGroupDotClass(groupAppearance.colorKey))}
+                className={cn(
+                  "mb-2",
+                  getGroupDotClass(groupAppearance.colorKey),
+                )}
                 aria-hidden
               />
             )}
@@ -2127,13 +2178,13 @@ function TasksBoardViewContent({
             TASK_GROUP_COLUMN_BODY_CLASS,
             isToday &&
               plannerActive &&
-              "ring-2 ring-primary/25 shadow-md shadow-primary/10"
+              "ring-2 ring-primary/25 shadow-md shadow-primary/10",
           )}
         >
           <div
             className={cn(
               "group/column-header flex h-11 shrink-0 items-center gap-0 rounded-t-xl px-1.5 transition-colors duration-150 hover:bg-surface-hover/40",
-              TASK_GROUP_COLUMN_HEADER_CLASS
+              TASK_GROUP_COLUMN_HEADER_CLASS,
             )}
           >
             {isToday ? (
@@ -2161,7 +2212,7 @@ function TasksBoardViewContent({
                     onOpenChange={setTodayTitleOpen}
                   >
                     <DropdownMenuTrigger
-                      className="inline-flex h-7 min-w-[5.5rem] items-center justify-center gap-1 rounded-md px-2 text-sm font-semibold outline-none hover:bg-muted/60"
+                      className="inline-flex h-7 min-w-[5.5rem] items-center justify-center gap-1 rounded-md px-2 text-sm font-semibold outline-none hover:bg-surface-hover/60"
                       aria-label={`Selected day: ${displayTitle}`}
                     >
                       {displayTitle}
@@ -2181,7 +2232,8 @@ function TasksBoardViewContent({
                           }}
                           className={cn(
                             "mx-2 mt-1 text-xs first:mt-0",
-                            todayViewDate === item.key && "bg-muted font-medium"
+                            todayViewDate === item.key &&
+                              "bg-surface-raised font-medium",
                           )}
                         >
                           {item.label}
@@ -2214,7 +2266,7 @@ function TasksBoardViewContent({
                   onOpenChange={setTodayCalendarOpen}
                 >
                   <DropdownMenuTrigger
-                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-accent-text outline-none hover:bg-muted/60"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-accent-text outline-none hover:bg-surface-hover/60"
                     aria-label="Pick date"
                   >
                     <CalendarDays className="size-3.5" />
@@ -2313,7 +2365,7 @@ function TasksBoardViewContent({
                 <button
                   type="button"
                   onClick={() => openCompose(group.id, "bottom")}
-                  className="mt-0.5 flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-transparent py-1.5 text-[11px] font-medium text-muted-foreground/75 transition-colors hover:border-border/45 hover:bg-muted/35 hover:text-foreground"
+                  className="mt-0.5 flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-transparent py-1.5 text-[11px] font-medium text-muted-foreground/75 transition-colors hover:border-border/45 hover:bg-surface-hover hover:text-foreground"
                 >
                   <Plus className="size-3" />
                   Add a task
@@ -2338,13 +2390,13 @@ function TasksBoardViewContent({
                           });
                           syncBoardTaskDropTargetFromPointer(
                             event.clientX,
-                            event.clientY
+                            event.clientY,
                           );
                           event.dataTransfer.dropEffect = "move";
                         }
                       : undefined
                   }
-                  className="flex w-full items-center gap-1 rounded-md px-1 py-1.5 text-xs font-medium text-muted-foreground/85 transition-colors hover:bg-muted/40 hover:text-foreground"
+                  className="flex w-full items-center gap-1 rounded-md px-1 py-1.5 text-xs font-medium text-muted-foreground/85 transition-colors hover:bg-surface-hover hover:text-foreground"
                 >
                   {isCompletedOpen ? (
                     <ChevronDown className="size-3.5 shrink-0" />
@@ -2380,9 +2432,11 @@ function TasksBoardViewContent({
     );
   }
 
-  const iconChooserGroup = groups.find((group) => group.id === iconChooserGroupId);
+  const iconChooserGroup = groups.find(
+    (group) => group.id === iconChooserGroupId,
+  );
   const colorChooserGroup = groups.find(
-    (group) => group.id === colorChooserGroupId
+    (group) => group.id === colorChooserGroupId,
   );
 
   function openNewGroupDialog(moveTaskId?: string) {
@@ -2445,142 +2499,146 @@ function TasksBoardViewContent({
       onDeleteTask,
       onUpdateTask,
       onSetPlanningState,
-    ]
+    ],
   );
 
   return (
     <TaskBoardGroupsProvider groups={groups}>
-    <TaskBoardActionsProvider actions={boardActions}>
-    <>
-      <div className="flex h-full min-h-0 flex-col gap-3">
-      <div className="relative flex w-full shrink-0 items-center px-10">
-        <h1 className={cn(type.pageTitle, "min-w-0 shrink-0")}>Tasks</h1>
+      <TaskBoardActionsProvider actions={boardActions}>
+        <>
+          <div className="flex h-full min-h-0 flex-col gap-3">
+            <div className="relative flex w-full shrink-0 items-center">
+              <h1 className={cn(type.pageTitle, "min-w-0 shrink-0")}>Tasks</h1>
 
-        {onToggleQuickPlanner ? (
-          <div className="pointer-events-none absolute inset-x-0 flex justify-center">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className={cn(
-                "pointer-events-auto h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
-                "border-border/45 bg-background text-foreground/85",
-                "shadow-sm",
-                "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
-                "hover:border-primary/35 hover:bg-muted/45 hover:text-foreground",
-                "active:scale-[0.98] active:bg-muted/50",
-                plannerActive &&
-                  "border-primary/45 bg-primary/[0.06] text-foreground shadow-sm hover:bg-primary/[0.08] hover:border-primary/55"
-              )}
-              onClick={onToggleQuickPlanner}
-              aria-pressed={plannerActive}
-            >
-              <Clock
+              {onToggleQuickPlanner ? (
+                <div className="pointer-events-none absolute inset-x-0 flex justify-center">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className={cn(
+                      "pointer-events-auto h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
+                      "border-border/45 bg-surface-base text-foreground/85",
+                      "shadow-sm",
+                      "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
+                      "hover:border-primary/35 hover:bg-surface-hover/45 hover:text-foreground",
+                      "active:scale-[0.98] active:bg-surface-raised",
+                      plannerActive &&
+                        "border-primary/45 bg-primary/[0.06] text-foreground shadow-sm hover:bg-primary/[0.08] hover:border-primary/55",
+                    )}
+                    onClick={onToggleQuickPlanner}
+                    aria-pressed={plannerActive}
+                  >
+                    <Clock
+                      className={cn(
+                        "size-3.5 transition-colors duration-150",
+                        plannerActive
+                          ? "text-accent-text"
+                          : "text-accent-text/90",
+                      )}
+                    />
+                    Quick Schedule
+                  </Button>
+                </div>
+              ) : null}
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
                 className={cn(
-                  "size-3.5 transition-colors duration-150",
-                  plannerActive ? "text-accent-text" : "text-accent-text/90"
+                  "relative z-20 ml-auto h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
+                  "border-border-subtle bg-surface-base text-foreground/85",
+                  "shadow-raised",
+                  "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
+                  "hover:border-border-strong hover:bg-surface-hover hover:text-foreground",
+                  "active:scale-[0.98] active:bg-surface-hover",
                 )}
-              />
-              Quick Schedule
-            </Button>
+                onClick={() => openNewGroupDialog()}
+              >
+                <Plus className="size-3.5 text-muted-foreground transition-colors duration-150 group-hover/button:text-foreground" />
+                New Group
+              </Button>
+            </div>
+
+            <BoardGroupDragScrollChrome
+              ref={boardRef}
+              onDragOver={handleBoardDragOver}
+              onDrop={(event) => {
+                if (dragKindRef.current === "group") {
+                  event.preventDefault();
+                  void handleGroupDragEnd();
+                  return;
+                }
+                void handleExternalTaskDrop(event);
+              }}
+              className="tasks-board-scroll flex min-h-0 flex-1 gap-3 overflow-x-auto overscroll-x-contain pb-1"
+            >
+              {groups.map((group, columnIndex) =>
+                renderGroupColumn(group, columnIndex),
+              )}
+              <BoardGroupDropTrailingMarker />
+            </BoardGroupDragScrollChrome>
           </div>
-        ) : null}
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className={cn(
-            "relative z-20 ml-auto h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
-            "border-border/45 bg-background text-foreground/85",
-            "shadow-[0_1px_2px_0_rgba(15,23,42,0.05)]",
-            "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
-            "hover:border-border/70 hover:bg-muted/40 hover:text-foreground hover:shadow-[0_1px_3px_0_rgba(15,23,42,0.07)]",
-            "active:scale-[0.98] active:bg-muted/55 active:shadow-[0_1px_1px_0_rgba(15,23,42,0.04)]"
-          )}
-          onClick={() => openNewGroupDialog()}
-        >
-          <Plus className="size-3.5 text-muted-foreground transition-colors duration-150 group-hover/button:text-foreground" />
-          New Group
-        </Button>
-      </div>
+          <DragBlockedTooltip
+            position={planningQueueDragTooltip}
+            message={planningQueueDragTooltip?.message ?? ""}
+          />
+          <GroupDragBlockedTooltip message={SYSTEM_VIEW_REORDER_BLOCKED_HINT} />
+          <DragBlockedTooltip
+            position={taskReorderBlockedDragTooltip}
+            message={REORDER_DISABLED_TOOLTIP}
+          />
 
-      <BoardGroupDragScrollChrome
-        ref={boardRef}
-        onDragOver={handleBoardDragOver}
-        onDrop={(event) => {
-          if (dragKindRef.current === "group") {
-            event.preventDefault();
-            void handleGroupDragEnd();
-            return;
-          }
-          void handleExternalTaskDrop(event);
-        }}
-        className="tasks-board-scroll flex min-h-0 flex-1 gap-3 overflow-x-auto overscroll-x-contain pb-1"
-      >
-        {groups.map((group, columnIndex) => renderGroupColumn(group, columnIndex))}
-        <BoardGroupDropTrailingMarker />
-      </BoardGroupDragScrollChrome>
-      </div>
+          <GrowthAreaIconChooser
+            open={iconChooserGroupId !== null}
+            onOpenChange={(open) => {
+              if (!open) setIconChooserGroupId(null);
+            }}
+            value={
+              iconChooserGroup
+                ? getTaskGroupAppearance(iconChooserGroup).icon
+                : "📝"
+            }
+            onSelect={(emoji) => {
+              if (iconChooserGroupId) {
+                void onUpdateGroupIcon(iconChooserGroupId, emoji);
+              }
+            }}
+          />
 
-      <DragBlockedTooltip
-        position={planningQueueDragTooltip}
-        message={planningQueueDragTooltip?.message ?? ""}
-      />
-      <GroupDragBlockedTooltip message={SYSTEM_VIEW_REORDER_BLOCKED_HINT} />
-      <DragBlockedTooltip
-        position={taskReorderBlockedDragTooltip}
-        message={REORDER_DISABLED_TOOLTIP}
-      />
+          <TaskGroupColorChooser
+            open={colorChooserGroupId !== null}
+            onOpenChange={(open) => {
+              if (!open) setColorChooserGroupId(null);
+            }}
+            value={
+              colorChooserGroup
+                ? getTaskGroupAppearance(colorChooserGroup).colorKey
+                : "blue"
+            }
+            onSelect={(colorKey) => {
+              if (colorChooserGroupId) {
+                void onUpdateGroupColor(colorChooserGroupId, colorKey);
+              }
+            }}
+          />
 
-      <GrowthAreaIconChooser
-        open={iconChooserGroupId !== null}
-        onOpenChange={(open) => {
-          if (!open) setIconChooserGroupId(null);
-        }}
-        value={
-          iconChooserGroup
-            ? getTaskGroupAppearance(iconChooserGroup).icon
-            : "📝"
-        }
-        onSelect={(emoji) => {
-          if (iconChooserGroupId) {
-            void onUpdateGroupIcon(iconChooserGroupId, emoji);
-          }
-        }}
-      />
-
-      <TaskGroupColorChooser
-        open={colorChooserGroupId !== null}
-        onOpenChange={(open) => {
-          if (!open) setColorChooserGroupId(null);
-        }}
-        value={
-          colorChooserGroup
-            ? getTaskGroupAppearance(colorChooserGroup).colorKey
-            : "blue"
-        }
-        onSelect={(colorKey) => {
-          if (colorChooserGroupId) {
-            void onUpdateGroupColor(colorChooserGroupId, colorKey);
-          }
-        }}
-      />
-
-      <TaskGroupDialog
-        open={newGroupDialogOpen}
-        onOpenChange={(open) => {
-          setNewGroupDialogOpen(open);
-          if (!open) {
-            newGroupMoveTaskIdRef.current = null;
-            setNewGroupMoveTaskId(null);
-          }
-        }}
-        existingGroups={groups}
-        onSave={handleSaveNewGroup}
-      />
-    </>
-    </TaskBoardActionsProvider>
+          <TaskGroupDialog
+            open={newGroupDialogOpen}
+            onOpenChange={(open) => {
+              setNewGroupDialogOpen(open);
+              if (!open) {
+                newGroupMoveTaskIdRef.current = null;
+                setNewGroupMoveTaskId(null);
+              }
+            }}
+            existingGroups={groups}
+            onSave={handleSaveNewGroup}
+          />
+        </>
+      </TaskBoardActionsProvider>
     </TaskBoardGroupsProvider>
   );
 }
@@ -2605,7 +2663,7 @@ function SystemViewInfoPanel({ view }: { view: SystemViewInfoKey }) {
           key={paragraph}
           className={cn(
             "text-xs leading-snug text-muted-foreground",
-            index === 0 ? "mt-1.5" : "mt-2"
+            index === 0 ? "mt-1.5" : "mt-2",
           )}
         >
           {paragraph}
@@ -2633,7 +2691,7 @@ function SystemViewInfoMenu({
       <DropdownMenuTrigger
         className={cn(
           "inline-flex shrink-0 items-center justify-center rounded-sm px-0.5 text-[11px] leading-none text-muted-foreground hover:bg-surface-hover hover:text-foreground",
-          triggerClassName
+          triggerClassName,
         )}
         aria-label={`About ${info.title}`}
       >
@@ -2667,7 +2725,7 @@ function DragBlockedTooltip({
     >
       {message}
     </div>,
-    document.body
+    document.body,
   );
 }
 
@@ -2683,7 +2741,10 @@ function GroupHeaderDragHandle({
   onDragEnd: () => void;
 }) {
   return (
-    <div className="flex size-7 shrink-0 items-center justify-center" aria-hidden={disabled}>
+    <div
+      className="flex size-7 shrink-0 items-center justify-center"
+      aria-hidden={disabled}
+    >
       {disabled ? null : (
         <button
           type="button"
@@ -2718,7 +2779,7 @@ function GroupHeaderOptionsMenu({
     <div className="flex size-7 shrink-0 items-center justify-center">
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex size-7 items-center justify-center rounded-md text-muted-foreground opacity-0 outline-none transition-opacity duration-150 hover:bg-surface-hover hover:text-foreground focus-visible:opacity-100 data-[state=open]:bg-muted/70 data-[state=open]:opacity-100 data-[state=open]:text-foreground group-hover/column-header:opacity-100"
+          className="flex size-7 items-center justify-center rounded-md text-muted-foreground opacity-0 outline-none transition-opacity duration-150 hover:bg-surface-hover hover:text-foreground focus-visible:opacity-100 data-[state=open]:bg-surface-hover/70 data-[state=open]:opacity-100 data-[state=open]:text-foreground group-hover/column-header:opacity-100"
           aria-label={`${displayTitle} options`}
         >
           <MoreHorizontal className="size-4" />
@@ -2799,7 +2860,7 @@ const TaskComposeInput = forwardRef<
       }}
       placeholder="Task title..."
       rows={1}
-      className="mt-0.5 w-full resize-none overflow-hidden rounded-md border-b border-primary/25 bg-transparent px-1.5 py-1.5 text-[13px] outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary/45 focus:bg-muted/15"
+      className="mt-0.5 w-full resize-none overflow-hidden rounded-md border-b border-primary/25 bg-transparent px-1.5 py-1.5 text-[13px] outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary/45 focus:bg-surface-raised"
       style={{ minHeight: "1.75rem" }}
       onKeyDown={(event: KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.key === "Enter" && !event.shiftKey) {

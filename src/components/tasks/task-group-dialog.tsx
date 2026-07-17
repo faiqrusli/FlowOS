@@ -60,7 +60,7 @@ export function TaskGroupDialog({
         icon,
         color,
       }),
-    [color, icon, name]
+    [color, icon, name],
   );
 
   useEffect(() => {
@@ -118,7 +118,7 @@ export function TaskGroupDialog({
 
               <div className="space-y-2">
                 <Label>Preview</Label>
-                <div className="flex min-h-11 items-center rounded-xl border border-border/40 bg-muted/20 px-3 py-2">
+                <div className="flex min-h-11 items-center rounded-xl border border-border/40 bg-surface-raised px-3 py-2">
                   <TaskGroupPill
                     icon={previewAppearance.icon}
                     name={name.trim() || "Group name"}
@@ -134,7 +134,7 @@ export function TaskGroupDialog({
                     id="task-group-icon"
                     type="button"
                     onClick={() => setIconChooserOpen(true)}
-                    className="flex h-10 w-full items-center justify-center rounded-xl border border-border/50 bg-background text-xl transition-colors hover:bg-muted/40"
+                    className="flex h-10 w-full items-center justify-center rounded-xl border border-border/50 bg-background text-xl transition-colors hover:bg-surface-hover"
                     aria-label="Choose icon"
                   >
                     {icon}
@@ -152,15 +152,15 @@ export function TaskGroupDialog({
                         aria-pressed={color === colorKey}
                         onClick={() => setColor(colorKey)}
                         className={cn(
-                          "flex aspect-square items-center justify-center rounded-lg border border-border/50 bg-muted/20 shadow-sm transition-transform hover:scale-105",
+                          "flex aspect-square items-center justify-center rounded-lg border border-border/50 bg-surface-raised shadow-sm transition-transform hover:scale-105",
                           color === colorKey &&
-                            "ring-2 ring-foreground ring-offset-2 ring-offset-background"
+                            "ring-2 ring-foreground ring-offset-2 ring-offset-background",
                         )}
                       >
                         <span
                           className={cn(
                             "size-2 shrink-0 rounded-full",
-                            TASK_GROUP_SWATCH_CLASS[colorKey]
+                            TASK_GROUP_SWATCH_CLASS[colorKey],
                           )}
                           aria-hidden
                         />
@@ -170,7 +170,9 @@ export function TaskGroupDialog({
                 </div>
               </div>
 
-              {error ? <p className="text-sm text-destructive">{error}</p> : null}
+              {error ? (
+                <p className="text-sm text-destructive">{error}</p>
+              ) : null}
             </div>
 
             <DialogFooter>

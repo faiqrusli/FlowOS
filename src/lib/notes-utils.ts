@@ -28,33 +28,33 @@ export const CARD_COLOR_CLASSES: Record<
 > = {
   rose: {
     dot: "bg-rose-500",
-    bg: "bg-rose-50/80 dark:bg-rose-950/30",
-    border: "border-rose-200/70 dark:border-rose-800/40",
+    bg: "bg-surface-raised",
+    border: "border-border-subtle",
   },
   amber: {
     dot: "bg-amber-400",
-    bg: "bg-amber-50/80 dark:bg-amber-950/30",
-    border: "border-amber-200/70 dark:border-amber-800/40",
+    bg: "bg-surface-raised",
+    border: "border-border-subtle",
   },
   emerald: {
     dot: "bg-emerald-500",
-    bg: "bg-emerald-50/80 dark:bg-emerald-950/30",
-    border: "border-emerald-200/70 dark:border-emerald-800/40",
+    bg: "bg-surface-raised",
+    border: "border-border-subtle",
   },
   sky: {
     dot: "bg-sky-500",
-    bg: "bg-sky-50/80 dark:bg-sky-950/30",
-    border: "border-sky-200/70 dark:border-sky-800/40",
+    bg: "bg-surface-raised",
+    border: "border-border-subtle",
   },
   violet: {
     dot: "bg-violet-500",
-    bg: "bg-violet-50/80 dark:bg-violet-950/30",
-    border: "border-violet-200/70 dark:border-violet-800/40",
+    bg: "bg-surface-raised",
+    border: "border-border-subtle",
   },
   slate: {
     dot: "bg-slate-400",
-    bg: "bg-slate-50/80 dark:bg-slate-900/30",
-    border: "border-slate-200/70 dark:border-slate-700/40",
+    bg: "bg-surface-raised",
+    border: "border-border-subtle",
   },
 };
 

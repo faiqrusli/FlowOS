@@ -39,7 +39,7 @@ function buildPreviewInnerHtml(data: TaskDragPreviewData): string {
   const badges = (data.badges ?? [])
     .map(
       (badge) =>
-        `<span class="inline-flex max-w-[5rem] shrink-0 items-center truncate rounded-md border border-border/35 bg-muted/50 px-1.5 py-0 text-[11px] font-medium text-foreground/85"><span class="truncate">${escapeHtml(badge.label)}</span></span>`
+        `<span class="inline-flex max-w-[5rem] shrink-0 items-center truncate rounded-md border border-border/35 bg-surface-raised px-1.5 py-0 text-[11px] font-medium text-foreground/85"><span class="truncate">${escapeHtml(badge.label)}</span></span>`
     )
     .join("");
   const titleClass = data.completed
@@ -47,7 +47,7 @@ function buildPreviewInnerHtml(data: TaskDragPreviewData): string {
     : "text-sm leading-[18px]";
 
   return `
-    <div class="flex min-w-0 select-none items-center gap-0 rounded-md border border-border/40 bg-background py-1 pl-0.5 pr-0.5 shadow-lg ring-1 ring-border/25">
+    <div class="flex min-w-0 select-none items-center gap-0 rounded-md border border-border-subtle bg-surface-raised py-1 pl-0.5 pr-0.5 shadow-[var(--shadow-overlay)]">
       <div class="flex size-5 shrink-0 items-center justify-center text-muted-foreground">
         ${
           data.completed

@@ -176,11 +176,17 @@ export function formatCompactBreakCountdownLabel(remainingSeconds: number): stri
   return `Break in ${minutes} min`;
 }
 
+/** Focus-threshold label: "25 min", "1h", "1h 30m", "3h". */
 export function formatBreakAtMinutes(minutes: number): string {
-  return `${minutes} min`;
+  const safe = Math.max(0, Math.round(minutes));
+  if (safe < 60) return `${safe} min`;
+  const hours = Math.floor(safe / 60);
+  const rest = safe % 60;
+  if (rest === 0) return `${hours}h`;
+  return `${hours}h ${rest}m`;
 }
 
 export function formatBreakLengthMinutes(minutes: number | null): string {
   if (minutes == null) return "Not set";
-  return `${minutes} min`;
+  return formatBreakAtMinutes(minutes);
 }

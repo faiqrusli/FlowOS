@@ -17,7 +17,7 @@ export function ScheduleSummaryCard({ summary }: ScheduleSummaryProps) {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-lg bg-muted/35 px-3 py-2.5">
+        <div className="rounded-lg bg-surface-raised px-3 py-2.5">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Next
           </p>
@@ -35,7 +35,7 @@ export function ScheduleSummaryCard({ summary }: ScheduleSummaryProps) {
           )}
         </div>
 
-        <div className="rounded-lg bg-muted/35 px-3 py-2.5">
+        <div className="rounded-lg bg-surface-raised px-3 py-2.5">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Remaining
           </p>

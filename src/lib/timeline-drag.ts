@@ -23,6 +23,7 @@ export function setBoardTaskDragData(
   event.dataTransfer.setData(TIMELINE_DRAG_ID_MIME, taskId);
   event.dataTransfer.setData("text/plain", taskId);
   setActiveTaskDragId(taskId);
+  setActiveTimelineDrag({ kind: "task", id: taskId });
 }
 
 let activeTaskDragId: string | null = null;

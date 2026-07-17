@@ -62,12 +62,12 @@ export function NotesPanel({
 }: NotesPanelProps) {
   const { openFloatingNote, closeFloatingNote } = useGlobalRightSidebar();
   const [selectedId, setSelectedId] = useState<string | null>(
-    notes[0]?.id ?? null
+    notes[0]?.id ?? null,
   );
   const [search, setSearch] = useState("");
   const [preview, setPreview] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">(
-    "idle"
+    "idle",
   );
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
@@ -88,7 +88,7 @@ export function NotesPanel({
     return sortedNotes.filter(
       (note) =>
         note.title.toLowerCase().includes(q) ||
-        note.content.toLowerCase().includes(q)
+        note.content.toLowerCase().includes(q),
     );
   }, [sortedNotes, search]);
 
@@ -124,7 +124,7 @@ export function NotesPanel({
   const persistNote = useCallback(
     async (
       id: string,
-      patch: { title?: string; content?: string; is_pinned?: boolean }
+      patch: { title?: string; content?: string; is_pinned?: boolean },
     ) => {
       setSaveState("saving");
       try {
@@ -133,8 +133,8 @@ export function NotesPanel({
           notes.map((note) =>
             note.id === updated.id
               ? { ...updated, is_pinned: updated.is_pinned ?? false }
-              : note
-          )
+              : note,
+          ),
         );
         onNotesChange(next);
         setSaveState("saved");
@@ -143,12 +143,12 @@ export function NotesPanel({
         setSaveState("idle");
       }
     },
-    [notes, onNotesChange]
+    [notes, onNotesChange],
   );
 
   function scheduleSave(
     id: string,
-    patch: { title?: string; content?: string }
+    patch: { title?: string; content?: string },
   ) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
@@ -166,7 +166,7 @@ export function NotesPanel({
     try {
       const title = resolveNewNoteTitle(
         notes.map((note) => note.title),
-        growthAreaName
+        growthAreaName,
       );
       const created = await createNote({
         growth_area_id: growthAreaId,
@@ -190,7 +190,7 @@ export function NotesPanel({
       const next = notes.filter((item) => item.id !== note.id);
       onNotesChange(next);
       setSelectedId((current) =>
-        current === note.id ? next[0]?.id ?? null : current
+        current === note.id ? (next[0]?.id ?? null) : current,
       );
       closeFloatingNote(note.id);
       showNotice(`"${deletedTitle}" deleted`);
@@ -207,9 +207,9 @@ export function NotesPanel({
         notes.map((item) =>
           item.id === updated.id
             ? { ...updated, is_pinned: updated.is_pinned ?? false }
-            : item
-        )
-      )
+            : item,
+        ),
+      ),
     );
   }
 
@@ -222,7 +222,7 @@ export function NotesPanel({
     const title = renameDraft.trim() || "Untitled";
     setRenamingId(null);
     onNotesChange(
-      notes.map((note) => (note.id === noteId ? { ...note, title } : note))
+      notes.map((note) => (note.id === noteId ? { ...note, title } : note)),
     );
     await persistNote(noteId, { title });
   }
@@ -232,7 +232,7 @@ export function NotesPanel({
     const next = notes.filter((note) => note.id !== noteId);
     onNotesChange(next);
     setSelectedId((current) =>
-      current === noteId ? next[0]?.id ?? null : current
+      current === noteId ? (next[0]?.id ?? null) : current,
     );
     onAreasRefresh();
   }
@@ -243,7 +243,7 @@ export function NotesPanel({
 
   function updateLocal(id: string, patch: Partial<Note>) {
     onNotesChange(
-      notes.map((note) => (note.id === id ? { ...note, ...patch } : note))
+      notes.map((note) => (note.id === id ? { ...note, ...patch } : note)),
     );
     scheduleSave(id, {
       title: patch.title,
@@ -256,7 +256,9 @@ export function NotesPanel({
       <div
         className={cn(
           "flex h-full min-h-0 flex-row overflow-hidden",
-          embedded ? "" : "rounded-xl border border-border-subtle bg-surface-base shadow-none"
+          embedded
+            ? ""
+            : "rounded-xl border border-border-subtle bg-surface-base shadow-none",
         )}
       >
         <div className="flex h-full min-h-0 w-[min(200px,34vw)] shrink-0 flex-col border-r border-border-subtle bg-surface-base xl:w-[216px]">
@@ -296,7 +298,7 @@ export function NotesPanel({
                     "group relative flex items-center rounded-xl transition-[background-color,box-shadow]",
                     selectedId === note.id
                       ? "flow-selected"
-                      : "hover:bg-surface-hover/70"
+                      : "hover:bg-surface-hover/70",
                   )}
                   onContextMenu={(event) => {
                     if (renamingId === note.id) return;
@@ -347,9 +349,10 @@ export function NotesPanel({
                     >
                       <DropdownMenuTrigger
                         className={cn(
-                          "absolute top-1/2 right-1.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted",
-                          (selectedId === note.id || openMenuNoteId === note.id) &&
-                            "opacity-100"
+                          "absolute top-1/2 right-1.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-surface-hover",
+                          (selectedId === note.id ||
+                            openMenuNoteId === note.id) &&
+                            "opacity-100",
                         )}
                         aria-label={`${note.title} options`}
                         onClick={(event) => event.stopPropagation()}
@@ -367,7 +370,9 @@ export function NotesPanel({
                           <Pencil className="size-3.5" />
                           Rename
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setMoveNoteId(note.id)}>
+                        <DropdownMenuItem
+                          onClick={() => setMoveNoteId(note.id)}
+                        >
                           <FolderInput className="size-3.5" />
                           Move to
                         </DropdownMenuItem>

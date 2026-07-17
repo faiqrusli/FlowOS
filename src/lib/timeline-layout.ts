@@ -18,7 +18,7 @@ export const TIMELINE_PLACEMENT_END_MINUTES = TIMELINE_END_MINUTES;
 export const SNAP_MINUTES = 5;
 export const DEFAULT_TASK_DURATION = 30;
 export const DEFAULT_HABIT_DURATION = 15;
-export const MIN_BLOCK_HEIGHT_PX = 34;
+export const MIN_BLOCK_HEIGHT_PX = 30;
 
 export type TimelineZoom = "5" | "10" | "15" | "20";
 

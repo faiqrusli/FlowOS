@@ -15,7 +15,7 @@ export function PlannedFeaturesCard({ features }: PlannedFeaturesCardProps) {
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-muted/60">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-surface-raised">
             <ListChecks className="size-4 text-muted-foreground stroke-[1.5]" />
           </div>
           <CardTitle className="text-base">Planned Features</CardTitle>

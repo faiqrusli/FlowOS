@@ -8,12 +8,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import {
-  BookOpen,
-  ListPlus,
-  NotebookPen,
-  Plus,
-} from "lucide-react";
+import { BookOpen, ListPlus, NotebookPen, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,14 +50,21 @@ function QuickAddHint({
   );
 }
 
-const iconActionClass =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border-subtle bg-surface-base text-foreground transition-colors hover:bg-surface-hover";
+const textActionClass =
+  "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground";
 
-export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRowProps) {
-  const { createNewNote, openDailyNote, openReflection, notifyWorkplaceTaskCreated } =
-    useGlobalRightSidebar();
+export function WorkplaceQuickAddRow({
+  onOpenTaskDetails,
+}: WorkplaceQuickAddRowProps) {
+  const {
+    createNewNote,
+    openDailyNote,
+    openReflection,
+    notifyWorkplaceTaskCreated,
+  } = useGlobalRightSidebar();
   const boardGroups = useOptionalTaskBoardGroups();
   const [title, setTitle] = useState("");
+  const [focused, setFocused] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pendingSaveRef = useRef<Promise<void>>(Promise.resolve());
   const boardGroupsRef = useRef<TaskGroupWithTasks[] | null>(boardGroups);
@@ -87,17 +89,17 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
             boardGroupsRef.current = addTaskToBoard(
               boardGroupsRef.current,
               created,
-              todayViewDate
+              todayViewDate,
             );
           }
         })
         .catch((err) => {
           setError(
-            err instanceof TasksError ? err.message : "Failed to create task."
+            err instanceof TasksError ? err.message : "Failed to create task.",
           );
         });
     },
-    [notifyWorkplaceTaskCreated]
+    [notifyWorkplaceTaskCreated],
   );
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -110,40 +112,67 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
     }
   }
 
+  function handleAddClick() {
+    const trimmed = title.trim();
+    if (trimmed) {
+      setTitle("");
+      enqueueInlineTask(trimmed);
+      return;
+    }
+    onOpenTaskDetails();
+  }
+
+  const showCaptureHint = focused || title.trim().length > 0;
+
   return (
     <div className="flex w-full min-w-0 flex-col gap-1">
       <div className="flex w-full min-w-0 flex-nowrap items-center gap-1.5">
-        <div className="flex min-w-0 flex-1 items-center gap-1">
+        <div className="relative flex min-w-0 flex-1 items-center">
           <Input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Add a task…"
-            title="Type a task and press Enter to add to Today"
-            className="h-8 min-w-0 flex-1 border-border-subtle bg-surface-raised px-2.5 text-[13px] shadow-none"
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            placeholder="Quick capture a task…"
+            title="Type a task and press Enter to add to Today · Inbox"
+            className={cn(
+              "h-8 min-w-0 flex-1 border-0 bg-transparent px-1 text-[13px] shadow-none placeholder:text-muted-foreground/70 focus-visible:ring-0",
+              showCaptureHint && "pr-[7.25rem]",
+            )}
           />
-          <QuickAddHint label="Quick capture — full task form · Ctrl+Shift+A">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-sm"
-              onClick={onOpenTaskDetails}
-              className="size-8 shrink-0 rounded-lg shadow-xs"
-              aria-label="Quick capture task"
-            >
-              <ListPlus className="size-3.5" />
-            </Button>
-          </QuickAddHint>
+          {showCaptureHint ? (
+            <span className="pointer-events-none absolute right-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/70">
+              <span className="hidden sm:inline">Today · Inbox</span>
+              <span className="tabular-nums">↵ Add</span>
+            </span>
+          ) : null}
         </div>
+        <QuickAddHint label="Daily reflection in sidebar · Ctrl+Shift+R">
+          <button
+            type="button"
+            onClick={openReflection}
+            className={textActionClass}
+            aria-label="Reflection"
+          >
+            <NotebookPen className="size-3.5 shrink-0" />
+            <span className="hidden sm:inline">Reflection</span>
+          </button>
+        </QuickAddHint>
         <QuickAddHint label="Today's note or blank note in sidebar">
           <DropdownMenu>
             <DropdownMenuTrigger
-              className={cn(iconActionClass, "gap-0")}
+              className={cn(textActionClass, "gap-1.5")}
               aria-label="Notes"
             >
               <BookOpen className="size-3.5 shrink-0" />
+              <span className="hidden sm:inline">Note</span>
             </DropdownMenuTrigger>
-            <DropdownMenuContent side="bottom" align="end" className="min-w-[11rem]">
+            <DropdownMenuContent
+              side="bottom"
+              align="end"
+              className="min-w-[11rem]"
+            >
               <DropdownMenuItem
                 onClick={() => void openDailyNote()}
                 className="gap-2 text-[13px]"
@@ -167,19 +196,24 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
             </DropdownMenuContent>
           </DropdownMenu>
         </QuickAddHint>
-        <QuickAddHint label="Daily reflection in sidebar · Ctrl+Shift+R">
-          <button
+        <QuickAddHint label="Full task form — or Enter in the field to quick-add · Ctrl+Shift+A">
+          <Button
             type="button"
-            onClick={openReflection}
-            className={iconActionClass}
-            aria-label="Reflection"
+            size="sm"
+            onClick={handleAddClick}
+            className="h-8 shrink-0 gap-1 rounded-lg px-2.5 text-[12px]"
+            aria-label="Add task"
           >
-            <NotebookPen className="size-3.5 shrink-0" />
-          </button>
+            <ListPlus className="size-3.5" />
+            <span className="hidden sm:inline">Add task</span>
+            <span className="sm:hidden">Add</span>
+          </Button>
         </QuickAddHint>
       </div>
       {error ? (
-        <p className={cn("truncate px-0.5 text-[11px] text-destructive")}>{error}</p>
+        <p className={cn("truncate px-0.5 text-[11px] text-destructive")}>
+          {error}
+        </p>
       ) : null}
     </div>
   );

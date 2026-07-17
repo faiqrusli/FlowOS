@@ -22,6 +22,30 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-17 — Today focus/queue layout + Neutral Dark shell (merge)
+
+**Branch:** `tweak/today-focus-queue-layout` → `main` (founder-approved)
+
+**Shipped (large bundle):**
+- **Today hierarchy B1–B4:** timer-first Focus, compact Current Focus, Timeline width, Next Up Queue shell (collapsed rail + expanded panel), Queue DnD, large Tasks/Habits overlays, Start Next / complete flow polish
+- **Application shell:** shared left/right rails, utility panel persistence, stable icon geometry; left sidebar **in-flow expand** (pushes content); divider via `border-r`
+- **Neutral Dark migration:** tokens + primitives + Today/workspace surfaces; [DESIGN_SYSTEM_NEUTRAL_DARK.md](../../foundation/DESIGN_SYSTEM_NEUTRAL_DARK.md)
+- **Founder palette lock (live):**
+  - Nav + canvas `#171717`
+  - Cards `#212123`
+  - Focus current-task raised `#29292D`
+  - Overlay `#303034`
+  - Timeline on canvas; floating Tasks/Habits dock inset toward content column
+- **Continue / unified queue helpers** and related Focus/Next Up refinements
+
+**Docs:** decision-log 2026-07-17 palette lock; retired application-shell-navigation runbook/spec after shell landed on this branch.
+
+**Production:** https://flowos-sage.vercel.app — smoke Today (Focus, Queue, Timeline, dock), left expand push, right rail, Tasks page edges.
+
+**Prior commits on branch (examples):** `0c936d1` … `ee97ff9` plus uncommitted Neutral Dark + shell/Today polish committed at merge time.
+
+---
+
 ## 2026-07-14 — Dark-only theme lock
 
 **Shipped:**

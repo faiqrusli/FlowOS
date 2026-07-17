@@ -1,6 +1,6 @@
 /**
- * Reusable surface & interaction class strings aligned with FlowOS v3 tokens.
- * Canonical: Canvas → Navigation → Base → Raised → Overlay (+ Hover temporary).
+ * Reusable surface & interaction class strings aligned with Neutral Dark tokens.
+ * Canonical: Environment → Work → Emphasis → Floating (+ Hover temporary).
  * Prefer `.flow-*` classes from globals.css directly when possible.
  */
 
@@ -40,10 +40,9 @@ export const surfaceBoardClass = "bg-surface-base border-border-subtle";
 /**
  * Kanban list well — Base column body.
  */
-export const kanbanColumnBodyClass =
-  "border-border-subtle/80 bg-surface-base shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
+export const kanbanColumnBodyClass = "border-border-subtle/80 bg-surface-base";
 
-/** Kanban column header — barely brighter than the column well. */
+/** Kanban column header — Raised emphasis over Base column. */
 export const kanbanColumnHeaderClass =
   "border-b border-border-subtle/70 bg-surface-board-header";
 
@@ -56,7 +55,7 @@ export const kanbanCardClass =
 /** Navigation chrome (sidebars, drawers) */
 export const surfaceChromeClass = "bg-surface-nav text-sidebar-foreground";
 
-/** Right workspace rail — same Navigation token as left nav. */
+/** Right workspace rail — same Navigation chrome as left sidebar. */
 export const workspaceRailBackgroundClass = "bg-surface-nav";
 
 /**
@@ -71,12 +70,48 @@ export const drawerCardStackClass = "flex flex-col gap-6 p-3";
 /** Temporary hover / selected feedback */
 export const surfaceHoverClass = "bg-surface-hover";
 
-/** Inset sections on the workspace canvas */
+/** Inset sections on the workspace canvas — Raised well, not opacity greys */
 export const surfaceInsetClass =
-  "rounded-xl border border-divider bg-muted/35 dark:bg-muted/30";
+  "rounded-xl border border-divider bg-surface-raised";
 
-/** Writing fields slightly lighter than surrounding card */
-export const drawerWritingFieldClass = "bg-muted/35";
+/**
+ * Recessed editable control inside a base (#242429) card.
+ * Default #1E1E20 → hover/focus #232325 (subtle). Focus also uses indigo ring.
+ * Do not use --surface-hover / --control-* here — those are for compact selectors.
+ * Apply per context, not globally on every Input/Textarea.
+ */
+export const surfaceInsetControlClass =
+  "border-border-subtle bg-surface-inset hover:bg-surface-inset-hover focus-visible:bg-surface-inset-hover dark:bg-surface-inset dark:hover:bg-surface-inset-hover dark:focus-visible:bg-surface-inset-hover";
+
+/** Writing fields recessed inside drawer/base cards */
+export const drawerWritingFieldClass = surfaceInsetControlClass;
+
+/**
+ * Compact selector/button control (Date, Time, Duration, Alert, Priority, …).
+ * Default #29292D → hover/focus #303034 → open/pressed #343438.
+ * Stronger response than inset text fields; apply per context.
+ */
+export const compactControlTriggerClass =
+  "inline-flex h-7 items-center rounded-lg border border-border-subtle bg-control-default text-xs text-foreground outline-none transition-colors duration-150 hover:bg-control-hover focus-visible:bg-control-hover focus-visible:ring-1 focus-visible:ring-ring/40 aria-expanded:bg-control-active data-popup-open:bg-control-active disabled:bg-control-default disabled:text-muted-foreground disabled:opacity-55";
+
+/** Open / pressed override when open state is class-driven (not aria-expanded). */
+export const compactControlTriggerOpenClass = "bg-control-active";
+
+/** Segmented plan/state chips — same height as compact selectors. */
+export const compactControlChipClass =
+  "inline-flex h-7 items-center rounded-lg border px-2 text-xs font-medium transition-colors duration-150";
+
+export const compactControlChipActiveClass =
+  "border-border-subtle bg-control-active text-foreground";
+
+export const compactControlChipInactiveClass =
+  "border-transparent bg-transparent text-muted-foreground hover:bg-control-hover hover:text-foreground";
+
+/** Quiet task/list row hover — soft white wash over parent surface */
+export const taskRowInteractiveClass = "flow-row-interactive";
+
+/** Dragging ghost / raised row */
+export const taskRowDraggingClass = "flow-row-dragging";
 
 /** Timeline column — Base organisational grid on Canvas shell */
 export const surfaceTimelineClass = "bg-surface-base text-foreground";

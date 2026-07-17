@@ -24,7 +24,7 @@ function resolveSessionStateLabel(
 ): string {
   if (!isActive) return "Idle";
   if (isPaused) return "Paused";
-  return mode === "focus" ? "Focusing" : "Break";
+  return mode === "focus" ? "In Focus" : "Break";
 }
 
 export function FocusCurrentSessionCard() {

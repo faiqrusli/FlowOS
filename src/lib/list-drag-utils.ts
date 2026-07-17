@@ -73,3 +73,38 @@ export function setDragImageFromElement(
   event.dataTransfer.setDragImage(ghost, offsetX * 1.015, offsetY * 1.015);
   requestAnimationFrame(() => ghost.remove());
 }
+
+/** Compact Next Up queue drag ghost — title + optional duration. */
+export function setCompactQueueDragImage(
+  event: { dataTransfer: DataTransfer },
+  title: string,
+  durationLabel?: string | null
+) {
+  const ghost = document.createElement("div");
+  ghost.style.cssText =
+    "position:absolute;top:-1000px;left:-1000px;pointer-events:none;" +
+    "display:flex;align-items:center;gap:8px;max-width:280px;" +
+    "padding:6px 10px;border-radius:8px;" +
+    "border:1px solid var(--border-subtle);background:var(--card);" +
+    "color:var(--foreground);font-size:13px;font-weight:500;" +
+    "box-shadow:var(--shadow-md);";
+
+  const titleEl = document.createElement("span");
+  titleEl.textContent = title;
+  titleEl.style.cssText =
+    "min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+  ghost.appendChild(titleEl);
+
+  if (durationLabel) {
+    const dur = document.createElement("span");
+    dur.textContent = durationLabel;
+    dur.style.cssText =
+      "flex-shrink:0;font-size:11px;font-variant-numeric:tabular-nums;" +
+      "color:var(--muted-foreground);";
+    ghost.appendChild(dur);
+  }
+
+  document.body.appendChild(ghost);
+  event.dataTransfer.setDragImage(ghost, 12, 12);
+  requestAnimationFrame(() => ghost.remove());
+}

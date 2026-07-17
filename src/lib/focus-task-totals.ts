@@ -3,8 +3,13 @@ import {
   getTaskFocusTotals,
   type StoredActiveFocusSession,
 } from "@/lib/focus-active-session";
-import { supabase } from "@/lib/supabase";
+import {
+  aggregateTodayFocusedTaskRows,
+  type TodayFocusedTaskRow,
+} from "@/lib/focus-continue";
 import { FocusSessionsError } from "@/lib/focus-sessions";
+import { getTodayDateString } from "@/lib/date-utils";
+import { supabase } from "@/lib/supabase";
 
 /**
  * Writes task-focused time only at session transition boundaries. The active
@@ -41,4 +46,24 @@ export async function persistFocusTaskTotals(
     .upsert(rows, { onConflict: "user_id,focus_session_id,task_id" });
 
   if (error) throw new FocusSessionsError(error.message);
+}
+
+/** Fetch persisted per-task focus rows updated today (app timezone). */
+export async function fetchTodayFocusedTaskHistory(
+  todayKey = getTodayDateString()
+): Promise<TodayFocusedTaskRow[]> {
+  const userId = await requireUserId();
+  // Loose lower bound (~2 days) then filter to today's date key in APP_TIMEZONE.
+  const since = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from("focus_session_task_totals")
+    .select("task_id, focused_seconds, updated_at")
+    .eq("user_id", userId)
+    .gte("updated_at", since)
+    .order("updated_at", { ascending: false });
+
+  if (error) throw new FocusSessionsError(error.message);
+
+  return aggregateTodayFocusedTaskRows(data ?? [], todayKey);
 }

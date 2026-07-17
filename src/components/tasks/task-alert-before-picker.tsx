@@ -20,6 +20,7 @@ import {
   parseAlertBeforeTimeInput,
 } from "@/lib/task-alert-before-options";
 import { cn } from "@/lib/utils";
+import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 
 const ALERT_MENU_COLLISION = {
   side: "shift",
@@ -27,15 +28,15 @@ const ALERT_MENU_COLLISION = {
 } as const;
 
 const COMPACT_TRIGGER_CLASS =
-  "size-6 justify-center rounded-md hover:bg-muted/80";
-const COMPACT_TRIGGER_OPEN_CLASS = "bg-muted/80";
+  "size-6 justify-center rounded-md hover:bg-surface-hover/80";
+const COMPACT_TRIGGER_OPEN_CLASS = "bg-surface-raised";
 const COMPACT_MENU_CLASS =
   "max-h-72 min-w-0 w-36 overflow-hidden rounded-xl border-border/50 !p-0 shadow-md";
 const DETAIL_MENU_CLASS =
   "max-h-72 min-w-0 overflow-hidden rounded-xl border-border/50 !p-0 shadow-md w-[var(--anchor-width)] max-w-[var(--anchor-width)]";
 
 const ALERT_CUSTOM_INPUT_CLASS =
-  "w-full rounded-md bg-muted/35 px-2 py-1 text-center text-sm tabular-nums outline-none transition-colors focus:bg-muted/55 focus:ring-1 focus:ring-sky-400/25";
+  "w-full rounded-md bg-surface-raised px-2 py-1 text-center text-sm tabular-nums outline-none transition-colors focus:bg-surface-raised focus:ring-1 focus:ring-primary/40";
 
 type TaskAlertBeforePickerProps = {
   notificationEnabled: boolean;
@@ -68,7 +69,7 @@ export function AlertBeforeCustomInput({
   const [customValue, setCustomValue] = useState(() =>
     configured && leadMinutes
       ? formatAlertBeforeTimeInput(leadMinutes)
-      : "0:05"
+      : "0:05",
   );
   const customDirtyRef = useRef(false);
 
@@ -103,8 +104,8 @@ export function AlertBeforeCustomInput({
         )?.select();
       }}
       className={cn(
-        "flex w-full border-b border-border/60 px-2 py-1.5 hover:bg-muted/40",
-        className
+        "flex w-full border-b border-border/60 px-2 py-1.5 hover:bg-surface-hover",
+        className,
       )}
     >
       <input
@@ -186,17 +187,17 @@ export function TaskAlertBeforePicker({
                 COMPACT_TRIGGER_CLASS,
                 open && COMPACT_TRIGGER_OPEN_CLASS,
                 configured
-                  ? "text-sky-600"
+                  ? "text-primary"
                   : !notificationEnabled
                     ? "text-muted-foreground/55"
-                    : "text-muted-foreground/70"
+                    : "text-muted-foreground/70",
               )
             : cn(
-                "h-9 w-full justify-between gap-2 rounded-lg border border-border/50 bg-background px-2 text-sm hover:bg-muted/20",
-                open && "ring-1 ring-ring/30",
-                !configured && "text-muted-foreground"
+                "w-full justify-between gap-2 px-2",
+                compactControlTriggerClass,
+                !configured && "text-muted-foreground",
               ),
-          className
+          className,
         )}
         id={isDetail ? "task-detail-alert-before" : undefined}
         aria-label={
@@ -216,7 +217,7 @@ export function TaskAlertBeforePicker({
           <BellOff className="size-3.5 shrink-0" strokeWidth={1.75} />
         ) : (
           <Bell
-            className={cn("size-3.5 shrink-0", configured && "fill-sky-500/15")}
+            className={cn("size-3.5 shrink-0", configured && "fill-primary/15")}
             strokeWidth={1.75}
           />
         )}
@@ -245,7 +246,8 @@ export function TaskAlertBeforePicker({
             }}
             className={cn(
               "text-xs",
-              !notificationEnabled && "bg-muted font-medium text-foreground"
+              !notificationEnabled &&
+                "bg-surface-raised font-medium text-foreground",
             )}
           >
             Silent
@@ -262,7 +264,7 @@ export function TaskAlertBeforePicker({
                 "text-xs tabular-nums",
                 notificationEnabled &&
                   leadMinutes === option.minutes &&
-                  "bg-muted font-medium text-foreground"
+                  "bg-surface-raised font-medium text-foreground",
               )}
             >
               {option.label}

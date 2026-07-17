@@ -9,9 +9,8 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    // Cancel shell pad on top/left/bottom only — shell already uses pr-0,
-    // so -mr would overflow and enable horizontal scroll on main.
-    <div className="-ml-10 -mt-10 -mb-10 flex h-[calc(100dvh-3.5rem)] min-h-0 flex-col overflow-hidden bg-surface-canvas lg:h-[calc(100dvh-3rem)]">
+    // AppShell skips padding on `/` — fill the main column edge-to-edge.
+    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-surface-canvas">
       <TodayPageContent />
     </div>
   );

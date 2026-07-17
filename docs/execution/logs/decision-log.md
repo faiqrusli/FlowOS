@@ -1,8 +1,8 @@
-﻿# Decision Log
+# Decision Log
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 10, 2026
+**Last updated:** July 17, 2026
 
 ---
 
@@ -20,7 +20,7 @@ When making a significant product decision:
 2. Link to related design docs if applicable  
 3. Do not delete entries — mark superseded decisions as such  
 
-### Entry template
+### Entry template                                                                                                          
 
 ```
 ### YYYY-MM-DD — Decision title
@@ -35,6 +35,70 @@ When making a significant product decision:
 ---
 
 ## 2026 decisions
+
+### 2026-07-17 — Today Neutral Dark palette lock (founder experiment)
+
+**Context:** After Neutral Dark token migration and Today hierarchy/shell work on `tweak/today-focus-queue-layout`, founder iterated live surface hexes until the workspace felt calm and intentional.
+
+**Decision:** Lock production dark paints to:
+- Environment (nav + canvas): `#171717`
+- Cards (`--surface-base`): `#212123`
+- Raised: `#29292D` (incl. Focus current-task card)
+- Overlay: `#303034`
+- Borders: `#3A3A3F` / `#444449`
+- Timeline: canvas (`#171717`), not a separate card fill
+
+Also: left sidebar expands in-flow (pushes content); Tasks/Habits dock stays floating, inset toward the content column.
+
+**Alternatives rejected:** Overlay-only left expand (content never shifts); matching Timeline to card `#212123`; keeping navy v3 atmosphere.
+
+**Outcome:** Founder approved merge of `tweak/today-focus-queue-layout` to `main` (2026-07-17 / 2026-07-18).
+
+**Related:** [DESIGN_SYSTEM_NEUTRAL_DARK.md](../../foundation/DESIGN_SYSTEM_NEUTRAL_DARK.md) · [july-log.md](./july-log.md)
+
+### 2026-07-16 — Neutral Dark Visual Design System (implementation)
+
+**Context:** The navy-tinted v3.0 palette created a persistent blue atmosphere across canvas, rails, cards, and interaction states. FlowOS needs a quieter neutral workspace so indigo communicates identity and action selectively.
+
+**Decision:** Adopt [DESIGN_SYSTEM_NEUTRAL_DARK.md](../../foundation/DESIGN_SYSTEM_NEUTRAL_DARK.md) as the active visual implementation contract. Core paints: environment `#1B1B1B`, work `#242429`, emphasis `#29292D`, floating `#303034`, hover `#343438`, identity `#586CF6`. Implement via `globals.css` tokens first, then shared primitives and workspaces. Preserve product behaviour; migrate styling only. [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) v3.0 remains for non-conflicting semantic/component rules and is marked superseded for palette.
+
+**Alternatives rejected:** Keeping navy v3 paints; page-by-page hardcoded rethemes; inventing additional intermediate greys.
+
+**Outcome:** Superseded in part by 2026-07-17 palette lock (canvas/nav `#171717`, cards `#212123`). Token architecture from this entry remains.
+
+**Related:** [DESIGN_SYSTEM_NEUTRAL_DARK.md](../../foundation/DESIGN_SYSTEM_NEUTRAL_DARK.md) · [globals.css](../../../src/app/globals.css)
+
+### 2026-07-14 — Timeline is a full-height canvas, not a floating card
+
+**Context:** Today hierarchy refinement initially rounded Queue and Timeline as matching panels. With Focus / Queue / Timeline as Now / Next / When, a floating rounded Timeline reads as another widget and weakens the planning workspace.
+
+**Decision:** Timeline is permanent workspace infrastructure — continuous time canvas under the global Today top nav (never behind/replacing it). Full height from immediately below the top nav to the app bottom. Sticky ~48px toolbar (visibility, Now, 5m/10m/15m); only the time grid scrolls. Left divider only; no card rounding. Queue stays a collapsible rounded panel.
+
+**Alternatives rejected:** Matching rounded floating cards for Queue and Timeline; Timeline as Level-2 card chrome; Timeline spanning behind/replacing the global top bar.
+
+**Related:** [today-page-hierarchy-refinement-spec.md](../../review/design/today-page-hierarchy-refinement-spec.md) · `workplaceTimelineEdgeClassName`
+
+### 2026-07-14 — Next Up Queue: keyboard reorder deferred to polish follow-up
+
+**Context:** Hierarchy refinement Session 9 allows move up/down as a11y alternative to DnD, or documented deferral.  
+**Decision:** Defer keyboard reorder buttons; Escape + rail focus remain. Ship DnD reorder only for B4.  
+**Alternatives rejected:** Blocking B4 on full keyboard DnD pattern.  
+**Related:** [m2-today-hierarchy-refinement.md](../runbooks/m2-today-hierarchy-refinement.md) Session 9 decision point #3
+
+### 2026-07-14 — Next Up Queue: multi-source references (hierarchy refinement)
+
+**Context:** [today-page-hierarchy-refinement-spec.md](../../review/design/today-page-hierarchy-refinement-spec.md) §12 requires Queue items as references to `task | habit | schedule` (not duplicated payloads). Prior Next Up V2 (2026-07-10) persists a **task-only** queue on `tasks.queue_order`. Session 5 of [m2-today-hierarchy-refinement.md](../runbooks/m2-today-hierarchy-refinement.md) needs a persistence choice before coding.
+
+**Decision:** **Hybrid (extend V2).**  
+1. Keep **task** queue persistence on `tasks.queue_order` (unchanged V2 contract).  
+2. Introduce a reference-shaped `QueueItem` type (`sourceType`, `sourceId`, `position`, `addedAt`) for UI/resolution; task rows map from `queue_order` at render time (titles/durations from live Task entities).  
+3. **Habit** and **schedule** sources may be added in Session 6+ via additive client storage (or a later table) without replacing `queue_order` for tasks. Timeline events stay on the Timeline when queued (reference only).
+
+**Alternatives rejected:** (A) localStorage-only for all sources (regresses durable task queue); (B) new Supabase table replacing `queue_order` in Session 5 (unnecessary migration risk); full multi-source write path in Session 5 before DnD exists.
+
+**Outcome:** Gate cleared for Session 5 on `tweak/today-focus-queue-layout`.
+
+**Related:** [today-page-hierarchy-refinement-spec.md](../../review/design/today-page-hierarchy-refinement-spec.md) · [m2-today-hierarchy-refinement.md](../runbooks/m2-today-hierarchy-refinement.md) · Next Up V2 2026-07-10
 
 ### 2026-07-13 — Visual Design System v3.0 migration sessions 1–4 complete
 

@@ -57,7 +57,7 @@ export function GrowthAreaIconChooser({
     if (!container) return;
     const next = Math.max(
       0,
-      Math.min(index, GROWTH_AREA_ICON_CATEGORIES.length - 1)
+      Math.min(index, GROWTH_AREA_ICON_CATEGORIES.length - 1),
     );
     container.scrollTo({
       left: next * container.clientWidth,
@@ -121,7 +121,7 @@ export function GrowthAreaIconChooser({
             type="button"
             onClick={() => scrollToSlide(activeSlide - 1)}
             disabled={activeSlide === 0}
-            className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/50 text-muted-foreground transition-colors hover:bg-muted disabled:opacity-30"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/50 text-muted-foreground transition-colors hover:bg-surface-hover disabled:opacity-30"
             aria-label="Previous icon group"
           >
             <ChevronLeft className="size-4" />
@@ -137,7 +137,7 @@ export function GrowthAreaIconChooser({
                   "h-1.5 rounded-full transition-all",
                   index === activeSlide
                     ? "w-4 bg-foreground/70"
-                    : "w-1.5 bg-muted-foreground/35 hover:bg-muted-foreground/55"
+                    : "w-1.5 bg-muted-foreground/35 hover:bg-surface-hover-foreground/55",
                 )}
                 aria-label={`Show ${category.label} icons`}
               />
@@ -148,7 +148,7 @@ export function GrowthAreaIconChooser({
             type="button"
             onClick={() => scrollToSlide(activeSlide + 1)}
             disabled={activeSlide === GROWTH_AREA_ICON_CATEGORIES.length - 1}
-            className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/50 text-muted-foreground transition-colors hover:bg-muted disabled:opacity-30"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/50 text-muted-foreground transition-colors hover:bg-surface-hover disabled:opacity-30"
             aria-label="Next icon group"
           >
             <ChevronRight className="size-4" />
@@ -183,7 +183,7 @@ function IconButton({
         "flex size-11 items-center justify-center rounded-xl text-xl leading-none transition-colors",
         selected
           ? "flow-selected text-foreground"
-          : "hover:bg-muted/80"
+          : "hover:bg-surface-hover/80",
       )}
     >
       {option.emoji}

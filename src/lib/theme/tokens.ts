@@ -2,18 +2,27 @@
  * FlowOS theme token reference — values live in globals.css (:root / .dark).
  * Use Tailwind utilities (bg-surface-canvas, bg-card) or surface-classes.ts helpers.
  *
- * v3 semantic roles are canonical. Legacy names remain as compatibility aliases
- * until later migration phases retire consumers.
+ * Neutral Dark semantic roles are canonical (DESIGN_SYSTEM_NEUTRAL_DARK.md).
+ * Legacy names remain as compatibility aliases until consumers retire.
  */
 export const themeTokens = {
-  /** Canonical v3 semantic surface stack — see DESIGN_SYSTEM.md §3 */
+  /** Canonical Neutral Dark surface stack */
   surface: {
     canvas: "--surface-canvas",
     nav: "--surface-nav",
+    drawer: "--surface-drawer",
     base: "--surface-base",
+    inset: "--surface-inset",
+    insetHover: "--surface-inset-hover",
     raised: "--surface-raised",
     overlay: "--surface-overlay",
     hover: "--surface-hover",
+    rowHover: "--surface-row-hover",
+  },
+  control: {
+    default: "--control-default",
+    hover: "--control-hover",
+    active: "--control-active",
   },
   border: {
     subtle: "--border-subtle",
@@ -23,6 +32,7 @@ export const themeTokens = {
     primary: "--text-primary",
     secondary: "--text-secondary",
     muted: "--text-muted",
+    tertiary: "--text-tertiary",
     disabled: "--text-disabled",
   },
   primary: {
@@ -32,8 +42,8 @@ export const themeTokens = {
     medium: "--primary-medium",
   },
   /**
-   * Compatibility aliases — map to v3 roles in globals.css.
-   * Prefer semantic names in new code; do not remove until Phase 11 audit.
+   * Compatibility aliases — map to Neutral Dark roles in globals.css.
+   * Prefer semantic names in new code.
    */
   surfaceLegacy: {
     background: "--background", // → canvas

@@ -1,7 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { TimelineDrawer, TimelineDrawerToggle } from "@/components/tasks/timeline-drawer";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  TimelineDrawer,
+  TimelineDrawerToggle,
+} from "@/components/tasks/timeline-drawer";
 import { TasksBoardView } from "@/components/tasks/tasks-board-view";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import {
@@ -93,12 +102,13 @@ export function TasksPageContent() {
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [todayViewDate, setTodayViewDate] = useState(getTodayDateString);
   const updateTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
-    new Map()
+    new Map(),
   );
+  const pendingTaskUpdates = useRef<Map<string, Partial<Task>>>(new Map());
   const plannerLayoutSnapshotRef = useRef<Map<string, DOMRect> | null>(null);
 
   function setTimelineOpenWithLayoutAnimation(
-    value: boolean | ((previous: boolean) => boolean)
+    value: boolean | ((previous: boolean) => boolean),
   ) {
     setTimelineOpen((previous) => {
       const next = typeof value === "function" ? value(previous) : value;
@@ -126,7 +136,7 @@ export function TasksPageContent() {
           err instanceof TasksError ||
           err instanceof HabitsError
           ? err.message
-          : "Failed to load tasks."
+          : "Failed to load tasks.",
       );
       setGroups([]);
       setHabits([]);
@@ -170,13 +180,19 @@ export function TasksPageContent() {
 
   function scheduleTaskPersist(taskId: string, updates: Partial<Task>) {
     const normalizedUpdates = normalizeScheduleUpdates(updates);
+    const merged = normalizeScheduleUpdates({
+      ...(pendingTaskUpdates.current.get(taskId) ?? {}),
+      ...normalizedUpdates,
+    });
+    pendingTaskUpdates.current.set(taskId, merged);
+
     setGroups((prev) =>
       replaceTaskOnBoard(
         prev,
         taskId,
-        (task) => ({ ...task, ...normalizedUpdates }),
-        todayViewDate
-      )
+        (task) => ({ ...task, ...merged }),
+        todayViewDate,
+      ),
     );
 
     const existing = updateTimers.current.get(taskId);
@@ -186,16 +202,47 @@ export function TasksPageContent() {
       taskId,
       setTimeout(async () => {
         updateTimers.current.delete(taskId);
+        const payload = pendingTaskUpdates.current.get(taskId);
+        if (!payload) return;
+
         try {
-          const updated = await updateTask(taskId, normalizedUpdates);
-          setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+          const updated = await updateTask(taskId, payload);
+          const stillPending = pendingTaskUpdates.current.get(taskId);
+          if (stillPending) {
+            const remaining: Partial<Task> = { ...stillPending };
+            for (const key of Object.keys(payload) as (keyof Task)[]) {
+              if (remaining[key] === payload[key]) {
+                delete remaining[key];
+              }
+            }
+            if (Object.keys(remaining).length === 0) {
+              pendingTaskUpdates.current.delete(taskId);
+            } else {
+              pendingTaskUpdates.current.set(taskId, remaining);
+            }
+          }
+
+          setGroups((prev) => {
+            let next = syncTaskOnBoard(prev, updated, todayViewDate);
+            const overlay = pendingTaskUpdates.current.get(taskId);
+            if (overlay && Object.keys(overlay).length > 0) {
+              next = replaceTaskOnBoard(
+                next,
+                taskId,
+                (task) => ({ ...task, ...overlay }),
+                todayViewDate,
+              );
+            }
+            return next;
+          });
         } catch (err) {
+          pendingTaskUpdates.current.delete(taskId);
           setError(
-            err instanceof TasksError ? err.message : "Failed to save task."
+            err instanceof TasksError ? err.message : "Failed to save task.",
           );
           void loadBoard();
         }
-      }, 350)
+      }, 350),
     );
   }
 
@@ -205,12 +252,12 @@ export function TasksPageContent() {
     options?: {
       scheduledDate?: string | null;
       planningState?: "none" | "later";
-    }
+    },
   ) {
     setError(null);
     const orgGroup = groups.find(
       (item) =>
-        item.id === groupId && !isTodayGroup(item) && !isLaterGroup(item)
+        item.id === groupId && !isTodayGroup(item) && !isLaterGroup(item),
     );
     const inbox = groups.find(isInboxGroup);
     const composeGroup = groups.find((item) => item.id === groupId);
@@ -224,8 +271,8 @@ export function TasksPageContent() {
           filterTasksForGroup(
             sortContextGroup,
             sortContextGroup.tasks,
-            todayViewDate
-          ).filter((task) => !task.completed)
+            todayViewDate,
+          ).filter((task) => !task.completed),
         )
       : [];
     const manualTopInsert = isManualTaskSortMode(sortMode);
@@ -245,7 +292,7 @@ export function TasksPageContent() {
       setGroups((prev) => addTaskToBoard(prev, created, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to create task."
+        err instanceof TasksError ? err.message : "Failed to create task.",
       );
     }
   }
@@ -267,8 +314,8 @@ export function TasksPageContent() {
         prev,
         taskId,
         (task) => ({ ...task, ...normalizedUpdates }),
-        todayViewDate
-      )
+        todayViewDate,
+      ),
     );
 
     try {
@@ -276,7 +323,7 @@ export function TasksPageContent() {
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to update task."
+        err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
     }
@@ -293,8 +340,8 @@ export function TasksPageContent() {
           completed: !item.completed,
           completed_at: !item.completed ? new Date().toISOString() : null,
         }),
-        todayViewDate
-      )
+        todayViewDate,
+      ),
     );
 
     try {
@@ -302,7 +349,7 @@ export function TasksPageContent() {
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to update task."
+        err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
     }
@@ -314,7 +361,7 @@ export function TasksPageContent() {
 
     const orgGroup = groups.find((item) => item.id === task.group_id);
     const activeInGroup = sortByManualOrder(
-      (orgGroup?.tasks ?? []).filter((item) => !item.completed)
+      (orgGroup?.tasks ?? []).filter((item) => !item.completed),
     );
     const sortOrder = manualOrderForNewTaskAtEnd(activeInGroup);
 
@@ -323,7 +370,7 @@ export function TasksPageContent() {
       setGroups((prev) => addTaskToBoard(prev, duplicated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to duplicate task."
+        err instanceof TasksError ? err.message : "Failed to duplicate task.",
       );
     }
   }
@@ -349,7 +396,7 @@ export function TasksPageContent() {
           laterGroupId: laterGroup?.id,
           inboxGroupId: inboxGroup?.id,
           todayViewDate,
-        }
+        },
       );
       return nextBoard;
     });
@@ -358,9 +405,7 @@ export function TasksPageContent() {
       await persistTaskBoardLayout(nextBoard, { todayViewDate });
     } catch (err) {
       setError(
-        err instanceof TaskGroupsError
-          ? err.message
-          : "Failed to move task."
+        err instanceof TaskGroupsError ? err.message : "Failed to move task.",
       );
       void loadBoard();
     }
@@ -368,7 +413,7 @@ export function TasksPageContent() {
 
   async function handleCreateGroupAndMoveTask(
     input: { title: string; icon: string; color: string },
-    taskId: string
+    taskId: string,
   ) {
     setError(null);
     try {
@@ -396,7 +441,7 @@ export function TasksPageContent() {
             laterGroupId: withNewGroup.find(isLaterGroup)?.id,
             inboxGroupId: withNewGroup.find(isInboxGroup)?.id,
             todayViewDate,
-          }
+          },
         );
         return nextBoard;
       });
@@ -407,7 +452,7 @@ export function TasksPageContent() {
       setError(
         err instanceof TaskGroupsError
           ? err.message
-          : "Failed to create group."
+          : "Failed to create group.",
       );
       throw err;
     }
@@ -424,7 +469,7 @@ export function TasksPageContent() {
       await deleteTask(taskId);
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to delete task."
+        err instanceof TasksError ? err.message : "Failed to delete task.",
       );
       void loadBoard();
     }
@@ -442,14 +487,14 @@ export function TasksPageContent() {
         color: input.color,
       });
       setGroups((prev) =>
-        orderPinnedTaskGroups([...prev, { ...created, tasks: [] }])
+        orderPinnedTaskGroups([...prev, { ...created, tasks: [] }]),
       );
       return created.id;
     } catch (err) {
       setError(
         err instanceof TaskGroupsError
           ? err.message
-          : "Failed to create group."
+          : "Failed to create group.",
       );
       throw err;
     }
@@ -480,7 +525,7 @@ export function TasksPageContent() {
           if (!inboxGroup || item.id !== inboxGroup.id) return item;
           const { active, completed } = sortActiveAndCompleted(
             [...item.tasks, ...movedTasks],
-            item
+            item,
           );
           return { ...item, tasks: [...active, ...completed] };
         });
@@ -494,7 +539,7 @@ export function TasksPageContent() {
       setError(
         err instanceof TaskGroupsError
           ? err.message
-          : "Failed to delete group."
+          : "Failed to delete group.",
       );
     }
   }
@@ -505,14 +550,14 @@ export function TasksPageContent() {
       await updateTaskGroup(groupId, { title });
       setGroups((prev) =>
         prev.map((group) =>
-          group.id === groupId ? { ...group, title } : group
-        )
+          group.id === groupId ? { ...group, title } : group,
+        ),
       );
     } catch (err) {
       setError(
         err instanceof TaskGroupsError
           ? err.message
-          : "Failed to rename group."
+          : "Failed to rename group.",
       );
     }
   }
@@ -520,9 +565,7 @@ export function TasksPageContent() {
   async function handleUpdateGroupIcon(groupId: string, icon: string) {
     setError(null);
     setGroups((prev) =>
-      prev.map((group) =>
-        group.id === groupId ? { ...group, icon } : group
-      )
+      prev.map((group) => (group.id === groupId ? { ...group, icon } : group)),
     );
 
     try {
@@ -531,7 +574,7 @@ export function TasksPageContent() {
       setError(
         err instanceof TaskGroupsError
           ? err.message
-          : "Failed to update group icon."
+          : "Failed to update group icon.",
       );
       void loadBoard();
     }
@@ -540,9 +583,7 @@ export function TasksPageContent() {
   async function handleUpdateGroupColor(groupId: string, color: string) {
     setError(null);
     setGroups((prev) =>
-      prev.map((group) =>
-        group.id === groupId ? { ...group, color } : group
-      )
+      prev.map((group) => (group.id === groupId ? { ...group, color } : group)),
     );
 
     try {
@@ -551,13 +592,16 @@ export function TasksPageContent() {
       setError(
         err instanceof TaskGroupsError
           ? err.message
-          : "Failed to update group color."
+          : "Failed to update group color.",
       );
       void loadBoard();
     }
   }
 
-  async function handleUpdateGroupSortMode(groupId: string, sortMode: TaskSortMode) {
+  async function handleUpdateGroupSortMode(
+    groupId: string,
+    sortMode: TaskSortMode,
+  ) {
     setError(null);
     const targetGroup = groups.find((group) => group.id === groupId);
     if (!targetGroup) return;
@@ -573,14 +617,14 @@ export function TasksPageContent() {
         const visibleTasks = filterTasksForGroup(
           updatedGroup,
           updatedGroup.tasks,
-          todayViewDate
+          todayViewDate,
         );
         const { active, completed } = sortActiveAndCompleted(
           visibleTasks,
-          updatedGroup
+          updatedGroup,
         );
         return { ...updatedGroup, tasks: [...active, ...completed] };
-      })
+      }),
     );
 
     if (isLaterGroup(targetGroup)) return;
@@ -591,21 +635,21 @@ export function TasksPageContent() {
       setError(
         err instanceof TaskGroupsError
           ? err.message
-          : "Failed to update sort mode."
+          : "Failed to update sort mode.",
       );
       void loadBoard();
     }
   }
 
   async function handlePersistManualOrder(
-    updates: { id: string; sort_order: number }[]
+    updates: { id: string; sort_order: number }[],
   ) {
     await batchUpdateManualOrders(updates);
   }
 
   async function handlePersistGroupOrder(
     previous: TaskGroupWithTasks[],
-    next: TaskGroupWithTasks[]
+    next: TaskGroupWithTasks[],
   ) {
     await persistTaskGroupOrderDiff(previous, next);
   }
@@ -615,7 +659,7 @@ export function TasksPageContent() {
     options?: {
       previousBoard?: TaskGroupWithTasks[];
       taskDateAssignments?: { taskId: string; scheduledDate: string }[];
-    }
+    },
   ) {
     if (options?.previousBoard) {
       await persistTaskBoardDiff(options.previousBoard, next, {
@@ -629,7 +673,7 @@ export function TasksPageContent() {
 
   async function handleSetPlanningState(
     taskId: string,
-    planningState: PlanningState
+    planningState: PlanningState,
   ) {
     const task = groups
       .flatMap((group) => group.tasks)
@@ -661,7 +705,7 @@ export function TasksPageContent() {
           ...task,
           ...laterUpdates,
         }),
-        todayViewDate
+        todayViewDate,
       );
       return nextBoard;
     });
@@ -673,7 +717,7 @@ export function TasksPageContent() {
       setError(
         err instanceof TasksError
           ? err.message
-          : "Failed to move task to Later."
+          : "Failed to move task to Later.",
       );
       void loadBoard();
     }
@@ -686,8 +730,8 @@ export function TasksPageContent() {
         prev,
         taskId,
         (task) => ({ ...task, planning_state: "none" }),
-        todayViewDate
-      )
+        todayViewDate,
+      ),
     );
 
     try {
@@ -695,7 +739,7 @@ export function TasksPageContent() {
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to update task."
+        err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
     }
@@ -706,7 +750,8 @@ export function TasksPageContent() {
     updates: {
       scheduled_date: string;
       scheduled_time: string | null;
-    }
+      duration_minutes?: number | null;
+    },
   ) {
     setError(null);
     const withPlanning = { ...updates, planning_state: "none" as const };
@@ -715,8 +760,8 @@ export function TasksPageContent() {
         prev,
         taskId,
         (task) => ({ ...task, ...withPlanning }),
-        todayViewDate
-      )
+        todayViewDate,
+      ),
     );
 
     try {
@@ -724,7 +769,7 @@ export function TasksPageContent() {
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to schedule task."
+        err instanceof TasksError ? err.message : "Failed to schedule task.",
       );
       void loadBoard();
     }
@@ -737,28 +782,32 @@ export function TasksPageContent() {
   async function handleScheduleHabit(
     habitId: string,
     updates: { scheduled_time: string | null },
-    scheduleDate: string
+    scheduleDate: string,
   ) {
     setError(null);
-    setHabitDailyScheduleOverride(habitId, scheduleDate, updates.scheduled_time);
+    setHabitDailyScheduleOverride(
+      habitId,
+      scheduleDate,
+      updates.scheduled_time,
+    );
   }
 
   async function handleToggleHabitComplete(habit: Habit) {
     setError(null);
     setHabits((prev) =>
       prev.map((item) =>
-        item.id === habit.id ? { ...item, completed: !item.completed } : item
-      )
+        item.id === habit.id ? { ...item, completed: !item.completed } : item,
+      ),
     );
 
     try {
       const updated = await toggleHabitComplete(habit);
       setHabits((prev) =>
-        prev.map((item) => (item.id === updated.id ? updated : item))
+        prev.map((item) => (item.id === updated.id ? updated : item)),
       );
     } catch (err) {
       setError(
-        err instanceof HabitsError ? err.message : "Failed to update habit."
+        err instanceof HabitsError ? err.message : "Failed to update habit.",
       );
       void loadBoard();
     }
@@ -772,7 +821,7 @@ export function TasksPageContent() {
       }
       return null;
     },
-    [groups]
+    [groups],
   );
 
   useRegisterTaskDetailSource(
@@ -784,7 +833,7 @@ export function TasksPageContent() {
       onMoveToGroup: handleMoveTask,
       onPlanningStateChange: handleSetPlanningState,
     },
-    [groups, todayViewDate, getTask]
+    [groups, todayViewDate, getTask],
   );
 
   if (loading) {
@@ -795,20 +844,19 @@ export function TasksPageContent() {
     );
   }
 
-
   return (
     <div className="relative flex h-full min-h-0">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col pb-3 pt-2">
         {error && (
-          <div className="mb-3 shrink-0 px-10">
+          <div className="mb-3 shrink-0">
             <ErrorBanner message={error} />
           </div>
         )}
 
         {hint && (
-          <div className="mb-3 shrink-0 px-10">
+          <div className="mb-3 shrink-0">
             <p
-              className="rounded-lg border border-sky-200/80 bg-sky-50/90 px-3 py-2 text-sm text-sky-950 dark:border-sky-400/30 dark:bg-sky-500/12 dark:text-sky-100"
+              className="rounded-lg border border-selected-border bg-primary-soft px-3 py-2 text-sm text-foreground"
               role="status"
             >
               {hint}
@@ -816,36 +864,36 @@ export function TasksPageContent() {
           </div>
         )}
 
-          <TasksBoardView
-            groups={groups}
-            selectedTaskId={selectedTaskId}
-            todayViewDate={todayViewDate}
-            plannerActive={timelineOpen}
-            onToggleQuickPlanner={() =>
-              setTimelineOpenWithLayoutAnimation((value) => !value)
-            }
-            onTodayViewDateChange={setTodayViewDate}
-            onGroupsChange={setGroups}
-            onSelectTask={handleSelectTask}
-            onCreateTask={handleCreateTask}
-            onUpdateTask={handleUpdateTask}
-            onToggleComplete={handleToggleComplete}
-            onDuplicateTask={handleDuplicateTask}
-            onMoveTask={handleMoveTask}
-            onDeleteTask={handleDeleteTask}
-            onCreateGroup={handleCreateGroup}
-            onCreateGroupAndMoveTask={handleCreateGroupAndMoveTask}
-            onRenameGroup={handleRenameGroup}
-            onUpdateGroupIcon={handleUpdateGroupIcon}
-            onUpdateGroupColor={handleUpdateGroupColor}
-            onUpdateGroupSortMode={handleUpdateGroupSortMode}
-            onDeleteGroup={handleDeleteGroup}
-            onPersistLayout={handlePersistLayout}
-            onPersistGroupOrder={handlePersistGroupOrder}
-            onPersistManualOrder={handlePersistManualOrder}
-            onShowHint={setHint}
-            onSetPlanningState={handleSetPlanningState}
-          />
+        <TasksBoardView
+          groups={groups}
+          selectedTaskId={selectedTaskId}
+          todayViewDate={todayViewDate}
+          plannerActive={timelineOpen}
+          onToggleQuickPlanner={() =>
+            setTimelineOpenWithLayoutAnimation((value) => !value)
+          }
+          onTodayViewDateChange={setTodayViewDate}
+          onGroupsChange={setGroups}
+          onSelectTask={handleSelectTask}
+          onCreateTask={handleCreateTask}
+          onUpdateTask={handleUpdateTask}
+          onToggleComplete={handleToggleComplete}
+          onDuplicateTask={handleDuplicateTask}
+          onMoveTask={handleMoveTask}
+          onDeleteTask={handleDeleteTask}
+          onCreateGroup={handleCreateGroup}
+          onCreateGroupAndMoveTask={handleCreateGroupAndMoveTask}
+          onRenameGroup={handleRenameGroup}
+          onUpdateGroupIcon={handleUpdateGroupIcon}
+          onUpdateGroupColor={handleUpdateGroupColor}
+          onUpdateGroupSortMode={handleUpdateGroupSortMode}
+          onDeleteGroup={handleDeleteGroup}
+          onPersistLayout={handlePersistLayout}
+          onPersistGroupOrder={handlePersistGroupOrder}
+          onPersistManualOrder={handlePersistManualOrder}
+          onShowHint={setHint}
+          onSetPlanningState={handleSetPlanningState}
+        />
       </div>
 
       <TimelineDrawer

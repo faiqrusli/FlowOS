@@ -1,6 +1,9 @@
 "use client";
 
-import { getFocusRingPoint, getFocusRingVisualState } from "@/lib/focus-timer-ring";
+import {
+  getFocusRingPoint,
+  getFocusRingVisualState,
+} from "@/lib/focus-timer-ring";
 import {
   FOCUS_TIMER_COLORS,
   getFocusRingProgressColor,
@@ -68,7 +71,10 @@ export function FocusTimerRing({
 
   return (
     <div
-      className={cn("relative inline-flex items-center justify-center", className)}
+      className={cn(
+        "relative inline-flex items-center justify-center",
+        className,
+      )}
       style={{ width: size, height: size }}
     >
       <svg
@@ -117,14 +123,13 @@ export function FocusTimerRing({
           "relative z-[1] flex flex-col items-center justify-center text-center transition-opacity duration-200",
           compact ? "px-2" : "px-4",
           "group-hover/timer:pointer-events-none group-hover/timer:opacity-0",
-          "group-focus-within/timer:pointer-events-none group-focus-within/timer:opacity-0"
         )}
       >
         <p
           className={cn(
             "font-mono font-semibold leading-none tabular-nums tracking-tight text-white",
             compact ? "text-[2rem]" : "text-[2.65rem]",
-            !isActive && "text-white/35"
+            !isActive && "text-white/35",
           )}
         >
           {clock}
@@ -135,16 +140,20 @@ export function FocusTimerRing({
               "font-semibold uppercase tracking-[0.22em]",
               compact ? "mt-1 text-[10px]" : "mt-2 text-[11px]",
               statusTone === "break" && "text-warning",
-              statusTone === "muted" && "text-muted-foreground"
+              statusTone === "muted" && "text-muted-foreground",
             )}
             style={
-              statusTone === "focus" ? { color: FOCUS_TIMER_COLORS.labelFocus } : undefined
+              statusTone === "focus"
+                ? { color: FOCUS_TIMER_COLORS.labelFocus }
+                : undefined
             }
           >
             {statusLabel}
           </p>
         ) : null}
-        {children ? <div className={compact ? "mt-2" : "mt-3"}>{children}</div> : null}
+        {children ? (
+          <div className={compact ? "mt-2" : "mt-3"}>{children}</div>
+        ) : null}
       </div>
     </div>
   );

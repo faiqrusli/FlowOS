@@ -1,4 +1,7 @@
-import { getNowMinutesInAppTimezone, parseTimeToMinutes } from "@/lib/date-utils";
+import {
+  getNowMinutesInAppTimezone,
+  parseTimeToMinutes,
+} from "@/lib/date-utils";
 import type { ScheduleItem, ScheduleItemType } from "@/types/schedule";
 import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
@@ -10,7 +13,7 @@ export const SNAP_MINUTES = 5;
 export const TIMELINE_START_MINUTES = SCHEDULE_START_HOUR * 60;
 export const TIMELINE_END_MINUTES = SCHEDULE_END_HOUR * 60;
 export const TIMELINE_HEIGHT_PX =
-  ((SCHEDULE_END_HOUR - SCHEDULE_START_HOUR) * HOUR_HEIGHT_PX);
+  (SCHEDULE_END_HOUR - SCHEDULE_START_HOUR) * HOUR_HEIGHT_PX;
 
 export type ScheduleKpis = {
   scheduledToday: number;
@@ -30,7 +33,7 @@ export type ScheduleBlockLayout = {
 
 export function getBlockHeightPx(
   item: ScheduleItem,
-  durationMinutes: number
+  durationMinutes: number,
 ): number {
   if (item.type === "habit") {
     return HABIT_HEIGHT_PX;
@@ -51,28 +54,29 @@ export type ScheduleTypeStyle = {
   dot: string;
 };
 
-export const SCHEDULE_TYPE_STYLES: Record<ScheduleItemType, ScheduleTypeStyle> = {
-  task: {
-    block: "border-border-subtle bg-surface-raised hover:bg-surface-hover",
-    badge: "bg-muted/50 text-foreground",
-    bell: "text-muted-foreground hover:bg-surface-hover",
-    dot: "bg-muted-foreground/40",
-  },
-  habit: {
-    block:
-      "border-border-subtle border-l-[3px] border-l-warning/50 bg-surface-raised hover:bg-surface-hover",
-    badge: "text-warning",
-    bell: "text-warning hover:bg-surface-hover",
-    dot: "bg-warning",
-  },
-  focus: {
-    block:
-      "border-border-subtle border-l-[3px] border-l-primary/40 bg-surface-raised hover:bg-surface-hover",
-    badge: "text-accent-text",
-    bell: "text-accent-text hover:bg-surface-hover",
-    dot: "bg-primary",
-  },
-};
+export const SCHEDULE_TYPE_STYLES: Record<ScheduleItemType, ScheduleTypeStyle> =
+  {
+    task: {
+      block: "border-border-subtle bg-surface-raised hover:bg-surface-hover",
+      badge: "bg-surface-raised text-foreground",
+      bell: "text-muted-foreground hover:bg-surface-hover",
+      dot: "bg-muted-foreground/40",
+    },
+    habit: {
+      block:
+        "border-border-subtle border-l-[3px] border-l-warning/50 bg-surface-raised hover:bg-surface-hover",
+      badge: "text-warning",
+      bell: "text-warning hover:bg-surface-hover",
+      dot: "bg-warning",
+    },
+    focus: {
+      block:
+        "border-border-subtle border-l-[3px] border-l-primary/40 bg-surface-raised hover:bg-surface-hover",
+      badge: "text-accent-text",
+      bell: "text-accent-text hover:bg-surface-hover",
+      dot: "bg-primary",
+    },
+  };
 
 const DEFAULT_DURATIONS: Record<ScheduleItemType, number> = {
   task: 45,
@@ -92,11 +96,10 @@ export function minutesToTimeString(minutes: number): string {
 }
 
 export function snapToScheduleGrid(minutes: number): number {
-  const snapped =
-    Math.round(minutes / SNAP_MINUTES) * SNAP_MINUTES;
+  const snapped = Math.round(minutes / SNAP_MINUTES) * SNAP_MINUTES;
   return Math.max(
     TIMELINE_START_MINUTES,
-    Math.min(TIMELINE_END_MINUTES - SNAP_MINUTES, snapped)
+    Math.min(TIMELINE_END_MINUTES - SNAP_MINUTES, snapped),
   );
 }
 
@@ -105,8 +108,7 @@ export function minutesToTopPx(minutes: number): number {
 }
 
 export function topPxToMinutes(topPx: number): number {
-  const raw =
-    TIMELINE_START_MINUTES + (topPx / HOUR_HEIGHT_PX) * 60;
+  const raw = TIMELINE_START_MINUTES + (topPx / HOUR_HEIGHT_PX) * 60;
   return snapToScheduleGrid(raw);
 }
 
@@ -127,7 +129,7 @@ export function formatDurationLabel(minutes: number): string {
 }
 
 export function buildScheduleBlockLayouts(
-  items: ScheduleItem[]
+  items: ScheduleItem[],
 ): ScheduleBlockLayout[] {
   return items
     .filter((item) => item.timeSort < Number.MAX_SAFE_INTEGER)
@@ -153,13 +155,15 @@ export function buildScheduleBlockLayouts(
 export function computeScheduleKpis(
   tasks: Task[],
   habits: Habit[],
-  items: ScheduleItem[]
+  items: ScheduleItem[],
 ): ScheduleKpis {
   const scheduledToday = items.filter(
-    (item) => item.timeSort < Number.MAX_SAFE_INTEGER
+    (item) => item.timeSort < Number.MAX_SAFE_INTEGER,
   ).length;
   const unscheduledTasks = tasks.filter((task) => !task.scheduled_time).length;
-  const unscheduledHabits = habits.filter((habit) => !habit.scheduled_time).length;
+  const unscheduledHabits = habits.filter(
+    (habit) => !habit.scheduled_time,
+  ).length;
   const tasksCompleted = tasks.filter((task) => task.completed).length;
   const completable = tasks.length + habits.length;
   const completed = tasksCompleted + habits.filter((h) => h.completed).length;
@@ -192,7 +196,9 @@ export function buildHourLabels(): string[] {
   return labels;
 }
 
-export function getNowLineTopPx(nowMinutes = getNowMinutesInAppTimezone()): number | null {
+export function getNowLineTopPx(
+  nowMinutes = getNowMinutesInAppTimezone(),
+): number | null {
   if (
     nowMinutes < TIMELINE_START_MINUTES ||
     nowMinutes > TIMELINE_END_MINUTES

@@ -9,6 +9,7 @@ export {
   getNextUpTask,
   insertNextUpTask,
   isEligibleForNextUp,
+  pruneNextUpTasks,
   reorderNextUpTasks,
 } from "@/lib/task-next-up-logic";
 import {

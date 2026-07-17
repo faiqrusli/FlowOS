@@ -1,4 +1,9 @@
 export const GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX = 52;
+/** Small inset between the rail’s right edge and the viewport edge. */
+export const GLOBAL_RIGHT_RAIL_OUTER_GUTTER_PX = 4;
+/** Layout reserve for the collapsed rail + outer gutter. */
+export const GLOBAL_RIGHT_SIDEBAR_LAYOUT_RESERVE_PX =
+  GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX + GLOBAL_RIGHT_RAIL_OUTER_GUTTER_PX;
 export const GLOBAL_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX = 360;
 export const GLOBAL_RIGHT_SIDEBAR_MIN_WIDTH_PX = 280;
 export const GLOBAL_RIGHT_SIDEBAR_MAX_WIDTH_PX = 520;

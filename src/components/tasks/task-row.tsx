@@ -32,10 +32,11 @@ import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
 import { AlertBeforeCustomInput } from "@/components/tasks/task-alert-before-picker";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskSchedulePopover } from "@/components/tasks/task-schedule-popover";
+import { formatDurationMinutes } from "@/lib/task-duration-options";
 import {
-  formatDurationMinutes,
-} from "@/lib/task-duration-options";
-import { TASK_ALERT_BEFORE_OPTIONS, applyPresetAlert } from "@/lib/task-alert-before-options";
+  TASK_ALERT_BEFORE_OPTIONS,
+  applyPresetAlert,
+} from "@/lib/task-alert-before-options";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
   normalizePlanningState,
@@ -43,7 +44,11 @@ import {
   PLANNING_STATES,
   PLAN_SECTION_LABEL,
 } from "@/lib/task-planning";
-import { getGroupDisplayTitle, isLaterGroup, isTodayGroup } from "@/lib/task-groups";
+import {
+  getGroupDisplayTitle,
+  isLaterGroup,
+  isTodayGroup,
+} from "@/lib/task-groups";
 import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import {
@@ -121,7 +126,10 @@ function areTaskRowDisplayFieldsEqual(previous: Task, next: Task): boolean {
   );
 }
 
-function areTaskRowPropsEqual(previous: TaskRowProps, next: TaskRowProps): boolean {
+function areTaskRowPropsEqual(
+  previous: TaskRowProps,
+  next: TaskRowProps,
+): boolean {
   if (previous.groupId !== next.groupId) return false;
   if (previous.zone !== next.zone) return false;
   if (previous.todayViewDate !== next.todayViewDate) return false;
@@ -154,7 +162,7 @@ function PriorityFlagIcon({
 
 function uniqueMoveTargets(
   groups: TaskGroupWithTasks[],
-  currentGroupId: string | null
+  currentGroupId: string | null,
 ) {
   const seen = new Set<string>();
   return groups.filter((group) => {
@@ -183,9 +191,10 @@ function TaskPriorityMenuPopover({
   onUpdate: (updates: Partial<Task>) => void;
 }) {
   const [mounted, setMounted] = useState(false);
-  const [position, setPosition] = useState<{ top: number; left: number } | null>(
-    null
-  );
+  const [position, setPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
 
   const updatePosition = useCallback(() => {
     const anchor = anchorRef.current;
@@ -203,7 +212,7 @@ function TaskPriorityMenuPopover({
     }
     left = Math.max(
       padding,
-      Math.min(left, window.innerWidth - popoverWidth - padding)
+      Math.min(left, window.innerWidth - popoverWidth - padding),
     );
 
     let top = rect.top;
@@ -212,7 +221,7 @@ function TaskPriorityMenuPopover({
     }
     top = Math.max(
       padding,
-      Math.min(top, window.innerHeight - popoverHeight - padding)
+      Math.min(top, window.innerHeight - popoverHeight - padding),
     );
 
     setPosition({ top, left });
@@ -254,8 +263,9 @@ function TaskPriorityMenuPopover({
         type="button"
         onClick={() => onUpdate({ priority: "high" })}
         className={cn(
-          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
-          priority === "high" && "bg-red-500/10 font-medium text-red-700 dark:bg-red-500/15 dark:text-red-300"
+          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70",
+          priority === "high" &&
+            "bg-red-500/10 font-medium text-red-700 dark:bg-red-500/15 dark:text-red-300",
         )}
       >
         <PriorityFlagIcon priority="high" /> {TASK_PRIORITY_CONFIG.high.label}
@@ -264,24 +274,26 @@ function TaskPriorityMenuPopover({
         type="button"
         onClick={() => onUpdate({ priority: "medium" })}
         className={cn(
-          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
-          priority === "medium" && "bg-amber-500/10 font-medium text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
+          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70",
+          priority === "medium" &&
+            "bg-amber-500/10 font-medium text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
         )}
       >
-        <PriorityFlagIcon priority="medium" /> {TASK_PRIORITY_CONFIG.medium.label}
+        <PriorityFlagIcon priority="medium" />{" "}
+        {TASK_PRIORITY_CONFIG.medium.label}
       </button>
       <button
         type="button"
         onClick={() => onUpdate({ priority: "low" })}
         className={cn(
-          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
-          priority === "low" && "bg-muted font-medium text-foreground"
+          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70",
+          priority === "low" && "bg-surface-raised font-medium text-foreground",
         )}
       >
         <PriorityFlagIcon priority="low" /> {TASK_PRIORITY_CONFIG.low.label}
       </button>
     </div>,
-    document.body
+    document.body,
   );
 }
 
@@ -317,7 +329,7 @@ function TaskDetailSubmenuRow({
       <button
         type="button"
         data-task-menu-action={submenuToggleAction}
-        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70"
+        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70"
       >
         <Icon className="size-3.5" />
         {label}
@@ -329,7 +341,7 @@ function TaskDetailSubmenuRow({
             data-task-detail-submenu
             className={cn(
               "flow-surface-elevated overflow-hidden p-0",
-              submenuClassName ?? "min-w-[7rem]"
+              submenuClassName ?? "min-w-[7rem]",
             )}
           >
             {children}
@@ -388,9 +400,10 @@ function TaskDetailMenuPopover({
 }) {
   const planningState = normalizePlanningState(task.planning_state);
   const [mounted, setMounted] = useState(false);
-  const [position, setPosition] = useState<{ top: number; left: number } | null>(
-    null
-  );
+  const [position, setPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
   const menuActionsRef = useRef<TaskDetailMenuActionHandlers>({
     onDuplicate,
     onDelete,
@@ -451,10 +464,10 @@ function TaskDetailMenuPopover({
       if (!node) return;
       menuCleanupRef.current = bindTaskDetailMenuActions(
         node,
-        () => menuActionsRef.current
+        () => menuActionsRef.current,
       );
     },
-    [popoverRef]
+    [popoverRef],
   );
 
   useEffect(
@@ -462,7 +475,7 @@ function TaskDetailMenuPopover({
       menuCleanupRef.current?.();
       menuCleanupRef.current = null;
     },
-    []
+    [],
   );
 
   const updatePosition = useCallback(() => {
@@ -497,7 +510,7 @@ function TaskDetailMenuPopover({
     }
     left = Math.max(
       padding,
-      Math.min(left, window.innerWidth - popoverWidth - padding)
+      Math.min(left, window.innerWidth - popoverWidth - padding),
     );
 
     let top = rect.top;
@@ -506,7 +519,7 @@ function TaskDetailMenuPopover({
     }
     top = Math.max(
       padding,
-      Math.min(top, window.innerHeight - popoverHeight - padding)
+      Math.min(top, window.innerHeight - popoverHeight - padding),
     );
 
     setPosition({ top, left });
@@ -541,10 +554,11 @@ function TaskDetailMenuPopover({
   if (!mounted) return null;
 
   const anchorRect = anchorRef.current?.getBoundingClientRect();
-  const top = position?.top ?? (pointerPosition?.y ?? anchorRect?.top ?? 0);
+  const top = position?.top ?? pointerPosition?.y ?? anchorRect?.top ?? 0;
   const left =
     position?.left ??
-    (pointerPosition?.x ?? (anchorRect ? anchorRect.right + 6 : 0));
+    pointerPosition?.x ??
+    (anchorRect ? anchorRect.right + 6 : 0);
 
   return createPortal(
     <div
@@ -556,7 +570,7 @@ function TaskDetailMenuPopover({
       <button
         type="button"
         data-task-menu-action="duplicate"
-        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70"
+        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70"
       >
         <Copy className="size-3.5" /> Duplicate
       </button>
@@ -584,8 +598,9 @@ function TaskDetailMenuPopover({
           type="button"
           data-task-menu-action="alert:silent"
           className={cn(
-            "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
-            !task.notification_enabled && "bg-muted font-medium text-foreground"
+            "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70",
+            !task.notification_enabled &&
+              "bg-surface-raised font-medium text-foreground",
           )}
         >
           Silent
@@ -596,10 +611,10 @@ function TaskDetailMenuPopover({
             type="button"
             data-task-menu-action={`alert:${option.minutes}`}
             className={cn(
-              "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs tabular-nums hover:bg-muted",
+              "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs tabular-nums hover:bg-surface-hover",
               task.notification_enabled &&
                 task.notification_lead_minutes === option.minutes &&
-                "bg-muted font-medium text-foreground"
+                "bg-surface-raised font-medium text-foreground",
             )}
           >
             {option.label}
@@ -609,7 +624,7 @@ function TaskDetailMenuPopover({
         <button
           type="button"
           data-task-menu-action="alert:clear"
-          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground hover:bg-muted"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground hover:bg-surface-hover"
         >
           Clear
         </button>
@@ -620,7 +635,7 @@ function TaskDetailMenuPopover({
           <button
             type="button"
             data-task-menu-action="add-to-today"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70"
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70"
           >
             <CalendarDays className="size-3.5 text-muted-foreground" />
             Add to Today
@@ -646,8 +661,9 @@ function TaskDetailMenuPopover({
                 type="button"
                 data-task-menu-action={`planning:${state}`}
                 className={cn(
-                  "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-muted/70",
-                  planningState === state && "bg-muted font-medium text-foreground"
+                  "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70",
+                  planningState === state &&
+                    "bg-surface-raised font-medium text-foreground",
                 )}
               >
                 {state === "later" ? (
@@ -683,7 +699,7 @@ function TaskDetailMenuPopover({
             <button
               type="button"
               data-task-menu-action="create-group"
-              className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
               aria-label="New group"
             >
               <Plus className="size-3.5" />
@@ -697,7 +713,7 @@ function TaskDetailMenuPopover({
               key={group.id}
               type="button"
               data-task-menu-action={`move:${group.id}`}
-              className="flex w-full items-center rounded-md px-2 py-1.5 text-left transition-colors duration-100 hover:bg-muted/70"
+              className="flex w-full items-center rounded-md px-2 py-1.5 text-left transition-colors duration-100 hover:bg-surface-hover/70"
             >
               <TaskGroupPill
                 icon={appearance.icon}
@@ -718,12 +734,12 @@ function TaskDetailMenuPopover({
       <button
         type="button"
         data-task-menu-action="delete"
-        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-muted"
+        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-surface-hover"
       >
         <Trash2 className="size-3.5" /> Delete
       </button>
     </div>,
-    document.body
+    document.body,
   );
 }
 
@@ -782,7 +798,7 @@ export const TaskRow = memo(function TaskRow({
       }
       boardActions?.onMoveTask(task.id, targetGroupId);
     },
-    [boardActions, onMoveToGroupProp, task.id]
+    [boardActions, onMoveToGroupProp, task.id],
   );
 
   const onDelete = useCallback(() => {
@@ -801,7 +817,7 @@ export const TaskRow = memo(function TaskRow({
       }
       boardActions?.onUpdateTask(task.id, updates);
     },
-    [boardActions, onUpdateProp, task.id]
+    [boardActions, onUpdateProp, task.id],
   );
 
   const onSetPlanningState = useCallback(
@@ -812,7 +828,7 @@ export const TaskRow = memo(function TaskRow({
       }
       boardActions?.onSetPlanningState?.(task.id, planningState);
     },
-    [boardActions, onSetPlanningStateProp, task.id]
+    [boardActions, onSetPlanningStateProp, task.id],
   );
 
   const onRequestCreateGroup = useCallback(() => {
@@ -831,7 +847,7 @@ export const TaskRow = memo(function TaskRow({
   const detailMenuOpen = useSyncExternalStore(
     subscribeTaskDetailMenu,
     () => isActiveTaskDetailMenuAnchor(menuAnchor),
-    () => false
+    () => false,
   );
   const [flagMenuOpen, setFlagMenuOpen] = useState(false);
   const [moveSubmenuOpen, setMoveSubmenuOpen] = useState(false);
@@ -852,17 +868,19 @@ export const TaskRow = memo(function TaskRow({
   const priority = normalizeTaskPriority(task.priority);
   const moveTargets = useMemo(
     () => uniqueMoveTargets(groups, task.group_id),
-    [groups, task.group_id]
+    [groups, task.group_id],
   );
 
   const hasSchedule = Boolean(task.scheduled_date);
   const scheduleDateColorClass = getTaskScheduleDateColorClass(
-    getTaskScheduleDateTone(task, todayViewDate)
+    getTaskScheduleDateTone(task, todayViewDate),
   );
 
   const scheduleLabel = formatTaskScheduleCompact(task);
   const isCompleted = task.completed;
-  const hasDuration = Boolean(task.duration_minutes && task.duration_minutes > 0);
+  const hasDuration = Boolean(
+    task.duration_minutes && task.duration_minutes > 0,
+  );
   const durationLabel = hasDuration
     ? formatDurationMinutes(task.duration_minutes!)
     : null;
@@ -888,7 +906,7 @@ export const TaskRow = memo(function TaskRow({
     (coords: { clientX: number; clientY: number }) => {
       boardActions?.onTaskPointerDragStart(task.id, groupId, coords);
     },
-    [boardActions, groupId, task.id]
+    [boardActions, groupId, task.id],
   );
 
   const onPointerDragEnd = useCallback(() => {
@@ -934,7 +952,7 @@ export const TaskRow = memo(function TaskRow({
       cancelPendingOpenDetail();
       startRename();
     },
-    [cancelPendingOpenDetail, startRename]
+    [cancelPendingOpenDetail, startRename],
   );
 
   useEffect(() => {
@@ -1005,14 +1023,14 @@ export const TaskRow = memo(function TaskRow({
         dragEnabled && !reorderEnabled ? reorderDisabledTooltip : undefined
       }
       className={cn(
-        "group relative mx-0.5 flex min-w-0 select-none items-center gap-0 rounded-md border border-transparent py-1 pl-0.5 pr-0.5 transition-[background-color,border-color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        dragEnabled &&
-          "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
+        "group relative mx-0.5 flex min-w-0 select-none items-center gap-0 rounded-md border border-transparent py-1 pl-0.5 pr-0.5",
+        !isSelected && "flow-row-interactive",
+        dragEnabled && "cursor-grab active:cursor-grabbing",
         scheduleOpen && "z-20",
         detailMenuOpen && "z-20",
         flagMenuOpen && "z-20",
         isSelected && "flow-selected",
-        isCompleted && "opacity-[0.45] hover:opacity-[0.62]"
+        isCompleted && "opacity-[0.45] hover:opacity-[0.62]",
       )}
     >
       <button
@@ -1020,7 +1038,7 @@ export const TaskRow = memo(function TaskRow({
         data-no-task-drag
         onPointerDown={(event) => event.stopPropagation()}
         onClick={onToggleComplete}
-        className="flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
+        className="flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface-hover/80 hover:text-foreground"
         aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
       >
         {isCompleted ? (
@@ -1056,7 +1074,7 @@ export const TaskRow = memo(function TaskRow({
               isCompleted
                 ? typographyType.contentDense
                 : "text-sm leading-[18px]",
-              isCompleted && "line-through"
+              isCompleted && "line-through",
             )}
             aria-label="Rename task"
           />
@@ -1066,7 +1084,7 @@ export const TaskRow = memo(function TaskRow({
             onDoubleClick={handleTitleDoubleClick}
             className={cn(
               "flex min-w-0 w-full flex-1 flex-col items-start gap-px px-1 text-left",
-              dragEnabled && "cursor-grab active:cursor-grabbing"
+              dragEnabled && "cursor-grab active:cursor-grabbing",
             )}
             title={task.title}
           >
@@ -1077,7 +1095,7 @@ export const TaskRow = memo(function TaskRow({
                 isCompleted
                   ? typographyType.contentDense
                   : "text-sm leading-[18px]",
-                isCompleted && "line-through"
+                isCompleted && "line-through",
               )}
             >
               {task.title || "Untitled"}
@@ -1088,12 +1106,10 @@ export const TaskRow = memo(function TaskRow({
                   "flex w-full min-w-0 items-center justify-between gap-2 font-normal tabular-nums",
                   isCompleted
                     ? "text-[9px] leading-[10px] text-muted-foreground/60"
-                    : "text-[10px] leading-[11px] text-muted-foreground/65"
+                    : "text-[10px] leading-[11px] text-muted-foreground/65",
                 )}
               >
-                <span className="min-w-0 truncate">
-                  {scheduleLabel ?? ""}
-                </span>
+                <span className="min-w-0 truncate">{scheduleLabel ?? ""}</span>
                 {durationLabel ? (
                   <span className="shrink-0 text-muted-foreground/55">
                     {durationLabel}
@@ -1111,7 +1127,7 @@ export const TaskRow = memo(function TaskRow({
           "relative shrink-0 transition-opacity",
           hasDuration || durationOpen
             ? "opacity-100"
-            : "opacity-0 group-hover:opacity-100"
+            : "opacity-0 group-hover:opacity-100",
         )}
       >
         <TaskDurationPicker
@@ -1129,7 +1145,7 @@ export const TaskRow = memo(function TaskRow({
           "relative size-6 shrink-0 transition-opacity",
           hasSchedule || scheduleOpen
             ? "opacity-100"
-            : "opacity-0 group-hover:opacity-100"
+            : "opacity-0 group-hover:opacity-100",
         )}
       >
         <button
@@ -1137,9 +1153,9 @@ export const TaskRow = memo(function TaskRow({
           onPointerDown={(event) => event.stopPropagation()}
           onClick={() => setScheduleOpen((value) => !value)}
           className={cn(
-            "absolute inset-0 flex items-center justify-center rounded hover:bg-muted/80",
-            scheduleOpen && "bg-muted/80",
-            scheduleDateColorClass
+            "absolute inset-0 flex items-center justify-center rounded hover:bg-surface-hover/80",
+            scheduleOpen && "bg-surface-raised",
+            scheduleDateColorClass,
           )}
           aria-label="Schedule date and time"
           aria-expanded={scheduleOpen}
@@ -1162,7 +1178,7 @@ export const TaskRow = memo(function TaskRow({
           type="button"
           onPointerDown={(event) => event.stopPropagation()}
           onClick={() => setFlagMenuOpen((value) => !value)}
-          className="flex size-6 items-center justify-center rounded hover:bg-muted/80"
+          className="flex size-6 items-center justify-center rounded hover:bg-surface-hover/80"
           aria-label="Set priority"
           aria-expanded={flagMenuOpen}
         >
