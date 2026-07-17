@@ -29,20 +29,22 @@ export function ScheduleCapacityBar({
           <span
             className={cn(
               "shrink-0 text-xs font-semibold tabular-nums",
-              capacity.isOverloaded ? "text-destructive" : "text-success"
+              capacity.isOverloaded ? "text-destructive" : "text-success",
             )}
           >
-            {capacity.isOverloaded ? "Over capacity" : `${capacity.loadPercent}%`}
+            {capacity.isOverloaded
+              ? "Over capacity"
+              : `${capacity.loadPercent}%`}
           </span>
         </div>
 
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted/80">
+        <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-raised">
           <div
             className={cn(
               "h-full rounded-full transition-all duration-500",
               capacity.isOverloaded
                 ? "bg-gradient-to-r from-warning/70 to-destructive/80"
-                : "bg-gradient-to-r from-success-muted to-success/60"
+                : "bg-gradient-to-r from-success-muted to-success/60",
             )}
             style={{ width: `${barPercent}%` }}
           />
@@ -70,7 +72,7 @@ export function ScheduleCapacityBar({
               "rounded-full px-2.5 py-1 font-medium transition-colors",
               showProjections
                 ? "bg-foreground/8 text-foreground"
-                : "hover:bg-muted text-muted-foreground"
+                : "hover:bg-surface-hover text-muted-foreground",
             )}
           >
             {showProjections ? "Projections on" : "Projections off"}

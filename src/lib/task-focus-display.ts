@@ -6,12 +6,21 @@ import {
 import { getTaskDurationMinutes } from "@/lib/timeline-layout";
 import type { Task } from "@/types/task";
 
+/**
+ * Next Up / focus meta:
+ * - time only → start time
+ * - duration only → "20 min"
+ * - both → "5:55 pm – 6:15 pm"
+ */
 export function formatTaskFocusSchedule(task: Task): string {
   const hasTime = Boolean(task.scheduled_time);
-  const duration = task.duration_minutes ?? null;
+  const duration =
+    task.duration_minutes != null && task.duration_minutes > 0
+      ? task.duration_minutes
+      : null;
   const startLabel = formatTimeShort(task.scheduled_time);
 
-  if (hasTime && duration) {
+  if (hasTime && duration != null) {
     const endMinutes =
       parseTimeToMinutes(task.scheduled_time!) + getTaskDurationMinutes(task);
     const endHours = Math.floor(endMinutes / 60) % 24;
@@ -22,7 +31,7 @@ export function formatTaskFocusSchedule(task: Task): string {
   }
 
   if (hasTime && startLabel) return startLabel;
-  if (duration) return `${duration}m`;
+  if (duration != null) return `${duration} min`;
   return "—";
 }
 

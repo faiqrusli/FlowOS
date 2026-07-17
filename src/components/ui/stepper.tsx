@@ -1,7 +1,13 @@
 "use client";
 
 import { Minus, Plus } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -97,7 +103,7 @@ export function AnimatedStepperValue({
       className={cn(
         "tabular-nums transition-colors duration-150",
         flash && "text-primary",
-        className
+        className,
       )}
     >
       {value}
@@ -140,13 +146,13 @@ export function NumberStepper({
       const next = valueRef.current + direction * step;
       const clamped = Math.min(
         max ?? Number.POSITIVE_INFINITY,
-        Math.max(min ?? Number.NEGATIVE_INFINITY, next)
+        Math.max(min ?? Number.NEGATIVE_INFINITY, next),
       );
       if (clamped === valueRef.current) return;
       valueRef.current = clamped;
       onChange(clamped);
     },
-    [max, min, onChange, step]
+    [max, min, onChange, step],
   );
 
   const display = formatValue ? formatValue(value) : String(value);

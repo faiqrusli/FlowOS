@@ -71,9 +71,9 @@ export function WorkplaceModuleCard({
               workplacePanelSectionClassName,
               "group/module flex min-h-0 flex-col overflow-hidden",
               !cardVisible &&
-                "border-transparent bg-transparent shadow-none hover:border-transparent hover:bg-transparent hover:shadow-none"
+                "border-transparent bg-transparent shadow-none hover:border-transparent hover:bg-transparent hover:shadow-none",
             ),
-        className
+        className,
       )}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -81,7 +81,7 @@ export function WorkplaceModuleCard({
       <header
         className={cn(
           "flex shrink-0 items-center justify-between gap-2 border-b border-divider px-2.5 py-2 transition-opacity duration-150",
-          !overlay && !cardVisible && "pointer-events-none opacity-0"
+          !overlay && !cardVisible && "pointer-events-none opacity-0",
         )}
       >
         <div className="flex min-w-0 items-center gap-1.5">
@@ -120,7 +120,7 @@ export function WorkplaceModuleCard({
             <button
               type="button"
               onClick={toggleVisibility}
-              className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-muted/50 hover:text-muted-foreground"
+              className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-surface-hover hover:text-muted-foreground"
               aria-label={
                 hoverReveal
                   ? "Show on hover — click for always visible"
@@ -141,7 +141,7 @@ export function WorkplaceModuleCard({
         className={cn(
           "min-h-0 flex-1 overflow-hidden transition-opacity duration-150",
           !contentVisible && "pointer-events-none opacity-0",
-          bodyClassName
+          bodyClassName,
         )}
       >
         {children}

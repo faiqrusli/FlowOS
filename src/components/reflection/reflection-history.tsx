@@ -142,7 +142,7 @@ export function ReflectionHistory({
         <div className="border-t border-border/40 px-6 pb-6 pt-4">
           <Link
             href="/reflection/WeeklyReflection"
-            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-input bg-surface-base px-4 text-sm font-medium shadow-xs transition-colors hover:bg-surface-hover hover:text-accent-foreground"
           >
             <CalendarRange className="size-4" />
             Weekly reflection

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import type { BreakPrompt } from "@/contexts/focus-session-context";
+import { formatBreakAtMinutes } from "@/lib/focus-scheduled-break";
 import { cn } from "@/lib/utils";
 
 type FocusBreakNotificationProps = {
@@ -29,19 +30,19 @@ export function FocusBreakNotification({
     <div
       role="alert"
       className={cn(
-        "inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 gap-y-1.5 rounded-full border border-primary/35 bg-primary/[0.06] px-4 py-1.5 text-xs",
-        className
+        "inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 gap-y-1.5 rounded-lg border border-primary/15 bg-surface-raised px-3 py-1.5 text-xs",
+        className,
       )}
     >
-      <span className="font-medium text-foreground/90">
+      <span className="font-semibold text-foreground">
         {isReady ? "Time for a break" : "Break finished"}
       </span>
-      <span aria-hidden className="text-muted-foreground/50">
+      <span aria-hidden className="text-muted-foreground/45">
         ·
       </span>
-      <span className="text-muted-foreground">
+      <span className="text-muted-foreground/75">
         {isReady
-          ? `Reached ${breakAtMinutes ?? 0} min`
+          ? `Reached ${formatBreakAtMinutes(breakAtMinutes ?? 0)}`
           : "Ready to focus again?"}
       </span>
       <div className="flex shrink-0 items-center gap-1.5">

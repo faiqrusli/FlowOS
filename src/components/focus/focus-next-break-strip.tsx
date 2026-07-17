@@ -2,6 +2,7 @@
 
 import { Pencil, X } from "lucide-react";
 import {
+  formatBreakAtMinutes,
   formatBreakCountdownLabel,
   formatCompactBreakCountdownLabel,
 } from "@/lib/focus-scheduled-break";
@@ -32,23 +33,27 @@ export function FocusNextBreakStrip({
   if (!breakAtMinutes) return null;
 
   const breakLengthLabel =
-    breakLengthMinutes != null ? `${breakLengthMinutes} min break` : "length not set";
+    breakLengthMinutes != null
+      ? `${formatBreakAtMinutes(breakLengthMinutes)} break`
+      : "length not set";
   const countdownLabel = formatBreakCountdownLabel(remainingToBreakSeconds);
-  const compactCountdownLabel = formatCompactBreakCountdownLabel(remainingToBreakSeconds);
+  const compactCountdownLabel = formatCompactBreakCountdownLabel(
+    remainingToBreakSeconds,
+  );
 
   return (
     <div
       className={cn(
         "group/next-break relative inline-flex h-10 max-h-11 min-h-9 max-w-full items-center gap-2",
         "rounded-lg border border-border-subtle bg-surface-base/50 px-3 text-[11px]",
-        className
+        className,
       )}
     >
       {/* Compact: narrow viewports — label + countdown only */}
       <div
         className={cn(
           "flex min-w-0 items-center gap-2 text-muted-foreground sm:hidden",
-          readOnly && "justify-center"
+          readOnly && "justify-center",
         )}
       >
         <span className="font-medium text-muted-foreground">Next Break</span>
@@ -68,7 +73,9 @@ export function FocusNextBreakStrip({
       {/* Full: sm+ — target, length, live countdown */}
       <div className="hidden min-w-0 flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-muted-foreground sm:flex">
         <span className="font-medium text-muted-foreground">Next Break</span>
-        <span className="tabular-nums">{breakAtMinutes} min</span>
+        <span className="tabular-nums">
+          {formatBreakAtMinutes(breakAtMinutes)}
+        </span>
         <span aria-hidden>·</span>
         <span className="tabular-nums">{breakLengthLabel}</span>
         {readOnly ? (
@@ -94,7 +101,7 @@ export function FocusNextBreakStrip({
         <div
           className={cn(
             "flex shrink-0 items-center gap-1 opacity-0 transition-opacity duration-150",
-            "group-hover/next-break:opacity-100 group-focus-within/next-break:opacity-100"
+            "group-hover/next-break:opacity-100 group-focus-within/next-break:opacity-100",
           )}
         >
           <button

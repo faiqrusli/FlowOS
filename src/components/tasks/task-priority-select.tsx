@@ -34,7 +34,7 @@ export function TaskPrioritySelect({
         disabled={disabled}
         className={cn(
           "flex h-9 w-full items-center gap-2 rounded-md border border-input bg-background px-2.5 text-sm outline-none",
-          className
+          className,
         )}
         aria-label="Priority"
       >
@@ -44,7 +44,11 @@ export function TaskPrioritySelect({
         </span>
         <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent side="bottom" align="start" className="min-w-[10rem] rounded-xl">
+      <DropdownMenuContent
+        side="bottom"
+        align="start"
+        className="min-w-[10rem] rounded-xl"
+      >
         {TASK_PRIORITIES.map((priority) => {
           const selected = value === priority;
           const config = TASK_PRIORITY_CONFIG[priority];
@@ -55,9 +59,15 @@ export function TaskPrioritySelect({
               onClick={() => onChange(priority)}
               className={cn(
                 "gap-2",
-                selected && priority === "high" && "bg-destructive-muted font-medium text-destructive",
-                selected && priority === "medium" && "bg-warning-muted font-medium text-warning",
-                selected && priority === "low" && "bg-muted font-medium text-foreground"
+                selected &&
+                  priority === "high" &&
+                  "bg-destructive-muted font-medium text-destructive",
+                selected &&
+                  priority === "medium" &&
+                  "bg-warning-muted font-medium text-warning",
+                selected &&
+                  priority === "low" &&
+                  "bg-muted font-medium text-foreground",
               )}
             >
               <TaskPriorityFlagIcon priority={priority} className="size-3.5" />

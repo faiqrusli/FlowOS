@@ -38,7 +38,7 @@ export const TASK_GROUP_COLOR_KEYS: TaskGroupColorKey[] = [
 
 /** Neutral chip chrome until Task 3 migrates consumers to dot + label. */
 const NEUTRAL_PILL_CLASS =
-  "border-border-subtle/60 bg-muted/30 text-foreground shadow-xs";
+  "border-border-subtle/60 bg-surface-raised text-foreground shadow-xs";
 
 const GROUP_DOT_CLASS: Record<TaskGroupColorKey, string> = {
   sky: "size-2 shrink-0 rounded-full bg-chart-1",
@@ -78,12 +78,31 @@ export function getGroupEdgeClass(colorKey: TaskGroupColorKey): string {
   return GROUP_EDGE_CLASS[colorKey] ?? GROUP_EDGE_CLASS.blue;
 }
 
+/** CSS color for the group left edge — used when breathing the in-focus accent. */
+export function getGroupEdgeColorVar(colorKey: TaskGroupColorKey): string {
+  switch (colorKey) {
+    case "emerald":
+    case "teal":
+      return "var(--chart-2)";
+    case "amber":
+    case "orange":
+    case "later":
+      return "var(--chart-3)";
+    case "rose":
+      return "var(--chart-4)";
+    case "slate":
+      return "var(--chart-5)";
+    default:
+      return "var(--chart-1)";
+  }
+}
+
 export function getGroupLabelClass(): string {
   return "text-sm font-medium text-foreground";
 }
 
 export function getTaskGroupTimelinePillClass(
-  colorKey: TaskGroupColorKey
+  colorKey: TaskGroupColorKey,
 ): string {
   void colorKey;
   return NEUTRAL_PILL_CLASS;
@@ -123,18 +142,20 @@ export const TASK_GROUP_SWATCH_CLASS: Record<TaskGroupColorKey, string> = {
 };
 
 /**
- * Tasks board column body — Base organisational panel (v3).
- * Accent stays on dots/edges only.
+ * Tasks board column body — no fill; sits on canvas (#1B1B1B).
+ * Accent stays on dots/edges only; header carries the work surface.
  */
-export const TASK_GROUP_COLUMN_BODY_CLASS =
-  "border-border-subtle/80 bg-surface-base shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]";
+export const TASK_GROUP_COLUMN_BODY_CLASS = "border-border-subtle/80";
 
-/** Column header strip — barely brighter than column body for scanability. */
+/** Column header — persistent work surface (#242429 / surface-base). */
 export const TASK_GROUP_COLUMN_HEADER_CLASS =
-  "border-b border-border-subtle/70 bg-surface-board-header";
+  "border-b border-border-subtle/70 bg-surface-base";
 
 /** @deprecated Prefer TASK_GROUP_COLUMN_BODY_CLASS — kept for colorKey map call sites. */
-export const TASK_GROUP_COLUMN_SURFACE_CLASS: Record<TaskGroupColorKey, string> = {
+export const TASK_GROUP_COLUMN_SURFACE_CLASS: Record<
+  TaskGroupColorKey,
+  string
+> = {
   sky: TASK_GROUP_COLUMN_BODY_CLASS,
   blue: TASK_GROUP_COLUMN_BODY_CLASS,
   indigo: TASK_GROUP_COLUMN_BODY_CLASS,
@@ -151,11 +172,13 @@ export const TASK_GROUP_COLUMN_SURFACE_CLASS: Record<TaskGroupColorKey, string> 
 
 const SYSTEM_TASK_GROUP_COLOR_KEYS: TaskGroupColorKey[] = ["inbox", "later"];
 
-function isTaskGroupColorKey(value: string | null | undefined): value is TaskGroupColorKey {
+function isTaskGroupColorKey(
+  value: string | null | undefined,
+): value is TaskGroupColorKey {
   return Boolean(
     value &&
-      (TASK_GROUP_COLOR_KEYS.includes(value as TaskGroupColorKey) ||
-        SYSTEM_TASK_GROUP_COLOR_KEYS.includes(value as TaskGroupColorKey))
+    (TASK_GROUP_COLOR_KEYS.includes(value as TaskGroupColorKey) ||
+      SYSTEM_TASK_GROUP_COLOR_KEYS.includes(value as TaskGroupColorKey)),
   );
 }
 
@@ -194,7 +217,7 @@ function hashString(value: string): number {
 }
 
 function resolveBuiltinAppearance(
-  group: Pick<TaskGroup, "slug" | "title">
+  group: Pick<TaskGroup, "slug" | "title">,
 ): Pick<TaskGroupAppearance, "icon" | "colorKey"> | null {
   if (group.slug && BUILTIN_APPEARANCE[group.slug]) {
     return BUILTIN_APPEARANCE[group.slug];
@@ -206,7 +229,7 @@ function resolveBuiltinAppearance(
 }
 
 function resolveHashedAppearance(
-  group: Pick<TaskGroup, "id" | "title">
+  group: Pick<TaskGroup, "id" | "title">,
 ): Pick<TaskGroupAppearance, "icon" | "colorKey"> {
   const hash = hashString(group.id || group.title);
   return {
@@ -221,7 +244,7 @@ export function pickNextGroupColor(
       icon?: string | null;
       color?: string | null;
     }
-  >
+  >,
 ): TaskGroupColorKey {
   const usageCount = new Map<TaskGroupColorKey, number>();
   for (const colorKey of TASK_GROUP_COLOR_KEYS) {
@@ -240,13 +263,13 @@ export function pickNextGroupColor(
 
   return (
     TASK_GROUP_COLOR_KEYS.find(
-      (colorKey) => usageCount.get(colorKey) === minCount
+      (colorKey) => usageCount.get(colorKey) === minCount,
     ) ?? "blue"
   );
 }
 
 export function getDefaultAppearanceForNewGroup(
-  title: string
+  title: string,
 ): Pick<TaskGroupAppearance, "icon" | "colorKey"> {
   const slug = title
     .trim()
@@ -262,7 +285,7 @@ export function getTaskGroupAppearance(
   group: Pick<TaskGroup, "id" | "slug" | "title"> & {
     icon?: string | null;
     color?: string | null;
-  }
+  },
 ): TaskGroupAppearance {
   const builtin = resolveBuiltinAppearance(group);
   const hashed = resolveHashedAppearance(group);

@@ -16,6 +16,7 @@ import {
   type TaskPriority,
 } from "@/lib/task-priority";
 import { cn } from "@/lib/utils";
+import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 
 type TaskPriorityPickerProps = {
   priority: string | null | undefined;
@@ -36,8 +37,9 @@ export function TaskPriorityPicker({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border-subtle bg-surface-base px-2 py-1 text-xs font-medium outline-none transition-colors hover:bg-surface-hover",
-          className
+          "max-w-full justify-between gap-1.5 px-2 font-medium",
+          compactControlTriggerClass,
+          className,
         )}
         aria-label={`Priority: ${currentConfig.label}`}
       >
@@ -59,9 +61,15 @@ export function TaskPriorityPicker({
               }}
               className={cn(
                 "gap-2 py-2 text-xs",
-                selected && option === "high" && "bg-destructive-muted font-medium text-destructive",
-                selected && option === "medium" && "bg-warning-muted font-medium text-warning",
-                selected && option === "low" && "bg-primary-soft font-medium text-foreground"
+                selected &&
+                  option === "high" &&
+                  "bg-destructive-muted font-medium text-destructive",
+                selected &&
+                  option === "medium" &&
+                  "bg-warning-muted font-medium text-warning",
+                selected &&
+                  option === "low" &&
+                  "bg-primary-soft font-medium text-foreground",
               )}
             >
               <TaskPriorityFlagIcon priority={option} />

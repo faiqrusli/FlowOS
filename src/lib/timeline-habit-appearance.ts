@@ -1,8 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /** Habit identity — amber edge on timeline *events* only. */
-export const TIMELINE_HABIT_ACCENT_CLASS =
-  "border-l-[3px] border-l-warning/70";
+export const TIMELINE_HABIT_ACCENT_CLASS = "border-l-[3px] border-l-warning/70";
 
 /**
  * Scheduled habit block — same Raised event chrome as tasks.
@@ -22,7 +21,7 @@ export function timelineHabitBlockClassNames(extra?: string): string {
   return cn(
     TIMELINE_HABIT_ACCENT_CLASS,
     TIMELINE_HABIT_BLOCK_SURFACE_CLASS,
-    extra
+    extra,
   );
 }
 

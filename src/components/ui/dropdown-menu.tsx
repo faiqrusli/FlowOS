@@ -12,7 +12,10 @@ function DropdownMenuTrigger({ className, ...props }: Menu.Trigger.Props) {
   return (
     <Menu.Trigger
       data-slot="dropdown-menu-trigger"
-      className={cn("outline-none", className)}
+      className={cn(
+        "cursor-pointer outline-none disabled:cursor-not-allowed",
+        className,
+      )}
       {...props}
     />
   );
@@ -43,7 +46,7 @@ function DropdownMenuContent({
           className={cn(
             "flow-surface-elevated min-w-[12rem] overflow-hidden p-1 outline-none",
             "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-97 data-open:duration-150 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-97 data-closed:duration-100",
-            className
+            className,
           )}
         >
           {children}
@@ -58,8 +61,8 @@ function DropdownMenuItem({ className, ...props }: Menu.Item.Props) {
     <Menu.Item
       data-slot="dropdown-menu-item"
       className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 outline-none select-none transition-colors duration-100 data-highlighted:bg-surface-hover data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground [&_svg]:transition-colors [&_svg]:duration-100 data-highlighted:[&_svg]:text-foreground",
-        className
+        "relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 outline-none select-none transition-colors duration-100 data-highlighted:bg-surface-hover data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground [&_svg]:transition-colors [&_svg]:duration-100 data-highlighted:[&_svg]:text-foreground",
+        className,
       )}
       {...props}
     />
@@ -72,8 +75,8 @@ function DropdownMenuLinkItem({ className, ...props }: Menu.LinkItem.Props) {
       data-slot="dropdown-menu-link-item"
       closeOnClick
       className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 no-underline outline-none select-none transition-colors duration-100 data-highlighted:bg-surface-hover data-highlighted:text-foreground [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground data-highlighted:[&_svg]:text-foreground",
-        className
+        "relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/90 no-underline outline-none select-none transition-colors duration-100 data-highlighted:bg-surface-hover data-highlighted:text-foreground [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-muted-foreground data-highlighted:[&_svg]:text-foreground",
+        className,
       )}
       {...props}
     />

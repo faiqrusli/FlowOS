@@ -45,7 +45,7 @@ type TimePickerPanelProps = {
 };
 
 const SEGMENT_ACTIVE_CLASS =
-  "rounded bg-background text-foreground shadow-sm ring-1 ring-ring/45";
+  "rounded bg-surface-overlay text-foreground shadow-sm ring-1 ring-ring/45";
 
 function TimePickerColumn<T extends string | number>({
   items,
@@ -74,11 +74,11 @@ function TimePickerColumn<T extends string | number>({
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-5 bg-gradient-to-b from-background to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-5 bg-gradient-to-b from-surface-overlay to-transparent"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-5 bg-gradient-to-t from-background to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-5 bg-gradient-to-t from-surface-overlay to-transparent"
       />
       <div
         aria-label={ariaLabel}
@@ -96,7 +96,7 @@ function TimePickerColumn<T extends string | number>({
                 "mx-auto flex h-7 w-full max-w-[2.85rem] items-center justify-center rounded-md text-xs font-medium tabular-nums transition-colors",
                 selected
                   ? "text-foreground"
-                  : "text-muted-foreground/50 hover:bg-muted/50 hover:text-foreground/75"
+                  : "text-muted-foreground/50 hover:bg-surface-hover hover:text-foreground/75",
               )}
               aria-pressed={selected}
             >
@@ -132,7 +132,7 @@ function TimePickerEditableHeader({
   const replaceOnNextDigitRef = useRef(true);
   const [hourDraft, setHourDraft] = useState(String(value.hour12));
   const [minuteDraft, setMinuteDraft] = useState(
-    String(value.minute).padStart(2, "0")
+    String(value.minute).padStart(2, "0"),
   );
   const [sequentialDigits, setSequentialDigits] = useState("");
   const [periodMenuOpen, setPeriodMenuOpen] = useState(false);
@@ -253,7 +253,10 @@ function TimePickerEditableHeader({
 
     if (/^\d$/.test(event.key)) {
       event.preventDefault();
-      if (activeSegment === "hour" && document.activeElement === hourRef.current) {
+      if (
+        activeSegment === "hour" &&
+        document.activeElement === hourRef.current
+      ) {
         const next = replaceOnNextDigitRef.current
           ? event.key
           : `${hourDraft}${event.key}`;
@@ -300,7 +303,7 @@ function TimePickerEditableHeader({
       onKeyDown={handleHeaderKeyDown}
     >
       <div
-        className="flex items-center justify-center gap-0.5 rounded-lg bg-muted/35 px-2 py-1.5"
+        className="flex items-center justify-center gap-0.5 rounded-lg bg-surface-raised px-2 py-1.5"
         aria-label={`Time ${formatTimePickerDisplayLabel(value)}`}
       >
         <input
@@ -308,7 +311,9 @@ function TimePickerEditableHeader({
           type="text"
           inputMode="numeric"
           value={hourDraft}
-          onChange={(event) => setHourDraft(event.target.value.replace(/\D/g, "").slice(0, 2))}
+          onChange={(event) =>
+            setHourDraft(event.target.value.replace(/\D/g, "").slice(0, 2))
+          }
           onFocus={(event) => {
             onActiveSegmentChange("hour");
             setSequentialDigits("");
@@ -337,7 +342,7 @@ function TimePickerEditableHeader({
           }}
           className={cn(
             "w-6 bg-transparent text-center text-sm font-semibold tabular-nums text-foreground outline-none",
-            activeSegment === "hour" && SEGMENT_ACTIVE_CLASS
+            activeSegment === "hour" && SEGMENT_ACTIVE_CLASS,
           )}
           aria-label="Hour"
         />
@@ -374,7 +379,7 @@ function TimePickerEditableHeader({
           }}
           className={cn(
             "w-7 bg-transparent text-center text-sm font-semibold tabular-nums text-foreground outline-none",
-            activeSegment === "minute" && SEGMENT_ACTIVE_CLASS
+            activeSegment === "minute" && SEGMENT_ACTIVE_CLASS,
           )}
           aria-label="Minute"
         />
@@ -403,8 +408,8 @@ function TimePickerEditableHeader({
               }
             }}
             className={cn(
-              "ml-1 inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-sm font-semibold text-foreground outline-none hover:bg-background/80",
-              activeSegment === "period" && SEGMENT_ACTIVE_CLASS
+              "ml-1 inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-sm font-semibold text-foreground outline-none hover:bg-surface-hover",
+              activeSegment === "period" && SEGMENT_ACTIVE_CLASS,
             )}
             aria-label="AM or PM"
           >
@@ -421,7 +426,7 @@ function TimePickerEditableHeader({
                 }}
                 className={cn(
                   "text-xs",
-                  value.period === period && "bg-muted font-medium"
+                  value.period === period && "bg-surface-hover font-medium",
                 )}
               >
                 {period === "AM" ? "a.m." : "p.m."}
@@ -453,11 +458,7 @@ export function TimePickerPanel({
 
   return (
     <div
-      className={cn(
-        "select-none",
-        TIME_PICKER_PANEL_WIDTH_CLASS,
-        className
-      )}
+      className={cn("select-none", TIME_PICKER_PANEL_WIDTH_CLASS, className)}
     >
       <TimePickerEditableHeader
         value={value}
@@ -502,8 +503,8 @@ export function TimePickerPanel({
             className={cn(
               "w-full rounded-md py-1 text-center text-[11px] font-medium transition-colors",
               hasValue
-                ? "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                : "cursor-default text-muted-foreground/40"
+                ? "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                : "cursor-default text-muted-foreground/40",
             )}
           >
             Remove Time

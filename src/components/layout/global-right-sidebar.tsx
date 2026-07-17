@@ -2,14 +2,13 @@
 
 import {
   BookOpen,
-  ChevronLeft,
   ClipboardList,
   ExternalLink,
   NotebookPen,
+  PanelRightClose,
   PanelRightOpen,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
 import { SidebarDetailsPanel } from "@/components/layout/sidebar-details-panel";
 import { SidebarNotesPanel } from "@/components/layout/sidebar-notes-panel";
 import { SidebarReflectionPanel } from "@/components/layout/sidebar-reflection-panel";
@@ -17,58 +16,42 @@ import { SidebarResizeHandle } from "@/components/layout/sidebar-resize-handle";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import {
   GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX,
+  GLOBAL_RIGHT_RAIL_OUTER_GUTTER_PX,
+  GLOBAL_RIGHT_SIDEBAR_LAYOUT_RESERVE_PX,
   type GlobalRightSidebarPanel,
 } from "@/lib/global-right-sidebar-persistence";
 import {
-  GLOBAL_RAIL_ICON_CLASS,
   globalRailButtonClass,
-  globalRailButtonStyle,
-  globalRailCollapseButtonClass,
-  globalRailIconStyle,
+  globalRailHoverIconClass,
+  globalRailPrimaryIconClass,
+  shellRailIconRowClass,
 } from "@/lib/panel-toggle-styles";
-import {
-  PANEL_LAYOUT_MS,
-  panelShellTransitionStyle,
-  panelSlideTransitionStyle,
-} from "@/lib/panel-layout-animation";
-import {
-  SHELL_HEADER_HEIGHT_PX,
-  SHELL_SECONDARY_CONTROL_PX,
-  SHELL_UTILITY_HEADER_ACTION_ICON_PX,
-  SHELL_UTILITY_HEADER_ACTION_PX,
-  SHELL_UTILITY_HEADER_PADDING_PX,
-  SHELL_UTILITY_RAIL_GAP_PX,
-  SHELL_UTILITY_RAIL_TOP_PX,
-  SHELL_UTILITY_RAIL_WIDTH_PX,
-} from "@/lib/shell-dimensions";
+import { PANEL_LAYOUT_EASE } from "@/lib/panel-layout-animation";
 import { cn } from "@/lib/utils";
+import { workspaceRailBackgroundClass } from "@/lib/theme/surface-classes";
 import {
-  workspaceDrawerPanelClass,
-  workspaceRailBackgroundClass,
-} from "@/lib/theme/surface-classes";
-
-const RAIL_WIDTH_PX = GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX;
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const PANEL_ITEMS: {
   id: GlobalRightSidebarPanel;
   label: string;
-  openLabel: string;
   icon: typeof ClipboardList;
 }[] = [
-  {
-    id: "details",
-    label: "Task Details",
-    openLabel: "Open Task Details",
-    icon: ClipboardList,
-  },
-  { id: "notes", label: "Notes", openLabel: "Open Notes", icon: BookOpen },
-  {
-    id: "reflection",
-    label: "Reflection",
-    openLabel: "Open Reflection",
-    icon: NotebookPen,
-  },
+  { id: "details", label: "Details", icon: ClipboardList },
+  { id: "notes", label: "Notes", icon: BookOpen },
+  { id: "reflection", label: "Reflection", icon: NotebookPen },
 ];
+
+/** Slightly slower than shared panel chrome so open/close reads softer. */
+const RIGHT_SIDEBAR_MOTION_MS = 340;
+const NAV_TOOLTIP_DELAY_MS = 500;
+
+const PANEL_SLIDE_TRANSITION = `transform ${RIGHT_SIDEBAR_MOTION_MS}ms ${PANEL_LAYOUT_EASE}`;
+const railTooltipContentClass =
+  "px-2.5 py-1 font-medium whitespace-nowrap text-popover-foreground";
 
 function GlobalRightSidebarBody({
   activePanel,
@@ -85,354 +68,187 @@ function GlobalRightSidebarBody({
   }
 }
 
+/** Expanded header title — rail keeps short "Details" label. */
 function panelHeaderTitle(activePanel: GlobalRightSidebarPanel): string {
+  if (activePanel === "details") {
+    // Habit Details when a habit drawer path exists; tasks use Task Details.
+    return "Task Details";
+  }
   return PANEL_ITEMS.find((item) => item.id === activePanel)?.label ?? "";
 }
 
+/** Full-page destination for drawer panels that have a matching route. */
 function panelPageHref(activePanel: GlobalRightSidebarPanel): string | null {
   if (activePanel === "notes") return "/notes";
   if (activePanel === "reflection") return "/reflection";
   return null;
 }
 
-function UtilityHeaderAction({
-  href,
-  label,
-  onClick,
-  children,
-}: {
-  href?: string;
-  label: string;
-  onClick?: () => void;
-  children: ReactNode;
-}) {
-  const className =
-    "flex items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground";
-  const style = {
-    width: SHELL_UTILITY_HEADER_ACTION_PX,
-    height: SHELL_UTILITY_HEADER_ACTION_PX,
-  };
-
-  if (href) {
-    return (
-      <Link
-        href={href}
-        className={className}
-        style={style}
-        aria-label={label}
-        title={label}
-      >
-        {children}
-      </Link>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={className}
-      style={style}
-      aria-label={label}
-      title={label}
-    >
-      {children}
-    </button>
-  );
-}
-
-function UtilityRailButtons({
-  activePanel,
-  expanded,
-  onOpenPanel,
-}: {
-  activePanel: GlobalRightSidebarPanel;
-  expanded: boolean;
-  onOpenPanel: (panel: GlobalRightSidebarPanel) => void;
-}) {
-  return (
-    <>
-      {PANEL_ITEMS.map((item) => {
-        const Icon = item.icon;
-        const active = expanded && activePanel === item.id;
-
-        return (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onOpenPanel(item.id)}
-            className={globalRailButtonClass(active)}
-            style={globalRailButtonStyle()}
-            aria-label={item.openLabel}
-            title={item.label}
-            aria-pressed={active}
-          >
-            <span
-              className="inline-flex shrink-0 items-center justify-center"
-              style={globalRailIconStyle()}
-              aria-hidden
-            >
-              <Icon
-                className={GLOBAL_RAIL_ICON_CLASS}
-                style={globalRailIconStyle()}
-              />
-            </span>
-          </button>
-        );
-      })}
-    </>
-  );
-}
-
-function UtilityPanelHeader({
-  activePanel,
-}: {
-  activePanel: GlobalRightSidebarPanel;
-}) {
-  const pageHref = panelPageHref(activePanel);
-
-  return (
-    <header
-      className="box-border flex shrink-0 items-center justify-between gap-3 border-b border-border-subtle"
-      style={{
-        height: SHELL_HEADER_HEIGHT_PX,
-        minHeight: SHELL_HEADER_HEIGHT_PX,
-        maxHeight: SHELL_HEADER_HEIGHT_PX,
-        paddingInline: SHELL_UTILITY_HEADER_PADDING_PX,
-      }}
-    >
-      <h2 className="min-w-0 truncate text-base font-semibold tracking-tight">
-        {panelHeaderTitle(activePanel)}
-      </h2>
-      {pageHref ? (
-        <UtilityHeaderAction
-          href={pageHref}
-          label={`Open ${panelHeaderTitle(activePanel).toLowerCase()} page`}
-        >
-          <ExternalLink
-            style={{
-              width: SHELL_UTILITY_HEADER_ACTION_ICON_PX,
-              height: SHELL_UTILITY_HEADER_ACTION_ICON_PX,
-            }}
-            strokeWidth={1.75}
-          />
-        </UtilityHeaderAction>
-      ) : null}
-    </header>
-  );
-}
-
-function UtilityRailColumn({
-  activePanel,
-  expanded,
-  onCollapse,
-  onExpand,
-  onOpenPanel,
-}: {
-  activePanel: GlobalRightSidebarPanel;
-  expanded: boolean;
-  onCollapse: () => void;
-  onExpand: () => void;
-  onOpenPanel: (panel: GlobalRightSidebarPanel) => void;
-}) {
-  return (
-    <aside
-      className={cn(
-        "flex h-full shrink-0 flex-col items-center",
-        workspaceRailBackgroundClass,
-        expanded ? "border-l border-border-subtle/60" : undefined
-      )}
-      style={{ width: SHELL_UTILITY_RAIL_WIDTH_PX }}
-    >
-      {/* Shared 64px header — expand when closed, collapse when open */}
-      <div
-        className="box-border flex shrink-0 items-center justify-center border-b border-border-subtle"
-        style={{
-          height: SHELL_HEADER_HEIGHT_PX,
-          minHeight: SHELL_HEADER_HEIGHT_PX,
-          maxHeight: SHELL_HEADER_HEIGHT_PX,
-          width: "100%",
-        }}
-      >
-        {expanded ? (
-          <button
-            type="button"
-            onClick={onCollapse}
-            className={globalRailCollapseButtonClass()}
-            style={{
-              width: SHELL_SECONDARY_CONTROL_PX,
-              height: SHELL_SECONDARY_CONTROL_PX,
-              borderRadius: 10,
-            }}
-            aria-label="Collapse utility panel"
-            aria-expanded={true}
-          >
-            <ChevronLeft
-              className={GLOBAL_RAIL_ICON_CLASS}
-              style={globalRailIconStyle()}
-            />
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={onExpand}
-            className={globalRailCollapseButtonClass()}
-            style={{
-              width: SHELL_SECONDARY_CONTROL_PX,
-              height: SHELL_SECONDARY_CONTROL_PX,
-              borderRadius: 10,
-            }}
-            aria-label="Expand utility panel"
-            aria-expanded={false}
-          >
-            <PanelRightOpen
-              className={GLOBAL_RAIL_ICON_CLASS}
-              style={globalRailIconStyle()}
-            />
-          </button>
-        )}
-      </div>
-      <div
-        className="flex flex-col items-center"
-        style={{
-          paddingTop: SHELL_UTILITY_RAIL_TOP_PX,
-          gap: SHELL_UTILITY_RAIL_GAP_PX,
-        }}
-      >
-        <UtilityRailButtons
-          activePanel={activePanel}
-          expanded={expanded}
-          onOpenPanel={onOpenPanel}
-        />
-      </div>
-    </aside>
-  );
-}
-
-/**
- * Unified right utility sidebar — persistent rail + optional elevated panel.
- *
- * Only the spacer participates in the AppShell flex row. The visual shell is
- * `position: fixed` inside a zero-size flex slot so its width is not reserved twice
- * (that double-count caused the black gap / restricted main workspace).
- */
 export function GlobalRightSidebar() {
-  const {
-    activePanel,
-    expanded,
-    width,
-    overlayMode,
-    openPanel,
-    toggleExpanded,
-    setExpanded,
-    adjustWidthByDelta,
-    persistSidebarWidth,
-  } = useGlobalRightSidebar();
+  const { activePanel, expanded, width, openPanel, toggleExpanded, setWidth } =
+    useGlobalRightSidebar();
 
-  const [showBody, setShowBody] = useState(expanded);
-  const [isResizing, setIsResizing] = useState(false);
-  const shellRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (expanded) {
-      setShowBody(true);
-      return;
-    }
-
-    const timer = window.setTimeout(() => setShowBody(false), PANEL_LAYOUT_MS);
-    return () => window.clearTimeout(timer);
-  }, [expanded]);
-
-  useEffect(() => {
-    if (!expanded) return;
-
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Escape") return;
-      const target = event.target as Node | null;
-      if (target && shellRef.current?.contains(target)) {
-        event.preventDefault();
-        setExpanded(false);
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [expanded, setExpanded]);
-
-  const shellWidth = expanded ? width : RAIL_WIDTH_PX;
-  const contentWidthPx = Math.max(0, width - SHELL_UTILITY_RAIL_WIDTH_PX);
-  const widthTransition = isResizing ? "none" : panelShellTransitionStyle();
-  const layoutReservePx = overlayMode
-    ? RAIL_WIDTH_PX
-    : expanded
-      ? width
-      : RAIL_WIDTH_PX;
+  // Panel occupies everything left of the fixed icon rail.
+  const panelWidth = Math.max(
+    0,
+    width - GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX,
+  );
+  const railRightOffset = GLOBAL_RIGHT_RAIL_OUTER_GUTTER_PX;
+  const panelRightOffset = GLOBAL_RIGHT_SIDEBAR_LAYOUT_RESERVE_PX;
 
   return (
     <>
+      {/* Permanent collapsed spacer — expand never reflows page content. */}
       <div
         className="h-full shrink-0"
-        style={{
-          width: layoutReservePx,
-          transition: widthTransition,
-        }}
+        style={{ width: GLOBAL_RIGHT_SIDEBAR_LAYOUT_RESERVE_PX }}
         aria-hidden
       />
 
-      {/* Zero-size flex item — fixed shell must not consume a second flex width */}
-      <div className="pointer-events-none relative h-0 w-0 shrink-0 overflow-visible">
-        <div
-          ref={shellRef}
-          className={cn(
-            "pointer-events-auto fixed inset-y-0 right-0 z-[21] flex overflow-hidden",
-            !expanded &&
-              cn("border-l border-border-subtle", workspaceRailBackgroundClass)
-          )}
-          style={{
-            width: shellWidth,
-            transition: widthTransition,
-          }}
-        >
-          {expanded ? (
+      {/* Sliding panel — transform only; rail is a separate fixed layer. */}
+      <div
+        className={cn(
+          "fixed inset-y-0 z-50 flex flex-col overflow-hidden border-l border-border-subtle text-foreground",
+          workspaceRailBackgroundClass,
+          !expanded && "pointer-events-none",
+        )}
+        style={{
+          right: panelRightOffset,
+          width: panelWidth,
+          transform: expanded ? "translateX(0)" : "translateX(100%)",
+          transition: PANEL_SLIDE_TRANSITION,
+          willChange: "transform",
+        }}
+        aria-hidden={!expanded}
+      >
+        {/* Content drops on the same click as collapse — empty canvas slides away. */}
+        {expanded ? (
+          <>
             <SidebarResizeHandle
-              onResizeStart={() => setIsResizing(true)}
-              onResizeDelta={adjustWidthByDelta}
-              onResizeEnd={() => {
-                setIsResizing(false);
-                persistSidebarWidth();
-              }}
+              onResizeDelta={(delta) => setWidth(width + delta)}
+              onResizeEnd={() => undefined}
             />
-          ) : null}
 
-          {expanded ? (
-            <div
-              className={cn(
-                "flow-shell-right-drawer relative flex min-h-0 min-w-0 flex-1 flex-col",
-                workspaceDrawerPanelClass,
-                showBody ? "opacity-100" : "opacity-0"
-              )}
-              style={{
-                width: contentWidthPx,
-                transition: isResizing ? "none" : panelSlideTransitionStyle(),
-              }}
-            >
-              <UtilityPanelHeader activePanel={activePanel} />
-              <div className="min-h-0 flex-1 overflow-hidden">
-                {showBody ? (
-                  <GlobalRightSidebarBody activePanel={activePanel} />
-                ) : null}
-              </div>
+            <div className="flex h-[49px] shrink-0 items-center justify-between gap-2 border-b border-sidebar-border px-3">
+              <h2 className="text-sm font-semibold tracking-tight">
+                {panelHeaderTitle(activePanel)}
+              </h2>
+              {panelPageHref(activePanel) ? (
+                <Link
+                  href={panelPageHref(activePanel)!}
+                  className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-surface-hover hover:text-muted-foreground"
+                  aria-label={`Open ${panelHeaderTitle(activePanel).toLowerCase()} page`}
+                  title={`Open ${panelHeaderTitle(activePanel).toLowerCase()} page`}
+                >
+                  <ExternalLink className="size-4" />
+                </Link>
+              ) : null}
             </div>
-          ) : null}
 
-          <UtilityRailColumn
-            activePanel={activePanel}
-            expanded={expanded}
-            onCollapse={toggleExpanded}
-            onExpand={toggleExpanded}
-            onOpenPanel={openPanel}
-          />
+            <div className="min-h-0 flex-1 overflow-hidden">
+              <GlobalRightSidebarBody activePanel={activePanel} />
+            </div>
+          </>
+        ) : null}
+      </div>
+
+      {/* Icon rail — inset strip with clear L/R borders; never translates. */}
+      <div
+        className={cn(
+          "fixed inset-y-0 z-50 flex h-full flex-col items-center gap-0 border-x border-border-strong px-1 text-foreground",
+          workspaceRailBackgroundClass,
+        )}
+        style={{
+          right: railRightOffset,
+          width: GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX,
+        }}
+      >
+        <div className={shellRailIconRowClass}>
+          <Tooltip>
+            <TooltipTrigger
+              delay={NAV_TOOLTIP_DELAY_MS}
+              render={
+                <button
+                  type="button"
+                  onClick={toggleExpanded}
+                  className={cn("group/panel-toggle", globalRailButtonClass())}
+                  aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
+                  aria-expanded={expanded}
+                />
+              }
+            >
+              <PanelRightOpen
+                className={cn(
+                  globalRailPrimaryIconClass("sm"),
+                  expanded && "opacity-0",
+                )}
+                aria-hidden
+              />
+              <PanelRightOpen
+                className={cn(
+                  globalRailHoverIconClass("sm"),
+                  expanded && "!opacity-0",
+                )}
+                aria-hidden
+              />
+              <PanelRightClose
+                className={cn(
+                  "absolute inset-0 m-auto size-4.5 transition-opacity duration-150",
+                  expanded
+                    ? "opacity-100 group-hover/panel-toggle:opacity-0"
+                    : "opacity-0",
+                )}
+                aria-hidden
+              />
+              <PanelRightClose
+                className={cn(
+                  "absolute inset-0 m-auto size-4.5 opacity-0 transition-opacity duration-150",
+                  expanded && "group-hover/panel-toggle:opacity-100",
+                )}
+                aria-hidden
+              />
+            </TooltipTrigger>
+            <TooltipContent
+              side="left"
+              sideOffset={8}
+              className={railTooltipContentClass}
+            >
+              {expanded ? "Collapse sidebar" : "Expand sidebar"}
+            </TooltipContent>
+          </Tooltip>
         </div>
+
+        {PANEL_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const active = activePanel === item.id;
+
+          return (
+            <div key={item.id} className={shellRailIconRowClass}>
+              <Tooltip>
+                <TooltipTrigger
+                  delay={NAV_TOOLTIP_DELAY_MS}
+                  render={
+                    <button
+                      type="button"
+                      onClick={() => openPanel(item.id)}
+                      className={globalRailButtonClass(active)}
+                      aria-label={item.label}
+                    />
+                  }
+                >
+                  <Icon className="size-4.5" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="left"
+                  sideOffset={8}
+                  className={railTooltipContentClass}
+                >
+                  {item.label}
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          );
+        })}
       </div>
     </>
   );

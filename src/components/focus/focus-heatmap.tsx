@@ -2,10 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  buildHeatmapWeeks,
-  type FocusDayMetrics,
-} from "@/lib/focus-analytics";
+import { buildHeatmapWeeks, type FocusDayMetrics } from "@/lib/focus-analytics";
 import { formatDuration } from "@/lib/focus-utils";
 import { cn } from "@/lib/utils";
 import type { FocusSession } from "@/types/focus";
@@ -16,7 +13,7 @@ type FocusHeatmapProps = {
 };
 
 function intensityClass(focusSeconds: number): string {
-  if (focusSeconds <= 0) return "bg-muted/40";
+  if (focusSeconds <= 0) return "bg-surface-raised";
   if (focusSeconds < 900) return "bg-success-muted";
   if (focusSeconds < 3600) return "bg-success/25";
   if (focusSeconds < 7200) return "bg-success/45";
@@ -35,7 +32,7 @@ function HeatmapCell({
       type="button"
       className={cn(
         "size-3 rounded-sm border border-border/20 transition-colors sm:size-3.5",
-        intensityClass(day.focusSeconds)
+        intensityClass(day.focusSeconds),
       )}
       onMouseEnter={() => onHover(day)}
       onMouseLeave={() => onHover(null)}
@@ -76,7 +73,7 @@ export function FocusHeatmap({ sessions, loading }: FocusHeatmapProps) {
               </div>
             </div>
 
-            <div className="min-h-[3rem] rounded-lg border border-border/25 bg-muted/15 px-3 py-2 text-xs">
+            <div className="min-h-[3rem] rounded-lg border border-border/25 bg-surface-raised px-3 py-2 text-xs">
               {hovered ? (
                 <>
                   <p className="font-medium text-foreground">{hovered.date}</p>

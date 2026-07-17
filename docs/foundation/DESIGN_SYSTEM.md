@@ -4,12 +4,16 @@
 |                           |                                                                                                                                                          |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Version**               | 3.0                                                                                                                                                      |
-| **Status**                | Shipped — migration sessions 1–4 complete (merge pending)                                                                                                     |
+| **Status**                | Superseded for palette — Neutral Dark is the active implementation contract                                                                              |
 | **Owner**                 | FlowOS Product                                                                                                                                           |
 | **Date**                  | July 13, 2026                                                                                                                                            |
 | **Supersedes**            | [Visual Design System v2.0](./DESIGN_SYSTEM_v2.md)                                                                                                       |
-| **Implementation source** | [globals.css](../../src/app/globals.css) after the dedicated migration                                                                                   |
+| **Superseded by**         | [Neutral Dark Visual Design System](./DESIGN_SYSTEM_NEUTRAL_DARK.md) (2026-07-16)                                                                         |
+| **Implementation source** | [globals.css](../../src/app/globals.css) · Neutral Dark tokens                                                                                           |
 | **Related**               | [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md) · [PRINCIPLES.md](./governance/PRINCIPLES.md) · [decision-log.md](../execution/logs/decision-log.md) |
+
+
+> **Palette authority:** Use [DESIGN_SYSTEM_NEUTRAL_DARK.md](./DESIGN_SYSTEM_NEUTRAL_DARK.md) for surfaces, borders, text, and identity paints. This v3.0 document retains semantic roles, component contracts, and workspace rules where they do not conflict with Neutral Dark.
 
 
 ---

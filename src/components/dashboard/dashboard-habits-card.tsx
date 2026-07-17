@@ -32,7 +32,7 @@ function HabitPreviewRow({
 }) {
   const time = formatHabitTimeRangeWithDuration(
     habit.scheduled_time,
-    getHabitDurationMinutes(habit.id)
+    getHabitDurationMinutes(habit.id),
   );
 
   return (
@@ -46,7 +46,7 @@ function HabitPreviewRow({
           habit.completed
             ? "border-warning bg-warning text-background"
             : "border-muted-foreground/45 bg-transparent hover:border-warning/70",
-          disabled && "opacity-50"
+          disabled && "opacity-50",
         )}
         aria-label={`Mark "${habit.name}" as ${habit.completed ? "incomplete" : "complete"}`}
       >

@@ -72,6 +72,26 @@ export function clearHabitQueueRefs(): void {
   writeRaw([]);
 }
 
+/** Rewrite habit-ref order to match a unified queue sequence. */
+export function reorderHabitQueueRefs(habitIds: string[]): QueueItem[] {
+  const byId = new Map(
+    fetchHabitQueueRefs().map((item) => [item.sourceId, item])
+  );
+  const next: QueueItem[] = habitIds.map((habitId, index) => {
+    const existing = byId.get(habitId);
+    if (existing) return { ...existing, position: index };
+    return {
+      id: `habit:${habitId}`,
+      sourceType: "habit",
+      sourceId: habitId,
+      position: index,
+      addedAt: new Date().toISOString(),
+    };
+  });
+  writeRaw(next);
+  return next;
+}
+
 /** Drop refs whose habits no longer exist or are completed. */
 export function pruneHabitQueueRefs(
   habits: Array<{ id: string; completed?: boolean }>

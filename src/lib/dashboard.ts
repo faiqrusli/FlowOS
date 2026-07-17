@@ -18,7 +18,8 @@ export class DashboardError extends Error {
 function buildProgress(
   tasks: Task[],
   habits: Habit[],
-  focusSeconds: number
+  focusSeconds: number,
+  breakSeconds: number
 ): TodayProgress {
   return {
     tasksCompleted: tasks.filter((t) => t.completed).length,
@@ -26,6 +27,7 @@ function buildProgress(
     habitsCompleted: habits.filter((h) => h.completed).length,
     habitsTotal: habits.length,
     focusSeconds,
+    breakSeconds,
   };
 }
 
@@ -41,7 +43,12 @@ export async function fetchDashboardData(): Promise<DashboardData> {
     ]);
 
     const focus = computeFocusStatsForDate(focusSessions, today);
-    const progress = buildProgress(tasks, habits, focus.totalFocusSeconds);
+    const progress = buildProgress(
+      tasks,
+      habits,
+      focus.totalFocusSeconds,
+      focus.totalBreakSeconds
+    );
     const timeline = buildScheduleItems(tasks, habits, "today");
 
     return {

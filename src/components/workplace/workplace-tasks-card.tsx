@@ -9,12 +9,18 @@ import {
   useState,
   type MouseEvent,
 } from "react";
-import { CheckSquare, ChevronDown } from "lucide-react";
+import { CheckSquare } from "lucide-react";
 import { WorkplaceCompactTaskRow } from "@/components/workplace/workplace-compact-task-row";
 import { WorkplaceModuleCard } from "@/components/workplace/workplace-module-card";
+import { useFocusSessionContext } from "@/contexts/focus-session-context";
+import {
+  getTimelineTaskFocusClock,
+  isTimelineTaskInFocus,
+} from "@/lib/timeline-task-focus";
 import {
   partitionWorkplaceTasks,
   resolveWorkplaceTaskTab,
+  workplaceTaskTodoCount,
   type WorkplaceTaskTab,
 } from "@/lib/workplace-tasks";
 import {
@@ -23,19 +29,17 @@ import {
   TODAY_TASKS_SECTION_ID,
   todayTaskAnchorId,
 } from "@/lib/today-in-place";
-import { taskBelongsInLaterView, taskBelongsInTodayView } from "@/lib/task-groups";
+import {
+  taskBelongsInLaterView,
+  taskBelongsInTodayView,
+} from "@/lib/task-groups";
 import { cn } from "@/lib/utils";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
 
-const QUEUE_CAP = 5;
-
-const DISCLOSURES: {
-  id: Exclude<WorkplaceTaskTab, "queue">;
-  label: string;
-}[] = [
-  { id: "unscheduled", label: "Later" },
+const TABS: { id: WorkplaceTaskTab; label: string }[] = [
+  { id: "todo", label: "To Do" },
   { id: "missed", label: "Missed" },
-  { id: "completed", label: "Done" },
+  { id: "completed", label: "Completed" },
 ];
 
 export type WorkplaceTasksCardHandle = {
@@ -46,11 +50,9 @@ type WorkplaceTasksCardProps = {
   tasks: Task[];
   groups: TaskGroupWithTasks[];
   todayViewDate: string;
-  /** Quiet empty / Later chrome while Focus owns the page. */
+  /** Quiet empty chrome while Focus owns the page. */
   demoted?: boolean;
   overlay?: boolean;
-  /** Two-column list + detail for the large Today overlay. */
-  twoPane?: boolean;
   onClose?: () => void;
   onOpenDetail: (taskId: string) => void;
   onToggleComplete: (task: Task) => void;
@@ -62,7 +64,10 @@ function TaskList({
   list,
   groups,
   demoted = false,
+  emptyLabel = "No tasks here",
   selectedTaskId,
+  focusTaskId = null,
+  focusClock = null,
   onSelect,
   onOpenDetail,
   onToggleComplete,
@@ -72,56 +77,77 @@ function TaskList({
   list: Task[];
   groups: TaskGroupWithTasks[];
   demoted?: boolean;
+  emptyLabel?: string;
   selectedTaskId?: string | null;
+  focusTaskId?: string | null;
+  focusClock?: string | null;
   onSelect?: (taskId: string) => void;
   onOpenDetail: (taskId: string) => void;
   onToggleComplete: (task: Task) => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
   onTaskContextMenu: (task: Task, anchorRect: DOMRect) => void;
 }) {
-  const handleContextMenu = (task: Task) => (event: MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    onTaskContextMenu(task, event.currentTarget.getBoundingClientRect());
-  };
+  const handleContextMenu =
+    (task: Task) => (event: MouseEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      onSelect?.(task.id);
+      onTaskContextMenu(task, event.currentTarget.getBoundingClientRect());
+    };
 
   if (list.length === 0) {
     if (demoted) {
       return (
         <p className="mx-1 my-0.5 px-2 py-1.5 text-center text-[12px] text-muted-foreground/45">
-          No tasks in queue
+          {emptyLabel}
         </p>
       );
     }
     return (
       <p className="flow-empty mx-1 my-1.5 px-2 py-4 text-center text-[13px] text-muted-foreground/70">
-        No tasks here
+        {emptyLabel}
       </p>
     );
   }
 
   return (
     <div className="space-y-1">
-      {list.map((task) => (
-        <div
-          key={task.id}
-          className={cn(
-            selectedTaskId === task.id && "rounded-md ring-1 ring-primary/40"
-          )}
-          onClick={() => onSelect?.(task.id)}
-        >
+      {list.map((task) => {
+        const inFocus = focusTaskId === task.id;
+        return (
           <WorkplaceCompactTaskRow
+            key={task.id}
             task={task}
             groups={groups}
+            selected={selectedTaskId === task.id}
+            inFocus={inFocus}
+            focusClock={inFocus ? focusClock : null}
+            onSelect={onSelect ? () => onSelect(task.id) : undefined}
             onOpenDetail={() => onOpenDetail(task.id)}
             onToggleComplete={() => onToggleComplete(task)}
             onUpdateDuration={(minutes) =>
               onUpdateTask(task.id, { duration_minutes: minutes })
             }
             onContextMenu={handleContextMenu(task)}
+            onOpenMenu={
+              onSelect
+                ? (anchorRect) => {
+                    onSelect(task.id);
+                    onTaskContextMenu(task, anchorRect);
+                  }
+                : undefined
+            }
           />
-        </div>
-      ))}
+        );
+      })}
     </div>
+  );
+}
+
+function TodoGroupLabel({ children }: { children: string }) {
+  return (
+    <p className="px-2 pb-0.5 pt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+      {children}
+    </p>
   );
 }
 
@@ -135,70 +161,74 @@ export const WorkplaceTasksCard = forwardRef<
     todayViewDate,
     demoted = false,
     overlay = false,
-    twoPane = false,
     onClose,
     onOpenDetail,
     onToggleComplete,
     onUpdateTask,
     onTaskContextMenu,
   },
-  ref
+  ref,
 ) {
-  const [queueExpanded, setQueueExpanded] = useState(false);
-  const [expandedDisclosures, setExpandedDisclosures] = useState<
-    Set<Exclude<WorkplaceTaskTab, "queue">>
-  >(() => new Set());
+  const [tab, setTab] = useState<WorkplaceTaskTab>("todo");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const pendingScrollIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (demoted) setExpandedDisclosures(new Set());
-  }, [demoted]);
+  const { activeSession, tick } = useFocusSessionContext();
+  void tick;
 
   const sections = useMemo(
     () => partitionWorkplaceTasks(tasks, todayViewDate),
-    [tasks, todayViewDate]
+    [tasks, todayViewDate],
   );
 
-  const hiddenQueueCount = Math.max(0, sections.queue.length - QUEUE_CAP);
-  const visibleQueue =
-    queueExpanded || hiddenQueueCount === 0
-      ? sections.queue
-      : sections.queue.slice(0, QUEUE_CAP);
+  const focusingTaskId = useMemo(() => {
+    if (!activeSession?.target_id) return null;
+    if (!isTimelineTaskInFocus(activeSession, activeSession.target_id)) {
+      return null;
+    }
+    const task = tasks.find(
+      (item) => item.id === activeSession.target_id && !item.completed,
+    );
+    return task?.id ?? null;
+  }, [activeSession, tasks]);
+
+  const focusClock =
+    focusingTaskId && activeSession
+      ? getTimelineTaskFocusClock(activeSession, focusingTaskId)
+      : null;
+
+  const focusingTask = useMemo(() => {
+    if (!focusingTaskId) return null;
+    return tasks.find((task) => task.id === focusingTaskId) ?? null;
+  }, [focusingTaskId, tasks]);
+
+  /** Focused task sits above Scheduled; removed from Scheduled / Anytime / Missed lists. */
+  const scheduledWithoutFocus = useMemo(() => {
+    if (!focusingTaskId) return sections.todo.scheduled;
+    return sections.todo.scheduled.filter((task) => task.id !== focusingTaskId);
+  }, [focusingTaskId, sections.todo.scheduled]);
+
+  const anytimeWithoutFocus = useMemo(() => {
+    if (!focusingTaskId) return sections.todo.anytime;
+    return sections.todo.anytime.filter((task) => task.id !== focusingTaskId);
+  }, [focusingTaskId, sections.todo.anytime]);
+
+  const counts: Record<WorkplaceTaskTab, number> = {
+    todo: workplaceTaskTodoCount(sections),
+    missed: sections.missed.length,
+    completed: sections.completed.length,
+  };
 
   const todayTasks = useMemo(
     () =>
       tasks.filter(
         (task) =>
           taskBelongsInTodayView(task, todayViewDate) &&
-          !taskBelongsInLaterView(task)
+          !taskBelongsInLaterView(task),
       ),
-    [tasks, todayViewDate]
+    [tasks, todayViewDate],
   );
   const completedToday = todayTasks.filter((task) => task.completed).length;
   const titleMeta = `${completedToday}/${todayTasks.length}`;
-
-  const selectedTask =
-    tasks.find((task) => task.id === selectedTaskId) ??
-    visibleQueue[0] ??
-    null;
-
-  useEffect(() => {
-    if (!twoPane) return;
-    if (selectedTaskId && tasks.some((task) => task.id === selectedTaskId)) {
-      return;
-    }
-    setSelectedTaskId(visibleQueue[0]?.id ?? tasks[0]?.id ?? null);
-  }, [selectedTaskId, tasks, twoPane, visibleQueue]);
-
-  const toggleDisclosure = (id: Exclude<WorkplaceTaskTab, "queue">) => {
-    setExpandedDisclosures((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
 
   useImperativeHandle(
     ref,
@@ -215,21 +245,16 @@ export const WorkplaceTasksCard = forwardRef<
           return false;
         }
 
-        if (targetTab === "queue") {
-          const queueIndex = sections.queue.findIndex((item) => item.id === taskId);
-          if (queueIndex >= QUEUE_CAP) {
-            setQueueExpanded(true);
-          }
-          pendingScrollIdRef.current = anchorId;
-          return true;
+        if (tab === targetTab) {
+          return scrollToTodayTarget(anchorId);
         }
 
-        setExpandedDisclosures((prev) => new Set(prev).add(targetTab));
         pendingScrollIdRef.current = anchorId;
+        setTab(targetTab);
         return true;
       },
     }),
-    [sections.queue, tasks, todayViewDate]
+    [tab, tasks, todayViewDate],
   );
 
   useEffect(() => {
@@ -238,13 +263,31 @@ export const WorkplaceTasksCard = forwardRef<
 
     pendingScrollIdRef.current = null;
     scrollToTodayTargetDeferred(anchorId);
-  }, [queueExpanded, expandedDisclosures, visibleQueue.length]);
+  }, [tab]);
+
+  const listProps = {
+    groups,
+    demoted,
+    selectedTaskId: overlay ? selectedTaskId : null,
+    focusTaskId: focusingTaskId,
+    focusClock,
+    onSelect: overlay ? setSelectedTaskId : undefined,
+    onOpenDetail,
+    onToggleComplete,
+    onUpdateTask,
+    onTaskContextMenu,
+  };
+
+  const todoEmpty =
+    !focusingTask &&
+    scheduledWithoutFocus.length === 0 &&
+    anytimeWithoutFocus.length === 0;
 
   return (
     <WorkplaceModuleCard
       moduleId="tasks"
       anchorId={TODAY_TASKS_SECTION_ID}
-      title="Today's Tasks"
+      title="Tasks"
       titleIcon={CheckSquare}
       titleMeta={titleMeta}
       overlay={overlay}
@@ -252,148 +295,63 @@ export const WorkplaceTasksCard = forwardRef<
       className="min-h-0 overflow-hidden"
       bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
     >
-      <div
-        className={cn(
-          "flex h-full min-h-0",
-          twoPane ? "flex-row" : "flex-col"
-        )}
-      >
-        <div
-          className={cn(
-            "min-h-0 flex-1 space-y-1 overflow-y-auto p-1.5",
-            twoPane && "border-r border-border-subtle"
-          )}
-        >
-          <TaskList
-            list={visibleQueue}
-            groups={groups}
-            demoted={demoted}
-            selectedTaskId={twoPane ? selectedTask?.id ?? null : null}
-            onSelect={twoPane ? setSelectedTaskId : undefined}
-            onOpenDetail={onOpenDetail}
-            onToggleComplete={onToggleComplete}
-            onUpdateTask={onUpdateTask}
-            onTaskContextMenu={onTaskContextMenu}
-          />
-          {hiddenQueueCount > 0 && !queueExpanded ? (
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex shrink-0 flex-wrap gap-1 border-b border-divider px-2 py-1.5">
+          {TABS.map((item) => (
             <button
+              key={item.id}
               type="button"
-              onClick={() => setQueueExpanded(true)}
-              className="mx-1 flex w-[calc(100%-0.5rem)] items-center justify-between rounded-md px-2 py-1.5 text-left text-[13px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+              onClick={() => setTab(item.id)}
+              className={cn(
+                "rounded-md px-2 py-0.5 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-150",
+                tab === item.id
+                  ? "flow-selected text-foreground"
+                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
+              )}
             >
-              <span>{hiddenQueueCount} more</span>
-              <ChevronDown className="size-3.5 shrink-0" aria-hidden />
+              {item.label} ({counts[item.id]})
             </button>
-          ) : null}
-
-          {DISCLOSURES.map((disclosure) => {
-            const count = sections[disclosure.id].length;
-            if (count === 0) return null;
-
-            const expanded = expandedDisclosures.has(disclosure.id);
-            const isMissed = disclosure.id === "missed";
-
-            if (demoted && !expanded) {
-              return (
-                <button
-                  key={disclosure.id}
-                  type="button"
-                  onClick={() => toggleDisclosure(disclosure.id)}
-                  className="mx-1 flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-[12px] font-medium text-muted-foreground/55 transition-colors hover:bg-muted/40 hover:text-muted-foreground"
-                >
-                  <span>
-                    {disclosure.label}
-                    <span className="ml-1 tabular-nums">({count})</span>
-                  </span>
-                  <ChevronDown className="size-3.5 shrink-0" aria-hidden />
-                </button>
-              );
-            }
-
-            return (
-              <div key={disclosure.id} className="mx-1">
-                <button
-                  type="button"
-                  onClick={() => toggleDisclosure(disclosure.id)}
-                  aria-expanded={expanded}
-                  className={cn(
-                    "flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-[13px] font-medium transition-colors hover:bg-muted/50",
-                    isMissed
-                      ? "text-warning hover:text-warning"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <span>
-                    {disclosure.label}
-                    <span className="ml-1 tabular-nums">({count})</span>
-                  </span>
-                  <ChevronDown
-                    className={cn(
-                      "size-3.5 shrink-0 transition-transform duration-150",
-                      expanded && "rotate-180"
-                    )}
-                    aria-hidden
-                  />
-                </button>
-                {expanded ? (
-                  <div className="pb-1 pt-0.5">
-                    <TaskList
-                      list={sections[disclosure.id]}
-                      groups={groups}
-                      demoted={demoted}
-                      selectedTaskId={twoPane ? selectedTask?.id ?? null : null}
-                      onSelect={twoPane ? setSelectedTaskId : undefined}
-                      onOpenDetail={onOpenDetail}
-                      onToggleComplete={onToggleComplete}
-                      onUpdateTask={onUpdateTask}
-                      onTaskContextMenu={onTaskContextMenu}
-                    />
+          ))}
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-1.5 scrollbar-subtle">
+          {tab === "todo" ? (
+            todoEmpty ? (
+              <TaskList list={[]} emptyLabel="No tasks to do" {...listProps} />
+            ) : (
+              <div className="space-y-1">
+                {focusingTask ? (
+                  <div className="mb-2.5">
+                    <TaskList list={[focusingTask]} {...listProps} />
+                  </div>
+                ) : null}
+                {scheduledWithoutFocus.length > 0 ? (
+                  <div>
+                    <TodoGroupLabel>Scheduled</TodoGroupLabel>
+                    <TaskList list={scheduledWithoutFocus} {...listProps} />
+                  </div>
+                ) : null}
+                {anytimeWithoutFocus.length > 0 ? (
+                  <div>
+                    <TodoGroupLabel>Anytime</TodoGroupLabel>
+                    <TaskList list={anytimeWithoutFocus} {...listProps} />
                   </div>
                 ) : null}
               </div>
-            );
-          })}
+            )
+          ) : (
+            <TaskList
+              list={
+                focusingTaskId
+                  ? sections[tab].filter((task) => task.id !== focusingTaskId)
+                  : sections[tab]
+              }
+              emptyLabel={
+                tab === "missed" ? "No missed tasks" : "No completed tasks"
+              }
+              {...listProps}
+            />
+          )}
         </div>
-
-        {twoPane ? (
-          <div className="flex w-[min(50%,22rem)] shrink-0 flex-col overflow-y-auto p-3">
-            {selectedTask ? (
-              <>
-                <p className="text-[15px] font-semibold text-foreground">
-                  {selectedTask.title}
-                </p>
-                <p className="mt-2 text-[12px] text-muted-foreground">
-                  {selectedTask.duration_minutes
-                    ? `${selectedTask.duration_minutes} min`
-                    : "No duration"}
-                  {selectedTask.scheduled_time
-                    ? ` · ${selectedTask.scheduled_time}`
-                    : ""}
-                </p>
-                {selectedTask.description?.trim() ? (
-                  <p className="mt-3 whitespace-pre-wrap text-[13px] leading-snug text-foreground/85">
-                    {selectedTask.description.trim()}
-                  </p>
-                ) : (
-                  <p className="mt-3 text-[12px] text-muted-foreground">
-                    No description
-                  </p>
-                )}
-                <button
-                  type="button"
-                  onClick={() => onOpenDetail(selectedTask.id)}
-                  className="mt-auto pt-4 text-left text-[12px] font-medium text-primary hover:underline"
-                >
-                  View Task
-                </button>
-              </>
-            ) : (
-              <p className="text-[13px] text-muted-foreground">
-                Select a task to inspect.
-              </p>
-            )}
-          </div>
-        ) : null}
       </div>
     </WorkplaceModuleCard>
   );

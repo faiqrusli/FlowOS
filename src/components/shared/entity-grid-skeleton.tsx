@@ -10,7 +10,7 @@ export function EntityGridSkeleton({ count = 4 }: EntityGridSkeletonProps) {
       {Array.from({ length: count }).map((_, i) => (
         <Card
           key={i}
-          className="h-28 animate-pulse bg-muted/50 ring-border/40"
+          className="h-28 animate-pulse bg-surface-raised ring-border/40"
         />
       ))}
     </div>

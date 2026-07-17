@@ -41,7 +41,7 @@ export function NotesPageContent() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [boards, setBoards] = useState<KanbanBoard[]>([]);
   const [activeBoard, setActiveBoard] = useState<KanbanBoardWithColumns | null>(
-    null
+    null,
   );
   const [tab, setTab] = useState<ContentTab>("notes");
   const [tabAnimKey, setTabAnimKey] = useState(0);
@@ -50,7 +50,7 @@ export function NotesPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [areaDialogOpen, setAreaDialogOpen] = useState(false);
   const [areaDialogMode, setAreaDialogMode] = useState<"create" | "edit">(
-    "create"
+    "create",
   );
   const [editingArea, setEditingArea] = useState<GrowthArea | null>(null);
 
@@ -74,7 +74,7 @@ export function NotesPageContent() {
       setError(
         err instanceof GrowthAreasError
           ? err.message
-          : "Failed to load growth areas."
+          : "Failed to load growth areas.",
       );
     } finally {
       setLoading(false);
@@ -94,7 +94,7 @@ export function NotesPageContent() {
       setError(
         err instanceof NotesError || err instanceof KanbanError
           ? err.message
-          : "Failed to load folder content."
+          : "Failed to load folder content.",
       );
     }
   }, []);
@@ -179,7 +179,7 @@ export function NotesPageContent() {
         {loading ? (
           <aside
             style={{ width: 56 }}
-            className="shrink-0 self-start animate-pulse rounded-2xl bg-muted/30"
+            className="shrink-0 self-start animate-pulse rounded-2xl bg-surface-raised"
             aria-hidden
           />
         ) : (
@@ -204,7 +204,7 @@ export function NotesPageContent() {
 
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col self-stretch overflow-hidden">
           {loading ? (
-            <div className="h-full min-h-0 animate-pulse rounded-2xl bg-muted/30" />
+            <div className="h-full min-h-0 animate-pulse rounded-2xl bg-surface-raised" />
           ) : (
             selectedArea && (
               <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border-subtle bg-surface-base shadow-none">

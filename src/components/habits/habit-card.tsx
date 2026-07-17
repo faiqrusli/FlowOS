@@ -56,7 +56,7 @@ export function HabitCard({
                   <span className="sr-only">Track with Focus enabled</span>
                 </span>
               ) : (
-                <span className="rounded-md bg-muted/55 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                <span className="rounded-md bg-surface-raised px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                   No focus tracking
                 </span>
               )}
@@ -86,7 +86,7 @@ export function HabitCard({
                 habit.days_of_week!.map((day) => (
                   <span
                     key={day}
-                    className="rounded-md bg-muted/55 px-2 py-0.5 text-[10px] font-medium text-foreground/85"
+                    className="rounded-md bg-surface-raised px-2 py-0.5 text-[10px] font-medium text-foreground/85"
                   >
                     {day}
                   </span>

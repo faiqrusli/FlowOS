@@ -40,10 +40,9 @@ export function TaskCompactCard({
     <article
       className={cn(
         "group flex min-h-[90px] max-h-[120px] gap-3 rounded-xl border border-border bg-card px-3.5 py-3 shadow-xs transition-[border-color,box-shadow,background-color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-border hover:shadow-sm",
-        isCompleted && "border-border/70 bg-muted/25 opacity-70 hover:shadow-xs",
-        overdue &&
-          !isCompleted &&
-          "border-l-[3px] border-l-warning/50"
+        isCompleted &&
+          "border-border/70 bg-surface-raised opacity-70 hover:shadow-xs",
+        overdue && !isCompleted && "border-l-[3px] border-l-warning/50",
       )}
     >
       <button
@@ -55,7 +54,7 @@ export function TaskCompactCard({
           isCompleted
             ? "border-primary bg-primary text-primary-foreground"
             : "border-muted-foreground/45 bg-transparent hover:border-muted-foreground/70",
-          disabled && "opacity-50"
+          disabled && "opacity-50",
         )}
         aria-label={`Mark "${task.title}" as ${isCompleted ? "incomplete" : "complete"}`}
       >
@@ -64,11 +63,14 @@ export function TaskCompactCard({
 
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex min-w-0 items-start gap-1.5">
-          <TaskPriorityFlagIcon priority={priority} className="mt-0.5 size-3.5 shrink-0" />
+          <TaskPriorityFlagIcon
+            priority={priority}
+            className="mt-0.5 size-3.5 shrink-0"
+          />
           <p
             className={cn(
               "line-clamp-1 text-sm font-semibold text-foreground",
-              isCompleted && "text-muted-foreground line-through"
+              isCompleted && "text-muted-foreground line-through",
             )}
           >
             {task.title}
@@ -79,7 +81,7 @@ export function TaskCompactCard({
           <p
             className={cn(
               "line-clamp-1 text-xs text-muted-foreground",
-              isCompleted && "line-through"
+              isCompleted && "line-through",
             )}
           >
             {task.description}
@@ -87,9 +89,7 @@ export function TaskCompactCard({
         )}
 
         <div className="flex flex-wrap items-center gap-2 pt-0.5">
-          {meta && (
-            <p className="text-xs text-muted-foreground">{meta}</p>
-          )}
+          {meta && <p className="text-xs text-muted-foreground">{meta}</p>}
           {overdue && !isCompleted && (
             <Badge variant="status-warning">Overdue</Badge>
           )}

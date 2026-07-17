@@ -150,7 +150,7 @@ export function NoteFloatingCard({
         <button
           type="button"
           onClick={onOpenInSidebar}
-          className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
           aria-label="Open note in sidebar"
         >
           <ExternalLink className="size-4" />
@@ -158,7 +158,7 @@ export function NoteFloatingCard({
         <button
           type="button"
           onClick={onClose}
-          className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
           aria-label="Close note card"
         >
           <X className="size-4" />

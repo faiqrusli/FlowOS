@@ -27,7 +27,7 @@ export function HabitFormFields({
 }: HabitFormFieldsProps) {
   function update<K extends keyof HabitFormValues>(
     key: K,
-    value: HabitFormValues[K]
+    value: HabitFormValues[K],
   ) {
     onChange({ ...values, [key]: value });
   }
@@ -48,7 +48,10 @@ export function HabitFormFields({
       <div className="space-y-2">
         <Label htmlFor="habit-time">Scheduled time</Label>
         {/* Gate interaction locally: the picker field has no disabled prop */}
-        <div inert={disabled || undefined} className={cn(disabled && "opacity-60")}>
+        <div
+          inert={disabled || undefined}
+          className={cn(disabled && "opacity-60")}
+        >
           <ScheduleTimePickerField
             id="habit-time"
             value={values.scheduledTime || null}
@@ -71,7 +74,10 @@ export function HabitFormFields({
           onChange={(e) =>
             update(
               "durationMinutes",
-              Math.max(15, Math.min(240, Number.parseInt(e.target.value, 10) || 15))
+              Math.max(
+                15,
+                Math.min(240, Number.parseInt(e.target.value, 10) || 15),
+              ),
             )
           }
           disabled={disabled}
@@ -88,7 +94,7 @@ export function HabitFormFields({
       <label
         className={cn(
           "flex cursor-pointer items-start gap-3 rounded-lg border border-border-subtle px-3 py-2.5",
-          disabled && "cursor-not-allowed opacity-60"
+          disabled && "cursor-not-allowed opacity-60",
         )}
       >
         <input

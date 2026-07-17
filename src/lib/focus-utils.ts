@@ -24,6 +24,19 @@ export function formatDuration(seconds: number): string {
   return `${s}s`;
 }
 
+/** Minute-resolution duration for calm Focus chrome (no seconds). */
+export function formatDurationCompact(seconds: number): string {
+  const safeSeconds = Math.max(0, Math.round(seconds));
+  const totalMinutes = Math.floor(safeSeconds / 60);
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+
+  if (h > 0 && m > 0) return `${h}h ${m}m`;
+  if (h > 0) return `${h}h`;
+  if (m > 0) return `${m}m`;
+  return "0m";
+}
+
 export function formatTimerClock(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;

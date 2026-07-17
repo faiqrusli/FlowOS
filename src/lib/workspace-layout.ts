@@ -19,6 +19,6 @@ export function timelineGridGutterClass(
 ): string {
   if (!drawerMode) return "px-0";
   // Workplace: even inset so lines/cards/zoom clear the scrollbar slightly.
-  if (options?.flushRight) return "px-1";
+  if (options?.flushRight) return "px-0.5";
   return "px-2";
 }

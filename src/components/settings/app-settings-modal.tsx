@@ -1,22 +1,12 @@
 "use client";
 
 import type { ComponentType } from "react";
-import {
-  CircleHelp,
-  Palette,
-  Settings,
-  UserRound,
-  X,
-} from "lucide-react";
+import { CircleHelp, Palette, Settings, UserRound, X } from "lucide-react";
 import { SettingsAccountPanel } from "@/components/settings/panels/settings-account-panel";
 import { SettingsAppearancePanel } from "@/components/settings/panels/settings-appearance-panel";
 import { SettingsHelpPanel } from "@/components/settings/panels/settings-help-panel";
 import { SettingsPreferencesPanel } from "@/components/settings/panels/settings-preferences-panel";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useSettingsModal } from "@/contexts/settings-modal-context";
 import { cn } from "@/lib/utils";
 import type { SettingsModalSection } from "@/types/settings-modal";
@@ -55,7 +45,8 @@ function SettingsPanelContent({ section }: { section: SettingsModalSection }) {
 
 export function AppSettingsModal() {
   const { open, section, setSection, closeSettings } = useSettingsModal();
-  const activeItem = NAV_ITEMS.find((item) => item.id === section) ?? NAV_ITEMS[0];
+  const activeItem =
+    NAV_ITEMS.find((item) => item.id === section) ?? NAV_ITEMS[0];
 
   return (
     <Dialog open={open} onOpenChange={(next) => !next && closeSettings()}>
@@ -66,12 +57,12 @@ export function AppSettingsModal() {
         <DialogTitle className="sr-only">{activeItem.title}</DialogTitle>
 
         <div className="flex min-h-0 flex-1">
-          <aside className="flex w-[200px] shrink-0 flex-col border-r border-border/60 bg-muted/30">
+          <aside className="flex w-[200px] shrink-0 flex-col border-r border-border/60 bg-surface-raised">
             <div className="flex items-center px-2 pt-2">
               <button
                 type="button"
                 onClick={closeSettings}
-                className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
                 aria-label="Close settings"
               >
                 <X className="size-4 stroke-[1.5]" />
@@ -92,7 +83,7 @@ export function AppSettingsModal() {
                       "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors",
                       isActive
                         ? "bg-background font-medium text-foreground shadow-sm ring-1 ring-border/60"
-                        : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
+                        : "text-muted-foreground hover:bg-background/60 hover:text-foreground",
                     )}
                   >
                     <Icon className="size-4 shrink-0 stroke-[1.5]" />

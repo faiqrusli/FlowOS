@@ -76,7 +76,7 @@ export function NoteMoveDialog({
                       onOpenChange(false);
                       setQuery("");
                     }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60"
+                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-surface-hover"
                   >
                     <span className="text-base leading-none">{area.emoji}</span>
                     <span className="truncate text-sm font-medium">

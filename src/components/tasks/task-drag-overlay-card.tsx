@@ -20,7 +20,7 @@ export const TaskDragOverlayCard = memo(function TaskDragOverlayCard({
   return (
     <div
       className={cn(
-        "pointer-events-none flex min-w-0 select-none items-center gap-0 rounded-md border border-border/40 bg-background/60 py-1 pl-0.5 pr-0.5 opacity-60 shadow-lg ring-1 ring-border/25 backdrop-blur-[1px]"
+        "pointer-events-none flex min-w-0 select-none items-center gap-0 rounded-md border border-border-subtle bg-surface-raised py-1 pl-0.5 pr-0.5 shadow-[var(--shadow-overlay)]",
       )}
     >
       <div className="flex size-5 shrink-0 items-center justify-center text-muted-foreground">

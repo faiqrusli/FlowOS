@@ -178,6 +178,18 @@ export function getTodayFocusDisplaySeconds(
   return persistedSeconds + getActiveSessionFocusSeconds(activeSession);
 }
 
+/** Persisted today break + live active-session break for the status rail. */
+export function getTodayBreakDisplaySeconds(
+  persistedSeconds: number,
+  activeSession: StoredActiveFocusSession | null
+): number {
+  if (!activeSession) return persistedSeconds;
+  if (activeSession.timer_type === "quick") {
+    return persistedSeconds + computeQuickFocusSeconds(activeSession).break;
+  }
+  return persistedSeconds + activeSession.accumulated_break_seconds;
+}
+
 function createTaskFocusSessionId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();

@@ -11,7 +11,7 @@ export function SettingsAppearancePanel() {
         <p className="mt-1 text-xs text-muted-foreground">
           FlowOS is dark-only so surface hierarchy stays consistent.
         </p>
-        <div className="mt-3 flex items-center gap-2 rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5">
+        <div className="mt-3 flex items-center gap-2 rounded-lg border border-border/60 bg-surface-raised px-3 py-2.5">
           <Moon className="size-3.5 shrink-0 stroke-[1.5] text-foreground" />
           <div className="min-w-0 flex-1">
             <p className="text-sm text-foreground">Dark</p>

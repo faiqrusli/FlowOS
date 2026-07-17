@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import type { StoredActiveFocusSession } from "@/lib/focus-active-session";
 import {
   clampBreakLengthMinutes,
+  formatBreakAtMinutes,
   formatCompactBreakCountdownLabel,
   getDefaultBreakAtMinutes,
   getMinBreakAtMinutes,
@@ -217,5 +218,15 @@ describe("formatCompactBreakCountdownLabel", () => {
   it("omits seconds in compact label", () => {
     expect(formatCompactBreakCountdownLabel(2500)).toBe("Break in 42 min");
     expect(formatCompactBreakCountdownLabel(0)).toBe("Break ready");
+  });
+});
+
+describe("formatBreakAtMinutes", () => {
+  it("formats long thresholds naturally", () => {
+    expect(formatBreakAtMinutes(25)).toBe("25 min");
+    expect(formatBreakAtMinutes(45)).toBe("45 min");
+    expect(formatBreakAtMinutes(60)).toBe("1h");
+    expect(formatBreakAtMinutes(90)).toBe("1h 30m");
+    expect(formatBreakAtMinutes(180)).toBe("3h");
   });
 });

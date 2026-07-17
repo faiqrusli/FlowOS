@@ -27,7 +27,7 @@ export function TaskChecklistRow({
     <li
       className={cn(
         "group flex items-center gap-2.5",
-        compact ? "py-1.5" : "gap-3 py-1.5 text-sm"
+        compact ? "py-1.5" : "gap-3 py-1.5 text-sm",
       )}
     >
       <button
@@ -40,7 +40,7 @@ export function TaskChecklistRow({
           task.completed
             ? "border-primary bg-primary text-primary-foreground"
             : "border-muted-foreground/45 bg-transparent hover:border-muted-foreground/70",
-          disabled && "opacity-50"
+          disabled && "opacity-50",
         )}
         aria-label={`Mark "${task.title}" as ${task.completed ? "incomplete" : "complete"}`}
       >
@@ -52,7 +52,7 @@ export function TaskChecklistRow({
         className={cn(
           "min-w-0 flex-1 truncate",
           compact ? type.contentPrimary : "font-medium text-foreground",
-          task.completed && "text-muted-foreground line-through"
+          task.completed && "text-muted-foreground line-through",
         )}
       >
         {task.title}

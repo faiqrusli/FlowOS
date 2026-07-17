@@ -73,7 +73,7 @@ export function FocusAnalyticsStrip({
           {METRICS.map((metric) => (
             <div
               key={metric.key}
-              className="rounded-lg border border-border/30 bg-muted/15 px-3 py-2.5"
+              className="rounded-lg border border-border/30 bg-surface-raised px-3 py-2.5"
             >
               <p className="text-[11px] text-muted-foreground">{metric.label}</p>
               <p className="mt-0.5 text-sm font-semibold tabular-nums text-foreground">

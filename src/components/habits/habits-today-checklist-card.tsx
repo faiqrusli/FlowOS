@@ -3,12 +3,7 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { getHabitDurationMinutes } from "@/lib/schedule-durations";
 import { cn } from "@/lib/utils";
@@ -44,7 +39,7 @@ function HabitOccurrenceRow({
 }) {
   const time = formatHabitTimeRangeWithDuration(
     habit.scheduled_time,
-    getHabitDurationMinutes(habit.id)
+    getHabitDurationMinutes(habit.id),
   );
 
   return (
@@ -58,7 +53,7 @@ function HabitOccurrenceRow({
           habit.completed
             ? "border-warning bg-warning text-background"
             : "border-muted-foreground/45 bg-transparent hover:border-warning/70",
-          disabled && "opacity-50"
+          disabled && "opacity-50",
         )}
         aria-label={`Mark today's "${habit.name}" occurrence as ${habit.completed ? "incomplete" : "complete"}`}
       >
@@ -68,7 +63,7 @@ function HabitOccurrenceRow({
         <p
           className={cn(
             "truncate font-medium text-foreground",
-            habit.completed && "text-muted-foreground"
+            habit.completed && "text-muted-foreground",
           )}
         >
           {habit.name}

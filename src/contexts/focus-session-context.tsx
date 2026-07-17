@@ -45,6 +45,7 @@ import {
 } from "@/lib/focus-utils";
 import {
   clearScheduledBreak,
+  formatBreakAtMinutes,
   getRemainingToBreakSeconds,
   isBreakFinished,
   isBreakReady,
@@ -280,7 +281,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     if (prompt === "ready") {
       void showBrowserNotification(
         "FlowOS — Time for a break",
-        `You've reached ${current.breakAtMinutes ?? 0} minutes of focus.`
+        `You've reached ${formatBreakAtMinutes(current.breakAtMinutes ?? 0)} of focus.`
       );
     } else if (prompt === "finished") {
       void showBrowserNotification(

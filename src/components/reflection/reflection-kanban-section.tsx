@@ -34,7 +34,10 @@ import {
   kanbanColumnHeaderClass,
 } from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
-import type { ReflectionKanban, ReflectionKanbanCard } from "@/types/reflection";
+import type {
+  ReflectionKanban,
+  ReflectionKanbanCard,
+} from "@/types/reflection";
 
 type ReflectionKanbanSectionProps = {
   kanbans: ReflectionKanban[];
@@ -57,9 +60,13 @@ export function ReflectionKanbanSection({
 
   function updateKanban(
     kanbanId: string,
-    updater: (kanban: ReflectionKanban) => ReflectionKanban
+    updater: (kanban: ReflectionKanban) => ReflectionKanban,
   ) {
-    onChange(kanbans.map((kanban) => (kanban.id === kanbanId ? updater(kanban) : kanban)));
+    onChange(
+      kanbans.map((kanban) =>
+        kanban.id === kanbanId ? updater(kanban) : kanban,
+      ),
+    );
   }
 
   function handleAddKanban() {
@@ -100,7 +107,7 @@ export function ReflectionKanbanSection({
   const body = (
     <div className="space-y-3">
       {addingBoard && (
-        <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-muted/10 p-2">
+        <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-surface-raised p-2">
           <Input
             value={titleDraft}
             onChange={(event) => setTitleDraft(event.target.value)}
@@ -134,7 +141,7 @@ export function ReflectionKanbanSection({
         <div
           className={cn(
             "flex gap-3 overflow-x-auto pb-1",
-            compact ? "flex-col overflow-visible" : "kanban-board-scroll"
+            compact ? "flex-col overflow-visible" : "kanban-board-scroll",
           )}
         >
           {kanbans.map((kanban) => (
@@ -234,7 +241,7 @@ function ReflectionKanbanColumn({
     onChange({
       ...kanban,
       cards: kanban.cards.map((card) =>
-        card.id === cardId ? { ...card, content: normalized } : card
+        card.id === cardId ? { ...card, content: normalized } : card,
       ),
     });
     setEditingCardId(null);
@@ -256,20 +263,22 @@ function ReflectionKanbanColumn({
       className={cn(
         "flex shrink-0 flex-col rounded-xl border",
         kanbanColumnBodyClass,
-        compact ? "w-full" : "w-[min(100%,280px)] min-w-[240px] max-w-[280px]"
+        compact ? "w-full" : "w-[min(100%,280px)] min-w-[240px] max-w-[280px]",
       )}
     >
       <div
         className={cn(
           "flex shrink-0 items-center gap-1 rounded-t-xl px-2 py-2",
-          kanbanColumnHeaderClass
+          kanbanColumnHeaderClass,
         )}
       >
         <button
           type="button"
           onClick={() => onChange({ ...kanban, collapsed: !collapsed })}
           className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover"
-          aria-label={collapsed ? `Expand ${kanban.title}` : `Collapse ${kanban.title}`}
+          aria-label={
+            collapsed ? `Expand ${kanban.title}` : `Collapse ${kanban.title}`
+          }
         >
           {collapsed ? (
             <ChevronRight className="size-3.5" />
@@ -277,7 +286,9 @@ function ReflectionKanbanColumn({
             <ChevronDown className="size-3.5" />
           )}
         </button>
-        <h3 className="min-w-0 flex-1 truncate text-sm font-semibold">{kanban.title}</h3>
+        <h3 className="min-w-0 flex-1 truncate text-sm font-semibold">
+          {kanban.title}
+        </h3>
         <DropdownMenu>
           <DropdownMenuTrigger
             className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover"
@@ -305,10 +316,7 @@ function ReflectionKanbanColumn({
             return (
               <div
                 key={card.id}
-                className={cn(
-                  "group relative px-3 py-2",
-                  kanbanCardClass
-                )}
+                className={cn("group relative px-3 py-2", kanbanCardClass)}
                 onDoubleClick={() => {
                   if (disabled) return;
                   setEditingCardId(card.id);
@@ -344,9 +352,13 @@ function ReflectionKanbanColumn({
 
                 <DropdownMenu
                   open={contextCardId === card.id}
-                  onOpenChange={(open) => setContextCardId(open ? card.id : null)}
+                  onOpenChange={(open) =>
+                    setContextCardId(open ? card.id : null)
+                  }
                 >
-                  <DropdownMenuTrigger className="sr-only">Card menu</DropdownMenuTrigger>
+                  <DropdownMenuTrigger className="sr-only">
+                    Card menu
+                  </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="rounded-xl">
                     <DropdownMenuItem
                       onClick={() => {
@@ -405,7 +417,7 @@ function ReflectionKanbanColumn({
                 setComposing(true);
                 setComposeText("");
               }}
-              className="flex w-full items-center justify-center gap-1 rounded-lg py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-1 rounded-lg py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground disabled:opacity-50"
             >
               <Plus className="size-3" />
               Add a card
@@ -429,7 +441,7 @@ type AutoGrowTextareaProps = {
 const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
   function AutoGrowTextarea(
     { value, onChange, className, placeholder, onKeyDown, onBlur },
-    ref
+    ref,
   ) {
     const innerRef = useRef<HTMLTextAreaElement>(null);
 
@@ -463,12 +475,12 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
         rows={1}
         className={cn(
           "w-full resize-none overflow-hidden text-sm leading-relaxed outline-none",
-          className
+          className,
         )}
         style={{ minHeight: "2.25rem" }}
         onKeyDown={onKeyDown}
         onBlur={onBlur}
       />
     );
-  }
+  },
 );

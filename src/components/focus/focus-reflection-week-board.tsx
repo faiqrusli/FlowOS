@@ -30,9 +30,11 @@ export function FocusReflectionWeekBoard({
 
     for (let offset = 6; offset >= 0; offset -= 1) {
       const date = shiftDateKey(today, -offset);
-      const reflection = reflections.find((item) => item.reflection_date === date);
+      const reflection = reflections.find(
+        (item) => item.reflection_date === date,
+      );
       const focusEntry = reflection?.custom_entries.find((entry) =>
-        isFocusReflectionEntry(entry.title)
+        isFocusReflectionEntry(entry.title),
       );
 
       days.push({
@@ -63,7 +65,7 @@ export function FocusReflectionWeekBoard({
                   "flex min-h-[7rem] flex-col rounded-xl border p-2.5 text-xs",
                   day.hasFocusReflection
                     ? "border-selected-border bg-selected"
-                    : "border-border/30 bg-muted/10"
+                    : "border-border/30 bg-surface-raised",
                 )}
               >
                 <p className="font-semibold text-foreground">{day.label}</p>

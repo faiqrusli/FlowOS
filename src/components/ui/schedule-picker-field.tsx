@@ -2,17 +2,26 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
-import { CalendarPanel, CALENDAR_PANEL_WIDTH_CLASS } from "@/components/ui/calendar-panel";
-import { TimePickerPanel, TIME_PICKER_PANEL_WIDTH_CLASS } from "@/components/ui/time-picker-panel";
+import {
+  CalendarPanel,
+  CALENDAR_PANEL_WIDTH_CLASS,
+} from "@/components/ui/calendar-panel";
+import {
+  TimePickerPanel,
+  TIME_PICKER_PANEL_WIDTH_CLASS,
+} from "@/components/ui/time-picker-panel";
 import { formatRelativeDateLabel, formatTimeShort } from "@/lib/date-utils";
 import {
   parseTimePickerParts,
   timePickerPartsToScheduledTime,
 } from "@/lib/time-picker-utils";
 import { cn } from "@/lib/utils";
+import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 
-const schedulePickerTriggerClassName =
-  "flex h-8 w-full items-center justify-between gap-2 rounded-lg border border-border/50 bg-background px-2 text-xs outline-none transition-colors hover:bg-muted/20 focus-visible:ring-1 focus-visible:ring-ring/30";
+const schedulePickerTriggerClassName = cn(
+  "w-full cursor-pointer justify-between gap-2 px-2",
+  compactControlTriggerClass,
+);
 
 type ScheduleDatePickerFieldProps = {
   id?: string;
@@ -69,7 +78,7 @@ function SchedulePickerPopover({
       className={cn(
         "flow-surface-elevated absolute top-[calc(100%+0.375rem)] z-[120] overflow-hidden rounded-xl",
         align === "end" ? "right-0" : "left-0",
-        className
+        className,
       )}
     >
       {children}
@@ -99,8 +108,8 @@ export function ScheduleDatePickerField({
         onClick={() => setOpen((current) => !current)}
         className={cn(
           schedulePickerTriggerClassName,
-          open && "ring-1 ring-ring/30",
-          !value && "text-muted-foreground"
+          open && "bg-control-active ring-1 ring-ring/40",
+          !value && "text-muted-foreground",
         )}
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -115,7 +124,7 @@ export function ScheduleDatePickerField({
         triggerRef={triggerRef}
         className={CALENDAR_PANEL_WIDTH_CLASS}
       >
-        <div className="overflow-hidden rounded-xl bg-background">
+        <div className="overflow-hidden rounded-xl bg-surface-overlay">
           <CalendarPanel
             value={value}
             showQuickActions
@@ -146,7 +155,7 @@ export function ScheduleTimePickerField({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [parts, setParts] = useState(() => parseTimePickerParts(value));
-  const label = value ? formatTimeShort(value) ?? placeholder : placeholder;
+  const label = value ? (formatTimeShort(value) ?? placeholder) : placeholder;
 
   useEffect(() => {
     if (!open) {
@@ -171,8 +180,8 @@ export function ScheduleTimePickerField({
         onClick={() => setOpen((current) => !current)}
         className={cn(
           schedulePickerTriggerClassName,
-          open && "ring-1 ring-ring/30",
-          !value && "text-muted-foreground"
+          open && "bg-control-active ring-1 ring-ring/40",
+          !value && "text-muted-foreground",
         )}
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -188,7 +197,7 @@ export function ScheduleTimePickerField({
         align="end"
         className={TIME_PICKER_PANEL_WIDTH_CLASS}
       >
-        <div className="overflow-hidden rounded-xl bg-background">
+        <div className="overflow-hidden rounded-xl bg-surface-overlay">
           <TimePickerPanel
             value={parts}
             hasValue={Boolean(value)}

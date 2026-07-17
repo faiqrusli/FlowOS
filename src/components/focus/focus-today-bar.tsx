@@ -8,7 +8,7 @@ type FocusTodayBarProps = {
 
 export function FocusTodayBar({ stats, loading }: FocusTodayBarProps) {
   return (
-    <div className="rounded-xl border border-border/50 bg-muted/35 px-5 py-4">
+    <div className="rounded-xl border border-border/50 bg-surface-raised px-5 py-4">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-wrap gap-8">
           <div>

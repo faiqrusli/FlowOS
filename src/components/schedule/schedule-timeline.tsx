@@ -52,27 +52,27 @@ export function ScheduleTimeline({
 
   const mergedItems = useMemo(
     () => mergeFocusIntoScheduleItems(items, activeSession),
-    [items, activeSession]
+    [items, activeSession],
   );
 
   const currentIndex = useMemo(
     () => findCurrentItemIndex(mergedItems, nowMinutes),
-    [mergedItems, nowMinutes]
+    [mergedItems, nowMinutes],
   );
 
   const timelineEntries = useMemo(
     () => buildTimelineEntries(mergedItems, nowMinutes),
-    [mergedItems, nowMinutes]
+    [mergedItems, nowMinutes],
   );
 
   const summary = useMemo(
     () => computeScheduleSummary(mergedItems, nowMinutes),
-    [mergedItems, nowMinutes]
+    [mergedItems, nowMinutes],
   );
 
   if (items.length === 0 && !activeSession) {
     return (
-      <Card className="border-dashed border-border/50 bg-muted/35 ring-border/40">
+      <Card className="border-dashed border-border/50 bg-surface-raised ring-border/40">
         <CardContent className="py-12 text-center">
           <p className="text-sm font-medium text-foreground">
             Nothing scheduled for today
@@ -81,11 +81,7 @@ export function ScheduleTimeline({
             Add tasks or habits with a scheduled time to see them here.
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              render={<Link href="/tasks" />}
-            >
+            <Button variant="outline" size="sm" render={<Link href="/tasks" />}>
               Go to tasks
             </Button>
             <Button
@@ -121,7 +117,7 @@ export function ScheduleTimeline({
                 entry.item,
                 entry.itemIndex,
                 currentIndex,
-                nowMinutes
+                nowMinutes,
               );
 
               return (
@@ -133,7 +129,9 @@ export function ScheduleTimeline({
                     <span
                       className={cn(
                         "absolute left-[27px] top-8 h-[calc(100%-1rem)] w-px",
-                        status === "past" ? "bg-muted-foreground/30" : "bg-muted"
+                        status === "past"
+                          ? "bg-muted-foreground/30"
+                          : "bg-surface-raised",
                       )}
                       aria-hidden
                     />
@@ -188,7 +186,7 @@ function ScheduleTimelineRow({
   const isCurrent = status === "current";
   const channel = getChannelStyle(
     item.type,
-    isTask ? normalizeTaskPriority(item.priority) : undefined
+    isTask ? normalizeTaskPriority(item.priority) : undefined,
   );
 
   return (
@@ -199,7 +197,7 @@ function ScheduleTimelineRow({
             "text-sm font-semibold tabular-nums",
             isPast && !isCurrent && "text-muted-foreground",
             isCurrent && "text-primary",
-            !isPast && !isCurrent && "text-foreground"
+            !isPast && !isCurrent && "text-foreground",
           )}
         >
           {item.time ?? "—"}
@@ -220,13 +218,11 @@ function ScheduleTimelineRow({
           isCurrent &&
             !isFocus &&
             "border-primary bg-primary/15 ring-2 ring-primary/20",
-          isPast &&
-            item.completed &&
-            "border-success bg-success",
+          isPast && item.completed && "border-success bg-success",
           isPast &&
             !item.completed &&
             !isFocus &&
-            "border-warning/50 bg-warning-muted"
+            "border-warning/50 bg-warning-muted",
         )}
       />
 
@@ -238,7 +234,7 @@ function ScheduleTimelineRow({
           isCurrent &&
             "shadow-sm ring-1 ring-primary/20 border-primary/35 bg-primary/[0.06]",
           isPast && "opacity-80",
-          !isCurrent && !isPast && !isFocus && "border-border/40"
+          !isCurrent && !isPast && !isFocus && "border-border/40",
         )}
       >
         {isCurrent && (
@@ -253,9 +249,11 @@ function ScheduleTimelineRow({
               <p
                 className={cn(
                   "font-medium text-foreground",
-                  isPast && item.completed && "text-muted-foreground line-through",
+                  isPast &&
+                    item.completed &&
+                    "text-muted-foreground line-through",
                   isPast && isHabit && item.completed && "line-through",
-                  isPast && !item.completed && !isFocus && "text-foreground/85"
+                  isPast && !item.completed && !isFocus && "text-foreground/85",
                 )}
               >
                 {item.title}
@@ -281,7 +279,9 @@ function ScheduleTimelineRow({
             </div>
 
             {item.subtitle && (
-              <p className="mt-1 text-xs text-muted-foreground">{item.subtitle}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {item.subtitle}
+              </p>
             )}
 
             {isCurrent && !isFocus && item.time && (
@@ -317,7 +317,7 @@ function ScheduleTimelineRow({
                     : isHabit
                       ? "border-warning/40 bg-transparent hover:border-warning/60"
                       : "border-muted-foreground/35 bg-transparent hover:border-muted-foreground/60",
-                  disabled && "opacity-50"
+                  disabled && "opacity-50",
                 )}
                 aria-label={
                   isHabit
@@ -325,7 +325,9 @@ function ScheduleTimelineRow({
                     : `Mark "${item.title}" as ${item.completed ? "incomplete" : "complete"}`
                 }
               >
-                {item.completed && <Check className="size-3.5" strokeWidth={3} />}
+                {item.completed && (
+                  <Check className="size-3.5" strokeWidth={3} />
+                )}
               </button>
             )}
             {!interactive && item.completed && !isFocus && (

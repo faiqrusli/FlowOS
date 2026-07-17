@@ -1,18 +1,29 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type DragEvent } from "react";
 import {
-  NextUpQueueItem,
-} from "@/components/focus/next-up-queue-item";
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type DragEvent,
+} from "react";
+import { NextUpQueueItem } from "@/components/focus/next-up-queue-item";
 import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
-import type { Task, TaskGroupWithTasks } from "@/types/task";
 import {
   acceptNextUpScheduleDrag,
+  clearNextUpQueueDrag,
   isNextUpReorderDrag,
   isScheduleKindDrag,
   parseNextUpReorderDrop,
-  setNextUpReorderDrag,
+  setNextUpQueueDrag,
 } from "@/lib/next-up-drag";
+import { consumeTimelineDropConsumed } from "@/lib/timeline-drag";
+import {
+  parseUnifiedQueueKey,
+  type UnifiedQueueKey,
+} from "@/lib/next-up-unified-order";
+import { getHabitDurationMinutes } from "@/lib/schedule-durations";
 import {
   initialDropBeforeId,
   reorderByDropBeforeId,
@@ -21,47 +32,96 @@ import {
   type DropBeforeId,
 } from "@/lib/list-drag-utils";
 import { cn } from "@/lib/utils";
+import type { Habit } from "@/types/habit";
+import type { QueueItem } from "@/types/queue-item";
+import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 const NEXT_UP_ROW_ATTR = "data-next-up-row";
 
+export type NextUpListEntry =
+  | { key: UnifiedQueueKey; kind: "task"; task: Task }
+  | { key: UnifiedQueueKey; kind: "habit"; habit: Habit; ref: QueueItem };
+
 type NextUpQueueListProps = {
-  tasks: Task[];
+  entries: NextUpListEntry[];
   groups: TaskGroupWithTasks[];
-  onStartFocus: (task: Task) => void;
-  onOpenDetail: (task: Task) => void;
-  onRemove: (id: string) => void;
+  onStartFocusTask: (task: Task) => void;
+  onStartFocusHabit: (habit: Habit) => void;
+  onOpenTask: (task: Task) => void;
+  onOpenHabit: (habit: Habit) => void;
+  onRemoveTask: (taskId: string) => void;
+  onRemoveHabit: (habitId: string) => void;
   onReorder: (fromIndex: number, toIndex: number) => void;
   onToggleComplete: (task: Task) => void;
   listRef?: React.RefObject<HTMLDivElement | null>;
   onScroll?: () => void;
   externalDropActive?: boolean;
-  externalDropBeforeId?: string | null;
-  onExternalDragOver?: (taskId: string | null) => void;
-  onExternalDrop?: (event: DragEvent<HTMLDivElement>, taskId: string | null) => void;
+  /** Unified key to insert before, or null for end. */
+  externalDropBeforeKey?: UnifiedQueueKey | null;
+  onExternalDragOver?: (beforeKey: UnifiedQueueKey | null) => void;
+  onExternalDrop?: (
+    event: DragEvent<HTMLDivElement>,
+    beforeKey: UnifiedQueueKey | null,
+  ) => void;
   className?: string;
 };
 
+export function buildNextUpListEntries(
+  order: UnifiedQueueKey[],
+  tasks: Task[],
+  habitRefs: QueueItem[],
+  habits: Habit[],
+): NextUpListEntry[] {
+  const taskById = new Map(tasks.map((task) => [task.id, task]));
+  const habitById = new Map(habits.map((habit) => [habit.id, habit]));
+  const habitRefById = new Map(habitRefs.map((ref) => [ref.sourceId, ref]));
+  const entries: NextUpListEntry[] = [];
+
+  for (const key of order) {
+    const parsed = parseUnifiedQueueKey(key);
+    if (!parsed) continue;
+    if (parsed.sourceType === "task") {
+      const task = taskById.get(parsed.sourceId);
+      if (task) entries.push({ key, kind: "task", task });
+      continue;
+    }
+    const habit = habitById.get(parsed.sourceId);
+    const ref = habitRefById.get(parsed.sourceId);
+    if (habit && ref) entries.push({ key, kind: "habit", habit, ref });
+  }
+
+  return entries;
+}
+
 export function NextUpQueueList({
-  tasks,
+  entries,
   groups,
-  onStartFocus,
-  onOpenDetail,
-  onRemove,
+  onStartFocusTask,
+  onStartFocusHabit,
+  onOpenTask,
+  onOpenHabit,
+  onRemoveTask,
+  onRemoveHabit,
   onReorder,
   onToggleComplete,
   listRef,
   onScroll,
   externalDropActive = false,
-  externalDropBeforeId = null,
+  externalDropBeforeKey = null,
   onExternalDragOver,
   onExternalDrop,
   className,
 }: NextUpQueueListProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const tasksRef = useRef(tasks);
+  const entriesRef = useRef(entries);
   useEffect(() => {
-    tasksRef.current = tasks;
-  }, [tasks]);
+    entriesRef.current = entries;
+  }, [entries]);
+
+  const orderedKeys = useMemo(
+    () => entries.map((entry) => entry.key),
+    [entries],
+  );
 
   const dragIdRef = useRef<string | null>(null);
   const dropBeforeIdRef = useRef<DropBeforeId>(null);
@@ -76,7 +136,7 @@ export function NextUpQueueList({
         listRef.current = node;
       }
     },
-    [listRef]
+    [listRef],
   );
 
   const resetDrag = useCallback(() => {
@@ -95,21 +155,25 @@ export function NextUpQueueList({
   const commitReorder = useCallback(() => {
     const activeId = dragIdRef.current;
     const beforeId = dropBeforeIdRef.current;
-    const current = tasksRef.current;
+    const current = entriesRef.current;
 
     if (!activeId) {
       resetDrag();
       return;
     }
 
-    const fromIndex = current.findIndex((task) => task.id === activeId);
+    const fromIndex = current.findIndex((entry) => entry.key === activeId);
     if (fromIndex < 0) {
       resetDrag();
       return;
     }
 
-    const reordered = reorderByDropBeforeId(current, activeId, beforeId);
-    const toIndex = reordered.findIndex((task) => task.id === activeId);
+    const reorderedKeys = reorderByDropBeforeId(
+      current.map((entry) => ({ id: entry.key })),
+      activeId,
+      beforeId,
+    ).map((item) => item.id as UnifiedQueueKey);
+    const toIndex = reorderedKeys.indexOf(activeId as UnifiedQueueKey);
     if (toIndex >= 0 && toIndex !== fromIndex) {
       onReorder(fromIndex, toIndex);
     }
@@ -118,19 +182,23 @@ export function NextUpQueueList({
   }, [onReorder, resetDrag]);
 
   const handleItemDragStart = useCallback(
-    (itemId: string, event: DragEvent<HTMLDivElement>) => {
-      setNextUpReorderDrag(event, itemId);
+    (itemKey: string, event: DragEvent<HTMLDivElement>) => {
+      const parsed = parseUnifiedQueueKey(itemKey);
+      if (parsed) {
+        setNextUpQueueDrag(event, parsed.sourceType, parsed.sourceId, itemKey);
+      } else {
+        event.dataTransfer.effectAllowed = "move";
+      }
       setDragImageFromElement(event, event.currentTarget, 12, 12);
 
-      dragIdRef.current = itemId;
-      setDragId(itemId);
+      dragIdRef.current = itemKey;
+      setDragId(itemKey);
 
-      const orderedIds = tasksRef.current.map((task) => task.id);
-      const initial = initialDropBeforeId(orderedIds, itemId);
+      const initial = initialDropBeforeId(orderedKeys, itemKey);
       dropBeforeIdRef.current = initial;
       setDropBeforeId(initial);
     },
-    []
+    [orderedKeys],
   );
 
   const handleListDragOver = useCallback(
@@ -142,18 +210,17 @@ export function NextUpQueueList({
       event.stopPropagation();
       event.dataTransfer.dropEffect = "move";
 
-      const orderedIds = tasksRef.current.map((task) => task.id);
       const beforeId = resolveDropBeforeId(
-        orderedIds,
+        orderedKeys,
         containerRef.current,
         NEXT_UP_ROW_ATTR,
         event.clientY,
         "y",
-        dragIdRef.current
+        dragIdRef.current,
       );
       setDropBeforeIfChanged(beforeId);
     },
-    [setDropBeforeIfChanged]
+    [orderedKeys, setDropBeforeIfChanged],
   );
 
   const handleListDrop = useCallback(
@@ -162,14 +229,13 @@ export function NextUpQueueList({
       event.preventDefault();
       event.stopPropagation();
 
-      // Prefer mime id if present; fall back to in-flight drag ref.
       const fromId = parseNextUpReorderDrop(event) ?? dragIdRef.current;
       if (fromId && !dragIdRef.current) {
         dragIdRef.current = fromId;
       }
       commitReorder();
     },
-    [commitReorder]
+    [commitReorder],
   );
 
   const handleExternalDragOver = useCallback(
@@ -180,7 +246,7 @@ export function NextUpQueueList({
       acceptNextUpScheduleDrag(event);
       onExternalDragOver?.(null);
     },
-    [onExternalDragOver]
+    [onExternalDragOver],
   );
 
   const handleExternalDrop = useCallback(
@@ -190,12 +256,19 @@ export function NextUpQueueList({
       event.stopPropagation();
       onExternalDrop?.(event, null);
     },
-    [onExternalDrop]
+    [onExternalDrop],
   );
 
   const handleItemDragEnd = useCallback(() => {
-    // Native dragend fires after drop; only commit if still dragging
-    // (drop path already reset).
+    const droppedOnTimeline = consumeTimelineDropConsumed();
+    clearNextUpQueueDrag();
+    if (droppedOnTimeline) {
+      dragIdRef.current = null;
+      dropBeforeIdRef.current = null;
+      setDragId(null);
+      setDropBeforeId(null);
+      return;
+    }
     if (dragIdRef.current) {
       commitReorder();
     }
@@ -214,59 +287,95 @@ export function NextUpQueueList({
         handleExternalDrop(event);
       }}
       className={cn(
-        "min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-0.5",
-        className
+        "min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-0.5 scrollbar-subtle",
+        className,
       )}
     >
-      {tasks.length === 0 ? (
-        <p className="px-1 py-2 text-[13px] text-muted-foreground/85">
-          Add a Today or unscheduled task to choose what&apos;s next.
-        </p>
+      {entries.length === 0 ? (
+        externalDropActive ? (
+          <div className="flex min-h-10 flex-col justify-center py-1">
+            <TaskBoardInsertLine />
+          </div>
+        ) : (
+          <p className="px-1 py-2 text-[13px] text-muted-foreground/85">
+            Add a task or habit to choose what&apos;s next.
+          </p>
+        )
       ) : (
         <>
-          {tasks.map((task, index) => (
-            <div key={task.id}>
-              {dragId !== null && dropBeforeId === task.id ? (
+          {entries.map((entry, index) => (
+            <div key={entry.key}>
+              {dragId !== null && dropBeforeId === entry.key ? (
                 <TaskBoardInsertLine className="mb-1" />
               ) : null}
               <div
-                data-next-up-row={task.id}
-                className={cn(dragId === task.id && "opacity-0")}
+                data-next-up-row={entry.key}
+                className={cn(dragId === entry.key && "opacity-0")}
                 onDragOver={(event) => {
-                  if (isNextUpReorderDrag(event) || !isScheduleKindDrag(event)) return;
+                  if (isNextUpReorderDrag(event) || !isScheduleKindDrag(event))
+                    return;
                   event.preventDefault();
                   event.stopPropagation();
                   acceptNextUpScheduleDrag(event);
-                  onExternalDragOver?.(task.id);
+                  onExternalDragOver?.(entry.key);
                 }}
                 onDrop={(event) => {
-                  if (isNextUpReorderDrag(event) || !isScheduleKindDrag(event)) return;
+                  if (isNextUpReorderDrag(event) || !isScheduleKindDrag(event))
+                    return;
                   event.preventDefault();
                   event.stopPropagation();
-                  onExternalDrop?.(event, task.id);
+                  onExternalDrop?.(event, entry.key);
                 }}
               >
-                {externalDropActive && externalDropBeforeId === task.id ? (
+                {externalDropActive && externalDropBeforeKey === entry.key ? (
                   <TaskBoardInsertLine className="mb-1" />
                 ) : null}
-                <NextUpQueueItem
-                  task={task}
-                  groups={groups}
-                  onStartFocus={onStartFocus}
-                  onOpenDetail={onOpenDetail}
-                  onRemove={onRemove}
-                  onDragStart={(event) => handleItemDragStart(task.id, event)}
-                  onDragEnd={handleItemDragEnd}
-                  onToggleComplete={onToggleComplete}
-                  onMove={(delta) => onReorder(index, index + delta)}
-                />
+                {entry.kind === "task" ? (
+                  <NextUpQueueItem
+                    kind="task"
+                    task={entry.task}
+                    groups={groups}
+                    position={index + 1}
+                    onStartFocus={() => onStartFocusTask(entry.task)}
+                    onOpen={() => onOpenTask(entry.task)}
+                    onRemove={() => onRemoveTask(entry.task.id)}
+                    onDragStart={(event) =>
+                      handleItemDragStart(entry.key, event)
+                    }
+                    onDragEnd={handleItemDragEnd}
+                    onToggleComplete={onToggleComplete}
+                    onMove={(delta) => onReorder(index, index + delta)}
+                    onMoveToTop={() => onReorder(index, 0)}
+                    onMoveToBottom={() => onReorder(index, entries.length - 1)}
+                  />
+                ) : (
+                  <NextUpQueueItem
+                    kind="habit"
+                    habit={entry.habit}
+                    habitDurationMinutes={getHabitDurationMinutes(
+                      entry.habit.id,
+                    )}
+                    groups={groups}
+                    position={index + 1}
+                    onStartFocus={() => onStartFocusHabit(entry.habit)}
+                    onOpen={() => onOpenHabit(entry.habit)}
+                    onRemove={() => onRemoveHabit(entry.habit.id)}
+                    onDragStart={(event) =>
+                      handleItemDragStart(entry.key, event)
+                    }
+                    onDragEnd={handleItemDragEnd}
+                    onMove={(delta) => onReorder(index, index + delta)}
+                    onMoveToTop={() => onReorder(index, 0)}
+                    onMoveToBottom={() => onReorder(index, entries.length - 1)}
+                  />
+                )}
               </div>
             </div>
           ))}
           {dragId !== null && dropBeforeId === null ? (
             <TaskBoardInsertLine className="mt-1" />
           ) : null}
-          {externalDropActive && externalDropBeforeId === null ? (
+          {externalDropActive && externalDropBeforeKey === null ? (
             <TaskBoardInsertLine className="mt-1" />
           ) : null}
         </>

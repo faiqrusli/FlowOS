@@ -8,12 +8,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import {
-  BookOpen,
-  ListPlus,
-  NotebookPen,
-  Plus,
-} from "lucide-react";
+import { BookOpen, ListPlus, NotebookPen, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,11 +53,18 @@ function QuickAddHint({
 const textActionClass =
   "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground";
 
-export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRowProps) {
-  const { createNewNote, openDailyNote, openReflection, notifyWorkplaceTaskCreated } =
-    useGlobalRightSidebar();
+export function WorkplaceQuickAddRow({
+  onOpenTaskDetails,
+}: WorkplaceQuickAddRowProps) {
+  const {
+    createNewNote,
+    openDailyNote,
+    openReflection,
+    notifyWorkplaceTaskCreated,
+  } = useGlobalRightSidebar();
   const boardGroups = useOptionalTaskBoardGroups();
   const [title, setTitle] = useState("");
+  const [focused, setFocused] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pendingSaveRef = useRef<Promise<void>>(Promise.resolve());
   const boardGroupsRef = useRef<TaskGroupWithTasks[] | null>(boardGroups);
@@ -87,17 +89,17 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
             boardGroupsRef.current = addTaskToBoard(
               boardGroupsRef.current,
               created,
-              todayViewDate
+              todayViewDate,
             );
           }
         })
         .catch((err) => {
           setError(
-            err instanceof TasksError ? err.message : "Failed to create task."
+            err instanceof TasksError ? err.message : "Failed to create task.",
           );
         });
     },
-    [notifyWorkplaceTaskCreated]
+    [notifyWorkplaceTaskCreated],
   );
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -120,17 +122,32 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
     onOpenTaskDetails();
   }
 
+  const showCaptureHint = focused || title.trim().length > 0;
+
   return (
     <div className="flex w-full min-w-0 flex-col gap-1">
       <div className="flex w-full min-w-0 flex-nowrap items-center gap-1.5">
-        <Input
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Quick capture… (task, idea, or note)"
-          title="Type a task and press Enter to add to Today"
-          className="h-8 min-w-0 flex-1 border-0 bg-transparent px-1 text-[13px] shadow-none placeholder:text-muted-foreground/70 focus-visible:ring-0"
-        />
+        <div className="relative flex min-w-0 flex-1 items-center">
+          <Input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            placeholder="Quick capture a task…"
+            title="Type a task and press Enter to add to Today · Inbox"
+            className={cn(
+              "h-8 min-w-0 flex-1 border-0 bg-transparent px-1 text-[13px] shadow-none placeholder:text-muted-foreground/70 focus-visible:ring-0",
+              showCaptureHint && "pr-[7.25rem]",
+            )}
+          />
+          {showCaptureHint ? (
+            <span className="pointer-events-none absolute right-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/70">
+              <span className="hidden sm:inline">Today · Inbox</span>
+              <span className="tabular-nums">↵ Add</span>
+            </span>
+          ) : null}
+        </div>
         <QuickAddHint label="Daily reflection in sidebar · Ctrl+Shift+R">
           <button
             type="button"
@@ -151,7 +168,11 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
               <BookOpen className="size-3.5 shrink-0" />
               <span className="hidden sm:inline">Note</span>
             </DropdownMenuTrigger>
-            <DropdownMenuContent side="bottom" align="end" className="min-w-[11rem]">
+            <DropdownMenuContent
+              side="bottom"
+              align="end"
+              className="min-w-[11rem]"
+            >
               <DropdownMenuItem
                 onClick={() => void openDailyNote()}
                 className="gap-2 text-[13px]"
@@ -175,7 +196,7 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
             </DropdownMenuContent>
           </DropdownMenu>
         </QuickAddHint>
-        <QuickAddHint label="Add task — Enter to quick-add, or open full form · Ctrl+Shift+A">
+        <QuickAddHint label="Full task form — or Enter in the field to quick-add · Ctrl+Shift+A">
           <Button
             type="button"
             size="sm"
@@ -184,12 +205,15 @@ export function WorkplaceQuickAddRow({ onOpenTaskDetails }: WorkplaceQuickAddRow
             aria-label="Add task"
           >
             <ListPlus className="size-3.5" />
-            Add
+            <span className="hidden sm:inline">Add task</span>
+            <span className="sm:hidden">Add</span>
           </Button>
         </QuickAddHint>
       </div>
       {error ? (
-        <p className={cn("truncate px-0.5 text-[11px] text-destructive")}>{error}</p>
+        <p className={cn("truncate px-0.5 text-[11px] text-destructive")}>
+          {error}
+        </p>
       ) : null}
     </div>
   );

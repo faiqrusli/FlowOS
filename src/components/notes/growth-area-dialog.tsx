@@ -91,7 +91,7 @@ export function GrowthAreaDialog({
                   id="area-emoji"
                   type="button"
                   onClick={() => setIconChooserOpen(true)}
-                  className="flex h-10 w-16 items-center justify-center rounded-xl border border-border/50 bg-background text-xl transition-colors hover:bg-muted/40"
+                  className="flex h-10 w-16 items-center justify-center rounded-xl border border-border/50 bg-background text-xl transition-colors hover:bg-surface-hover"
                   aria-label="Choose icon"
                 >
                   {emoji}

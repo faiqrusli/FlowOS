@@ -2,11 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { fetchTaskBoard, isInboxGroup } from "@/lib/task-groups";
+import { fetchTaskBoard, isInboxGroup, isOrganizationGroup } from "@/lib/task-groups";
 import { createQuickCaptureTask } from "@/lib/quick-capture-task";
-import {
-  TasksError,
-} from "@/lib/tasks";
+import { TasksError } from "@/lib/tasks";
 import { getTodayDateString } from "@/lib/date-utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,12 +25,12 @@ import {
 import { ScheduleDatePickerField } from "@/components/ui/schedule-picker-field";
 import { TaskPrioritySelect } from "@/components/tasks/task-priority-select";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
-import { getTaskGroupAppearance, TASK_GROUP_SWATCH_CLASS } from "@/lib/task-group-appearance";
-import type { TaskPriority } from "@/lib/task-priority";
 import {
-  DEFAULT_TASK_SORT_MODE,
-  getTaskGroupSortMode,
-} from "@/lib/task-sort";
+  getTaskGroupAppearance,
+  TASK_GROUP_SWATCH_CLASS,
+} from "@/lib/task-group-appearance";
+import type { TaskPriority } from "@/lib/task-priority";
+import { DEFAULT_TASK_SORT_MODE, getTaskGroupSortMode } from "@/lib/task-sort";
 import { cn } from "@/lib/utils";
 import type { PlanningState, TaskGroupWithTasks } from "@/types/task";
 
@@ -53,7 +51,9 @@ export function QuickCaptureDialog() {
 
   const selectedSortMode = useMemo(() => {
     const group = groups.find((item) => item.id === selectedGroupId);
-    return group ? getTaskGroupSortMode(group) ?? DEFAULT_TASK_SORT_MODE : DEFAULT_TASK_SORT_MODE;
+    return group
+      ? (getTaskGroupSortMode(group) ?? DEFAULT_TASK_SORT_MODE)
+      : DEFAULT_TASK_SORT_MODE;
   }, [groups, selectedGroupId]);
   const selectedGroupAppearance = useMemo(() => {
     const group = groups.find((item) => item.id === selectedGroupId);
@@ -79,13 +79,13 @@ export function QuickCaptureDialog() {
     if (!quickCaptureOpen) return;
     void (async () => {
       try {
-        const boardGroups = await fetchTaskBoard();
+        const boardGroups = (await fetchTaskBoard()).filter(isOrganizationGroup);
         setGroups(boardGroups);
         const inbox = boardGroups.find(isInboxGroup);
         if (inbox) setSelectedGroupId(inbox.id);
       } catch (err) {
         setError(
-          err instanceof TasksError ? err.message : "Failed to load groups."
+          err instanceof TasksError ? err.message : "Failed to load groups.",
         );
       }
     })();
@@ -114,7 +114,7 @@ export function QuickCaptureDialog() {
       setTitle("");
     } catch (err) {
       setError(
-        err instanceof TasksError ? err.message : "Failed to create task."
+        err instanceof TasksError ? err.message : "Failed to create task.",
       );
     } finally {
       setSaving(false);
@@ -145,7 +145,9 @@ export function QuickCaptureDialog() {
           <div className="grid grid-cols-3 gap-2">
             <ScheduleDatePickerField
               value={scheduledDate}
-              onChange={(dateKey) => setScheduledDate(dateKey ?? getTodayDateString())}
+              onChange={(dateKey) =>
+                setScheduledDate(dateKey ?? getTodayDateString())
+              }
               placeholder="Pick date"
               className="h-9"
             />
@@ -156,7 +158,7 @@ export function QuickCaptureDialog() {
             />
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="flex h-9 items-center gap-2 rounded-md border border-input bg-background px-2.5 text-sm outline-none"
+                className="flex h-9 items-center gap-2 rounded-md border border-input bg-surface-base px-2.5 text-sm outline-none"
                 aria-label="Group"
               >
                 <span
@@ -164,26 +166,32 @@ export function QuickCaptureDialog() {
                     "inline-flex size-4 shrink-0 items-center justify-center",
                     selectedGroupAppearance
                       ? ""
-                      : "rounded-full bg-muted"
+                      : "rounded-full bg-surface-raised",
                   )}
                 >
                   {selectedGroupAppearance ? (
                     <span
                       className={cn(
                         "size-2 shrink-0 rounded-full",
-                        TASK_GROUP_SWATCH_CLASS[selectedGroupAppearance.colorKey]
+                        TASK_GROUP_SWATCH_CLASS[
+                          selectedGroupAppearance.colorKey
+                        ],
                       )}
                       aria-hidden
                     />
                   ) : null}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-left">
-                  {groups.find((group) => group.id === selectedGroupId)?.title ??
-                    "Group"}
+                  {groups.find((group) => group.id === selectedGroupId)
+                    ?.title ?? "Group"}
                 </span>
                 <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="bottom" align="start" className="min-w-[12rem]">
+              <DropdownMenuContent
+                side="bottom"
+                align="start"
+                className="min-w-[12rem]"
+              >
                 {groups.map((group) => {
                   const appearance = getTaskGroupAppearance(group);
                   return (
@@ -192,17 +200,20 @@ export function QuickCaptureDialog() {
                       onClick={() => setSelectedGroupId(group.id)}
                       className={cn(
                         "gap-2",
-                        group.id === selectedGroupId && "bg-muted font-medium"
+                        group.id === selectedGroupId &&
+                          "bg-primary-soft font-medium",
                       )}
                     >
                       <span
                         className={cn(
                           "size-2 shrink-0 rounded-full",
-                          TASK_GROUP_SWATCH_CLASS[appearance.colorKey]
+                          TASK_GROUP_SWATCH_CLASS[appearance.colorKey],
                         )}
                         aria-hidden
                       />
-                      <span className="min-w-0 flex-1 truncate">{group.title}</span>
+                      <span className="min-w-0 flex-1 truncate">
+                        {group.title}
+                      </span>
                     </DropdownMenuItem>
                   );
                 })}
@@ -240,7 +251,7 @@ export function QuickCaptureDialog() {
           {showPlanning ? (
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Plan</span>
-              <div className="inline-flex rounded-lg border border-border/60 bg-muted/40 p-0.5">
+              <div className="inline-flex rounded-lg border border-border-subtle bg-surface-raised p-0.5">
                 {(["none", "later"] as const).map((item) => (
                   <button
                     key={item}
@@ -249,8 +260,8 @@ export function QuickCaptureDialog() {
                     className={cn(
                       "rounded-md px-2.5 py-0.5 text-[14px] font-medium capitalize transition-[background-color,color,box-shadow] duration-150",
                       planningState === item
-                        ? "bg-card text-foreground shadow-xs"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-surface-overlay text-foreground shadow-xs"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
                     {item === "none" ? "Normal" : "Later"}

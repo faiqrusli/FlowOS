@@ -87,16 +87,20 @@ export function ScheduleBlock({
           !item.completed &&
           "cursor-grab active:cursor-grabbing",
         isCurrent && SCHEDULE_BLOCK_CURRENT_CLASS,
-        item.completed && "opacity-60"
+        item.completed && "opacity-60",
       )}
       style={{ top: topPx, height: heightPx }}
     >
-      <div className={cn("absolute top-0 bottom-0 left-0 w-1", channel.accent)} />
+      <div
+        className={cn("absolute top-0 bottom-0 left-0 w-1", channel.accent)}
+      />
 
       <div
         className={cn(
           "flex h-full min-w-0",
-          isCompact ? "items-center gap-2 px-3 py-1 pl-4" : "flex-col px-3 py-2 pl-4"
+          isCompact
+            ? "items-center gap-2 px-3 py-1 pl-4"
+            : "flex-col px-3 py-2 pl-4",
         )}
       >
         <div className="flex min-w-0 flex-1 items-start gap-2">
@@ -110,7 +114,7 @@ export function ScheduleBlock({
                 item.completed
                   ? "border-foreground bg-foreground text-background"
                   : "border-muted-foreground/40 bg-surface-base hover:border-foreground/50",
-                disabled && "opacity-50"
+                disabled && "opacity-50",
               )}
               aria-label={`Mark ${item.title} complete`}
             >
@@ -123,7 +127,7 @@ export function ScheduleBlock({
               <p
                 className={cn(
                   "text-[11px] font-semibold tracking-wide tabular-nums uppercase",
-                  channel.text
+                  channel.text,
                 )}
               >
                 {item.time}
@@ -133,7 +137,7 @@ export function ScheduleBlock({
               className={cn(
                 "truncate font-medium text-foreground",
                 isCompact ? "text-sm" : "text-[15px] leading-snug",
-                item.completed && "line-through opacity-70"
+                item.completed && "line-through opacity-70",
               )}
             >
               {item.title}
@@ -150,7 +154,7 @@ export function ScheduleBlock({
         <div
           className={cn(
             "flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100",
-            isCompact ? "" : "mt-auto self-end"
+            isCompact ? "" : "mt-auto self-end",
           )}
         >
           {isFocus ? (
@@ -175,7 +179,9 @@ export function ScheduleBlock({
                   type="button"
                   onClick={() => onToggleNotification(item)}
                   className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
-                  aria-label={notifyOn ? "Notifications on" : "Notifications off"}
+                  aria-label={
+                    notifyOn ? "Notifications on" : "Notifications off"
+                  }
                 >
                   {notifyOn ? (
                     <Bell className="size-3.5 fill-current" />

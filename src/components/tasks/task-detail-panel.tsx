@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Bell,
   CalendarDays,
@@ -47,6 +47,10 @@ import {
   drawerCardClass,
   drawerCardStackClass,
   drawerWritingFieldClass,
+  surfaceInsetControlClass,
+  compactControlChipActiveClass,
+  compactControlChipClass,
+  compactControlChipInactiveClass,
 } from "@/lib/theme/surface-classes";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
@@ -54,6 +58,34 @@ const DETAIL_PANEL_WIDTH_PX = GLOBAL_ACCESS_PANEL_WIDTH_PX;
 const DETAIL_PANEL_COLLAPSED_WIDTH_PX = GLOBAL_ACCESS_PANEL_COLLAPSED_WIDTH_PX;
 
 export { DETAIL_PANEL_WIDTH_PX, DETAIL_PANEL_COLLAPSED_WIDTH_PX };
+
+/** Keeps typing stable when a stale server sync arrives mid-edit. */
+function useTaskWritingField(taskId: string, serverValue: string) {
+  const [value, setValue] = useState(serverValue);
+  const focusedRef = useRef(false);
+
+  useEffect(() => {
+    setValue(serverValue);
+    focusedRef.current = false;
+  }, [taskId]);
+
+  useEffect(() => {
+    if (!focusedRef.current) {
+      setValue(serverValue);
+    }
+  }, [serverValue]);
+
+  return {
+    value,
+    onFocus: () => {
+      focusedRef.current = true;
+    },
+    onBlur: () => {
+      focusedRef.current = false;
+    },
+    setValue,
+  };
+}
 
 type TaskDetailPanelProps = {
   task: Task | null;
@@ -80,7 +112,10 @@ function PropertyLabel({
       htmlFor={htmlFor}
       className="gap-1.5 text-xs font-medium text-muted-foreground"
     >
-      <Icon className="size-3.5 shrink-0 text-muted-foreground/80" aria-hidden />
+      <Icon
+        className="size-3.5 shrink-0 text-muted-foreground/80"
+        aria-hidden
+      />
       {children}
     </Label>
   );
@@ -90,7 +125,7 @@ function PlanningInfoMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="inline-flex shrink-0 items-center justify-center rounded-sm px-0.5 text-[11px] leading-none text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+        className="inline-flex shrink-0 items-center justify-center rounded-sm px-0.5 text-[11px] leading-none text-muted-foreground hover:bg-surface-hover/80 hover:text-foreground"
         aria-label={`About ${PLAN_SECTION_LABEL.toLowerCase()}`}
       >
         ⓘ
@@ -100,13 +135,17 @@ function PlanningInfoMenu() {
         align="start"
         className="w-64 rounded-xl p-3"
       >
-        <p className="text-xs leading-snug text-muted-foreground">{PLANNING_INTRO}</p>
+        <p className="text-xs leading-snug text-muted-foreground">
+          {PLANNING_INTRO}
+        </p>
         <ul className="mt-2 space-y-1.5 text-xs leading-snug text-muted-foreground">
           {PLANNING_STATES.map((state) => {
             const config = PLANNING_STATE_CONFIG[state];
             return (
               <li key={state}>
-                <span className="font-medium text-foreground">{config.label}:</span>{" "}
+                <span className="font-medium text-foreground">
+                  {config.label}:
+                </span>{" "}
                 {config.description}
               </li>
             );
@@ -154,6 +193,8 @@ export function TaskDetailFields({
   const [addedTaskId, setAddedTaskId] = useState<string | null>(null);
   const addedToNextUp = task.queue_order !== null || addedTaskId === task.id;
   const canAddToNextUp = isEligibleForNextUp(task) && !addedToNextUp;
+  const titleField = useTaskWritingField(task.id, task.title);
+  const descriptionField = useTaskWritingField(task.id, task.description ?? "");
 
   const handleAddToNextUp = async () => {
     if (!canAddToNextUp) return;
@@ -178,7 +219,7 @@ export function TaskDetailFields({
                 "flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors",
                 task.completed
                   ? "border-foreground bg-foreground text-background"
-                  : "border-muted-foreground/35 hover:border-foreground/55"
+                  : "border-muted-foreground/35 hover:border-foreground/55",
               )}
               aria-label={
                 task.completed
@@ -193,17 +234,22 @@ export function TaskDetailFields({
           ) : null}
           <Input
             id="task-detail-title"
-            value={task.title}
-            onChange={(event) => onChange({ title: event.target.value })}
+            value={titleField.value}
+            onFocus={titleField.onFocus}
+            onBlur={titleField.onBlur}
+            onChange={(event) => {
+              titleField.setValue(event.target.value);
+              onChange({ title: event.target.value });
+            }}
             aria-label="Task title"
-            className="min-w-0 flex-1"
+            className={cn("min-w-0 flex-1", surfaceInsetControlClass)}
           />
           {canAddToNextUp || addedToNextUp ? (
             <button
               type="button"
               onClick={() => void handleAddToNextUp()}
               disabled={!canAddToNextUp || addingToNextUp}
-              className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md border border-border/60 px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:cursor-default disabled:opacity-60"
+              className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md border border-border/60 px-2 text-xs text-muted-foreground hover:bg-surface-hover hover:text-foreground disabled:cursor-default disabled:opacity-60"
             >
               <ListPlus className="size-3.5" />
               {addedToNextUp ? "In Next Up" : "Add to Queue"}
@@ -220,13 +266,18 @@ export function TaskDetailFields({
           </Label>
           <Textarea
             id="task-detail-description"
-            value={task.description ?? ""}
+            value={descriptionField.value}
             rows={4}
             className={cn(
               "field-sizing-fixed resize-none overflow-y-auto",
-              drawerWritingFieldClass
+              drawerWritingFieldClass,
             )}
-            onChange={(event) => onChange({ description: event.target.value })}
+            onFocus={descriptionField.onFocus}
+            onBlur={descriptionField.onBlur}
+            onChange={(event) => {
+              descriptionField.setValue(event.target.value);
+              onChange({ description: event.target.value });
+            }}
             placeholder="Add notes..."
           />
         </div>
@@ -257,7 +308,9 @@ export function TaskDetailFields({
       <section className={drawerCardClass} aria-label="Schedule">
         <div className="space-y-1.5">
           <div className="flex items-center gap-1">
-            <PropertyLabel icon={CalendarClock}>{PLAN_SECTION_LABEL}</PropertyLabel>
+            <PropertyLabel icon={CalendarClock}>
+              {PLAN_SECTION_LABEL}
+            </PropertyLabel>
             <PlanningInfoMenu />
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -270,10 +323,10 @@ export function TaskDetailFields({
                   type="button"
                   onClick={() => onPlanningStateChange?.(state)}
                   className={cn(
-                    "inline-flex items-center rounded-lg border px-2 py-0.5 text-xs font-medium transition-colors",
+                    compactControlChipClass,
                     active
-                      ? "border-foreground/20 bg-surface-hover"
-                      : "border-border/50 hover:bg-surface-hover"
+                      ? compactControlChipActiveClass
+                      : compactControlChipInactiveClass,
                   )}
                   title={config.description}
                 >
@@ -292,9 +345,7 @@ export function TaskDetailFields({
             <ScheduleDatePickerField
               id="task-detail-date"
               value={task.scheduled_date ?? null}
-              onChange={(dateKey) =>
-                onChange({ scheduled_date: dateKey })
-              }
+              onChange={(dateKey) => onChange({ scheduled_date: dateKey })}
             />
           </div>
           <div className="space-y-1.5">

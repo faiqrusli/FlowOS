@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, type DragEvent } from "react";
-import { GripVertical, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import {
+  GripVertical,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { KanbanBoardDialog } from "@/components/notes/kanban-board-dialog";
 import { KanbanBoardView } from "@/components/notes/kanban-board-view";
 import { Button } from "@/components/ui/button";
@@ -83,7 +89,10 @@ export function KanbanPanel({
     setDropBeforeId(next);
   }
 
-  function handleBoardDragStart(boardId: string, event: DragEvent<HTMLButtonElement>) {
+  function handleBoardDragStart(
+    boardId: string,
+    event: DragEvent<HTMLButtonElement>,
+  ) {
     event.stopPropagation();
     dragBoardIdRef.current = boardId;
     setDragBoardId(boardId);
@@ -110,7 +119,7 @@ export function KanbanPanel({
       "data-board-id",
       event.clientX,
       "x",
-      dragBoardIdRef.current
+      dragBoardIdRef.current,
     );
     setDropBeforeIfChanged(beforeId);
   }
@@ -123,7 +132,7 @@ export function KanbanPanel({
       const reordered = reorderByDropBeforeId(
         boardsRef.current,
         activeId,
-        beforeId
+        beforeId,
       );
       if (reordered !== boardsRef.current) {
         const next = reordered.map((board, index) => ({
@@ -135,7 +144,7 @@ export function KanbanPanel({
         try {
           await reorderKanbanBoards(
             growthAreaId,
-            next.map((board) => board.id)
+            next.map((board) => board.id),
           );
         } catch {
           onBoardsChange(previous);
@@ -167,8 +176,8 @@ export function KanbanPanel({
 
     onBoardsChange(
       boards.map((board) =>
-        board.id === boardId ? { ...board, title } : board
-      )
+        board.id === boardId ? { ...board, title } : board,
+      ),
     );
     if (activeBoard?.id === boardId) {
       onActiveBoardChange({ ...activeBoard, title });
@@ -210,17 +219,17 @@ export function KanbanPanel({
       const column = await createKanbanColumn(
         activeBoard.id,
         "New list",
-        insertIndex
+        insertIndex,
       );
       const persistedColumns = nextColumns.map((c) =>
-        c.id === optimisticId ? { ...column, cards: [] } : c
+        c.id === optimisticId ? { ...column, cards: [] } : c,
       );
       onActiveBoardChange({ ...activeBoard, columns: persistedColumns });
       setFocusColumnId(column.id);
       await reorderKanbanColumns(
         activeBoard.id,
         persistedColumns.map((c) => c.id),
-        previousOrder
+        previousOrder,
       );
     } catch {
       onActiveBoardChange(snapshot);
@@ -242,7 +251,7 @@ export function KanbanPanel({
     <div
       className={cn(
         "flex h-full min-h-0 flex-col overflow-hidden",
-        embedded ? "p-4" : ""
+        embedded ? "p-4" : "",
       )}
     >
       <div className="flex shrink-0 items-center gap-2">
@@ -261,77 +270,81 @@ export function KanbanPanel({
                   data-board-id={board.id}
                   className={cn(
                     "group/tab flex shrink-0 items-center",
-                    isDragging && "opacity-40"
+                    isDragging && "opacity-40",
                   )}
                 >
                   <button
                     type="button"
                     draggable
-                    onDragStart={(event) => handleBoardDragStart(board.id, event)}
+                    onDragStart={(event) =>
+                      handleBoardDragStart(board.id, event)
+                    }
                     onDragEnd={() => void handleBoardDragEnd()}
                     onMouseDown={(event) => event.stopPropagation()}
                     className={cn(
-                      "flex size-6 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted active:cursor-grabbing group-hover/tab:opacity-100",
-                      isDragging && "opacity-100"
+                      "flex size-6 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-surface-hover active:cursor-grabbing group-hover/tab:opacity-100",
+                      isDragging && "opacity-100",
                     )}
                     aria-label={`Reorder ${board.title}`}
                   >
                     <GripVertical className="size-3.5" />
                   </button>
-                {editingBoardId === board.id ? (
-                  <input
-                    value={boardTitleDraft}
-                    onChange={(e) => setBoardTitleDraft(e.target.value)}
-                    onBlur={() => void saveBoardTitle(board.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") void saveBoardTitle(board.id);
-                      if (e.key === "Escape") setEditingBoardId(null);
-                    }}
-                    className="h-8 w-36 rounded-lg border border-border/50 bg-background px-3 text-sm font-medium outline-none"
-                    autoFocus
-                  />
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => onSelectBoard(board.id)}
-                    className={cn(
-                      "whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
-                      isActive
-                        ? "flow-selected text-foreground"
-                        : "bg-muted/50 text-foreground/70 hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    {board.title}
-                  </button>
-                )}
-                {isActive && editingBoardId !== board.id && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      className="ml-1 flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                      aria-label={`${board.title} options`}
+                  {editingBoardId === board.id ? (
+                    <input
+                      value={boardTitleDraft}
+                      onChange={(e) => setBoardTitleDraft(e.target.value)}
+                      onBlur={() => void saveBoardTitle(board.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") void saveBoardTitle(board.id);
+                        if (e.key === "Escape") setEditingBoardId(null);
+                      }}
+                      className="h-8 w-36 rounded-lg border border-border/50 bg-background px-3 text-sm font-medium outline-none"
+                      autoFocus
+                    />
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onSelectBoard(board.id)}
+                      className={cn(
+                        "whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                        isActive
+                          ? "flow-selected text-foreground"
+                          : "bg-surface-raised text-foreground/70 hover:bg-surface-hover hover:text-foreground",
+                      )}
                     >
-                      <MoreHorizontal className="size-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="rounded-xl">
-                      <DropdownMenuItem onClick={() => startRenameBoard(board)}>
-                        <Pencil className="size-3.5" />
-                        Rename
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => void handleAddList()}>
-                        <Plus className="size-3.5" />
-                        Add a list
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() => void handleDeleteBoard(board.id)}
+                      {board.title}
+                    </button>
+                  )}
+                  {isActive && editingBoardId !== board.id && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        className="ml-1 flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+                        aria-label={`${board.title} options`}
                       >
-                        <Trash2 className="size-3.5" />
-                        Delete board
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
+                        <MoreHorizontal className="size-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="rounded-xl">
+                        <DropdownMenuItem
+                          onClick={() => startRenameBoard(board)}
+                        >
+                          <Pencil className="size-3.5" />
+                          Rename
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => void handleAddList()}>
+                          <Plus className="size-3.5" />
+                          Add a list
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => void handleDeleteBoard(board.id)}
+                        >
+                          <Trash2 className="size-3.5" />
+                          Delete board
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </div>
               </div>
             );
@@ -364,21 +377,21 @@ export function KanbanPanel({
       </div>
 
       <div className="min-h-0 flex-1 overflow-hidden pt-3">
-      {!activeBoard ? (
-        <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-border/50 bg-muted/10 p-8 text-center text-sm text-muted-foreground">
-          {boards.length === 0
-            ? "Create a board to track your growth journey."
-            : "Select a board to view your journey."}
-        </div>
-      ) : (
-        <KanbanBoardView
-          board={activeBoard}
-          onBoardChange={onActiveBoardChange}
-          onAreasRefresh={onAreasRefresh}
-          focusColumnId={focusColumnId}
-          onFocusColumnHandled={() => setFocusColumnId(null)}
-        />
-      )}
+        {!activeBoard ? (
+          <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-border/50 bg-surface-raised p-8 text-center text-sm text-muted-foreground">
+            {boards.length === 0
+              ? "Create a board to track your growth journey."
+              : "Select a board to view your journey."}
+          </div>
+        ) : (
+          <KanbanBoardView
+            board={activeBoard}
+            onBoardChange={onActiveBoardChange}
+            onAreasRefresh={onAreasRefresh}
+            focusColumnId={focusColumnId}
+            onFocusColumnHandled={() => setFocusColumnId(null)}
+          />
+        )}
       </div>
 
       <KanbanBoardDialog

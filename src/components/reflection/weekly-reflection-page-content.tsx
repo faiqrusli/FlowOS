@@ -73,7 +73,10 @@ export function WeeklyReflectionPageContent() {
       ]);
 
       const reflectionByDate = new Map(
-        reflections.map((reflection) => [reflection.reflection_date, reflection])
+        reflections.map((reflection) => [
+          reflection.reflection_date,
+          reflection,
+        ]),
       );
 
       const dayBundles = await Promise.all(
@@ -81,15 +84,19 @@ export function WeeklyReflectionPageContent() {
           const reflection = reflectionByDate.get(dateKey) ?? null;
           const review = await fetchReflectionDayReview(dateKey);
           return buildWeeklyReflectionDayBundle(dateKey, reflection, review);
-        })
+        }),
       );
 
       setBundles(dayBundles);
-      setLayout(savedLayout.weekStart === weekStart ? savedLayout : {
-        weekStart,
-        placements: [],
-        collapsedColumns: [],
-      });
+      setLayout(
+        savedLayout.weekStart === weekStart
+          ? savedLayout
+          : {
+              weekStart,
+              placements: [],
+              collapsedColumns: [],
+            },
+      );
     } catch {
       setError("Failed to load weekly reflection.");
     } finally {
@@ -103,15 +110,17 @@ export function WeeklyReflectionPageContent() {
 
   const allCards = useMemo(
     () => bundles.flatMap((bundle) => bundle.cards),
-    [bundles]
+    [bundles],
   );
 
   const cardById = useMemo(
     () => new Map(allCards.map((card) => [card.id, card])),
-    [allCards]
+    [allCards],
   );
 
-  function resolvePlacement(card: WeeklyReflectionBoardCard): WeeklyReflectionCardPlacement {
+  function resolvePlacement(
+    card: WeeklyReflectionBoardCard,
+  ): WeeklyReflectionCardPlacement {
     const existing = layout.placements.find((item) => item.cardId === card.id);
     if (existing) return existing;
     return {
@@ -141,9 +150,11 @@ export function WeeklyReflectionPageContent() {
     for (const [key, cards] of map.entries()) {
       cards.sort((a, b) => {
         const orderA =
-          layout.placements.find((item) => item.cardId === a.id)?.sortOrder ?? 0;
+          layout.placements.find((item) => item.cardId === a.id)?.sortOrder ??
+          0;
         const orderB =
-          layout.placements.find((item) => item.cardId === b.id)?.sortOrder ?? 0;
+          layout.placements.find((item) => item.cardId === b.id)?.sortOrder ??
+          0;
         return orderA - orderB;
       });
       map.set(key, cards);
@@ -164,14 +175,15 @@ export function WeeklyReflectionPageContent() {
     cardId: string,
     targetDay: string,
     targetColumnKey: string,
-    targetIndex: number
+    targetIndex: number,
   ) {
     const card = cardById.get(cardId);
     if (!card) return;
 
     const others = layout.placements.filter((item) => item.cardId !== cardId);
-    const targetColumnCards = [...(cardsByColumn.get(columnId(targetDay, targetColumnKey)) ?? [])]
-      .filter((item) => item.id !== cardId);
+    const targetColumnCards = [
+      ...(cardsByColumn.get(columnId(targetDay, targetColumnKey)) ?? []),
+    ].filter((item) => item.id !== cardId);
     targetColumnCards.splice(targetIndex, 0, card);
 
     const nextPlacements: WeeklyReflectionCardPlacement[] = [
@@ -224,7 +236,7 @@ export function WeeklyReflectionPageContent() {
   function handleDropOnColumn(
     event: DragEvent<HTMLDivElement>,
     dayDateKey: string,
-    columnKey: string
+    columnKey: string,
   ) {
     event.preventDefault();
     if (!dragCardId) return;
@@ -238,7 +250,7 @@ export function WeeklyReflectionPageContent() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <Link
           href="/reflection"
-          className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md border border-input bg-background px-3 text-sm font-medium hover:bg-accent"
+          className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md border border-input bg-surface-base px-3 text-sm font-medium hover:bg-surface-hover"
         >
           <ArrowLeft className="size-4" />
           Back
@@ -262,7 +274,7 @@ export function WeeklyReflectionPageContent() {
               key={bundle.dateKey}
               className="flex w-[min(100%,320px)] min-w-[300px] shrink-0 flex-col gap-3"
             >
-              <h2 className="sticky top-0 z-10 rounded-lg border border-border/40 bg-background px-3 py-2 text-sm font-semibold">
+              <h2 className="sticky top-0 z-10 rounded-lg border border-border/40 bg-surface-base px-3 py-2 text-sm font-semibold">
                 {formatWeeklyDayHeading(bundle.dateKey)}
               </h2>
 
@@ -274,17 +286,16 @@ export function WeeklyReflectionPageContent() {
                 return (
                   <div
                     key={colId}
-                    className={cn(
-                      "rounded-xl border",
-                      kanbanColumnBodyClass
-                    )}
+                    className={cn("rounded-xl border", kanbanColumnBodyClass)}
                   >
                     <button
                       type="button"
-                      onClick={() => toggleColumnCollapsed(bundle.dateKey, column.key)}
+                      onClick={() =>
+                        toggleColumnCollapsed(bundle.dateKey, column.key)
+                      }
                       className={cn(
                         "flex w-full items-center gap-1 rounded-t-xl px-2 py-2 text-left",
-                        kanbanColumnHeaderClass
+                        kanbanColumnHeaderClass,
                       )}
                     >
                       {isCollapsed ? (
@@ -292,7 +303,9 @@ export function WeeklyReflectionPageContent() {
                       ) : (
                         <ChevronDown className="size-3.5 text-muted-foreground" />
                       )}
-                      <span className="text-sm font-medium">{column.title}</span>
+                      <span className="text-sm font-medium">
+                        {column.title}
+                      </span>
                       <span className="ml-auto text-xs text-muted-foreground">
                         {cards.length}
                       </span>
@@ -317,31 +330,31 @@ export function WeeklyReflectionPageContent() {
                               card.title !== column.title;
 
                             return (
-                            <div
-                              key={card.id}
-                              draggable
-                              onDragStart={() => setDragCardId(card.id)}
-                              onDragEnd={() => setDragCardId(null)}
-                              className={cn(
-                                "px-3 py-2",
-                                kanbanCardClass,
-                                dragCardId === card.id && "opacity-50"
-                              )}
-                            >
-                              {showCardTitle ? (
-                                <p className="text-xs font-medium text-muted-foreground">
-                                  {card.title}
-                                </p>
-                              ) : null}
-                              <p
+                              <div
+                                key={card.id}
+                                draggable
+                                onDragStart={() => setDragCardId(card.id)}
+                                onDragEnd={() => setDragCardId(null)}
                                 className={cn(
-                                  "whitespace-pre-wrap text-sm leading-relaxed",
-                                  showCardTitle && "mt-1"
+                                  "px-3 py-2",
+                                  kanbanCardClass,
+                                  dragCardId === card.id && "opacity-50",
                                 )}
                               >
-                                {card.content}
-                              </p>
-                            </div>
+                                {showCardTitle ? (
+                                  <p className="text-xs font-medium text-muted-foreground">
+                                    {card.title}
+                                  </p>
+                                ) : null}
+                                <p
+                                  className={cn(
+                                    "whitespace-pre-wrap text-sm leading-relaxed",
+                                    showCardTitle && "mt-1",
+                                  )}
+                                >
+                                  {card.content}
+                                </p>
+                              </div>
                             );
                           })
                         )}

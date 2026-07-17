@@ -11,7 +11,7 @@ import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import { computeOnTrackStatus } from "@/lib/dashboard-command";
 import { DashboardError, fetchDashboardData } from "@/lib/dashboard";
-import { getTodayFocusDisplaySeconds } from "@/lib/focus-active-session";
+import { getTodayBreakDisplaySeconds, getTodayFocusDisplaySeconds } from "@/lib/focus-active-session";
 import {
   scrollToTodayTarget,
   TODAY_FOCUS_ANCHOR_ID,
@@ -57,10 +57,22 @@ export function TodayPageContent() {
     );
   }, [activeSession, data?.progress.focusSeconds, tick]);
 
+  const displayBreakSeconds = useMemo(() => {
+    void tick;
+    return getTodayBreakDisplaySeconds(
+      data?.progress.breakSeconds ?? 0,
+      activeSession
+    );
+  }, [activeSession, data?.progress.breakSeconds, tick]);
+
   const railProgress = useMemo(() => {
     if (!data) return undefined;
-    return { ...data.progress, focusSeconds: displayFocusSeconds };
-  }, [data, displayFocusSeconds]);
+    return {
+      ...data.progress,
+      focusSeconds: displayFocusSeconds,
+      breakSeconds: displayBreakSeconds,
+    };
+  }, [data, displayBreakSeconds, displayFocusSeconds]);
 
   useEffect(() => {
     if (!lastSavedSession?.id) return;
@@ -78,11 +90,15 @@ export function TodayPageContent() {
     () =>
       data
         ? computeOnTrackStatus(
-            { ...data.progress, focusSeconds: displayFocusSeconds },
+            {
+              ...data.progress,
+              focusSeconds: displayFocusSeconds,
+              breakSeconds: displayBreakSeconds,
+            },
             data.reflection
           )
         : { label: "Fresh start", description: "", percent: 0 },
-    [data, displayFocusSeconds]
+    [data, displayBreakSeconds, displayFocusSeconds]
   );
 
   const handleKpiCellAction = useCallback(
@@ -108,34 +124,33 @@ export function TodayPageContent() {
   );
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <div className="shrink-0 space-y-2">
-        <TodayStatusRail
-          loading={loading}
-          onTrack={onTrack}
-          stats={
-            railProgress
-              ? {
-                  progress: railProgress,
-                  onCellAction: handleKpiCellAction,
-                }
-              : undefined
-          }
-        />
+    <div className="flex h-full min-h-0 flex-1 flex-col">
+      <WorkplacePageContent
+        tasksTabRef={tasksTabRef}
+        habitsTabRef={habitsTabRef}
+        statusRail={
+          <div className="shrink-0 space-y-2">
+            <TodayStatusRail
+              loading={loading}
+              onTrack={onTrack}
+              stats={
+                railProgress
+                  ? {
+                      progress: railProgress,
+                      onCellAction: handleKpiCellAction,
+                    }
+                  : undefined
+              }
+            />
 
-        {error ? (
-          <div className="px-10">
-            <ErrorBanner message={error} />
+            {error ? (
+              <div className="px-5">
+                <ErrorBanner message={error} />
+              </div>
+            ) : null}
           </div>
-        ) : null}
-      </div>
-
-      <div className="min-h-0 flex-1 pt-3">
-        <WorkplacePageContent
-          tasksTabRef={tasksTabRef}
-          habitsTabRef={habitsTabRef}
-        />
-      </div>
+        }
+      />
     </div>
   );
 }

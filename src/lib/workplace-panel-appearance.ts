@@ -1,10 +1,14 @@
-import { surfaceCardClass, surfaceFocusClass } from "@/lib/theme/surface-classes";
+import {
+  surfaceCardClass,
+  surfaceFocusClass,
+} from "@/lib/theme/surface-classes";
 
 /**
  * Today hierarchy surface map (spec §4 → existing v3 tokens):
  * Level 0 canvas → --background (--surface-canvas)
  * Level 1 chrome → --surface (--surface-nav)
- * Level 2 content → --card (--surface-base) — Current Focus, queue/timeline items
+ * Level 2 content → --card (--surface-base) — queue/timeline items
+ * Current Focus → soft raised wash (not a full Level 2 card) — calm workspace region
  * Level 3 elevated → --surface-elevated (--surface-raised) — overlays only
  * Hover → --surface-hover (temporary interaction, never permanent fill)
  */
@@ -18,9 +22,9 @@ export const workplacePanelSectionClassName = [
   "hover:border-border-strong/60",
 ].join(" ");
 
-/** Focus execution zone — cardless on Canvas (timer hierarchy via typography). */
+/** Focus execution zone — card surface on canvas. */
 export const workplaceFocusCanvasClassName =
-  "border-transparent bg-transparent shadow-none";
+  "mb-3 rounded-xl border border-border-subtle bg-surface-base pr-0.5 shadow-none";
 
 /** @deprecated Prefer workplaceFocusCanvasClassName for Today Focus shell */
 export const workplaceFocusSectionClassName = [
@@ -28,5 +32,9 @@ export const workplaceFocusSectionClassName = [
   "transition-[background-color,border-color] duration-200",
 ].join(" ");
 
-/** Timeline left edge — whisper divider on the workspace canvas. */
-export const workplaceTimelineEdgeClassName = "border-l border-divider";
+/** Timeline — canvas surface (#1B1B1B), flush with workspace. */
+export const workplaceTimelineEdgeClassName = [
+  "rounded-none",
+  "border-0",
+  "bg-surface-canvas shadow-none ring-0",
+].join(" ");

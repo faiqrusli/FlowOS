@@ -79,18 +79,21 @@ function DraggableTaskRow({
       className={cn(
         "group relative overflow-hidden rounded-lg border border-border-subtle bg-surface-base transition-colors duration-150",
         channel.border,
-        !task.completed && "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
-        task.completed && "opacity-55"
+        !task.completed &&
+          "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
+        task.completed && "opacity-55",
       )}
     >
-      <div className={cn("absolute top-0 bottom-0 left-0 w-1", channel.accent)} />
+      <div
+        className={cn("absolute top-0 bottom-0 left-0 w-1", channel.accent)}
+      />
       <div className="flex items-center gap-2 px-2.5 py-2.5 pl-3.5">
         <GripVertical className="size-3.5 shrink-0 text-muted-foreground/30" />
         <div className="min-w-0 flex-1">
           <p
             className={cn(
               "truncate text-sm font-medium text-foreground",
-              task.completed && "line-through"
+              task.completed && "line-through",
             )}
           >
             {task.title}
@@ -126,7 +129,7 @@ function DraggableHabitRow({
   const duration = getHabitDurationMinutes(habit.id);
   const timeRange = formatHabitTimeRangeWithDuration(
     habit.scheduled_time,
-    duration
+    duration,
   );
 
   return (
@@ -140,24 +143,29 @@ function DraggableHabitRow({
       className={cn(
         "group relative overflow-hidden rounded-lg border border-border-subtle bg-surface-base transition-colors duration-150",
         channel.border,
-        !habit.completed && "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
-        habit.completed && "opacity-55"
+        !habit.completed &&
+          "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
+        habit.completed && "opacity-55",
       )}
     >
-      <div className={cn("absolute top-0 bottom-0 left-0 w-1", channel.accent)} />
+      <div
+        className={cn("absolute top-0 bottom-0 left-0 w-1", channel.accent)}
+      />
       <div className="flex items-center gap-2 px-2.5 py-2.5 pl-3.5">
         <GripVertical className="size-3.5 shrink-0 text-muted-foreground/30" />
         <div className="min-w-0 flex-1">
           <p
             className={cn(
               "truncate text-sm font-medium text-foreground",
-              habit.completed && "line-through opacity-70"
+              habit.completed && "line-through opacity-70",
             )}
           >
             {habit.name}
           </p>
           <p className="mt-0.5 text-[11px] text-muted-foreground">
-            {timeRange ? `Habit · ${timeRange}` : `Habit · ${formatDurationLabel(duration)}`}
+            {timeRange
+              ? `Habit · ${timeRange}`
+              : `Habit · ${formatDurationLabel(duration)}`}
           </p>
         </div>
         {onAutoschedule && !habit.completed && (
@@ -195,20 +203,20 @@ export function ScheduleTaskSidebar({
 
   const inbox = useMemo(
     () => buildScheduleInbox(tasks, habits, buckets),
-    [tasks, habits, buckets]
+    [tasks, habits, buckets],
   );
 
   const matchesSearch = (title: string) =>
     title.toLowerCase().includes(search.trim().toLowerCase());
 
   const filteredUnscheduled = inbox.unscheduledTasks.filter((task) =>
-    matchesSearch(task.title)
+    matchesSearch(task.title),
   );
   const filteredLater = inbox.laterTasks.filter((task) =>
-    matchesSearch(task.title)
+    matchesSearch(task.title),
   );
   const filteredHabits = inbox.unscheduledHabits.filter((habit) =>
-    matchesSearch(habit.name)
+    matchesSearch(habit.name),
   );
 
   const showTasks = filter === "all" || filter === "tasks";
@@ -255,7 +263,7 @@ export function ScheduleTaskSidebar({
                 "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
                 filter === tab.id
                   ? "bg-primary-soft text-foreground"
-                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
               )}
             >
               {tab.label}
@@ -267,7 +275,9 @@ export function ScheduleTaskSidebar({
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-3">
         {totalInbox === 0 && (
           <div className="rounded-xl border border-dashed border-border/60 px-3 py-6 text-center">
-            <p className="text-sm text-muted-foreground">Nothing waiting in Later.</p>
+            <p className="text-sm text-muted-foreground">
+              Nothing waiting in Later.
+            </p>
             <Link
               href="/tasks"
               className="mt-2 inline-block text-sm font-medium text-foreground underline-offset-2 hover:underline"

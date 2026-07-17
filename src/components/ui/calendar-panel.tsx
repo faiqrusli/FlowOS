@@ -11,10 +11,7 @@ import {
   resolveCalendarViewMonth,
   shiftMonth,
 } from "@/lib/calendar-utils";
-import {
-  getTodayDateString,
-  getTomorrowDateString,
-} from "@/lib/date-utils";
+import { getTodayDateString, getTomorrowDateString } from "@/lib/date-utils";
 import { cn } from "@/lib/utils";
 
 type CalendarPanelProps = {
@@ -28,7 +25,7 @@ type CalendarPanelProps = {
 export const CALENDAR_PANEL_WIDTH_CLASS = "w-[12.25rem]";
 
 const QUICK_ACTION_BUTTON_CLASS =
-  "flex flex-1 items-center justify-center rounded-md border border-border/50 bg-background px-1.5 py-1 text-[11px] font-medium text-foreground transition-colors hover:bg-muted/50";
+  "flex flex-1 items-center justify-center rounded-md border border-border-subtle bg-surface-base px-1.5 py-1 text-[11px] font-medium text-foreground transition-colors hover:bg-surface-hover";
 
 export function CalendarPanel({
   value,
@@ -51,7 +48,7 @@ export function CalendarPanel({
 
   const monthCells = useMemo(
     () => getCalendarMonthGrid(viewYear, viewMonth, today),
-    [viewMonth, viewYear, today]
+    [viewMonth, viewYear, today],
   );
 
   function goToMonth(delta: number) {
@@ -61,13 +58,7 @@ export function CalendarPanel({
   }
 
   return (
-    <div
-      className={cn(
-        "select-none",
-        CALENDAR_PANEL_WIDTH_CLASS,
-        className
-      )}
-    >
+    <div className={cn("select-none", CALENDAR_PANEL_WIDTH_CLASS, className)}>
       {showQuickActions ? (
         <div className="grid grid-cols-2 gap-1 border-b border-border/50 p-1.5">
           <button
@@ -75,7 +66,8 @@ export function CalendarPanel({
             onClick={() => onChange(today)}
             className={cn(
               QUICK_ACTION_BUTTON_CLASS,
-              value === today && "border-foreground/20 bg-muted font-semibold"
+              value === today &&
+                "border-selected-border bg-primary-soft font-semibold",
             )}
           >
             Today
@@ -85,7 +77,8 @@ export function CalendarPanel({
             onClick={() => onChange(tomorrow)}
             className={cn(
               QUICK_ACTION_BUTTON_CLASS,
-              value === tomorrow && "border-foreground/20 bg-muted font-semibold"
+              value === tomorrow &&
+                "border-selected-border bg-primary-soft font-semibold",
             )}
           >
             Tomorrow
@@ -144,12 +137,10 @@ export function CalendarPanel({
                   !cell.inMonth && "text-muted-foreground/45",
                   cell.inMonth &&
                     !selected &&
-                    "text-foreground/80 hover:bg-muted/60",
+                    "text-foreground/80 hover:bg-surface-hover",
                   selected &&
-                    "bg-muted font-semibold text-foreground hover:bg-muted/90",
-                  !selected &&
-                    isToday &&
-                    "ring-1 ring-sky-400/35 ring-inset"
+                    "bg-primary-soft font-semibold text-foreground hover:bg-primary-soft",
+                  !selected && isToday && "ring-1 ring-primary/40 ring-inset",
                 )}
                 aria-label={cell.dateKey}
                 aria-pressed={selected}
@@ -170,8 +161,8 @@ export function CalendarPanel({
             className={cn(
               "w-full rounded-md py-1 text-center text-[11px] font-medium transition-colors",
               value
-                ? "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                : "cursor-default text-muted-foreground/40"
+                ? "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                : "cursor-default text-muted-foreground/40",
             )}
           >
             Remove Date

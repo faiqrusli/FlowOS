@@ -46,7 +46,7 @@ export function CustomFocusSession({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-xl border border-border/50 bg-muted/35">
+    <div className="rounded-xl border border-border/50 bg-surface-raised">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -58,7 +58,7 @@ export function CustomFocusSession({
         <ChevronDown
           className={cn(
             "size-4 text-muted-foreground transition-transform",
-            open && "rotate-180"
+            open && "rotate-180",
           )}
         />
       </button>
@@ -66,7 +66,8 @@ export function CustomFocusSession({
       {open && (
         <div className="space-y-4 border-t border-border/50 px-5 pb-5 pt-4">
           <p className="text-xs text-muted-foreground">
-            Pomodoro-style countdown. Optional — quick focus above is the default.
+            Pomodoro-style countdown. Optional — quick focus above is the
+            default.
           </p>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -111,7 +112,7 @@ export function CustomFocusSession({
                   className={cn(
                     "w-full",
                     mode === "break" &&
-                      "[&_[data-slot=progress-indicator]]:bg-amber-500"
+                      "[&_[data-slot=progress-indicator]]:bg-amber-500",
                   )}
                 />
               </div>
@@ -136,10 +137,7 @@ export function CustomFocusSession({
               </Button>
             )}
             {isPaused && (
-              <Button
-                onClick={onResume}
-                className="rounded-full"
-              >
+              <Button onClick={onResume} className="rounded-full">
                 <Play className="size-4" data-icon="inline-start" />
                 Resume
               </Button>

@@ -116,7 +116,10 @@ export function GrowthAreaSidebar({
     setDropBeforeId(next);
   }
 
-  function handleAreaDragStart(areaId: string, event: DragEvent<HTMLButtonElement>) {
+  function handleAreaDragStart(
+    areaId: string,
+    event: DragEvent<HTMLButtonElement>,
+  ) {
     event.stopPropagation();
     dragAreaIdRef.current = areaId;
     setDragAreaId(areaId);
@@ -143,7 +146,7 @@ export function GrowthAreaSidebar({
       "data-growth-area-row",
       event.clientY,
       "y",
-      dragAreaIdRef.current
+      dragAreaIdRef.current,
     );
     setDropBeforeIfChanged(beforeId);
   }
@@ -153,11 +156,7 @@ export function GrowthAreaSidebar({
     const beforeId = dropBeforeIdRef.current;
 
     if (activeId !== null) {
-      const next = reorderByDropBeforeId(
-        areasRef.current,
-        activeId,
-        beforeId
-      );
+      const next = reorderByDropBeforeId(areasRef.current, activeId, beforeId);
       if (next !== areasRef.current) {
         onReorder(next);
       }
@@ -174,13 +173,15 @@ export function GrowthAreaSidebar({
       className={cn(
         "flex max-h-full shrink-0 flex-col self-start overflow-visible rounded-xl border border-border-subtle bg-surface-nav text-sidebar-foreground shadow-none",
         animateWidth && "transition-[width] duration-200 ease-out",
-        isNarrowLayout && expanded && "absolute top-0 left-0 z-30 h-full max-h-full shadow-md"
+        isNarrowLayout &&
+          expanded &&
+          "absolute top-0 left-0 z-30 h-full max-h-full shadow-md",
       )}
     >
       <div
         className={cn(
           "flex shrink-0 items-center border-b border-border/30",
-          expanded ? "justify-between px-2.5 py-2.5" : "justify-center py-3"
+          expanded ? "justify-between px-2.5 py-2.5" : "justify-center py-3",
         )}
       >
         {expanded ? (
@@ -206,7 +207,7 @@ export function GrowthAreaSidebar({
               <button
                 type="button"
                 onClick={collapseSidebar}
-                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
                 aria-label="Collapse growth areas"
               >
                 <ChevronLeft className="size-4" />
@@ -217,7 +218,7 @@ export function GrowthAreaSidebar({
           <button
             type="button"
             onClick={expandSidebar}
-            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
             aria-label="Expand growth areas"
           >
             <ChevronRight className="size-4" />
@@ -230,7 +231,9 @@ export function GrowthAreaSidebar({
         onDragOver={expanded ? handleNavDragOver : undefined}
         className={cn(
           "max-h-[calc(100dvh-10rem)] overflow-x-hidden overflow-y-auto",
-          expanded ? "space-y-0.5 p-1.5" : "flex flex-col items-center gap-0.5 py-2"
+          expanded
+            ? "space-y-0.5 p-1.5"
+            : "flex flex-col items-center gap-0.5 py-2",
         )}
       >
         {areas.map((area) => {
@@ -250,7 +253,7 @@ export function GrowthAreaSidebar({
                   "flex size-10 shrink-0 items-center justify-center rounded-xl text-lg leading-none transition-[background-color,box-shadow]",
                   active
                     ? "flow-selected text-foreground"
-                    : "hover:bg-surface-hover/70"
+                    : "hover:bg-surface-hover/70",
                 )}
               >
                 {area.emoji}
@@ -265,7 +268,7 @@ export function GrowthAreaSidebar({
                 data-growth-area-row={area.id}
                 className={cn(
                   "group relative flex items-center",
-                  isDragging && "opacity-40"
+                  isDragging && "opacity-40",
                 )}
               >
                 <button
@@ -275,8 +278,8 @@ export function GrowthAreaSidebar({
                   onDragEnd={handleAreaDragEnd}
                   onMouseDown={(event) => event.stopPropagation()}
                   className={cn(
-                    "flex size-6 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted active:cursor-grabbing group-hover:opacity-100",
-                    isDragging && "opacity-100"
+                    "flex size-6 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-surface-hover active:cursor-grabbing group-hover:opacity-100",
+                    isDragging && "opacity-100",
                   )}
                   aria-label={`Reorder ${area.name}`}
                 >
@@ -292,7 +295,7 @@ export function GrowthAreaSidebar({
                     "flex min-w-0 flex-1 items-center gap-2 rounded-xl py-2 pr-8 pl-1 text-left transition-[background-color,box-shadow]",
                     active
                       ? "flow-selected text-foreground"
-                      : "hover:bg-surface-hover/70"
+                      : "hover:bg-surface-hover/70",
                   )}
                 >
                   <span className="flex w-6 shrink-0 items-center justify-center text-lg leading-none">
@@ -301,7 +304,7 @@ export function GrowthAreaSidebar({
                   <p
                     className={cn(
                       "min-w-0 flex-1 truncate text-sm",
-                      active ? "font-semibold text-foreground" : "font-normal"
+                      active ? "font-semibold text-foreground" : "font-normal",
                     )}
                   >
                     {area.name}{" "}
@@ -312,9 +315,7 @@ export function GrowthAreaSidebar({
                 </button>
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger
-                    className="absolute top-1/2 right-1.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted group-hover:opacity-100"
-                  >
+                  <DropdownMenuTrigger className="absolute top-1/2 right-1.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-surface-hover group-hover:opacity-100">
                     <MoreHorizontal className="size-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="rounded-xl">

@@ -53,7 +53,7 @@ export function FocusSessionHistoryList({
               return (
                 <li
                   key={session.id}
-                  className="rounded-lg border border-border/30 bg-muted/10 px-3 py-2.5 text-sm"
+                  className="rounded-lg border border-border/30 bg-surface-raised px-3 py-2.5 text-sm"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="font-medium text-foreground">

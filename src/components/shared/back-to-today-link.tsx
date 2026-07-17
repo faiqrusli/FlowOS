@@ -11,8 +11,8 @@ export function BackToTodayLink({ className }: BackToTodayLinkProps) {
     <Link
       href="/"
       className={cn(
-        "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-border/60 bg-muted/30 px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground",
-        className
+        "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-border/60 bg-surface-raised px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground",
+        className,
       )}
     >
       <ArrowLeft className="size-3.5 shrink-0" aria-hidden />

@@ -16,14 +16,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSettingsModal } from "@/contexts/settings-modal-context";
-import {
-  SHELL_NAV_RADIUS_PX,
-  SHELL_PROFILE_AVATAR_PX,
-  SHELL_PROFILE_CARD_HEIGHT_PX,
-  SHELL_PROFILE_HIT_PX,
-} from "@/lib/shell-dimensions";
 import type { SettingsModalSection } from "@/types/settings-modal";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type SidebarAccountMenuProps = {
   displayName: string;
@@ -34,6 +33,8 @@ type SidebarAccountMenuProps = {
   onNavigate?: () => void;
   compact?: boolean;
 };
+
+const NAV_TOOLTIP_DELAY_MS = 500;
 
 export function SidebarAccountMenu({
   displayName,
@@ -52,67 +53,70 @@ export function SidebarAccountMenu({
   }
 
   return (
-    <div
-      className={cn(
-        "min-w-0 shrink-0 overflow-hidden pb-3",
-        compact ? "px-0" : "px-3"
-      )}
-    >
+    <div className="shrink-0 px-2 pt-2 pb-3">
       <DropdownMenu>
-        <DropdownMenuTrigger
-          aria-label={displayName}
-          className={cn(
-            "group/account relative flex min-w-0 items-center overflow-hidden text-left transition-colors duration-150",
-            compact
-              ? "mx-auto justify-center border border-transparent bg-transparent p-0 hover:bg-sidebar-accent"
-              : "w-full max-w-full gap-2.5 rounded-[10px] border border-transparent bg-transparent px-2 hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent"
-          )}
-          style={
-            compact
-              ? {
-                  width: SHELL_PROFILE_HIT_PX,
-                  height: SHELL_PROFILE_HIT_PX,
-                  borderRadius: SHELL_NAV_RADIUS_PX,
-                }
-              : { height: SHELL_PROFILE_CARD_HEIGHT_PX }
-          }
-        >
-          <div
-            className="flex shrink-0 items-center justify-center rounded-full border border-sidebar-border/80 bg-primary text-xs font-semibold text-primary-foreground"
-            style={{
-              width: SHELL_PROFILE_AVATAR_PX,
-              height: SHELL_PROFILE_AVATAR_PX,
-            }}
-            aria-hidden
+        <Tooltip>
+          <TooltipTrigger
+            delay={NAV_TOOLTIP_DELAY_MS}
+            disabled={!compact}
+            closeOnClick
+            render={
+              <DropdownMenuTrigger
+                aria-label={compact ? displayName : undefined}
+                className={cn(
+                  // Quiet on chrome — menu popover carries card elevation, not the trigger.
+                  "group/account relative flex h-11 w-full items-center overflow-hidden rounded-xl text-left transition-colors duration-150",
+                  compact
+                    ? "border-transparent bg-transparent hover:bg-sidebar-accent"
+                    : "border border-sidebar-border bg-transparent hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent",
+                )}
+              />
+            }
           >
-            {initials}
-          </div>
-          {!compact && (
-            <>
-              <div className="min-w-0 flex-1 overflow-hidden">
-                <p className="truncate text-sm font-semibold leading-tight text-foreground">
+            <div
+              className="flex h-full shrink-0 items-center justify-center"
+              style={{ width: 40 }}
+            >
+              <div
+                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground"
+                aria-hidden
+              >
+                {initials}
+              </div>
+            </div>
+            <div
+              className={cn(
+                "flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden pr-2.5 transition-opacity duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+                compact
+                  ? "pointer-events-none opacity-0"
+                  : "opacity-100",
+              )}
+              aria-hidden={compact}
+            >
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13px] font-semibold leading-tight text-foreground">
                   {displayName}
                 </p>
-                <p className="truncate text-xs leading-tight text-muted-foreground">
+                <p className="truncate text-[11px] leading-tight text-muted-foreground">
                   {userRole}
                 </p>
               </div>
               <ChevronDown
                 className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-aria-expanded:rotate-180"
                 strokeWidth={2}
-                aria-hidden
               />
-            </>
-          )}
-          {compact && (
-            <span
-              role="tooltip"
-              className="flow-surface-elevated flow-shell-nav-tooltip absolute top-1/2 left-[calc(100%+0.5rem)] z-50 hidden whitespace-nowrap px-2.5 py-1 text-xs font-medium text-popover-foreground group-hover/account:block"
+            </div>
+          </TooltipTrigger>
+          {compact ? (
+            <TooltipContent
+              side="right"
+              sideOffset={8}
+              className="px-2.5 py-1 font-medium whitespace-nowrap text-popover-foreground"
             >
               {displayName}
-            </span>
-          )}
-        </DropdownMenuTrigger>
+            </TooltipContent>
+          ) : null}
+        </Tooltip>
 
         <DropdownMenuContent
           className="w-[15rem] rounded-xl p-1.5"

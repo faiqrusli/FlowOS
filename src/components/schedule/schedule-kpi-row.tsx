@@ -28,7 +28,7 @@ export function ScheduleKpiRow({ kpis }: ScheduleKpiRowProps) {
         <span className={cn(type.meta, "shrink-0 tabular-nums")}>
           {kpis.onTrackPercent}% on track
         </span>
-        <div className="h-1 min-w-[4rem] flex-1 overflow-hidden rounded-full bg-muted">
+        <div className="h-1 min-w-[4rem] flex-1 overflow-hidden rounded-full bg-surface-raised">
           <div
             className="h-full rounded-full bg-success transition-all"
             style={{ width: `${kpis.onTrackPercent}%` }}

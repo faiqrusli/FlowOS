@@ -19,13 +19,20 @@
   --color-surface-nav: var(--surface-nav);
   --color-surface-drawer: var(--surface-drawer);
   --color-surface-base: var(--surface-base);
+  --color-surface-inset: var(--surface-inset);
+  --color-surface-inset-hover: var(--surface-inset-hover);
   --color-surface-raised: var(--surface-raised);
   --color-surface-overlay: var(--surface-overlay);
+  --color-control-default: var(--control-default);
+  --color-control-hover: var(--control-hover);
+  --color-control-active: var(--control-active);
+  --color-surface-row-hover: var(--surface-row-hover);
   --color-border-subtle: var(--border-subtle);
   --color-border-strong: var(--border-strong);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
+  --color-text-tertiary: var(--text-tertiary);
   --color-text-disabled: var(--text-disabled);
   --color-primary-subtle: var(--primary-subtle);
   --color-primary-soft: var(--primary-soft);
@@ -110,13 +117,20 @@
   --surface-nav: oklch(0.975 0.005 265);
   --surface-drawer: color-mix(in oklab, var(--surface-canvas) 97%, black 3%);
   --surface-base: oklch(1 0 0);
+  --surface-inset: oklch(0.97 0.004 265);
+  --surface-inset-hover: oklch(0.94 0.005 265);
   --surface-raised: oklch(1 0 0);
   --surface-overlay: oklch(1 0 0);
+  --control-default: oklch(0.96 0.006 265);
+  --control-hover: oklch(0.94 0.008 265);
+  --control-active: oklch(0.92 0.01 265);
+  --surface-row-hover: color-mix(in srgb, white 3.5%, transparent);
   --border-subtle: oklch(0.88 0.008 265);
   --border-strong: oklch(0.78 0.012 265);
   --text-primary: oklch(0.205 0.02 265);
   --text-secondary: oklch(0.42 0.02 265);
   --text-muted: oklch(0.52 0.018 265);
+  --text-tertiary: oklch(0.62 0.014 265);
   --text-disabled: oklch(0.72 0.012 265);
   --primary-subtle: oklch(0.58 0.1 265 / 8%);
   --primary-soft: oklch(0.58 0.1 265 / 12%);
@@ -125,7 +139,7 @@
   /* Application shell — application-shell-navigation-spec */
   --shell-header-height: 64px;
   --topbar-height: var(--shell-header-height);
-  --left-rail-width: 88px;
+  --left-rail-width: 56px;
   --left-sidebar-expanded-width: 288px;
   --right-rail-width: 64px;
   --sidebar-header-height: var(--shell-header-height);
@@ -236,40 +250,57 @@
   --sidebar-ring: oklch(0.58 0.1 265);
 }
 
-/* ─── Dark theme: Visual Design System v3.0 ───
-   Canonical tokens: DESIGN_SYSTEM.md §§3–5.
-   Legacy names alias to v3 roles so existing consumers keep working. */
+/* ─── Dark theme: Neutral Dark Visual Design System ───
+   Canonical: DESIGN_SYSTEM_NEUTRAL_DARK.md
+   Few paints, many semantic aliases. Legacy shadcn names map to roles. */
 .dark {
   color-scheme: dark;
 
-  /* v3 semantic surfaces */
-  --surface-canvas: #080e1b;
-  --surface-nav: #070c18;
-  --surface-drawer: color-mix(in oklab, var(--surface-canvas) 94%, white 6%);
-  --surface-base: #0d1423;
-  --surface-raised: #121b2c;
-  --surface-overlay: #151e30;
-  --surface-hover: #1a2437;
+  /* Environment */
+  --surface-canvas: #171717;
+  --surface-nav: #171717;
+  --surface-drawer: var(--surface-canvas);
 
-  --border-subtle: #202b3d;
-  --border-strong: #303c51;
+  /* Work surfaces */
+  --surface-base: #212123;
+  /* Inset / recessed controls inside base cards (title, description, etc.) */
+  --surface-inset: #1e1e20;
+  --surface-inset-hover: #232325;
+  --surface-raised: #29292d;
+  --surface-overlay: #303034;
+  --surface-hover: #343438;
 
-  --text-primary: #f9fafb;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-disabled: #475569;
+  /* Compact selectors (Date, Time, Duration, Priority, …) */
+  --control-default: #29292d;
+  --control-hover: #303034;
+  --control-active: #343438;
 
+  /* Task / list row hover — soft white wash over parent surface */
+  --surface-row-hover: color-mix(in srgb, white 3.5%, transparent);
+
+  /* Borders */
+  --border-subtle: #3a3a3f;
+  --border-strong: #444449;
+
+  /* Text hierarchy */
+  --text-primary: #e9ecee;
+  --text-secondary: #d3d6d8;
+  --text-muted: #b4b6b8;
+  --text-tertiary: #9ea0a2;
+  --text-disabled: #747679;
+
+  /* FlowOS identity */
   --primary: #586cf6;
-  --primary-hover: color-mix(in oklab, #586cf6 88%, white 12%);
-  --primary-foreground: #f9fafb;
-  --primary-subtle: rgba(88, 108, 246, 0.08);
-  --primary-soft: rgba(88, 108, 246, 0.12);
-  --primary-medium: rgba(88, 108, 246, 0.2);
+  --primary-hover: color-mix(in srgb, var(--primary), white 10%);
+  --primary-foreground: #e9ecee;
+  --primary-subtle: color-mix(in srgb, var(--primary) 10%, transparent);
+  --primary-soft: color-mix(in srgb, var(--primary) 16%, transparent);
+  --primary-medium: color-mix(in srgb, var(--primary) 24%, transparent);
   /* Kept for residual consumers; primitives no longer apply glow. */
-  --primary-glow: rgba(88, 108, 246, 0.28);
-  --accent-text: color-mix(in oklab, #586cf6 72%, white 28%);
+  --primary-glow: color-mix(in srgb, var(--primary) 28%, transparent);
+  --accent-text: color-mix(in srgb, var(--primary) 72%, white 28%);
 
-  /* Compatibility aliases — map legacy shadcn/Tailwind names to v3 roles */
+  /* Compatibility aliases — map legacy shadcn/Tailwind names to roles */
   --background: var(--surface-canvas);
   --surface: var(--surface-nav);
   --card: var(--surface-base);
@@ -282,13 +313,13 @@
   --surface-popover: var(--surface-overlay);
   --surface-dialog: var(--surface-overlay);
 
-  /* Feature extensions still used until later phases migrate consumers */
-  --surface-card-hover: color-mix(in oklab, var(--surface-base) 96%, white 4%);
+  /* Derived surfaces — semantic names, constrained paints */
+  --surface-card-hover: var(--surface-raised);
   --surface-focus: var(--surface-raised);
-  --surface-focus-hover: color-mix(in oklab, var(--surface-raised) 92%, white 8%);
+  --surface-focus-hover: var(--surface-overlay);
   --surface-board: var(--surface-base);
-  --surface-board-header: color-mix(in oklab, var(--surface-base) 94%, white 6%);
-  --border-board: color-mix(in oklab, var(--border-subtle) 80%, transparent);
+  --surface-board-header: var(--surface-raised);
+  --border-board: color-mix(in srgb, var(--border-subtle) 80%, transparent);
   --surface-kanban-card: var(--surface-raised);
 
   --foreground: var(--text-primary);
@@ -298,13 +329,14 @@
   --popover: var(--surface-overlay);
   --popover-foreground: var(--text-primary);
 
-  --secondary: color-mix(in oklab, var(--surface-base) 88%, white 12%);
+  --secondary: var(--surface-overlay);
   --secondary-foreground: var(--text-primary);
-  --muted: color-mix(in oklab, var(--surface-base) 92%, white 8%);
+  --muted: var(--surface-raised);
   --muted-foreground: var(--text-muted);
   --accent: var(--surface-hover);
   --accent-foreground: var(--text-primary);
 
+  /* Status — independent of FlowOS identity */
   --destructive: oklch(0.68 0.175 22);
   --destructive-muted: oklch(0.68 0.175 22 / 14%);
   --success: oklch(0.72 0.13 158);
@@ -313,13 +345,13 @@
   --warning-muted: oklch(0.78 0.12 82 / 13%);
 
   --border: var(--border-subtle);
-  --border-focus: color-mix(in oklab, var(--border-subtle) 70%, var(--border-strong) 30%);
-  --divider: color-mix(in oklab, var(--border-subtle) 55%, transparent);
-  --input: color-mix(in oklab, var(--border-subtle) 75%, transparent);
-  --ring: color-mix(in oklab, var(--primary) 55%, transparent);
+  --border-focus: color-mix(in srgb, var(--border-subtle) 70%, var(--border-strong) 30%);
+  --divider: color-mix(in srgb, var(--border-subtle) 55%, transparent);
+  --input: color-mix(in srgb, var(--border-subtle) 75%, transparent);
+  --ring: color-mix(in srgb, var(--primary) 55%, transparent);
 
   --selected: var(--primary-soft);
-  --selected-border: color-mix(in oklab, var(--primary) 42%, transparent);
+  --selected-border: color-mix(in srgb, var(--primary) 42%, transparent);
 
   --chart-1: var(--primary);
   --chart-2: var(--success);
@@ -349,7 +381,7 @@
   --sidebar-accent: var(--surface-hover);
   --sidebar-accent-foreground: var(--text-primary);
   --sidebar-border: var(--border-subtle);
-  --sidebar-ring: color-mix(in oklab, var(--primary) 45%, transparent);
+  --sidebar-ring: color-mix(in srgb, var(--primary) 45%, transparent);
 }
 
 @layer base {
@@ -363,6 +395,16 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+  }
+
+  /* Tailwind v4 dropped button pointer; restore for enabled click targets. */
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not(:disabled):not([aria-disabled="true"]),
+  [role="menuitem"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="option"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="tab"]:not([aria-disabled="true"]):not([data-disabled]),
+  summary {
+    cursor: pointer;
   }
 }
 
@@ -396,9 +438,9 @@
     background: var(--primary);
   }
 
-  /* Persistent utility rail — structural nav surface. */
+  /* Persistent utility rail — canvas surface (with main workspace). */
   .flow-shell-utility-sidebar {
-    background: var(--surface-nav);
+    background: var(--surface-canvas);
   }
 
   /* Elevated utility panel — layered beside the rail. */
@@ -463,13 +505,10 @@
 
   .flow-interactive,
   .flow-card-interactive {
+    cursor: pointer;
     transition-property: background-color, border-color, color, box-shadow, opacity;
     transition-duration: 150ms;
     transition-timing-function: var(--ease-premium);
-  }
-
-  .flow-card-interactive {
-    cursor: pointer;
   }
 
   .flow-card-interactive:hover {
@@ -483,6 +522,29 @@
   .flow-selected {
     background: var(--primary-soft);
     box-shadow: inset 0 0 0 1px var(--selected-border);
+  }
+
+  .flow-selected:hover {
+    background: var(--primary-soft);
+  }
+
+  /* Quiet list-row hover — transparent default; soft lift on parent card/canvas */
+  .flow-row-interactive {
+    background: transparent;
+    border-color: transparent;
+    transition-property: background-color, border-color, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: var(--ease-premium);
+  }
+
+  .flow-row-interactive:hover {
+    background: var(--surface-row-hover);
+  }
+
+  .flow-row-dragging {
+    background: var(--surface-raised);
+    border-color: var(--border-subtle);
+    box-shadow: var(--shadow-overlay);
   }
 
   .flow-divider {
@@ -552,6 +614,118 @@
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
+}
+
+/* Calm in-focus cue — same group left border as siblings, slow blink */
+@property --focus-edge-blink {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.7;
+}
+
+.timeline-task-in-focus {
+  border-left-width: 3px;
+  border-left-style: solid;
+  border-left-color: color-mix(
+    in srgb,
+    var(--focus-edge-color, var(--chart-1)) calc(var(--focus-edge-blink) * 100%),
+    transparent
+  );
+  animation: timeline-focus-edge-breathe 3.6s ease-in-out infinite;
+}
+
+@keyframes timeline-focus-edge-breathe {
+  0%,
+  100% {
+    --focus-edge-blink: 0.5;
+  }
+  50% {
+    --focus-edge-blink: 1;
+  }
+}
+
+.timeline-focus-indicator {
+  transform-origin: center;
+  will-change: transform, opacity, box-shadow;
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 35%, transparent);
+  animation: timeline-focus-indicator-breathe 1.9s ease-in-out infinite;
+}
+
+@keyframes timeline-focus-indicator-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 30%, transparent);
+  }
+  50% {
+    transform: scale(1.14);
+    opacity: 1;
+    box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--primary) 28%, transparent);
+  }
+}
+
+@keyframes workplace-dock-popup-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.workplace-dock-popup {
+  transform-origin: bottom left;
+  animation: workplace-dock-popup-rise 170ms var(--ease-premium) forwards;
+}
+
+.workplace-dock-popup-caret {
+  position: absolute;
+  bottom: -5px;
+  width: 10px;
+  height: 10px;
+  rotate: 45deg;
+  border-right: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border-strong);
+  background: var(--surface-overlay);
+}
+
+/* Today Tasks/Habits launcher — floating dock; segment is a quiet indicator */
+.workplace-dock-launcher {
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-raised);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.26),
+    0 0 18px color-mix(in srgb, var(--primary) 8%, transparent);
+  transition:
+    box-shadow 180ms var(--ease-premium),
+    border-color 180ms var(--ease-premium),
+    transform 180ms var(--ease-premium);
+}
+
+.workplace-dock-launcher-open {
+  background: var(--surface-raised);
+  transform: translateY(-2px);
+  box-shadow:
+    0 15px 36px rgba(0, 0, 0, 0.46),
+    0 5px 14px rgba(0, 0, 0, 0.3),
+    0 0 22px color-mix(in srgb, var(--primary) 11%, transparent);
+}
+
+.workplace-dock-active-pill {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  border-radius: 0.5rem;
+  /* Muted primary wash — readable, not a solid brand block. */
+  background: color-mix(in srgb, var(--primary) 75%, transparent);
+  transition:
+    left 180ms var(--ease-premium),
+    width 180ms var(--ease-premium);
+  pointer-events: none;
 }
 
 @keyframes notes-tab-enter-right {
@@ -695,6 +869,50 @@
   height: 0 !important;
   background: transparent !important;
   border: none !important;
+}
+
+/* Today Focus + Timeline row — always-visible horizontal bar when cramped. */
+.workplace-canvas-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 32%, transparent)
+    color-mix(in oklch, var(--muted-foreground) 10%, transparent);
+}
+
+.workplace-canvas-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 8px;
+}
+
+.workplace-canvas-scroll::-webkit-scrollbar-track {
+  background: color-mix(in oklch, var(--muted-foreground) 10%, transparent);
+  border-radius: 9999px;
+}
+
+.workplace-canvas-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--muted-foreground) 32%, transparent);
+  border-radius: 9999px;
+}
+
+.workplace-canvas-scroll::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--muted-foreground) 48%, transparent);
+}
+
+.workplace-canvas-scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* While dragging a schedule item, keep drag-live marker available for any
+   remaining dismiss layers (legacy). */
+html[data-workplace-drag-live] [data-next-up-dismiss] {
+  pointer-events: none;
+}
+
+html[data-workplace-middle-pan],
+html[data-workplace-middle-pan] * {
+  cursor: grabbing !important;
+  user-select: none !important;
 }
 
 .kanban-board-scroll {

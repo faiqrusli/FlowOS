@@ -17,7 +17,9 @@ import { cn } from "@/lib/utils";
 
 export function FocusSettingsPanel() {
   const { pomodoro } = useFocusSessionContext();
-  const [settings, setSettings] = useState<FocusSettings>(DEFAULT_FOCUS_SETTINGS);
+  const [settings, setSettings] = useState<FocusSettings>(
+    DEFAULT_FOCUS_SETTINGS,
+  );
   const [newActivity, setNewActivity] = useState("");
 
   useEffect(() => {
@@ -93,7 +95,7 @@ export function FocusSettingsPanel() {
           </div>
 
           <div className="flex flex-wrap gap-6 pt-1">
-            <label className="flex items-center gap-2 text-sm">
+            <label className="flex cursor-pointer items-center gap-2 text-sm">
               <Switch
                 checked={settings.autoBreak}
                 onCheckedChange={(checked) =>
@@ -102,7 +104,7 @@ export function FocusSettingsPanel() {
               />
               Auto break
             </label>
-            <label className="flex items-center gap-2 text-sm">
+            <label className="flex cursor-pointer items-center gap-2 text-sm">
               <Switch
                 checked={settings.autoResume}
                 onCheckedChange={(checked) =>
@@ -124,11 +126,11 @@ export function FocusSettingsPanel() {
                 onClick={() =>
                   updateSettings({
                     breakActivities: settings.breakActivities.filter(
-                      (item) => item !== activity
+                      (item) => item !== activity,
                     ),
                   })
                 }
-                className="rounded-full border border-border/40 bg-muted/20 px-2.5 py-1 text-xs hover:bg-muted/40"
+                className="rounded-full border border-border/40 bg-surface-raised px-2.5 py-1 text-xs hover:bg-surface-hover"
               >
                 {activity} ×
               </button>
@@ -176,7 +178,7 @@ export function FocusSettingsPanel() {
               <label
                 key={key}
                 className={cn(
-                  "flex items-center gap-2 text-sm text-muted-foreground"
+                  "flex items-center gap-2 text-sm text-muted-foreground",
                 )}
               >
                 <Switch

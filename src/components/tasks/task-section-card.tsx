@@ -36,9 +36,10 @@ export function TaskSectionCard({
     <Card
       className={cn(
         "ring-border/40",
-        tone === "today" && "border-blue-200/80 bg-blue-50/40 dark:border-blue-400/30 dark:bg-blue-500/10",
-        tone === "missed" && "border-warning/30 bg-warning-muted/40 dark:border-warning/25 dark:bg-warning-muted/20",
-        tone === "default" && "bg-muted/35"
+        tone === "today" && "border-selected-border bg-primary-soft",
+        tone === "missed" &&
+          "border-warning/30 bg-warning-muted/40 dark:border-warning/25 dark:bg-warning-muted/20",
+        tone === "default" && "bg-surface-raised",
       )}
     >
       <CardHeader className="pb-3">
@@ -53,7 +54,7 @@ export function TaskSectionCard({
               <ChevronDown
                 className={cn(
                   "size-4 shrink-0 text-muted-foreground transition-transform",
-                  open && "rotate-180"
+                  open && "rotate-180",
                 )}
               />
               <h2 className="text-sm font-semibold text-foreground">{title}</h2>
@@ -62,7 +63,9 @@ export function TaskSectionCard({
               </span>
             </div>
             {description && (
-              <p className="pl-6 text-xs text-muted-foreground">{description}</p>
+              <p className="pl-6 text-xs text-muted-foreground">
+                {description}
+              </p>
             )}
           </div>
         </button>

@@ -42,14 +42,14 @@ export function ReflectionDetailContent({
 
       <div className="space-y-2">
         <Label>What went well</Label>
-        <p className="whitespace-pre-wrap rounded-lg bg-muted/35 p-3 text-foreground/90">
+        <p className="whitespace-pre-wrap rounded-lg bg-surface-raised p-3 text-foreground/90">
           {reflection.went_well.trim() || "—"}
         </p>
       </div>
 
       <div className="space-y-2">
         <Label>What went wrong</Label>
-        <p className="whitespace-pre-wrap rounded-lg bg-muted/35 p-3 text-foreground/90">
+        <p className="whitespace-pre-wrap rounded-lg bg-surface-raised p-3 text-foreground/90">
           {reflection.went_wrong.trim() || "—"}
         </p>
       </div>
@@ -66,7 +66,7 @@ export function ReflectionDetailContent({
             {reflection.custom_kanbans.map((kanban) => (
               <li
                 key={kanban.id}
-                className="rounded-lg border border-border/40 bg-muted/35 px-3 py-2"
+                className="rounded-lg border border-border/40 bg-surface-raised px-3 py-2"
               >
                 <p className="font-medium text-foreground">{kanban.title}</p>
                 {kanban.cards.length === 0 ? (
@@ -101,7 +101,7 @@ export function ReflectionDetailContent({
             {reflection.custom_entries.map((entry) => (
               <li
                 key={entry.id}
-                className="rounded-lg border border-border/40 bg-muted/35 px-3 py-2"
+                className="rounded-lg border border-border/40 bg-surface-raised px-3 py-2"
               >
                 <p className="font-medium text-foreground">{entry.title}</p>
                 <p className="text-muted-foreground">{entry.content || "—"}</p>

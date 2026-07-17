@@ -44,15 +44,17 @@ export function ScheduleHabitStrip({
         channel.hover,
         interactive && !item.completed && "cursor-grab active:cursor-grabbing",
         isCurrent && SCHEDULE_BLOCK_CURRENT_CLASS,
-        item.completed && "opacity-60"
+        item.completed && "opacity-60",
       )}
       style={{ top: topPx, height: heightPx }}
     >
-      <div className={cn("absolute top-0 bottom-0 left-0 w-1", channel.accent)} />
+      <div
+        className={cn("absolute top-0 bottom-0 left-0 w-1", channel.accent)}
+      />
       <span
         className={cn(
           "shrink-0 pl-2 text-[11px] font-semibold tabular-nums",
-          channel.text
+          channel.text,
         )}
       >
         {item.time ?? "—"}
@@ -61,7 +63,7 @@ export function ScheduleHabitStrip({
       <p
         className={cn(
           "min-w-0 flex-1 truncate text-sm font-medium",
-          item.completed && "line-through opacity-70"
+          item.completed && "line-through opacity-70",
         )}
       >
         {item.title}
@@ -92,7 +94,7 @@ export function ScheduleHabitStrip({
               item.completed
                 ? "border-warning bg-warning text-background"
                 : "border-warning/40 bg-background/70 hover:border-warning/60",
-              disabled && "opacity-50"
+              disabled && "opacity-50",
             )}
             aria-label={`Mark ${item.title} complete`}
           >

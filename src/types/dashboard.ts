@@ -8,6 +8,7 @@ export type TodayProgress = {
   habitsCompleted: number;
   habitsTotal: number;
   focusSeconds: number;
+  breakSeconds: number;
 };
 
 export type DashboardFocusStats = {
