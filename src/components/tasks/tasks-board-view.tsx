@@ -273,6 +273,8 @@ type TasksBoardViewProps = {
   todayViewDate: string;
   plannerActive?: boolean;
   onToggleQuickPlanner?: () => void;
+  /** Host outside the shrinking board column so Add Task / New Group stay put when Quick Schedule opens. */
+  actionsHost?: HTMLElement | null;
   onTodayViewDateChange: (date: string) => void;
   onGroupsChange: (groups: TaskGroupWithTasks[]) => void;
   onSelectTask: (taskId: string | null) => void;
@@ -385,6 +387,7 @@ function TasksBoardViewContent({
   todayViewDate,
   plannerActive = false,
   onToggleQuickPlanner,
+  actionsHost,
   onTodayViewDateChange,
   onGroupsChange,
   onSelectTask,
@@ -2520,13 +2523,60 @@ function TasksBoardViewContent({
     ],
   );
 
+  const pinActionsOutside = actionsHost !== undefined;
+  const renderHeaderActions = () => (
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className={cn(
+          "h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
+          "border-primary/40 bg-primary/[0.08] text-foreground shadow-none",
+          "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
+          "hover:border-primary/55 hover:bg-primary/[0.12] hover:text-foreground",
+          "active:scale-[0.98]",
+        )}
+        onClick={() => requestQuickCapture()}
+      >
+        <Plus className="size-3.5" />
+        Add Task
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className={cn(
+          "h-8 shrink-0 gap-1.5 rounded-full px-3 text-sm font-medium",
+          "text-foreground/75 shadow-none",
+          "hover:bg-surface-hover/60 hover:text-foreground",
+          "active:scale-[0.98]",
+        )}
+        onClick={() => openNewGroupDialog()}
+      >
+        <Plus className="size-3.5" />
+        New Group
+      </Button>
+    </>
+  );
+
   return (
     <TaskBoardGroupsProvider groups={groups}>
       <TaskBoardActionsProvider actions={boardActions}>
         <>
+          {pinActionsOutside && actionsHost
+            ? createPortal(
+                <div className="flex items-center gap-2">
+                  {renderHeaderActions()}
+                </div>,
+                actionsHost,
+              )
+            : null}
           <div className="flex h-full min-h-0 flex-col gap-2 px-2 pt-2 pb-2">
             <div className="relative flex h-8 w-full shrink-0 items-center gap-2">
-              <h1 className={cn(type.pageTitle, "min-w-0 shrink-0 text-xl")}>Tasks</h1>
+              <h1 className={cn(type.pageTitle, "min-w-0 shrink-0 text-xl")}>
+                Tasks
+              </h1>
 
               {onToggleQuickPlanner ? (
                 <div className="pointer-events-none absolute inset-x-0 flex justify-center">
@@ -2559,38 +2609,14 @@ function TasksBoardViewContent({
                 </div>
               ) : null}
 
-              <div className="relative z-20 ml-auto flex shrink-0 items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    "h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
-                    "border-primary/40 bg-primary/[0.08] text-foreground shadow-none",
-                    "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
-                    "hover:border-primary/55 hover:bg-primary/[0.12] hover:text-foreground",
-                    "active:scale-[0.98]",
-                  )}
-                  onClick={() => requestQuickCapture()}
-                >
-                  <Plus className="size-3.5" />
-                  Add Task
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "h-8 shrink-0 gap-1.5 rounded-full px-3 text-sm font-medium",
-                    "text-foreground/75 shadow-none",
-                    "hover:bg-surface-hover/60 hover:text-foreground",
-                    "active:scale-[0.98]",
-                  )}
-                  onClick={() => openNewGroupDialog()}
-                >
-                  <Plus className="size-3.5" />
-                  New Group
-                </Button>
+              <div
+                className={cn(
+                  "relative z-20 ml-auto flex shrink-0 items-center gap-2",
+                  pinActionsOutside && "invisible pointer-events-none",
+                )}
+                aria-hidden={pinActionsOutside || undefined}
+              >
+                {renderHeaderActions()}
               </div>
             </div>
 

@@ -263,11 +263,11 @@ const TIMELINE_DURATION_CHIP_ACTIVE =
   "bg-primary-soft text-foreground shadow-none";
 const TIMELINE_DURATION_CHIP_IDLE =
   "bg-transparent text-muted-foreground hover:bg-surface-hover hover:text-foreground";
-/** Active pool tab — raised pill so Unscheduled/Later reads at a glance. */
+/** Active pool tab — primary soft + ring so Unscheduled/Later reads at a glance. */
 const TIMELINE_POOL_TAB_ACTIVE =
-  "bg-surface-hover text-foreground shadow-none";
+  "bg-primary-soft font-semibold text-foreground ring-1 ring-primary/35 shadow-none";
 const TIMELINE_POOL_TAB_IDLE =
-  "text-muted-foreground hover:bg-surface-hover hover:text-foreground";
+  "font-medium text-muted-foreground hover:bg-surface-hover/70 hover:text-foreground";
 
 function QuickScheduleInfoMenu() {
   return (
@@ -1917,15 +1917,16 @@ export function TimelinePlanner({
               >
                 <div
                   className={cn(
-                    "mb-1 inline-flex max-w-full items-center gap-0.5 rounded-md border-0 bg-surface-base/60 p-0.5",
+                    "mb-1.5 flex w-full items-center gap-0.5 rounded-lg border border-border/40 bg-surface-base p-0.5",
                   )}
                 >
                   <button
                     type="button"
                     {...{ [QUICK_SCHEDULE_INBOX_TAB_ATTR]: "unscheduled" }}
                     onClick={() => setInboxTab("unscheduled")}
+                    aria-pressed={inboxTab === "unscheduled"}
                     className={cn(
-                      "shrink-0 rounded-md px-2 py-0.5 font-medium whitespace-nowrap transition-colors",
+                      "min-w-0 flex-1 rounded-md px-2 py-1 whitespace-nowrap transition-[background-color,color,box-shadow] duration-150",
                       compactTaskListTabs ? "text-[9px]" : "text-[11px]",
                       inboxTab === "unscheduled"
                         ? TIMELINE_POOL_TAB_ACTIVE
@@ -1942,8 +1943,9 @@ export function TimelinePlanner({
                     type="button"
                     {...{ [QUICK_SCHEDULE_INBOX_TAB_ATTR]: "later" }}
                     onClick={() => setInboxTab("later")}
+                    aria-pressed={inboxTab === "later"}
                     className={cn(
-                      "shrink-0 rounded-md px-2 py-0.5 font-medium whitespace-nowrap transition-colors",
+                      "min-w-0 flex-1 rounded-md px-2 py-1 whitespace-nowrap transition-[background-color,color,box-shadow] duration-150",
                       compactTaskListTabs ? "text-[9px]" : "text-[11px]",
                       inboxTab === "later"
                         ? TIMELINE_POOL_TAB_ACTIVE

@@ -1,6 +1,7 @@
 import {
   formatInAppTimezone,
   formatNowTimeInAppTimezone,
+  getAppNow,
   getMinutesFromTimestamp,
   getNowMinutesInAppTimezone,
   parseTimestamp,
@@ -176,7 +177,7 @@ export function computeScheduleSummary(
   };
 }
 
-export function formatNowMarkerLabel(date = new Date()): string {
+export function formatNowMarkerLabel(date = getAppNow()): string {
   return `NOW (${formatNowTimeInAppTimezone(date)})`;
 }
 

@@ -25,7 +25,7 @@ import {
   getDashboardRemainingSeconds,
   getPomodoroPhaseTotalSeconds,
   getPomodoroRemainingSeconds,
-  getSegmentElapsedSeconds,
+  getQuickClockSeconds,
   pauseSession,
   pomodoroCompleteFocusPhase,
   quickResumeFocus,
@@ -438,7 +438,9 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     ? deriveQuickPhase(quickSession)
     : "idle";
 
-  const quickElapsed = quickSession ? getSegmentElapsedSeconds(quickSession) : 0;
+  const quickElapsed = quickSession
+    ? getQuickClockSeconds(quickSession)
+    : 0;
   const quickTotals = quickSession
     ? computeQuickFocusSeconds(quickSession)
     : { focus: 0, break: 0 };

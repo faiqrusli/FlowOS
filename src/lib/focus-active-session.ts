@@ -508,8 +508,31 @@ export function buildCompletedPayload(session: StoredActiveFocusSession): {
   };
 }
 
+/**
+ * Continuous focused (execution) seconds — never resets within one session.
+ * Pause freezes this; break does not (break has its own segment clock).
+ */
+export function getQuickExecutionSeconds(
+  session: StoredActiveFocusSession
+): number {
+  return computeQuickFocusSeconds(session).focus;
+}
+
+/**
+ * Hero clock seconds: continuous focus while focusing; break segment while on break
+ * (same break display as before). Resume Focus continues from accumulated focus.
+ */
+export function getQuickClockSeconds(
+  session: StoredActiveFocusSession
+): number {
+  if (session.mode === "break") {
+    return getSegmentElapsedSeconds(session);
+  }
+  return getQuickExecutionSeconds(session);
+}
+
 export function formatQuickClock(session: StoredActiveFocusSession): string {
-  return formatTimerClock(getSegmentElapsedSeconds(session));
+  return formatTimerClock(getQuickClockSeconds(session));
 }
 
 export function formatPomodoroClock(session: StoredActiveFocusSession): string {
@@ -523,12 +546,7 @@ export function getDashboardRemainingSeconds(
     return getPomodoroRemainingSeconds(session);
   }
 
-  const segment = getSegmentElapsedSeconds(session);
-  if (session.mode === "break") {
-    return segment;
-  }
-
-  return segment;
+  return getQuickClockSeconds(session);
 }
 
 export function getActiveSessionStatusLabel(

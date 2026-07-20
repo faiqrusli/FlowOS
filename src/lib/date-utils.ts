@@ -1,6 +1,39 @@
 export const APP_TIMEZONE = "Asia/Singapore";
 export const APP_LOCALE = "en-SG";
 
+/** Dev-only: localStorage `flowos.fakeNow` or `NEXT_PUBLIC_FLOWOS_FAKE_NOW` in `.env.local`. */
+const FAKE_NOW_STORAGE_KEY = "flowos.fakeNow";
+
+function readFakeNowRaw(): string | null {
+  if (process.env.NODE_ENV !== "development") return null;
+
+  const fromEnv = process.env.NEXT_PUBLIC_FLOWOS_FAKE_NOW?.trim();
+  if (fromEnv) return fromEnv;
+
+  if (typeof window !== "undefined") {
+    try {
+      const raw = window.localStorage.getItem(FAKE_NOW_STORAGE_KEY);
+      if (raw?.trim()) return raw.trim();
+    } catch {
+      /* private mode / blocked storage */
+    }
+  }
+  return null;
+}
+
+/**
+ * App "now" for date headings, today keys, and clocks.
+ * Development only — production always uses the real clock.
+ */
+export function getAppNow(): Date {
+  const raw = readFakeNowRaw();
+  if (raw) {
+    const fake = new Date(raw);
+    if (!Number.isNaN(fake.getTime())) return fake;
+  }
+  return new Date();
+}
+
 export const DAYS_OF_WEEK = [
   "Sun",
   "Mon",
@@ -88,7 +121,7 @@ export function getDateKeyInTimezone(
 }
 
 export function getTodayDateString(timeZone: string = APP_TIMEZONE): string {
-  return getDateKeyInTimezone(new Date(), timeZone);
+  return getDateKeyInTimezone(getAppNow(), timeZone);
 }
 
 export function getYesterdayDateString(timeZone: string = APP_TIMEZONE): string {
@@ -134,12 +167,12 @@ export function formatRelativeDateLabel(
 }
 
 export function getTodayDayAbbrev(timeZone: string = APP_TIMEZONE): string {
-  const weekday = weekdayFormatter.format(new Date());
+  const weekday = weekdayFormatter.format(getAppNow());
   return WEEKDAY_TO_ABBREV[weekday] ?? weekday;
 }
 
 export function formatTodayHeading(timeZone: string = APP_TIMEZONE): string {
-  return todayHeadingFormatter.format(new Date());
+  return todayHeadingFormatter.format(getAppNow());
 }
 
 export function formatWeekdayLabel(
@@ -298,7 +331,7 @@ export function formatInAppTimezone(
   }).format(date);
 }
 
-export function getNowMinutesInAppTimezone(date = new Date()): number {
+export function getNowMinutesInAppTimezone(date = getAppNow()): number {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: APP_TIMEZONE,
     hour: "numeric",
@@ -314,7 +347,7 @@ export function getNowMinutesInAppTimezone(date = new Date()): number {
   return hour * 60 + minute;
 }
 
-export function formatNowTimeInAppTimezone(date = new Date()): string {
+export function formatNowTimeInAppTimezone(date = getAppNow()): string {
   return formatInAppTimezone(date, {
     hour: "numeric",
     minute: "2-digit",

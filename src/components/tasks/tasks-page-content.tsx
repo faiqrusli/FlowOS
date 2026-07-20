@@ -106,6 +106,7 @@ export function TasksPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timelineOpen, setTimelineOpen] = useState(false);
+  const [actionsHost, setActionsHost] = useState<HTMLDivElement | null>(null);
   const [todayViewDate, setTodayViewDate] = useState(getTodayDateString);
   const updateTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
     new Map(),
@@ -981,6 +982,10 @@ export function TasksPageContent() {
 
   return (
     <div className="relative flex h-full min-h-0">
+      <div
+        ref={setActionsHost}
+        className="pointer-events-none absolute top-2 right-2 z-20 [&_button]:pointer-events-auto"
+      />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {error && (
           <div className="mb-3 shrink-0">
@@ -993,6 +998,7 @@ export function TasksPageContent() {
           selectedTaskId={selectedTaskId}
           todayViewDate={todayViewDate}
           plannerActive={timelineOpen}
+          actionsHost={actionsHost}
           onToggleQuickPlanner={() =>
             setTimelineOpenWithLayoutAnimation((value) => !value)
           }
