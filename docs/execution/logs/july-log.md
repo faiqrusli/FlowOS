@@ -22,6 +22,23 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-21 — Implementation hold + docs cleanup
+
+**Branch:** `docs/hold-review-cleanup` (docs-only)
+
+**Shipped (docs):**
+- Root README + docs hub: **hold / review** framing, live demo + FEATURE_INVENTORY + CONTRIBUTING links
+- Visual authority: V3 family + Tokyo Night Warm; historical themes → `docs/archive/design/themes/` (stubs left in foundation)
+- Superseded runbooks → `docs/archive/runbooks/`; indexes refreshed to match july-log
+- Spec status headers updated (hierarchy, schedule break, notifications, Next Up, Day Engine deferred)
+- decision-log hold entry; M2 SRAI marked incomplete snapshot
+
+**Not done (deferred):** license file, README screenshots; `review/focus/*` left in place
+
+**Production:** unchanged — https://flowos-sage.vercel.app
+
+---
+
 ## 2026-07-20 — Tokyo Night / V3 polish + Settings 4/7 + reminders (merge)
 
 **Branch:** `tweak/tokyo-night-warm` → `main` (founder-approved)

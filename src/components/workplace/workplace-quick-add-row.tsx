@@ -17,6 +17,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useOptionalTaskBoardGroups } from "@/components/tasks/task-board-groups-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import { getTodayDateString } from "@/lib/date-utils";
@@ -30,23 +35,35 @@ type WorkplaceQuickAddRowProps = {
   onOpenTaskDetails: () => void;
 };
 
+/** Hold longer before showing — avoids flicker on pass-through hover. */
+const SHORTCUT_TOOLTIP_DELAY_MS = 700;
+
 function QuickAddHint({
   label,
+  shortcut,
   children,
 }: {
   label: string;
+  shortcut?: string;
   children: ReactNode;
 }) {
   return (
-    <span className="group/hint relative inline-flex max-w-full">
-      {children}
-      <span
-        role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-1.5 max-w-[14rem] -translate-x-1/2 rounded-md border border-border/60 bg-popover px-2 py-1 text-center text-[11px] leading-snug text-popover-foreground opacity-0 shadow-md transition-opacity duration-150 group-hover/hint:opacity-100 group-focus-within/hint:opacity-100"
+    <Tooltip>
+      <TooltipTrigger
+        delay={SHORTCUT_TOOLTIP_DELAY_MS}
+        render={<span className="inline-flex max-w-full" />}
       >
-        {label}
-      </span>
-    </span>
+        {children}
+      </TooltipTrigger>
+      <TooltipContent side="top" className="text-center">
+        <p>{label}</p>
+        {shortcut ? (
+          <p className="mt-1 font-mono text-[11px] tabular-nums text-muted-foreground">
+            {shortcut}
+          </p>
+        ) : null}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -154,12 +171,15 @@ export function WorkplaceQuickAddRow({
             </span>
           ) : null}
         </div>
-        <QuickAddHint label="Daily reflection in sidebar · Ctrl+Shift+R">
+        <QuickAddHint
+          label="Daily reflection in sidebar"
+          shortcut="Ctrl+Shift+R"
+        >
           <button
             type="button"
             onClick={openReflection}
             className={textActionClass}
-            aria-label="Reflection"
+            aria-label="Reflection (Ctrl+Shift+R)"
           >
             <NotebookPen className="size-3.5 shrink-0" />
             <span className="hidden sm:inline">Reflection</span>
@@ -202,13 +222,16 @@ export function WorkplaceQuickAddRow({
             </DropdownMenuContent>
           </DropdownMenu>
         </QuickAddHint>
-        <QuickAddHint label="Full task form — or Enter in the field to quick-add · Ctrl+Shift+A">
+        <QuickAddHint
+          label="Full task form — or Enter in the field to quick-add"
+          shortcut="Ctrl+Shift+A"
+        >
           <Button
             type="button"
             size="sm"
             onClick={handleAddClick}
             className="h-8 shrink-0 gap-1 rounded-lg px-2.5 text-[12px]"
-            aria-label="Add task"
+            aria-label="Add task (Ctrl+Shift+A)"
           >
             <ListPlus className="size-3.5" />
             <span className="hidden sm:inline">Add task</span>

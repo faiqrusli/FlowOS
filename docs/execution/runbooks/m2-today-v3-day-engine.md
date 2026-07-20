@@ -1,5 +1,6 @@
 # Today V3 — The Day Engine (owns all of Today until fully shipped)
 
+**Status:** **Deferred indefinitely** during implementation hold (2026-07-21). Do not start Phase C / Sessions 6–12 until the hold is lifted and founder re-approves. Early sessions (1–5) remain historical on `main` where shipped.  
 **Scope:** All of Today (`/`) — supersedes M2's Today-chrome scope for the duration of this runbook. Where V3 exceeds masterplan M2 closed scope, it is planned here and explicitly gated on founder decision-log approval before Phase C (see appendix) — it is not deferred, shrunk, or renamed to fit M2.
 **Authority:** [today-v3-greenfield-design.md](../../review/design/today-v3-greenfield-design.md) §4 (spec) and §13 (staged path) are the primary design source. [today-executive-review.md](../../review/design/today-executive-review.md) is the audit baseline for what's shipped vs. broken. [PRINCIPLES.md](../../foundation/governance/PRINCIPLES.md) is non-negotiable and wins any conflict with either design doc. [execution-masterplan.md](../../strategy/execution-masterplan.md) is reference only for sequencing sense, not a scope ceiling.
 **Repo root:** repository root (Next.js app).

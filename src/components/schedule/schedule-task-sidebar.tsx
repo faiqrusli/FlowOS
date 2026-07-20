@@ -230,9 +230,6 @@ export function ScheduleTaskSidebar({
         <div className="flex items-center justify-between gap-2">
           <div>
             <h2 className="text-sm font-semibold text-foreground">Later</h2>
-            <p className="text-[11px] text-muted-foreground">
-              Drag onto calendar to timebox
-            </p>
           </div>
           {onAutoscheduleAll && totalInbox > 0 && (
             <button

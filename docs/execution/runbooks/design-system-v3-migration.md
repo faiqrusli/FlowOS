@@ -1,8 +1,8 @@
 ﻿# Visual Design System v3.0 - Global Migration
 
-**Status:** Sessions 1–4 complete on branch — merge to `main` pending founder approval  
-**Scope:** Application-wide visual migration only. Implements [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) v3.0. Does **not** change product behaviour, persistence, routing, database logic, or feature architecture unless a visual replacement requires it.  
-**Authority:** [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) section 10 · [decision-log.md](../logs/decision-log.md) 2026-07-13 "Visual Design System v3.0". Historical baseline: [DESIGN_SYSTEM_v2.md](../../foundation/DESIGN_SYSTEM_v2.md).  
+**Status:** **Complete** — Sessions 1–4 merged to `main` (2026-07-13); palette later locked to Tokyo Night Warm + V3 Surface 0–10 (2026-07-20). No further migration sessions during implementation hold.  
+**Scope:** Application-wide visual migration only. Original target was navy [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) stub → [archive navy v3](../../archive/design/themes/DESIGN_SYSTEM_navy_v3.md). **Live authority now:** [DESIGN_SYSTEM_V3.md](../../foundation/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md). Does **not** change product behaviour, persistence, routing, database logic, or feature architecture unless a visual replacement requires it.  
+**Authority:** decision-log (2026-07-13 Visual Design System v3.0; 2026-07-19/20 Tokyo + V3 family). Historical: [archive/design/themes/](../../archive/design/themes/).  
 **Repo root:** repository root (Next.js app).  
 **Production baseline:** https://flowos-sage.vercel.app  
 **Docs path:** `docs/` (tracked in VCS)  
@@ -518,9 +518,10 @@ rg "shadow-\[" src/components
 
 ## Related documents
 
-- [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) - v3.0 authority
+- [DESIGN_SYSTEM_V3.md](../../foundation/DESIGN_SYSTEM_V3.md) + [Tokyo Night Warm](../../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) - live authority
+- [DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) - stub → archived navy v3
 - [CODE_STANDARDS.md](../../foundation/governance/CODE_STANDARDS.md) - styling rules
-- [m2-surface-hierarchy.md](./m2-surface-hierarchy.md) - historical v1 implementation
-- [m2-visual-design-v2.md](./m2-visual-design-v2.md) - historical v2 baseline
+- [m2-surface-hierarchy.md](./m2-surface-hierarchy.md) - stub → archive
+- [m2-visual-design-v2.md](./m2-visual-design-v2.md) - stub → archive
 
 *End of runbook. Do not change phase order without a decision-log entry.*

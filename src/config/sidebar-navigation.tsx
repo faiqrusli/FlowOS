@@ -13,6 +13,8 @@ export type SidebarNavItem = {
   label: string;
   href: string;
   icon: LucideIcon;
+  /** Optional global shortcut hint shown on hover / collapsed tooltip. */
+  shortcut?: string;
 };
 
 /** Primary home destination — sits alone above the nav divider. */
@@ -20,6 +22,7 @@ export const sidebarPrimaryItem: SidebarNavItem = {
   label: "Today",
   href: "/",
   icon: LayoutDashboard,
+  shortcut: "T",
 };
 
 /**

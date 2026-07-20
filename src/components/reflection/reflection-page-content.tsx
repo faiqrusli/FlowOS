@@ -117,10 +117,7 @@ export function ReflectionPageContent() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
-      <PageHeader
-        title="Reflection"
-        description="Review your day, capture insights, and build a calm evening ritual."
-      />
+      <PageHeader title="Reflection" />
 
       {error && <ErrorBanner message={error} />}
 

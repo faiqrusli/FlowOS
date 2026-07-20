@@ -78,10 +78,7 @@ export function FocusPageContent() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 pb-8">
-      <PageHeader
-        title="Focus"
-        description="Review, understand, and improve your focus. Deep work happens in Workplace."
-      />
+      <PageHeader title="Focus" />
 
       {error ? <ErrorBanner message={error} /> : null}
 

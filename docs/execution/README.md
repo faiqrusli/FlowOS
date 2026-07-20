@@ -1,10 +1,11 @@
 ﻿# FlowOS Execution Layer
 
 **Current milestone:** M2 — Founder Daily Driver  
-**Status:** Engineering Sessions 1–6 complete (July 4, 2026); Sessions 7–8 (recruiting + dogfooding) in progress  
-**Production:** https://flowos-sage.vercel.app
+**Status:** **Paused / review mode** (2026-07-21) — production dogfood + GitHub review + live demo; no large new feature runbooks until the hold is lifted.  
+**Production:** https://flowos-sage.vercel.app  
+**Live demo:** [runbooks/flowos-live-demo.md](./runbooks/flowos-live-demo.md) · [spec](../review/design/flowos-live-demo-spec.md)
 
-This folder is the index for **how FlowOS ships right now**. Strategy lives in the masterplan; these docs are the operating manual.
+This folder is the index for **how FlowOS ships**. Strategy lives in the masterplan; these docs are the operating manual.
 
 ---
 
@@ -23,22 +24,26 @@ This folder is the index for **how FlowOS ships right now**. Strategy lives in t
 | Milestone | Runbook | Status |
 |-----------|---------|--------|
 | M0 — Custody | (covered in masterplan) | Complete |
-| M1 — Deployed & Secure | [m1-ship-gate.md](./runbooks/m1-ship-gate.md) | **Complete** — RLS verified, production live |
-| M2 — Founder Daily Driver | [m2-founder-daily-driver.md](./runbooks/m2-founder-daily-driver.md) | **In progress** — Sessions 1–6 shipped |
-| M2 — Surface hierarchy | [m2-surface-hierarchy.md](./runbooks/m2-surface-hierarchy.md) | **Complete** — historical Sessions 1–5 baseline (2026-07-08) |
-| Visual Design System v2.0 | [DESIGN_SYSTEM_v2.md](../foundation/DESIGN_SYSTEM_v2.md) | Historical baseline; superseded |
-| Visual Design System v3.0 | [DESIGN_SYSTEM.md](../foundation/DESIGN_SYSTEM.md) | **Approved** — [design-system-v3-migration.md](./runbooks/design-system-v3-migration.md) ready |
-| M2 — Visual Design v2.0 | [m2-visual-design-v2.md](./runbooks/m2-visual-design-v2.md) | Historical baseline runbook; later sessions discarded |
-| M2 — Global navigation | [m2-global-navigation.md](./runbooks/m2-global-navigation.md) | Ready — deferred |
-| M2 — Today UX polish | [m2-today-ux-polish.md](./runbooks/m2-today-ux-polish.md) | **Complete** — production sign-off 2026-07-05 |
-| M2 — Today hierarchy refinement | [m2-today-hierarchy-refinement.md](./runbooks/m2-today-hierarchy-refinement.md) | **Ready** — refine current Today (Focus→Queue→Timeline); [spec](../review/design/today-page-hierarchy-refinement-spec.md) |
-| M3 — First Strangers | (masterplan Step 2) | Not started — recruiting prep underway |
+| M1 — Deployed & Secure | [m1-ship-gate.md](./runbooks/m1-ship-gate.md) | **Complete** |
+| M2 — Founder Daily Driver | [m2-founder-daily-driver.md](./runbooks/m2-founder-daily-driver.md) | **Paused** — engineering shipped; recruiting/dogfood open; hold for review |
+| M2 — Global navigation | [m2-global-navigation.md](./runbooks/m2-global-navigation.md) | **Complete** — on `main` 2026-07-10 |
+| M2 — Today UX polish | [m2-today-ux-polish.md](./runbooks/m2-today-ux-polish.md) | **Complete** — 2026-07-05 |
+| M2 — Today hierarchy refinement | [m2-today-hierarchy-refinement.md](./runbooks/m2-today-hierarchy-refinement.md) | **Complete** — merged via `tweak/today-focus-queue-layout` (2026-07-17) |
+| Schedule Break | [m2-schedule-break.md](./runbooks/m2-schedule-break.md) | **Complete** |
+| Design System V3 migration | [design-system-v3-migration.md](./runbooks/design-system-v3-migration.md) | **Complete** — merged; palette now Tokyo Night Warm + V3 Surface 0–10 |
+| Live demo (guest) | [flowos-live-demo.md](./runbooks/flowos-live-demo.md) | **Approved / in progress** — dedicated workstream, not an M2 exit gate |
+| Today V3 Day Engine | [m2-today-v3-day-engine.md](./runbooks/m2-today-v3-day-engine.md) | **Deferred indefinitely** during hold — aspirational rebuild |
+| M3 — First Strangers | (masterplan Step 2) | Not started — recruiting prep |
+
+**Historical runbooks (archive):** [../archive/runbooks/](../archive/runbooks/) — surface hierarchy, visual v2, Next Up V1, agent prompt.
+
+**Visual authority:** [DESIGN_SYSTEM_V3.md](../foundation/DESIGN_SYSTEM_V3.md) + [Tokyo Night Warm](../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md)
 
 **M2 recruiting:** [recruiting-pipeline.md](./ops/recruiting-pipeline.md)
 
 Runbook index: [runbooks/README.md](./runbooks/README.md)
 
-**After milestone exit:** Write or update SRAI review in [../review/milestones/](../review/milestones/) — see [../review/README.md](../review/README.md).
+**After milestone exit:** SRAI in [../review/milestones/](../review/milestones/) — see [../review/README.md](../review/README.md).
 
 ---
 
@@ -55,14 +60,12 @@ Runbook index: [runbooks/README.md](./runbooks/README.md)
 
 | Log | Purpose |
 |-----|---------|
-| [inbox.md](./logs/inbox.md) | Scratch UI/UX fixes — promote to runbook when scoped |
+| [inbox.md](./logs/inbox.md) | Scratch UI/UX fixes — promote when scoped |
 | [friction-log.md](./logs/friction-log.md) | Live founder friction from production use |
 | [decision-log.md](./logs/decision-log.md) | Product decisions with rationale |
 | [july-log.md](./logs/july-log.md) | July session narrative |
 
 Log index: [logs/README.md](./logs/README.md)
-
-**Historical friction audit (simulated, July 3):** [ux-friction-review.md](../archive/design/july-3/ux-friction-review.md) — superseded by live friction log for evidence.
 
 ---
 
@@ -80,7 +83,6 @@ From the masterplan — all must pass before M3:
 
 ## Governance (still in force)
 
-Release gates and decision rules are unchanged:
-
-- [governance/GATES.md](../foundation/governance/GATES.md) — metrics and release gates
+- [governance/GATES.md](../foundation/governance/GATES.md)
+- [governance/GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) — merge to `main` needs founder approval
 - [governance/](../foundation/governance/)

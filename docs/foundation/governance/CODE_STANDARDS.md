@@ -86,7 +86,7 @@ export function getChannelStyle(type, priority?) { … }
 
 ## Styling
 
-1. **Tokens first** — use CSS variables and semantic Tailwind classes from [globals.css](../../../src/app/globals.css), not page-specific hex, slate/gray, border, shadow, radius, or text-scale combinations. Follow the surface, type, spacing, state, primitive, and accessibility rules in [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md). During v3 migration, preserve compatibility aliases and follow the approved migration runbook.
+1. **Tokens first** — use CSS variables and semantic Tailwind classes from [globals.css](../../../src/app/globals.css), not page-specific hex, slate/gray, border, shadow, radius, or text-scale combinations. Follow [DESIGN_SYSTEM_V3.md](../DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) (Workspace / Interaction for layout and states).
 2. **Centralize channel colors** — schedule, habits, task groups go through `lib/*-appearance.ts` or `schedule-palette.ts`, not one-off hex in JSX.
 3. **No light theme** — dark-only; do not add theme switching.
 4. **Visible controls** — critical actions must not be hover-only ([PRINCIPLES.md](./PRINCIPLES.md) #10).

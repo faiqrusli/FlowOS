@@ -103,17 +103,13 @@ export function HabitsTodayChecklistCard({
 
   return (
     <section className="rounded-xl bg-surface-base px-4 py-5 sm:px-5">
-      <header className="space-y-1">
+      <header>
         <h2 className={typography.sectionTitle}>
           Today&apos;s habits{" "}
           <span className="font-medium tabular-nums text-foreground-secondary">
             {completed}/{habits.length}
           </span>
         </h2>
-        <p className={typography.meta}>
-          Check off each habit you&apos;ve completed today — not the routine
-          forever.
-        </p>
       </header>
 
       <div className="mt-4">

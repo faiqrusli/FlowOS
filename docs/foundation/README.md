@@ -1,28 +1,42 @@
 ﻿# FlowOS Foundation Documentation
 
-Product truth documents — vision, features, architecture.
+Product truth documents — vision, features, architecture, visual system.
 
-**Current execution:** [../execution/README.md](../execution/README.md) — M2 in progress  
-**Governance (5 files):** [governance/README.md](./governance/README.md)
+**Status:** Implementation hold for review — see [../execution/README.md](../execution/README.md)  
+**Governance:** [governance/README.md](./governance/README.md)
 
-**Last updated:** July 16, 2026 (Neutral Dark Visual Design System)
+**Last updated:** July 21, 2026 (hold cleanup — V3 + Tokyo authority)
 
 ---
 
-## Core documents (4)
+## Core documents
 
 | File | Purpose |
 |------|---------|
 | [PRODUCT_VISION.md](./PRODUCT_VISION.md) | North star, positioning, non-goals, target user |
 | [FEATURE_INVENTORY.md](./FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
 | [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt, deployment |
-| [DESIGN_SYSTEM_NEUTRAL_DARK.md](./DESIGN_SYSTEM_NEUTRAL_DARK.md) | Active Neutral Dark visual contract (implementation source). Prior: [v3.0 navy](./DESIGN_SYSTEM.md), [v2.0](./DESIGN_SYSTEM_v2.md), [v1.0](./DESIGN_SYSTEM_v1.md) |
 
 **Metrics and release gates:** [governance/GATES.md](./governance/GATES.md) (WAD, D7, alpha/beta thresholds)
 
 ---
 
-## Governance (5 active documents)
+## Visual system (current authority)
+
+| File | Purpose |
+|------|---------|
+| [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) | Philosophy, Surface 0–10, Soft Indigo brand |
+| [DESIGN_SYSTEM_V3_WORKSPACE.md](./DESIGN_SYSTEM_V3_WORKSPACE.md) | Shell, borderless workspace, per-module maps |
+| [DESIGN_SYSTEM_V3_INTERACTION.md](./DESIGN_SYSTEM_V3_INTERACTION.md) | Type, spacing, motion, states |
+| [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette / implementation contract |
+
+**Code truth:** `src/app/globals.css`
+
+Historical / alternate themes: [../archive/design/themes/](../archive/design/themes/) (v1, v2, Neutral Dark, Gruvbox, Everforest, Borderless snapshot, legacy navy stub path).
+
+---
+
+## Governance
 
 | File | Purpose |
 |------|------|
@@ -31,6 +45,7 @@ Product truth documents — vision, features, architecture.
 | [QUALITY_GATES.md](./governance/QUALITY_GATES.md) | Definition of done |
 | [ENGINEERING.md](./governance/ENGINEERING.md) | Technical tradeoffs |
 | [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md) | Code conventions (TS, React, styling) |
+| [GIT_WORKFLOW.md](./governance/GIT_WORKFLOW.md) | Branches; merge to `main` needs founder approval |
 
 ---
 
@@ -39,9 +54,8 @@ Product truth documents — vision, features, architecture.
 | File | Purpose |
 |------|---------|
 | [execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5 |
-| [m2-founder-daily-driver.md](../execution/runbooks/m2-founder-daily-driver.md) | Current runbook |
+| [execution/README.md](../execution/README.md) | Ops index (hold / review mode) |
 | [review/milestones/](../review/milestones/) | SRAI reviews after milestone exit |
-| [recruiting-pipeline.md](../execution/ops/recruiting-pipeline.md) | M3 alpha recruiting |
 | [decision-log.md](../execution/logs/decision-log.md) | Product decisions |
 | [friction-log.md](../execution/logs/friction-log.md) | Live friction |
 

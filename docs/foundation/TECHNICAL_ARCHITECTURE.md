@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For the active visual contract and its implementation status, see [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md); the July 3 project-state document is historical only.
+Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For the active visual contract, see [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md); code truth is `src/app/globals.css`. The July 3 project-state document is historical only.
 
 ---
 
@@ -101,10 +101,12 @@ Types: `flowos/src/types/database.ts`
 
 ## Central design libraries
 
-Visual semantics are specified by [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md). Its v3 migration is pending, so these remain the current implementation helpers:
+Visual semantics are specified by [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md). Code truth: `src/app/globals.css`.
 
 | Library | Purpose |
 |---------|---------|
+| `lib/theme/surface-classes.ts` | Semantic surface helpers |
+| `lib/theme/tokens.ts` | Token aliases |
 | `lib/task-group-appearance.ts` | Group color dots |
 | `lib/schedule-palette.ts` | Schedule channel colors |
 | `lib/timeline-habit-appearance.ts` | Habit row styling |

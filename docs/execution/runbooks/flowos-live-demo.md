@@ -34,10 +34,11 @@ Full matrices: spec §16–§21.
 
 ## Ops prerequisites (before P2)
 
-- [ ] Enable **Anonymous Auth** on the Supabase project  
-- [ ] Confirm service-role path for purge / auth user delete  
+- [ ] Enable **Anonymous Auth** on the Supabase project (Auth → Providers → Anonymous)  
+- [ ] Run `supabase/demo_feedback.sql` on the project  
+- [ ] Confirm `tasks.notification_enabled` / `notification_lead_minutes` migrated (`supabase/tasks_notification_lead.sql`)  
+- [ ] Confirm service-role path for purge / auth user delete (P6 TTL job)  
 - [ ] Note expected row cost after seed pack size is known  
-- [ ] Confirm `tasks.notification_enabled` / `notification_lead_minutes` migrated on prod (`supabase/tasks_notification_lead.sql`)  
 
 ---
 
@@ -49,21 +50,21 @@ Work in order. Each phase ends with local `npm run build` && `npm run lint` on t
 
 **Deliverable:** Typed seed + relative date resolver.
 
-- [ ] `src/lib/demo/` (or equivalent): `DEMO_SEED_VERSION`, persona constants, seed data  
-- [ ] Relative date helper from `demoAnchorDate`  
-- [ ] Entity volumes/fields per spec §17  
-- [ ] **Schedule reminders:** clone-time offsets per spec §21 (`T0+6m` task, habit timed, etc.)  
-- [ ] Unit tests for date offsets + ID remap (optional but preferred)
+- [x] `src/lib/demo/` (or equivalent): `DEMO_SEED_VERSION`, persona constants, seed data  
+- [x] Relative date helper from `demoAnchorDate`  
+- [x] Entity volumes/fields per spec §17  
+- [x] **Schedule reminders:** clone-time offsets per spec §21 (`T0+6m` task, habit timed, etc.)  
+- [x] Unit tests for date offsets + ID remap (optional but preferred)
 
 ### P2 — Guest session shell
 
 **Deliverable:** Enter Demo → clone → banner → refresh restore → expiry → restart/exit.
 
-- [ ] Landing CTA: Enter Demo Workspace  
-- [ ] Anonymous sign-in + metadata (`is_demo`, expiry, seed version, anchor)  
-- [ ] `cloneSeed` / `purgeDemoUserData` (§19)  
-- [ ] Client wipe (§18) including `flowos.schedule-reminders.delivered`  
-- [ ] Demo banner + account menu Restart / Exit / Feedback  
+- [x] Landing CTA: Enter Demo Workspace  
+- [x] Anonymous sign-in + metadata (`is_demo`, expiry, seed version, anchor)  
+- [x] `cloneSeed` / `purgeDemoUserData` (§19)  
+- [x] Client wipe (§18) including `flowos.schedule-reminders.delivered`  
+- [x] Demo banner + account menu Restart / Exit / Feedback  
 
 ### P3 — Surface QA
 
@@ -78,15 +79,15 @@ Work in order. Each phase ends with local `npm run build` && `npm run lint` on t
 
 **Deliverable:** `demo_feedback` table + UI.
 
-- [ ] Migration + RLS (insert public; select public & not hidden)  
-- [ ] Comment / rating / bug form  
-- [ ] Rate limit + honeypot + max length  
-- [ ] Public list (newest first)  
+- [x] Migration + RLS (insert public; select public & not hidden) — run `supabase/demo_feedback.sql`  
+- [x] Comment / rating / bug form  
+- [x] Rate limit + honeypot + max length  
+- [x] Public list (newest first)  
 
 ### P5 — Landing polish
 
-- [ ] Login/marketing CTA + disclaimer  
-- [ ] Real Sign in / Register still available  
+- [x] Login/marketing CTA + disclaimer  
+- [x] Real Sign in / Register still available  
 
 ### P6 — Hardening
 
