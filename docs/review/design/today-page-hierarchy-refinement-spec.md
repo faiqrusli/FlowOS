@@ -1,6 +1,6 @@
 # Today Page Visual Hierarchy & Execution Flow Refinement
 
-**Status:** Proposed for Implementation  
+**Status:** **Shipped** — hierarchy refinement merged to `main` (2026-07-17). Spec retained as historical contract.  
 **Scope:** Today / Focus workspace (`/`)  
 **Priority:** High  
 **Design direction:** Preserve current functionality while adopting stronger visual hierarchy and the PLAN → COMMIT → EXECUTE model.  

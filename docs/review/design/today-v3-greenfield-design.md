@@ -1,7 +1,7 @@
 # FlowOS Today V3 — Greenfield Design: the Day Engine
 
 **Date:** July 6, 2026  
-**Status:** Design exercise — staged implementation path in §13  
+**Status:** Design exercise / aspirational Day Engine — **deferred indefinitely** during implementation hold (2026-07-21). Not current work. See [m2-today-v3-day-engine.md](../../execution/runbooks/m2-today-v3-day-engine.md).  
 **Source artifact:** `flowos-today-v3-greenfield-design.canvas.tsx`  
 **Inputs treated as evidence, not truth:** ChatGPT.md, both mockups/screenshots, PRINCIPLES.md, FEATURE_INVENTORY.md, shipped code, and the prior executive review.
 

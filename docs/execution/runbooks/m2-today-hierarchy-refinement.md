@@ -1,5 +1,6 @@
 # M2 — Today Hierarchy & Execution Flow Refinement
 
+**Status:** **Complete** — merged to `main` via `tweak/today-focus-queue-layout` (2026-07-17). No further sessions during implementation hold.  
 **Scope:** M2 addendum — visual hierarchy and execution-flow refinement of the existing Today / Focus workspace. Preserves current functional architecture; does not rebuild Today as the Day Engine.  
 **Authority:** Spec [today-page-hierarchy-refinement-spec.md](../../review/design/today-page-hierarchy-refinement-spec.md). Does not add, remove, defer, or weaken any M2 exit criterion from [execution-masterplan.md](../../strategy/execution-masterplan.md).  
 **Repo root:** repository root (Next.js app).  

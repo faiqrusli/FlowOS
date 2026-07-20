@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Document type** | Feature spec |
-| **Status** | Proposed — MVP scope |
+| **Status** | **Partial ship** — Schedule reminders MVP on `main` (2026-07-20: in-app toast + browser Notification API). Full notification center still gated. |
 | **Date** | July 20, 2026 |
 | **Related** | `notification_lead_minutes` on `tasks` · [WorkplaceNotificationHost](../../foundation/FEATURE_INVENTORY.md) · Today page |
 

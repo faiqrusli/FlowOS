@@ -1,7 +1,8 @@
 # Design Phase Reviews (Historical)
 
 **Status:** Complete through Phase 2 (July 2026) — frozen in archive  
-**Active reviews:** Use [../milestones/](../milestones/) for M0–M5 execution
+**Active reviews:** Use [../milestones/](../milestones/) for M0–M5 execution  
+**Hold:** Large new design phases deferred while implementation is paused for review.
 
 The design program (visual system, interaction consistency, accent language) ran **before** the execution masterplan. Its review artifacts live in the archive; this index is the entry point from `docs/review/`.
 
@@ -37,18 +38,22 @@ Read each phase in order: **review → spec → implementation → post-review**
 | [AUDIT_HISTORY.md](../../archive/design/july-3/AUDIT_HISTORY.md) | Decision rationale index |
 | [CHANGELOG.md](../../archive/design/july-3/CHANGELOG.md) | Chronological design evolution |
 
-### Today page (July 2026)
+### Specs (July 2026)
 
-| Document | Source canvas | Role |
-|----------|---------------|------|
-| [today-executive-review.md](./today-executive-review.md) | `flowos-today-executive-review.canvas.tsx` | ChatGPT proposal vs shipped Today — audit, gap analysis, V2 convergence, 80/20 plan |
-| [today-v3-greenfield-design.md](./today-v3-greenfield-design.md) | `flowos-today-v3-greenfield-design.canvas.tsx` | First-principles Day Engine design (Concept B: NOW + NEXT + rest) |
-| [today-page-hierarchy-refinement-spec.md](./today-page-hierarchy-refinement-spec.md) | — | Visual hierarchy + PLAN→COMMIT→EXECUTE refinement of current Today (not a rebuild) |
-| [schedule-break-modal-spec.md](./schedule-break-modal-spec.md) | — | Schedule Break modal for quick focus — user-initiated reminders, not Pomodoro |
-| [notification-system-mvp-spec.md](./notification-system-mvp-spec.md) | — | Scheduled task/habit reminders — in-app toast + browser Notification API (MVP) |
-| [flowos-live-demo-spec.md](./flowos-live-demo-spec.md) | — | Guest live demo v1.2 — **approved**; includes schedule reminders MVP · runbook [flowos-live-demo.md](../../execution/runbooks/flowos-live-demo.md) |
+| Document | Status | Role |
+|----------|--------|------|
+| [today-executive-review.md](./today-executive-review.md) | Review complete | ChatGPT proposal vs shipped Today |
+| [today-page-hierarchy-refinement-spec.md](./today-page-hierarchy-refinement-spec.md) | **Shipped** | Hierarchy + PLAN→COMMIT→EXECUTE of current Today |
+| [schedule-break-modal-spec.md](./schedule-break-modal-spec.md) | **Shipped** | Schedule Break modal |
+| [notification-system-mvp-spec.md](./notification-system-mvp-spec.md) | **Partial** | Reminders MVP shipped; center gated |
+| [flowos-live-demo-spec.md](./flowos-live-demo-spec.md) | **Approved** | Guest live demo v1.2 · [runbook](../../execution/runbooks/flowos-live-demo.md) |
+| [today-v3-greenfield-design.md](./today-v3-greenfield-design.md) | **Deferred** | Day Engine rebuild — not current work |
 
-**Authoritative visual system:** [../../foundation/DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) (v3.0) — global semantic visual contract; implementation via [design-system-v3-migration.md](../../execution/runbooks/design-system-v3-migration.md). Historical: [v2.0](../../foundation/DESIGN_SYSTEM_v2.md), [v1.0](../../foundation/DESIGN_SYSTEM_v1.md).
+**Retired after ship:** Application shell navigation spec/runbook — deleted after Jul 17 merge; see [july-log.md](../../execution/logs/july-log.md).
+
+**Authoritative visual system:** [DESIGN_SYSTEM_V3.md](../../foundation/DESIGN_SYSTEM_V3.md) · [Tokyo Night Warm](../../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) · Workspace · Interaction. Historical themes: [archive/design/themes/](../../archive/design/themes/).
+
+**Superseded Next Up V1:** [archive/runbooks/next-up-queue-spec.md](../../archive/runbooks/next-up-queue-spec.md) · Living: [design/focus/next-up.md](../../design/focus/next-up.md)
 
 **Git anchors:** Phase 0 `5fc780a` · Phase 1 `04fe227` · Phase 2 `9f7e7c4`
 
@@ -56,7 +61,7 @@ Read each phase in order: **review → spec → implementation → post-review**
 
 ## Future design work
 
-If a new design phase runs (e.g. visual polish after M3), create:
+If a new design phase runs after the hold is lifted:
 
 1. Review doc in `docs/review/design/` (or archive when frozen)  
 2. Follow [../template.md](../template.md) SRAI structure  

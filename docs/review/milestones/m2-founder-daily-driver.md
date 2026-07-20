@@ -2,7 +2,9 @@
 
 **Runbook:** [m2-founder-daily-driver.md](../../execution/runbooks/m2-founder-daily-driver.md)  
 **Review date:** _pending M2 exit_  
-**Verdict:** **In progress** (engineering Sessions 1–6 shipped; Sessions 7–8 open)
+**Verdict:** **Incomplete snapshot** — frozen at Jul 4 engineering sessions; later Jul 17–20 ships (Today hierarchy, shell, V3/Tokyo, reminders) are in [july-log.md](../../execution/logs/july-log.md) / [FEATURE_INVENTORY.md](../../foundation/FEATURE_INVENTORY.md). Full SRAI rewrite deferred until M2 exit or hold lift.
+
+**Hold (2026-07-21):** Implementation paused for GitHub + live-demo review. Do not treat this file as up-to-date scope truth.
 
 ---
 
@@ -16,13 +18,15 @@
 4. Founder uses hosted FlowOS **≥ 5 days/week**  
 5. **≥ 3 recruiting candidates** in pipeline  
 
-### Shipped so far (July 4, 2026)
+### Shipped so far (July 4, 2026 snapshot — incomplete)
 
 | Session area | Status | Notes |
 |--------------|--------|-------|
 | Sessions 1–6 (engineering) | Shipped | Today home, routing, capture, focus UI — see runbook |
 | Session 7 (recruiting) | Open | [recruiting-pipeline.md](../../execution/ops/recruiting-pipeline.md) |
 | Session 8 (dogfooding) | Open | [friction-log.md](../../execution/logs/friction-log.md) |
+
+**Also on `main` after this snapshot (see july-log):** Today hierarchy B1–B4, application shell, Design System V3 + Tokyo Night Warm, schedule reminders MVP, action toasts, Settings surfaces lock.
 
 ---
 

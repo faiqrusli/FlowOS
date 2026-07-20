@@ -1,9 +1,9 @@
 # FlowOS — Schedule Break Modal
 
 **Date:** July 7, 2026  
-**Status:** Spec captured — not implemented  
-**Target surface:** Focus timer (primary: Fable greenfield `/fable` focus hero; eventual: production `workplace-focus-card.tsx` quick-focus tab)  
-**Related code:** `focus-session-context.tsx`, `focus-active-session.ts`, `fable5-focus-hero.tsx`, `workplace-focus-card.tsx`
+**Status:** **Shipped** — Schedule Break modal on production Focus (2026-07). Spec retained as historical contract.  
+**Target surface:** Focus timer (`workplace-focus-card.tsx` / schedule-break modal)  
+**Related code:** `focus-session-context.tsx`, `focus-scheduled-break.ts`, `schedule-break-modal.tsx`
 
 ---
 

@@ -1,6 +1,6 @@
 ﻿# Start Here — Engineer
 
-~15 minute path to understand the codebase and current execution work.
+~15 minute path to understand the codebase. **Implementation hold:** prefer small fixes; do not open large runbooks unless the founder lifts the pause.
 
 ---
 
@@ -10,10 +10,13 @@
 |------|-----|
 | [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | What's shipped, partial, and deferred |
 | [TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) | Stack, data model, auth, known debt |
-| [DESIGN_SYSTEM.md](../foundation/DESIGN_SYSTEM.md) | Active visual contract; [v3 migration runbook](../execution/runbooks/design-system-v3-migration.md) |
-| [execution/README.md](../execution/README.md) | Current milestone and runbooks |
+| [DESIGN_SYSTEM_V3.md](../foundation/DESIGN_SYSTEM_V3.md) | Visual philosophy + Surface 0–10 |
+| [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract |
+| [execution/README.md](../execution/README.md) | Hold / review mode + runbook status |
 
-**Do not use alone:** [archive/design/july-3/project-state-july-2026.md](../archive/design/july-3/project-state-july-2026.md) — frozen at July 3 (Phase 2). Use feature inventory + execution index instead.
+**Code truth for paint:** `src/app/globals.css`
+
+**Do not use alone:** [archive/design/july-3/project-state-july-2026.md](../archive/design/july-3/project-state-july-2026.md) — frozen at July 3. Use feature inventory + execution index instead.
 
 ---
 
@@ -33,15 +36,18 @@ npm run dev
 
 ---
 
-## 3. If you're shipping M2/M3 work (5 min)
+## 3. If you're shipping work (5 min)
+
+While the hold is on, keep scope tiny (docs, bugs, demo polish).
 
 | Read | Why |
 |------|-----|
-| [execution-masterplan.md](../strategy/execution-masterplan.md) | Scope rules — what's in/out of current milestone |
-| [m2-founder-daily-driver.md](../execution/runbooks/m2-founder-daily-driver.md) | Session dependencies and verification steps |
-| [m1-ship-gate.md](../execution/runbooks/m1-ship-gate.md) | Deploy cadence, CI, RLS expectations |
+| [CONTRIBUTING.md](../../CONTRIBUTING.md) | Hold rules + branch expectations |
+| [execution-masterplan.md](../strategy/execution-masterplan.md) | Scope rules — what's in/out |
+| [GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Branch per change; merge to `main` needs founder yes |
+| [flowos-live-demo.md](../execution/runbooks/flowos-live-demo.md) | Guest demo workstream (allowed under hold) |
 
-**Deploy cadence:** `npm run build` + `npm run lint` → commit → push → verify https://flowos-sage.vercel.app
+**Deploy cadence:** `npm run build` + `npm run lint` → commit → push branch → ask founder before `main`
 
 ---
 
@@ -62,7 +68,7 @@ npm run dev
 
 | Read | Why |
 |------|-----|
-| [governance/GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Branch per session; merge to `main` needs your yes |
+| [governance/GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Branch per session; merge to `main` needs founder yes |
 | [governance/ENGINEERING.md](../foundation/governance/ENGINEERING.md) | How to evaluate engineering choices |
 | [governance/CODE_STANDARDS.md](../foundation/governance/CODE_STANDARDS.md) | Folder layout, TS/React, styling, pre-merge checklist |
 | [governance/QUALITY_GATES.md](../foundation/governance/QUALITY_GATES.md) | What must pass before ship |
@@ -72,7 +78,8 @@ npm run dev
 
 ## Design history (reference only)
 
-Visual design phases 0–2 are complete. Read for context, not current plan:
+Visual design phases 0–2 and alternate themes are archived:
 
 - [archive/design/july-3/README.md](../archive/design/july-3/README.md)
-- [ux-friction-review.md](../archive/design/july-3/ux-friction-review.md) — July 3 simulated audit; live evidence is [friction-log.md](../execution/logs/friction-log.md)
+- [archive/design/themes/](../archive/design/themes/)
+- Live friction: [friction-log.md](../execution/logs/friction-log.md)

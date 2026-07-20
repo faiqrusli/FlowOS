@@ -1,11 +1,10 @@
 # Focus Next Up — Living Design Specification
 
-**Status:** Living specification — implementation in progress  
-**Last updated:** July 10, 2026  
+**Status:** Living specification — **Shipped** (Next Up V2 on production). Refine only under hold; do not reopen V1 queue plan.  
+**Last updated:** July 21, 2026 (status pass)  
 **Owner:** FlowOS Product  
-**Primary surface:** Today → Workplace → Quick Focus  
-**Implementation branch:** `tweak/recover-next-up-queue`  
-**Authoritative decisions:** [Decision log](../../execution/logs/decision-log.md#2026-07-10--next-up-v2-persistent-task-execution-queue) wins if this document conflicts with it.
+**Primary surface:** Today → Workplace → Quick Focus / Queue  
+**Authoritative decisions:** [Decision log](../../execution/logs/decision-log.md) wins if this document conflicts with it.
 
 ---
 
