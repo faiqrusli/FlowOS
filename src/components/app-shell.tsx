@@ -12,7 +12,9 @@ import { FocusSessionProvider } from "@/contexts/focus-session-context";
 import { ScheduleReminderProvider } from "@/contexts/schedule-reminder-context";
 import { SettingsModalProvider } from "@/contexts/settings-modal-context";
 import { ActionToastProvider } from "@/contexts/action-toast-context";
+import { DemoSessionProvider } from "@/contexts/demo-session-context";
 import { ScheduleReminderToastHost } from "@/components/notifications/schedule-reminder-toast-host";
+import { DemoWorkspaceBanner } from "@/components/demo/demo-workspace-banner";
 import { useGlobalShortcuts } from "@/hooks/use-global-shortcuts";
 import { cn } from "@/lib/utils";
 import {
@@ -43,26 +45,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <ScheduleReminderProvider>
         <SettingsModalProvider>
           <ActionToastProvider>
-            <GlobalRightSidebarProvider>
-              <AppShellShortcuts />
-              <QuickCaptureDialog />
-              <GlobalFloatingNotes />
-              <ScheduleReminderToastHost />
+            <DemoSessionProvider>
+              <GlobalRightSidebarProvider>
+                <AppShellShortcuts />
+                <QuickCaptureDialog />
+                <GlobalFloatingNotes />
+                <ScheduleReminderToastHost />
 
-              {/* Canvas workspace; left/right chrome use Navigation. */}
-              <div className="flex h-dvh overflow-hidden bg-surface-canvas">
-                <AppSidebar
-                  mobileOpen={mobileNavOpen}
-                  onMobileOpenChange={setMobileNavOpen}
-                />
+                {/* Canvas workspace; left/right chrome use Navigation. */}
+                <div className="flex h-dvh overflow-hidden bg-surface-canvas">
+                  <AppSidebar
+                    mobileOpen={mobileNavOpen}
+                    onMobileOpenChange={setMobileNavOpen}
+                  />
 
-                <div className="flex min-h-0 min-w-0 flex-1 flex-col border-l-0 bg-surface-canvas">
-                  <main
-                    className={cn(
-                      "flow-workspace min-h-0 flex-1 overflow-x-hidden overscroll-y-contain border-l-0",
-                      pageBleed ? "overflow-hidden" : "overflow-y-auto",
-                    )}
-                  >
+                  <div className="flex min-h-0 min-w-0 flex-1 flex-col border-l-0 bg-surface-canvas">
+                    <DemoWorkspaceBanner />
+                    <main
+                      className={cn(
+                        "flow-workspace min-h-0 flex-1 overflow-x-hidden overscroll-y-contain border-l-0",
+                        pageBleed ? "overflow-hidden" : "overflow-y-auto",
+                      )}
+                    >
                     {/* Gutter only — attaches workspace to rails (not page padding). */}
                     <div
                       className={cn(
@@ -99,6 +103,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
               <AppSettingsModal />
             </GlobalRightSidebarProvider>
+            </DemoSessionProvider>
           </ActionToastProvider>
         </SettingsModalProvider>
       </ScheduleReminderProvider>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -8,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +32,13 @@ export function HoldRepeatStepButton({
 }: HoldRepeatStepButtonProps) {
   const timeoutRef = useRef<number | null>(null);
   const intervalRef = useRef<number | null>(null);
+  const onStepRef = useRef(onStep);
+  /** True after pointerdown stepped — skip the following synthetic click. */
+  const skipClickRef = useRef(false);
+
+  useEffect(() => {
+    onStepRef.current = onStep;
+  }, [onStep]);
 
   const clearTimers = useCallback(() => {
     if (timeoutRef.current !== null) {
@@ -47,12 +54,14 @@ export function HoldRepeatStepButton({
   useEffect(() => clearTimers, [clearTimers]);
 
   const startHold = useCallback(() => {
-    onStep();
+    onStepRef.current();
     clearTimers();
     timeoutRef.current = window.setTimeout(() => {
-      intervalRef.current = window.setInterval(onStep, HOLD_REPEAT_INTERVAL_MS);
+      intervalRef.current = window.setInterval(() => {
+        onStepRef.current();
+      }, HOLD_REPEAT_INTERVAL_MS);
     }, HOLD_INITIAL_DELAY_MS);
-  }, [clearTimers, onStep]);
+  }, [clearTimers]);
 
   return (
     <Button
@@ -64,15 +73,32 @@ export function HoldRepeatStepButton({
       className={className}
       onClick={() => {
         if (disabled) return;
-        onStep();
+        if (skipClickRef.current) {
+          skipClickRef.current = false;
+          return;
+        }
+        onStepRef.current();
       }}
       onPointerDown={(event) => {
+        if (event.button !== 0) return;
+        // Suppress ghost click so we don't double-step with onClick.
         event.preventDefault();
         if (disabled) return;
+        skipClickRef.current = true;
         startHold();
       }}
-      onPointerUp={clearTimers}
+      onPointerUp={() => {
+        clearTimers();
+        // If preventDefault suppressed the click, drop the skip flag after the event loop.
+        window.setTimeout(() => {
+          skipClickRef.current = false;
+        }, 0);
+      }}
       onPointerLeave={clearTimers}
+      onPointerCancel={() => {
+        clearTimers();
+        skipClickRef.current = false;
+      }}
     >
       {children}
     </Button>

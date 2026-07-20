@@ -211,13 +211,22 @@ function SidebarNavLink({
       </span>
       <span
         className={cn(
-          "min-w-0 flex-1 truncate whitespace-nowrap pr-2.5 transition-opacity duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "min-w-0 flex-1 truncate whitespace-nowrap transition-opacity duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+          item.shortcut && !collapsed ? "pr-1" : "pr-2.5",
           collapsed ? "opacity-0" : "opacity-100",
         )}
         aria-hidden={collapsed}
       >
         {item.label}
       </span>
+      {item.shortcut && !collapsed ? (
+        <kbd
+          className="mr-2 shrink-0 rounded-md bg-surface-base px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground tabular-nums opacity-0 transition-opacity duration-150 group-hover/nav:opacity-100"
+          aria-hidden
+        >
+          {item.shortcut}
+        </kbd>
+      ) : null}
     </>
   );
 
@@ -230,7 +239,14 @@ function SidebarNavLink({
           <Link
             href={item.href}
             onClick={onNavigate}
-            aria-label={collapsed ? item.label : undefined}
+            aria-label={
+              collapsed
+                ? item.shortcut
+                  ? `${item.label} (${item.shortcut})`
+                  : item.label
+                : undefined
+            }
+            aria-keyshortcuts={item.shortcut}
             aria-current={isActive ? "page" : undefined}
             className={linkClassName}
           />
@@ -244,7 +260,14 @@ function SidebarNavLink({
           sideOffset={8}
           className={navTooltipContentClass}
         >
-          {item.label}
+          <span className="inline-flex items-center gap-2">
+            {item.label}
+            {item.shortcut ? (
+              <kbd className="rounded-md bg-surface-base px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground tabular-nums">
+                {item.shortcut}
+              </kbd>
+            ) : null}
+          </span>
         </TooltipContent>
       ) : null}
     </Tooltip>

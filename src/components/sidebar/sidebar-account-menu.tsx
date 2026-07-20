@@ -4,7 +4,9 @@ import {
   BookOpen,
   ChevronDown,
   LogOut,
+  MessageSquarePlus,
   Palette,
+  RotateCcw,
   Settings,
   UserRound,
 } from "lucide-react";
@@ -16,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSettingsModal } from "@/contexts/settings-modal-context";
+import { useDemoSession } from "@/contexts/demo-session-context";
 import type { SettingsModalSection } from "@/types/settings-modal";
 import { cn } from "@/lib/utils";
 import {
@@ -46,6 +49,8 @@ export function SidebarAccountMenu({
   compact = false,
 }: SidebarAccountMenuProps) {
   const { openSettings } = useSettingsModal();
+  const { isDemo, busy, openFeedback, restartDemo, exitDemo, remainingLabel } =
+    useDemoSession();
 
   function openSection(section: SettingsModalSection) {
     onNavigate?.();
@@ -64,7 +69,6 @@ export function SidebarAccountMenu({
               <DropdownMenuTrigger
                 aria-label={compact ? displayName : undefined}
                 className={cn(
-                  // Quiet on chrome — menu popover carries card elevation, not the trigger.
                   "group/account relative flex h-11 w-full items-center overflow-hidden rounded-xl text-left transition-colors duration-150 ease-out",
                   compact
                     ? "border-transparent bg-transparent hover:bg-surface-ghost-hover"
@@ -98,7 +102,9 @@ export function SidebarAccountMenu({
                   {displayName}
                 </p>
                 <p className="truncate text-[11px] leading-tight text-muted-foreground">
-                  {userRole}
+                  {isDemo && remainingLabel
+                    ? `${userRole} · ${remainingLabel} left`
+                    : userRole}
                 </p>
               </div>
               <ChevronDown
@@ -152,18 +158,59 @@ export function SidebarAccountMenu({
             <BookOpen />
             About
           </DropdownMenuItem>
-          <DropdownMenuSeparator className="my-1.5" />
-          <DropdownMenuItem
-            disabled={signingOut}
-            className="rounded-md px-2.5 py-2 text-destructive data-highlighted:bg-destructive/10 data-highlighted:text-destructive"
-            onClick={() => {
-              onNavigate?.();
-              void onLogout();
-            }}
-          >
-            <LogOut />
-            {signingOut ? "Signing out…" : "Log Out"}
-          </DropdownMenuItem>
+          {isDemo ? (
+            <>
+              <DropdownMenuSeparator className="my-1.5" />
+              <DropdownMenuItem
+                className="rounded-md px-2.5 py-2"
+                disabled={busy}
+                onClick={() => {
+                  onNavigate?.();
+                  openFeedback();
+                }}
+              >
+                <MessageSquarePlus />
+                Feedback
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="rounded-md px-2.5 py-2"
+                disabled={busy}
+                onClick={() => {
+                  onNavigate?.();
+                  void restartDemo();
+                }}
+              >
+                <RotateCcw />
+                Restart Demo Workspace
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={busy || signingOut}
+                className="rounded-md px-2.5 py-2 text-destructive data-highlighted:bg-destructive/10 data-highlighted:text-destructive"
+                onClick={() => {
+                  onNavigate?.();
+                  void exitDemo();
+                }}
+              >
+                <LogOut />
+                {busy ? "Exiting…" : "Exit Demo"}
+              </DropdownMenuItem>
+            </>
+          ) : (
+            <>
+              <DropdownMenuSeparator className="my-1.5" />
+              <DropdownMenuItem
+                disabled={signingOut}
+                className="rounded-md px-2.5 py-2 text-destructive data-highlighted:bg-destructive/10 data-highlighted:text-destructive"
+                onClick={() => {
+                  onNavigate?.();
+                  void onLogout();
+                }}
+              >
+                <LogOut />
+                {signingOut ? "Signing out…" : "Log Out"}
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

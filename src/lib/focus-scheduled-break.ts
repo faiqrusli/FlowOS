@@ -53,11 +53,13 @@ export function getBreakAtMenuOptions(currentFocusMinutes: number): BreakAtMenuO
 
 /** Next preset strictly greater than current focus; falls back to +30 extend. */
 export function getDefaultBreakAtMinutes(currentFocusMinutes: number): number {
+  const min = getMinBreakAtMinutes(currentFocusMinutes);
   const options = getBreakAtMenuOptions(currentFocusMinutes);
-  return options[0]?.minutes ?? getMinBreakAtMinutes(currentFocusMinutes);
+  const preferred = options[0]?.minutes ?? min;
+  return Math.max(preferred, min);
 }
 
-/** Lowest valid "Break at" value for the stepper: next 5-min step above current focus. */
+/** Lowest valid "Break at" value for the stepper: next step above current focus. */
 export function getMinBreakAtMinutes(currentFocusMinutes: number): number {
   const safeCurrent = Math.max(0, currentFocusMinutes);
   const floor = safeCurrent + BREAK_AT_STEP_MINUTES;

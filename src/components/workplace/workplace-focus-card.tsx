@@ -15,7 +15,10 @@ import { ScheduleBreakModal } from "@/components/focus/schedule-break-modal";
 import { WorkplaceFocusInlineReflection } from "@/components/workplace/workplace-focus-inline-reflection";
 import { WorkplaceFocusSessionComplete } from "@/components/workplace/workplace-focus-session-complete";
 import { WorkplaceFocusReflectionModal } from "@/components/workplace/workplace-focus-reflection-modal";
-import { FocusSwitchToast } from "@/components/workplace/focus-switch-toast";
+import {
+  FocusSwitchConfirmToast,
+  FocusSwitchToast,
+} from "@/components/workplace/focus-switch-toast";
 import { useWorkplaceFocusTask } from "@/contexts/workplace-focus-task-context";
 import { useNextUpQueueViewController } from "@/contexts/next-up-queue-view-context";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
@@ -1656,56 +1659,6 @@ export function WorkplaceFocusCard({
                     )}
                   </div>
 
-                  <div
-                    className={cn(
-                      "grid transition-[grid-template-rows,opacity,margin] duration-200 ease-out",
-                      pendingFocusTask
-                        ? "mt-4 grid-rows-[1fr] opacity-100"
-                        : "mt-0 grid-rows-[0fr] opacity-0",
-                    )}
-                  >
-                    <div className="min-h-0 overflow-hidden">
-                      {pendingFocusTask ? (
-                        <div
-                          ref={pendingFocusBannerRef}
-                          role="alertdialog"
-                          aria-labelledby="pending-focus-title"
-                          className="flex flex-wrap items-center justify-between gap-2 rounded-lg border-0 bg-surface-base px-3 py-2 text-[13px]"
-                        >
-                          <p
-                            id="pending-focus-title"
-                            className="min-w-0 flex-1 truncate text-foreground"
-                          >
-                            Switch focus to &ldquo;{pendingFocusTask.title}
-                            &rdquo;?
-                          </p>
-                          <div className="flex shrink-0 gap-1.5">
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 px-2 text-[12px]"
-                              onClick={() => setPendingFocusTask(null)}
-                            >
-                              Keep current
-                            </Button>
-                            <Button
-                              type="button"
-                              size="sm"
-                              className="h-7 px-2 text-[12px]"
-                              onClick={() => {
-                                activateFocusTask(pendingFocusTask);
-                                setPendingFocusTask(null);
-                              }}
-                            >
-                              Switch focus
-                            </Button>
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-
                   <FocusCurrentTaskCard
                     key={currentFocusTask?.id ?? "empty"}
                     task={currentFocusTask}
@@ -1986,15 +1939,28 @@ export function WorkplaceFocusCard({
         onOpenChange={setScheduleBreakOpen}
       />
 
-      {focusSwitchNotice ? (
-        <div className="pointer-events-none fixed bottom-4 right-4 z-[200]">
-          <FocusSwitchToast
-            newTaskTitle={focusSwitchNotice.newTask.title}
-            previousTaskTitle={focusSwitchNotice.previousTask.title}
-            onComplete={completePreviousFromSwitch}
-            onUndo={undoFocusSwitch}
-            onDismiss={dismissFocusSwitchNotice}
-          />
+      {pendingFocusTask || focusSwitchNotice ? (
+        <div className="pointer-events-none fixed bottom-4 left-1/2 z-[200] flex w-full max-w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 flex-col items-center gap-2 px-4 sm:left-auto sm:right-4 sm:translate-x-0 sm:items-end sm:px-0">
+          {pendingFocusTask ? (
+            <FocusSwitchConfirmToast
+              ref={pendingFocusBannerRef}
+              taskTitle={pendingFocusTask.title}
+              onKeepCurrent={() => setPendingFocusTask(null)}
+              onSwitch={() => {
+                activateFocusTask(pendingFocusTask);
+                setPendingFocusTask(null);
+              }}
+            />
+          ) : null}
+          {focusSwitchNotice ? (
+            <FocusSwitchToast
+              newTaskTitle={focusSwitchNotice.newTask.title}
+              previousTaskTitle={focusSwitchNotice.previousTask.title}
+              onComplete={completePreviousFromSwitch}
+              onUndo={undoFocusSwitch}
+              onDismiss={dismissFocusSwitchNotice}
+            />
+          ) : null}
         </div>
       ) : null}
     </>

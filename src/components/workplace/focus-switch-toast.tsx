@@ -1,9 +1,64 @@
 "use client";
 
-import { useEffect } from "react";
+import { forwardRef, useEffect } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const floatingToastClassName = cn(
+  "flow-surface-elevated pointer-events-auto w-[min(24rem,calc(100vw-2rem))] rounded-xl px-4 py-3",
+  "animate-in slide-in-from-bottom-2 fade-in duration-200",
+);
+
+export type FocusSwitchConfirmToastProps = {
+  taskTitle: string;
+  onKeepCurrent: () => void;
+  onSwitch: () => void;
+};
+
+/** Confirm before switching focus target — floating, not inline in the card. */
+export const FocusSwitchConfirmToast = forwardRef<
+  HTMLDivElement,
+  FocusSwitchConfirmToastProps
+>(function FocusSwitchConfirmToast(
+  { taskTitle, onKeepCurrent, onSwitch },
+  ref,
+) {
+  return (
+    <div
+      ref={ref}
+      role="alertdialog"
+      aria-labelledby="pending-focus-title"
+      className={floatingToastClassName}
+    >
+      <p
+        id="pending-focus-title"
+        className="text-[13px] leading-snug text-foreground"
+      >
+        Switch focus to &ldquo;{taskTitle}&rdquo;?
+      </p>
+      <div className="mt-2.5 flex flex-wrap gap-1.5">
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          className="h-7 px-2.5 text-[12px]"
+          onClick={onKeepCurrent}
+        >
+          Keep current
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          className="h-7 px-2.5 text-[12px]"
+          onClick={onSwitch}
+        >
+          Switch focus
+        </Button>
+      </div>
+    </div>
+  );
+});
 
 export type FocusSwitchToastProps = {
   newTaskTitle: string;
@@ -30,10 +85,7 @@ export function FocusSwitchToast({
 
   return (
     <div
-      className={cn(
-        "flow-surface-elevated pointer-events-auto w-[min(22rem,calc(100vw-2rem))] rounded-xl px-4 py-3",
-        "animate-in slide-in-from-bottom-2 fade-in duration-200",
-      )}
+      className={floatingToastClassName}
       role="status"
       aria-live="polite"
     >

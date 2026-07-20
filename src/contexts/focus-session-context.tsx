@@ -72,6 +72,8 @@ type FocusSessionContextValue = {
   lastSavedSession: FocusSession | null;
   notification: string | null;
   clearNotification: () => void;
+  /** Drop in-memory + stored active focus (demo restart / exit). */
+  hardResetActiveSession: () => void;
   dashboardActive: DashboardActiveFocus;
   prepareFocusTarget: (
     target: { type: FocusTargetType; id: string; label?: string } | null
@@ -185,6 +187,15 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     },
     []
   );
+
+  const hardResetActiveSession = useCallback(() => {
+    completionHandledRef.current = false;
+    pendingFocusTargetRef.current = null;
+    sessionRef.current = null;
+    setSession(null);
+    setNotification(null);
+    clearActiveSession();
+  }, []);
 
   const endSession = useCallback(
     async (
@@ -504,6 +515,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       lastSavedSession,
       notification,
       clearNotification: () => setNotification(null),
+      hardResetActiveSession,
       dashboardActive,
       prepareFocusTarget,
       quick: {
@@ -574,6 +586,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     session,
     lastSavedSession,
     notification,
+    hardResetActiveSession,
     dashboardActive,
     prepareFocusTarget,
     quickPhase,

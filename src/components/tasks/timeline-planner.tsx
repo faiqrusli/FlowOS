@@ -1785,9 +1785,6 @@ export function TimelinePlanner({
                 <Clock className={panelTogglePrimaryIconClass()} />
                 <div className="min-w-0">
                   <h2 className="truncate text-base font-semibold">Schedule</h2>
-                  <p className="truncate text-[11px] text-foreground-secondary">
-                    Drag tasks & habits to plan your day
-                  </p>
                 </div>
               </div>
 
@@ -1888,9 +1885,6 @@ export function TimelinePlanner({
                 <div className="shrink-0 px-3 py-2.5">
                   <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                     Plan pool
-                  </p>
-                  <p className="text-[10px] text-foreground-secondary">
-                    Unscheduled &amp; Later
                   </p>
                 </div>
               ) : null}
@@ -2103,10 +2097,7 @@ export function TimelinePlanner({
               >
                 <div className="shrink-0 px-3 py-2.5">
                   <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                    Task pool
-                  </p>
-                  <p className="text-[10px] text-foreground-secondary">
-                    Drag onto the timeline
+                    Task and Habit Pool
                   </p>
                 </div>
                 <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">

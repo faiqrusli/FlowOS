@@ -1,6 +1,5 @@
 "use client";
 
-import { InfoIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ScheduleBreakStepperField } from "@/components/focus/schedule-break-stepper-field";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { formatTimerClock } from "@/lib/focus-utils";
 import {
@@ -25,22 +23,6 @@ type ScheduleBreakModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
-
-function InfoTooltip({ text }: { text: string }) {
-  return (
-    <Tooltip>
-      <TooltipTrigger
-        className="inline-flex items-center text-muted-foreground outline-none hover:text-foreground"
-        aria-label="More info"
-      >
-        <InfoIcon className="size-3.5" />
-      </TooltipTrigger>
-      <TooltipContent>
-        <p className="whitespace-pre-line">{text}</p>
-      </TooltipContent>
-    </Tooltip>
-  );
-}
 
 export function ScheduleBreakModal({ open, onOpenChange }: ScheduleBreakModalProps) {
   const { tick, quick } = useFocusSessionContext();
@@ -56,9 +38,10 @@ export function ScheduleBreakModal({ open, onOpenChange }: ScheduleBreakModalPro
   useEffect(() => {
     if (!open) return;
     void tick;
-    setBreakAtMinutes(
-      quick.breakAtMinutes ?? getDefaultBreakAtMinutes(currentFocusMinutes)
-    );
+    const min = getMinBreakAtMinutes(currentFocusMinutes);
+    const seeded =
+      quick.breakAtMinutes ?? getDefaultBreakAtMinutes(currentFocusMinutes);
+    setBreakAtMinutes(Math.max(seeded, min));
     setBreakLengthMinutes(quick.breakLengthMinutes ?? DEFAULT_BREAK_LENGTH_MINUTES);
     // Only re-seed draft when the modal opens.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,10 +83,7 @@ export function ScheduleBreakModal({ open, onOpenChange }: ScheduleBreakModalPro
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex items-center gap-1.5">
-                <p className="text-sm font-medium text-foreground">Break at</p>
-                <InfoTooltip text="You'll be reminded when your focus reaches this duration.\nFocus won't stop automatically." />
-              </div>
+              <p className="text-sm font-medium text-foreground">Break at</p>
               <ScheduleBreakStepperField
                 kind="break-at"
                 value={breakAtMinutes}
@@ -117,10 +97,7 @@ export function ScheduleBreakModal({ open, onOpenChange }: ScheduleBreakModalPro
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex items-center gap-1.5">
-                <p className="text-sm font-medium text-foreground">Break length</p>
-                <InfoTooltip text="How long your break lasts.\nYou'll be notified when it ends, but focus won't resume automatically." />
-              </div>
+              <p className="text-sm font-medium text-foreground">Break length</p>
               <ScheduleBreakStepperField
                 kind="break-length"
                 value={breakLengthMinutes}

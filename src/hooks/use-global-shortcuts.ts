@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
+// Chord list for UI: `src/lib/global-shortcuts.ts` (About / Settings).
 
 function isEditableTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) return false;
@@ -15,6 +17,7 @@ function isEditableTarget(target: EventTarget | null) {
 }
 
 export function useGlobalShortcuts() {
+  const router = useRouter();
   const {
     requestQuickCapture,
     openDailyNote,
@@ -27,6 +30,13 @@ export function useGlobalShortcuts() {
       if (event.metaKey || isEditableTarget(event.target)) return;
 
       const key = event.key.toLowerCase();
+
+      /* Bare letter nav — no modifiers (safe outside fields). */
+      if (!event.ctrlKey && !event.altKey && !event.shiftKey && key === "t") {
+        event.preventDefault();
+        router.push("/");
+        return;
+      }
 
       if (event.ctrlKey && event.altKey && !event.shiftKey && key === "n") {
         event.preventDefault();
@@ -59,6 +69,7 @@ export function useGlobalShortcuts() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [
+    router,
     requestQuickCapture,
     openDailyNote,
     createNewNote,

@@ -256,10 +256,7 @@ export function WeeklyReflectionPageContent() {
           Back
         </Link>
         <div className="min-w-0 flex-1">
-          <PageHeader
-            title="Weekly reflection"
-            description="Review the week by day. Drag cards between boards to reorganize."
-          />
+          <PageHeader title="Weekly reflection" />
         </div>
       </div>
 

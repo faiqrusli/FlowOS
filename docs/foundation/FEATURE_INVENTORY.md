@@ -90,6 +90,8 @@ WORKSPACE
 | Settings | `/settings` | Shipped | Preferences, durations |
 | Account | `/account` | Shipped | Profile management |
 | Session middleware | — | Shipped | `/workplace` in `PROTECTED_PREFIXES` (M1) |
+| Live demo (guest) | `/login` CTA | **In progress** | Anonymous auth + seed clone; spec [flowos-live-demo-spec.md](../review/design/flowos-live-demo-spec.md) · runbook [flowos-live-demo.md](../execution/runbooks/flowos-live-demo.md) |
+| Demo feedback wall | — | **In progress** | `demo_feedback` table SQL — run `supabase/demo_feedback.sql` on project |
 
 ---
 

@@ -145,7 +145,6 @@ export function HabitsPageContent() {
     <div className="space-y-6">
       <PageHeader
         title="Habits"
-        description="Define recurring routines here. Mark today's occurrence when due — habits stay active day after day."
         action={<HabitDialog mode="create" onSave={handleSave} />}
       />
 

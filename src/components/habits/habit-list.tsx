@@ -74,12 +74,7 @@ export function HabitList({
       />
 
       <section className="space-y-4">
-        <div className="space-y-1">
-          <h2 className={typography.sectionTitle}>All habits</h2>
-          <p className={typography.meta}>
-            Edit schedules and manage your routines below.
-          </p>
-        </div>
+        <h2 className={typography.sectionTitle}>All habits</h2>
         <ul className="grid gap-3 sm:grid-cols-2 sm:gap-3">
           {habits.map((habit) => (
             <li key={habit.id} className="min-w-0">

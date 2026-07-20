@@ -211,6 +211,42 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      demo_feedback: {
+        Row: {
+          id: string;
+          created_at: string;
+          kind: "comment" | "rating" | "bug";
+          display_name: string | null;
+          body: string;
+          rating: number | null;
+          severity: "low" | "medium" | "high" | null;
+          page_path: string | null;
+          user_agent: string | null;
+          demo_session_id: string | null;
+          is_public: boolean;
+          is_hidden: boolean;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          kind: "comment" | "rating" | "bug";
+          display_name?: string | null;
+          body: string;
+          rating?: number | null;
+          severity?: "low" | "medium" | "high" | null;
+          page_path?: string | null;
+          user_agent?: string | null;
+          demo_session_id?: string | null;
+          is_public?: boolean;
+          is_hidden?: boolean;
+        };
+        Update: {
+          is_public?: boolean;
+          is_hidden?: boolean;
+          body?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

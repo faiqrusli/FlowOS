@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { KeyboardShortcutsSection } from "@/components/about/keyboard-shortcuts-section";
 import { useSettingsModal } from "@/contexts/settings-modal-context";
 
 export function SettingsHelpPanel() {
@@ -12,8 +13,7 @@ export function SettingsHelpPanel() {
     <div className="space-y-5">
       <section>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          FlowOS is a personal daily productivity OS — plan your day, execute
-          with focus, and close with reflection in one workspace.
+          A personal execution system for your day.
         </p>
         <Button
           variant="outline"
@@ -25,6 +25,8 @@ export function SettingsHelpPanel() {
           Open About
         </Button>
       </section>
+
+      <KeyboardShortcutsSection compact />
     </div>
   );
 }
