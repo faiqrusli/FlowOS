@@ -22,9 +22,28 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-21 — Combine merge to main (docs + tweaks + live demo)
+
+**Branch:** `tweak/combine-july-21-improvements` → `main` (`22cf5dd`)
+
+**Merged in:**
+- `docs/hold-review-cleanup` — hold framing, theme/runbook archive, CONTRIBUTING, start-here refresh
+- `tweak/continuous-focus-timer` — continuous quick-focus clock across breaks; pin Add Task/New Group when Quick Schedule opens; clearer Unscheduled/Later tabs; dev-only `getAppNow` for screenshots
+- `demo/live-guest-workspace` stash — guest demo session, seed/feedback, banner/expiry dialogs, shortcuts polish (`supabase/demo_feedback.sql`)
+
+**Also:** fixed conditional hooks in schedule-break stepper before ship.
+
+**Checks:** `npm run build` pass; lint 0 errors.
+
+**Production:** https://flowos-sage.vercel.app (Vercel deploy from `main`)
+
+**Decisions:** [decision-log](./decision-log.md) — hold + continuous focus clock (2026-07-21)
+
+---
+
 ## 2026-07-21 — Implementation hold + docs cleanup
 
-**Branch:** `docs/hold-review-cleanup` (docs-only)
+**Branch:** `docs/hold-review-cleanup` (docs-only; later included in combine merge above)
 
 **Shipped (docs):**
 - Root README + docs hub: **hold / review** framing, live demo + FEATURE_INVENTORY + CONTRIBUTING links
@@ -35,7 +54,7 @@ Low ceremony — bullets are fine.
 
 **Not done (deferred):** license file, README screenshots; `review/focus/*` left in place
 
-**Production:** unchanged — https://flowos-sage.vercel.app
+**Production:** unchanged at docs-only land — later shipped via combine merge
 
 ---
 
