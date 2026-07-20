@@ -238,7 +238,6 @@ export function WorkplaceFocusCard({
   const [todaySessionCount, setTodaySessionCount] = useState(0);
   const [dropActive, setDropActive] = useState(false);
   const [habitDropBlocked, setHabitDropBlocked] = useState(false);
-  const [habitDropNotice, setHabitDropNotice] = useState<string | null>(null);
   const habitDropBlockedRef = useRef(false);
   const [clockLabel, setClockLabel] = useState(formatNowTimeInAppTimezone());
   const [timerHeroInView, setTimerHeroInView] = useState(true);
@@ -648,13 +647,14 @@ export function WorkplaceFocusCard({
 
       if (payload.kind === "habit") {
         if (!isFocusableHabit(payload.id)) {
-          setHabitDropNotice(
-            "Turn on Track with Focus to use this habit in Focus.",
-          );
+          showActionToast({
+            message: "Turn on Track with Focus to use this habit in Focus.",
+            tone: "warning",
+            icon: "warning",
+          });
           return;
         }
         queueDropHandledRef.current = true;
-        setHabitDropNotice(null);
         setHabitQueueRefs(insertHabitQueueRef(payload.id));
         setUnifiedQueueOrder((prev) => {
           const next = insertUnifiedQueueKey(
@@ -668,8 +668,6 @@ export function WorkplaceFocusCard({
         finishDragAutoClose();
         return;
       }
-
-      setHabitDropNotice(null);
 
       if (payload.kind === "task" && NEXT_UP_WORKPLACE_UI_ENABLED) {
         queueDropHandledRef.current = true;
@@ -688,11 +686,14 @@ export function WorkplaceFocusCard({
             });
           })
           .catch((error: unknown) => {
-            setHabitDropNotice(
-              error instanceof Error
-                ? error.message
-                : "Couldn't add this task to Next Up.",
-            );
+            showActionToast({
+              message:
+                error instanceof Error
+                  ? error.message
+                  : "Couldn't add this task to Next Up.",
+              tone: "warning",
+              icon: "warning",
+            });
           });
         return;
       }
@@ -706,6 +707,7 @@ export function WorkplaceFocusCard({
       nextUpEntries,
       refreshNextUpTasks,
       setActiveTaskId,
+      showActionToast,
     ],
   );
 
@@ -1003,15 +1005,16 @@ export function WorkplaceFocusCard({
 
       if (payload.kind === "habit") {
         if (!isFocusableHabit(payload.id)) {
-          setHabitDropNotice(
-            "Turn on Track with Focus to use this habit in Focus.",
-          );
+          showActionToast({
+            message: "Turn on Track with Focus to use this habit in Focus.",
+            tone: "warning",
+            icon: "warning",
+          });
           return;
         }
         const habit = habits.find((item) => item.id === payload.id);
         if (!habit) return;
         queueDropHandledRef.current = true;
-        setHabitDropNotice(null);
         activateFocusHabit(habit);
         finishDragAutoClose();
         return;
@@ -1022,7 +1025,6 @@ export function WorkplaceFocusCard({
         .find((item) => item.id === payload.id);
       if (!task) return;
       queueDropHandledRef.current = true;
-      setHabitDropNotice(null);
       // Drag-to-focus: switch immediately (pause prior task history), toast for Complete/Undo.
       switchFocusFromDrop(task);
       finishDragAutoClose();
@@ -1033,6 +1035,7 @@ export function WorkplaceFocusCard({
       groups,
       habits,
       isFocusableHabit,
+      showActionToast,
       switchFocusFromDrop,
     ],
   );
@@ -1451,11 +1454,6 @@ export function WorkplaceFocusCard({
                 )}
                 onClick={onDismissDockOverlay}
               />
-            ) : null}
-            {habitDropNotice ? (
-              <div className="mb-2 shrink-0 rounded-md border border-warning/40 bg-warning-muted/80 px-3 py-2 text-[13px] leading-snug text-warning">
-                {habitDropNotice}
-              </div>
             ) : null}
             {tab === "focus" ? (
               <div className="relative min-h-0 flex-1">
