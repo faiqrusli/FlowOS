@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 20, 2026
+**Last updated:** July 21, 2026
 
 ---
 
@@ -35,6 +35,16 @@ When making a significant product decision:
 ---
 
 ## 2026 decisions
+
+### 2026-07-21 — Implementation hold for GitHub + live demo review
+
+**Context:** FlowOS reached a reviewable production state (M2 engineering, V3/Tokyo visuals, reminders MVP). Founder wants to pause large implementation so the product can be used, checked on GitHub, and exercised via live demo without new milestone sprawl.  
+**Decision:** **Hold** big feature / Day Engine / large runbook work. Keep production live; allow docs cleanup, small tweaks, recruiting, and the guest live-demo workstream. Agents must not start large new runbooks until the hold is lifted here.  
+**Alternatives rejected:** Continuing M2 Day Engine sessions; treating “review” as still-active large engineering; deleting historical docs.  
+**Outcome:** Docs hub + README framed as hold; themes/superseded runbooks archived under medium cleanup (`docs/hold-review-cleanup`).  
+**Related:** [docs/README.md](../../README.md) · [execution/README.md](../README.md) · [flowos-live-demo.md](../runbooks/flowos-live-demo.md)
+
+---
 
 ### 2026-07-20 — Settings modal surfaces locked (rail 4 / shell 7)
 

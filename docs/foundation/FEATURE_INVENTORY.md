@@ -4,7 +4,7 @@
 **Audience:** Engineers, product lead  
 **Last updated:** July 13, 2026 (Visual Design System v3.0 migration sessions 1–4 complete on branch)
 
-**Visual system:** [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) v3.0 is the active visual authority. Migration implemented across tokens, primitives, shell, domain helpers, and major workspaces; see [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md). Canonical helpers: `src/lib/theme/surface-classes.ts`, `src/lib/theme/tokens.ts`.
+**Visual system:** [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) (Surface 0–10 live in `globals.css`). Historical themes: [archive/design/themes/](../archive/design/themes/). Canonical helpers: `src/lib/theme/surface-classes.ts`, `src/lib/theme/tokens.ts`.
 
 ---
 
@@ -244,8 +244,8 @@ Full detail: [../archive/project/03-future-enhancements.md](../archive/project/0
 
 | System | Status | Source |
 |--------|--------|--------|
-| Visual Design System v3.0 | **Shipped (migration sessions 1–4)** | [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) · [design-system-v3-migration.md](../execution/runbooks/design-system-v3-migration.md) |
-| Visual Design System v2.0 | Historical Sessions 1–5 baseline | [DESIGN_SYSTEM_v2.md](./DESIGN_SYSTEM_v2.md) |
+| Visual Design System V3 + Tokyo Night Warm | **Shipped** | [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) · [TOKYO_NIGHT_WARM](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) |
+| Visual Design System (legacy navy / v2 / Neutral Dark) | Historical | [archive/design/themes/](../archive/design/themes/) |
 | Design audit / Phases 0–2 | Historical | [archive/design/july-3/](../archive/design/july-3/) |
 
 ---

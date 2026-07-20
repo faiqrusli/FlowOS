@@ -9,7 +9,7 @@
 | **Theme type** | Dark |
 | **Design goal** | Calm, intelligent, focused productivity — UI disappears, work remains |
 | **Date** | July 19, 2026 |
-| **Related** | [Design System v3](./DESIGN_SYSTEM_V3.md) · [V3 Workspace](./DESIGN_SYSTEM_V3_WORKSPACE.md) · [V3 Interaction](./DESIGN_SYSTEM_V3_INTERACTION.md) · [Borderless Workspace](./DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md) · [Gruvbox](./DESIGN_SYSTEM_GRUVBOX.md) · [Everforest](./DESIGN_SYSTEM_EVERFOREST.md) · [Navy v3](./DESIGN_SYSTEM.md) · [Code standards](./governance/CODE_STANDARDS.md) |
+| **Related** | [Design System v3](./DESIGN_SYSTEM_V3.md) · [V3 Workspace](./DESIGN_SYSTEM_V3_WORKSPACE.md) · [V3 Interaction](./DESIGN_SYSTEM_V3_INTERACTION.md) · Historical themes: [archive/design/themes/](../archive/design/themes/) · [Code standards](./governance/CODE_STANDARDS.md) |
 
 ---
 

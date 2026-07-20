@@ -7,7 +7,7 @@
 | **Version** | 3.0 |
 | **Theme** | Tokyo Night + Soft Indigo |
 | **Date** | July 19, 2026 |
-| **Supersedes (visual)** | Ad-hoc surface ladders in Tokyo Night Warm / Neutral Dark for new work; [Borderless Workspace](./DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md) policy moves into V3 Workspace |
+| **Supersedes (visual)** | Ad-hoc surface ladders; Borderless Workspace policy lives in V3 Workspace ([archive snapshot](../archive/design/themes/DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md)) |
 | **Related** | [V3 Workspace](./DESIGN_SYSTEM_V3_WORKSPACE.md) · [V3 Interaction](./DESIGN_SYSTEM_V3_INTERACTION.md) · [Code standards](./governance/CODE_STANDARDS.md) · [Product principles](./governance/PRINCIPLES.md) |
 
 ---

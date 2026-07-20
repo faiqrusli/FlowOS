@@ -2,7 +2,7 @@
 
 Frozen historical documentation. **Do not use for current planning** — see [../README.md](../README.md) for active docs.
 
-Pass 3 reorganization — July 4, 2026.
+Pass 3 reorganization — July 4, 2026 · Hold cleanup themes/runbooks — July 21, 2026.
 
 ---
 
@@ -12,7 +12,10 @@ Pass 3 reorganization — July 4, 2026.
 |--------|----------|--------|
 | [project/](./project/) | Original thesis, related works, SRS future enhancements | Pre-implementation |
 | [design/july-3/](./design/july-3/) | Design audit, Phases 0–2, UX friction review | July 2026 |
+| [design/themes/](./design/themes/) | Superseded visual themes (v1/v2, Neutral Dark, Gruvbox, Everforest, Borderless, legacy navy) | July 2026 |
+| [runbooks/](./runbooks/) | Historical / superseded execution runbooks + agent prompt | July 2026 |
 | [planning/](./planning/) | Superseded launch timeline | July 2026 |
+| [foundation/](./foundation/) | Merged foundation drafts (IA, personas, CEO review, …) | July 2026 |
 
 ---
 
@@ -24,6 +27,7 @@ Pass 3 reorganization — July 4, 2026.
 | [project-state-july-2026.md](./design/july-3/project-state-july-2026.md) | Frozen at Phase 2 — use [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) instead |
 | [launch-plan-july-2026.md](./planning/launch-plan-july-2026.md) | Superseded by execution masterplan |
 | [ux-friction-review.md](./design/july-3/ux-friction-review.md) | Simulated July 3 audit — live evidence in [friction-log.md](../execution/logs/friction-log.md) |
+| [design/themes/](./design/themes/) | Not live paint — live: [DESIGN_SYSTEM_V3.md](../foundation/DESIGN_SYSTEM_V3.md) + Tokyo |
 
 **Review index for design phases:** [../review/design/README.md](../review/design/README.md)
 
