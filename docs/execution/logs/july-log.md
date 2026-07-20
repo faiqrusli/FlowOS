@@ -22,6 +22,18 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-21 — Habit drop notice auto-dismiss
+
+**Branch:** `tweak/habit-drop-notice-dismiss` → `main` (`2256fe1`)
+
+**Shipped:** “Track with Focus” habit drop warning (and Next Up insert errors) now use action toast and auto-dismiss instead of a sticky Focus card banner.
+
+**Checks:** `npm run build` pass; lint 0 errors.
+
+**Production:** https://flowos-sage.vercel.app
+
+---
+
 ## 2026-07-21 — Combine merge to main (docs + tweaks + live demo)
 
 **Branch:** `tweak/combine-july-21-improvements` → `main` (`22cf5dd`)
