@@ -22,6 +22,23 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-20 — Tokyo Night / V3 polish + Settings 4/7 + reminders (merge)
+
+**Branch:** `tweak/tokyo-night-warm` → `main` (founder-approved)
+
+**Shipped:**
+- **Design System V3:** Surface 0–10 tokens live in `globals.css`; Soft Indigo brand; V3 + Tokyo Night Warm docs; borderless workspace polish
+- **Settings modal (final):** rail **Surface 4** / shell **Surface 7**; nav selected `primary-soft`; fields Surface 5
+- **Schedule reminders MVP:** alert-before → in-app toast + browser Notification API; `tasks_notification_lead.sql`
+- **Action toasts:** shared host across Today / Tasks / Schedule / Focus / Notes / Reflection
+- **UX polish:** focus edge breathe, task menu selected, Plan submenu flip, Kanban list context menu, custom entries Surface 5, task group headers slightly taller
+
+**Docs:** decision-log Settings 4/7 lock + live demo / V3 entries; V3 Workspace + Interaction Settings exception.
+
+**Production:** https://flowos-sage.vercel.app — smoke Settings (rail/shell), Today Focus/Queue, Tasks headers, schedule reminder toast, action toasts.
+
+---
+
 ## 2026-07-17 — Today focus/queue layout + Neutral Dark shell (merge)
 
 **Branch:** `tweak/today-focus-queue-layout` → `main` (founder-approved)
