@@ -11,78 +11,86 @@ import {
   clampBreakLengthMinutes,
 } from "@/lib/focus-scheduled-break";
 
-type ScheduleBreakStepperFieldProps =
-  | {
-      kind: "break-at";
-      value: number;
-      onChange: (minutes: number) => void;
-      min: number;
-      currentFocusMinutes: number;
-    }
-  | {
-      kind: "break-length";
-      value: number | null;
-      onChange: (minutes: number | null) => void;
-      currentFocusMinutes?: number;
-    };
+type BreakAtProps = {
+  kind: "break-at";
+  value: number;
+  onChange: (minutes: number) => void;
+  min: number;
+  currentFocusMinutes: number;
+};
+
+type BreakLengthProps = {
+  kind: "break-length";
+  value: number | null;
+  onChange: (minutes: number | null) => void;
+  currentFocusMinutes?: number;
+};
+
+type ScheduleBreakStepperFieldProps = BreakAtProps | BreakLengthProps;
 
 const STEP_BUTTON_CLASS = "min-w-9 px-1.5 text-xs font-medium tabular-nums";
 
-export function ScheduleBreakStepperField(props: ScheduleBreakStepperFieldProps) {
-  if (props.kind === "break-at") {
-    const { value, onChange, min, currentFocusMinutes } = props;
-    const valueRef = useRef(value);
-    const minRef = useRef(min);
+function BreakAtStepperField({
+  value,
+  onChange,
+  min,
+  currentFocusMinutes,
+}: Omit<BreakAtProps, "kind">) {
+  const valueRef = useRef(value);
+  const minRef = useRef(min);
 
-    useEffect(() => {
-      valueRef.current = value;
-    }, [value]);
-    useEffect(() => {
-      minRef.current = min;
-    }, [min]);
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+  useEffect(() => {
+    minRef.current = min;
+  }, [min]);
 
-    return (
-      <div className="inline-flex items-center gap-3">
-        <HoldRepeatStepButton
-          ariaLabel={`Decrease break at by ${BREAK_AT_STEP_MINUTES} minutes`}
-          disabled={value <= min}
-          className={STEP_BUTTON_CLASS}
-          onStep={() => {
-            const next = Math.max(
-              minRef.current,
-              valueRef.current - BREAK_AT_STEP_MINUTES,
-            );
-            valueRef.current = next;
-            onChange(next);
-          }}
-        >
-          {`-${BREAK_AT_STEP_MINUTES}`}
-        </HoldRepeatStepButton>
-        <ScheduleBreakDurationPicker
-          kind="break-at"
-          variant="stepper"
-          value={value}
-          currentFocusMinutes={currentFocusMinutes}
-          onChange={(minutes) => {
-            if (minutes != null) onChange(minutes);
-          }}
-        />
-        <HoldRepeatStepButton
-          ariaLabel={`Increase break at by ${BREAK_AT_STEP_MINUTES} minutes`}
-          className={STEP_BUTTON_CLASS}
-          onStep={() => {
-            const next = valueRef.current + BREAK_AT_STEP_MINUTES;
-            valueRef.current = next;
-            onChange(next);
-          }}
-        >
-          {`+${BREAK_AT_STEP_MINUTES}`}
-        </HoldRepeatStepButton>
-      </div>
-    );
-  }
+  return (
+    <div className="inline-flex items-center gap-3">
+      <HoldRepeatStepButton
+        ariaLabel={`Decrease break at by ${BREAK_AT_STEP_MINUTES} minutes`}
+        disabled={value <= min}
+        className={STEP_BUTTON_CLASS}
+        onStep={() => {
+          const next = Math.max(
+            minRef.current,
+            valueRef.current - BREAK_AT_STEP_MINUTES,
+          );
+          valueRef.current = next;
+          onChange(next);
+        }}
+      >
+        {`-${BREAK_AT_STEP_MINUTES}`}
+      </HoldRepeatStepButton>
+      <ScheduleBreakDurationPicker
+        kind="break-at"
+        variant="stepper"
+        value={value}
+        currentFocusMinutes={currentFocusMinutes}
+        onChange={(minutes) => {
+          if (minutes != null) onChange(minutes);
+        }}
+      />
+      <HoldRepeatStepButton
+        ariaLabel={`Increase break at by ${BREAK_AT_STEP_MINUTES} minutes`}
+        className={STEP_BUTTON_CLASS}
+        onStep={() => {
+          const next = valueRef.current + BREAK_AT_STEP_MINUTES;
+          valueRef.current = next;
+          onChange(next);
+        }}
+      >
+        {`+${BREAK_AT_STEP_MINUTES}`}
+      </HoldRepeatStepButton>
+    </div>
+  );
+}
 
-  const { value, onChange } = props;
+function BreakLengthStepperField({
+  value,
+  onChange,
+}: Omit<BreakLengthProps, "kind" | "currentFocusMinutes">) {
   const valueRef = useRef(value);
 
   useEffect(() => {
@@ -131,5 +139,22 @@ export function ScheduleBreakStepperField(props: ScheduleBreakStepperFieldProps)
         {`+${BREAK_LENGTH_STEP_MINUTES}`}
       </HoldRepeatStepButton>
     </div>
+  );
+}
+
+export function ScheduleBreakStepperField(props: ScheduleBreakStepperFieldProps) {
+  if (props.kind === "break-at") {
+    return (
+      <BreakAtStepperField
+        value={props.value}
+        onChange={props.onChange}
+        min={props.min}
+        currentFocusMinutes={props.currentFocusMinutes}
+      />
+    );
+  }
+
+  return (
+    <BreakLengthStepperField value={props.value} onChange={props.onChange} />
   );
 }
