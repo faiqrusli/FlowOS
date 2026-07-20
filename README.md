@@ -50,11 +50,11 @@ A visual timeline for intentional work, plus Quick Schedule to drag unscheduled 
 
 ### Reminders
 
-Start alerts for tasks and habits — in-app toasts and optional browser notifications.
+Start alerts for tasks and habits (in-app toasts and optional browser notifications), plus scheduled focus break prompts when it’s time to pause.
 
 ### Focus
 
-Continuous focus sessions with break support, session tracking, and a clear view of what you’re executing now.
+Continuous focus sessions with scheduled breaks, session tracking, and a clear view of what you’re executing now.
 
 ### Habits
 
