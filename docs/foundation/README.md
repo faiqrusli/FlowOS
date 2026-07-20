@@ -13,7 +13,7 @@ Product truth documents — vision, features, architecture, visual system.
 
 | File | Purpose |
 |------|---------|
-| [PRODUCT_VISION.md](./PRODUCT_VISION.md) | North star, positioning, non-goals, target user |
+| [PRODUCT_VISION.md](./PRODUCT_VISION.md) | Stub → [flowos-vision-and-product-strategy.md](../strategy/flowos-vision-and-product-strategy.md) |
 | [FEATURE_INVENTORY.md](./FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
 | [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt, deployment |
 

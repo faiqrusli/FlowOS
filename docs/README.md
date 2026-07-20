@@ -27,11 +27,12 @@ When documents conflict, this order wins:
 
 | Priority | Source | Role |
 |----------|--------|------|
-| 1 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions |
-| 2 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 |
-| 3 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
-| 4 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
-| 5 | [archive/](./archive/) | Historical reference only |
+| 1 | [strategy/flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) | **Highest** — product vision, philosophy, positioning, long-term architecture |
+| 2 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions (explicit amendments win for that change) |
+| 3 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 |
+| 4 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
+| 5 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
+| 6 | [archive/](./archive/) | Historical reference only |
 
 **Visual / UI:** [DESIGN_SYSTEM_V3.md](./foundation/DESIGN_SYSTEM_V3.md) family + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md). Code truth: `src/app/globals.css`. Do not treat Neutral Dark, Gruvbox, Everforest, or legacy navy `DESIGN_SYSTEM.md` as live paint authority.
 
@@ -41,7 +42,7 @@ When documents conflict, this order wins:
 
 | Directory | Contents | Status |
 |-----------|----------|--------|
-| [strategy/](./strategy/) | Execution masterplan | **Active** |
+| [strategy/](./strategy/) | Vision + execution masterplan | **Active** |
 | [execution/](./execution/) | Runbooks, logs, ops | **Active** (hold = no new large runbooks) |
 | [review/](./review/) | SRAI + design specs | **Active** |
 | [design/](./design/) | Living feature design specifications | **Active** |
@@ -62,6 +63,7 @@ When documents conflict, this order wins:
 
 | Document | Purpose |
 |----------|---------|
+| [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) | **Highest** — vision, philosophy, positioning, long-term architecture |
 | [execution-masterplan.md](./strategy/execution-masterplan.md) | Primary plan — milestones M0–M5 |
 | [execution/README.md](./execution/README.md) | Current ops index (hold / review mode) |
 | [flowos-live-demo.md](./execution/runbooks/flowos-live-demo.md) | Guest live demo runbook |
@@ -90,7 +92,7 @@ When documents conflict, this order wins:
 | [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract |
 | [design/focus/next-up.md](./design/focus/next-up.md) | Living Focus Next Up design |
 | [governance/GATES.md](./foundation/governance/GATES.md) | Launch gates, WAD, D7 definitions |
-| [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | North star and non-goals |
+| [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | Stub → [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) |
 
 Full foundation index: [foundation/README.md](./foundation/README.md)
 

@@ -34,8 +34,9 @@ Do **not** start Day Engine / large M2 addenda until you lift the hold in decisi
 
 | Read | Why |
 |------|-----|
+| [flowos-vision-and-product-strategy.md](../strategy/flowos-vision-and-product-strategy.md) | **Highest** — vision & product strategy |
 | [governance/PRINCIPLES.md](../foundation/governance/PRINCIPLES.md) | Non-negotiable product rules |
-| [PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | Positioning and focus |
+| [PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | Stub → vision strategy doc |
 | [decision-log.md](../execution/logs/decision-log.md) | Past decisions — append new ones here |
 | [GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Approve merges to `main` explicitly |
 

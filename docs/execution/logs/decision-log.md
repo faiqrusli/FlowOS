@@ -36,6 +36,16 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-21 — Vision & Product Strategy is highest product authority
+
+**Context:** Founder authored a comprehensive FlowOS vision covering philosophy, core loop, positioning vs Akiflow/peers, Queue/Focus/Goals, risks, and development sequence (related: User Evolution and Market Positioning).  
+**Decision:** Canonical path is [`docs/strategy/flowos-vision-and-product-strategy.md`](../../strategy/flowos-vision-and-product-strategy.md). It is **priority 1** in the docs authority hierarchy (above decision-log for product philosophy). Dated decision-log entries that *explicitly* amend the vision still win for that amendment. [`PRODUCT_VISION.md`](../../foundation/PRODUCT_VISION.md) becomes a stub. Masterplan remains the milestone plan under the vision.  
+**Alternatives rejected:** Keeping the short PRODUCT_VISION as equal authority; putting vision under foundation only; treating this as archive/thesis-only.  
+**Outcome:** Indexes, founder start-here, and agent `flowos-core` rule updated.  
+**Related:** [flowos-vision-and-product-strategy.md](../../strategy/flowos-vision-and-product-strategy.md) · [docs/README.md](../../README.md)
+
+---
+
 ### 2026-07-21 — Quick focus continues across breaks; break clock unchanged
 
 **Context:** After focus → break → resume focus, the main quick-focus clock reset to `00:00` because it displayed only the new focus phase segment.

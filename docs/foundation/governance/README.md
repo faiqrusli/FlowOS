@@ -34,8 +34,9 @@ New idea
 
 | Document | Role |
 |----------|------|
+| [../../strategy/flowos-vision-and-product-strategy.md](../../strategy/flowos-vision-and-product-strategy.md) | **Highest** — vision & product strategy |
 | [../../strategy/execution-masterplan.md](../../strategy/execution-masterplan.md) | Current milestone plan |
-| [../PRODUCT_VISION.md](../PRODUCT_VISION.md) | North star |
+| [../PRODUCT_VISION.md](../PRODUCT_VISION.md) | Stub → vision strategy |
 | [GATES.md](./GATES.md) | Release gates and metric definitions |
 | [../../execution/logs/decision-log.md](../../execution/logs/decision-log.md) | Decision history |
 

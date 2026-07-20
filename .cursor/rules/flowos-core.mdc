@@ -13,11 +13,12 @@ alwaysApply: true
 
 ## Doc authority (conflicts — higher wins)
 
-1. `docs/execution/logs/decision-log.md`
-2. `docs/strategy/execution-masterplan.md`
-3. `docs/foundation/governance/` (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW)
-4. `docs/foundation/` + `docs/execution/`
-5. `docs/archive/` — history only; never for current planning
+1. `docs/strategy/flowos-vision-and-product-strategy.md` — product vision, philosophy, positioning (highest)
+2. `docs/execution/logs/decision-log.md` — dated decisions (explicit amendments win for that change)
+3. `docs/strategy/execution-masterplan.md`
+4. `docs/foundation/governance/` (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW)
+5. `docs/foundation/` + `docs/execution/`
+6. `docs/archive/` — history only; never for current planning
 
 ## Do not use for current work
 
