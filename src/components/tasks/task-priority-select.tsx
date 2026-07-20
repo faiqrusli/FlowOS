@@ -13,6 +13,7 @@ import {
   TASK_PRIORITY_CONFIG,
   type TaskPriority,
 } from "@/lib/task-priority";
+import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
 
 type TaskPrioritySelectProps = {
@@ -32,10 +33,7 @@ export function TaskPrioritySelect({
     <DropdownMenu>
       <DropdownMenuTrigger
         disabled={disabled}
-        className={cn(
-          "flex h-9 w-full items-center gap-2 rounded-md border border-input bg-background px-2.5 text-sm outline-none",
-          className,
-        )}
+        className={cn(compactControlTriggerClass, "h-9 w-full gap-2 px-2.5 text-sm", className)}
         aria-label="Priority"
       >
         <TaskPriorityFlagIcon priority={value} className="size-3.5" />

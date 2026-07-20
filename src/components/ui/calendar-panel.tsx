@@ -25,7 +25,7 @@ type CalendarPanelProps = {
 export const CALENDAR_PANEL_WIDTH_CLASS = "w-[12.25rem]";
 
 const QUICK_ACTION_BUTTON_CLASS =
-  "flex flex-1 items-center justify-center rounded-md border border-border-subtle bg-surface-base px-1.5 py-1 text-[11px] font-medium text-foreground transition-colors hover:bg-surface-hover";
+  "flex flex-1 items-center justify-center rounded-md border border-border-subtle bg-surface-8 px-1.5 py-1 text-[11px] font-medium text-foreground transition-colors hover:bg-surface-hover";
 
 export function CalendarPanel({
   value,
@@ -67,7 +67,7 @@ export function CalendarPanel({
             className={cn(
               QUICK_ACTION_BUTTON_CLASS,
               value === today &&
-                "border-selected-border bg-primary-soft font-semibold",
+                "border-primary/40 bg-primary-soft font-semibold ring-1 ring-primary/30",
             )}
           >
             Today
@@ -78,7 +78,7 @@ export function CalendarPanel({
             className={cn(
               QUICK_ACTION_BUTTON_CLASS,
               value === tomorrow &&
-                "border-selected-border bg-primary-soft font-semibold",
+                "border-primary/40 bg-primary-soft font-semibold ring-1 ring-primary/30",
             )}
           >
             Tomorrow
@@ -137,9 +137,9 @@ export function CalendarPanel({
                   !cell.inMonth && "text-muted-foreground/45",
                   cell.inMonth &&
                     !selected &&
-                    "text-foreground/80 hover:bg-surface-hover",
+                    "text-foreground/85 hover:bg-surface-hover hover:text-foreground",
                   selected &&
-                    "bg-primary-soft font-semibold text-foreground hover:bg-primary-soft",
+                    "bg-primary-soft font-semibold text-foreground ring-1 ring-primary/40 hover:bg-primary-soft",
                   !selected && isToday && "ring-1 ring-primary/40 ring-inset",
                 )}
                 aria-label={cell.dateKey}

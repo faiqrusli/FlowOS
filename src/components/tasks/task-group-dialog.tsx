@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { GrowthAreaIconChooser } from "@/components/notes/growth-area-icon-chooser";
+import { TaskGroupIdentityMark } from "@/components/tasks/task-group-identity-mark";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  DEFAULT_NEW_GROUP_ICON,
   getTaskGroupAppearance,
-  pickNextGroupColor,
+  pickRandomGroupColor,
   TASK_GROUP_COLOR_KEYS,
   TASK_GROUP_COLOR_LABELS,
   TASK_GROUP_SWATCH_CLASS,
@@ -27,7 +27,8 @@ import type { TaskGroupWithTasks } from "@/types/task";
 
 export type TaskGroupCreateInput = {
   title: string;
-  icon: string;
+  /** Optional — `null` keeps color-only identity. */
+  icon: string | null;
   color: TaskGroupColorKey;
 };
 
@@ -45,7 +46,7 @@ export function TaskGroupDialog({
   onSave,
 }: TaskGroupDialogProps) {
   const [name, setName] = useState("");
-  const [icon, setIcon] = useState(DEFAULT_NEW_GROUP_ICON);
+  const [icon, setIcon] = useState<string | null>(null);
   const [color, setColor] = useState<TaskGroupColorKey>("blue");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,8 +67,8 @@ export function TaskGroupDialog({
   useEffect(() => {
     if (!open) return;
     setName("");
-    setIcon(DEFAULT_NEW_GROUP_ICON);
-    setColor(pickNextGroupColor(existingGroups));
+    setIcon(null);
+    setColor(pickRandomGroupColor());
     setError(null);
     setIconChooserOpen(false);
   }, [open, existingGroups]);
@@ -84,7 +85,7 @@ export function TaskGroupDialog({
     try {
       await onSave({
         title: name.trim(),
-        icon: icon.trim() || DEFAULT_NEW_GROUP_ICON,
+        icon: icon?.trim() || null,
         color,
       });
       onOpenChange(false);
@@ -134,10 +135,13 @@ export function TaskGroupDialog({
                     id="task-group-icon"
                     type="button"
                     onClick={() => setIconChooserOpen(true)}
-                    className="flex h-10 w-full items-center justify-center rounded-xl border border-border/50 bg-background text-xl transition-colors hover:bg-surface-hover"
-                    aria-label="Choose icon"
+                    className="flex h-10 w-full items-center justify-center rounded-xl border border-border/50 bg-background transition-colors hover:bg-surface-hover"
+                    aria-label={icon ? "Change icon" : "Choose icon (optional)"}
                   >
-                    {icon}
+                    <TaskGroupIdentityMark
+                      icon={icon}
+                      colorKey={color}
+                    />
                   </button>
                 </div>
 
@@ -194,7 +198,9 @@ export function TaskGroupDialog({
       <GrowthAreaIconChooser
         open={iconChooserOpen}
         onOpenChange={setIconChooserOpen}
-        value={icon}
+        value={icon ?? ""}
+        allowClear={Boolean(icon)}
+        onClear={() => setIcon(null)}
         onSelect={(nextIcon) => setIcon(nextIcon)}
       />
     </>

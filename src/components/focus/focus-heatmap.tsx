@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buildHeatmapWeeks, type FocusDayMetrics } from "@/lib/focus-analytics";
 import { formatDuration } from "@/lib/focus-utils";
+import { type as typography } from "@/lib/typography";
 import { cn } from "@/lib/utils";
 import type { FocusSession } from "@/types/focus";
 
@@ -13,7 +13,7 @@ type FocusHeatmapProps = {
 };
 
 function intensityClass(focusSeconds: number): string {
-  if (focusSeconds <= 0) return "bg-surface-raised";
+  if (focusSeconds <= 0) return "bg-surface-base";
   if (focusSeconds < 900) return "bg-success-muted";
   if (focusSeconds < 3600) return "bg-success/25";
   if (focusSeconds < 7200) return "bg-success/45";
@@ -31,7 +31,7 @@ function HeatmapCell({
     <button
       type="button"
       className={cn(
-        "size-3 rounded-sm border border-border/20 transition-colors sm:size-3.5",
+        "size-3 rounded-sm transition-colors sm:size-3.5",
         intensityClass(day.focusSeconds),
       )}
       onMouseEnter={() => onHover(day)}
@@ -48,13 +48,11 @@ export function FocusHeatmap({ sessions, loading }: FocusHeatmapProps) {
   const [hovered, setHovered] = useState<FocusDayMetrics | null>(null);
 
   return (
-    <Card className="border-border-subtle bg-surface-base shadow-none">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Focus heatmap</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+      <h2 className={typography.sectionTitle}>Focus heatmap</h2>
+      <div className="mt-4 space-y-3">
         {loading ? (
-          <p className="text-sm text-muted-foreground">Loading heatmap…</p>
+          <p className={typography.bodyMuted}>Loading heatmap…</p>
         ) : (
           <>
             <div className="overflow-x-auto pb-1">
@@ -73,25 +71,25 @@ export function FocusHeatmap({ sessions, loading }: FocusHeatmapProps) {
               </div>
             </div>
 
-            <div className="min-h-[3rem] rounded-lg border border-border/25 bg-surface-raised px-3 py-2 text-xs">
+            <div className="min-h-[3rem] rounded-lg bg-surface-base px-3 py-2 text-xs">
               {hovered ? (
                 <>
                   <p className="font-medium text-foreground">{hovered.date}</p>
-                  <p className="mt-0.5 text-muted-foreground">
+                  <p className="mt-0.5 text-foreground-secondary">
                     Focused {formatDuration(hovered.focusSeconds)} ·{" "}
                     {hovered.sessionCount}{" "}
                     {hovered.sessionCount === 1 ? "session" : "sessions"}
                   </p>
                 </>
               ) : (
-                <p className="text-muted-foreground">
+                <p className="text-foreground-secondary">
                   Hover a cell to see date, focused duration, and sessions.
                 </p>
               )}
             </div>
           </>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

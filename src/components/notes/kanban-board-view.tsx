@@ -6,11 +6,13 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   useState,
   type DragEvent,
   type KeyboardEvent,
 } from "react";
+import { createPortal } from "react-dom";
 import {
   Archive,
   ChevronDown,
@@ -34,6 +36,7 @@ import {
   kanbanColumnHeaderClass,
 } from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
+import { useActionToast } from "@/contexts/action-toast-context";
 import {
   cardBodyDraft,
   cardDragTargetsEqual,
@@ -116,6 +119,7 @@ export function KanbanBoardView({
   focusColumnId,
   onFocusColumnHandled,
 }: KanbanBoardViewProps) {
+  const { showActionToast } = useActionToast();
   const boardRef = useRef<HTMLDivElement>(null);
   const boardStateRef = useRef(board);
   const dragKindRef = useRef<DragKind>(null);
@@ -156,6 +160,11 @@ export function KanbanBoardView({
   const [cardDraft, setCardDraft] = useState("");
   const [cardContextMenu, setCardContextMenu] = useState<{
     cardId: string;
+    x: number;
+    y: number;
+  } | null>(null);
+  const [columnContextMenu, setColumnContextMenu] = useState<{
+    columnId: string;
     x: number;
     y: number;
   } | null>(null);
@@ -755,6 +764,10 @@ export function KanbanBoardView({
       columns: board.columns.filter((c) => c.id !== columnId),
     });
     onAreasRefresh();
+    showActionToast({
+      message: "List deleted",
+      icon: "trash",
+    });
   }
 
   function toggleArchivedSection(columnId: string) {
@@ -850,6 +863,10 @@ export function KanbanBoardView({
       })),
     });
     onAreasRefresh();
+    showActionToast({
+      message: "Card deleted",
+      icon: "trash",
+    });
   }
 
   function openCompose(columnId: string) {
@@ -893,8 +910,17 @@ export function KanbanBoardView({
                 draggable
                 onDragStart={(e) => handleColumnDragStart(column.id, e)}
                 onDragEnd={handleColumnDragEnd}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  setCardContextMenu(null);
+                  setColumnContextMenu({
+                    columnId: column.id,
+                    x: event.clientX,
+                    y: event.clientY,
+                  });
+                }}
                 className={cn(
-                  "flex w-11 shrink-0 cursor-grab flex-col items-center rounded-xl border py-2 active:cursor-grabbing",
+                  "flex w-11 shrink-0 cursor-grab flex-col items-center rounded-xl py-2 active:cursor-grabbing",
                   kanbanColumnBodyClass,
                   isSourceColumn && "opacity-40",
                 )}
@@ -922,11 +948,22 @@ export function KanbanBoardView({
             <div
               data-kanban-column={column.id}
               className={cn(
-                "flex h-full max-h-full w-[min(100%,280px)] min-w-[260px] max-w-[280px] shrink-0 flex-col rounded-xl border",
+                "flex h-full max-h-full w-[min(100%,280px)] min-w-[260px] max-w-[280px] shrink-0 flex-col rounded-xl",
                 kanbanColumnBodyClass,
                 isSourceColumn && "opacity-40",
               )}
               onDragOver={(e) => handleColumnBodyDragOver(e, column.id)}
+              onContextMenu={(event) => {
+                const target = event.target as HTMLElement;
+                if (target.closest("[data-kanban-card]")) return;
+                event.preventDefault();
+                setCardContextMenu(null);
+                setColumnContextMenu({
+                  columnId: column.id,
+                  x: event.clientX,
+                  y: event.clientY,
+                });
+              }}
             >
               <div
                 className={cn(
@@ -1073,9 +1110,10 @@ export function KanbanBoardView({
                           handleCardPointerDragStart(card.id, coords)
                         }
                         onPointerDragEnd={handleCardDragEnd}
-                        onOpenContextMenu={(x, y) =>
-                          setCardContextMenu({ cardId: card.id, x, y })
-                        }
+                        onOpenContextMenu={(x, y) => {
+                          setColumnContextMenu(null);
+                          setCardContextMenu({ cardId: card.id, x, y });
+                        }}
                       />
                     </div>
                   ))}
@@ -1106,7 +1144,7 @@ export function KanbanBoardView({
                   )}
 
                   {archivedCards.length > 0 && (
-                    <div className="mt-1 border-t border-border/30 pt-1">
+                    <div className="mt-2 pt-1">
                       <button
                         type="button"
                         onClick={() => toggleArchivedSection(column.id)}
@@ -1131,7 +1169,7 @@ export function KanbanBoardView({
                             zone: "archived",
                           });
                         }}
-                        className="flex w-full items-center gap-1 rounded-md px-1 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-surface-hover/50 hover:text-foreground"
+                        className="flex w-full items-center gap-1 rounded-md px-1 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
                       >
                         {isArchivedOpen ? (
                           <ChevronDown className="size-3.5 shrink-0" />
@@ -1205,9 +1243,10 @@ export function KanbanBoardView({
                                   handleCardPointerDragStart(card.id, coords)
                                 }
                                 onPointerDragEnd={handleCardDragEnd}
-                                onOpenContextMenu={(x, y) =>
-                                  setCardContextMenu({ cardId: card.id, x, y })
-                                }
+                                onOpenContextMenu={(x, y) => {
+                                  setColumnContextMenu(null);
+                                  setCardContextMenu({ cardId: card.id, x, y });
+                                }}
                               />
                             </div>
                           ))}
@@ -1257,6 +1296,33 @@ export function KanbanBoardView({
           }}
         />
       ) : null}
+
+      {columnContextMenu ? (
+        <KanbanColumnContextMenu
+          columnId={columnContextMenu.columnId}
+          x={columnContextMenu.x}
+          y={columnContextMenu.y}
+          board={board}
+          onClose={() => setColumnContextMenu(null)}
+          onRename={(columnId) => {
+            const column = board.columns.find((item) => item.id === columnId);
+            if (column) startEditColumn(column);
+            setColumnContextMenu(null);
+          }}
+          onInsertBefore={(columnId) => {
+            void handleInsertColumn(columnId, "before");
+            setColumnContextMenu(null);
+          }}
+          onInsertAfter={(columnId) => {
+            void handleInsertColumn(columnId, "after");
+            setColumnContextMenu(null);
+          }}
+          onDelete={(columnId) => {
+            void handleDeleteColumn(columnId);
+            setColumnContextMenu(null);
+          }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -1279,7 +1345,7 @@ function AddCardButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center justify-center gap-1 rounded-lg py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-surface-hover/50 hover:text-foreground"
+      className="flex w-full items-center justify-center gap-1 rounded-lg py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
     >
       <Plus className="size-3" />
       Add a card
@@ -1461,7 +1527,7 @@ const KanbanCardRow = memo(function KanbanCardRow({
       className={cn(
         "group relative min-w-0 touch-none overflow-hidden",
         kanbanCardClass,
-        card.is_archived && "border-border/30 bg-surface-raised opacity-90",
+        card.is_archived && "opacity-75",
         !isEditing && "cursor-grab active:cursor-grabbing",
         isDragging && "pointer-events-none opacity-0",
       )}
@@ -1472,6 +1538,7 @@ const KanbanCardRow = memo(function KanbanCardRow({
       onContextMenu={(event) => {
         if (isEditing) return;
         event.preventDefault();
+        event.stopPropagation();
         onOpenContextMenu(event.clientX, event.clientY);
       }}
     >
@@ -1545,6 +1612,32 @@ const KanbanCardRow = memo(function KanbanCardRow({
   );
 });
 
+function useClampedMenuPosition(x: number, y: number) {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ left: x, top: y });
+
+  useLayoutEffect(() => {
+    const menu = menuRef.current;
+    const width = menu?.offsetWidth ?? 176;
+    const height = menu?.offsetHeight ?? 240;
+    const padding = 8;
+    let left = x;
+    let top = y;
+    if (left + width > window.innerWidth - padding) {
+      left = window.innerWidth - width - padding;
+    }
+    if (top + height > window.innerHeight - padding) {
+      top = window.innerHeight - height - padding;
+    }
+    setPosition({
+      left: Math.max(padding, left),
+      top: Math.max(padding, top),
+    });
+  }, [x, y]);
+
+  return { menuRef, position };
+}
+
 function KanbanCardContextMenu({
   cardId,
   x,
@@ -1572,10 +1665,11 @@ function KanbanCardContextMenu({
   const moveTargets = board.columns.filter(
     (column) => column.id !== card?.column_id,
   );
+  const { menuRef, position } = useClampedMenuPosition(x, y);
 
   if (!card) return null;
 
-  return (
+  return createPortal(
     <>
       <button
         type="button"
@@ -1584,8 +1678,9 @@ function KanbanCardContextMenu({
         onClick={onClose}
       />
       <div
+        ref={menuRef}
         className="flow-surface-elevated fixed z-[100] min-w-[11rem] p-1"
-        style={{ left: x, top: y }}
+        style={{ left: position.left, top: position.top }}
         onClick={(event) => event.stopPropagation()}
       >
         <button
@@ -1606,16 +1701,25 @@ function KanbanCardContextMenu({
             Archive card
           </button>
         ) : null}
-        {moveTargets.map((column) => (
-          <button
-            key={column.id}
-            type="button"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-surface-hover"
-            onClick={() => onMoveToList(cardId, column.id)}
-          >
-            {column.title}
-          </button>
-        ))}
+        {moveTargets.length > 0 ? (
+          <>
+            <div className="my-1 border-t border-border/40" />
+            <p className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
+              Move to list
+            </p>
+            {moveTargets.map((column) => (
+              <button
+                key={column.id}
+                type="button"
+                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-surface-hover"
+                onClick={() => onMoveToList(cardId, column.id)}
+              >
+                {column.title}
+              </button>
+            ))}
+          </>
+        ) : null}
+        <div className="my-1 border-t border-border/40" />
         <button
           type="button"
           className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-surface-hover"
@@ -1625,7 +1729,84 @@ function KanbanCardContextMenu({
           Delete card
         </button>
       </div>
-    </>
+    </>,
+    document.body,
+  );
+}
+
+function KanbanColumnContextMenu({
+  columnId,
+  x,
+  y,
+  board,
+  onClose,
+  onRename,
+  onInsertBefore,
+  onInsertAfter,
+  onDelete,
+}: {
+  columnId: string;
+  x: number;
+  y: number;
+  board: KanbanBoardWithColumns;
+  onClose: () => void;
+  onRename: (columnId: string) => void;
+  onInsertBefore: (columnId: string) => void;
+  onInsertAfter: (columnId: string) => void;
+  onDelete: (columnId: string) => void;
+}) {
+  const column = board.columns.find((item) => item.id === columnId);
+  const { menuRef, position } = useClampedMenuPosition(x, y);
+
+  if (!column) return null;
+
+  return createPortal(
+    <>
+      <button
+        type="button"
+        className="fixed inset-0 z-[99] cursor-default bg-transparent"
+        aria-label="Close menu"
+        onClick={onClose}
+      />
+      <div
+        ref={menuRef}
+        className="flow-surface-elevated fixed z-[100] min-w-[11rem] p-1"
+        style={{ left: position.left, top: position.top }}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-surface-hover"
+          onClick={() => onRename(columnId)}
+        >
+          Rename list
+        </button>
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-surface-hover"
+          onClick={() => onInsertBefore(columnId)}
+        >
+          Insert list before
+        </button>
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-surface-hover"
+          onClick={() => onInsertAfter(columnId)}
+        >
+          Insert list after
+        </button>
+        <div className="my-1 border-t border-border/40" />
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-surface-hover"
+          onClick={() => onDelete(columnId)}
+        >
+          <Trash2 className="size-3.5 shrink-0" />
+          Delete list
+        </button>
+      </div>
+    </>,
+    document.body,
   );
 }
 

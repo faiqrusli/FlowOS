@@ -1,23 +1,43 @@
 /**
- * FlowOS theme token reference — values live in globals.css (:root / .dark).
- * Use Tailwind utilities (bg-surface-canvas, bg-card) or surface-classes.ts helpers.
+ * FlowOS theme token reference — values live in globals.css (.dark).
+ * Use Tailwind utilities (bg-surface-canvas, bg-surface-4) or surface-classes.ts helpers.
  *
- * Neutral Dark semantic roles are canonical (DESIGN_SYSTEM_NEUTRAL_DARK.md).
- * Legacy names remain as compatibility aliases until consumers retire.
+ * Canonical: DESIGN_SYSTEM_V3.md (Surface 0–10). Semantic names alias to numbered paints.
  */
 export const themeTokens = {
-  /** Canonical Neutral Dark surface stack */
+  /** Design System v3 Surface 0–10 */
+  surfaceLadder: {
+    0: "--surface-0",
+    1: "--surface-1",
+    2: "--surface-2",
+    3: "--surface-3",
+    4: "--surface-4",
+    5: "--surface-5",
+    6: "--surface-6",
+    7: "--surface-7",
+    8: "--surface-8",
+    9: "--surface-9",
+    10: "--surface-10",
+  },
+  /** Semantic aliases → Surface 0–10 in globals.css */
   surface: {
-    canvas: "--surface-canvas",
-    nav: "--surface-nav",
-    drawer: "--surface-drawer",
-    base: "--surface-base",
-    inset: "--surface-inset",
-    insetHover: "--surface-inset-hover",
-    raised: "--surface-raised",
-    overlay: "--surface-overlay",
-    hover: "--surface-hover",
+    canvas: "--surface-canvas", // → 1
+    nav: "--surface-nav", // → 0
+    rail: "--surface-rail", // → 2
+    section: "--surface-section", // → 3
+    drawer: "--surface-drawer", // → 2
+    base: "--surface-base", // → 4
+    inset: "--surface-inset", // → 5
+    insetHover: "--surface-inset-hover", // → 6
+    editor: "--surface-editor", // → 5
+    raised: "--surface-raised", // → 4 (resting)
+    float: "--surface-float", // → 8
+    overlay: "--surface-overlay", // → 5
+    hover: "--surface-hover", // → 6
+    active: "--surface-active", // → 7
+    selected: "--surface-selected", // → 7
     rowHover: "--surface-row-hover",
+    ghostHover: "--surface-ghost-hover",
   },
   control: {
     default: "--control-default",
@@ -26,7 +46,12 @@ export const themeTokens = {
   },
   border: {
     subtle: "--border-subtle",
+    control: "--border-control",
+    elevated: "--border-elevated",
     strong: "--border-strong",
+    hairline: "--border-hairline",
+    float: "--border-float",
+    divider: "--divider",
   },
   text: {
     primary: "--text-primary",
@@ -42,19 +67,19 @@ export const themeTokens = {
     medium: "--primary-medium",
   },
   /**
-   * Compatibility aliases — map to Neutral Dark roles in globals.css.
-   * Prefer semantic names in new code.
+   * Compatibility aliases — map to Surface ladder in globals.css.
+   * Prefer semantic / numbered names in new code.
    */
   surfaceLegacy: {
-    background: "--background", // → canvas
-    surface: "--surface", // → nav
-    card: "--card", // → base
+    background: "--background", // → 1
+    surface: "--surface", // → 0
+    card: "--card", // → 4
     app: "--surface-app",
     sidebar: "--surface-sidebar",
     page: "--surface-page",
-    elevated: "--surface-elevated", // → raised
-    timeline: "--timeline-surface",
-    dialog: "--surface-dialog", // → overlay
+    elevated: "--surface-elevated", // → 8
+    timeline: "--timeline-surface", // → 1 (matches workspace)
+    dialog: "--surface-dialog", // → 9
   },
   semantic: {
     selected: "--selected",

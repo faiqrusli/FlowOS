@@ -14,26 +14,52 @@
     Consolas, monospace;
   --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 
-  /* v3 semantic surfaces */
+  /* Design System v3 — Surface 0–10 paints */
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-4: var(--surface-4);
+  --color-surface-5: var(--surface-5);
+  --color-surface-6: var(--surface-6);
+  --color-surface-7: var(--surface-7);
+  --color-surface-8: var(--surface-8);
+  --color-surface-9: var(--surface-9);
+  --color-surface-10: var(--surface-10);
+  --color-surface-ghost-hover: var(--surface-ghost-hover);
+
+  /* Semantic surfaces (aliases → Surface 0–10) */
   --color-surface-canvas: var(--surface-canvas);
   --color-surface-nav: var(--surface-nav);
+  --color-surface-rail: var(--surface-rail);
+  --color-surface-section: var(--surface-section);
   --color-surface-drawer: var(--surface-drawer);
   --color-surface-base: var(--surface-base);
+  --color-surface-focus-primary: var(--surface-focus-primary);
   --color-surface-inset: var(--surface-inset);
   --color-surface-inset-hover: var(--surface-inset-hover);
+  --color-surface-editor: var(--surface-editor);
   --color-surface-raised: var(--surface-raised);
+  --color-surface-float: var(--surface-float);
   --color-surface-overlay: var(--surface-overlay);
   --color-control-default: var(--control-default);
   --color-control-hover: var(--control-hover);
   --color-control-active: var(--control-active);
   --color-surface-row-hover: var(--surface-row-hover);
+  --color-surface-disabled: var(--surface-disabled);
   --color-border-subtle: var(--border-subtle);
   --color-border-strong: var(--border-strong);
+  --color-border-control: var(--border-control);
+  --color-border-elevated: var(--border-elevated);
+  --color-border-hairline: var(--border-hairline);
+  --color-border-float: var(--border-float);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
+  --color-text-inactive: var(--text-inactive);
   --color-text-tertiary: var(--text-tertiary);
   --color-text-disabled: var(--text-disabled);
+  --color-text-placeholder: var(--text-placeholder);
   --color-primary-subtle: var(--primary-subtle);
   --color-primary-soft: var(--primary-soft);
   --color-primary-medium: var(--primary-medium);
@@ -83,6 +109,17 @@
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  /* Task group identity — 10 distinctive swatches */
+  --color-group-sky: var(--group-sky);
+  --color-group-blue: var(--group-blue);
+  --color-group-indigo: var(--group-indigo);
+  --color-group-violet: var(--group-violet);
+  --color-group-emerald: var(--group-emerald);
+  --color-group-teal: var(--group-teal);
+  --color-group-amber: var(--group-amber);
+  --color-group-orange: var(--group-orange);
+  --color-group-rose: var(--group-rose);
+  --color-group-slate: var(--group-slate);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -113,35 +150,61 @@
   color-scheme: light;
 
   /* v3 names stubbed to light L0–L6 so utilities resolve if .dark is absent */
-  --surface-canvas: oklch(0.985 0.004 265);
-  --surface-nav: oklch(0.975 0.005 265);
-  --surface-drawer: color-mix(in oklab, var(--surface-canvas) 97%, black 3%);
-  --surface-base: oklch(1 0 0);
-  --surface-inset: oklch(0.97 0.004 265);
-  --surface-inset-hover: oklch(0.94 0.005 265);
-  --surface-raised: oklch(1 0 0);
-  --surface-overlay: oklch(1 0 0);
+  --surface-0: oklch(0.97 0.005 265);
+  --surface-1: oklch(0.985 0.004 265);
+  --surface-2: oklch(0.975 0.005 265);
+  --surface-3: oklch(0.97 0.005 265);
+  --surface-4: oklch(1 0 0);
+  --surface-5: oklch(0.97 0.004 265);
+  --surface-6: oklch(0.94 0.005 265);
+  --surface-7: oklch(0.92 0.006 265);
+  --surface-8: oklch(1 0 0);
+  --surface-9: oklch(1 0 0);
+  --surface-10: oklch(1 0 0);
+  --surface-canvas: var(--surface-1);
+  --surface-nav: var(--surface-0);
+  --surface-rail: var(--surface-2);
+  --surface-section: var(--surface-3);
+  --surface-drawer: var(--surface-2);
+  --surface-base: var(--surface-4);
+  --surface-inset: var(--surface-5);
+  --surface-inset-hover: var(--surface-6);
+  --surface-editor: var(--surface-5);
+  --surface-raised: var(--surface-4);
+  --surface-overlay: var(--surface-5);
+  --surface-float: var(--surface-8);
+  --surface-hover: var(--surface-6);
+  --surface-active: var(--surface-7);
+  --surface-selected: var(--surface-7);
+  --surface-disabled: oklch(0.94 0.006 265);
+  --surface-ghost-hover: color-mix(in srgb, black 3%, transparent);
   --control-default: oklch(0.96 0.006 265);
   --control-hover: oklch(0.94 0.008 265);
   --control-active: oklch(0.92 0.01 265);
   --surface-row-hover: color-mix(in srgb, white 3.5%, transparent);
   --border-subtle: oklch(0.88 0.008 265);
   --border-strong: oklch(0.78 0.012 265);
+  /* Structure / canvas chrome — quieter than float */
+  --border-hairline: oklch(0.205 0.02 265 / 3%);
+  --border-hairline-width: 0.5px;
+  /* Floating cards / overlays — soft separation without heavy chrome */
+  --border-float: oklch(0.205 0.02 265 / 6%);
   --text-primary: oklch(0.205 0.02 265);
   --text-secondary: oklch(0.42 0.02 265);
   --text-muted: oklch(0.52 0.018 265);
   --text-tertiary: oklch(0.62 0.014 265);
   --text-disabled: oklch(0.72 0.012 265);
+  --text-placeholder: oklch(0.62 0.014 265);
   --primary-subtle: oklch(0.58 0.1 265 / 8%);
   --primary-soft: oklch(0.58 0.1 265 / 12%);
   --primary-medium: oklch(0.58 0.1 265 / 20%);
 
   /* Application shell — application-shell-navigation-spec */
-  --shell-header-height: 64px;
+  --shell-header-height: 43px;
   --topbar-height: var(--shell-header-height);
   --left-rail-width: 56px;
   --left-sidebar-expanded-width: 288px;
-  --right-rail-width: 64px;
+  --right-rail-width: 52px;
   --sidebar-header-height: var(--shell-header-height);
   --nav-row-height: 48px;
   --nav-row-gap: 8px;
@@ -159,8 +222,7 @@
   --shell-border-width: 1px;
   --active-indicator-width: 3px;
   --active-indicator-height: 30px;
-  --shadow-right-drawer: -12px 0 32px rgba(0, 0, 0, 0.18),
-    -2px 0 8px rgba(0, 0, 0, 0.1);
+  --shadow-right-drawer: -5px 0 15px rgb(0 0 0 / 10%);
   /* Legacy aliases */
   --sidebar-collapsed-width: var(--left-rail-width);
   --sidebar-expanded-width: var(--left-sidebar-expanded-width);
@@ -230,6 +292,18 @@
   --chart-4: oklch(0.55 0.2 25);
   --chart-5: oklch(0.48 0.02 265);
 
+  /* Task group swatches — 10 distinct hues (light) */
+  --group-sky: oklch(0.62 0.12 230);
+  --group-blue: oklch(0.55 0.16 255);
+  --group-indigo: oklch(0.52 0.18 280);
+  --group-violet: oklch(0.55 0.18 305);
+  --group-emerald: oklch(0.55 0.14 155);
+  --group-teal: oklch(0.55 0.1 185);
+  --group-amber: oklch(0.68 0.14 85);
+  --group-orange: oklch(0.65 0.16 55);
+  --group-rose: oklch(0.58 0.18 15);
+  --group-slate: oklch(0.52 0.04 265);
+
   --radius: 0.625rem;
 
   --shadow-xs: 0 1px 1px 0 oklch(0.205 0.02 265 / 4%);
@@ -250,55 +324,124 @@
   --sidebar-ring: oklch(0.58 0.1 265);
 }
 
-/* ─── Dark theme: Neutral Dark Visual Design System ───
-   Canonical: DESIGN_SYSTEM_NEUTRAL_DARK.md
-   Few paints, many semantic aliases. Legacy shadcn names map to roles. */
+/* ─── Dark theme: Design System v3 — Tokyo Night × Soft Indigo ───
+   Canonical: DESIGN_SYSTEM_V3.md (+ WORKSPACE + INTERACTION)
+   Surface 0–10 = single paint source; semantic names are aliases. */
 .dark {
   color-scheme: dark;
 
-  /* Environment */
-  --surface-canvas: #171717;
-  --surface-nav: #171717;
-  --surface-drawer: var(--surface-canvas);
+  /* Surface 0–10 — tiny luminance steps, one Tokyo Night hue
+     Shell ladder: Left 0 → App 1 → Right utility 2 → Canvas 3 → Cards 4 → Inputs 5 */
+  --surface-0: #15161f; /* chrome / left rail (darkest) */
+  --surface-1: #171923; /* app / workspace background */
+  --surface-2: #1a1c2a; /* right utility workspace — between app bg and canvas */
+  --surface-3: #1b1d28; /* canvases */
+  --surface-4: #1d2030; /* content cards */
+  --surface-5: #202333; /* inputs / controls */
+  --surface-6: #232637; /* hover */
+  --surface-7: #262a3b; /* selected */
+  --surface-8: #2a2e41; /* floating UI */
+  --surface-9: #2d3247; /* dialogs */
+  --surface-10: #31364d; /* highest / reserved */
 
-  /* Work surfaces */
-  --surface-base: #212123;
-  /* Inset / recessed controls inside base cards (title, description, etc.) */
-  --surface-inset: #1e1e20;
-  --surface-inset-hover: #232325;
-  --surface-raised: #29292d;
-  --surface-overlay: #303034;
-  --surface-hover: #343438;
+  /* Semantic aliases → Surface 0–10 */
+  --surface-nav: var(--surface-0);
+  --surface-canvas: var(--surface-1);
+  --surface-rail: var(--surface-2);
+  --surface-drawer: var(--surface-2);
+  --surface-section: var(--surface-3);
+  --surface-base: var(--surface-4);
+  --surface-raised: var(--surface-4); /* resting raised = card paint */
+  /* Current Task well — Surface 6 on Focus canvas (Surface 4); palette only, no ad-hoc mixes */
+  --surface-focus-primary: var(--surface-6);
+  --surface-focus-primary-hover: var(--surface-7);
+  /* Active session meta on Current Task */
+  --text-focus-meta: color-mix(in srgb, var(--text-primary) 70%, transparent);
+  --text-focus-goal: color-mix(in srgb, var(--text-primary) 55%, transparent);
+  --surface-overlay: var(--surface-5);
+  --surface-inset: var(--surface-5);
+  --surface-inset-hover: var(--surface-6);
+  --surface-editor: var(--surface-5);
+  --surface-float: var(--surface-7);
+  --surface-hover: var(--surface-6);
+  --surface-active: var(--surface-7);
+  --surface-selected: var(--surface-7);
+  /* On floating / elevated chrome (already Surface 7+), hover must still light *up* */
+  --surface-float-hover: var(--surface-9);
+  --surface-float-selected: var(--surface-8);
+  --surface-disabled: color-mix(in srgb, var(--surface-3) 85%, black 15%);
 
   /* Compact selectors (Date, Time, Duration, Priority, …) */
-  --control-default: #29292d;
-  --control-hover: #303034;
-  --control-active: #343438;
+  --control-default: var(--surface-5);
+  --control-hover: var(--surface-6);
+  --control-active: var(--surface-7);
 
-  /* Task / list row hover — soft white wash over parent surface */
-  --surface-row-hover: color-mix(in srgb, white 3.5%, transparent);
+  /* Task / list row hover — soft cool wash over parent surface */
+  --surface-row-hover: color-mix(in srgb, #c0caf5 6%, transparent);
 
-  /* Borders */
-  --border-subtle: #3a3a3f;
-  --border-strong: #444449;
+  /* Borders — structural only; keep quiet (Linear-like).
+     Docked UI prefers luminance; strokes stay soft when needed. */
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-default: rgba(255, 255, 255, 0.05);
+  --border-control: rgba(255, 255, 255, 0.05); /* inputs / compact controls */
+  --border-elevated: rgba(255, 255, 255, 0.06); /* menus / dialogs only */
+  --border-strong: rgba(255, 255, 255, 0.08); /* rare emphasis */
+  /* Structure / canvas chrome (nav rails, shell edges) */
+  --border-hairline: rgba(255, 255, 255, 0.03);
+  --border-hairline-width: 0.5px;
+  /* Floating cards / overlays — readable edge without heavy chrome */
+  --border-float: rgba(255, 255, 255, 0.06);
+  --border-danger: #f7768e;
+  --border-success: #9ece6a;
 
-  /* Text hierarchy */
-  --text-primary: #e9ecee;
-  --text-secondary: #d3d6d8;
-  --text-muted: #b4b6b8;
-  --text-tertiary: #9ea0a2;
-  --text-disabled: #747679;
+  /* Typography — hierarchy via weight + opacity (not size).
+     Primary #C0CAF5 @ 100%; secondary 78%; meta 62%; inactive 48%. */
+  --text-primary: #c0caf5;
+  --text-secondary: color-mix(in srgb, var(--text-primary) 78%, transparent);
+  --text-muted: color-mix(in srgb, var(--text-primary) 62%, transparent);
+  --text-inactive: color-mix(in srgb, var(--text-primary) 48%, transparent);
+  /* Section labels (NEXT UP / CONTINUE) — quieter than content, Linear-like */
+  --text-section: color-mix(in srgb, var(--text-primary) 65%, transparent);
+  --text-placeholder: color-mix(in srgb, var(--text-primary) 42%, transparent);
+  --text-tertiary: var(--text-placeholder);
+  --text-disabled: color-mix(in srgb, var(--text-primary) 35%, transparent);
+  --text-inverse: #1a1b26;
 
-  /* FlowOS identity */
-  --primary: #586cf6;
-  --primary-hover: color-mix(in srgb, var(--primary), white 10%);
-  --primary-foreground: #e9ecee;
-  --primary-subtle: color-mix(in srgb, var(--primary) 10%, transparent);
-  --primary-soft: color-mix(in srgb, var(--primary) 16%, transparent);
-  --primary-medium: color-mix(in srgb, var(--primary) 24%, transparent);
-  /* Kept for residual consumers; primitives no longer apply glow. */
-  --primary-glow: color-mix(in srgb, var(--primary) 28%, transparent);
+  --font-weight-display: 800;
+  --font-weight-title: 700;
+  --font-weight-section: 500;
+  --font-weight-button: 550;
+  --font-weight-label: 500;
+  --font-weight-meta: 425;
+  --font-weight-caption: 400;
+
+  /* FlowOS identity — Soft Indigo (~5% less saturation than #7886f2) */
+  --primary: #7b88ef;
+  --primary-hover: #707ee5;
+  --primary-pressed: #6270d8;
+  --primary-active: #6270d8;
+  --primary-foreground: #1a1b26;
+  /* Nav selection stays quieter than primary CTA */
+  --primary-soft: rgba(123, 136, 239, 0.07);
+  --primary-muted: rgba(123, 136, 239, 0.14);
+  --primary-border: rgba(123, 136, 239, 0.28);
+  --primary-ring: rgba(123, 136, 239, 0.45);
+  /* Compatibility: soft fill / stronger fill for selected rows */
+  --primary-subtle: var(--primary-soft);
+  --primary-medium: var(--primary-muted);
+  /* Signature wash — used sparingly (timer glow, selected emphasis) */
+  --primary-glow: color-mix(in srgb, var(--primary) 22%, transparent);
   --accent-text: color-mix(in srgb, var(--primary) 72%, white 28%);
+
+  /* Named accents (Tokyo Night) */
+  --blue: #7aa2f7;
+  --cyan: #7dcfff;
+  --green: #9ece6a;
+  --purple: #bb9af7;
+  --orange: #ff9e64;
+  --red: #f7768e;
+  --yellow: #e0af68;
+  --focus-module: #7b88ef;
 
   /* Compatibility aliases — map legacy shadcn/Tailwind names to roles */
   --background: var(--surface-canvas);
@@ -307,72 +450,108 @@
   --surface-app: var(--surface-canvas);
   --surface-sidebar: var(--surface-nav);
   --surface-page: var(--surface-canvas);
-  --timeline-surface: var(--surface-canvas);
+  --timeline-surface: var(--surface-1);
   --surface-card: var(--surface-base);
-  --surface-elevated: var(--surface-raised);
-  --surface-popover: var(--surface-overlay);
-  --surface-dialog: var(--surface-overlay);
+  --surface-elevated: var(--surface-7);
+  --surface-popover: var(--surface-7);
+  --surface-dialog: var(--surface-9);
 
   /* Derived surfaces — semantic names, constrained paints */
-  --surface-card-hover: var(--surface-raised);
-  --surface-focus: var(--surface-raised);
-  --surface-focus-hover: var(--surface-overlay);
-  --surface-board: var(--surface-base);
-  --surface-board-header: var(--surface-raised);
-  --border-board: color-mix(in srgb, var(--border-subtle) 80%, transparent);
-  --surface-kanban-card: var(--surface-raised);
+  --surface-card-hover: var(--surface-6);
+  --surface-focus: var(--surface-4);
+  --surface-focus-hover: var(--surface-6);
+  --surface-board: var(--surface-3);
+  --surface-board-header: var(--surface-4);
+  --border-board: color-mix(in srgb, var(--border-subtle) 70%, transparent);
+  --surface-kanban-card: var(--surface-4);
 
   --foreground: var(--text-primary);
   --foreground-secondary: var(--text-secondary);
   --foreground-disabled: var(--text-disabled);
   --card-foreground: var(--text-primary);
-  --popover: var(--surface-overlay);
+  --popover: var(--surface-7);
   --popover-foreground: var(--text-primary);
 
-  --secondary: var(--surface-overlay);
+  --secondary: var(--surface-4);
   --secondary-foreground: var(--text-primary);
-  --muted: var(--surface-raised);
+  --muted: var(--surface-4);
   --muted-foreground: var(--text-muted);
-  --accent: var(--surface-hover);
+  --accent: var(--surface-6);
   --accent-foreground: var(--text-primary);
 
-  /* Status — independent of FlowOS identity */
-  --destructive: oklch(0.68 0.175 22);
-  --destructive-muted: oklch(0.68 0.175 22 / 14%);
-  --success: oklch(0.72 0.13 158);
-  --success-muted: oklch(0.72 0.13 158 / 13%);
-  --warning: oklch(0.78 0.12 82);
-  --warning-muted: oklch(0.78 0.12 82 / 13%);
+  /* Status — Tokyo Night semantic */
+  --destructive: #f7768e;
+  --destructive-muted: rgba(247, 118, 142, 0.15);
+  --success: #9ece6a;
+  --success-muted: rgba(158, 206, 106, 0.15);
+  --warning: #e0af68;
+  --warning-muted: rgba(224, 175, 104, 0.15);
+  --info: #7dcfff;
+  --info-muted: rgba(125, 207, 255, 0.15);
 
   --border: var(--border-subtle);
-  --border-focus: color-mix(in srgb, var(--border-subtle) 70%, var(--border-strong) 30%);
-  --divider: color-mix(in srgb, var(--border-subtle) 55%, transparent);
-  --input: color-mix(in srgb, var(--border-subtle) 75%, transparent);
-  --ring: color-mix(in srgb, var(--primary) 55%, transparent);
+  --border-focus: var(--primary-border);
+  --divider: rgba(255, 255, 255, 0.05);
+  --input: var(--border-control);
+  --ring: var(--primary-ring);
 
-  --selected: var(--primary-soft);
-  --selected-border: color-mix(in srgb, var(--primary) 42%, transparent);
+  --selected: var(--surface-selected);
+  --selected-border: var(--primary-border);
 
-  --chart-1: var(--primary);
-  --chart-2: var(--success);
-  --chart-3: var(--warning);
-  --chart-4: var(--destructive);
-  --chart-5: var(--text-muted);
+  /* Charts — Tokyo Night Warm series */
+  --chart-1: #7aa2f7;
+  --chart-2: #9ece6a;
+  --chart-3: #e0af68;
+  --chart-4: #bb9af7;
+  --chart-5: #7dcfff;
 
-  /* Elevation — surface contrast first; no neon / primary glow shadows */
+  /* Task group swatches — 10 distinctive hues users can tell apart */
+  --group-sky: #7dcfff;
+  --group-blue: #7aa2f7;
+  --group-indigo: #818cf8;
+  --group-violet: #bb9af7;
+  --group-emerald: #9ece6a;
+  --group-teal: #73daca;
+  --group-amber: #e0af68;
+  --group-orange: #ff9e64;
+  --group-rose: #f7768e;
+  --group-slate: #a9b1d6;
+
+  /* Elevation — V3 Interaction: docked none; float/dialog soft only */
   --shadow-card: none;
-  --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.22);
-  --shadow-overlay: 0 8px 28px rgba(0, 0, 0, 0.32);
-  --shadow-modal: 0 12px 48px rgba(0, 0, 0, 0.4);
-  --shadow-xs: var(--shadow-raised);
-  --shadow-sm: var(--shadow-raised);
+  --shadow-raised: none;
+  --shadow-overlay: 0 2px 6px rgb(0 0 0 / 15%);
+  --shadow-modal: 0 10px 30px rgb(0 0 0 / 20%);
+  --shadow-xs: none;
+  --shadow-sm: var(--shadow-overlay);
   --shadow-md: var(--shadow-overlay);
   --shadow-lg: var(--shadow-modal);
   --shadow-primary: none;
-  --shadow-right-drawer: -12px 0 32px rgba(0, 0, 0, 0.22),
-    -2px 0 8px rgba(0, 0, 0, 0.12);
-  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
-  --radius: 0.5rem; /* 8px medium default */
+  /* Soft left cast — Sunsama shape, quieter opacity for Tokyo Night */
+  --shadow-right-drawer: -3px 0 12px rgb(0 0 0 / 36%);
+  /* Interaction motion — people notice when it is missing */
+  --ease-premium: ease-out;
+  --duration-fast: 180ms;
+  --duration-panel: 220ms;
+  /* Spacing scale — 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 */
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  /* Aliases (legacy names) */
+  --space-tiny: var(--space-2);
+  --space-sm: var(--space-4);
+  --space-md: var(--space-6);
+  --space-lg: var(--space-8);
+  --space-xl: var(--space-10);
+  --space-2xl: var(--space-12);
+  /* Ghost hover — inactive chrome only (right rail / Today / left nav) */
+  --surface-ghost-hover: rgba(255, 255, 255, 0.03);
+  --radius: 0.5rem; /* 8px buttons; cards use larger radius utilities */
 
   --sidebar: var(--surface-nav);
   --sidebar-foreground: var(--text-secondary);
@@ -408,6 +587,13 @@
   }
 }
 
+/* Animatable focus-edge alpha — must be top-level (not inside @layer). */
+@property --focus-edge-blink {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.62;
+}
+
 @layer components {
   /* v3 surface recipes — Canvas / Nav / Base / Raised / Overlay */
   .flow-surface-canvas {
@@ -418,6 +604,11 @@
   .flow-surface-nav {
     background: var(--surface-nav);
     color: var(--text-secondary);
+  }
+
+  .flow-surface-section {
+    background: var(--surface-section);
+    color: var(--text-primary);
   }
 
   .flow-shell-topbar {
@@ -438,15 +629,19 @@
     background: var(--primary);
   }
 
-  /* Persistent utility rail — canvas surface (with main workspace). */
+  /* Persistent utility rail — dedicated quiet strip. */
   .flow-shell-utility-sidebar {
-    background: var(--surface-canvas);
+    background: var(--surface-rail);
   }
 
-  /* Elevated utility panel — layered beside the rail. */
+  /* Side panels — Sunsama-style left cast on the open leading edge only. */
   .flow-shell-right-drawer {
+    border-left: var(--border-hairline-width) solid var(--border-hairline);
     background: var(--surface-drawer);
-    border-left: 1px solid var(--border-subtle);
+  }
+
+  .flow-shell-right-drawer-elevated,
+  .flow-shell-right-rail-elevated {
     box-shadow: var(--shadow-right-drawer);
   }
 
@@ -465,49 +660,64 @@
     transform: translateY(-50%) scale(1);
   }
 
+  /* Borderless Workspace — Level 1/2 surfaces: fill + radius, no decorative stroke */
   .flow-surface-base {
-    @apply rounded-xl border border-border-subtle bg-surface-base text-foreground;
+    @apply rounded-xl border-0 bg-surface-base text-foreground;
   }
 
-  /* Base organisational panels (groups, lists) — no permanent shadow */
+  /* Base organisational panels (groups, lists) — surface contrast, no border */
   .flow-surface-card,
   .flow-panel {
-    @apply rounded-xl border border-border-subtle bg-surface-base text-card-foreground;
+    @apply rounded-xl border-0 bg-surface-base text-card-foreground;
     box-shadow: none;
   }
 
-  /* Raised — attention surfaces; subtle shadow only when needed */
+  /* Raised — attention via fill; no decorative stroke */
   .flow-surface-raised {
-    @apply rounded-xl border border-border-strong bg-surface-raised text-card-foreground;
-    box-shadow: var(--shadow-raised);
+    @apply rounded-xl border-0 bg-surface-raised text-card-foreground;
+    box-shadow: none;
   }
 
   /* Today Focus legacy class → Raised */
   .flow-surface-focus {
-    @apply rounded-xl border border-border-strong bg-surface-raised text-card-foreground;
-    box-shadow: var(--shadow-raised);
+    @apply rounded-xl border-0 bg-surface-raised text-card-foreground;
+    box-shadow: none;
   }
 
   .flow-surface-focus:hover {
     background-color: var(--surface-focus-hover);
   }
 
-  /* Overlay — temporary UI above workspace */
+  /* Menus / popovers — float + slightly stronger edge than workspace cards.
+     Rebind hover/selected so luminance still climbs (never darken on float). */
   .flow-surface-elevated {
-    @apply rounded-lg border border-border-strong bg-surface-overlay text-popover-foreground;
+    @apply rounded-lg border border-border-elevated bg-surface-float text-popover-foreground;
     box-shadow: var(--shadow-overlay);
+    --surface-hover: var(--surface-float-hover);
+    --color-surface-hover: var(--surface-float-hover);
+    --surface-selected: var(--surface-float-selected);
+    --color-surface-selected: var(--surface-float-selected);
+    --selected: var(--surface-float-selected);
+    --color-selected: var(--surface-float-selected);
   }
 
   .flow-surface-modal {
-    @apply rounded-xl border border-border-strong bg-surface-overlay text-popover-foreground;
+    @apply rounded-xl border border-border-elevated text-popover-foreground;
+    background: var(--surface-9);
     box-shadow: var(--shadow-modal);
+    --surface-hover: var(--surface-10);
+    --color-surface-hover: var(--surface-10);
+    --surface-selected: var(--surface-10);
+    --color-surface-selected: var(--surface-10);
+    --selected: var(--surface-10);
+    --color-selected: var(--surface-10);
   }
 
   .flow-interactive,
   .flow-card-interactive {
     cursor: pointer;
-    transition-property: background-color, border-color, color, box-shadow, opacity;
-    transition-duration: 150ms;
+    transition-property: background-color, border-color, color, box-shadow, opacity, transform;
+    transition-duration: var(--duration-fast);
     transition-timing-function: var(--ease-premium);
   }
 
@@ -519,32 +729,258 @@
     transition-duration: 100ms;
   }
 
+  /* Selection — Surface 7 lift + Soft Indigo soft fill (one cue family) */
   .flow-selected {
-    background: var(--primary-soft);
-    box-shadow: inset 0 0 0 1px var(--selected-border);
+    background: color-mix(in srgb, var(--surface-7) 70%, var(--primary-soft));
+    box-shadow: none;
+    transition: background-color var(--duration-fast) var(--ease-premium);
   }
 
   .flow-selected:hover {
-    background: var(--primary-soft);
+    background: color-mix(in srgb, var(--surface-7) 55%, var(--primary-soft));
   }
 
-  /* Quiet list-row hover — transparent default; soft lift on parent card/canvas */
+  /* Quiet list-row hover — transparent default; Surface 6 lift on hover */
   .flow-row-interactive {
     background: transparent;
     border-color: transparent;
-    transition-property: background-color, border-color, box-shadow;
-    transition-duration: 150ms;
+    transition-property: background-color, border-color, box-shadow, transform;
+    transition-duration: var(--duration-fast);
     transition-timing-function: var(--ease-premium);
   }
 
   .flow-row-interactive:hover {
-    background: var(--surface-row-hover);
+    background: var(--surface-hover);
+  }
+
+  /*
+   * Current Focus Task — premium in-focus cue.
+   * Real border-left (not a clipped strip) so BOTH edges follow the card
+   * radius — same “(“ curve as timeline/board group accents.
+   * Breath via --focus-edge-blink (@property declared at root).
+   */
+  .flow-focus-current {
+    position: relative;
+    overflow: hidden;
+    border-top: var(--border-hairline-width) solid var(--border-float);
+    border-right: var(--border-hairline-width) solid var(--border-float);
+    border-bottom: var(--border-hairline-width) solid var(--border-float);
+    border-left: none;
+    border-radius: 14px;
+    background: var(--surface-focus-primary); /* Surface 6 */
+    box-shadow: none;
+    transition:
+      background-color 200ms ease-out,
+      opacity 200ms ease-out,
+      border-color 200ms ease-out;
+  }
+
+  .flow-focus-current:hover {
+    background: var(--surface-focus-primary-hover); /* Surface 7 */
+  }
+
+  .flow-focus-current[data-active-focus="true"] {
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-left-color: color-mix(
+      in srgb,
+      var(--focus-edge-color, var(--chart-1)) calc(var(--focus-edge-blink) * 100%),
+      transparent
+    );
+    animation:
+      flow-focus-current-enter 200ms ease-out,
+      flow-focus-edge-breathe 3.6s ease-in-out 200ms infinite;
+  }
+
+  .flow-focus-current[data-focus-softened="true"] {
+    animation: none;
+    --focus-edge-blink: 0.35;
+  }
+
+  @keyframes flow-focus-edge-breathe {
+    0%,
+    100% {
+      --focus-edge-blink: 0.52;
+    }
+    50% {
+      --focus-edge-blink: 0.72;
+    }
+  }
+
+  @keyframes flow-focus-current-enter {
+    from {
+      opacity: 0.72;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-focus-current {
+      transition: none;
+    }
+
+    .flow-focus-current[data-active-focus="true"] {
+      animation: none;
+      --focus-edge-blink: 0.62;
+    }
+  }
+
+  .flow-focus-current-title {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .flow-focus-current-meta {
+    color: var(--text-focus-meta);
+    font-weight: var(--font-weight-meta);
+  }
+
+  .flow-focus-current-goal {
+    color: var(--text-focus-goal);
+  }
+
+  /* Section labels (NEXT UP / CONTINUE) — quieter than content; Linear-like */
+  .flow-section-label {
+    font-weight: var(--font-weight-section);
+    letter-spacing: 0.08em;
+    color: var(--text-section);
+  }
+
+  /* Section counts — never compete with the label */
+  .flow-section-count {
+    font-weight: var(--font-weight-caption);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    color: color-mix(in srgb, var(--text-primary) 45%, transparent);
+  }
+
+  /* Typography roles — prefer these over ad-hoc font-semibold everywhere */
+  .flow-type-display {
+    font-weight: var(--font-weight-display);
+    color: var(--text-primary);
+  }
+
+  .flow-type-title {
+    font-weight: var(--font-weight-title);
+    color: var(--text-primary);
+  }
+
+  .flow-type-section {
+    font-weight: var(--font-weight-section);
+    letter-spacing: 0.08em;
+    color: var(--text-section);
+  }
+
+  .flow-type-button {
+    font-weight: var(--font-weight-button);
+  }
+
+  .flow-type-label {
+    font-weight: var(--font-weight-label);
+    color: var(--text-secondary);
+  }
+
+  .flow-type-meta {
+    font-weight: var(--font-weight-meta);
+    color: var(--text-muted);
+  }
+
+  .flow-type-caption {
+    font-weight: var(--font-weight-caption);
+    color: var(--text-inactive);
+  }
+
+  /* Queue indices — navigational markers (VS Code line numbers), not content */
+  .flow-queue-index {
+    display: inline-flex;
+    width: 1.125rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: color-mix(in srgb, var(--text-primary) 55%, transparent);
+    user-select: none;
+  }
+
+  /* Metadata groups — breathe; never cram pills */
+  .flow-meta-row {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--space-4); /* 16px */
+    row-gap: var(--space-2); /* 8px */
+  }
+
+  .flow-meta-group {
+    display: inline-flex;
+    min-width: 0;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  /* Chrome icons — quiet until hover / focus */
+  .flow-icon-quiet {
+    opacity: 0.7;
+    transition: opacity var(--duration-fast) var(--ease-premium),
+      color var(--duration-fast) var(--ease-premium),
+      background-color var(--duration-fast) var(--ease-premium);
+  }
+
+  .flow-icon-quiet:hover,
+  .flow-icon-quiet:focus-visible,
+  .group\/queue-item:hover .flow-icon-quiet,
+  .group\/continue-item:hover .flow-icon-quiet,
+  .group\/preview-row:hover .flow-icon-quiet {
+    opacity: 1;
+  }
+
+  /* Interactive list rows — surface tone states only */
+  .flow-interactive {
+    background: transparent;
+    transition: background-color var(--duration-fast) var(--ease-premium),
+      opacity var(--duration-fast) var(--ease-premium);
+  }
+
+  .flow-interactive:hover {
+    background: var(--surface-hover);
+  }
+
+  .flow-interactive:active {
+    background: var(--surface-selected);
+  }
+
+  .flow-interactive[data-selected="true"],
+  .flow-interactive[aria-selected="true"] {
+    background: var(--surface-selected);
+  }
+
+  .flow-interactive[data-disabled="true"],
+  .flow-interactive:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .flow-interactive[data-dragging="true"] {
+    opacity: 0.4;
+  }
+
+  .flow-interactive[data-completed="true"] {
+    opacity: 0.7;
   }
 
   .flow-row-dragging {
     background: var(--surface-raised);
-    border-color: var(--border-subtle);
+    border-color: transparent;
     box-shadow: var(--shadow-overlay);
+    transform: scale(1.01);
   }
 
   .flow-divider {
@@ -616,56 +1052,118 @@
   }
 }
 
-/* Calm in-focus cue — same group left border as siblings, slow blink */
-@property --focus-edge-blink {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0.7;
+/* Timeline / schedule event chrome — readable ladder on canvas (Surface 1/3).
+ * Surface 4 is too close to canvas and reads as flat black; events start at 5.
+ * Avoid background-color transitions that promote layers to intermittent black. */
+.timeline-event-surface {
+  background-color: var(--surface-5);
+  background-clip: padding-box;
+  isolation: isolate;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
-.timeline-task-in-focus {
-  border-left-width: 3px;
-  border-left-style: solid;
-  border-left-color: color-mix(
-    in srgb,
-    var(--focus-edge-color, var(--chart-1)) calc(var(--focus-edge-blink) * 100%),
-    transparent
+.timeline-event-surface:hover {
+  background-color: var(--surface-6);
+}
+
+.timeline-event-surface.timeline-event-selected {
+  /* Distinct from hover — primary wash like pre-borderless selected fill. */
+  background-color: color-mix(
+    in oklab,
+    var(--surface-7) 86%,
+    var(--primary) 14%
   );
+}
+
+.timeline-event-surface.timeline-event-selected:hover {
+  background-color: color-mix(
+    in oklab,
+    var(--surface-8) 82%,
+    var(--primary) 18%
+  );
+}
+
+.timeline-event-surface.timeline-event-completed {
+  background-color: var(--surface-4);
+}
+
+.timeline-event-surface.timeline-event-completed:hover {
+  background-color: var(--surface-6);
+}
+
+/* Calm in-focus cue — left edge via ::before opacity (not @property / border-color). */
+.timeline-task-in-focus:not(.flow-focus-current) {
+  border-left-width: 0;
+  border-left-style: none;
+}
+
+.timeline-task-in-focus:not(.flow-focus-current)::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+  background: var(--focus-edge-color, var(--chart-1));
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 2;
   animation: timeline-focus-edge-breathe 3.6s ease-in-out infinite;
+}
+
+.timeline-task-in-focus:not(.flow-focus-current)[data-focus-softened="true"]::before {
+  animation: none;
+  opacity: 0.35;
 }
 
 @keyframes timeline-focus-edge-breathe {
   0%,
   100% {
-    --focus-edge-blink: 0.5;
+    opacity: 0.5;
   }
   50% {
-    --focus-edge-blink: 1;
-  }
-}
-
-.timeline-focus-indicator {
-  transform-origin: center;
-  will-change: transform, opacity, box-shadow;
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 35%, transparent);
-  animation: timeline-focus-indicator-breathe 1.9s ease-in-out infinite;
-}
-
-@keyframes timeline-focus-indicator-breathe {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.8;
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 30%, transparent);
-  }
-  50% {
-    transform: scale(1.14);
     opacity: 1;
-    box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--primary) 28%, transparent);
   }
 }
 
-@keyframes workplace-dock-popup-rise {
+@media (prefers-reduced-motion: reduce) {
+  .timeline-task-in-focus:not(.flow-focus-current)::before {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Floating overlays — Tasks/Habits dock + Next Up Queue.
+ * One elevation above standard cards; below menus / dropdowns. */
+.flow-floating-overlay {
+  border-radius: 1.25rem; /* 20px — larger than card xl */
+  border: 1px solid var(--border-float);
+  background: var(--surface-float);
+  box-shadow: var(--shadow-overlay);
+  /* Parent is already Surface 7 — hover/selected must lift, not sink */
+  --surface-hover: var(--surface-float-hover);
+  --color-surface-hover: var(--surface-float-hover);
+  --surface-selected: var(--surface-float-selected);
+  --color-surface-selected: var(--surface-float-selected);
+  --selected: var(--surface-float-selected);
+  --color-selected: var(--surface-float-selected);
+}
+
+/* Explicit light-up — do not rely on Tailwind token inheritance alone */
+.flow-floating-overlay .group\/row:hover {
+  background-color: var(--surface-float-hover);
+}
+
+.flow-floating-overlay .group\/row[data-selected="true"],
+.flow-floating-overlay .group\/row[aria-selected="true"] {
+  background-color: var(--surface-float-selected);
+}
+
+.flow-floating-overlay .group\/row[data-completed="true"]:hover {
+  background-color: transparent;
+}
+
+/* Signature: soft primary radial behind an active focus timer (one memorable detail). */@keyframes workplace-dock-popup-rise {
   from {
     opacity: 0;
     transform: translateY(6px) scale(0.98);
@@ -681,6 +1179,31 @@
   animation: workplace-dock-popup-rise 170ms var(--ease-premium) forwards;
 }
 
+/* Demoted desk overlays — Tasks/Habits + Next Up (Surface 6, not float 7). */
+.flow-floating-overlay.workplace-dock-popup,
+.flow-floating-overlay.workplace-next-up-overlay {
+  background: var(--surface-6);
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-overlay);
+  --surface-hover: var(--surface-7);
+  --color-surface-hover: var(--surface-7);
+  --surface-selected: var(--surface-8);
+  --color-surface-selected: var(--surface-8);
+  --selected: var(--surface-8);
+  --color-selected: var(--surface-8);
+}
+
+.flow-floating-overlay.workplace-dock-popup .group\/row:hover,
+.flow-floating-overlay.workplace-next-up-overlay .group\/row:hover,
+.flow-floating-overlay.workplace-next-up-overlay .group\/queue-item:hover {
+  background-color: var(--surface-7);
+}
+
+.flow-floating-overlay.workplace-dock-popup .group\/row[data-selected="true"],
+.flow-floating-overlay.workplace-dock-popup .group\/row[aria-selected="true"] {
+  background-color: var(--surface-8);
+}
+
 .workplace-dock-popup-caret {
   position: absolute;
   bottom: -5px;
@@ -689,43 +1212,121 @@
   rotate: 45deg;
   border-right: 1px solid var(--border-strong);
   border-bottom: 1px solid var(--border-strong);
-  background: var(--surface-overlay);
+  background: var(--surface-6);
 }
 
-/* Today Tasks/Habits launcher — floating dock; segment is a quiet indicator */
+/* Next Up Queue — floating card over Focus (inset so edges aren’t clipped). */
+@keyframes workplace-next-up-overlay-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.flow-floating-overlay.workplace-next-up-overlay {
+  transform-origin: bottom right;
+  animation: workplace-next-up-overlay-rise 180ms var(--ease-premium) forwards;
+}
+
+/* @deprecated Prefer .workplace-next-up-overlay */
+.workplace-next-up-panel {
+  transform-origin: center right;
+  animation: workplace-next-up-overlay-rise 180ms var(--ease-premium) forwards;
+}
+
+/* Focus canvas under Tasks/Habits or Next Up — slight fade so the panel reads above it. */
+.workplace-focus-under-overlay {
+  opacity: 0.88;
+}
+
+/* Next Up reveal flash — temporary highlight when jumping from Today Tasks. */
+@keyframes workplace-next-up-reveal {
+  0% {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+  14% {
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 35%, transparent);
+  }
+  72% {
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 35%, transparent);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+}
+
+.workplace-next-up-reveal {
+  border-radius: 0.375rem;
+  animation: workplace-next-up-reveal 1000ms ease-out forwards;
+}
+
+/* Today Tasks/Habits — Focus workspace toolbar (not a floating card). */
 .workplace-dock-launcher {
-  border: 1px solid var(--border-subtle);
-  background: var(--surface-raised);
-  box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.4),
-    0 4px 12px rgba(0, 0, 0, 0.26),
-    0 0 18px color-mix(in srgb, var(--primary) 8%, transparent);
+  height: 40px;
+  border: var(--border-hairline-width) solid var(--border-hairline);
+  border-radius: 14px;
+  background: var(--surface-7);
+  box-shadow: none;
+  --surface-hover: var(--surface-8);
+  --color-surface-hover: var(--surface-8);
   transition:
-    box-shadow 180ms var(--ease-premium),
     border-color 180ms var(--ease-premium),
-    transform 180ms var(--ease-premium);
+    background-color 180ms var(--ease-premium);
 }
 
 .workplace-dock-launcher-open {
-  background: var(--surface-raised);
-  transform: translateY(-2px);
-  box-shadow:
-    0 15px 36px rgba(0, 0, 0, 0.46),
-    0 5px 14px rgba(0, 0, 0, 0.3),
-    0 0 22px color-mix(in srgb, var(--primary) 11%, transparent);
+  background: var(--surface-8);
+  box-shadow: none;
 }
 
 .workplace-dock-active-pill {
   position: absolute;
-  top: 2px;
-  bottom: 2px;
-  border-radius: 0.5rem;
-  /* Muted primary wash — readable, not a solid brand block. */
-  background: color-mix(in srgb, var(--primary) 75%, transparent);
+  top: 3px;
+  bottom: 3px;
+  border-radius: 10px;
+  /* Quiet selected — soft wash + hairline ring, no bright outline flash */
+  background: color-mix(in srgb, var(--primary-soft) 70%, var(--surface-8));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 16%, transparent);
   transition:
     left 180ms var(--ease-premium),
     width 180ms var(--ease-premium);
   pointer-events: none;
+}
+
+/* Brief nudge when a task is captured — points users to the Tasks dock. */
+@keyframes workplace-dock-tasks-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 0%, transparent);
+    background-color: transparent;
+  }
+  18% {
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--primary) 40%, transparent),
+      0 0 18px color-mix(in srgb, var(--primary) 35%, transparent);
+    background-color: color-mix(in srgb, var(--primary) 14%, transparent);
+  }
+  55% {
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--primary) 28%, transparent),
+      0 0 14px color-mix(in srgb, var(--primary) 22%, transparent);
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 0%, transparent);
+    background-color: transparent;
+  }
+}
+
+.workplace-dock-tab-pulse {
+  animation: workplace-dock-tasks-pulse 1.15s var(--ease-premium) forwards;
 }
 
 @keyframes notes-tab-enter-right {
@@ -768,7 +1369,12 @@
 @layer base {
   * {
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in oklch, var(--muted-foreground) 28%, transparent)
+    scrollbar-color: transparent transparent;
+  }
+
+  *:hover,
+  *:focus-within {
+    scrollbar-color: color-mix(in srgb, var(--border-default) 70%, transparent)
       transparent;
   }
 
@@ -782,12 +1388,17 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background: color-mix(in oklch, var(--muted-foreground) 24%, transparent);
+    background: transparent;
     border-radius: 9999px;
   }
 
+  *:hover::-webkit-scrollbar-thumb,
+  *:focus-within::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--border-default) 70%, transparent);
+  }
+
   *::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in oklch, var(--muted-foreground) 38%, transparent);
+    background: var(--border-strong);
   }
 
   *::-webkit-scrollbar-button,
@@ -1032,5 +1643,29 @@ html[data-workplace-middle-pan] * {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Quiet chrome hairline — 0.5px / white 6%. Use instead of ad-hoc white/[0.03]. */
+@layer utilities {
+  .flow-border-hairline {
+    border: var(--border-hairline-width) solid var(--border-hairline);
+  }
+
+  .flow-border-hairline-l {
+    border-left: var(--border-hairline-width) solid var(--border-hairline);
+  }
+
+  .flow-border-hairline-r {
+    border-right: var(--border-hairline-width) solid var(--border-hairline);
+  }
+
+  .flow-border-hairline-b {
+    border-bottom: var(--border-hairline-width) solid var(--border-hairline);
+  }
+
+  /* Soft edge — 0.5px / white 6% (`--border-float`). Selected wells / list frames. */
+  .flow-border-float {
+    border: var(--border-hairline-width) solid var(--border-float);
   }
 }

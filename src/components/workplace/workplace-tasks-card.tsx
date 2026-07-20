@@ -15,6 +15,7 @@ import { WorkplaceModuleCard } from "@/components/workplace/workplace-module-car
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import {
   getTimelineTaskFocusClock,
+  isTimelineTaskFocusSoftened,
   isTimelineTaskInFocus,
 } from "@/lib/timeline-task-focus";
 import {
@@ -68,6 +69,7 @@ function TaskList({
   selectedTaskId,
   focusTaskId = null,
   focusClock = null,
+  focusSoftened = false,
   onSelect,
   onOpenDetail,
   onToggleComplete,
@@ -81,6 +83,7 @@ function TaskList({
   selectedTaskId?: string | null;
   focusTaskId?: string | null;
   focusClock?: string | null;
+  focusSoftened?: boolean;
   onSelect?: (taskId: string) => void;
   onOpenDetail: (taskId: string) => void;
   onToggleComplete: (task: Task) => void;
@@ -120,6 +123,7 @@ function TaskList({
             groups={groups}
             selected={selectedTaskId === task.id}
             inFocus={inFocus}
+            focusSoftened={inFocus && focusSoftened}
             focusClock={inFocus ? focusClock : null}
             onSelect={onSelect ? () => onSelect(task.id) : undefined}
             onOpenDetail={() => onOpenDetail(task.id)}
@@ -145,7 +149,7 @@ function TaskList({
 
 function TodoGroupLabel({ children }: { children: string }) {
   return (
-    <p className="px-2 pb-0.5 pt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+    <p className="flow-section-label px-0.5 pb-0.5 pt-1.5 text-[10px] uppercase first:pt-0">
       {children}
     </p>
   );
@@ -196,6 +200,10 @@ export const WorkplaceTasksCard = forwardRef<
       ? getTimelineTaskFocusClock(activeSession, focusingTaskId)
       : null;
 
+  const focusSoftened =
+    focusingTaskId != null &&
+    isTimelineTaskFocusSoftened(activeSession, focusingTaskId);
+
   const focusingTask = useMemo(() => {
     if (!focusingTaskId) return null;
     return tasks.find((task) => task.id === focusingTaskId) ?? null;
@@ -239,6 +247,7 @@ export const WorkplaceTasksCard = forwardRef<
 
         const targetTab = resolveWorkplaceTaskTab(task, tasks, todayViewDate);
         const anchorId = todayTaskAnchorId(taskId);
+        setSelectedTaskId(taskId);
 
         if (!targetTab) {
           scrollToTodayTarget(TODAY_TASKS_SECTION_ID);
@@ -271,6 +280,7 @@ export const WorkplaceTasksCard = forwardRef<
     selectedTaskId: overlay ? selectedTaskId : null,
     focusTaskId: focusingTaskId,
     focusClock,
+    focusSoftened,
     onSelect: overlay ? setSelectedTaskId : undefined,
     onOpenDetail,
     onToggleComplete,
@@ -296,14 +306,14 @@ export const WorkplaceTasksCard = forwardRef<
       bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
     >
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex shrink-0 flex-wrap gap-1 border-b border-divider px-2 py-1.5">
+        <div className="flex shrink-0 flex-wrap gap-1.5 px-2.5 py-2">
           {TABS.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => setTab(item.id)}
               className={cn(
-                "rounded-md px-2 py-0.5 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-150",
+                "rounded-md px-2.5 py-1 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-150",
                 tab === item.id
                   ? "flow-selected text-foreground"
                   : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
@@ -313,14 +323,14 @@ export const WorkplaceTasksCard = forwardRef<
             </button>
           ))}
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto p-1.5 scrollbar-subtle">
+        <div className="min-h-0 flex-1 space-y-1 overflow-y-auto p-2 scrollbar-subtle">
           {tab === "todo" ? (
             todoEmpty ? (
               <TaskList list={[]} emptyLabel="No tasks to do" {...listProps} />
             ) : (
               <div className="space-y-1">
                 {focusingTask ? (
-                  <div className="mb-2.5">
+                  <div className="mb-2">
                     <TaskList list={[focusingTask]} {...listProps} />
                   </div>
                 ) : null}

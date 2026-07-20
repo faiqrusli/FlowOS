@@ -47,7 +47,7 @@ export function DashboardPanel({
   return (
     <section
       className={cn(
-        "flex h-full flex-col rounded-lg border border-border/50 bg-card px-4 py-4",
+        "flex h-full flex-col rounded-lg border-0 bg-surface-section px-4 py-4 shadow-none",
         className
       )}
     >

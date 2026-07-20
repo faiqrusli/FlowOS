@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDuration } from "@/lib/focus-utils";
+import { type as typography } from "@/lib/typography";
 import type { FocusTodaySummary } from "@/lib/focus-analytics";
 
 type FocusTodaySummaryCardProps = {
@@ -9,41 +9,49 @@ type FocusTodaySummaryCardProps = {
   loading?: boolean;
 };
 
+const STATS = [
+  {
+    key: "focused",
+    label: "Focused",
+    value: (s: FocusTodaySummary) => formatDuration(s.totalFocusSeconds),
+  },
+  {
+    key: "sessions",
+    label: "Sessions",
+    value: (s: FocusTodaySummary) => String(s.sessionCount),
+  },
+  {
+    key: "breaks",
+    label: "Breaks",
+    value: (s: FocusTodaySummary) => String(s.breakCount),
+  },
+  {
+    key: "longest",
+    label: "Longest",
+    value: (s: FocusTodaySummary) => formatDuration(s.longestSessionSeconds),
+  },
+] as const;
+
 export function FocusTodaySummaryCard({
   summary,
   loading,
 }: FocusTodaySummaryCardProps) {
   return (
-    <Card className="border-border-subtle bg-surface-base shadow-none">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Today&apos;s focus</CardTitle>
-      </CardHeader>
-      <CardContent className="grid grid-cols-2 gap-3 text-sm">
-        <div>
-          <p className="text-xs text-muted-foreground">Focused</p>
-          <p className="mt-0.5 font-semibold tabular-nums">
-            {loading ? "—" : formatDuration(summary.totalFocusSeconds)}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Sessions</p>
-          <p className="mt-0.5 font-semibold tabular-nums">
-            {loading ? "—" : summary.sessionCount}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Breaks</p>
-          <p className="mt-0.5 font-semibold tabular-nums">
-            {loading ? "—" : summary.breakCount}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Longest</p>
-          <p className="mt-0.5 font-semibold tabular-nums">
-            {loading ? "—" : formatDuration(summary.longestSessionSeconds)}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+      <h2 className={typography.sectionTitle}>Today&apos;s focus</h2>
+      <div className="mt-4 grid grid-cols-2 gap-2.5">
+        {STATS.map((stat) => (
+          <div
+            key={stat.key}
+            className="rounded-lg bg-surface-base px-3 py-2.5"
+          >
+            <p className={typography.meta}>{stat.label}</p>
+            <p className="mt-0.5 text-sm font-semibold tabular-nums text-foreground">
+              {loading ? "—" : stat.value(summary)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

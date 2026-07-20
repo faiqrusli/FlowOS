@@ -15,6 +15,7 @@ import {
   type HabitFormValues,
 } from "@/components/habits/habit-form-fields";
 import { getHabitDurationMinutes, setItemDurationMinutes } from "@/lib/schedule-durations";
+import { requestBrowserNotificationPermissionIfNeeded } from "@/lib/browser-notifications";
 import type { Habit, HabitInsert } from "@/types/habit";
 
 const emptyForm: HabitFormValues = {
@@ -105,6 +106,9 @@ export function HabitDialog({
 
     try {
       const input = formToInsert(form);
+      if (input.scheduled_time) {
+        void requestBrowserNotificationPermissionIfNeeded();
+      }
       const saved = await onSave(input, mode === "edit" ? habit?.id : undefined);
       setItemDurationMinutes("habit", saved.id, form.durationMinutes);
       setOpen(false);

@@ -6,7 +6,6 @@ import { ArrowRight } from "lucide-react";
 import { FocusBreakNotification } from "@/components/focus/focus-break-notification";
 import { FocusNextBreakStrip } from "@/components/focus/focus-next-break-strip";
 import { ScheduleBreakModal } from "@/components/focus/schedule-break-modal";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import {
   derivePomodoroPhase,
@@ -16,6 +15,7 @@ import {
   formatDuration,
   formatTimerClock,
 } from "@/lib/focus-utils";
+import { type as typography } from "@/lib/typography";
 
 function resolveSessionStateLabel(
   isActive: boolean,
@@ -60,39 +60,45 @@ export function FocusCurrentSessionCard() {
 
   return (
     <>
-      <Card className="flow-surface-base border-border-subtle shadow-none">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Current focus</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <section className="rounded-xl bg-surface-base px-4 py-5 sm:px-5">
+        <h2 className={typography.sectionTitle}>Current focus</h2>
+        <div className="mt-4 space-y-4">
           {isActive ? (
             <>
               <div className="space-y-1">
                 <p className="text-lg font-semibold tracking-tight text-foreground">
                   {dashboardActive.label || "Active session"}
                 </p>
-                <p className="text-sm text-muted-foreground">{stateLabel}</p>
+                <p className="text-sm text-foreground-secondary">{stateLabel}</p>
               </div>
 
-              <div className="flex flex-wrap gap-6 text-sm">
-                <div>
-                  <p className="text-xs text-muted-foreground">Elapsed</p>
-                  <p className="mt-0.5 font-mono text-base font-semibold tabular-nums">
-                    {elapsedDisplay}
-                  </p>
-                </div>
-                {showPomodoroRemaining ? (
-                  <div>
-                    <p className="text-xs text-muted-foreground">Remaining</p>
-                    <p className="mt-0.5 font-mono text-base font-semibold tabular-nums">
-                      {formatTimerClock(remainingSeconds ?? 0)}
+              <div className="space-y-2.5">
+                <div
+                  className={
+                    showPomodoroRemaining
+                      ? "grid gap-2.5 sm:grid-cols-2"
+                      : "grid gap-2.5"
+                  }
+                >
+                  <div className="rounded-lg bg-surface-inset px-3 py-2.5">
+                    <p className={typography.meta}>Elapsed</p>
+                    <p className="mt-0.5 font-mono text-base font-semibold tabular-nums text-foreground">
+                      {elapsedDisplay}
                     </p>
                   </div>
-                ) : null}
+                  {showPomodoroRemaining ? (
+                    <div className="rounded-lg bg-surface-inset px-3 py-2.5">
+                      <p className={typography.meta}>Remaining</p>
+                      <p className="mt-0.5 font-mono text-base font-semibold tabular-nums text-foreground">
+                        {formatTimerClock(remainingSeconds ?? 0)}
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
                 {activeSession?.timer_type === "quick" && quick.isActive ? (
-                  <div>
-                    <p className="text-xs text-muted-foreground">This session</p>
-                    <p className="mt-0.5 text-sm font-medium tabular-nums">
+                  <div className="rounded-lg bg-surface-inset px-3 py-2.5">
+                    <p className={typography.meta}>This session</p>
+                    <p className="mt-0.5 text-sm font-medium tabular-nums text-foreground">
                       Focus {formatDuration(quick.currentFocusSeconds)}
                       {quick.currentBreakSeconds > 0
                         ? ` · Break ${formatDuration(quick.currentBreakSeconds)}`
@@ -121,7 +127,9 @@ export function FocusCurrentSessionCard() {
                 </div>
               ) : null}
 
-              {showQuickScheduleBreak && quick.hasScheduledBreak && !quick.breakPrompt ? (
+              {showQuickScheduleBreak &&
+              quick.hasScheduledBreak &&
+              !quick.breakPrompt ? (
                 <FocusNextBreakStrip
                   breakAtMinutes={quick.breakAtMinutes}
                   breakLengthMinutes={quick.breakLengthMinutes}
@@ -133,9 +141,7 @@ export function FocusCurrentSessionCard() {
               ) : null}
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">
-              No active focus session.
-            </p>
+            <p className={typography.bodyMuted}>No active focus session.</p>
           )}
 
           <Link
@@ -145,8 +151,8 @@ export function FocusCurrentSessionCard() {
             Go to Today
             <ArrowRight className="size-4" />
           </Link>
-        </CardContent>
-      </Card>
+        </div>
+      </section>
 
       {showQuickScheduleBreak ? (
         <ScheduleBreakModal

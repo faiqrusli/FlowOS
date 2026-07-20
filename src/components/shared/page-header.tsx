@@ -7,9 +7,10 @@ type PageHeaderProps = {
   action?: ReactNode;
 };
 
+/** Page title block — section gap to following content comes from shell `space-y-6` (24px). */
 export function PageHeader({ title, description, action }: PageHeaderProps) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
       <div className="space-y-1">
         <h1 className={type.pageTitle}>{title}</h1>
         <p className={type.pageDescription}>{description}</p>

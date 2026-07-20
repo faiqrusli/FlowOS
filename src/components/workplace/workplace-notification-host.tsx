@@ -30,7 +30,7 @@ export function WorkplaceNotificationHost() {
 
   return (
     <div
-      className="pointer-events-none fixed bottom-4 right-4 z-[200] flex max-w-sm flex-col gap-2"
+      className="pointer-events-none fixed top-4 right-4 z-[200] flex max-w-sm flex-col gap-2"
       aria-live="polite"
     >
       {toasts.map((toast) => (
@@ -38,7 +38,7 @@ export function WorkplaceNotificationHost() {
           key={toast.id}
           className={cn(
             "flow-surface-elevated pointer-events-auto rounded-xl px-4 py-3 text-sm",
-            "animate-in slide-in-from-bottom-2 fade-in duration-200"
+            "animate-in slide-in-from-top-2 fade-in duration-200"
           )}
         >
           {toast.message}

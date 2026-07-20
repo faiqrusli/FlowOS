@@ -6,6 +6,8 @@ import { TodayRailStatsRow } from "@/components/today/today-rail-stats-row";
 import { formatTodayHeading } from "@/lib/date-utils";
 import type { OnTrackStatus } from "@/lib/dashboard-command";
 import { WORKPLACE_STATUS_RAIL_HIDE_BELOW_PX } from "@/lib/workplace-layout";
+import { WORKSPACE_PAGE_INSET_LEFT_CLASS } from "@/lib/workspace-layout";
+import { cn } from "@/lib/utils";
 import type { TodayProgress } from "@/types/dashboard";
 
 type TodayStatusRailProps = {
@@ -51,8 +53,13 @@ export function TodayStatusRail({
     <>
       <div ref={probeRef} className="contents" aria-hidden />
       {visible ? (
-        <header className="flex h-[49px] shrink-0 items-center border-b border-border-subtle bg-surface-nav px-5">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-foreground">
+        <header
+          className={cn(
+            "flex h-[43px] shrink-0 items-center bg-surface-canvas [&>*]:translate-y-px",
+            WORKSPACE_PAGE_INSET_LEFT_CLASS,
+          )}
+        >
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-foreground">
             <span className="font-medium text-foreground">{dateLabel}</span>
             <span aria-hidden className="text-muted-foreground/50">
               ·

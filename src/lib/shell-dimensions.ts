@@ -1,7 +1,7 @@
 /** Frozen application shell geometry — application-shell-navigation-spec. */
 
 /** Shared header band across brand cell, main status bar, utility headers. */
-export const SHELL_HEADER_HEIGHT_PX = 64;
+export const SHELL_HEADER_HEIGHT_PX = 43;
 /** @deprecated Use SHELL_HEADER_HEIGHT_PX */
 export const SHELL_TOPBAR_HEIGHT_PX = SHELL_HEADER_HEIGHT_PX;
 /** @deprecated Use SHELL_HEADER_HEIGHT_PX */
@@ -13,7 +13,7 @@ export const SHELL_SIDEBAR_COLLAPSED_WIDTH_PX = 88;
 /** Comfortable expanded width — room for profile row without clipping. */
 export const SHELL_SIDEBAR_EXPANDED_WIDTH_PX = 288;
 
-export const SHELL_UTILITY_RAIL_WIDTH_PX = 64;
+export const SHELL_UTILITY_RAIL_WIDTH_PX = 52;
 export const SHELL_UTILITY_SIDEBAR_EXPANDED_WIDTH_PX = 500;
 export const SHELL_UTILITY_SIDEBAR_CONTENT_WIDTH_PX =
   SHELL_UTILITY_SIDEBAR_EXPANDED_WIDTH_PX - SHELL_UTILITY_RAIL_WIDTH_PX;

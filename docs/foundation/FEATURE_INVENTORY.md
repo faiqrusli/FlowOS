@@ -105,6 +105,7 @@ WORKSPACE
 | Quick add card | Shipped | Inline Enter capture (optimistic queue); icon strip; `ListPlus` full form |
 | Workplace density presets | Shipped | `full` \| `work` (default) \| `focus` — `workplace-density.ts` |
 | Today status rail | Shipped | Compact chrome on `/`; Full density inline KPI + smart Next Action |
+| Schedule reminders (MVP) | **Shipped** | Today tasks/habits → in-app toast + browser Notification API; once-only local delivery; spec: [notification-system-mvp-spec.md](../review/design/notification-system-mvp-spec.md) |
 | **Agenda card** | **Dead code** | Component exists but **not imported** — delete in security week; not user-visible |
 | Focus reflection modal | Shipped | Post-session capture |
 
@@ -212,7 +213,7 @@ Logic: `flowos/src/lib/dashboard-command.ts`
 | FE-5 | Weekly Reflection | Partial | Layout exists; no auto-summary |
 | FE-6 | Music / Focus Integration | Not implemented | — |
 | FE-7 | Advanced Analytics | Partial | Dashboard KPIs, heatmap; no report engine |
-| FE-8 | Smart Notifications | Not implemented | — |
+| FE-8 | Smart Notifications | Partial | MVP schedule reminders shipped (Today toast + browser API + center); smart routing / push still deferred — [notification-system-mvp-spec.md](../review/design/notification-system-mvp-spec.md) |
 | FE-9 | Mobile Apps | Not planned | Web-only |
 | FE-10 | Gamification | Not implemented | — |
 | FE-11 | Calendar Sync | Not planned | Out of original scope |

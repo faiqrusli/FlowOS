@@ -244,7 +244,11 @@ export function TaskDurationPicker({
                 event.stopPropagation();
                 applyDuration(option.minutes);
               }}
-              className="text-xs tabular-nums"
+              className={cn(
+                "text-xs tabular-nums",
+                durationMinutes === option.minutes &&
+                  "bg-primary-soft font-medium text-foreground ring-1 ring-primary/25",
+              )}
             >
               {formatDurationMinutes(option.minutes)}
             </DropdownMenuItem>

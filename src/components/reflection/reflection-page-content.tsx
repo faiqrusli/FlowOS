@@ -9,6 +9,7 @@ import { TodaySummaryCard } from "@/components/reflection/today-summary-card";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
+import { useActionToast } from "@/contexts/action-toast-context";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
   fetchReflections,
@@ -20,6 +21,7 @@ import type { ReflectionDayReview } from "@/lib/reflection-day-review";
 import type { CustomEntry, Reflection, ReflectionKanban } from "@/types/reflection";
 
 export function ReflectionPageContent() {
+  const { showActionToast } = useActionToast();
   const [dayReview, setDayReview] = useState<ReflectionDayReview | null>(null);
   const [reflections, setReflections] = useState<Reflection[]>([]);
   const [wentWell, setWentWell] = useState("");
@@ -29,7 +31,6 @@ export function ReflectionPageContent() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [savedMessage, setSavedMessage] = useState<string | null>(null);
 
   const today = getTodayDateString();
 
@@ -79,7 +80,6 @@ export function ReflectionPageContent() {
   async function handleSave() {
     setSaving(true);
     setError(null);
-    setSavedMessage(null);
 
     try {
       const saved = await saveReflection({
@@ -103,8 +103,11 @@ export function ReflectionPageContent() {
           : customEntries.filter((e) => e.title.trim())
       );
 
-      setSavedMessage("Reflection saved successfully.");
-      window.setTimeout(() => setSavedMessage(null), 4000);
+      showActionToast({
+        message: "Reflection saved",
+        tone: "success",
+        icon: "reflection",
+      });
     } catch {
       setError("Failed to save reflection.");
     } finally {
@@ -120,14 +123,6 @@ export function ReflectionPageContent() {
       />
 
       {error && <ErrorBanner message={error} />}
-      {savedMessage && (
-        <p
-          className="rounded-lg border border-border-subtle bg-surface-base px-3 py-2 text-sm text-foreground"
-          role="status"
-        >
-          {savedMessage}
-        </p>
-      )}
 
       <TodaySummaryCard review={dayReview} loading={loading} />
 

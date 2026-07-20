@@ -23,7 +23,7 @@ const badgeVariants = cva(
         "entity-dot":
           "h-5 rounded-md border-border bg-transparent px-2 py-0.5 text-xs text-foreground",
         "entity-habit":
-          "h-4 rounded-md border-transparent bg-transparent px-1 py-px text-[11px] font-semibold uppercase tracking-wide text-warning",
+          "h-4 rounded-md border-transparent bg-transparent px-1 py-px text-[11px] font-semibold uppercase tracking-wide text-warning/65",
         "entity-focus":
           "h-4 rounded-md border-transparent bg-transparent p-0 text-accent-text",
         "status-success":

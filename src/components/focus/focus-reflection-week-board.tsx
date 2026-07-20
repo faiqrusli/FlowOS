@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTodayDateString, shiftDateKey } from "@/lib/date-utils";
 import { isFocusReflectionEntry } from "@/lib/focus-reflection";
 import { getReflectionDayLabel } from "@/lib/reflection-storage";
+import { type as typography } from "@/lib/typography";
 import { cn } from "@/lib/utils";
 import type { Reflection } from "@/types/reflection";
 
@@ -49,35 +49,33 @@ export function FocusReflectionWeekBoard({
   }, [reflections]);
 
   return (
-    <Card className="border-border-subtle bg-surface-base shadow-none">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Focus reflection history</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+      <h2 className={typography.sectionTitle}>Focus reflection history</h2>
+      <div className="mt-4">
         {loading ? (
-          <p className="text-sm text-muted-foreground">Loading reflections…</p>
+          <p className={typography.bodyMuted}>Loading reflections…</p>
         ) : (
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
             {weekDays.map((day) => (
               <div
                 key={day.date}
                 className={cn(
-                  "flex min-h-[7rem] flex-col rounded-xl border p-2.5 text-xs",
+                  "flex min-h-[7rem] flex-col rounded-lg p-2.5 text-xs",
                   day.hasFocusReflection
-                    ? "border-selected-border bg-selected"
-                    : "border-border/30 bg-surface-raised",
+                    ? "bg-surface-selected"
+                    : "bg-surface-base",
                 )}
               >
                 <p className="font-semibold text-foreground">{day.label}</p>
-                <p className="mt-0.5 text-[10px] text-muted-foreground">
+                <p className="mt-0.5 text-[10px] text-foreground-secondary">
                   {day.date}
                 </p>
                 {day.hasFocusReflection ? (
-                  <p className="mt-2 line-clamp-4 flex-1 text-[11px] leading-relaxed text-foreground/85">
+                  <p className="mt-2 line-clamp-4 flex-1 text-[11px] leading-relaxed text-foreground-secondary">
                     {day.preview}
                   </p>
                 ) : (
-                  <p className="mt-2 flex-1 text-[10px] text-muted-foreground/70">
+                  <p className="mt-2 flex-1 text-[10px] text-inactive">
                     No Focus reflection
                   </p>
                 )}
@@ -85,7 +83,7 @@ export function FocusReflectionWeekBoard({
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

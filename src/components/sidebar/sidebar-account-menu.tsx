@@ -1,8 +1,8 @@
 "use client";
 
 import {
+  BookOpen,
   ChevronDown,
-  CircleHelp,
   LogOut,
   Palette,
   Settings,
@@ -65,10 +65,10 @@ export function SidebarAccountMenu({
                 aria-label={compact ? displayName : undefined}
                 className={cn(
                   // Quiet on chrome — menu popover carries card elevation, not the trigger.
-                  "group/account relative flex h-11 w-full items-center overflow-hidden rounded-xl text-left transition-colors duration-150",
+                  "group/account relative flex h-11 w-full items-center overflow-hidden rounded-xl text-left transition-colors duration-150 ease-out",
                   compact
-                    ? "border-transparent bg-transparent hover:bg-sidebar-accent"
-                    : "border border-sidebar-border bg-transparent hover:bg-sidebar-accent aria-expanded:bg-sidebar-accent",
+                    ? "border-transparent bg-transparent hover:bg-surface-ghost-hover"
+                    : "border border-white/[0.05] bg-transparent hover:bg-surface-ghost-hover aria-expanded:bg-surface-ghost-hover",
                 )}
               />
             }
@@ -78,7 +78,7 @@ export function SidebarAccountMenu({
               style={{ width: 40 }}
             >
               <div
-                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground"
+                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground shadow-none"
                 aria-hidden
               >
                 {initials}
@@ -149,8 +149,8 @@ export function SidebarAccountMenu({
             className="rounded-md px-2.5 py-2"
             onClick={() => openSection("help")}
           >
-            <CircleHelp />
-            Help & Feedback
+            <BookOpen />
+            About
           </DropdownMenuItem>
           <DropdownMenuSeparator className="my-1.5" />
           <DropdownMenuItem

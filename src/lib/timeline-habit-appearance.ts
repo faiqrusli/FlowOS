@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
 
 /** Habit identity — amber edge on timeline *events* only. */
-export const TIMELINE_HABIT_ACCENT_CLASS = "border-l-[3px] border-l-warning/70";
+export const TIMELINE_HABIT_ACCENT_CLASS = "border-l-2 border-l-warning/30";
 
 /**
- * Scheduled habit block — same Raised event chrome as tasks.
+ * Scheduled habit block — same Base event chrome as tasks.
  * Amber stays on the left edge / HABIT label, not a second fill system.
  */
 export const TIMELINE_HABIT_BLOCK_SURFACE_CLASS =
-  "border-border-subtle bg-surface-raised";
+  "border-0 timeline-event-surface";
 
 /**
  * Pool habit chip — flat like task pool rows (`TIMELINE_POOL_ROW_SURFACE`).

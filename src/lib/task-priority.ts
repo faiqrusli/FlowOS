@@ -22,7 +22,7 @@ export const TASK_PRIORITY_CONFIG: Record<
     label: "Normal",
     emoji: "🟢",
     className: "text-muted-foreground",
-    flagClassName: "fill-muted-foreground/45 text-muted-foreground",
+    flagClassName: "fill-none text-muted-foreground",
   },
 };
 

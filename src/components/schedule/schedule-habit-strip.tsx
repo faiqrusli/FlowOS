@@ -38,13 +38,13 @@ export function ScheduleHabitStrip({
       draggable={interactive && !item.completed}
       onDragStart={(event) => onDragStart?.(item, event)}
       className={cn(
-        "group absolute right-3 left-3 z-10 flex items-center gap-2 overflow-hidden rounded-lg border px-3 py-1 shadow-none transition-all",
+        "group absolute right-3 left-3 z-10 flex items-center gap-2 overflow-hidden rounded-lg border-0 px-3 py-1 shadow-none transition-[box-shadow] duration-150",
         channel.bg,
         channel.border,
         channel.hover,
         interactive && !item.completed && "cursor-grab active:cursor-grabbing",
         isCurrent && SCHEDULE_BLOCK_CURRENT_CLASS,
-        item.completed && "opacity-60",
+        item.completed && "timeline-event-completed",
       )}
       style={{ top: topPx, height: heightPx }}
     >

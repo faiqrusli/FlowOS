@@ -60,7 +60,9 @@ export function setDragImageFromElement(
   offsetY = 20
 ) {
   const ghost = sourceEl.cloneNode(true) as HTMLElement;
+  const computed = window.getComputedStyle(sourceEl);
   ghost.style.width = `${sourceEl.offsetWidth}px`;
+  ghost.style.height = `${sourceEl.offsetHeight}px`;
   ghost.style.opacity = "1";
   ghost.style.position = "absolute";
   ghost.style.top = "-1000px";
@@ -69,6 +71,13 @@ export function setDragImageFromElement(
   ghost.style.boxShadow = "var(--shadow-lg)";
   ghost.style.transform = "scale(1.015)";
   ghost.style.transformOrigin = "top left";
+  // Bake opaque fill — off-screen clones often paint transparent → black on Windows.
+  ghost.style.backgroundColor =
+    computed.backgroundColor && computed.backgroundColor !== "rgba(0, 0, 0, 0)"
+      ? computed.backgroundColor
+      : "var(--surface-4)";
+  ghost.style.color = computed.color;
+  ghost.style.borderRadius = computed.borderRadius;
   document.body.appendChild(ghost);
   event.dataTransfer.setDragImage(ghost, offsetX * 1.015, offsetY * 1.015);
   requestAnimationFrame(() => ghost.remove());
@@ -85,7 +94,7 @@ export function setCompactQueueDragImage(
     "position:absolute;top:-1000px;left:-1000px;pointer-events:none;" +
     "display:flex;align-items:center;gap:8px;max-width:280px;" +
     "padding:6px 10px;border-radius:8px;" +
-    "border:1px solid var(--border-subtle);background:var(--card);" +
+    "border:1px solid var(--border-subtle);background:var(--surface-4);" +
     "color:var(--foreground);font-size:13px;font-weight:500;" +
     "box-shadow:var(--shadow-md);";
 

@@ -171,7 +171,7 @@ export function GrowthAreaSidebar({
     <aside
       style={{ width }}
       className={cn(
-        "flex max-h-full shrink-0 flex-col self-start overflow-visible rounded-xl border border-border-subtle bg-surface-nav text-sidebar-foreground shadow-none",
+        "flex max-h-full shrink-0 flex-col self-start overflow-visible rounded-xl border-0 bg-surface-rail shadow-none",
         animateWidth && "transition-[width] duration-200 ease-out",
         isNarrowLayout &&
           expanded &&
@@ -180,7 +180,7 @@ export function GrowthAreaSidebar({
     >
       <div
         className={cn(
-          "flex shrink-0 items-center border-b border-border/30",
+          "flex shrink-0 items-center",
           expanded ? "justify-between px-2.5 py-2.5" : "justify-center py-3",
         )}
       >
@@ -190,7 +190,7 @@ export function GrowthAreaSidebar({
               <p className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
                 Growth areas
               </p>
-              <p className="truncate text-xs text-muted-foreground">
+              <p className="truncate text-xs text-foreground-secondary">
                 Your personal folders
               </p>
             </div>
@@ -250,10 +250,10 @@ export function GrowthAreaSidebar({
                 aria-label={`${area.name} (${area.note_count})`}
                 aria-current={active ? "true" : undefined}
                 className={cn(
-                  "flex size-10 shrink-0 items-center justify-center rounded-xl text-lg leading-none transition-[background-color,box-shadow]",
+                  "flex size-10 shrink-0 items-center justify-center rounded-xl text-lg leading-none transition-colors duration-150",
                   active
                     ? "flow-selected text-foreground"
-                    : "hover:bg-surface-hover/70",
+                    : "hover:bg-surface-hover",
                 )}
               >
                 {area.emoji}
@@ -292,10 +292,10 @@ export function GrowthAreaSidebar({
                   title={growthAreaHoverTitle(area)}
                   aria-current={active ? "true" : undefined}
                   className={cn(
-                    "flex min-w-0 flex-1 items-center gap-2 rounded-xl py-2 pr-8 pl-1 text-left transition-[background-color,box-shadow]",
+                    "flex min-w-0 flex-1 items-center gap-2 rounded-xl border-0 py-2 pr-8 pl-1 text-left transition-colors duration-150",
                     active
                       ? "flow-selected text-foreground"
-                      : "hover:bg-surface-hover/70",
+                      : "hover:bg-surface-hover",
                   )}
                 >
                   <span className="flex w-6 shrink-0 items-center justify-center text-lg leading-none">
@@ -308,7 +308,7 @@ export function GrowthAreaSidebar({
                     )}
                   >
                     {area.name}{" "}
-                    <span className="font-normal tabular-nums text-muted-foreground">
+                    <span className="font-normal tabular-nums text-foreground-secondary">
                       ({area.note_count})
                     </span>
                   </p>

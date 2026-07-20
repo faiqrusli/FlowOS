@@ -97,7 +97,7 @@ export function FocusHistoryList({ history, loading }: FocusHistoryListProps) {
                       {day.sessions.map((session) => (
                         <li
                           key={session.id}
-                          className="rounded-lg border border-border/40 bg-card px-3 py-2.5 text-sm"
+                          className="rounded-lg border-0 bg-surface-base px-3 py-2.5 text-sm transition-colors hover:bg-surface-hover"
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <span className="font-medium text-foreground/90">

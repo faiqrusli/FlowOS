@@ -45,7 +45,7 @@ export function FocusNextBreakStrip({
     <div
       className={cn(
         "group/next-break relative inline-flex h-10 max-h-11 min-h-9 max-w-full items-center gap-2",
-        "rounded-lg border border-border-subtle bg-surface-base/50 px-3 text-[11px]",
+        "rounded-lg border-0 bg-surface-base/50 px-3 text-[11px]",
         className,
       )}
     >

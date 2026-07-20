@@ -25,7 +25,7 @@ export function WorkplaceFocusSessionComplete({
   const focusSeconds = getSessionFocusSeconds(session);
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-lg border border-border-subtle bg-card px-4 py-3 text-left">
+    <div className="mx-auto w-full max-w-md rounded-lg border-0 bg-surface-base px-4 py-3 text-left">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         Focus session saved
       </p>

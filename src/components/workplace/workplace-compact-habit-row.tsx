@@ -211,7 +211,7 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
           setContextMenu({ x: event.clientX, y: event.clientY });
         }}
         className={cn(
-          "flex items-center gap-1.5 rounded-md border px-1.5 py-1 transition-opacity duration-150",
+          "flex h-8 items-center gap-1.5 rounded-md border px-2 transition-opacity duration-150",
           focusDraggable
             ? "cursor-grab active:cursor-grabbing"
             : "cursor-default",
@@ -254,13 +254,13 @@ export const WorkplaceCompactHabitRow = memo(function WorkplaceCompactHabitRow({
         ) : null}
 
         {time ? (
-          <span className="shrink-0 text-[12px] tabular-nums text-muted-foreground/80">
+          <span className="ml-1 shrink-0 text-[12px] tabular-nums leading-none text-muted-foreground/80">
             {time}
           </span>
         ) : null}
 
         {habit.track_with_focus && !habit.completed ? (
-          <Clock className="size-3 shrink-0 text-accent-text" aria-hidden />
+          <Clock className="size-3.5 shrink-0 text-accent-text" aria-hidden />
         ) : null}
       </div>
 

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Document type** | Visual Design System & Implementation Specification |
-| **Status** | Active implementation contract — Neutral Dark Visual Design System |
+| **Status** | Superseded — see [DESIGN_SYSTEM_GRUVBOX.md](./DESIGN_SYSTEM_GRUVBOX.md) (2026-07-19) |
 | **Scope** | Application-wide dark theme |
 | **Implementation role** | Source specification for the neutral-dark migration (implemented on branch) |
 | **Date** | July 16, 2026 |

@@ -250,7 +250,7 @@ export function WeeklyReflectionPageContent() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <Link
           href="/reflection"
-          className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md border border-input bg-surface-base px-3 text-sm font-medium hover:bg-surface-hover"
+          className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md bg-surface-base px-3 text-sm font-medium transition-colors hover:bg-surface-hover"
         >
           <ArrowLeft className="size-4" />
           Back
@@ -268,13 +268,13 @@ export function WeeklyReflectionPageContent() {
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading weekly board…</p>
       ) : (
-        <div className="kanban-board-scroll flex gap-4 overflow-x-auto pb-4">
+        <div className="kanban-board-scroll flex gap-3 overflow-x-auto pb-4">
           {bundles.map((bundle) => (
             <div
               key={bundle.dateKey}
-              className="flex w-[min(100%,320px)] min-w-[300px] shrink-0 flex-col gap-3"
+              className="flex w-[min(100%,320px)] min-w-[300px] shrink-0 flex-col gap-2.5"
             >
-              <h2 className="sticky top-0 z-10 rounded-lg border border-border/40 bg-surface-base px-3 py-2 text-sm font-semibold">
+              <h2 className="sticky top-0 z-10 rounded-lg border-0 bg-surface-section px-3 py-2 text-sm font-semibold">
                 {formatWeeklyDayHeading(bundle.dateKey)}
               </h2>
 
@@ -286,7 +286,7 @@ export function WeeklyReflectionPageContent() {
                 return (
                   <div
                     key={colId}
-                    className={cn("rounded-xl border", kanbanColumnBodyClass)}
+                    className={cn("rounded-xl border-0", kanbanColumnBodyClass)}
                   >
                     <button
                       type="button"
@@ -306,7 +306,7 @@ export function WeeklyReflectionPageContent() {
                       <span className="text-sm font-medium">
                         {column.title}
                       </span>
-                      <span className="ml-auto text-xs text-muted-foreground">
+                      <span className="ml-auto text-xs text-foreground-secondary">
                         {cards.length}
                       </span>
                     </button>
@@ -342,7 +342,7 @@ export function WeeklyReflectionPageContent() {
                                 )}
                               >
                                 {showCardTitle ? (
-                                  <p className="text-xs font-medium text-muted-foreground">
+                                  <p className="text-xs font-medium text-foreground-secondary">
                                     {card.title}
                                   </p>
                                 ) : null}

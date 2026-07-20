@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { sortSessionsChronological } from "@/lib/focus-analytics";
 import { getDateKeyInTimezone } from "@/lib/date-utils";
 import {
@@ -11,6 +10,8 @@ import {
   getSessionBreakSeconds,
   getSessionFocusSeconds,
 } from "@/lib/focus-utils";
+import { type as typography } from "@/lib/typography";
+import { cn } from "@/lib/utils";
 import type { FocusSession } from "@/types/focus";
 
 type FocusSessionHistoryListProps = {
@@ -33,15 +34,13 @@ export function FocusSessionHistoryList({
   }, [sessions, filterDate]);
 
   return (
-    <Card className="border-border-subtle bg-surface-base shadow-none">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Session history</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+      <h2 className={typography.sectionTitle}>Session history</h2>
+      <div className="mt-4">
         {loading ? (
-          <p className="text-sm text-muted-foreground">Loading sessions…</p>
+          <p className={typography.bodyMuted}>Loading sessions…</p>
         ) : list.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
+          <p className={cn(typography.bodyMuted, "py-8 text-center")}>
             {filterDate
               ? "No sessions on the selected day."
               : "No focus sessions yet."}
@@ -53,7 +52,7 @@ export function FocusSessionHistoryList({
               return (
                 <li
                   key={session.id}
-                  className="rounded-lg border border-border/30 bg-surface-raised px-3 py-2.5 text-sm"
+                  className="rounded-lg bg-surface-base px-3 py-2.5 text-sm transition-colors hover:bg-surface-hover"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="font-medium text-foreground">
@@ -65,7 +64,7 @@ export function FocusSessionHistoryList({
                       {session.session_status.replace("_", " ")}
                     </Badge>
                   </div>
-                  <div className="mt-1.5 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                  <div className="mt-1.5 grid gap-1 text-xs text-foreground-secondary sm:grid-cols-2">
                     <span>
                       Start {formatSessionTime(session.started_at)}
                     </span>
@@ -79,7 +78,8 @@ export function FocusSessionHistoryList({
                       Duration {formatDuration(getSessionFocusSeconds(session))}
                     </span>
                     <span>
-                      Breaks {breakSeconds > 0 ? formatDuration(breakSeconds) : "—"}
+                      Breaks{" "}
+                      {breakSeconds > 0 ? formatDuration(breakSeconds) : "—"}
                     </span>
                   </div>
                 </li>
@@ -87,7 +87,7 @@ export function FocusSessionHistoryList({
             })}
           </ul>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

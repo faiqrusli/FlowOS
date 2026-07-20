@@ -18,6 +18,7 @@ import {
   parseTimePickerParts,
   timePickerPartsToScheduledTime,
 } from "@/lib/time-picker-utils";
+import { requestBrowserNotificationPermissionIfNeeded } from "@/lib/browser-notifications";
 import { cn } from "@/lib/utils";
 import type { Task } from "@/types/task";
 
@@ -158,6 +159,9 @@ export function TaskSchedulePopover({
               onUpdate({
                 scheduled_time: timePickerPartsToScheduledTime(parts),
               });
+              if (task.notification_enabled !== false) {
+                void requestBrowserNotificationPermissionIfNeeded();
+              }
             }}
             onClear={() => onUpdate({ scheduled_time: null })}
             className="w-full"

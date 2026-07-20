@@ -41,10 +41,10 @@ function TaskReviewLine({ task }: { task: Task }) {
   const time = formatTimeShort(task.scheduled_time);
 
   return (
-    <span className="text-sm text-foreground/90">
+    <span className="text-sm text-foreground">
       {task.title}
       {time ? (
-        <span className="text-muted-foreground"> · {time}</span>
+        <span className="text-foreground-secondary"> · {time}</span>
       ) : null}
     </span>
   );
@@ -54,10 +54,10 @@ function HabitReviewLine({ habit }: { habit: Habit }) {
   const time = formatTimeShort(habit.scheduled_time);
 
   return (
-    <span className="text-sm text-foreground/90">
+    <span className="text-sm text-foreground">
       {habit.name}
       {time ? (
-        <span className="text-muted-foreground"> · {time}</span>
+        <span className="text-foreground-secondary"> · {time}</span>
       ) : null}
     </span>
   );
@@ -88,7 +88,7 @@ export function ReflectionDayReviewSections({
           {dayLabel && (
             <p className="text-sm font-semibold text-foreground">{dayLabel}</p>
           )}
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-foreground-secondary">
             {formatSummaryLine(summary)}
           </p>
         </div>

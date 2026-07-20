@@ -10,25 +10,27 @@ export type ChannelStyle = {
   projection: string;
 };
 
-const NEUTRAL_BLOCK_BG = "bg-surface-base";
-const NEUTRAL_BLOCK_BORDER = "border-border-subtle";
+const NEUTRAL_BLOCK_BG = "timeline-event-surface";
+const NEUTRAL_BLOCK_BORDER = "border-transparent";
 const NEUTRAL_BLOCK_TEXT = "text-foreground";
-const NEUTRAL_BLOCK_HOVER = "hover:bg-surface-hover";
+/** Hover fill lives on `.timeline-event-surface:hover` — keep empty to avoid transition flashes. */
+const NEUTRAL_BLOCK_HOVER = "";
 const NEUTRAL_PROJECTION =
   "border border-dashed border-border-subtle/70 bg-surface-raised";
 
 /**
- * Selected / current block fill — opaque mix so hour lines don’t show through.
- * Shared by Schedule, Quick Schedule, and Today timeline.
+ * Selected / current block fill — Surface 7 + primary wash so it reads
+ * apart from hover. Shared by Schedule, Quick Schedule, and Today timeline.
+ * Do not set border-0 here — it would wipe the group left accent edge.
  */
 export const SCHEDULE_BLOCK_CURRENT_CLASS =
-  "border-primary/40 bg-[color-mix(in_oklab,var(--surface-raised)_86%,var(--primary)_14%)] ring-1 ring-inset ring-primary/30";
+  "timeline-event-surface timeline-event-selected";
 
 export const PRIORITY_CHANNEL: Record<TaskPriority, ChannelStyle> = {
   high: {
     accent: "bg-destructive",
     bg: NEUTRAL_BLOCK_BG,
-    border: `${NEUTRAL_BLOCK_BORDER} border-l-[3px] border-l-destructive/50`,
+    border: `${NEUTRAL_BLOCK_BORDER} border-l-2 border-l-destructive/35`,
     text: NEUTRAL_BLOCK_TEXT,
     hover: NEUTRAL_BLOCK_HOVER,
     projection: NEUTRAL_PROJECTION,
@@ -56,9 +58,9 @@ export const TYPE_CHANNEL: Record<
   ChannelStyle
 > = {
   habit: {
-    accent: "bg-warning",
+    accent: "bg-warning/70",
     bg: NEUTRAL_BLOCK_BG,
-    border: `${NEUTRAL_BLOCK_BORDER} border-l-[3px] border-l-warning/50`,
+    border: `${NEUTRAL_BLOCK_BORDER} border-l-2 border-l-warning/30`,
     text: NEUTRAL_BLOCK_TEXT,
     hover: NEUTRAL_BLOCK_HOVER,
     projection: NEUTRAL_PROJECTION,
@@ -66,7 +68,7 @@ export const TYPE_CHANNEL: Record<
   focus: {
     accent: "bg-primary",
     bg: NEUTRAL_BLOCK_BG,
-    border: `${NEUTRAL_BLOCK_BORDER} border-l-[3px] border-l-primary/40`,
+    border: `${NEUTRAL_BLOCK_BORDER} border-l-2 border-l-primary/30`,
     text: NEUTRAL_BLOCK_TEXT,
     hover: NEUTRAL_BLOCK_HOVER,
     projection: NEUTRAL_PROJECTION,

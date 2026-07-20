@@ -17,6 +17,7 @@ import {
   useGlobalRightSidebar,
   useGlobalRightSidebarOffsetPx,
 } from "@/contexts/global-right-sidebar-context";
+import { useActionToast } from "@/contexts/action-toast-context";
 import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
@@ -78,6 +79,7 @@ import {
   toggleHabitComplete,
 } from "@/lib/habits";
 import { setHabitDailyScheduleOverride } from "@/lib/habit-daily-schedule-store";
+import { removeTaskFromNextUp } from "@/lib/task-next-up";
 import type { Habit } from "@/types/habit";
 
 function normalizeScheduleUpdates(updates: Partial<Task>): Partial<Task> {
@@ -91,14 +93,18 @@ function normalizeScheduleUpdates(updates: Partial<Task>): Partial<Task> {
 }
 
 export function TasksPageContent() {
-  const { selectedTaskId, selectTask } = useGlobalRightSidebar();
+  const {
+    selectedTaskId,
+    selectTask,
+    registerWorkplaceTaskHandler,
+  } = useGlobalRightSidebar();
+  const { showActionToast } = useActionToast();
   const sidebarOffsetPx = useGlobalRightSidebarOffsetPx();
   const [groups, setGroups] = useState<TaskGroupWithTasks[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
   const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hint, setHint] = useState<string | null>(null);
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [todayViewDate, setTodayViewDate] = useState(getTodayDateString);
   const updateTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
@@ -150,6 +156,27 @@ export function TasksPageContent() {
   }, [loadBoard]);
 
   useEffect(() => {
+    registerWorkplaceTaskHandler((task) => {
+      setGroups((prev) => addTaskToBoard(prev, task, todayViewDate));
+      showActionToast({
+        message: "Task created successfully",
+        tone: "success",
+        icon: "check",
+        actionLabel: "View",
+        onAction: () => {
+          selectTask(task.id);
+        },
+      });
+    });
+    return () => registerWorkplaceTaskHandler(null);
+  }, [
+    registerWorkplaceTaskHandler,
+    selectTask,
+    showActionToast,
+    todayViewDate,
+  ]);
+
+  useEffect(() => {
     setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
   }, [todayViewDate]);
 
@@ -163,12 +190,6 @@ export function TasksPageContent() {
     plannerLayoutSnapshotRef.current = null;
     animateGroupColumnLayoutPush(snapshot);
   }, [timelineOpen]);
-
-  useEffect(() => {
-    if (!hint) return;
-    const timer = window.setTimeout(() => setHint(null), 4500);
-    return () => window.clearTimeout(timer);
-  }, [hint]);
 
   useEffect(() => {
     return () => {
@@ -290,6 +311,15 @@ export function TasksPageContent() {
       });
 
       setGroups((prev) => addTaskToBoard(prev, created, todayViewDate));
+      showActionToast({
+        message: "Task created successfully",
+        tone: "success",
+        icon: "check",
+        actionLabel: "View",
+        onAction: () => {
+          selectTask(created.id);
+        },
+      });
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to create task.",
@@ -329,16 +359,20 @@ export function TasksPageContent() {
     }
   }
 
-  async function handleToggleComplete(task: Task) {
+  async function handleToggleComplete(
+    task: Task,
+    options?: { silent?: boolean },
+  ) {
     setError(null);
+    const nextCompleted = !task.completed;
     setGroups((prev) =>
       replaceTaskOnBoard(
         prev,
         task.id,
         (item) => ({
           ...item,
-          completed: !item.completed,
-          completed_at: !item.completed ? new Date().toISOString() : null,
+          completed: nextCompleted,
+          completed_at: nextCompleted ? new Date().toISOString() : null,
         }),
         todayViewDate,
       ),
@@ -347,6 +381,19 @@ export function TasksPageContent() {
     try {
       const updated = await toggleTaskComplete(task);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      if (!options?.silent) {
+        showActionToast({
+          message: updated.completed
+            ? "Task marked as done"
+            : "Task marked incomplete",
+          tone: updated.completed ? "success" : "neutral",
+          icon: "check",
+          actionLabel: "Undo",
+          onAction: () => {
+            void handleToggleComplete(updated, { silent: true });
+          },
+        });
+      }
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to update task.",
@@ -368,6 +415,15 @@ export function TasksPageContent() {
     try {
       const duplicated = await duplicateTask(task, task.group_id, sortOrder);
       setGroups((prev) => addTaskToBoard(prev, duplicated, todayViewDate));
+      showActionToast({
+        message: "Task duplicated",
+        tone: "success",
+        icon: "check",
+        actionLabel: "View",
+        onAction: () => {
+          selectTask(duplicated.id);
+        },
+      });
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to duplicate task.",
@@ -375,8 +431,18 @@ export function TasksPageContent() {
     }
   }
 
-  async function handleMoveTask(taskId: string, targetGroupId: string) {
+  async function handleMoveTask(
+    taskId: string,
+    targetGroupId: string,
+    options?: { silent?: boolean },
+  ) {
     setError(null);
+
+    const snapshot = groups
+      .flatMap((group) => group.tasks)
+      .find((item) => item.id === taskId);
+    const previousGroupId = snapshot?.group_id ?? null;
+    const targetGroup = groups.find((group) => group.id === targetGroupId);
 
     let nextBoard = groups;
     setGroups((prev) => {
@@ -403,6 +469,27 @@ export function TasksPageContent() {
 
     try {
       await persistTaskBoardLayout(nextBoard, { todayViewDate });
+      if (
+        !options?.silent &&
+        previousGroupId &&
+        previousGroupId !== targetGroupId
+      ) {
+        const label = targetGroup
+          ? isLaterGroup(targetGroup)
+            ? "Later"
+            : isTodayGroup(targetGroup)
+              ? "Today"
+              : targetGroup.title
+          : "group";
+        showActionToast({
+          message: `Moved to ${label}`,
+          icon: targetGroup && isLaterGroup(targetGroup) ? "later" : "queue",
+          actionLabel: "Undo",
+          onAction: () => {
+            void handleMoveTask(taskId, previousGroupId, { silent: true });
+          },
+        });
+      }
     } catch (err) {
       setError(
         err instanceof TaskGroupsError ? err.message : "Failed to move task.",
@@ -412,7 +499,7 @@ export function TasksPageContent() {
   }
 
   async function handleCreateGroupAndMoveTask(
-    input: { title: string; icon: string; color: string },
+    input: { title: string; icon: string | null; color: string },
     taskId: string,
   ) {
     setError(null);
@@ -459,25 +546,44 @@ export function TasksPageContent() {
   }
 
   async function handleDeleteTask(taskId: string) {
+    const snapshot = groups
+      .flatMap((group) => group.tasks)
+      .find((item) => item.id === taskId);
+    if (!snapshot) return;
+
     setError(null);
     setGroups((prev) => removeTaskFromBoard(prev, taskId));
     if (selectedTaskId === taskId) {
       selectTask(null);
     }
 
-    try {
-      await deleteTask(taskId);
-    } catch (err) {
-      setError(
-        err instanceof TasksError ? err.message : "Failed to delete task.",
-      );
-      void loadBoard();
-    }
+    let committed = false;
+    const commitDelete = () => {
+      if (committed) return;
+      committed = true;
+      void deleteTask(taskId).catch((err) => {
+        setError(
+          err instanceof TasksError ? err.message : "Failed to delete task.",
+        );
+        void loadBoard();
+      });
+    };
+
+    showActionToast({
+      message: "Task moved to Trash",
+      icon: "trash",
+      actionLabel: "Undo",
+      onAction: () => {
+        committed = true;
+        setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
+      },
+      onExpire: commitDelete,
+    });
   }
 
   async function handleCreateGroup(input: {
     title: string;
-    icon: string;
+    icon: string | null;
     color: string;
   }) {
     setError(null);
@@ -489,6 +595,11 @@ export function TasksPageContent() {
       setGroups((prev) =>
         orderPinnedTaskGroups([...prev, { ...created, tasks: [] }]),
       );
+      showActionToast({
+        message: "Group created",
+        tone: "success",
+        icon: "check",
+      });
       return created.id;
     } catch (err) {
       setError(
@@ -534,6 +645,10 @@ export function TasksPageContent() {
 
     try {
       await deleteTaskGroup(groupId);
+      showActionToast({
+        message: "Group deleted",
+        icon: "trash",
+      });
     } catch (err) {
       setGroups(previousGroups);
       setError(
@@ -562,37 +677,29 @@ export function TasksPageContent() {
     }
   }
 
-  async function handleUpdateGroupIcon(groupId: string, icon: string) {
+  async function handleUpdateGroupAppearance(
+    groupId: string,
+    input: { icon: string | null; color: string },
+  ) {
     setError(null);
     setGroups((prev) =>
-      prev.map((group) => (group.id === groupId ? { ...group, icon } : group)),
+      prev.map((group) =>
+        group.id === groupId
+          ? { ...group, icon: input.icon, color: input.color }
+          : group,
+      ),
     );
 
     try {
-      await updateTaskGroup(groupId, { icon });
+      await updateTaskGroup(groupId, {
+        icon: input.icon,
+        color: input.color,
+      });
     } catch (err) {
       setError(
         err instanceof TaskGroupsError
           ? err.message
-          : "Failed to update group icon.",
-      );
-      void loadBoard();
-    }
-  }
-
-  async function handleUpdateGroupColor(groupId: string, color: string) {
-    setError(null);
-    setGroups((prev) =>
-      prev.map((group) => (group.id === groupId ? { ...group, color } : group)),
-    );
-
-    try {
-      await updateTaskGroup(groupId, { color });
-    } catch (err) {
-      setError(
-        err instanceof TaskGroupsError
-          ? err.message
-          : "Failed to update group color.",
+          : "Failed to update group appearance.",
       );
       void loadBoard();
     }
@@ -674,6 +781,7 @@ export function TasksPageContent() {
   async function handleSetPlanningState(
     taskId: string,
     planningState: PlanningState,
+    options?: { silent?: boolean },
   ) {
     const task = groups
       .flatMap((group) => group.tasks)
@@ -682,13 +790,40 @@ export function TasksPageContent() {
 
     const current = normalizePlanningState(task.planning_state);
     if (current === planningState) return;
+    const snapshot = task;
 
     if (planningState === "later") {
       await handleMoveToLater(taskId);
+      if (!options?.silent) {
+        showActionToast({
+          message: "Moved to Later",
+          icon: "later",
+          actionLabel: "Undo",
+          onAction: () => {
+            void handleUpdateTask(snapshot.id, {
+              planning_state: "none",
+              scheduled_date: snapshot.scheduled_date,
+              scheduled_time: snapshot.scheduled_time,
+              group_id: snapshot.group_id,
+            });
+          },
+        });
+      }
       return;
     }
 
     await handleClearPlanningState(taskId);
+    if (!options?.silent) {
+      showActionToast({
+        message: "Set to Normal",
+        tone: "success",
+        icon: "check",
+        actionLabel: "Undo",
+        onAction: () => {
+          void handleSetPlanningState(snapshot.id, "later", { silent: true });
+        },
+      });
+    }
   }
 
   async function handleMoveToLater(taskId: string) {
@@ -846,21 +981,10 @@ export function TasksPageContent() {
 
   return (
     <div className="relative flex h-full min-h-0">
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col pb-3 pt-2">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {error && (
           <div className="mb-3 shrink-0">
             <ErrorBanner message={error} />
-          </div>
-        )}
-
-        {hint && (
-          <div className="mb-3 shrink-0">
-            <p
-              className="rounded-lg border border-selected-border bg-primary-soft px-3 py-2 text-sm text-foreground"
-              role="status"
-            >
-              {hint}
-            </p>
           </div>
         )}
 
@@ -884,14 +1008,19 @@ export function TasksPageContent() {
           onCreateGroup={handleCreateGroup}
           onCreateGroupAndMoveTask={handleCreateGroupAndMoveTask}
           onRenameGroup={handleRenameGroup}
-          onUpdateGroupIcon={handleUpdateGroupIcon}
-          onUpdateGroupColor={handleUpdateGroupColor}
+          onUpdateGroupAppearance={handleUpdateGroupAppearance}
           onUpdateGroupSortMode={handleUpdateGroupSortMode}
           onDeleteGroup={handleDeleteGroup}
           onPersistLayout={handlePersistLayout}
           onPersistGroupOrder={handlePersistGroupOrder}
           onPersistManualOrder={handlePersistManualOrder}
-          onShowHint={setHint}
+          onShowHint={(message) => {
+            showActionToast({
+              message,
+              tone: "warning",
+              icon: "warning",
+            });
+          }}
           onSetPlanningState={handleSetPlanningState}
         />
       </div>
@@ -922,6 +1051,36 @@ export function TasksPageContent() {
         onDeleteTask={handleDeleteTask}
         onDuplicateTask={handleDuplicateTask}
         onSetPlanningState={handleSetPlanningState}
+        onTaskQueued={(taskId) => {
+          showActionToast({
+            message: "Added to Queue",
+            icon: "queue",
+            actionLabel: "Undo",
+            onAction: () => {
+              void removeTaskFromNextUp(taskId);
+            },
+          });
+        }}
+        onTaskUnscheduled={(taskId, previous) => {
+          showActionToast({
+            message: "Unscheduled",
+            icon: "calendar",
+            actionLabel: "Undo",
+            onAction: () => {
+              if (previous.scheduled_date) {
+                void handleScheduleTask(taskId, {
+                  scheduled_date: previous.scheduled_date,
+                  scheduled_time: previous.scheduled_time,
+                });
+                return;
+              }
+              void handleUpdateTask(taskId, {
+                scheduled_date: null,
+                scheduled_time: previous.scheduled_time,
+              });
+            },
+          });
+        }}
       />
 
       <TimelineDrawerToggle

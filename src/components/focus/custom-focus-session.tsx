@@ -46,7 +46,7 @@ export function CustomFocusSession({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-xl border border-border/50 bg-surface-raised">
+    <div className="rounded-xl border-0 bg-surface-section">
       <button
         type="button"
         onClick={() => setOpen(!open)}

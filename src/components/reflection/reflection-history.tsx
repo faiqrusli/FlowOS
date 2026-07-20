@@ -6,7 +6,6 @@ import { CalendarRange, Eye } from "lucide-react";
 import { ReflectionDetailContent } from "@/components/reflection/reflection-detail-content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +20,8 @@ import {
   formatSummaryLine,
   getReflectionDayLabel,
 } from "@/lib/reflection-storage";
+import { type as typography } from "@/lib/typography";
+import { cn } from "@/lib/utils";
 import type { Reflection } from "@/types/reflection";
 
 type ReflectionHistoryProps = {
@@ -83,17 +84,15 @@ export function ReflectionHistory({
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Reflection history</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+      <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+        <h2 className={typography.sectionTitle}>Reflection history</h2>
+        <div className="mt-4 space-y-6">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading history…</p>
+            <p className={typography.bodyMuted}>Loading history…</p>
           ) : (
             <>
-              <section className="space-y-3">
-                <h3 className="text-sm font-medium text-muted-foreground">
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-foreground-secondary">
                   Today
                 </h3>
                 {todayReflection ? (
@@ -108,24 +107,26 @@ export function ReflectionHistory({
                     onView={() => setViewing(todayReflection)}
                   />
                 ) : (
-                  <p className="rounded-lg border border-dashed border-border-subtle bg-surface-base px-4 py-6 text-center text-sm text-muted-foreground">
+                  <p
+                    className={cn(
+                      typography.bodyMuted,
+                      "rounded-lg bg-surface-base px-4 py-6 text-center",
+                    )}
+                  >
                     No reflection saved for today yet. Fill in your notes above
                     and click Save reflection.
                   </p>
                 )}
-              </section>
+              </div>
 
               {pastReflections.length > 0 && (
-                <section className="space-y-3">
-                  <h3 className="text-sm font-medium text-muted-foreground">
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-foreground-secondary">
                     Previous
                   </h3>
-                  <ul className="divide-y divide-border/40">
+                  <ul className="space-y-2">
                     {pastReflections.map((reflection) => (
-                      <li
-                        key={reflection.id}
-                        className="py-4 first:pt-0 last:pb-0"
-                      >
+                      <li key={reflection.id}>
                         <ReflectionHistoryItem
                           reflection={reflection}
                           todayDate={todayDate}
@@ -134,21 +135,22 @@ export function ReflectionHistory({
                       </li>
                     ))}
                   </ul>
-                </section>
+                </div>
               )}
             </>
           )}
-        </CardContent>
-        <div className="border-t border-border/40 px-6 pb-6 pt-4">
+        </div>
+
+        <div className="mt-5">
           <Link
             href="/reflection/WeeklyReflection"
-            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-input bg-surface-base px-4 text-sm font-medium shadow-xs transition-colors hover:bg-surface-hover hover:text-accent-foreground"
+            className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-surface-base px-4 text-sm font-medium transition-colors hover:bg-surface-hover"
           >
             <CalendarRange className="size-4" />
             Weekly reflection
           </Link>
         </div>
-      </Card>
+      </section>
 
       <Dialog
         open={Boolean(viewing)}
@@ -187,34 +189,29 @@ function ReflectionHistoryItem({
   const isToday = reflection.reflection_date === todayDate;
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border-subtle bg-surface-base px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-lg border-0 bg-surface-base px-4 py-3 transition-colors hover:bg-surface-hover sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-medium text-foreground">
             {getReflectionDayLabel(reflection.reflection_date)}
           </p>
           {isToday && (
-            <Badge
-              variant="outline"
-              className="border-green-600 text-green-700"
-            >
-              Saved
-            </Badge>
+            <Badge variant="status-success">Saved</Badge>
           )}
         </div>
         {summaryLine && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-foreground-secondary">
             {summaryLine}
             <> · {formatReflectionSavedAt(reflection.created_at)}</>
           </p>
         )}
-        <p className="line-clamp-2 text-sm text-muted-foreground">
+        <p className="line-clamp-2 text-sm text-foreground-secondary">
           {buildReflectionPreview(reflection)}
         </p>
       </div>
       <Button
         type="button"
-        variant="outline"
+        variant="secondary"
         size="sm"
         className="shrink-0 gap-1"
         onClick={onView}

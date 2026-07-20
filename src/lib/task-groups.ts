@@ -722,7 +722,7 @@ export async function fetchTaskBoard(
 
 export async function createTaskGroup(
   title: string,
-  options?: { icon?: string; color?: string }
+  options?: { icon?: string | null; color?: string }
 ): Promise<TaskGroup> {
   const userId = await requireUserId();
   const trimmed = title.trim();
@@ -757,6 +757,7 @@ export async function createTaskGroup(
     .maybeSingle();
 
   const sort_order = lastGroup ? lastGroup.sort_order + 1 : 0;
+  const icon = options?.icon?.trim() ? options.icon.trim() : null;
 
   const { data, error } = await supabase
     .from("task_groups")
@@ -764,7 +765,7 @@ export async function createTaskGroup(
       user_id: userId,
       title: trimmed,
       sort_order,
-      icon: options?.icon ?? null,
+      icon,
       color: options?.color ?? null,
     })
     .select()

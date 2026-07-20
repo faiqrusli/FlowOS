@@ -6,7 +6,7 @@ type ScheduleSummaryProps = {
 
 export function ScheduleSummaryCard({ summary }: ScheduleSummaryProps) {
   return (
-    <section className="space-y-4 rounded-xl border border-border/50 bg-card px-5 py-4">
+    <section className="space-y-4 rounded-xl border-0 bg-surface-section px-5 py-4">
       <div className="space-y-1">
         <h2 className="text-base font-semibold text-foreground">
           Today&apos;s Timeline
@@ -18,7 +18,7 @@ export function ScheduleSummaryCard({ summary }: ScheduleSummaryProps) {
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-lg bg-surface-raised px-3 py-2.5">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <p className="flow-section-label text-xs font-medium uppercase tracking-wide">
             Next
           </p>
           {summary.nextItem ? (
@@ -36,7 +36,7 @@ export function ScheduleSummaryCard({ summary }: ScheduleSummaryProps) {
         </div>
 
         <div className="rounded-lg bg-surface-raised px-3 py-2.5">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <p className="flow-section-label text-xs font-medium uppercase tracking-wide">
             Remaining
           </p>
           <p className="mt-1 text-sm font-medium text-foreground">

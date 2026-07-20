@@ -44,10 +44,6 @@ import {
   upsertSidebarNoteInCache,
 } from "@/lib/sidebar-notes-cache";
 import { cn } from "@/lib/utils";
-import {
-  drawerCardClass,
-  interactiveHoverClass,
-} from "@/lib/theme/surface-classes";
 import type { GrowthAreaWithCounts, Note } from "@/types/notes";
 
 export function SidebarNotesPanel() {
@@ -249,10 +245,12 @@ export function SidebarNotesPanel() {
       <li key={note.id}>
         <div
           className={cn(
-            "group relative rounded-md transition-[background-color,box-shadow]",
+            "group relative rounded-lg border-0 transition-colors duration-150",
             selectedNoteId === note.id
               ? "flow-selected"
-              : interactiveHoverClass,
+              : openMenuNoteId === note.id
+                ? "bg-surface-hover"
+                : "hover:bg-surface-hover",
           )}
           onContextMenu={(event) => {
             event.preventDefault();
@@ -262,9 +260,9 @@ export function SidebarNotesPanel() {
           <button
             type="button"
             onClick={() => selectNote(note.id)}
-            className="w-full px-2 py-1 pr-8 text-left"
+            className="w-full px-2 py-1.5 pr-8 text-left"
           >
-            <p className="truncate text-sm font-medium leading-snug text-foreground/80">
+            <p className="truncate text-sm font-medium leading-snug text-foreground">
               {note.title.trim() || "Untitled"}
             </p>
           </button>
@@ -316,7 +314,7 @@ export function SidebarNotesPanel() {
 
   if (selected) {
     return (
-      <div className="flex h-full min-h-0 flex-col gap-3 p-3">
+      <div className="flex h-full min-h-0 flex-col gap-3 px-5 py-4">
         <div className="flex shrink-0 items-center">
           <Button
             type="button"
@@ -329,11 +327,9 @@ export function SidebarNotesPanel() {
           </Button>
         </div>
 
-        {/* Document card on chrome — toolbar lives inside the card. */}
-        <div
-          className={cn(drawerCardClass, "min-h-0 flex-1 overflow-hidden p-0")}
-        >
-          <div className="flex shrink-0 items-center gap-2 border-b border-border/40 px-4 py-3">
+        {/* Document canvas — Surface 4 on drawer chrome (same as Notes page). */}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border-0 bg-surface-base text-card-foreground shadow-none">
+          <div className="flex shrink-0 items-center gap-2 px-4 py-3">
             <input
               ref={titleInputRef}
               value={selected.title}
@@ -374,7 +370,7 @@ export function SidebarNotesPanel() {
                 <Pin className="size-4" />
               )}
             </button>
-            <span className="shrink-0 text-xs text-muted-foreground">
+            <span className="shrink-0 text-xs text-foreground-secondary">
               {saveState === "saving"
                 ? "Saving..."
                 : saveState === "saved"
@@ -409,7 +405,7 @@ export function SidebarNotesPanel() {
     <>
       <div className="flex h-full min-h-0 flex-col">
         {/* Search / Today header region — separated from the folder list. */}
-        <div className="shrink-0 space-y-2.5 border-b border-sidebar-border px-3 pt-3 pb-3">
+        <div className="shrink-0 space-y-2.5 px-5 pt-4 pb-4">
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -436,13 +432,13 @@ export function SidebarNotesPanel() {
             type="button"
             onClick={() => void handleOpenToday()}
             className={cn(
-              "flex w-full items-center gap-2.5 rounded-xl border border-border-board bg-surface-board px-3 py-2 text-left transition-colors",
+              "flex w-full items-center gap-2 rounded-xl border-0 px-2.5 py-1.5 text-left transition-colors duration-150",
               todayDailyNoteId && selectedNoteId === todayDailyNoteId
-                ? "ring-1 ring-primary/30"
-                : "hover:bg-surface-board-header",
+                ? "bg-primary-soft hover:bg-primary-soft"
+                : "bg-surface-raised hover:bg-surface-hover",
             )}
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-board-header text-base leading-none">
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-surface-board-header text-sm leading-none">
               📅
             </span>
             <span className="min-w-0 flex-1">
@@ -456,13 +452,13 @@ export function SidebarNotesPanel() {
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-1.5 py-2">
+        <div className="min-h-0 flex-1 overflow-y-auto px-2.5 py-2">
           {menuPinnedNotes.length === 0 && grouped.length === 0 ? (
             <p className="px-2 py-6 text-center text-sm text-muted-foreground">
               {search.trim() ? "No matching notes" : "No notes yet"}
             </p>
           ) : (
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {menuPinnedNotes.length > 0 && (
                 <section>
                   <div className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5">

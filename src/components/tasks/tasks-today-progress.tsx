@@ -15,7 +15,7 @@ export function TasksTodayProgress({
     <section
       className={
         variant === "standalone"
-          ? "space-y-3 rounded-xl border border-border/50 bg-card px-5 py-4"
+          ? "space-y-3 rounded-xl border-0 bg-surface-section px-5 py-4"
           : "space-y-2"
       }
     >

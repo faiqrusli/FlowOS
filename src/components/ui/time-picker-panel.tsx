@@ -45,7 +45,7 @@ type TimePickerPanelProps = {
 };
 
 const SEGMENT_ACTIVE_CLASS =
-  "rounded bg-surface-overlay text-foreground shadow-sm ring-1 ring-ring/45";
+  "rounded-md bg-primary-soft text-foreground ring-1 ring-primary/40";
 
 function TimePickerColumn<T extends string | number>({
   items,
@@ -68,17 +68,18 @@ function TimePickerColumn<T extends string | number>({
 
   return (
     <div className="relative min-w-0 flex-1">
+      {/* Behind the numbers — opaque overlay was hiding the selected value */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-1/2 z-10 h-7 -translate-y-1/2 rounded-md border border-selected-border bg-selected"
+        className="pointer-events-none absolute inset-x-0 top-1/2 z-0 h-7 -translate-y-1/2 rounded-md border border-primary/35 bg-primary-soft"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-5 bg-gradient-to-b from-surface-overlay to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-5 bg-gradient-to-b from-surface-float to-transparent"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-5 bg-gradient-to-t from-surface-overlay to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-5 bg-gradient-to-t from-surface-float to-transparent"
       />
       <div
         aria-label={ariaLabel}
@@ -96,7 +97,7 @@ function TimePickerColumn<T extends string | number>({
                 "mx-auto flex h-7 w-full max-w-[2.85rem] items-center justify-center rounded-md text-xs font-medium tabular-nums transition-colors",
                 selected
                   ? "text-foreground"
-                  : "text-muted-foreground/50 hover:bg-surface-hover hover:text-foreground/75",
+                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
               )}
               aria-pressed={selected}
             >
@@ -303,7 +304,7 @@ function TimePickerEditableHeader({
       onKeyDown={handleHeaderKeyDown}
     >
       <div
-        className="flex items-center justify-center gap-0.5 rounded-lg bg-surface-raised px-2 py-1.5"
+        className="flex items-center justify-center gap-0.5 rounded-lg bg-surface-8 px-2 py-1.5 ring-1 ring-border-subtle"
         aria-label={`Time ${formatTimePickerDisplayLabel(value)}`}
       >
         <input

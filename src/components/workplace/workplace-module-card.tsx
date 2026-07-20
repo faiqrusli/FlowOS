@@ -80,7 +80,8 @@ export function WorkplaceModuleCard({
     >
       <header
         className={cn(
-          "flex shrink-0 items-center justify-between gap-2 border-b border-divider px-2.5 py-2 transition-opacity duration-150",
+          "flex shrink-0 items-center justify-between gap-2 px-2.5 py-2 transition-opacity duration-150",
+          !overlay && "border-b border-divider",
           !overlay && !cardVisible && "pointer-events-none opacity-0",
         )}
       >
@@ -94,11 +95,11 @@ export function WorkplaceModuleCard({
           <h3 className="truncate text-[14px] font-semibold tracking-tight text-foreground">
             {title}
             {titleMeta ? (
-              <span className="ml-1.5 font-medium text-muted-foreground">
+              <span className="ml-1.5 font-semibold text-muted-foreground">
                 {titleMeta}
               </span>
             ) : titleCount !== undefined ? (
-              <span className="ml-1 font-medium text-muted-foreground">
+              <span className="ml-1 font-semibold text-muted-foreground">
                 {titleCount}
               </span>
             ) : null}
@@ -110,7 +111,7 @@ export function WorkplaceModuleCard({
             <button
               type="button"
               onClick={onClose}
-              className="flex size-6 items-center justify-center rounded-md text-muted-foreground/70 transition-colors hover:bg-surface-hover hover:text-foreground"
+              className="flex size-6 items-center justify-center rounded-md text-muted-foreground/58 transition-colors hover:bg-surface-hover hover:text-foreground"
               aria-label={`Close ${title}`}
             >
               <X className="size-3.5" />
@@ -120,7 +121,7 @@ export function WorkplaceModuleCard({
             <button
               type="button"
               onClick={toggleVisibility}
-              className="flex size-6 items-center justify-center rounded-md text-muted-foreground/55 transition-colors hover:bg-surface-hover hover:text-muted-foreground"
+              className="flex size-6 items-center justify-center rounded-md text-muted-foreground/58 transition-colors hover:bg-surface-hover hover:text-muted-foreground"
               aria-label={
                 hoverReveal
                   ? "Show on hover — click for always visible"

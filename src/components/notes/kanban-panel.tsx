@@ -26,6 +26,7 @@ import {
   reorderKanbanColumns,
   updateKanbanBoard,
 } from "@/lib/kanban";
+import { useActionToast } from "@/contexts/action-toast-context";
 import {
   initialDropBeforeId,
   reorderByDropBeforeId,
@@ -61,6 +62,7 @@ export function KanbanPanel({
   onAreasRefresh,
   embedded = false,
 }: KanbanPanelProps) {
+  const { showActionToast } = useActionToast();
   const [boardDialogOpen, setBoardDialogOpen] = useState(false);
   const [editingBoardId, setEditingBoardId] = useState<string | null>(null);
   const [boardTitleDraft, setBoardTitleDraft] = useState("");
@@ -245,6 +247,10 @@ export function KanbanPanel({
       onActiveBoardChange(null);
     }
     onAreasRefresh();
+    showActionToast({
+      message: "Board deleted",
+      icon: "trash",
+    });
   }
 
   return (
@@ -306,10 +312,10 @@ export function KanbanPanel({
                       type="button"
                       onClick={() => onSelectBoard(board.id)}
                       className={cn(
-                        "whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                        "whitespace-nowrap rounded-lg border-[length:var(--border-hairline-width)] px-3 py-1.5 text-sm font-medium transition-colors duration-150",
                         isActive
-                          ? "flow-selected text-foreground"
-                          : "bg-surface-raised text-foreground/70 hover:bg-surface-hover hover:text-foreground",
+                          ? "flow-selected border-[color:var(--border-float)] text-foreground"
+                          : "border-transparent text-foreground-secondary hover:bg-surface-hover hover:text-foreground",
                       )}
                     >
                       {board.title}
@@ -357,7 +363,7 @@ export function KanbanPanel({
             type="button"
             size="sm"
             variant="outline"
-            className="h-8 shrink-0 gap-1.5 rounded-lg px-3 text-sm"
+            className="h-8 shrink-0 gap-1.5 rounded-lg border-primary/40 bg-primary/[0.08] px-3 text-sm text-foreground hover:border-primary/55 hover:bg-primary/[0.12] hover:text-foreground"
             disabled={!activeBoard}
             onClick={() => void handleAddList()}
           >
@@ -367,6 +373,7 @@ export function KanbanPanel({
           <Button
             type="button"
             size="sm"
+            variant="outline"
             className="h-8 shrink-0 gap-1.5 rounded-lg px-3 text-sm"
             onClick={() => setBoardDialogOpen(true)}
           >
@@ -378,7 +385,7 @@ export function KanbanPanel({
 
       <div className="min-h-0 flex-1 overflow-hidden pt-3">
         {!activeBoard ? (
-          <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-border/50 bg-surface-raised p-8 text-center text-sm text-muted-foreground">
+          <div className="flex h-full items-center justify-center p-8 text-center text-sm text-muted-foreground">
             {boards.length === 0
               ? "Create a board to track your growth journey."
               : "Select a board to view your journey."}

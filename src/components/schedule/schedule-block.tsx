@@ -78,7 +78,7 @@ export function ScheduleBlock({
       draggable={interactive && !isFocus && !item.completed}
       onDragStart={(event) => onDragStart?.(item, event)}
       className={cn(
-        "group absolute right-3 left-3 z-10 overflow-hidden rounded-lg border transition-colors duration-150",
+        "group absolute right-3 left-3 z-10 overflow-hidden rounded-lg border-0 transition-[box-shadow] duration-150",
         channel.bg,
         channel.border,
         channel.hover,
@@ -87,7 +87,7 @@ export function ScheduleBlock({
           !item.completed &&
           "cursor-grab active:cursor-grabbing",
         isCurrent && SCHEDULE_BLOCK_CURRENT_CLASS,
-        item.completed && "opacity-60",
+        item.completed && "timeline-event-completed",
       )}
       style={{ top: topPx, height: heightPx }}
     >
@@ -143,7 +143,7 @@ export function ScheduleBlock({
               {item.title}
             </p>
             {!isCompact && (
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="mt-0.5 text-xs text-foreground-secondary">
                 {isFocus ? "Focus session" : "Task"} ·{" "}
                 {formatDurationLabel(durationMinutes)}
               </p>

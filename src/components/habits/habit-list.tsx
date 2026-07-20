@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { HabitCard } from "@/components/habits/habit-card";
 import { HabitsTodayChecklistCard } from "@/components/habits/habits-today-checklist-card";
 import { EntityGridSkeleton } from "@/components/shared/entity-grid-skeleton";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   useHabitDailyScheduleStore,
   withHabitScheduleForDate,
@@ -15,6 +14,7 @@ import {
   getCachedHabitCompletions,
   isHabitScheduledToday,
 } from "@/lib/habits";
+import { type as typography } from "@/lib/typography";
 import type { Habit } from "@/types/habit";
 
 type HabitListProps = {
@@ -57,11 +57,11 @@ export function HabitList({
 
   if (habits.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-12 text-center text-sm text-muted-foreground">
+      <div className="rounded-xl bg-surface-section px-5 py-12 text-center">
+        <p className={typography.bodyMuted}>
           No habits yet. Click Add Habit to build your routine.
-        </CardContent>
-      </Card>
+        </p>
+      </div>
     );
   }
 
@@ -73,16 +73,16 @@ export function HabitList({
         onToggle={onToggleComplete}
       />
 
-      <section className="space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">All habits</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h2 className={typography.sectionTitle}>All habits</h2>
+          <p className={typography.meta}>
             Edit schedules and manage your routines below.
           </p>
         </div>
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid gap-3 sm:grid-cols-2 sm:gap-3">
           {habits.map((habit) => (
-            <li key={habit.id}>
+            <li key={habit.id} className="min-w-0">
               <HabitCard
                 habit={habit}
                 stats={

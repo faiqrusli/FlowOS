@@ -16,11 +16,13 @@ export type TaskGroupColorKey =
   | "later";
 
 export type TaskGroupAppearance = {
+  /** Empty string = color-only identity (no icon badge). */
   icon: string;
   colorKey: TaskGroupColorKey;
   pillClassName: string;
 };
 
+/** @deprecated New groups default to no icon (`null` / `""`). */
 export const DEFAULT_NEW_GROUP_ICON = "📁";
 
 export const TASK_GROUP_COLOR_KEYS: TaskGroupColorKey[] = [
@@ -41,33 +43,33 @@ const NEUTRAL_PILL_CLASS =
   "border-border-subtle/60 bg-surface-raised text-foreground shadow-xs";
 
 const GROUP_DOT_CLASS: Record<TaskGroupColorKey, string> = {
-  sky: "size-2 shrink-0 rounded-full bg-chart-1",
-  blue: "size-2 shrink-0 rounded-full bg-chart-1",
-  indigo: "size-2 shrink-0 rounded-full bg-chart-1",
-  violet: "size-2 shrink-0 rounded-full bg-chart-1",
-  emerald: "size-2 shrink-0 rounded-full bg-chart-2",
-  teal: "size-2 shrink-0 rounded-full bg-chart-2",
-  amber: "size-2 shrink-0 rounded-full bg-chart-3",
-  orange: "size-2 shrink-0 rounded-full bg-chart-3",
-  rose: "size-2 shrink-0 rounded-full bg-chart-4",
-  slate: "size-2 shrink-0 rounded-full bg-chart-5",
-  inbox: "size-2 shrink-0 rounded-full bg-chart-1",
-  later: "size-2 shrink-0 rounded-full bg-chart-3",
+  sky: "size-2 shrink-0 rounded-full bg-group-sky",
+  blue: "size-2 shrink-0 rounded-full bg-group-blue",
+  indigo: "size-2 shrink-0 rounded-full bg-group-indigo",
+  violet: "size-2 shrink-0 rounded-full bg-group-violet",
+  emerald: "size-2 shrink-0 rounded-full bg-group-emerald",
+  teal: "size-2 shrink-0 rounded-full bg-group-teal",
+  amber: "size-2 shrink-0 rounded-full bg-group-amber",
+  orange: "size-2 shrink-0 rounded-full bg-group-orange",
+  rose: "size-2 shrink-0 rounded-full bg-group-rose",
+  slate: "size-2 shrink-0 rounded-full bg-group-slate",
+  inbox: "size-2 shrink-0 rounded-full bg-group-blue",
+  later: "size-2 shrink-0 rounded-full bg-group-amber",
 };
 
 const GROUP_EDGE_CLASS: Record<TaskGroupColorKey, string> = {
-  sky: "border-l-[3px] border-l-chart-1/70",
-  blue: "border-l-[3px] border-l-chart-1/70",
-  indigo: "border-l-[3px] border-l-chart-1/70",
-  violet: "border-l-[3px] border-l-chart-1/70",
-  emerald: "border-l-[3px] border-l-chart-2/70",
-  teal: "border-l-[3px] border-l-chart-2/70",
-  amber: "border-l-[3px] border-l-chart-3/70",
-  orange: "border-l-[3px] border-l-chart-3/70",
-  rose: "border-l-[3px] border-l-chart-4/70",
-  slate: "border-l-[3px] border-l-chart-5/70",
-  inbox: "border-l-[3px] border-l-chart-1/70",
-  later: "border-l-[3px] border-l-chart-3/70",
+  sky: "border-l-[3px] border-l-group-sky/70",
+  blue: "border-l-[3px] border-l-group-blue/70",
+  indigo: "border-l-[3px] border-l-group-indigo/70",
+  violet: "border-l-[3px] border-l-group-violet/70",
+  emerald: "border-l-[3px] border-l-group-emerald/70",
+  teal: "border-l-[3px] border-l-group-teal/70",
+  amber: "border-l-[3px] border-l-group-amber/70",
+  orange: "border-l-[3px] border-l-group-orange/70",
+  rose: "border-l-[3px] border-l-group-rose/70",
+  slate: "border-l-[3px] border-l-group-slate/70",
+  inbox: "border-l-[3px] border-l-group-blue/70",
+  later: "border-l-[3px] border-l-group-amber/70",
 };
 
 export function getGroupDotClass(colorKey: TaskGroupColorKey): string {
@@ -81,19 +83,29 @@ export function getGroupEdgeClass(colorKey: TaskGroupColorKey): string {
 /** CSS color for the group left edge — used when breathing the in-focus accent. */
 export function getGroupEdgeColorVar(colorKey: TaskGroupColorKey): string {
   switch (colorKey) {
+    case "sky":
+      return "var(--group-sky)";
+    case "indigo":
+      return "var(--group-indigo)";
+    case "violet":
+      return "var(--group-violet)";
     case "emerald":
+      return "var(--group-emerald)";
     case "teal":
-      return "var(--chart-2)";
+      return "var(--group-teal)";
     case "amber":
-    case "orange":
     case "later":
-      return "var(--chart-3)";
+      return "var(--group-amber)";
+    case "orange":
+      return "var(--group-orange)";
     case "rose":
-      return "var(--chart-4)";
+      return "var(--group-rose)";
     case "slate":
-      return "var(--chart-5)";
+      return "var(--group-slate)";
+    case "blue":
+    case "inbox":
     default:
-      return "var(--chart-1)";
+      return "var(--group-blue)";
   }
 }
 
@@ -127,29 +139,29 @@ export const TASK_GROUP_COLOR_LABELS: Record<TaskGroupColorKey, string> = {
 };
 
 export const TASK_GROUP_SWATCH_CLASS: Record<TaskGroupColorKey, string> = {
-  sky: "bg-chart-1",
-  blue: "bg-chart-1",
-  indigo: "bg-chart-1",
-  violet: "bg-chart-1",
-  emerald: "bg-chart-2",
-  teal: "bg-chart-2",
-  amber: "bg-chart-3",
-  orange: "bg-chart-3",
-  rose: "bg-chart-4",
-  slate: "bg-chart-5",
-  inbox: "bg-chart-1",
-  later: "bg-chart-3",
+  sky: "bg-group-sky",
+  blue: "bg-group-blue",
+  indigo: "bg-group-indigo",
+  violet: "bg-group-violet",
+  emerald: "bg-group-emerald",
+  teal: "bg-group-teal",
+  amber: "bg-group-amber",
+  orange: "bg-group-orange",
+  rose: "bg-group-rose",
+  slate: "bg-group-slate",
+  inbox: "bg-group-blue",
+  later: "bg-group-amber",
 };
 
 /**
- * Tasks board column body — no fill; sits on canvas (#1B1B1B).
- * Accent stays on dots/edges only; header carries the work surface.
+ * Tasks board column body — no fill; sits on canvas.
+ * Quiet chrome hairline (same family as nav rails / Notes columns).
  */
-export const TASK_GROUP_COLUMN_BODY_CLASS = "border-border-subtle/80";
+export const TASK_GROUP_COLUMN_BODY_CLASS = "flow-border-hairline";
 
-/** Column header — persistent work surface (#242429 / surface-base). */
+/** Column header — persistent work surface (surface-base). */
 export const TASK_GROUP_COLUMN_HEADER_CLASS =
-  "border-b border-border-subtle/70 bg-surface-base";
+  "flow-border-hairline-b bg-surface-base";
 
 /** @deprecated Prefer TASK_GROUP_COLUMN_BODY_CLASS — kept for colorKey map call sites. */
 export const TASK_GROUP_COLUMN_SURFACE_CLASS: Record<
@@ -192,21 +204,6 @@ const BUILTIN_APPEARANCE: Record<
   "study-cpp": { icon: "📚", colorKey: "blue" },
 };
 
-const FALLBACK_ICONS = [
-  "📚",
-  "💻",
-  "🎯",
-  "📋",
-  "💼",
-  "🏠",
-  "✨",
-  "🔥",
-  "📝",
-  "🚀",
-  "💡",
-  "🎨",
-];
-
 function hashString(value: string): number {
   let hash = 0;
   for (let i = 0; i < value.length; i += 1) {
@@ -228,16 +225,25 @@ function resolveBuiltinAppearance(
   return null;
 }
 
-function resolveHashedAppearance(
+/** Stable color when a group has no stored color — never invents an icon. */
+function resolveHashedColorKey(
   group: Pick<TaskGroup, "id" | "title">,
-): Pick<TaskGroupAppearance, "icon" | "colorKey"> {
+): TaskGroupColorKey {
   const hash = hashString(group.id || group.title);
-  return {
-    icon: FALLBACK_ICONS[hash % FALLBACK_ICONS.length],
-    colorKey: TASK_GROUP_COLOR_KEYS[hash % TASK_GROUP_COLOR_KEYS.length],
-  };
+  return TASK_GROUP_COLOR_KEYS[hash % TASK_GROUP_COLOR_KEYS.length];
 }
 
+export function hasTaskGroupIcon(icon: string | null | undefined): boolean {
+  return Boolean(icon?.trim());
+}
+
+/** Random palette color for new groups (color is always required). */
+export function pickRandomGroupColor(): TaskGroupColorKey {
+  const index = Math.floor(Math.random() * TASK_GROUP_COLOR_KEYS.length);
+  return TASK_GROUP_COLOR_KEYS[index] ?? "blue";
+}
+
+/** Prefer least-used color — kept for callers that want balance over random. */
 export function pickNextGroupColor(
   groups: Array<
     Pick<TaskGroup, "id" | "slug" | "title"> & {
@@ -277,8 +283,8 @@ export function getDefaultAppearanceForNewGroup(
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
   const builtin = slug ? BUILTIN_APPEARANCE[slug] : null;
-  if (builtin) return builtin;
-  return resolveHashedAppearance({ id: title, title });
+  if (builtin) return { icon: builtin.icon, colorKey: builtin.colorKey };
+  return { icon: "", colorKey: pickRandomGroupColor() };
 }
 
 export function getTaskGroupAppearance(
@@ -288,16 +294,16 @@ export function getTaskGroupAppearance(
   },
 ): TaskGroupAppearance {
   const builtin = resolveBuiltinAppearance(group);
-  const hashed = resolveHashedAppearance(group);
-  const icon = group.icon?.trim() || builtin?.icon || hashed.icon;
   const isSystemGroup =
     isTodayGroup(group) || isLaterGroup(group) || isInboxGroup(group);
+  // Stored icon only — empty means color-only (no invented fallbacks).
+  const icon = group.icon?.trim() || "";
   const colorKey =
     isSystemGroup && builtin
       ? builtin.colorKey
       : isTaskGroupColorKey(group.color)
         ? group.color
-        : builtin?.colorKey || hashed.colorKey;
+        : builtin?.colorKey || resolveHashedColorKey(group);
 
   return {
     icon,

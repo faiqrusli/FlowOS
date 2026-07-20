@@ -41,7 +41,7 @@ export function QuickFocusSession({
   startDisabled = false,
 }: QuickFocusSessionProps) {
   return (
-    <section className="flex flex-col items-center rounded-2xl border border-border/50 bg-card px-6 py-12 shadow-sm sm:py-16">
+    <section className="flex flex-col items-center rounded-[18px] border-0 bg-surface-section px-6 py-12 shadow-none sm:py-16">
       {!isIdle && (
         <p className="mb-2 text-sm font-medium text-muted-foreground">
           {statusLabel}

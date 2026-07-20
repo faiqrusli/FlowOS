@@ -10,7 +10,6 @@ import {
 } from "@/lib/workplace-module-visibility";
 import {
   WORKPLACE_FOCUS_MIN_PX,
-  WORKPLACE_NEXT_UP_RAIL_PX,
   WORKPLACE_PANEL_TRAILING_INSET_CLASS,
 } from "@/lib/workplace-layout";
 import { cn } from "@/lib/utils";
@@ -46,14 +45,14 @@ export function WorkplaceQuickAddCard({
     <div
       className={cn("w-full shrink-0", WORKPLACE_PANEL_TRAILING_INSET_CLASS)}
       style={{
-        minWidth: WORKPLACE_FOCUS_MIN_PX + WORKPLACE_NEXT_UP_RAIL_PX,
+        minWidth: WORKPLACE_FOCUS_MIN_PX,
       }}
     >
       <section
         className={cn(
-          "group/qa flex w-full items-center gap-2 rounded-xl border border-border-subtle bg-surface-base px-2.5 py-1.5 shadow-sm",
+          "group/qa flex w-full items-center gap-2 rounded-xl border-0 bg-control-default px-2.5 py-2 shadow-none",
           !showChrome &&
-            "border-transparent bg-transparent shadow-none hover:border-transparent hover:bg-transparent hover:shadow-none",
+            "bg-transparent shadow-none hover:bg-transparent hover:shadow-none",
         )}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -65,13 +64,13 @@ export function WorkplaceQuickAddCard({
           )}
           aria-hidden
         >
-          <Zap className="size-3.5" />
+          <Zap className="size-3" strokeWidth={1.75} />
         </span>
         <div className="min-w-0 flex-1 overflow-hidden">
           {showActions ? (
             <WorkplaceQuickAddRow onOpenTaskDetails={onOpenTaskDetails} />
           ) : (
-            <div className="h-8" aria-hidden />
+            <div className="h-[34px]" aria-hidden />
           )}
         </div>
         <button

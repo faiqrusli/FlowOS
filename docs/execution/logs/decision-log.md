@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 17, 2026
+**Last updated:** July 20, 2026
 
 ---
 
@@ -35,6 +35,262 @@ When making a significant product decision:
 ---
 
 ## 2026 decisions
+
+### 2026-07-20 — Settings modal surfaces locked (rail 4 / shell 7)
+
+**Context:** Founder iterated Settings modal shell vs nav rail elevations on `tweak/tokyo-night-warm` (tried 8/9, 6/8, 5/7, 4/6, 3/5, 4/5, 4/9, 4/8, 5/8, etc.). Default dialogs stay Surface 9; Settings felt too bright at 8–9.  
+**Decision:** **Final:** Settings shell **Surface 7**, nav rail **Surface 4**, hairline `border-border-subtle`. Nav selected = `primary-soft` + primary icon (sidebar parity); inactive hover = `surface-ghost-hover`. Panel fields inset Surface 5. Other dialogs keep `.flow-surface-modal` (Surface 9).  
+**Alternatives rejected:** Rail 5 / shell 8; restoring raised rail + `bg-background` selected ring; leaving Settings on default Surface 9.  
+**Outcome:** Locked in code; shipping with Tokyo Night / V3 polish merge to `main`.  
+**Related:** [DESIGN_SYSTEM_V3_WORKSPACE.md](../../foundation/DESIGN_SYSTEM_V3_WORKSPACE.md) · [DESIGN_SYSTEM_V3_INTERACTION.md](../../foundation/DESIGN_SYSTEM_V3_INTERACTION.md) · `app-settings-modal.tsx`
+
+---
+
+### 2026-07-20 — Live Demo v1.2: include Schedule reminders MVP
+
+**Context:** After live-demo approval, branch shipped schedule reminders (task/habit alert-before → in-app toast + browser Notification API). Spec v1.1 had gated “notifications” too broadly.  
+**Decision:** Amend live demo to **include** Schedule reminders MVP in seed + QA (spec §21, US-10). Keep global search and smart/push routing gated. Never request browser permission on Enter Demo.  
+**Alternatives rejected:** Leaving reminders out of demo; faking a smart notification center; prompting OS permission on guest entry.  
+**Outcome:** Spec bumped to v1.2; runbook P1/P3 updated.  
+**Related:** [flowos-live-demo-spec.md](../../review/design/flowos-live-demo-spec.md) · [notification-system-mvp-spec.md](../../review/design/notification-system-mvp-spec.md) · [flowos-live-demo.md](../runbooks/flowos-live-demo.md)
+
+---
+
+### 2026-07-20 — Live Demo guest workspace (approved)
+
+**Context:** Need a resume/portfolio demo on production where visitors try FlowOS without signup — seeded multi-day workspace, temporary session, public feedback. Spec reviewed; v1.1 patched for seed/action/clone gaps and overclaims (search/notifications).  
+**Decision:** Approve [flowos-live-demo-spec.md](../../review/design/flowos-live-demo-spec.md) v1.1. Auth = anonymous Supabase + seed clone (Option A). TTL = 30 minutes. Feedback = public wall (no login). Search and notification center gated until shipped. Relative dates from visitor local today. Dedicated demo workstream — not an M2 exit gate. Implement via [flowos-live-demo.md](../runbooks/flowos-live-demo.md).  
+**Alternatives rejected:** Shared demo user + client overlay (B); client-only IndexedDB workspace (C) for v1; claiming global search/smart notifications; hardcoded “Monday = today”; tying demo to M2 exit.  
+**Outcome:** Spec locked; runbook opened; implementation may start at P1 (seed pack). Ops: enable Anonymous Auth before P2.  
+**Related:** [flowos-live-demo-spec.md](../../review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](../runbooks/flowos-live-demo.md) · [inbox.md](./inbox.md)
+
+---
+
+### 2026-07-19 — Design System v3 tokens live (ship pass)
+
+**Context:** V3 Surface 0–10 family was documented; app still used ad-hoc Tokyo Night paints and loud hover/selected fills.  
+**Decision:** Wire Surface 0–10 as the single paint source in `globals.css`; semantic tokens alias to the ladder. Remap Focus/Queue and module canvases to Surface 3; cards stay Surface 4; hover/selected quiet to Surfaces 6–7; floating/dialog shadows match V3 Interaction. Docs marked Active.  
+**Alternatives rejected:** Mass rename of `bg-surface-*` classes; keeping saturated `#565f89` selected fills.  
+**Outcome:** Implemented on `tweak/tokyo-night-warm`; founder approved merge to `main` (2026-07-20).  
+**Related:** [DESIGN_SYSTEM_V3.md](../../foundation/DESIGN_SYSTEM_V3.md) · Workspace · Interaction
+
+---
+
+### 2026-07-19 — Design System v3 family (authority split)
+
+**Context:** Surface Hierarchy & Lighting (Tokyo Night + Soft Indigo) needed supporting docs so every page can implement consistently without one mega-file or inventing parallel tokens.  
+**Decision:** Adopt a three-doc V3 family as proposed implementation authority: [DESIGN_SYSTEM_V3.md](../../foundation/DESIGN_SYSTEM_V3.md) (philosophy + Surface 0–10 + Soft Indigo), [DESIGN_SYSTEM_V3_WORKSPACE.md](../../foundation/DESIGN_SYSTEM_V3_WORKSPACE.md) (shell, borderless, per-module maps), [DESIGN_SYSTEM_V3_INTERACTION.md](../../foundation/DESIGN_SYSTEM_V3_INTERACTION.md) (type, spacing, motion, states). Borderless Workspace v1.0 absorbed into V3 Workspace (file kept as historical). Token wire-up in `globals.css` follows in a later pass.  
+**Alternatives rejected:** Single monolithic doc; keeping Borderless as a separate competing authority; inventing new surface hexes per page.  
+**Outcome:** Docs landed; code migration pending.  
+**Related:** Design System v3 family
+
+---
+
+### 2026-07-19 — Production UI polish pass (continuous workspace)
+
+**Context:** UI ~90–95% complete; borders and flat surfaces still read as boxed regions.
+**Decision:** Strip layout-only borders (header, left/right rails, drawer edge); clearer surface steps (canvas → base → raised → overlay inputs); quieter `--primary-soft` for nav; Notes section gap +24px panel bump; lighter collapsed Queue rail; +16px profile bottom pad; +4px Capture height; right-rail top padding.
+**Alternatives rejected:** Redesign, new colors, heavier shadows/glass.
+**Impact:** `globals.css` tokens + shell/Notes/Today chrome components.
+**Date:** 2026-07-19
+
+---
+
+### 2026-07-19 — Production polish: quieter chrome + softer Soft Indigo
+
+**Context:** Pre-demo polish — dividers and labels were slightly loud; primary felt oversaturated vs the calm workspace.
+**Decision:** Nav/chrome dividers at `rgba(255,255,255,0.05)`; inactive hover wash `rgba(255,255,255,0.03)`; section labels ~75% opacity; Soft Indigo desaturated ~5% to `#7B88EF`; interactions `150ms ease-out`; strip non-structural dividers (Notes/Reflection/Queue/status) in favor of spacing. Spacing scale tokens: 8 / 16 / 24 / 32.
+**Alternatives rejected:** Stronger hover fills (`surface-hover`) for inactive chrome; keeping queue header/footer strokes.
+**Impact:** Token + shell/Today/utility components; primary brand paint in Tokyo Night Warm doc.
+**Date:** 2026-07-19
+
+---
+
+Refine Docked Next Up Queue Visual Hierarchy
+
+The Today page has transitioned to a cleaner, borderless workspace style. Update the docked Next Up Queue to follow the same visual language.
+
+Remove outer card styling
+Remove the visible outer border completely.
+Remove any card-style outline around the entire docked queue.
+Do not increase contrast or darken the background to compensate.
+Keep the existing surface color consistent with the Today workspace.
+Keep only structural dividers
+
+Use dividers only where they communicate structure:
+
+Header → divider
+Footer → divider
+
+Do not place a divider between every section (NOW, NEXT UP, CONTINUE).
+
+Instead, separate sections primarily using vertical spacing.
+
+Current:
+
+Header
+────────
+NOW
+────────
+NEXT UP
+────────
+CONTINUE
+────────
+Footer
+
+Target:
+
+Header
+────────
+
+NOW
+
+NEXT UP
+
+CONTINUE
+
+────────
+Footer
+Let rows provide hierarchy
+
+Each task row already has a subtle raised background.
+
+That is enough visual grouping.
+
+Do not add additional containers around sections.
+
+Overlay remains elevated
+
+This change only applies to the docked queue.
+
+The floating Next Up Queue overlay should keep:
+
+subtle border
+subtle shadow
+floating appearance
+
+because it represents a higher elevation layer.
+
+Visual rule across FlowOS
+
+Follow this hierarchy consistently:
+
+Workspace panels (docked) → borderless, integrated into the page.
+Floating overlays / dialogs → subtle border + shadow.
+Interactive rows/cards inside panels → keep their existing subtle raised surfaces.
+
+The goal is for the docked Next Up Queue to feel like a natural extension of the Today workspace rather than another independent card. This should match the cleaner visual language already used across the latest FlowOS implementation.### 2026-07-19 — Borderless workspace (v1.0)
+
+**Context:** Tokyo Night Warm polish left too many decorative card strokes; UI read as stacked boxes rather than a continuous workspace.  
+**Decision:** Adopt [Borderless Workspace v1.0](../../foundation/DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md) — Level 1 panels and Level 3 rows are borderless by default; borders reserved for rails, floating overlays, inputs, and dashed empty drop targets. Hierarchy from spacing + surface contrast.  
+**Alternatives rejRefine Docked Next Up Queue Visual Hierarchy
+
+The Today page has transitioned to a cleaner, borderless workspace style. Update the docked Next Up Queue to follow the same visual language.
+
+Remove outer card styling
+Remove the visible outer border completely.
+Remove any card-style outline around the entire docked queue.
+Do not increase contrast or darken the background to compensate.
+Keep the existing surface color consistent with the Today workspace.
+Keep only structural dividers
+
+Use dividers only where they communicate structure:
+
+Header → divider
+Footer → divider
+
+Do not place a divider between every section (NOW, NEXT UP, CONTINUE).
+
+Instead, separate sections primarily using vertical spacing.
+
+Current:
+
+Header
+────────
+NOW
+────────
+NEXT UP
+────────
+CONTINUE
+────────
+Footer
+
+Target:
+
+Header
+────────
+
+NOW
+
+NEXT UP
+
+CONTINUE
+
+────────
+Footer
+Let rows provide hierarchy
+
+Each task row already has a subtle raised background.
+
+That is enough visual grouping.
+
+Do not add additional containers around sections.
+
+Overlay remains elevated
+
+This change only applies to the docked queue.
+
+The floating Next Up Queue overlay should keep:
+
+subtle border
+subtle shadow
+floating appearance
+
+because it represents a higher elevation layer.
+
+Visual rule across FlowOS
+
+Follow this hierarchy consistently:
+
+Workspace panels (docked) → borderless, integrated into the page.
+Floating overlays / dialogs → subtle border + shadow.
+Interactive rows/cards inside panels → keep their existing subtle raised surfaces.
+
+The goal is for the docked Next Up Queue to feel like a natural extension of the Today workspace rather than another independent card. This should match the cleaner visual language already used across the latest FlowOS implementation.ected:** Keep bordered cards everywhere (noise); remove all borders including overlays/inputs (loss of affordance).  
+**Outcome:** Implementation in progress on Today / Focus / Next Up / Tasks overlays and shared row surfaces.  
+**Related:** [DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md](../../foundation/DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md), [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md)
+
+### 2026-07-19 — Tokyo Night Warm hierarchy refinement (borders / inset / float)
+
+**Context:** Surfaces and Soft Indigo were locked; remaining polish was hierarchy craft (Linear/Raycast/Arc/Notion), not redesign.  
+**Decision:** Keep canvas, nav/rail, Soft Indigo `#7886F2`, and Base card fills. Refine only: three-tier white borders (0.08 / 0.06 / 0.04), inset ~4% darker than Base, editor body ~2% darker than toolbar, menus on `--surface-float` with softer shadows (elevated, not highlighted).  
+**Alternatives rejected:** Brighter floating menus (full Raised); uniform border opacity; deeper recessed inputs (`#1F2335`).  
+**Outcome:** Tokens + Notes/Task editor surfaces on `tweak/tokyo-night-warm`.  
+**Related:** [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md)
+
+### 2026-07-19 — Soft Indigo locked; stop accent experiments
+
+**Context:** After Tokyo Night Warm surfaces and multi-variant brand trials (amber → eucalyptus → soft indigo shortlist), founder review of the live product preferred consistency and craft over more color swaps. Variant doc retired.  
+**Decision:** Lock dark theme as Tokyo Night Warm + Soft Indigo (deeper `#7886F2` with translucent soft/muted/border/ring). Semantic accents: green / amber / red / cyan. Delete brand-variants trial doc. Prefer quieter borders, clearer Canvas→Section→Card→Interactive hierarchy, one signature timer glow, timer presence polish, and reflection-rail rhythm — not new brand hues.  
+**Alternatives rejected:** Keep Eucalyptus or further brand variants; amber primary from earlier Tokyo Night Warm draft; colorful dashboard accents.  
+**Outcome:** Implemented on `tweak/tokyo-night-warm`.  
+**Related:** [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md)
+
+### 2026-07-19 — Tokyo Night Warm (FlowOS Pro theme)
+
+**Context:** After trying Gruvbox warm earth tones, founder wanted a more premium, precise productivity look: deep navy foundation (Tokyo Night + Linear/Raycast inspiration), not charcoal or code-editor warmth.  
+**Decision:** Adopt [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) as the active dark-theme implementation contract. Map FlowOS semantic tokens in `globals.css` to Tokyo Night navy surfaces. **Brand accent superseded same day** by Soft Indigo lock (see entry above); early draft used amber `#E0AF68`. Supersedes Gruvbox (same day) and Neutral Dark palette lock (2026-07-17) for the live dark theme.  
+**Alternatives rejected:** Keep Gruvbox `#282828` charcoal; restore Neutral Dark gray; restore midnight navy without a locked brand; theme switcher in this change.  
+**Outcome:** Surfaces implemented on `tweak/tokyo-night-warm`; brand finalized Soft Indigo.  
+**Related:** [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) · [DESIGN_SYSTEM_GRUVBOX.md](../../foundation/DESIGN_SYSTEM_GRUVBOX.md)
+
+### 2026-07-19 — Gruvbox Design System (warm dark)
+
+**Context:** Founder wanted a warm, low-fatigue dark theme instead of cold navy or Neutral Dark gray. Gruvbox-inspired earth tones reduce eye strain for long sessions while keeping a clear surface hierarchy and a single warm-yellow brand accent.  
+**Decision:** Adopt [DESIGN_SYSTEM_GRUVBOX.md](../../foundation/DESIGN_SYSTEM_GRUVBOX.md) as the active dark-theme implementation contract. Map FlowOS semantic tokens in `globals.css` to Gruvbox paints: canvas `#282828`, nav `#1F1F1F`, base `#32302F`, raised `#3C3836`, overlay `#45403D`, primary `#D8A657` with inverse text `#282828`. Supersedes Neutral Dark palette lock (2026-07-17) and navy chrome for the live dark theme.  
+**Alternatives rejected:** Keep Neutral Dark `#171717` gray; restore midnight navy `#080E1B`; introduce a parallel theme switcher in this change.  
+**Outcome:** Tokens implemented on `tweak/gruvbox-design-system`.  
+**Related:** [DESIGN_SYSTEM_GRUVBOX.md](../../foundation/DESIGN_SYSTEM_GRUVBOX.md) · [DESIGN_SYSTEM_NEUTRAL_DARK.md](../../foundation/DESIGN_SYSTEM_NEUTRAL_DARK.md)
 
 ### 2026-07-17 — Today Neutral Dark palette lock (founder experiment)
 

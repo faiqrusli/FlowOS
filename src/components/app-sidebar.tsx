@@ -72,12 +72,12 @@ function SidebarToggleIcon({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        // Stay on chrome — do not use canvas `bg-background` inside the sidebar.
-        "flex size-7 shrink-0 items-center justify-center rounded-md border border-sidebar-border bg-sidebar-accent/60",
+        "flex size-7 shrink-0 items-center justify-center rounded-md border border-transparent bg-transparent transition-[background-color,color] duration-150 ease-out",
+        "group-hover/collapse:bg-surface-ghost-hover group-hover/logo:bg-surface-ghost-hover",
         className,
       )}
     >
-      <PanelLeft className="size-3.5 stroke-[1.5] text-sidebar-foreground/70" />
+      <PanelLeft className="size-3.5 stroke-[1.5] text-muted-foreground transition-colors duration-150 group-hover/collapse:text-foreground group-hover/logo:text-foreground" />
     </div>
   );
 }
@@ -106,10 +106,10 @@ function SidebarBrand({
   onToggleCollapse: () => void;
 }) {
   return (
-    <div className="flex h-[47px] w-full shrink-0 items-center">
+    <div className="flex h-[43px] w-full shrink-0 items-center">
       {/* Logo column = collapsed rail width — F never moves */}
       <div
-        className="flex h-full shrink-0 items-center justify-center"
+        className="flex h-full shrink-0 items-center justify-center [&>*]:translate-y-px"
         style={{ width: SIDEBAR_WIDTH_COLLAPSED }}
       >
         {collapsed ? (
@@ -144,7 +144,7 @@ function SidebarBrand({
         <button
           type="button"
           onClick={onToggleCollapse}
-          className="shrink-0 rounded-md transition-colors duration-150 hover:bg-sidebar-accent/70"
+          className="group/collapse shrink-0 rounded-md transition-colors duration-150 ease-out"
           aria-label="Collapse sidebar"
           title="Collapse sidebar"
           tabIndex={collapsed ? -1 : 0}
@@ -171,14 +171,17 @@ function SidebarNavLink({
   const Icon = item.icon;
 
   const linkClassName = cn(
-    "group/nav relative flex h-9 w-full items-center overflow-hidden rounded-md text-[13.5px] transition-[background-color,color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
+    "group/nav relative flex h-9 w-full items-center overflow-hidden rounded-md text-[13.5px] transition-[background-color,color] duration-[180ms] ease-out",
     isActive
       ? "font-medium text-foreground"
       : "font-normal text-muted-foreground",
     !collapsed && isActive && "bg-primary-soft",
     !collapsed &&
       !isActive &&
-      "hover:bg-surface-hover hover:text-foreground",
+      "hover:bg-surface-ghost-hover hover:text-foreground",
+    collapsed &&
+      !isActive &&
+      "hover:text-foreground",
   );
 
   const linkBody = (
@@ -190,12 +193,10 @@ function SidebarNavLink({
       >
         <span
           className={cn(
-            "flex size-full items-center justify-center overflow-hidden rounded-md transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
-            isActive
-              ? collapsed
-                ? "bg-primary-soft"
-                : undefined
-              : "group-hover/nav:bg-surface-hover",
+            "flex size-full items-center justify-center overflow-hidden rounded-md transition-colors duration-150 ease-out",
+            /* Collapsed: one quiet wash on the icon. Expanded: row hover only — no nested chip. */
+            isActive && collapsed && "bg-primary-soft",
+            !isActive && collapsed && "group-hover/nav:bg-surface-ghost-hover",
           )}
         >
           <Icon
@@ -260,7 +261,7 @@ function SidebarNav({
   onNavigate?: () => void;
 }) {
   return (
-    <nav className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pt-2.5 pb-3">
+    <nav className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pt-4 pb-3">
       <ul className="space-y-1 px-2">
         <li>
           <SidebarNavLink
@@ -272,9 +273,9 @@ function SidebarNav({
         </li>
       </ul>
 
-      {/* Same divider + spacing in both states so icon Y positions stay locked */}
+      {/* Spacing pause after Today — no hairline; icons stay borderless */}
       <div
-        className="mx-2.5 my-1.5 border-t border-sidebar-border/50"
+        className="mx-2.5 mt-2 mb-4 h-0"
         role="separator"
         aria-hidden
       />
@@ -319,8 +320,7 @@ function SidebarPanel({
         transition: animateWidth ? SIDEBAR_WIDTH_TRANSITION : undefined,
       }}
       className={cn(
-        // In-flow rail: border-r (not outer shadow) — overflow-hidden would clip a 1px shadow.
-        "flex h-full shrink-0 flex-col overflow-hidden border-r border-border-subtle bg-surface-nav text-sidebar-foreground",
+        "flow-border-hairline-r flex h-full shrink-0 flex-col overflow-hidden bg-surface-nav text-sidebar-foreground",
         overlay && "fixed inset-y-0 left-0 z-40",
         className,
       )}
@@ -488,7 +488,7 @@ type MobileSidebarTriggerProps = {
 export function MobileSidebarTrigger({ onOpen }: MobileSidebarTriggerProps) {
   return (
     // Merges into canvas — `--background`, not a floating `--surface` band.
-    <header className="flex h-[47px] shrink-0 items-center gap-3 border-b border-divider bg-surface-nav px-4 lg:hidden">
+    <header className="flex h-[43px] shrink-0 items-center gap-3 bg-surface-canvas px-4 [&>*]:translate-y-px lg:hidden">
       <button
         type="button"
         onClick={onOpen}

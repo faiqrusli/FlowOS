@@ -5,6 +5,7 @@ import { HabitDialog } from "@/components/habits/habit-dialog";
 import { HabitList } from "@/components/habits/habit-list";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { PageHeader } from "@/components/shared/page-header";
+import { useActionToast } from "@/contexts/action-toast-context";
 import {
   createHabit,
   deleteHabit,
@@ -16,6 +17,7 @@ import {
 import type { Habit, HabitInsert } from "@/types/habit";
 
 export function HabitsPageContent() {
+  const { showActionToast } = useActionToast();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,10 +58,18 @@ export function HabitsPageContent() {
 
     const created = await createHabit(input);
     setHabits((prev) => [created, ...prev]);
+    showActionToast({
+      message: "Habit created",
+      tone: "success",
+      icon: "habit",
+    });
     return created;
   }
 
-  async function handleToggleComplete(habit: Habit) {
+  async function handleToggleComplete(
+    habit: Habit,
+    options?: { silent?: boolean },
+  ) {
     setPendingId(habit.id);
     setError(null);
 
@@ -69,6 +79,19 @@ export function HabitsPageContent() {
         prev.map((h) => (h.id === updated.id ? updated : h))
       );
       setCompletionsVersion((version) => version + 1);
+      if (!options?.silent) {
+        showActionToast({
+          message: updated.completed
+            ? "Habit marked complete"
+            : "Habit unmarked",
+          tone: updated.completed ? "success" : "neutral",
+          icon: "habit",
+          actionLabel: "Undo",
+          onAction: () => {
+            void handleToggleComplete(updated, { silent: true });
+          },
+        });
+      }
     } catch (err) {
       setError(
         err instanceof HabitsError ? err.message : "Failed to update habit."
@@ -79,20 +102,43 @@ export function HabitsPageContent() {
   }
 
   async function handleDelete(id: string) {
+    const snapshot = habits.find((habit) => habit.id === id);
+    if (!snapshot) return;
+
     setPendingId(id);
     setError(null);
+    setHabits((prev) => prev.filter((h) => h.id !== id));
 
-    try {
-      await deleteHabit(id);
-      setHabits((prev) => prev.filter((h) => h.id !== id));
-      setCompletionsVersion((version) => version + 1);
-    } catch (err) {
-      setError(
-        err instanceof HabitsError ? err.message : "Failed to delete habit."
-      );
-    } finally {
-      setPendingId(null);
-    }
+    let committed = false;
+    const commitDelete = () => {
+      if (committed) return;
+      committed = true;
+      void deleteHabit(id)
+        .then(() => {
+          setCompletionsVersion((version) => version + 1);
+        })
+        .catch((err) => {
+          setHabits((prev) => [snapshot, ...prev]);
+          setError(
+            err instanceof HabitsError ? err.message : "Failed to delete habit.",
+          );
+        })
+        .finally(() => {
+          setPendingId(null);
+        });
+    };
+
+    setPendingId(null);
+    showActionToast({
+      message: "Habit deleted",
+      icon: "trash",
+      actionLabel: "Undo",
+      onAction: () => {
+        committed = true;
+        setHabits((prev) => [snapshot, ...prev]);
+      },
+      onExpire: commitDelete,
+    });
   }
 
   return (
