@@ -9,7 +9,7 @@ A personal execution system that connects planning, focused work, progress, and 
 **Live app:** [flowos-sage.vercel.app](https://flowos-sage.vercel.app)
 
 <p align="center">
-  <img src="docs/assets/readme/today-focus.png" alt="FlowOS Today — focus session with Next Up and daily timeline" width="100%" />
+  <img src="docs/screenshots/today-focus.png" alt="FlowOS Today — focus session with Next Up and daily timeline" width="100%" />
 </p>
 
 ---
@@ -19,8 +19,6 @@ A personal execution system that connects planning, focused work, progress, and 
 FlowOS is an integrated personal productivity platform designed around **execution** rather than organization alone.
 
 Instead of treating tasks, schedules, focus sessions, habits, and reflection as separate tools, FlowOS connects them into one continuous workflow: plan meaningful work, execute with focus, review progress, and improve over time.
-
-FlowOS began as a Final Year Project and continues to evolve toward a full personal execution system.
 
 ---
 
@@ -74,25 +72,25 @@ Review what happened, understand why, and improve tomorrow.
 
 Stay in session while tasks, habits, and notes stay within reach.
 
-<img src="docs/assets/readme/today-tasks-notes.png" alt="Focus view with tasks overlay and notes panel" width="100%" />
+<img src="docs/screenshots/today-tasks-notes.png" alt="Focus view with tasks overlay and notes panel" width="100%" />
 
 ### Tasks
 
 Board columns for Today, Inbox, and groups — with task details when you dig in.
 
-<img src="docs/assets/readme/tasks.png" alt="Tasks board with task details panel" width="100%" />
+<img src="docs/screenshots/tasks.png" alt="Tasks board with task details panel" width="100%" />
 
 ### Schedule
 
 Quick Schedule: unscheduled pool on the left, timeline on the right.
 
-<img src="docs/assets/readme/quick-schedule.png" alt="Tasks with Quick Schedule timeline open" width="100%" />
+<img src="docs/screenshots/quick-schedule.png" alt="Tasks with Quick Schedule timeline open" width="100%" />
 
 ### Notes
 
 Notes and boards for context without leaving the system.
 
-<img src="docs/assets/readme/notes.png" alt="Notes Learning board" width="100%" />
+<img src="docs/screenshots/notes.png" alt="Notes Learning board" width="100%" />
 
 ---
 
