@@ -8,6 +8,19 @@ function clearElementAnimation(el: HTMLElement) {
   el.style.willChange = "";
 }
 
+function slotKey(groupId: string, taskId: string): string {
+  return `${groupId}\0${taskId}`;
+}
+
+function parseSlotKey(key: string): { groupId: string; taskId: string } | null {
+  const separator = key.indexOf("\0");
+  if (separator <= 0) return null;
+  return {
+    groupId: key.slice(0, separator),
+    taskId: key.slice(separator + 1),
+  };
+}
+
 export function clearTaskDropLayoutAnimation(): void {
   for (const el of activeElements) {
     clearElementAnimation(el);
@@ -15,20 +28,28 @@ export function clearTaskDropLayoutAnimation(): void {
   activeElements.clear();
 }
 
-export function captureTaskSlotLayout(groupIds: Array<string | null>): Map<string, DOMRect> {
+/**
+ * Snapshot task slot rects per column. Keys are group-scoped so the same task
+ * appearing in Today + Inbox does not collide (Today is first in DOM order).
+ */
+export function captureTaskSlotLayout(
+  groupIds: Array<string | null>,
+): Map<string, DOMRect> {
   const snapshot = new Map<string, DOMRect>();
 
   for (const groupId of new Set(groupIds.filter(Boolean) as string[])) {
     const column = document.querySelector(
-      `[data-task-group-column="${groupId}"]`
+      `[data-task-group-column="${groupId}"]`,
     );
     if (!column) continue;
 
-    column.querySelectorAll<HTMLElement>("[data-task-board-slot]").forEach((el) => {
-      const taskId = el.getAttribute("data-task-board-slot");
-      if (!taskId) return;
-      snapshot.set(taskId, el.getBoundingClientRect());
-    });
+    column
+      .querySelectorAll<HTMLElement>("[data-task-board-slot]")
+      .forEach((el) => {
+        const taskId = el.getAttribute("data-task-board-slot");
+        if (!taskId) return;
+        snapshot.set(slotKey(groupId, taskId), el.getBoundingClientRect());
+      });
   }
 
   return snapshot;
@@ -36,17 +57,22 @@ export function captureTaskSlotLayout(groupIds: Array<string | null>): Map<strin
 
 export function animateTaskDropLayout(
   before: Map<string, DOMRect>,
-  options: { droppedTaskId: string }
+  options: { droppedTaskId: string },
 ): void {
   clearTaskDropLayoutAnimation();
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      for (const [taskId, oldRect] of before) {
-        if (taskId === options.droppedTaskId) continue;
+      for (const [key, oldRect] of before) {
+        const parsed = parseSlotKey(key);
+        if (!parsed) continue;
+        if (parsed.taskId === options.droppedTaskId) continue;
 
-        const el = document.querySelector<HTMLElement>(
-          `[data-task-board-slot="${taskId}"]`
+        const column = document.querySelector(
+          `[data-task-group-column="${parsed.groupId}"]`,
+        );
+        const el = column?.querySelector<HTMLElement>(
+          `[data-task-board-slot="${parsed.taskId}"]`,
         );
         if (!el) continue;
 

@@ -22,12 +22,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useActionToast } from "@/contexts/action-toast-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import {
   createNote,
   deleteNote,
   moveNote,
-  NotesError,
   setNotePinned,
   updateNote,
 } from "@/lib/notes";
@@ -61,6 +61,7 @@ export function NotesPanel({
   embedded = false,
 }: NotesPanelProps) {
   const { openFloatingNote, closeFloatingNote } = useGlobalRightSidebar();
+  const { showActionToast } = useActionToast();
   const [selectedId, setSelectedId] = useState<string | null>(
     notes[0]?.id ?? null,
   );
@@ -74,9 +75,7 @@ export function NotesPanel({
   const [moveNoteId, setMoveNoteId] = useState<string | null>(null);
   const [openMenuNoteId, setOpenMenuNoteId] = useState<string | null>(null);
   const [focusTitleNoteId, setFocusTitleNoteId] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
   const sortedNotes = useMemo(() => sortNotesForList(notes), [notes]);
@@ -115,12 +114,6 @@ export function NotesPanel({
     });
   }, [focusTitleNoteId, selectedId]);
 
-  useEffect(() => {
-    return () => {
-      if (noticeTimer.current) clearTimeout(noticeTimer.current);
-    };
-  }, []);
-
   const persistNote = useCallback(
     async (
       id: string,
@@ -156,12 +149,6 @@ export function NotesPanel({
     }, 800);
   }
 
-  function showNotice(message: string) {
-    setNotice(message);
-    if (noticeTimer.current) clearTimeout(noticeTimer.current);
-    noticeTimer.current = setTimeout(() => setNotice(null), 3200);
-  }
-
   async function handleCreate() {
     try {
       const title = resolveNewNoteTitle(
@@ -177,27 +164,50 @@ export function NotesPanel({
       setSelectedId(normalized.id);
       setFocusTitleNoteId(normalized.id);
       onAreasRefresh();
+      showActionToast({
+        message: "Note created",
+        tone: "success",
+        icon: "note",
+      });
     } catch {
       // parent shows errors
     }
   }
 
   async function handleDelete(note: Note) {
+    const snapshot = note;
     const deletedTitle = note.title.trim() || "Untitled";
+    const next = notes.filter((item) => item.id !== note.id);
+    onNotesChange(next);
+    setSelectedId((current) =>
+      current === note.id ? (next[0]?.id ?? null) : current,
+    );
+    closeFloatingNote(note.id);
 
-    try {
-      await deleteNote(note.id);
-      const next = notes.filter((item) => item.id !== note.id);
-      onNotesChange(next);
-      setSelectedId((current) =>
-        current === note.id ? (next[0]?.id ?? null) : current,
-      );
-      closeFloatingNote(note.id);
-      showNotice(`"${deletedTitle}" deleted`);
-      onAreasRefresh();
-    } catch (err) {
-      throw err instanceof NotesError ? err : new NotesError("Delete failed.");
-    }
+    let committed = false;
+    const commitDelete = () => {
+      if (committed) return;
+      committed = true;
+      void deleteNote(note.id)
+        .then(() => {
+          onAreasRefresh();
+        })
+        .catch(() => {
+          onNotesChange(insertNewNoteInList(notes, snapshot));
+        });
+    };
+
+    showActionToast({
+      message: `"${deletedTitle}" deleted`,
+      icon: "trash",
+      actionLabel: "Undo",
+      onAction: () => {
+        committed = true;
+        onNotesChange(insertNewNoteInList(next, snapshot));
+        setSelectedId(snapshot.id);
+      },
+      onExpire: commitDelete,
+    });
   }
 
   async function handleTogglePin(note: Note) {
@@ -258,11 +268,11 @@ export function NotesPanel({
           "flex h-full min-h-0 flex-row overflow-hidden",
           embedded
             ? ""
-            : "rounded-xl border border-border-subtle bg-surface-base shadow-none",
+            : "rounded-xl border-0 bg-surface-base shadow-none",
         )}
       >
-        <div className="flex h-full min-h-0 w-[min(200px,34vw)] shrink-0 flex-col border-r border-border-subtle bg-surface-base xl:w-[216px]">
-          <div className="shrink-0 border-b border-border/30 p-2.5">
+        <div className="flex h-full min-h-0 w-[min(200px,34vw)] shrink-0 flex-col xl:w-[216px]">
+          <div className="shrink-0 p-2.5 pb-2">
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
@@ -295,10 +305,12 @@ export function NotesPanel({
               <li key={note.id}>
                 <div
                   className={cn(
-                    "group relative flex items-center rounded-xl transition-[background-color,box-shadow]",
+                    "group relative flex items-center rounded-lg border-0 transition-colors duration-150",
                     selectedId === note.id
                       ? "flow-selected"
-                      : "hover:bg-surface-hover/70",
+                      : openMenuNoteId === note.id
+                        ? "bg-surface-hover"
+                        : "hover:bg-surface-hover",
                   )}
                   onContextMenu={(event) => {
                     if (renamingId === note.id) return;
@@ -334,7 +346,7 @@ export function NotesPanel({
                           {note.title}
                         </p>
                       </div>
-                      <p className="mt-0.5 text-[10px] leading-none text-muted-foreground/65">
+                      <p className="mt-0.5 text-[10px] leading-none text-foreground-secondary">
                         {formatNoteListTime(note.updated_at)}
                       </p>
                     </button>
@@ -401,7 +413,7 @@ export function NotesPanel({
 
         {selected ? (
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-            <div className="flex shrink-0 items-center gap-3 border-b border-border/30 px-4 py-2.5">
+            <div className="flex shrink-0 items-center gap-3 px-4 py-2.5">
               <input
                 ref={titleInputRef}
                 value={selected.title}
@@ -411,7 +423,7 @@ export function NotesPanel({
                 className="min-w-0 flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-muted-foreground"
                 placeholder="Note title"
               />
-              <span className="shrink-0 text-xs text-muted-foreground">
+              <span className="shrink-0 text-xs text-foreground-secondary">
                 {saveState === "saving"
                   ? "Saving..."
                   : saveState === "saved"
@@ -434,15 +446,6 @@ export function NotesPanel({
           </div>
         )}
       </div>
-
-      {notice && (
-        <div
-          role="status"
-          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-border/50 bg-popover px-4 py-2 text-sm text-popover-foreground shadow-lg"
-        >
-          {notice}
-        </div>
-      )}
 
       <NoteMoveDialog
         open={moveNoteId !== null}

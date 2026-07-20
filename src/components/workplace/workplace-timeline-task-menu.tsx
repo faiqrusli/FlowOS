@@ -31,7 +31,7 @@ import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 const MENU_ARROW_PX = 10;
 const MENU_GAP_PX = 8;
-const MENU_ESTIMATED_WIDTH_PX = 272;
+const MENU_ESTIMATED_WIDTH_PX = 240;
 
 type WorkplaceTimelineTaskMenuProps = {
   menuRef: RefObject<HTMLDivElement | null>;
@@ -157,7 +157,7 @@ export function WorkplaceTimelineTaskMenu({
       <div
         ref={menuRef}
         data-timeline-context-menu
-        className="flow-surface-elevated fixed z-[100] w-[17rem] overflow-visible rounded-xl"
+        className="flow-surface-elevated fixed z-[100] w-[15rem] overflow-visible rounded-xl"
         style={{ left: position.left, top: position.top }}
         onClick={(event) => event.stopPropagation()}
       >
@@ -172,8 +172,8 @@ export function WorkplaceTimelineTaskMenu({
           aria-hidden
         />
 
-        <div className="border-b border-border/30 px-3 py-2.5">
-          <p className="text-sm font-semibold leading-snug text-foreground">
+        <div className="border-b border-divider px-3 py-2.5">
+          <p className="truncate text-sm font-semibold leading-snug text-foreground">
             {task.title}
           </p>
         </div>
@@ -198,7 +198,7 @@ export function WorkplaceTimelineTaskMenu({
           ) : null}
         </div>
 
-        <div className="border-t border-border/30 p-1">
+        <div className="border-t border-divider p-1">
           {!completed ? (
             <button
               type="button"
@@ -247,7 +247,7 @@ export function WorkplaceTimelineTaskMenu({
           ) : null}
         </div>
 
-        <div className="border-t border-border/30 p-1">
+        <div className="border-t border-divider p-1">
           <button
             type="button"
             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] text-destructive hover:bg-destructive/10"

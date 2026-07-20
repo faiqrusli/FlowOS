@@ -20,7 +20,7 @@ export function GrowthAreaHeader({
   onOpenTodaysNote,
 }: GrowthAreaHeaderProps) {
   return (
-    <div className="shrink-0 border-b border-border/30 px-4 py-2">
+    <div className="shrink-0 px-4 py-2.5">
       <div className="flex min-w-0 items-center gap-3">
         <div
           className="flex min-w-0 items-center gap-2"
@@ -37,17 +37,17 @@ export function GrowthAreaHeader({
           </h2>
         </div>
 
-        <div className="inline-flex shrink-0 rounded-lg border border-border/50 bg-background/60 p-0.5">
+        <div className="inline-flex shrink-0 rounded-lg bg-surface-base p-0.5">
           {(["notes", "kanban"] as const).map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => onTabChange(item)}
               className={cn(
-                "rounded-md px-3 py-1 text-sm font-medium transition-[background-color,color,box-shadow]",
+                "rounded-md px-3 py-1 text-sm font-medium transition-colors duration-150",
                 tab === item
-                  ? "bg-surface-hover text-foreground shadow-sm ring-1 ring-border/40"
-                  : "text-muted-foreground hover:bg-surface-hover/50 hover:text-foreground",
+                  ? "bg-surface-hover text-foreground"
+                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
               )}
             >
               {item === "notes" ? "Notes" : "Kanban"}
@@ -58,7 +58,7 @@ export function GrowthAreaHeader({
         {area.name === MINDSET_GROWTH_AREA_NAME && onOpenTodaysNote ? (
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
             size="sm"
             className="ml-auto shrink-0"
             onClick={onOpenTodaysNote}

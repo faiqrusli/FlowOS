@@ -24,7 +24,6 @@ import {
   Palette,
   Pencil,
   Plus,
-  Smile,
   Trash2,
 } from "lucide-react";
 import {
@@ -32,12 +31,16 @@ import {
   CALENDAR_PANEL_WIDTH_CLASS,
 } from "@/components/ui/calendar-panel";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
-import { TaskGroupColorChooser } from "@/components/tasks/task-group-color-chooser";
+import { TaskGroupIdentityMark } from "@/components/tasks/task-group-identity-mark";
+import {
+  TaskGroupAppearanceDialog,
+  type TaskGroupAppearanceInput,
+} from "@/components/tasks/task-group-appearance-dialog";
+import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import {
   TaskGroupDialog,
   type TaskGroupCreateInput,
 } from "@/components/tasks/task-group-dialog";
-import { GrowthAreaIconChooser } from "@/components/notes/growth-area-icon-chooser";
 import { Button } from "@/components/ui/button";
 import { type } from "@/lib/typography";
 import {
@@ -172,7 +175,6 @@ import {
 import { formatTaskScheduleCompact } from "@/lib/tasks";
 import {
   getTaskGroupAppearance,
-  getGroupDotClass,
   TASK_GROUP_COLUMN_BODY_CLASS,
   TASK_GROUP_COLUMN_HEADER_CLASS,
 } from "@/lib/task-group-appearance";
@@ -189,16 +191,22 @@ import {
 import { cn } from "@/lib/utils";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
+/** Edge auto-scroll when pointer is in the board gutter (between/past columns). */
 const BOARD_EDGE_SCROLL_ZONE = 72;
+/**
+ * Tighter zone while over a column body. Columns are Today | Later | Inbox | …,
+ * so Inbox often sits in the right edge — a 72px zone made grabbing Inbox scroll
+ * the board and drift Today for no reason.
+ */
+const BOARD_EDGE_SCROLL_ZONE_OVER_COLUMN = 20;
 const BOARD_EDGE_SCROLL_SPEED = 8;
 const GROUP_COLUMN_WIDTH_CLASS = "w-[300px]";
-const GROUP_CHANGE_BLOCKED_HINT =
-  "Groups can only be changed in Inbox and Task details.";
+const GROUP_CHANGE_BLOCKED_HINT = "Task group can't be changed from here";
 const LATER_GROUP_CHANGE_BLOCKED_HINT =
-  "🚫 Groups can't be changed from Later.";
+  "Task group can't be changed from Later";
 const TODAY_GROUP_CHANGE_BLOCKED_HINT =
-  "🚫 Groups can't be changed from Today.";
-const SYSTEM_VIEW_REORDER_BLOCKED_HINT = "🚫 System views can't be reordered.";
+  "Task group can't be changed from Today";
+const SYSTEM_VIEW_REORDER_BLOCKED_HINT = "System views can't be reordered";
 
 type SystemViewInfoKey = "today" | "later" | "inbox";
 
@@ -287,8 +295,10 @@ type TasksBoardViewProps = {
     taskId: string,
   ) => Promise<string>;
   onRenameGroup: (groupId: string, title: string) => Promise<void>;
-  onUpdateGroupIcon: (groupId: string, icon: string) => Promise<void>;
-  onUpdateGroupColor: (groupId: string, color: string) => Promise<void>;
+  onUpdateGroupAppearance: (
+    groupId: string,
+    input: TaskGroupAppearanceInput,
+  ) => Promise<void>;
   onUpdateGroupSortMode: (
     groupId: string,
     sortMode: TaskSortMode,
@@ -387,8 +397,7 @@ function TasksBoardViewContent({
   onCreateGroup,
   onCreateGroupAndMoveTask,
   onRenameGroup,
-  onUpdateGroupIcon,
-  onUpdateGroupColor,
+  onUpdateGroupAppearance,
   onUpdateGroupSortMode,
   onDeleteGroup,
   onPersistLayout,
@@ -397,6 +406,7 @@ function TasksBoardViewContent({
   onShowHint,
   onSetPlanningState,
 }: TasksBoardViewProps) {
+  const { requestQuickCapture } = useGlobalRightSidebar();
   const boardRef = useRef<HTMLDivElement>(null);
   const groupsRef = useRef(groups);
   const dragKindRef = useRef<DragKind>(null);
@@ -440,10 +450,7 @@ function TasksBoardViewContent({
   const groupDragKeyCleanupRef = useRef<(() => void) | null>(null);
   const groupDragInitialBeforeIdRef = useRef<DropBeforeId>(null);
 
-  const [iconChooserGroupId, setIconChooserGroupId] = useState<string | null>(
-    null,
-  );
-  const [colorChooserGroupId, setColorChooserGroupId] = useState<string | null>(
+  const [appearanceGroupId, setAppearanceGroupId] = useState<string | null>(
     null,
   );
   const [newGroupDialogOpen, setNewGroupDialogOpen] = useState(false);
@@ -1172,17 +1179,34 @@ function TasksBoardViewContent({
       return;
     }
 
-    const rect = boardEl.getBoundingClientRect();
     const x = pointerXRef.current;
+    const y = pointerYRef.current;
+    const overColumn = findBoardColumnAtPoint(boardEl, x, y);
+
+    // Inbox → Later: stay put while still over the source column so an edge
+    // grab does not keep scrolling Today out from under the pointer.
+    if (
+      isBoardOriginatedTaskDrag() &&
+      overColumn &&
+      overColumn.id === dragOriginalSourceGroupIdRef.current
+    ) {
+      autoScrollRafRef.current = requestAnimationFrame(tickBoardAutoScroll);
+      return;
+    }
+
+    const edgeZone =
+      overColumn != null && dragKindRef.current === "task"
+        ? BOARD_EDGE_SCROLL_ZONE_OVER_COLUMN
+        : BOARD_EDGE_SCROLL_ZONE;
+
+    const rect = boardEl.getBoundingClientRect();
     let delta = 0;
 
-    if (x < rect.left + BOARD_EDGE_SCROLL_ZONE) {
-      const depth =
-        (rect.left + BOARD_EDGE_SCROLL_ZONE - x) / BOARD_EDGE_SCROLL_ZONE;
+    if (x < rect.left + edgeZone) {
+      const depth = (rect.left + edgeZone - x) / edgeZone;
       delta = -BOARD_EDGE_SCROLL_SPEED * Math.min(1, depth);
-    } else if (x > rect.right - BOARD_EDGE_SCROLL_ZONE) {
-      const depth =
-        (x - (rect.right - BOARD_EDGE_SCROLL_ZONE)) / BOARD_EDGE_SCROLL_ZONE;
+    } else if (x > rect.right - edgeZone) {
+      const depth = (x - (rect.right - edgeZone)) / edgeZone;
       delta = BOARD_EDGE_SCROLL_SPEED * Math.min(1, depth);
     }
 
@@ -2014,8 +2038,7 @@ function TasksBoardViewContent({
           <GroupHeaderOptionsMenu
             displayTitle={displayTitle}
             onRename={() => startRenameGroup(group)}
-            onChangeIcon={() => setIconChooserGroupId(group.id)}
-            onChangeColor={() => setColorChooserGroupId(group.id)}
+            onEditAppearance={() => setAppearanceGroupId(group.id)}
             onDelete={() => void onDeleteGroup(group.id)}
           />
         ) : null}
@@ -2115,7 +2138,7 @@ function TasksBoardViewContent({
           <GroupColumnDragShell
             groupId={group.id}
             className={cn(
-              "flex w-11 shrink-0 flex-col items-center rounded-xl border py-2 shadow-sm transition-[box-shadow,background-color,border-color] duration-150",
+              "flex w-11 shrink-0 flex-col items-center rounded-xl py-2 shadow-sm transition-[box-shadow,background-color,border-color] duration-150",
               TASK_GROUP_COLUMN_BODY_CLASS,
               "bg-surface-base",
             )}
@@ -2148,12 +2171,10 @@ function TasksBoardViewContent({
             {isLater ? (
               <LaterViewIcon className="mb-2" />
             ) : (
-              <span
-                className={cn(
-                  "mb-2",
-                  getGroupDotClass(groupAppearance.colorKey),
-                )}
-                aria-hidden
+              <TaskGroupIdentityMark
+                icon={groupAppearance.icon}
+                colorKey={groupAppearance.colorKey}
+                className="mb-2"
               />
             )}
             <span className="max-h-48 text-xs font-semibold text-foreground/80 [writing-mode:vertical-rl] rotate-180">
@@ -2174,7 +2195,7 @@ function TasksBoardViewContent({
         <GroupColumnDragShell
           groupId={group.id}
           className={cn(
-            "flex h-full max-h-full w-full shrink-0 flex-col rounded-xl border transition-[box-shadow,background-color,border-color] duration-150",
+            "flex h-full max-h-full w-full shrink-0 flex-col rounded-xl transition-[box-shadow,background-color,border-color] duration-150",
             TASK_GROUP_COLUMN_BODY_CLASS,
             isToday &&
               plannerActive &&
@@ -2183,7 +2204,7 @@ function TasksBoardViewContent({
         >
           <div
             className={cn(
-              "group/column-header flex h-11 shrink-0 items-center gap-0 rounded-t-xl px-1.5 transition-colors duration-150 hover:bg-surface-hover/40",
+              "group/column-header flex h-10 shrink-0 items-center gap-0 rounded-t-xl px-2",
               TASK_GROUP_COLUMN_HEADER_CLASS,
             )}
           >
@@ -2325,7 +2346,7 @@ function TasksBoardViewContent({
           >
             <TaskGroupActiveBody
               group={group}
-              className="flex flex-col divide-y divide-border/20 transition-[opacity,transform] duration-300 ease-out"
+              className="flex flex-col gap-0.5 transition-[opacity,transform] duration-300 ease-out"
               onDragOver={
                 isTimelineTaskDrag()
                   ? (event) => handleActiveBodyDragOver(event, group.id)
@@ -2365,7 +2386,7 @@ function TasksBoardViewContent({
                 <button
                   type="button"
                   onClick={() => openCompose(group.id, "bottom")}
-                  className="mt-0.5 flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-transparent py-1.5 text-[11px] font-medium text-muted-foreground/75 transition-colors hover:border-border/45 hover:bg-surface-hover hover:text-foreground"
+                  className="mt-0.5 flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-transparent py-1.5 text-[11px] font-medium text-muted-foreground/75 transition-colors hover:bg-surface-hover hover:text-foreground"
                 >
                   <Plus className="size-3" />
                   Add a task
@@ -2374,7 +2395,7 @@ function TasksBoardViewContent({
             </div>
 
             {completed.length > 0 && (
-              <div className="mt-2 border-t border-border/20 pt-1">
+              <div className="mt-2 pt-1">
                 <button
                   type="button"
                   onClick={() => toggleCompletedSection(group.id)}
@@ -2409,7 +2430,7 @@ function TasksBoardViewContent({
                 {isCompletedOpen && (
                   <TaskCompletedBody
                     group={group}
-                    className="mt-1 flex flex-col divide-y divide-border/20"
+                    className="mt-1 flex flex-col gap-0.5"
                     onDragOver={(event) =>
                       handleCompletedBodyDragOver(event, group.id)
                     }
@@ -2432,11 +2453,8 @@ function TasksBoardViewContent({
     );
   }
 
-  const iconChooserGroup = groups.find(
-    (group) => group.id === iconChooserGroupId,
-  );
-  const colorChooserGroup = groups.find(
-    (group) => group.id === colorChooserGroupId,
+  const appearanceGroup = groups.find(
+    (group) => group.id === appearanceGroupId,
   );
 
   function openNewGroupDialog(moveTaskId?: string) {
@@ -2506,9 +2524,9 @@ function TasksBoardViewContent({
     <TaskBoardGroupsProvider groups={groups}>
       <TaskBoardActionsProvider actions={boardActions}>
         <>
-          <div className="flex h-full min-h-0 flex-col gap-3">
-            <div className="relative flex w-full shrink-0 items-center">
-              <h1 className={cn(type.pageTitle, "min-w-0 shrink-0")}>Tasks</h1>
+          <div className="flex h-full min-h-0 flex-col gap-2 px-2 pt-2 pb-2">
+            <div className="relative flex h-8 w-full shrink-0 items-center gap-2">
+              <h1 className={cn(type.pageTitle, "min-w-0 shrink-0 text-xl")}>Tasks</h1>
 
               {onToggleQuickPlanner ? (
                 <div className="pointer-events-none absolute inset-x-0 flex justify-center">
@@ -2518,8 +2536,7 @@ function TasksBoardViewContent({
                     size="sm"
                     className={cn(
                       "pointer-events-auto h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
-                      "border-border/45 bg-surface-base text-foreground/85",
-                      "shadow-sm",
+                      "border-border/45 bg-surface-base text-foreground/85 shadow-sm",
                       "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
                       "hover:border-primary/35 hover:bg-surface-hover/45 hover:text-foreground",
                       "active:scale-[0.98] active:bg-surface-raised",
@@ -2542,23 +2559,39 @@ function TasksBoardViewContent({
                 </div>
               ) : null}
 
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "relative z-20 ml-auto h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
-                  "border-border-subtle bg-surface-base text-foreground/85",
-                  "shadow-raised",
-                  "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
-                  "hover:border-border-strong hover:bg-surface-hover hover:text-foreground",
-                  "active:scale-[0.98] active:bg-surface-hover",
-                )}
-                onClick={() => openNewGroupDialog()}
-              >
-                <Plus className="size-3.5 text-muted-foreground transition-colors duration-150 group-hover/button:text-foreground" />
-                New Group
-              </Button>
+              <div className="relative z-20 ml-auto flex shrink-0 items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "h-8 shrink-0 gap-1.5 rounded-full px-3.5 text-sm font-medium",
+                    "border-primary/40 bg-primary/[0.08] text-foreground shadow-none",
+                    "transition-[background-color,border-color,box-shadow,transform,color] duration-150",
+                    "hover:border-primary/55 hover:bg-primary/[0.12] hover:text-foreground",
+                    "active:scale-[0.98]",
+                  )}
+                  onClick={() => requestQuickCapture()}
+                >
+                  <Plus className="size-3.5" />
+                  Add Task
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "h-8 shrink-0 gap-1.5 rounded-full px-3 text-sm font-medium",
+                    "text-foreground/75 shadow-none",
+                    "hover:bg-surface-hover/60 hover:text-foreground",
+                    "active:scale-[0.98]",
+                  )}
+                  onClick={() => openNewGroupDialog()}
+                >
+                  <Plus className="size-3.5" />
+                  New Group
+                </Button>
+              </div>
             </div>
 
             <BoardGroupDragScrollChrome
@@ -2591,37 +2624,15 @@ function TasksBoardViewContent({
             message={REORDER_DISABLED_TOOLTIP}
           />
 
-          <GrowthAreaIconChooser
-            open={iconChooserGroupId !== null}
+          <TaskGroupAppearanceDialog
+            open={appearanceGroupId !== null}
             onOpenChange={(open) => {
-              if (!open) setIconChooserGroupId(null);
+              if (!open) setAppearanceGroupId(null);
             }}
-            value={
-              iconChooserGroup
-                ? getTaskGroupAppearance(iconChooserGroup).icon
-                : "📝"
-            }
-            onSelect={(emoji) => {
-              if (iconChooserGroupId) {
-                void onUpdateGroupIcon(iconChooserGroupId, emoji);
-              }
-            }}
-          />
-
-          <TaskGroupColorChooser
-            open={colorChooserGroupId !== null}
-            onOpenChange={(open) => {
-              if (!open) setColorChooserGroupId(null);
-            }}
-            value={
-              colorChooserGroup
-                ? getTaskGroupAppearance(colorChooserGroup).colorKey
-                : "blue"
-            }
-            onSelect={(colorKey) => {
-              if (colorChooserGroupId) {
-                void onUpdateGroupColor(colorChooserGroupId, colorKey);
-              }
+            group={appearanceGroup ?? null}
+            onSave={async (input) => {
+              if (!appearanceGroupId) return;
+              await onUpdateGroupAppearance(appearanceGroupId, input);
             }}
           />
 
@@ -2765,14 +2776,12 @@ function GroupHeaderDragHandle({
 function GroupHeaderOptionsMenu({
   displayTitle,
   onRename,
-  onChangeIcon,
-  onChangeColor,
+  onEditAppearance,
   onDelete,
 }: {
   displayTitle: string;
   onRename: () => void;
-  onChangeIcon: () => void;
-  onChangeColor: () => void;
+  onEditAppearance: () => void;
   onDelete: () => void;
 }) {
   return (
@@ -2788,11 +2797,8 @@ function GroupHeaderOptionsMenu({
           <DropdownMenuItem onClick={onRename}>
             <Pencil className="size-3.5" /> Rename
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onChangeIcon}>
-            <Smile className="size-3.5" /> Change icon
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={onChangeColor}>
-            <Palette className="size-3.5" /> Change color
+          <DropdownMenuItem onClick={onEditAppearance}>
+            <Palette className="size-3.5" /> Edit appearance
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="text-destructive" onClick={onDelete}>

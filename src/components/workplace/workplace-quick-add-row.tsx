@@ -51,7 +51,7 @@ function QuickAddHint({
 }
 
 const textActionClass =
-  "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground";
+  "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2 text-[12px] font-medium text-muted-foreground/80 transition-colors hover:bg-surface-hover hover:text-foreground";
 
 export function WorkplaceQuickAddRow({
   onOpenTaskDetails,
@@ -134,10 +134,16 @@ export function WorkplaceQuickAddRow({
             onKeyDown={handleKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            placeholder="Quick capture a task…"
+            placeholder="Capture a task…"
             title="Type a task and press Enter to add to Today · Inbox"
             className={cn(
-              "h-8 min-w-0 flex-1 border-0 bg-transparent px-1 text-[13px] shadow-none placeholder:text-muted-foreground/70 focus-visible:ring-0",
+              "h-[34px] min-w-0 flex-1 rounded-md border-0 bg-transparent px-1 text-[13px] shadow-none",
+              "dark:bg-transparent dark:hover:bg-surface-ghost-hover dark:focus-visible:bg-transparent",
+              "placeholder:text-muted-foreground/85",
+              "transition-[background-color] duration-150",
+              "hover:bg-surface-ghost-hover",
+              "focus-visible:border-0 focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0",
+              "hover:focus-visible:bg-surface-ghost-hover dark:hover:focus-visible:bg-surface-ghost-hover",
               showCaptureHint && "pr-[7.25rem]",
             )}
           />

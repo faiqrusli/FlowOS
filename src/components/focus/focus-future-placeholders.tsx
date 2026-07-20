@@ -1,6 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { type as typography } from "@/lib/typography";
+import { cn } from "@/lib/utils";
 
 const PLACEHOLDERS = [
   "AI focus insights",
@@ -12,24 +13,20 @@ const PLACEHOLDERS = [
 
 export function FocusFuturePlaceholders() {
   return (
-    <Card className="border-dashed border-border/40 bg-surface-raised">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base text-muted-foreground">
-          Coming soon
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-2">
-          {PLACEHOLDERS.map((item) => (
-            <span
-              key={item}
-              className="rounded-full border border-border/35 bg-background/70 px-3 py-1 text-xs text-muted-foreground"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+      <h2 className={cn(typography.sectionTitle, "text-foreground-secondary")}>
+        Coming soon
+      </h2>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {PLACEHOLDERS.map((item) => (
+          <span
+            key={item}
+            className="rounded-md bg-surface-base px-3 py-1 text-xs text-foreground-secondary"
+          >
+            {item}
+          </span>
+        ))}
+      </div>
+    </section>
   );
 }

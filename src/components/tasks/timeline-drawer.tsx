@@ -89,7 +89,7 @@ export function TimelineDrawer({ open, onClose, ...props }: TimelineDrawerProps)
       <div
         className={cn(
           "relative h-full shrink-0",
-          open && "shadow-[-12px_0_28px_rgba(0,0,0,0.38)]"
+          open && "shadow-[-8px_0_20px_rgba(0,0,0,0.22)]"
         )}
         style={{ width: `min(100%, ${TIMELINE_DRAWER_WIDTH_PX}px)` }}
       >

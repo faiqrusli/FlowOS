@@ -144,7 +144,7 @@ export function TodayPageContent() {
             />
 
             {error ? (
-              <div className="px-5">
+              <div className="px-2">
                 <ErrorBanner message={error} />
               </div>
             ) : null}

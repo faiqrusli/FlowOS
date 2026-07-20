@@ -1,6 +1,6 @@
 export const GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX = 52;
-/** Small inset between the rail’s right edge and the viewport edge. */
-export const GLOBAL_RIGHT_RAIL_OUTER_GUTTER_PX = 4;
+/** Flush to the viewport edge — no outer inset. */
+export const GLOBAL_RIGHT_RAIL_OUTER_GUTTER_PX = 0;
 /** Layout reserve for the collapsed rail + outer gutter. */
 export const GLOBAL_RIGHT_SIDEBAR_LAYOUT_RESERVE_PX =
   GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX + GLOBAL_RIGHT_RAIL_OUTER_GUTTER_PX;
@@ -8,6 +8,7 @@ export const GLOBAL_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX = 360;
 export const GLOBAL_RIGHT_SIDEBAR_MIN_WIDTH_PX = 280;
 export const GLOBAL_RIGHT_SIDEBAR_MAX_WIDTH_PX = 520;
 
+/** Single persisted width shared by Details, Notes, and Reflection. */
 const WIDTH_STORAGE_KEY = "flowos-global-right-sidebar-width";
 const EXPANDED_STORAGE_KEY = "flowos-global-right-sidebar-expanded";
 const PANEL_STORAGE_KEY = "flowos-global-right-sidebar-panel";

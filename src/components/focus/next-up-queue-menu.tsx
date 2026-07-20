@@ -72,7 +72,7 @@ export function NextUpQueueMenu({
           <ExternalLink className="size-3.5 text-muted-foreground" />
           {kind === "habit" ? "Open habit" : "Open details"}
         </button>
-        <div className="my-1 border-t border-border-subtle/70" />
+        <div className="my-1 border-t border-divider" />
         <button
           type="button"
           className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-surface-hover"
@@ -89,7 +89,7 @@ export function NextUpQueueMenu({
           <ArrowDownToLine className="size-3.5 text-muted-foreground" />
           Move to bottom
         </button>
-        <div className="my-1 border-t border-border-subtle/70" />
+        <div className="my-1 border-t border-divider" />
         <button
           type="button"
           className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] hover:bg-surface-hover"

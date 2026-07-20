@@ -215,7 +215,7 @@ export function ScheduleTimeGrid({
   }
 
   return (
-    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden flow-surface-card xl:basis-[76%]">
+    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border-0 bg-surface-canvas xl:basis-[76%]">
       <div
         ref={gridRef}
         className="relative max-h-[calc(100vh-12rem)] min-h-[560px] overflow-y-auto"

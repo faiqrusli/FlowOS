@@ -29,7 +29,7 @@ export function ReflectionDetailContent({
         <p className="text-base font-semibold text-foreground">
           {getReflectionDayLabel(reflection.reflection_date)}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-foreground-secondary">
           Saved at {formatReflectionSavedAt(reflection.created_at)}
         </p>
       </div>
@@ -42,14 +42,14 @@ export function ReflectionDetailContent({
 
       <div className="space-y-2">
         <Label>What went well</Label>
-        <p className="whitespace-pre-wrap rounded-lg bg-surface-raised p-3 text-foreground/90">
+        <p className="whitespace-pre-wrap rounded-lg bg-surface-5 p-3 text-foreground">
           {reflection.went_well.trim() || "—"}
         </p>
       </div>
 
       <div className="space-y-2">
         <Label>What went wrong</Label>
-        <p className="whitespace-pre-wrap rounded-lg bg-surface-raised p-3 text-foreground/90">
+        <p className="whitespace-pre-wrap rounded-lg bg-surface-5 p-3 text-foreground">
           {reflection.went_wrong.trim() || "—"}
         </p>
       </div>
@@ -66,7 +66,7 @@ export function ReflectionDetailContent({
             {reflection.custom_kanbans.map((kanban) => (
               <li
                 key={kanban.id}
-                className="rounded-lg border border-border/40 bg-surface-raised px-3 py-2"
+                className="rounded-lg border-0 bg-surface-6/50 px-3 py-2"
               >
                 <p className="font-medium text-foreground">{kanban.title}</p>
                 {kanban.cards.length === 0 ? (
@@ -76,7 +76,7 @@ export function ReflectionDetailContent({
                     {kanban.cards.map((card) => (
                       <li
                         key={card.id}
-                        className="whitespace-pre-wrap text-sm text-muted-foreground"
+                        className="whitespace-pre-wrap text-sm text-foreground-secondary"
                       >
                         {card.content || "—"}
                       </li>
@@ -101,10 +101,12 @@ export function ReflectionDetailContent({
             {reflection.custom_entries.map((entry) => (
               <li
                 key={entry.id}
-                className="rounded-lg border border-border/40 bg-surface-raised px-3 py-2"
+                className="rounded-lg border-0 bg-surface-6/50 px-3 py-2"
               >
                 <p className="font-medium text-foreground">{entry.title}</p>
-                <p className="text-muted-foreground">{entry.content || "—"}</p>
+                <p className="text-foreground-secondary">
+                  {entry.content || "—"}
+                </p>
               </li>
             ))}
           </ul>

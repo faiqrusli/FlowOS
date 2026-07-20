@@ -10,15 +10,18 @@ import {
   type MouseEvent,
 } from "react";
 import { Check, MoreHorizontal } from "lucide-react";
-import { TaskDurationPicker } from "@/components/tasks/task-duration-picker";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import { formatTaskFocusSchedule } from "@/lib/task-focus-display";
 import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
-import { getWorkplaceGroupAccentClass, getWorkplaceGroupAccentColorVar } from "@/lib/workplace-group-accent";
+import {
+  getWorkplaceGroupAccentClass,
+  getWorkplaceGroupAccentColorVar,
+} from "@/lib/workplace-group-accent";
 import { normalizeTaskPriority } from "@/lib/task-priority";
 import { setActiveTaskDragId, setBoardTaskDragData } from "@/lib/timeline-drag";
 import { setCompactQueueDragImage } from "@/lib/list-drag-utils";
+import { useNextUpQueueView } from "@/contexts/next-up-queue-view-context";
 import { cn } from "@/lib/utils";
 import { todayTaskAnchorId } from "@/lib/today-in-place";
 import type { Task, TaskGroupWithTasks } from "@/types/task";
@@ -29,6 +32,8 @@ type WorkplaceCompactTaskRowProps = {
   selected?: boolean;
   /** Active focus session is targeting this task. */
   inFocus?: boolean;
+  /** Pause — quieter in-focus edge, no breathe animation. */
+  focusSoftened?: boolean;
   /** Live MM:SS elapsed for the focused task. */
   focusClock?: string | null;
   onSelect?: () => void;
@@ -53,6 +58,7 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
   groups,
   selected = false,
   inFocus = false,
+  focusSoftened = false,
   focusClock = null,
   onSelect,
   onOpenDetail,
@@ -63,6 +69,9 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
 }: WorkplaceCompactTaskRowProps) {
   const rowRef = useRef<HTMLDivElement>(null);
   const suppressDragRef = useRef(false);
+  const nextUpQueueView = useNextUpQueueView();
+  const queuePosition =
+    nextUpQueueView?.getTaskQueuePosition(task.id) ?? null;
   const group = resolveTaskGroup(task, groups);
   const appearance = group ? getTaskGroupAppearance(group) : null;
   const priority = normalizeTaskPriority(task.priority);
@@ -119,14 +128,36 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
   }, [restoreDraggable]);
 
   const trailingMeta = (
-    <div className="flex shrink-0 items-center gap-1.5">
+    <div
+      className={cn(
+        "flex h-4 min-w-0 shrink-0 items-center gap-1 transition-opacity duration-150",
+        onOpenMenu &&
+          "group-hover/row:pointer-events-none group-hover/row:opacity-0 group-focus-within/row:pointer-events-none group-focus-within/row:opacity-0",
+      )}
+    >
       {group && appearance ? (
         <TaskGroupPill
           icon={appearance.icon}
           name={group.title}
           appearance={appearance}
-          className="max-w-[5rem] shrink-0 text-[11px]"
+          variant="plain"
+          className="h-4 max-w-[4.5rem] shrink-0 gap-1 text-[10px] leading-none text-muted-foreground"
         />
+      ) : null}
+      {queuePosition != null ? (
+        <button
+          type="button"
+          data-no-dnd
+          title={`Queued • Position ${queuePosition}`}
+          aria-label={`Queued, position ${queuePosition}. Open in Next Up queue.`}
+          onClick={(event) => {
+            event.stopPropagation();
+            nextUpQueueView?.revealQueuedTask(task.id);
+          }}
+          className="shrink-0 text-[11px] font-medium tabular-nums leading-none text-muted-foreground/70 transition-colors hover:text-muted-foreground"
+        >
+          #{queuePosition}
+        </button>
       ) : null}
       {inFocus && focusClock ? (
         <span
@@ -136,22 +167,15 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
         >
           {focusClock}
         </span>
-      ) : onUpdateDuration && !task.scheduled_time ? (
-        <div data-no-dnd>
-          <TaskDurationPicker
-            variant="timeline"
-            compact
-            durationMinutes={task.duration_minutes}
-            onChange={onUpdateDuration}
-          />
-        </div>
-      ) : (
-        <span className="shrink-0 text-[13px] tabular-nums text-muted-foreground/80">
-          {scheduleLabel}
+      ) : scheduleLabel || durationLabel ? (
+        <span className="shrink-0 text-[12px] tabular-nums leading-none text-muted-foreground/80">
+          {scheduleLabel ?? durationLabel}
         </span>
-      )}
+      ) : null}
     </div>
   );
+
+  void onUpdateDuration;
 
   return (
     <div
@@ -159,6 +183,7 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
       id={todayTaskAnchorId(task.id)}
       draggable={canDrag}
       data-task-in-focus={inFocus ? "true" : undefined}
+      data-focus-softened={focusSoftened ? "true" : undefined}
       onMouseDown={handleRowMouseDown}
       onMouseUp={restoreDraggable}
       onDragStart={canDrag ? handleDragStart : undefined}
@@ -166,15 +191,17 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
       onContextMenu={onContextMenu}
       onClick={() => onSelect?.()}
       className={cn(
-        "group/row relative flex items-center gap-1.5 rounded-md border border-transparent px-1.5 py-1 transition-[background-color,border-color,opacity,box-shadow] duration-150 hover:bg-surface-hover",
+        "group/row relative flex h-8 items-center gap-1.5 rounded-md border border-transparent px-2 transition-[background-color,border-color,box-shadow] duration-150 hover:bg-surface-hover",
         canDrag && "cursor-grab active:cursor-grabbing",
         onSelect && !canDrag && !task.completed && "cursor-pointer",
         task.completed && "cursor-default opacity-70 hover:bg-transparent",
         dragging && "opacity-40",
-        selected && "bg-primary/8 ring-1 ring-primary/35",
+        selected && "bg-surface-8 ring-1 ring-primary/35",
         accentClass && !inFocus ? cn("border-l-2", accentClass) : null,
         inFocus && "timeline-task-in-focus",
       )}
+      data-selected={selected ? "true" : undefined}
+      data-completed={task.completed ? "true" : undefined}
       style={
         inFocus
           ? ({
@@ -201,18 +228,10 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
         {task.completed ? <Check className="size-2.5" strokeWidth={3} /> : null}
       </button>
 
-      {inFocus ? (
-        <span
-          className="flex size-3.5 shrink-0 items-center justify-center"
-          aria-label="Currently in focus"
-          title="In focus"
-        >
-          <span className="timeline-focus-indicator size-1.5 rounded-full bg-primary" />
-        </span>
-      ) : showPriorityFlag ? (
+      {showPriorityFlag ? (
         <TaskPriorityFlagIcon
           priority={priority}
-          className="size-3.5 shrink-0"
+          className="size-3 shrink-0"
         />
       ) : null}
 
@@ -237,7 +256,7 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
           }
         }}
         className={cn(
-          "min-w-0 flex-1 truncate text-left text-[14px] font-medium leading-none text-foreground",
+          "min-w-0 flex-1 truncate text-left text-[13px] font-medium leading-none text-foreground",
           onSelect ? "hover:text-foreground" : "hover:underline",
           task.completed && "line-through opacity-60",
         )}
@@ -245,23 +264,24 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
         {task.title}
       </span>
 
-      {trailingMeta}
-
-      {onOpenMenu ? (
-        <button
-          type="button"
-          data-no-dnd
-          onClick={(event) => {
-            event.stopPropagation();
-            onOpenMenu(event.currentTarget.getBoundingClientRect());
-          }}
-          className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-surface-hover hover:text-foreground group-hover/row:opacity-100 focus-visible:opacity-100"
-          aria-label={`More actions for ${task.title}`}
-          title="More actions"
-        >
-          <MoreHorizontal className="size-3.5" />
-        </button>
-      ) : null}
+      <div className="relative flex h-full shrink-0 items-center justify-end">
+        {trailingMeta}
+        {onOpenMenu ? (
+          <button
+            type="button"
+            data-no-dnd
+            onClick={(event) => {
+              event.stopPropagation();
+              onOpenMenu(event.currentTarget.getBoundingClientRect());
+            }}
+            className="absolute right-0 top-1/2 z-10 flex size-5 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-surface-hover hover:text-foreground group-hover/row:opacity-100 focus-visible:opacity-100"
+            aria-label={`More actions for ${task.title}`}
+            title="More actions"
+          >
+            <MoreHorizontal className="size-3.5" />
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 });

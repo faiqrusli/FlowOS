@@ -36,7 +36,10 @@ import { formatDurationMinutes } from "@/lib/task-duration-options";
 import {
   TASK_ALERT_BEFORE_OPTIONS,
   applyPresetAlert,
+  formatAlertBeforeLabel,
 } from "@/lib/task-alert-before-options";
+import { requestBrowserNotificationPermissionIfNeeded } from "@/lib/browser-notifications";
+import { useOptionalActionToast } from "@/contexts/action-toast-context";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
   normalizePlanningState,
@@ -287,7 +290,7 @@ function TaskPriorityMenuPopover({
         onClick={() => onUpdate({ priority: "low" })}
         className={cn(
           "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70",
-          priority === "low" && "bg-surface-raised font-medium text-foreground",
+          priority === "low" && "bg-selected font-medium text-foreground",
         )}
       >
         <PriorityFlagIcon priority="low" /> {TASK_PRIORITY_CONFIG.low.label}
@@ -600,7 +603,7 @@ function TaskDetailMenuPopover({
           className={cn(
             "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70",
             !task.notification_enabled &&
-              "bg-surface-raised font-medium text-foreground",
+              "bg-selected font-medium text-foreground",
           )}
         >
           Silent
@@ -614,7 +617,7 @@ function TaskDetailMenuPopover({
               "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs tabular-nums hover:bg-surface-hover",
               task.notification_enabled &&
                 task.notification_lead_minutes === option.minutes &&
-                "bg-surface-raised font-medium text-foreground",
+                "bg-selected font-medium text-foreground",
             )}
           >
             {option.label}
@@ -663,7 +666,7 @@ function TaskDetailMenuPopover({
                 className={cn(
                   "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70",
                   planningState === state &&
-                    "bg-surface-raised font-medium text-foreground",
+                    "bg-selected font-medium text-foreground",
                 )}
               >
                 {state === "later" ? (
@@ -765,6 +768,7 @@ export const TaskRow = memo(function TaskRow({
   const groupsFromBoard = useOptionalTaskBoardGroups();
   const groups = groupsProp ?? groupsFromBoard ?? [];
   const boardActions = useOptionalTaskBoardActions();
+  const actionToast = useOptionalActionToast();
 
   const onToggleComplete = useCallback(() => {
     if (onToggleCompleteProp) {
@@ -1178,7 +1182,12 @@ export const TaskRow = memo(function TaskRow({
           type="button"
           onPointerDown={(event) => event.stopPropagation()}
           onClick={() => setFlagMenuOpen((value) => !value)}
-          className="flex size-6 items-center justify-center rounded hover:bg-surface-hover/80"
+          className={cn(
+            "flex size-6 items-center justify-center rounded hover:bg-surface-hover/80",
+            priority === "low" &&
+              "opacity-0 transition-opacity duration-150 group-hover:opacity-100 focus-visible:opacity-100",
+            flagMenuOpen && "opacity-100",
+          )}
           aria-label="Set priority"
           aria-expanded={flagMenuOpen}
         >
@@ -1214,6 +1223,24 @@ export const TaskRow = memo(function TaskRow({
           onAlertSubmenuOpenChange={setAlertSubmenuOpen}
           onSetAlertBefore={(updates) => {
             onUpdate(updates);
+            if (updates.notification_enabled) {
+              void requestBrowserNotificationPermissionIfNeeded();
+            }
+            const label = formatAlertBeforeLabel(
+              updates.notification_enabled,
+              updates.notification_lead_minutes,
+            );
+            const message = !updates.notification_enabled
+              ? "Alert silenced"
+              : updates.notification_lead_minutes == null ||
+                  updates.notification_lead_minutes <= 0
+                ? "Alert cleared"
+                : `Alert set · ${label}`;
+            actionToast?.showActionToast({
+              message,
+              tone: "success",
+              icon: "check",
+            });
             closeDetailMenu();
           }}
           onCloseMenu={closeDetailMenu}
@@ -1227,6 +1254,11 @@ export const TaskRow = memo(function TaskRow({
                   void onUpdate({
                     scheduled_date: getTodayDateString(),
                     planning_state: "none",
+                  });
+                  actionToast?.showActionToast({
+                    message: "Added to Today",
+                    tone: "success",
+                    icon: "calendar",
                   });
                   closeDetailMenu();
                 }

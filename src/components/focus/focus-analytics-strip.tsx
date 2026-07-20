@@ -1,11 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   formatFocusHourLabel,
   type FocusAnalytics,
 } from "@/lib/focus-analytics";
 import { formatDuration } from "@/lib/focus-utils";
+import { type as typography } from "@/lib/typography";
 
 type FocusAnalyticsStripProps = {
   analytics: FocusAnalytics;
@@ -64,25 +64,21 @@ export function FocusAnalyticsStrip({
   loading,
 }: FocusAnalyticsStripProps) {
   return (
-    <Card className="border-border-subtle bg-surface-base shadow-none">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Analytics</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {METRICS.map((metric) => (
-            <div
-              key={metric.key}
-              className="rounded-lg border border-border/30 bg-surface-raised px-3 py-2.5"
-            >
-              <p className="text-[11px] text-muted-foreground">{metric.label}</p>
-              <p className="mt-0.5 text-sm font-semibold tabular-nums text-foreground">
-                {loading ? "—" : metric.format(analytics[metric.key])}
-              </p>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+      <h2 className={typography.sectionTitle}>Analytics</h2>
+      <div className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+        {METRICS.map((metric) => (
+          <div
+            key={metric.key}
+            className="rounded-lg bg-surface-base px-3 py-2.5 transition-colors hover:bg-surface-hover"
+          >
+            <p className={typography.meta}>{metric.label}</p>
+            <p className="mt-0.5 text-sm font-semibold tabular-nums text-foreground">
+              {loading ? "—" : metric.format(analytics[metric.key])}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

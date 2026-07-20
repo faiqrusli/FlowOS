@@ -7,10 +7,10 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from "react";
 import {
+  Check,
   ChevronDown,
   ChevronUp,
-  Clock,
-  ExternalLink,
+  ListOrdered,
   MoreHorizontal,
   Play,
 } from "lucide-react";
@@ -18,6 +18,11 @@ import { NextUpQueueMenu } from "@/components/focus/next-up-queue-menu";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
+import {
+  acceptNextUpScheduleDrag,
+  isNextUpReorderDrag,
+  isScheduleKindDrag,
+} from "@/lib/next-up-drag";
 import { formatTaskFocusSchedule } from "@/lib/task-focus-display";
 import { getTaskGroupAppearance } from "@/lib/task-group-appearance";
 import { normalizeTaskPriority } from "@/lib/task-priority";
@@ -41,6 +46,7 @@ type NextUpPreviewProps = {
   /** When true, the open-panel control shows a close affordance. */
   queueOpen?: boolean;
   onStartFocus?: (task: Task) => void;
+  onToggleComplete?: (task: Task) => void;
   onOpenTask?: (task: Task) => void;
   onMoveToTop?: (task: Task) => void;
   onMoveToEnd?: (task: Task) => void;
@@ -67,6 +73,7 @@ function NextUpPreviewRow({
   selected = false,
   onOpenQueue,
   onStartFocus,
+  onToggleComplete,
   onOpenTask,
   onMoveToTop,
   onMoveToEnd,
@@ -81,6 +88,7 @@ function NextUpPreviewRow({
   selected?: boolean;
   onOpenQueue?: () => void;
   onStartFocus?: (task: Task) => void;
+  onToggleComplete?: (task: Task) => void;
   onOpenTask?: (task: Task) => void;
   onMoveToTop?: (task: Task) => void;
   onMoveToEnd?: (task: Task) => void;
@@ -97,7 +105,12 @@ function NextUpPreviewRow({
   const appearance = group ? getTaskGroupAppearance(group) : null;
   const meta = formatNextUpPreviewMeta(task);
   const hasActions = Boolean(
-    onStartFocus || onOpenTask || onMoveToTop || onMoveToEnd || onRemove,
+    onStartFocus ||
+      onToggleComplete ||
+      onOpenTask ||
+      onMoveToTop ||
+      onMoveToEnd ||
+      onRemove,
   );
   const showActions =
     hasActions && (selected || rowActive || menuPoint != null);
@@ -154,29 +167,30 @@ function NextUpPreviewRow({
             : undefined
         }
         className={cn(
-          "flex w-full min-w-0 items-center gap-2 rounded-md px-1.5 py-1.5 text-left transition-colors duration-150",
-          selected ? "bg-primary/10 ring-1 ring-primary/35" : "bg-transparent",
+          "flex w-full min-w-0 items-center gap-2 rounded-lg px-1 py-1.5 text-left transition-[background-color] duration-[180ms] ease-out",
+          selected
+            ? "bg-selected text-foreground"
+            : "bg-transparent",
           onOpenQueue &&
             !selected &&
-            "cursor-pointer hover:bg-surface-hover/70",
+            "cursor-pointer hover:bg-surface-hover",
           onOpenQueue && selected && "cursor-pointer",
         )}
       >
-        <span
-          aria-hidden
-          className="w-3.5 shrink-0 text-center text-[11px] font-medium tabular-nums text-muted-foreground/70"
-        >
+        <span className="flow-queue-index" aria-hidden>
           {position}
         </span>
-        {task.priority && normalizeTaskPriority(task.priority) !== "low" ? (
-          <TaskPriorityFlagIcon
-            priority={normalizeTaskPriority(task.priority)}
-            className="size-3.5 shrink-0"
-          />
-        ) : null}
-        <span className="min-w-0 flex-1 truncate text-[13px] font-medium leading-snug text-foreground">
-          {task.title}
-        </span>
+        <div className="flex min-w-0 flex-1 items-center gap-1.5">
+          <span className="flow-type-title min-w-0 truncate text-[13px] leading-snug">
+            {task.title}
+          </span>
+          {task.priority && normalizeTaskPriority(task.priority) !== "low" ? (
+            <TaskPriorityFlagIcon
+              priority={normalizeTaskPriority(task.priority)}
+              className="size-3.5 shrink-0"
+            />
+          ) : null}
+        </div>
         <div className="flex h-6 shrink-0 items-center justify-end gap-0.5">
           {showActions ? (
             <div
@@ -184,17 +198,30 @@ function NextUpPreviewRow({
               data-no-row-click
               onClick={(event) => event.stopPropagation()}
             >
+              {onToggleComplete ? (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onToggleComplete(task);
+                  }}
+                  className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                  aria-label={`Mark "${task.title}" complete`}
+                  title="Complete task"
+                >
+                  <Check className="size-3.5" strokeWidth={2.25} aria-hidden />
+                </button>
+              ) : null}
               {onStartFocus ? (
                 <button
                   type="button"
                   data-pending-focus-anchor=""
                   onClick={() => onStartFocus(task)}
-                  className="inline-flex h-6 items-center gap-1 rounded-md px-1.5 text-[11px] font-medium text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                  className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                   aria-label={`Start focus on ${task.title}`}
-                  title="Start"
+                  title="Start focus"
                 >
-                  <Play className="size-3 fill-current" />
-                  Start
+                  <Play className="size-3.5" aria-hidden />
                 </button>
               ) : null}
               {onOpenTask || onMoveToTop || onMoveToEnd || onRemove ? (
@@ -203,23 +230,24 @@ function NextUpPreviewRow({
                   onClick={openMenu}
                   className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                   aria-label={`More actions for ${task.title}`}
+                  title="More"
                 >
-                  <MoreHorizontal className="size-3.5" />
+                  <MoreHorizontal className="size-3.5" aria-hidden />
                 </button>
               ) : null}
             </div>
           ) : (
-            <div className="flex items-center gap-1.5">
+            <div className="flow-meta-row">
               {group && appearance ? (
                 <TaskGroupPill
                   icon={appearance.icon}
                   name={group.title}
                   appearance={appearance}
-                  className="max-w-24 shrink text-[11px]"
+                  className="flow-meta-group max-w-24 shrink text-[11px]"
                 />
               ) : null}
               {meta ? (
-                <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground">
+                <span className="flow-type-meta flow-meta-group shrink-0 text-[11px] tabular-nums">
                   {meta}
                 </span>
               ) : null}
@@ -257,6 +285,7 @@ export function NextUpPreview({
   onHeaderClick,
   queueOpen = false,
   onStartFocus,
+  onToggleComplete,
   onOpenTask,
   onMoveToTop,
   onMoveToEnd,
@@ -291,41 +320,52 @@ export function NextUpPreview({
   };
 
   return (
-    <div className="mt-2.5 flex shrink-0 flex-col gap-4 overflow-hidden rounded-lg border border-border-subtle/55 bg-surface-base px-2.5 py-2.5">
+    <div className="flex shrink-0 flex-col gap-2 pb-2 pt-5">
       <div className="flex items-center gap-2">
-        <Clock
-          className="size-3.5 shrink-0 text-muted-foreground"
-          aria-hidden
-        />
-        <button
-          type="button"
-          onClick={onHeaderClick}
-          disabled={!onHeaderClick}
-          className={cn(
-            "min-w-0 flex-1 truncate text-left text-[12px] font-semibold uppercase tracking-wide text-foreground/90",
-            onHeaderClick && "hover:text-foreground",
-          )}
-        >
-          Next Up
-          {tasks.length > 0 ? (
-            <span className="ml-1 font-medium normal-case tracking-normal text-muted-foreground">
-              ({tasks.length})
+        <div className="min-w-0 flex-1">
+          <button
+            type="button"
+            onClick={onHeaderClick}
+            disabled={!onHeaderClick}
+            className={cn(
+              "flex min-w-0 items-baseline gap-2 text-left",
+              onHeaderClick &&
+                "hover:[&_.flow-section-label]:text-foreground",
+            )}
+          >
+            <span className="flow-section-label truncate text-[11px] uppercase">
+              Next Up
+              {tasks.length > 0 ? (
+                <span className="flow-section-count normal-case tracking-normal">
+                  {" "}
+                  ({tasks.length})
+                </span>
+              ) : null}
             </span>
-          ) : null}
-        </button>
-        <div className="flex shrink-0 items-center gap-0.5">
+          </button>
+        </div>
+        <div className="flex shrink-0 items-center gap-1 pr-0.5">
           {toggleQueue ? (
             <button
               type="button"
               onClick={toggleQueue}
               aria-expanded={queueOpen}
               aria-label={
-                queueOpen ? "Close Next Up queue" : "Open Next Up queue"
+                queueOpen
+                  ? "Close Next Up queue"
+                  : `Open Next Up queue${
+                      tasks.length > 0 ? `, ${tasks.length} items` : ""
+                    }`
               }
-              title={queueOpen ? "Close Next Up queue" : "Open Next Up queue"}
-              className="flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+              title={queueOpen ? "Close queue" : "Open queue"}
+              className="relative mr-1 flex size-6 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-surface-hover hover:text-foreground"
             >
-              <ExternalLink className="size-3.5" aria-hidden />
+              <ListOrdered className="size-3.5" aria-hidden />
+              {tasks.length > 0 ? (
+                <span className="absolute -right-px -top-px flex h-3 min-w-3 items-center justify-center rounded-full bg-primary px-0.5 text-[8px] font-semibold leading-none tabular-nums text-primary-foreground">
+                  {tasks.length > 9 ? "9+" : tasks.length}
+                </span>
+              ) : null}
             </button>
           ) : null}
           {canTogglePreview ? (
@@ -338,7 +378,7 @@ export function NextUpPreview({
                   ? "Show one Next Up task"
                   : "Show up to three Next Up tasks"
               }
-              className="flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+              className="flow-icon-quiet flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
             >
               {expanded ? (
                 <ChevronUp className="size-3.5" aria-hidden />
@@ -350,33 +390,43 @@ export function NextUpPreview({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1">
         {isEmpty ? (
           <div
             className={cn(
               "flex items-center justify-center rounded-md border border-dashed px-3 text-center text-[12px] transition-colors",
-              demoted ? "min-h-9 py-1.5" : "min-h-14",
+              demoted ? "min-h-9 py-1.5" : "min-h-10 py-2",
               dropActive
                 ? "border-primary/60 bg-primary/10 text-foreground"
                 : demoted
                   ? "border-border-subtle/70 bg-transparent text-muted-foreground/60"
-                  : "border-border-subtle bg-surface-canvas/30 text-muted-foreground/85",
+                  : "border-border-subtle bg-transparent text-muted-foreground/85",
             )}
             onDragOver={(event) => {
+              if (
+                !isScheduleKindDrag(event) &&
+                !isNextUpReorderDrag(event)
+              ) {
+                return;
+              }
               event.preventDefault();
               event.stopPropagation();
+              acceptNextUpScheduleDrag(event);
               onExternalDragOver?.(null);
             }}
-            onDrop={(event) => onExternalDrop?.(event, null)}
+            onDrop={(event) => {
+              if (isNextUpReorderDrag(event)) return;
+              event.preventDefault();
+              event.stopPropagation();
+              onExternalDrop?.(event, null);
+            }}
           >
             {dropActive
               ? "Release to add to Next Up"
-              : demoted
-                ? "Drop a task for what’s next"
-                : "Drag a task here to decide what’s next."}
+              : "Drop here for what’s next"}
           </div>
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {visibleTasks.map((task, index) => (
               <NextUpPreviewRow
                 key={task.id}
@@ -386,16 +436,19 @@ export function NextUpPreview({
                 selected={pendingTaskId === task.id}
                 onOpenQueue={openQueue}
                 onStartFocus={onStartFocus}
+                onToggleComplete={onToggleComplete}
                 onOpenTask={onOpenTask}
                 onMoveToTop={onMoveToTop}
                 onMoveToEnd={onMoveToEnd}
                 onRemove={onRemove}
-                dropBefore={dropActive && dropBeforeTaskId === task.id}
+                dropBefore={
+                  dropActive && !queueOpen && dropBeforeTaskId === task.id
+                }
                 onExternalDragOver={() => onExternalDragOver?.(task.id)}
                 onExternalDrop={(event) => onExternalDrop?.(event, task.id)}
               />
             ))}
-            {dropActive && dropBeforeTaskId === null ? (
+            {dropActive && !queueOpen && dropBeforeTaskId === null ? (
               <TaskBoardInsertLine className="mt-1" />
             ) : null}
           </div>

@@ -84,7 +84,8 @@ type GlobalRightSidebarContextValue = {
   registerWorkplaceTaskHandler: (
     handler: ((task: Task) => void) | null
   ) => void;
-  notifyWorkplaceTaskCreated: (task: Task) => void;
+  /** Returns true when Today/workplace handled the create (e.g. toast + board). */
+  notifyWorkplaceTaskCreated: (task: Task) => boolean;
 };
 
 const GlobalRightSidebarContext =
@@ -302,7 +303,10 @@ export function GlobalRightSidebarProvider({
   );
 
   const notifyWorkplaceTaskCreated = useCallback((task: Task) => {
-    workplaceTaskHandlerRef.current?.(task);
+    const handler = workplaceTaskHandlerRef.current;
+    if (!handler) return false;
+    handler(task);
+    return true;
   }, []);
 
   // Today/workplace: always reserve collapsed rail width in layout so

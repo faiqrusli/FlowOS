@@ -5,6 +5,7 @@ import { setQuickScheduleOpen } from "@/lib/timeline-drag";
 import { TimelinePlanner } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
+import { useActionToast } from "@/contexts/action-toast-context";
 import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
@@ -28,6 +29,7 @@ import {
 } from "@/lib/task-groups";
 import { moveTaskInBoard } from "@/lib/task-drag-utils";
 import { normalizePlanningState } from "@/lib/task-planning";
+import { removeTaskFromNextUp } from "@/lib/task-next-up";
 import {
   deleteTask,
   duplicateTask,
@@ -40,6 +42,7 @@ import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 
 export function SchedulePageContent() {
   const { selectedTaskId, selectTask } = useGlobalRightSidebar();
+  const { showActionToast } = useActionToast();
   const [groups, setGroups] = useState<TaskGroupWithTasks[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -246,6 +249,7 @@ export function SchedulePageContent() {
   async function handleSetPlanningState(
     taskId: string,
     planningState: PlanningState,
+    options?: { silent?: boolean },
   ) {
     const task = groups
       .flatMap((group) => group.tasks)
@@ -254,9 +258,23 @@ export function SchedulePageContent() {
 
     const current = normalizePlanningState(task.planning_state);
     if (current === planningState) return;
+    const snapshot = task;
 
     if (planningState === "later") {
       await handleMoveToLater(taskId);
+      if (!options?.silent) {
+        showActionToast({
+          message: "Moved to Later",
+          icon: "later",
+          actionLabel: "Undo",
+          onAction: () => {
+            if (snapshot.group_id) {
+              void handleMoveTask(snapshot.id, snapshot.group_id);
+            }
+            void handleClearPlanningState(snapshot.id);
+          },
+        });
+      }
       return;
     }
 
@@ -324,7 +342,10 @@ export function SchedulePageContent() {
     }
   }
 
-  async function handleToggleComplete(task: Task) {
+  async function handleToggleComplete(
+    task: Task,
+    options?: { silent?: boolean },
+  ) {
     setError(null);
     setGroups((prev) =>
       replaceTaskOnBoard(
@@ -341,6 +362,19 @@ export function SchedulePageContent() {
     try {
       const updated = await toggleTaskComplete(task);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      if (!options?.silent) {
+        showActionToast({
+          message: updated.completed
+            ? "Task marked as done"
+            : "Task marked incomplete",
+          tone: updated.completed ? "success" : "neutral",
+          icon: "check",
+          actionLabel: "Undo",
+          onAction: () => {
+            void handleToggleComplete(updated, { silent: true });
+          },
+        });
+      }
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to update task.",
@@ -349,7 +383,10 @@ export function SchedulePageContent() {
     }
   }
 
-  async function handleToggleHabitComplete(habit: Habit) {
+  async function handleToggleHabitComplete(
+    habit: Habit,
+    options?: { silent?: boolean },
+  ) {
     setError(null);
     setHabits((prev) =>
       prev.map((item) =>
@@ -362,6 +399,19 @@ export function SchedulePageContent() {
       setHabits((prev) =>
         prev.map((item) => (item.id === updated.id ? updated : item)),
       );
+      if (!options?.silent) {
+        showActionToast({
+          message: updated.completed
+            ? "Habit marked complete"
+            : "Habit unmarked",
+          tone: updated.completed ? "success" : "neutral",
+          icon: "habit",
+          actionLabel: "Undo",
+          onAction: () => {
+            void handleToggleHabitComplete(updated, { silent: true });
+          },
+        });
+      }
     } catch (err) {
       setError(
         err instanceof HabitsError ? err.message : "Failed to update habit.",
@@ -380,6 +430,15 @@ export function SchedulePageContent() {
     try {
       const duplicated = await duplicateTask(task, task.group_id, sortOrder);
       setGroups((prev) => addTaskToBoard(prev, duplicated, todayViewDate));
+      showActionToast({
+        message: "Task duplicated",
+        tone: "success",
+        icon: "check",
+        actionLabel: "View",
+        onAction: () => {
+          selectTask(duplicated.id);
+        },
+      });
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to duplicate task.",
@@ -388,20 +447,37 @@ export function SchedulePageContent() {
   }
 
   async function handleDeleteTask(taskId: string) {
+    const snapshot = getTask(taskId);
+    if (!snapshot) return;
+
     setError(null);
     setGroups((prev) => removeTaskFromBoard(prev, taskId));
     if (selectedTaskId === taskId) {
       selectTask(null);
     }
 
-    try {
-      await deleteTask(taskId);
-    } catch (err) {
-      setError(
-        err instanceof TasksError ? err.message : "Failed to delete task.",
-      );
-      void loadBoard();
-    }
+    let committed = false;
+    const commitDelete = () => {
+      if (committed) return;
+      committed = true;
+      void deleteTask(taskId).catch((err) => {
+        setError(
+          err instanceof TasksError ? err.message : "Failed to delete task.",
+        );
+        void loadBoard();
+      });
+    };
+
+    showActionToast({
+      message: "Task moved to Trash",
+      icon: "trash",
+      actionLabel: "Undo",
+      onAction: () => {
+        committed = true;
+        setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
+      },
+      onExpire: commitDelete,
+    });
   }
 
   useRegisterTaskDetailSource(
@@ -461,6 +537,36 @@ export function SchedulePageContent() {
           onDeleteTask={handleDeleteTask}
           onDuplicateTask={handleDuplicateTask}
           onSetPlanningState={handleSetPlanningState}
+          onTaskQueued={(taskId) => {
+            showActionToast({
+              message: "Added to Queue",
+              icon: "queue",
+              actionLabel: "Undo",
+              onAction: () => {
+                void removeTaskFromNextUp(taskId);
+              },
+            });
+          }}
+          onTaskUnscheduled={(taskId, previous) => {
+            showActionToast({
+              message: "Unscheduled",
+              icon: "calendar",
+              actionLabel: "Undo",
+              onAction: () => {
+                if (previous.scheduled_date) {
+                  void handleScheduleTask(taskId, {
+                    scheduled_date: previous.scheduled_date,
+                    scheduled_time: previous.scheduled_time,
+                  });
+                  return;
+                }
+                void handleUpdateTask(taskId, {
+                  scheduled_date: null,
+                  scheduled_time: previous.scheduled_time,
+                });
+              },
+            });
+          }}
         />
       </div>
     </div>

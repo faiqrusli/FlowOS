@@ -58,7 +58,7 @@ export function MarkdownEditor({
 
   return (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
-      <div className="flex shrink-0 flex-wrap items-center gap-1 border-b border-border/40 px-2 py-1.5">
+      <div className="flex shrink-0 flex-wrap items-center gap-1 px-2 py-1.5">
         <ToolbarButton
           label="Heading"
           onClick={() =>
@@ -128,10 +128,7 @@ export function MarkdownEditor({
 
         {onPreviewChange && (
           <>
-            <span
-              aria-hidden
-              className="mx-0.5 h-4 w-px shrink-0 bg-border/60"
-            />
+            <span aria-hidden className="mx-0.5 w-1 shrink-0" />
             <Button
               type="button"
               variant="ghost"
@@ -163,7 +160,7 @@ export function MarkdownEditor({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="min-h-0 flex-1 resize-none overflow-y-auto bg-surface-base px-5 py-4 text-[15px] leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/60"
+          className="min-h-0 flex-1 resize-none overflow-y-auto bg-transparent px-5 py-4 text-[15px] leading-relaxed text-foreground outline-none placeholder:text-muted-foreground"
         />
       )}
     </div>

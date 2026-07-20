@@ -127,9 +127,9 @@ export function FocusTimerRing({
       >
         <p
           className={cn(
-            "font-mono font-semibold leading-none tabular-nums tracking-tight text-white",
+            "font-mono font-semibold leading-none tabular-nums tracking-tight",
             compact ? "text-[2rem]" : "text-[2.65rem]",
-            !isActive && "text-white/35",
+            isActive ? "text-white" : "text-white/35",
           )}
         >
           {clock}

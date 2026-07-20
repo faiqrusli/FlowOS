@@ -77,7 +77,7 @@ function DraggableTaskRow({
         event.dataTransfer.effectAllowed = "move";
       }}
       className={cn(
-        "group relative overflow-hidden rounded-lg border border-border-subtle bg-surface-base transition-colors duration-150",
+        "group relative overflow-hidden rounded-lg border-0 bg-surface-base transition-colors duration-150",
         channel.border,
         !task.completed &&
           "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
@@ -141,7 +141,7 @@ function DraggableHabitRow({
         event.dataTransfer.effectAllowed = "move";
       }}
       className={cn(
-        "group relative overflow-hidden rounded-lg border border-border-subtle bg-surface-base transition-colors duration-150",
+        "group relative overflow-hidden rounded-lg border-0 bg-surface-base transition-colors duration-150",
         channel.border,
         !habit.completed &&
           "cursor-grab hover:bg-surface-hover active:cursor-grabbing",
@@ -225,8 +225,8 @@ export function ScheduleTaskSidebar({
     filteredUnscheduled.length + filteredLater.length + filteredHabits.length;
 
   return (
-    <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-xl border border-border-subtle bg-surface-base xl:sticky xl:top-6 xl:max-h-[calc(100vh-8rem)] xl:basis-[24%] xl:max-w-[300px]">
-      <div className="space-y-3 border-b border-border-subtle bg-surface-base px-3 py-3">
+    <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-xl border-0 bg-surface-section xl:sticky xl:top-6 xl:max-h-[calc(100vh-8rem)] xl:basis-[24%] xl:max-w-[300px]">
+      <div className="space-y-3 border-b border-border-subtle bg-surface-section px-3 py-3">
         <div className="flex items-center justify-between gap-2">
           <div>
             <h2 className="text-sm font-semibold text-foreground">Later</h2>

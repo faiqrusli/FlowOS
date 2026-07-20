@@ -17,33 +17,43 @@ export const WORKPLACE_TIMELINE_CONTENT_GAP_PX = 2;
 export const WORKPLACE_PANEL_TRAILING_INSET_CLASS = "pr-0.5";
 
 /** Vertical + leading inset around the Next Up Queue card shell.
- * Top matches Focus header (`pt-1.5`) so the card lines up with Focus Reflection.
+ * Top/bottom 0 — Focus + Next Up share one outer box edge.
  */
-export const WORKPLACE_QUEUE_CARD_INSET_CLASS = `pt-1.5 pb-3 pl-2 ${WORKPLACE_PANEL_TRAILING_INSET_CLASS}`;
+export const WORKPLACE_QUEUE_CARD_INSET_CLASS = `pt-0 pb-0 pl-2 ${WORKPLACE_PANEL_TRAILING_INSET_CLASS}`;
 
 /** Gap between the workplace timeline and the global right sidebar (px). */
-export const WORKPLACE_TIMELINE_RIGHT_GAP_PX = 2;
+/** Gap between timeline and right utility rail — flush on Today. */
+export const WORKPLACE_TIMELINE_RIGHT_GAP_PX = 0;
 
 /** @deprecated Use WORKPLACE_TIMELINE_WIDTH_PX */
 export const WORKPLACE_TIMELINE_WIDTH_EXTRA_PX = 0;
 
-/** Collapsed Next Up queue rail width. */
-export const WORKPLACE_NEXT_UP_RAIL_PX = 40;
+/**
+ * @deprecated Queue no longer uses a permanent rail — Next Up preview is the launcher.
+ * Kept so residual references compile during migration.
+ */
+export const WORKPLACE_NEXT_UP_RAIL_PX = 0;
 
 /**
- * Expanded Next Up queue panel — preferred midpoint for layout math.
- * Band: 380–440px.
+ * @deprecated Inline side panel removed — Queue is overlay-only from Next Up.
+ * Kept for residual layout math references.
  */
 export const WORKPLACE_NEXT_UP_PANEL_PX = 400;
 
-/** CSS width for the open Queue panel — room for title + metadata. */
+/** @deprecated Inline Queue panel width — overlay uses WORKPLACE_NEXT_UP_OVERLAY_WIDTH_CSS. */
 export const WORKPLACE_NEXT_UP_PANEL_WIDTH_CSS = "clamp(380px, 26vw, 440px)";
+
+/** Compact overlay Queue — floats over Focus from the Next Up launcher. */
+export const WORKPLACE_NEXT_UP_OVERLAY_WIDTH_CSS = "clamp(356px, 24vw, 412px)";
+
+/** Top inset under Focus canvas when Queue stretches full height. */
+export const WORKPLACE_NEXT_UP_OVERLAY_TOP_INSET_PX = 8;
 
 /**
  * Focus canvas floor (timer / current-task card) — never shrink below this.
- * Queue rail/panel adds on top; tight layouts scroll horizontally instead.
+ * Queue overlay does not reserve horizontal space.
  */
-export const WORKPLACE_FOCUS_MIN_PX = 520;
+export const WORKPLACE_FOCUS_MIN_PX = 500;
 
 /**
  * Comfortable full Today workplace width (content column, not the window).
@@ -59,61 +69,37 @@ export const WORKPLACE_STATUS_RAIL_HIDE_BELOW_PX = Math.round(
 );
 
 /**
- * Tasks/Habits dock bottom offset by vertical room in `[data-focus-workspace]`.
- * Comfortable → slightly reduced → more reduced → most reduced (3 steps lower).
- * When horizontal layout is tight enough that the top status rail hides, the dock
- * drops lower so it doesn’t float mid-canvas in the extra vertical space.
+ * Tasks/Habits dock — pinned Focus workspace footer (no floating bottom stages).
  */
-export const WORKPLACE_DOCK_BOTTOM_FULL_PX = 68;
-export const WORKPLACE_DOCK_BOTTOM_SLIGHT_PX = 52;
-export const WORKPLACE_DOCK_BOTTOM_MORE_PX = 36;
-export const WORKPLACE_DOCK_BOTTOM_MOST_PX = 16;
 
-/** Focus-workspace height floors for each dock stage (px). */
-export const WORKPLACE_DOCK_STAGE_SLIGHT_BELOW_PX = 700;
-export const WORKPLACE_DOCK_STAGE_MORE_BELOW_PX = 560;
-export const WORKPLACE_DOCK_STAGE_MOST_BELOW_PX = 440;
+/** Launcher chrome height (keep in sync with `.workplace-dock-launcher` shell). */
+export const WORKPLACE_DOCK_LAUNCHER_HEIGHT_PX = 40;
+/** Gap between launcher top and overlay bottom. */
+export const WORKPLACE_DOCK_POPUP_GAP_PX = 8;
+/** Dock footer vertical padding (`py-3`) — keep in sync with Focus dock footer. */
+export const WORKPLACE_DOCK_FOOTER_PAD_Y_PX = 12;
+/** Popup `bottom` relative to Focus section bottom (= footer pad + launcher + gap). */
+export const WORKPLACE_DOCK_OVERLAY_BOTTOM_PX =
+  WORKPLACE_DOCK_FOOTER_PAD_Y_PX +
+  WORKPLACE_DOCK_LAUNCHER_HEIGHT_PX +
+  WORKPLACE_DOCK_POPUP_GAP_PX;
+/** @deprecated Prefer WORKPLACE_DOCK_OVERLAY_BOTTOM_PX */
+export const WORKPLACE_DOCK_POPUP_ABOVE_LAUNCHER_PX =
+  WORKPLACE_DOCK_LAUNCHER_HEIGHT_PX + WORKPLACE_DOCK_POPUP_GAP_PX;
 
-/** Launcher height + gap above it — popup sits this far above dock bottom. */
-export const WORKPLACE_DOCK_POPUP_ABOVE_LAUNCHER_PX = 44 + 8;
-
-export function resolveWorkplaceDockBottomPx(
-  workspaceHeightPx: number,
-  layoutWidthPx?: number,
-): number {
-  let bottom: number;
-  if (workspaceHeightPx >= WORKPLACE_DOCK_STAGE_SLIGHT_BELOW_PX) {
-    bottom = WORKPLACE_DOCK_BOTTOM_FULL_PX;
-  } else if (workspaceHeightPx >= WORKPLACE_DOCK_STAGE_MORE_BELOW_PX) {
-    bottom = WORKPLACE_DOCK_BOTTOM_SLIGHT_PX;
-  } else if (workspaceHeightPx >= WORKPLACE_DOCK_STAGE_MOST_BELOW_PX) {
-    bottom = WORKPLACE_DOCK_BOTTOM_MORE_PX;
-  } else {
-    bottom = WORKPLACE_DOCK_BOTTOM_MOST_PX;
-  }
-
-  // Same breakpoint as status-rail hide — reclaim the freed top chrome by sitting lower.
-  if (
-    layoutWidthPx != null &&
-    layoutWidthPx <= WORKPLACE_STATUS_RAIL_HIDE_BELOW_PX
-  ) {
-    bottom = Math.min(bottom, WORKPLACE_DOCK_BOTTOM_MORE_PX);
-  }
-
-  return bottom;
-}
-
-/** Task/Habit browse overlay — narrower; grows vertically with content. */
-export const WORKPLACE_MODULE_OVERLAY_MAX_PX = 340;
-export const WORKPLACE_MODULE_OVERLAY_MIN_HEIGHT_PX = 360;
-export const WORKPLACE_MODULE_OVERLAY_MAX_HEIGHT_CSS = "min(68vh, 560px)";
-
-/** @deprecated Bottom gap retired — Focus workspace runs to the viewport edge. */
-export const WORKPLACE_PANEL_BOTTOM_GAP_PX = 0;
+/** Task/Habit browse overlay — card size over the dock launcher. */
+export const WORKPLACE_MODULE_OVERLAY_MAX_PX = 372;
+export const WORKPLACE_MODULE_OVERLAY_MIN_HEIGHT_PX = 300;
+export const WORKPLACE_MODULE_OVERLAY_MAX_HEIGHT_CSS = "min(58vh, 480px)";
 
 /**
- * Below this focus-shell width, open Queue as a mid overlay over Focus
- * (expands left from the rail) instead of pushing Focus inline.
+ * Bottom breathing room under Focus + Next Up so the pair floats above the
+ * viewport edge (matches Focus column `pt-3` / 12px).
+ */
+export const WORKPLACE_PANEL_BOTTOM_GAP_PX = 12;
+
+/**
+ * @deprecated Queue is always a mid overlay; inline mode retired with the rail.
  */
 export const WORKPLACE_QUEUE_INLINE_MIN_PX =
   WORKPLACE_FOCUS_MIN_PX + WORKPLACE_NEXT_UP_PANEL_PX;
@@ -125,17 +111,9 @@ export const WORKPLACE_QUEUE_DRAWER_MAX_PX = 1200;
 
 export type WorkplaceQueueLayoutMode = "inline" | "mid" | "drawer";
 
-/** Inline when Focus shell can fit Focus min + open Queue; otherwise mid overlay. */
-export function resolveWorkplaceQueueLayoutMode(
-  focusShellWidthPx?: number,
-): WorkplaceQueueLayoutMode {
-  if (
-    focusShellWidthPx != null &&
-    focusShellWidthPx < WORKPLACE_QUEUE_INLINE_MIN_PX
-  ) {
-    return "mid";
-  }
-  return "inline";
+/** Queue always opens as a mid overlay over Focus (no rail / inline panel). */
+export function resolveWorkplaceQueueLayoutMode(): WorkplaceQueueLayoutMode {
+  return "mid";
 }
 
 /**

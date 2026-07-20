@@ -107,8 +107,8 @@ export function DashboardKpiStrip({
     onTrack.percent > 0 ? `${onTrack.percent}%` : onTrack.label;
 
   return (
-    <section className="overflow-hidden rounded-lg border border-border/60 bg-card">
-      <div className="flex flex-col divide-y divide-border/60 sm:flex-row sm:divide-x sm:divide-y-0">
+    <section className="overflow-hidden rounded-lg border-0 bg-surface-section shadow-none">
+      <div className="flex flex-col divide-y divide-divider sm:flex-row sm:divide-x sm:divide-y-0">
         <KpiCell
           label="Today"
           value={onTrackValue}

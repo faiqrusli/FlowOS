@@ -133,14 +133,14 @@ export const WorkplaceHabitsCard = forwardRef<
       bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
     >
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex shrink-0 flex-wrap gap-1 border-b border-divider px-2 py-1.5">
+        <div className="flex shrink-0 flex-wrap gap-1.5 px-2.5 py-2">
           {TABS.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => setTab(item.id)}
               className={cn(
-                "rounded-md px-2 py-0.5 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-150",
+                "rounded-md px-2.5 py-1 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-150",
                 tab === item.id
                   ? "flow-selected text-foreground"
                   : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
@@ -150,7 +150,7 @@ export const WorkplaceHabitsCard = forwardRef<
             </button>
           ))}
         </div>
-        <div className="min-h-0 flex-1 space-y-1 overflow-y-auto p-1.5 scrollbar-subtle">
+        <div className="min-h-0 flex-1 space-y-1 overflow-y-auto p-2 scrollbar-subtle">
           {list.length === 0 ? (
             <p className="flow-empty mx-1 my-1.5 px-2 py-4 text-center text-[13px] text-muted-foreground/70">
               No habits here
@@ -160,10 +160,10 @@ export const WorkplaceHabitsCard = forwardRef<
               <div
                 key={habit.id}
                 className={cn(
-                  overlay && "cursor-pointer",
+                  overlay && "cursor-pointer rounded-lg",
                   overlay &&
                     selectedHabitId === habit.id &&
-                    "rounded-md ring-1 ring-primary/40",
+                    "bg-surface-8 ring-1 ring-primary/35",
                 )}
                 onClick={() => overlay && setSelectedHabitId(habit.id)}
               >

@@ -13,23 +13,36 @@ export function TimelineHabitLabel({
   compact,
   trackWithFocus,
 }: TimelineHabitLabelProps) {
+  const focusBadge = trackWithFocus ? (
+    <Badge variant="entity-focus" className="p-0" title="Track with Focus">
+      <Crosshair className={cn(compact ? "size-2" : "size-2.5")} />
+    </Badge>
+  ) : null;
+
   return (
-    <span className={cn("inline-flex shrink-0 items-center gap-0.5", className)}>
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center",
+        compact ? "gap-1" : "gap-0.5",
+        className,
+      )}
+    >
       <Badge
         variant="entity-habit"
         className={cn(compact && "text-[7px]")}
       >
         Habit
       </Badge>
-      {trackWithFocus ? (
-        <Badge
-          variant="entity-focus"
-          className="p-0"
-          title="Track with Focus"
+      {compact ? (
+        <span
+          className="inline-flex size-3.5 shrink-0 items-center justify-center"
+          aria-hidden={!trackWithFocus}
         >
-          <Crosshair className={cn(compact ? "size-2" : "size-2.5")} />
-        </Badge>
-      ) : null}
+          {focusBadge}
+        </span>
+      ) : (
+        focusBadge
+      )}
     </span>
   );
 }

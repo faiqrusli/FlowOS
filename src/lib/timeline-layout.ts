@@ -16,7 +16,7 @@ export const TIMELINE_END_MINUTES = TIMELINE_END_HOUR * 60;
 /** Unscheduled click-to-place window matches the visible timeline (6 AM – midnight). */
 export const TIMELINE_PLACEMENT_END_MINUTES = TIMELINE_END_MINUTES;
 export const SNAP_MINUTES = 5;
-export const DEFAULT_TASK_DURATION = 30;
+export const DEFAULT_TASK_DURATION = 15;
 export const DEFAULT_HABIT_DURATION = 15;
 export const MIN_BLOCK_HEIGHT_PX = 30;
 

@@ -40,7 +40,7 @@ export function NextUpDropZone({
         "shrink-0 rounded-md border border-dashed px-3 py-2.5 text-center text-[13px] transition-[border-color,background-color] duration-150",
         active
           ? "border-primary/45 bg-primary/5 text-foreground/90"
-          : "border-border/60 bg-surface-raised text-muted-foreground/85",
+          : "border-border/60 bg-surface-base text-muted-foreground/85",
         className,
       )}
     >

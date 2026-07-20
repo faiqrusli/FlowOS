@@ -18,7 +18,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,6 +45,12 @@ type ReflectionKanbanSectionProps = {
   compact?: boolean;
   /** Drawer: no outer card — content sits on chrome. */
   flat?: boolean;
+  /** Hide the section title (e.g. when wrapped in a collapsible). */
+  hideHeader?: boolean;
+  /** Section heading — default "Custom kanban". */
+  title?: string;
+  /** CTA label — default "Add kanban". */
+  addLabel?: string;
 };
 
 export function ReflectionKanbanSection({
@@ -54,6 +59,9 @@ export function ReflectionKanbanSection({
   disabled,
   compact,
   flat = false,
+  hideHeader = false,
+  title = "Custom kanban",
+  addLabel = "Add kanban",
 }: ReflectionKanbanSectionProps) {
   const [titleDraft, setTitleDraft] = useState("");
   const [addingBoard, setAddingBoard] = useState(false);
@@ -70,13 +78,13 @@ export function ReflectionKanbanSection({
   }
 
   function handleAddKanban() {
-    const title = titleDraft.trim();
-    if (!title) return;
+    const boardTitle = titleDraft.trim();
+    if (!boardTitle) return;
     onChange([
       ...kanbans,
       {
         id: crypto.randomUUID(),
-        title,
+        title: boardTitle,
         cards: [],
         collapsed: false,
       },
@@ -85,21 +93,35 @@ export function ReflectionKanbanSection({
     setAddingBoard(false);
   }
 
-  const header = (
-    <div className="flex flex-row items-center justify-between gap-4">
-      <h3 className="text-sm font-semibold tracking-tight text-foreground">
-        Custom kanban
-      </h3>
+  const header = hideHeader ? (
+    <div className="flex h-7 items-center justify-end">
       <Button
         type="button"
-        variant="outline"
+        variant="secondary"
         size="sm"
         disabled={disabled}
         onClick={() => setAddingBoard(true)}
-        className="gap-1"
+        className="h-7 gap-1"
       >
-        <Plus className="size-4" />
-        Add kanban
+        <Plus className="size-3.5" />
+        {addLabel}
+      </Button>
+    </div>
+  ) : (
+    <div className="flex h-7 flex-row items-center justify-between gap-4">
+      <h3 className="flex h-7 items-center text-sm font-semibold leading-none tracking-tight text-foreground">
+        {title} ({kanbans.length})
+      </h3>
+      <Button
+        type="button"
+        variant="secondary"
+        size="sm"
+        disabled={disabled}
+        onClick={() => setAddingBoard(true)}
+        className="h-7 gap-1"
+      >
+        <Plus className="size-3.5" />
+        {addLabel}
       </Button>
     </div>
   );
@@ -107,7 +129,7 @@ export function ReflectionKanbanSection({
   const body = (
     <div className="space-y-3">
       {addingBoard && (
-        <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-surface-raised p-2">
+        <div className="flex items-center gap-2 rounded-lg border-0 bg-surface-base p-2">
           <Input
             value={titleDraft}
             onChange={(event) => setTitleDraft(event.target.value)}
@@ -171,23 +193,10 @@ export function ReflectionKanbanSection({
   }
 
   return (
-    <Card className="border-border-subtle shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between gap-4 pb-3">
-        <CardTitle>Custom kanban</CardTitle>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={disabled}
-          onClick={() => setAddingBoard(true)}
-          className="gap-1"
-        >
-          <Plus className="size-4" />
-          Add kanban
-        </Button>
-      </CardHeader>
-      <CardContent>{body}</CardContent>
-    </Card>
+    <section className="space-y-4">
+      {header}
+      {body}
+    </section>
   );
 }
 
@@ -261,7 +270,7 @@ function ReflectionKanbanColumn({
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col rounded-xl border",
+        "flex shrink-0 flex-col rounded-xl",
         kanbanColumnBodyClass,
         compact ? "w-full" : "w-[min(100%,280px)] min-w-[240px] max-w-[280px]",
       )}

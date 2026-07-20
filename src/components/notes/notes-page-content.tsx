@@ -9,6 +9,7 @@ import { NotesPanel } from "@/components/notes/notes-panel";
 import { NotesTabTransition } from "@/components/notes/notes-tab-transition";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { BackToTodayLink } from "@/components/shared/back-to-today-link";
+import { useActionToast } from "@/contexts/action-toast-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import {
   createGrowthArea,
@@ -36,6 +37,7 @@ type ContentTab = "notes" | "kanban";
 
 export function NotesPageContent() {
   const { openDailyNote } = useGlobalRightSidebar();
+  const { showActionToast } = useActionToast();
   const [areas, setAreas] = useState<GrowthAreaWithCounts[]>([]);
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -131,6 +133,11 @@ export function NotesPageContent() {
       const areasData = await fetchGrowthAreas();
       setAreas(areasData);
       setSelectedAreaId(created.id);
+      showActionToast({
+        message: "Growth area created",
+        tone: "success",
+        icon: "note",
+      });
       return;
     }
     if (editingArea) {
@@ -146,6 +153,10 @@ export function NotesPageContent() {
     const areasData = await fetchGrowthAreas();
     setAreas(areasData);
     setSelectedAreaId(areasData[0]?.id ?? null);
+    showActionToast({
+      message: "Growth area deleted",
+      icon: "trash",
+    });
   }
 
   async function handleReorderAreas(next: GrowthAreaWithCounts[]) {
@@ -160,14 +171,14 @@ export function NotesPageContent() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden">
-      <div className="flex shrink-0 items-center gap-3 border-b border-border/30 py-2">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden px-2 pt-2">
+      <div className="flex shrink-0 items-center gap-3 py-2">
         <BackToTodayLink />
         <div className="min-w-0">
           <h1 className="text-base font-semibold leading-tight text-foreground">
             Notes
           </h1>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-foreground-secondary">
             Growth areas, notes, and kanban boards
           </p>
         </div>
@@ -207,7 +218,7 @@ export function NotesPageContent() {
             <div className="h-full min-h-0 animate-pulse rounded-2xl bg-surface-raised" />
           ) : (
             selectedArea && (
-              <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border-subtle bg-surface-base shadow-none">
+              <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border-0 bg-surface-base shadow-none">
                 <GrowthAreaHeader
                   area={selectedArea}
                   tab={tab}

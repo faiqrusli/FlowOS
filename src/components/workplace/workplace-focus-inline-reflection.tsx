@@ -50,7 +50,7 @@ export function WorkplaceFocusInlineReflection({
   }
 
   return (
-    <div className="mx-auto w-full max-w-lg rounded-lg border border-border-subtle bg-surface-base px-3 py-2.5">
+    <div className="mx-auto w-full max-w-lg rounded-lg border-0 bg-surface-section px-3 py-2.5">
       <form
         className="flex flex-wrap items-center gap-x-2 gap-y-2"
         onSubmit={(event) => {

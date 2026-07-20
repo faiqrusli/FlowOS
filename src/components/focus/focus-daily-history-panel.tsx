@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buildDailyFocusHistory } from "@/lib/focus-storage";
 import { formatDuration } from "@/lib/focus-utils";
+import { type as typography } from "@/lib/typography";
 import { cn } from "@/lib/utils";
 import type { FocusSession } from "@/types/focus";
 
@@ -23,40 +23,40 @@ export function FocusDailyHistoryPanel({
   const history = useMemo(() => buildDailyFocusHistory(sessions), [sessions]);
 
   return (
-    <Card className="border-border-subtle bg-surface-base shadow-none">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Focus history</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+      <h2 className={typography.sectionTitle}>Focus history</h2>
+      <div className="mt-4">
         {loading ? (
-          <p className="text-sm text-muted-foreground">Loading history…</p>
+          <p className={typography.bodyMuted}>Loading history…</p>
         ) : history.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
+          <p className={cn(typography.bodyMuted, "py-8 text-center")}>
             No focus history yet.
           </p>
         ) : (
-          <ul className="max-h-72 space-y-1 overflow-y-auto">
+          <ul className="max-h-72 space-y-1.5 overflow-y-auto">
             {history.map((day) => (
               <li key={day.date}>
                 <button
                   type="button"
                   onClick={() => onSelectDate(day.date)}
                   className={cn(
-                    "flex w-full items-center justify-between gap-3 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-surface-hover",
-                    selectedDate === day.date && "flow-selected",
+                    "flex w-full items-center justify-between gap-3 rounded-lg bg-surface-base px-3 py-2.5 text-left text-sm transition-colors hover:bg-surface-hover",
+                    selectedDate === day.date && "bg-surface-selected",
                   )}
                 >
                   <div>
-                    <p className="font-medium">{day.label}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-medium text-foreground">{day.label}</p>
+                    <p className="text-xs text-foreground-secondary">
                       {day.sessions.length}{" "}
                       {day.sessions.length === 1 ? "session" : "sessions"}
                     </p>
                   </div>
                   <div className="text-right text-xs tabular-nums">
-                    <p>{formatDuration(day.focusSeconds)}</p>
+                    <p className="text-foreground">
+                      {formatDuration(day.focusSeconds)}
+                    </p>
                     {day.breakSeconds > 0 ? (
-                      <p className="text-muted-foreground">
+                      <p className="text-foreground-secondary">
                         Break {formatDuration(day.breakSeconds)}
                       </p>
                     ) : null}
@@ -66,8 +66,8 @@ export function FocusDailyHistoryPanel({
             ))}
           </ul>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
 

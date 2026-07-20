@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { getHabitDurationMinutes } from "@/lib/schedule-durations";
+import { type as typography } from "@/lib/typography";
 import { cn } from "@/lib/utils";
 import type { Habit } from "@/types/habit";
 
@@ -43,38 +43,51 @@ function HabitOccurrenceRow({
   );
 
   return (
-    <li className="flex items-start gap-2 rounded-md px-1 py-0.5 text-sm transition-colors hover:bg-surface-hover">
+    <li>
       <button
         type="button"
         disabled={disabled}
         onClick={onToggle}
         className={cn(
-          "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
-          habit.completed
-            ? "border-warning bg-warning text-background"
-            : "border-muted-foreground/45 bg-transparent hover:border-warning/70",
+          "flex w-full items-start gap-3 rounded-lg bg-surface-inset px-3.5 py-3 text-left transition-colors duration-150",
+          "hover:bg-surface-hover",
           disabled && "opacity-50",
         )}
         aria-label={`Mark today's "${habit.name}" occurrence as ${habit.completed ? "incomplete" : "complete"}`}
       >
-        {habit.completed && <Check className="size-2.5" strokeWidth={3} />}
-      </button>
-      <div className="min-w-0 flex-1 leading-tight">
-        <p
+        <span
           className={cn(
-            "truncate font-medium text-foreground",
-            habit.completed && "text-muted-foreground",
+            "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
+            habit.completed
+              ? "border-warning bg-warning text-background"
+              : "border-muted-foreground/45 bg-transparent",
           )}
+          aria-hidden
         >
-          {habit.name}
-        </p>
-        {time && (
-          <p className="truncate text-xs text-muted-foreground">
-            {time}
-            {habit.completed ? " · Done" : " · Due"}
-          </p>
-        )}
-      </div>
+          {habit.completed && <Check className="size-2.5" strokeWidth={3} />}
+        </span>
+        <span className="min-w-0 flex-1 leading-tight">
+          <span
+            className={cn(
+              typography.contentPrimary,
+              "block truncate",
+              habit.completed && "text-muted-foreground",
+            )}
+          >
+            {habit.name}
+          </span>
+          {time ? (
+            <span className="mt-1 block truncate text-xs text-foreground-secondary">
+              {time}
+              {habit.completed ? " · Done" : " · Due"}
+            </span>
+          ) : (
+            <span className="mt-1 block truncate text-xs text-foreground-secondary">
+              {habit.completed ? "Done" : "Due"}
+            </span>
+          )}
+        </span>
+      </button>
     </li>
   );
 }
@@ -89,23 +102,27 @@ export function HabitsTodayChecklistCard({
   const completed = habits.filter((h) => h.completed).length;
 
   return (
-    <Card className="border-border-subtle shadow-none">
-      <CardHeader className="space-y-0.5 pb-3">
-        <CardTitle className="text-base">
-          Today&apos;s habits {completed}/{habits.length}
-        </CardTitle>
-        <p className="text-xs font-normal text-muted-foreground">
+    <section className="rounded-xl bg-surface-base px-4 py-5 sm:px-5">
+      <header className="space-y-1">
+        <h2 className={typography.sectionTitle}>
+          Today&apos;s habits{" "}
+          <span className="font-medium tabular-nums text-foreground-secondary">
+            {completed}/{habits.length}
+          </span>
+        </h2>
+        <p className={typography.meta}>
           Check off each habit you&apos;ve completed today — not the routine
           forever.
         </p>
-      </CardHeader>
-      <CardContent className="space-y-4 pt-0">
+      </header>
+
+      <div className="mt-4">
         {sorted.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
+          <p className={cn(typography.bodyMuted, "py-2")}>
             No habits scheduled for today.
           </p>
         ) : (
-          <ul className="grid grid-cols-2 gap-x-4 gap-y-2 sm:gap-x-6">
+          <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-x-3 sm:gap-y-2">
             {sorted.map((habit) => (
               <HabitOccurrenceRow
                 key={habit.id}
@@ -116,17 +133,17 @@ export function HabitsTodayChecklistCard({
             ))}
           </ul>
         )}
+      </div>
 
-        {showManageButton && (
-          <Button
-            className="w-full rounded-full"
-            nativeButton={false}
-            render={<Link href="/habits" />}
-          >
-            Manage habits
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+      {showManageButton && (
+        <Button
+          className="mt-4 w-full rounded-full"
+          nativeButton={false}
+          render={<Link href="/habits" />}
+        >
+          Manage habits
+        </Button>
+      )}
+    </section>
   );
 }

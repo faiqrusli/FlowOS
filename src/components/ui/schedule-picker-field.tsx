@@ -124,7 +124,7 @@ export function ScheduleDatePickerField({
         triggerRef={triggerRef}
         className={CALENDAR_PANEL_WIDTH_CLASS}
       >
-        <div className="overflow-hidden rounded-xl bg-surface-overlay">
+        <div className="overflow-hidden rounded-xl bg-surface-raised">
           <CalendarPanel
             value={value}
             showQuickActions
@@ -197,7 +197,7 @@ export function ScheduleTimePickerField({
         align="end"
         className={TIME_PICKER_PANEL_WIDTH_CLASS}
       >
-        <div className="overflow-hidden rounded-xl bg-surface-overlay">
+        <div className="overflow-hidden rounded-xl bg-surface-raised">
           <TimePickerPanel
             value={parts}
             hasValue={Boolean(value)}

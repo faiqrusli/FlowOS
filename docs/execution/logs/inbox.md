@@ -48,6 +48,7 @@ inbox (scratch)
 
 | Idea | Runbook / spec | Session / WP |
 |------|----------------|--------------|
+| Live demo / resume guest workspace + public feedback DB | [flowos-live-demo-spec.md](../../review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](../runbooks/flowos-live-demo.md) | Approved 2026-07-20; **v1.2** adds schedule reminders MVP; P1 seed pack next |
 | Today visual hierarchy + Next Up Queue (PLAN→COMMIT→EXECUTE) | [today-page-hierarchy-refinement-spec.md](../../review/design/today-page-hierarchy-refinement-spec.md) · [m2-today-hierarchy-refinement.md](../runbooks/m2-today-hierarchy-refinement.md) | Sessions 1–9; founder gate before Session 5 |
 | Unmerged branch queue (founder-led P1→P7) | [unmerged-branch-queue.md](./unmerged-branch-queue.md) | **P1 done;** **P2 next:** Today V3 Session 6 |
 | Schedule Break modal — future break reminders on quick focus (not Pomodoro) | [schedule-break-modal-spec.md](../../review/design/schedule-break-modal-spec.md) | Shipped core; review follow-ups only |

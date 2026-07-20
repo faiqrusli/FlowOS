@@ -19,6 +19,7 @@ import {
   isAlertBeforeConfigured,
   parseAlertBeforeTimeInput,
 } from "@/lib/task-alert-before-options";
+import { requestBrowserNotificationPermissionIfNeeded } from "@/lib/browser-notifications";
 import { cn } from "@/lib/utils";
 import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 
@@ -167,11 +168,13 @@ export function TaskAlertBeforePicker({
 
   function applyClear() {
     onChange(applyClearAlert());
+    void requestBrowserNotificationPermissionIfNeeded();
     setOpen(false);
   }
 
   function applyPreset(minutes: number) {
     onChange(applyPresetAlert(minutes));
+    void requestBrowserNotificationPermissionIfNeeded();
     setOpen(false);
   }
 

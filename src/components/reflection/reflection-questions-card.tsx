@@ -1,8 +1,8 @@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { drawerWritingFieldClass } from "@/lib/theme/surface-classes";
+import { type as typography } from "@/lib/typography";
 
 type ReflectionQuestionsCardProps = {
   wentWell: string;
@@ -29,7 +29,12 @@ export function ReflectionQuestionsCard({
   const fields = (
     <>
       <div className="space-y-2">
-        <Label htmlFor="went-well">What went well today?</Label>
+        <Label
+          htmlFor="went-well"
+          className="text-[11px] font-semibold uppercase tracking-[0.14em] text-success/75"
+        >
+          What went well
+        </Label>
         <Textarea
           id="went-well"
           value={wentWell}
@@ -41,7 +46,12 @@ export function ReflectionQuestionsCard({
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="went-wrong">What went wrong today?</Label>
+        <Label
+          htmlFor="went-wrong"
+          className="text-[11px] font-semibold uppercase tracking-[0.14em] text-warning/75"
+        >
+          What went wrong
+        </Label>
         <Textarea
           id="went-wrong"
           value={wentWrong}
@@ -56,19 +66,15 @@ export function ReflectionQuestionsCard({
   );
 
   if (flat) {
-    return <section className="space-y-6">{fields}</section>;
+    return <section className="space-y-5">{fields}</section>;
   }
 
   return (
-    <Card className="border-border-subtle shadow-none">
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
       {hideTitle ? null : (
-        <CardHeader>
-          <CardTitle>Reflection</CardTitle>
-        </CardHeader>
+        <h2 className={typography.sectionTitle}>Reflection</h2>
       )}
-      <CardContent className={cn("space-y-6", hideTitle && "pt-4")}>
-        {fields}
-      </CardContent>
-    </Card>
+      <div className={cn("space-y-6", hideTitle ? "mt-0" : "mt-4")}>{fields}</div>
+    </section>
   );
 }

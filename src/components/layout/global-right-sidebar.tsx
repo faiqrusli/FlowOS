@@ -46,7 +46,7 @@ const PANEL_ITEMS: {
 ];
 
 /** Slightly slower than shared panel chrome so open/close reads softer. */
-const RIGHT_SIDEBAR_MOTION_MS = 340;
+const RIGHT_SIDEBAR_MOTION_MS = 220;
 const NAV_TOOLTIP_DELAY_MS = 500;
 
 const PANEL_SLIDE_TRANSITION = `transform ${RIGHT_SIDEBAR_MOTION_MS}ms ${PANEL_LAYOUT_EASE}`;
@@ -88,11 +88,9 @@ export function GlobalRightSidebar() {
   const { activePanel, expanded, width, openPanel, toggleExpanded, setWidth } =
     useGlobalRightSidebar();
 
-  // Panel occupies everything left of the fixed icon rail.
-  const panelWidth = Math.max(
-    0,
-    width - GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX,
-  );
+  // One shared content width for Details / Notes / Reflection.
+  // Drag-resize persists; switching panels must not change width.
+  const panelWidth = Math.max(0, width - GLOBAL_RIGHT_SIDEBAR_COLLAPSED_WIDTH_PX);
   const railRightOffset = GLOBAL_RIGHT_RAIL_OUTER_GUTTER_PX;
   const panelRightOffset = GLOBAL_RIGHT_SIDEBAR_LAYOUT_RESERVE_PX;
 
@@ -105,11 +103,12 @@ export function GlobalRightSidebar() {
         aria-hidden
       />
 
-      {/* Sliding panel — transform only; rail is a separate fixed layer. */}
+      {/* Sliding panel — transform only; rail is a separate fixed layer.
+          Outer overflow stays visible so left-edge drawer shadow isn’t clipped. */}
       <div
         className={cn(
-          "fixed inset-y-0 z-50 flex flex-col overflow-hidden border-l border-border-subtle text-foreground",
-          workspaceRailBackgroundClass,
+          "flow-shell-right-drawer fixed inset-y-0 z-50 flex flex-col text-foreground",
+          expanded && "flow-shell-right-drawer-elevated",
           !expanded && "pointer-events-none",
         )}
         style={{
@@ -129,7 +128,7 @@ export function GlobalRightSidebar() {
               onResizeEnd={() => undefined}
             />
 
-            <div className="flex h-[49px] shrink-0 items-center justify-between gap-2 border-b border-sidebar-border px-3">
+            <div className="flex h-[43px] shrink-0 items-center justify-between gap-2 px-3 [&>*]:translate-y-px">
               <h2 className="text-sm font-semibold tracking-tight">
                 {panelHeaderTitle(activePanel)}
               </h2>
@@ -152,11 +151,13 @@ export function GlobalRightSidebar() {
         ) : null}
       </div>
 
-      {/* Icon rail — inset strip with clear L/R borders; never translates. */}
+      {/* Icon rail — quiet strip; soft surface contrast + near-invisible edge.
+          Shadow only when collapsed — open drawer owns the left cast. */}
       <div
         className={cn(
-          "fixed inset-y-0 z-50 flex h-full flex-col items-center gap-0 border-x border-border-strong px-1 text-foreground",
+          "flow-border-hairline-l fixed inset-y-0 z-50 flex h-full flex-col items-center px-2 pt-1.5 text-foreground",
           workspaceRailBackgroundClass,
+          !expanded && "flow-shell-right-rail-elevated",
         )}
         style={{
           right: railRightOffset,
@@ -193,7 +194,7 @@ export function GlobalRightSidebar() {
               />
               <PanelRightClose
                 className={cn(
-                  "absolute inset-0 m-auto size-4.5 transition-opacity duration-150",
+                  "absolute inset-0 m-auto size-4.5 transition-opacity duration-[180ms] ease-out",
                   expanded
                     ? "opacity-100 group-hover/panel-toggle:opacity-0"
                     : "opacity-0",
@@ -202,7 +203,7 @@ export function GlobalRightSidebar() {
               />
               <PanelRightClose
                 className={cn(
-                  "absolute inset-0 m-auto size-4.5 opacity-0 transition-opacity duration-150",
+                  "absolute inset-0 m-auto size-4.5 opacity-0 transition-opacity duration-[180ms] ease-out",
                   expanded && "group-hover/panel-toggle:opacity-100",
                 )}
                 aria-hidden
@@ -218,37 +219,39 @@ export function GlobalRightSidebar() {
           </Tooltip>
         </div>
 
-        {PANEL_ITEMS.map((item) => {
-          const Icon = item.icon;
-          const active = activePanel === item.id;
+        <div className="mt-1 flex w-full flex-col items-center gap-1">
+          {PANEL_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const active = activePanel === item.id;
 
-          return (
-            <div key={item.id} className={shellRailIconRowClass}>
-              <Tooltip>
-                <TooltipTrigger
-                  delay={NAV_TOOLTIP_DELAY_MS}
-                  render={
-                    <button
-                      type="button"
-                      onClick={() => openPanel(item.id)}
-                      className={globalRailButtonClass(active)}
-                      aria-label={item.label}
-                    />
-                  }
-                >
-                  <Icon className="size-4.5" />
-                </TooltipTrigger>
-                <TooltipContent
-                  side="left"
-                  sideOffset={8}
-                  className={railTooltipContentClass}
-                >
-                  {item.label}
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          );
-        })}
+            return (
+              <div key={item.id} className={shellRailIconRowClass}>
+                <Tooltip>
+                  <TooltipTrigger
+                    delay={NAV_TOOLTIP_DELAY_MS}
+                    render={
+                      <button
+                        type="button"
+                        onClick={() => openPanel(item.id)}
+                        className={globalRailButtonClass(active)}
+                        aria-label={item.label}
+                      />
+                    }
+                  >
+                    <Icon className="size-4.5" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="left"
+                    sideOffset={8}
+                    className={railTooltipContentClass}
+                  >
+                    {item.label}
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </>
   );

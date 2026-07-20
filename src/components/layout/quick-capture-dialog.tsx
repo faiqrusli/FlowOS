@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { fetchTaskBoard, isInboxGroup, isOrganizationGroup } from "@/lib/task-groups";
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScheduleDatePickerField } from "@/components/ui/schedule-picker-field";
 import { TaskPrioritySelect } from "@/components/tasks/task-priority-select";
+import { useActionToast } from "@/contexts/action-toast-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import {
   getTaskGroupAppearance,
@@ -32,11 +34,18 @@ import {
 import type { TaskPriority } from "@/lib/task-priority";
 import { DEFAULT_TASK_SORT_MODE, getTaskGroupSortMode } from "@/lib/task-sort";
 import { cn } from "@/lib/utils";
+import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 import type { PlanningState, TaskGroupWithTasks } from "@/types/task";
 
 export function QuickCaptureDialog() {
-  const { quickCaptureOpen, setQuickCaptureOpen, notifyWorkplaceTaskCreated } =
-    useGlobalRightSidebar();
+  const router = useRouter();
+  const {
+    quickCaptureOpen,
+    setQuickCaptureOpen,
+    notifyWorkplaceTaskCreated,
+    selectTask,
+  } = useGlobalRightSidebar();
+  const { showActionToast } = useActionToast();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [showDescription, setShowDescription] = useState(false);
@@ -108,7 +117,19 @@ export function QuickCaptureDialog() {
         planningState: showPlanning ? planningState : "none",
       });
 
-      notifyWorkplaceTaskCreated(created);
+      const handled = notifyWorkplaceTaskCreated(created);
+      if (!handled) {
+        showActionToast({
+          message: "Task created successfully",
+          tone: "success",
+          icon: "check",
+          actionLabel: "View",
+          onAction: () => {
+            selectTask(created.id);
+            router.push("/tasks");
+          },
+        });
+      }
 
       setQuickCaptureOpen(false);
       setTitle("");
@@ -158,7 +179,7 @@ export function QuickCaptureDialog() {
             />
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="flex h-9 items-center gap-2 rounded-md border border-input bg-surface-base px-2.5 text-sm outline-none"
+                className={cn(compactControlTriggerClass, "h-9 w-full gap-2 px-2.5 text-sm")}
                 aria-label="Group"
               >
                 <span
@@ -166,7 +187,7 @@ export function QuickCaptureDialog() {
                     "inline-flex size-4 shrink-0 items-center justify-center",
                     selectedGroupAppearance
                       ? ""
-                      : "rounded-full bg-surface-raised",
+                      : "rounded-full bg-surface-overlay",
                   )}
                 >
                   {selectedGroupAppearance ? (
@@ -224,14 +245,14 @@ export function QuickCaptureDialog() {
           <div className="flex items-center gap-4 text-sm">
             <button
               type="button"
-              className="font-medium text-foreground hover:text-foreground/80"
+              className="font-medium text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setShowDescription((value) => !value)}
             >
               + Description
             </button>
             <button
               type="button"
-              className="font-medium text-foreground hover:text-foreground/80"
+              className="font-medium text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setShowPlanning((value) => !value)}
             >
               + Planning
@@ -251,7 +272,7 @@ export function QuickCaptureDialog() {
           {showPlanning ? (
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Plan</span>
-              <div className="inline-flex rounded-lg border border-border-subtle bg-surface-raised p-0.5">
+              <div className="inline-flex rounded-lg border border-border-subtle bg-control-default p-0.5">
                 {(["none", "later"] as const).map((item) => (
                   <button
                     key={item}
@@ -260,8 +281,8 @@ export function QuickCaptureDialog() {
                     className={cn(
                       "rounded-md px-2.5 py-0.5 text-[14px] font-medium capitalize transition-[background-color,color,box-shadow] duration-150",
                       planningState === item
-                        ? "bg-surface-overlay text-foreground shadow-xs"
-                        : "text-muted-foreground hover:text-foreground",
+                        ? "bg-surface-base text-foreground shadow-xs"
+                        : "text-muted-foreground hover:bg-control-hover hover:text-foreground",
                     )}
                   >
                     {item === "none" ? "Normal" : "Later"}

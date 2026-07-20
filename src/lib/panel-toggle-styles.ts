@@ -32,20 +32,28 @@ export function panelToggleHoverIconClass(size: "sm" | "md" = "md") {
   );
 }
 
-/** Shared left/right rail icon cell — centers the size-9 hit circle. */
-export const SHELL_RAIL_ICON_ROW_PX = 47;
+/**
+ * Shared left/right rail icon cell — true 43px band.
+ * Nudge children 1px down so the odd centering pixel sits on top
+ * (padding would shrink the content box under border-box).
+ */
+export const SHELL_RAIL_ICON_ROW_PX = 43;
 
 export const shellRailIconRowClass =
-  "flex h-[47px] w-full shrink-0 items-center justify-center";
+  "flex h-[43px] w-full shrink-0 items-center justify-center [&>*]:translate-y-px";
+
+/** Shared top/brand/utility header row — same 43px band + top-biased center. */
+export const shellHeaderBandClass =
+  "flex h-[43px] shrink-0 items-center [&>*]:translate-y-px";
 
 /** Neutral global sidebar rail — temporary hover/active on chrome. */
 export function globalRailButtonClass(active = false) {
   return cn(
-    // size-9 (36px) hit circle — shared left/right rail geometry
-    "relative inline-flex size-9 cursor-pointer items-center justify-center rounded-xl transition-[background-color,color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]",
+    // size-8 (32px) — tighter pad around icons than size-9
+    "relative inline-flex size-8 cursor-pointer items-center justify-center rounded-lg transition-[background-color,color] duration-[180ms] ease-out",
     active
       ? "bg-primary-soft text-primary"
-      : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
+      : "text-muted-foreground hover:bg-surface-ghost-hover hover:text-foreground",
   );
 }
 

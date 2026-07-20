@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { CustomEntryDialog } from "@/components/reflection/custom-entry-dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CustomEntry } from "@/types/reflection";
 
 type CustomEntriesSectionProps = {
@@ -13,6 +12,8 @@ type CustomEntriesSectionProps = {
   disabled?: boolean;
   /** Drawer: no outer card — content sits on chrome. */
   flat?: boolean;
+  /** Hide the section title (e.g. when wrapped in a collapsible). */
+  hideHeader?: boolean;
 };
 
 export function CustomEntriesSection({
@@ -20,6 +21,7 @@ export function CustomEntriesSection({
   onChange,
   disabled,
   flat = false,
+  hideHeader = false,
 }: CustomEntriesSectionProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
@@ -51,20 +53,34 @@ export function CustomEntriesSection({
     setDialogOpen(true);
   }
 
-  const header = (
-    <div className="flex flex-row items-center justify-between gap-4">
-      <h3 className="text-sm font-semibold tracking-tight text-foreground">
-        Custom entries
-      </h3>
+  const header = hideHeader ? (
+    <div className="flex h-7 items-center justify-end">
       <Button
         type="button"
-        variant="outline"
+        variant="secondary"
         size="sm"
         disabled={disabled}
         onClick={openCreate}
-        className="gap-1"
+        className="h-7 gap-1"
       >
-        <Plus className="size-4" />
+        <Plus className="size-3.5" />
+        Add entry
+      </Button>
+    </div>
+  ) : (
+    <div className="flex h-7 flex-row items-center justify-between gap-4">
+      <h3 className="flex h-7 items-center text-sm font-semibold leading-none tracking-tight text-foreground">
+        Custom entries ({entries.length})
+      </h3>
+      <Button
+        type="button"
+        variant="secondary"
+        size="sm"
+        disabled={disabled}
+        onClick={openCreate}
+        className="h-7 gap-1"
+      >
+        <Plus className="size-3.5" />
         Add entry
       </Button>
     </div>
@@ -81,13 +97,13 @@ export function CustomEntriesSection({
           {entries.map((entry) => (
             <li
               key={entry.id}
-              className="flex items-start justify-between gap-3 rounded-lg border border-border-subtle bg-surface-base px-4 py-3"
+              className="flex items-start justify-between gap-3 rounded-lg border-0 bg-surface-5 px-4 py-3 transition-[background-color] duration-150 hover:bg-surface-6"
             >
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground">
                   {entry.title}
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 text-sm text-foreground-secondary">
                   {entry.content || "—"}
                 </p>
               </div>
@@ -99,6 +115,7 @@ export function CustomEntriesSection({
                   disabled={disabled}
                   onClick={() => openEdit(entry)}
                   aria-label={`Edit ${entry.title}`}
+                  className="text-muted-foreground"
                 >
                   <Pencil className="size-4" />
                 </Button>
@@ -145,23 +162,10 @@ export function CustomEntriesSection({
   }
 
   return (
-    <Card className="border-border-subtle shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between gap-4">
-        <CardTitle>Custom entries</CardTitle>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={disabled}
-          onClick={openCreate}
-          className="gap-1"
-        >
-          <Plus className="size-4" />
-          Add entry
-        </Button>
-      </CardHeader>
-      <CardContent>{list}</CardContent>
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+      <div className="mb-4">{header}</div>
+      {list}
       {dialog}
-    </Card>
+    </section>
   );
 }

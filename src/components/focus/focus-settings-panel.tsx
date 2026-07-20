@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -13,6 +12,7 @@ import {
   writeFocusSettings,
   type FocusSettings,
 } from "@/lib/focus-settings";
+import { type as typography } from "@/lib/typography";
 import { cn } from "@/lib/utils";
 
 export function FocusSettingsPanel() {
@@ -40,13 +40,11 @@ export function FocusSettingsPanel() {
   }
 
   return (
-    <Card className="border-border-subtle bg-surface-base shadow-none">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Settings</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-8">
-        <section className="space-y-3">
-          <h3 className="text-sm font-semibold">Pomodoro</h3>
+    <section className="rounded-xl bg-surface-section px-4 py-5 sm:px-5">
+      <h2 className={typography.sectionTitle}>Settings</h2>
+      <div className="mt-5 space-y-8">
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">Pomodoro</h3>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-1.5">
               <Label htmlFor="focus-minutes">Focus duration (min)</Label>
@@ -114,10 +112,12 @@ export function FocusSettingsPanel() {
               Auto resume
             </label>
           </div>
-        </section>
+        </div>
 
-        <section className="space-y-3">
-          <h3 className="text-sm font-semibold">Break activities</h3>
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">
+            Break activities
+          </h3>
           <div className="flex flex-wrap gap-2">
             {settings.breakActivities.map((activity) => (
               <button
@@ -130,7 +130,7 @@ export function FocusSettingsPanel() {
                     ),
                   })
                 }
-                className="rounded-full border border-border/40 bg-surface-raised px-2.5 py-1 text-xs hover:bg-surface-hover"
+                className="rounded-md bg-surface-base px-2.5 py-1 text-xs text-foreground transition-colors hover:bg-surface-hover"
               >
                 {activity} ×
               </button>
@@ -145,7 +145,7 @@ export function FocusSettingsPanel() {
             />
             <Button
               type="button"
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={() => {
                 const trimmed = newActivity.trim();
@@ -160,11 +160,11 @@ export function FocusSettingsPanel() {
               Add
             </Button>
           </div>
-        </section>
+        </div>
 
-        <section className="space-y-3">
-          <h3 className="text-sm font-semibold">Music</h3>
-          <p className="text-xs text-muted-foreground">
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">Music</h3>
+          <p className={typography.meta}>
             Future integration — no embedded player yet.
           </p>
           <div className="flex flex-wrap gap-4">
@@ -178,7 +178,7 @@ export function FocusSettingsPanel() {
               <label
                 key={key}
                 className={cn(
-                  "flex items-center gap-2 text-sm text-muted-foreground",
+                  "flex items-center gap-2 text-sm text-foreground-secondary",
                 )}
               >
                 <Switch
@@ -196,8 +196,8 @@ export function FocusSettingsPanel() {
               </label>
             ))}
           </div>
-        </section>
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+    </section>
   );
 }

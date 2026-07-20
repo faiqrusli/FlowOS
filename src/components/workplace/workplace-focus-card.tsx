@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CalendarClock, Coffee, Pause, Play, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,9 @@ import { WorkplaceFocusSessionComplete } from "@/components/workplace/workplace-
 import { WorkplaceFocusReflectionModal } from "@/components/workplace/workplace-focus-reflection-modal";
 import { FocusSwitchToast } from "@/components/workplace/focus-switch-toast";
 import { useWorkplaceFocusTask } from "@/contexts/workplace-focus-task-context";
+import { useNextUpQueueViewController } from "@/contexts/next-up-queue-view-context";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
+import { useActionToast } from "@/contexts/action-toast-context";
 import {
   getDateKeyInTimezone,
   getTodayDateString,
@@ -60,10 +62,6 @@ import {
 } from "@/lib/next-up-drag";
 import {
   WORKPLACE_FOCUS_MIN_PX,
-  WORKPLACE_NEXT_UP_PANEL_PX,
-  WORKPLACE_NEXT_UP_RAIL_PX,
-  resolveWorkplaceQueueLayoutMode,
-  type WorkplaceQueueLayoutMode,
 } from "@/lib/workplace-layout";
 import {
   fetchHabitQueueRefs,
@@ -74,6 +72,10 @@ import {
   reorderHabitQueueRefs,
 } from "@/lib/queue-ref-storage";
 import { buildNextUpListEntries } from "@/components/focus/next-up-queue-list";
+import {
+  buildTaskQueuePositionMap,
+  revealNextUpTaskWhenReady,
+} from "@/lib/next-up-queue-view";
 import {
   fetchUnifiedQueueOrder,
   habitQueueKey,
@@ -114,12 +116,22 @@ const NEXT_UP_WORKPLACE_UI_ENABLED = true;
 type WorkplaceFocusCardProps = {
   groups: TaskGroupWithTasks[];
   onToggleComplete: (task: Task, markComplete?: boolean) => void;
+  onToggleHabitComplete?: (habit: Habit) => void;
   onOpenDetail: (taskId: string) => void;
   onOpenHabit?: (habitId: string) => void;
   onContinueLater: (task: Task) => void;
   onContinueTomorrow: (task: Task) => void;
   onPlanLater: (task: Task) => void;
+  onDeleteTask: (taskId: string) => void;
   onUpdateDescription?: (taskId: string, description: string | null) => void;
+  /** Tasks/Habits dock open — dim Focus canvas under the overlay. */
+  dockOverlayOpen?: boolean;
+  /** Dismiss Tasks/Habits overlay (scrim covers Focus section only). */
+  onDismissDockOverlay?: () => void;
+  /** Hide/disable dismiss scrim while schedule-dragging from the dock. */
+  dockOverlayScrimDisabled?: boolean;
+  /** Pinned Focus workspace footer (Tasks/Habits switcher + overlay). */
+  dockFooter?: ReactNode;
 };
 
 function clearTimerControlFocus(container: HTMLElement) {
@@ -175,8 +187,8 @@ function WorkplaceFocusClock({
       <p
         className={cn(
           // Fixed size — layout tightness scrolls horizontally; timer never scales down.
-          "font-mono text-[4.75rem] font-semibold leading-[0.95] tracking-[-0.03em] tabular-nums",
-          idle ? "text-foreground/30" : "text-foreground",
+          "flow-type-display font-mono text-[4.75rem] leading-[0.95] tracking-[-0.03em] tabular-nums",
+          idle ? "text-foreground/30" : null,
         )}
       >
         {clock}
@@ -184,9 +196,9 @@ function WorkplaceFocusClock({
       {statusLabel ? (
         <p
           className={cn(
-            "mt-[0.35em] text-[13px] font-semibold uppercase tracking-[0.14em]",
+            "flow-type-label mt-[0.35em] text-[13px] uppercase tracking-[0.14em]",
             statusTone === "break" && "text-warning",
-            statusTone === "muted" && "text-muted-foreground",
+            statusTone === "muted" && "flow-type-meta",
             statusTone === "focus" && "text-primary",
           )}
         >
@@ -203,13 +215,20 @@ const timerStopButtonClassName =
 export function WorkplaceFocusCard({
   groups,
   onToggleComplete,
+  onToggleHabitComplete,
   onOpenDetail,
   onOpenHabit,
   onContinueLater,
   onContinueTomorrow,
   onPlanLater,
+  onDeleteTask,
   onUpdateDescription,
+  dockOverlayOpen = false,
+  onDismissDockOverlay,
+  dockOverlayScrimDisabled = false,
+  dockFooter,
 }: WorkplaceFocusCardProps) {
+  const { showActionToast } = useActionToast();
   const [tab, setTab] = useState<FocusTab>("focus");
   const [reflectionOpen, setReflectionOpen] = useState(false);
   const [scheduleBreakOpen, setScheduleBreakOpen] = useState(false);
@@ -236,13 +255,13 @@ export function WorkplaceFocusCard({
     useState<FocusSession | null>(null);
   const [nextUpDrawerOpen, setNextUpDrawerOpen] = useState(false);
   const focusShellRef = useRef<HTMLDivElement>(null);
-  const [queueLayoutMode, setQueueLayoutMode] =
-    useState<WorkplaceQueueLayoutMode>("inline");
   /** Tracks whether the queue was opened by the user or by an eligible drag. */
   const queueOpenModeRef = useRef<"closed" | "manual" | "drag">("closed");
   const dragAutoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
+  /** Set synchronously on a valid queue/NOW drop so cancel-drag can close immediately. */
+  const queueDropHandledRef = useRef(false);
   const nextUpDrawerScrollTopRef = useRef(0);
   const nextUpDrawerListRef = useRef<HTMLDivElement>(null);
   const [nextUpTasks, setNextUpTasks] = useState<Task[]>([]);
@@ -278,6 +297,7 @@ export function WorkplaceFocusCard({
     prepareFocusTarget,
     lastSavedSession,
   } = useFocusSessionContext();
+  const nextUpQueueView = useNextUpQueueViewController();
 
   const pomodoroDisabled = quick.isActive;
   const quickStartDisabled = pomodoro.isRunning || pomodoro.isPaused;
@@ -573,7 +593,12 @@ export function WorkplaceFocusCard({
     if (!lastSavedSession || !pendingSessionEndRef.current) return;
     pendingSessionEndRef.current = false;
     setSessionCompleteSession(lastSavedSession);
-  }, [lastSavedSession]);
+    showActionToast({
+      message: "Focus session saved",
+      tone: "success",
+      icon: "play",
+    });
+  }, [lastSavedSession, showActionToast]);
 
   const finishDragAutoClose = useCallback(() => {
     if (queueOpenModeRef.current !== "drag") return;
@@ -585,7 +610,7 @@ export function WorkplaceFocusCard({
         queueOpenModeRef.current = "closed";
         setNextUpDrawerOpen(false);
       }
-    }, 750);
+    }, 1200);
   }, []);
 
   const handleScheduleDrop = useCallback(
@@ -625,6 +650,7 @@ export function WorkplaceFocusCard({
           );
           return;
         }
+        queueDropHandledRef.current = true;
         setHabitDropNotice(null);
         setHabitQueueRefs(insertHabitQueueRef(payload.id));
         setUnifiedQueueOrder((prev) => {
@@ -643,6 +669,8 @@ export function WorkplaceFocusCard({
       setHabitDropNotice(null);
 
       if (payload.kind === "task" && NEXT_UP_WORKPLACE_UI_ENABLED) {
+        queueDropHandledRef.current = true;
+        finishDragAutoClose();
         void insertTaskToNextUp(payload.id, beforeTaskId)
           .then(() => {
             void refreshNextUpTasks();
@@ -655,7 +683,6 @@ export function WorkplaceFocusCard({
               persistUnifiedQueueOrder(next);
               return next;
             });
-            finishDragAutoClose();
           })
           .catch((error: unknown) => {
             setHabitDropNotice(
@@ -667,6 +694,7 @@ export function WorkplaceFocusCard({
         return;
       }
 
+      queueDropHandledRef.current = true;
       setActiveTaskId(payload.id, "manual");
     },
     [
@@ -720,6 +748,29 @@ export function WorkplaceFocusCard({
     setNextUpDrawerOpen(true);
   }, []);
 
+  const taskQueuePositions = useMemo(
+    () => buildTaskQueuePositionMap(nextUpEntries),
+    [nextUpEntries],
+  );
+
+  useEffect(() => {
+    nextUpQueueView?.setTaskPositions(taskQueuePositions);
+  }, [nextUpQueueView, taskQueuePositions]);
+
+  const revealQueuedTask = useCallback(
+    (taskId: string) => {
+      openNextUpDrawer("manual");
+      revealNextUpTaskWhenReady(taskId);
+    },
+    [openNextUpDrawer],
+  );
+
+  useEffect(() => {
+    if (!nextUpQueueView) return;
+    nextUpQueueView.setRevealHandler(revealQueuedTask);
+    return () => nextUpQueueView.setRevealHandler(null);
+  }, [nextUpQueueView, revealQueuedTask]);
+
   const toggleNextUpDrawer = useCallback(() => {
     if (nextUpDrawerOpen) {
       closeNextUpDrawer();
@@ -734,6 +785,7 @@ export function WorkplaceFocusCard({
       if (!event.dataTransfer) return;
       if (!isScheduleKindDrag(event as unknown as React.DragEvent)) return;
       if (isNextUpReorderDrag(event as unknown as React.DragEvent)) return;
+      queueDropHandledRef.current = false;
       setDropActive(true);
       const drag = getActiveTimelineDrag();
       if (drag?.kind === "habit") {
@@ -752,6 +804,15 @@ export function WorkplaceFocusCard({
       setNextUpDropBeforeKey(null);
       habitDropBlockedRef.current = false;
       setHabitDropBlocked(false);
+      // Cancel / miss: close drag-opened Queue immediately. Valid drops schedule dwell.
+      if (
+        queueOpenModeRef.current === "drag" &&
+        !queueDropHandledRef.current &&
+        !dragAutoCloseTimerRef.current
+      ) {
+        queueOpenModeRef.current = "closed";
+        setNextUpDrawerOpen(false);
+      }
     };
     window.addEventListener("dragstart", onDragStart);
     window.addEventListener("dragend", onDragEnd);
@@ -946,6 +1007,7 @@ export function WorkplaceFocusCard({
         }
         const habit = habits.find((item) => item.id === payload.id);
         if (!habit) return;
+        queueDropHandledRef.current = true;
         setHabitDropNotice(null);
         activateFocusHabit(habit);
         finishDragAutoClose();
@@ -956,6 +1018,7 @@ export function WorkplaceFocusCard({
         .flatMap((group) => group.tasks)
         .find((item) => item.id === payload.id);
       if (!task) return;
+      queueDropHandledRef.current = true;
       setHabitDropNotice(null);
       // Drag-to-focus: switch immediately (pause prior task history), toast for Complete/Undo.
       switchFocusFromDrop(task);
@@ -1021,18 +1084,35 @@ export function WorkplaceFocusCard({
       void removeTaskFromNextUp(taskId).catch(() => {
         void refreshNextUpTasks();
       });
+      showActionToast({
+        message: "Removed from Queue",
+        icon: "queue",
+        actionLabel: "Undo",
+        onAction: () => {
+          void appendTaskToNextUp(taskId).then(() => {
+            void refreshNextUpTasks();
+          });
+        },
+      });
     },
-    [refreshNextUpTasks],
+    [refreshNextUpTasks, showActionToast],
   );
 
-  const handleRemoveQueueHabit = useCallback((habitId: string) => {
-    setHabitQueueRefs(removeHabitQueueRef(habitId));
-    setUnifiedQueueOrder((prev) => {
-      const next = removeUnifiedQueueKey(prev, habitQueueKey(habitId));
-      persistUnifiedQueueOrder(next);
-      return next;
-    });
-  }, []);
+  const handleRemoveQueueHabit = useCallback(
+    (habitId: string) => {
+      setHabitQueueRefs(removeHabitQueueRef(habitId));
+      setUnifiedQueueOrder((prev) => {
+        const next = removeUnifiedQueueKey(prev, habitQueueKey(habitId));
+        persistUnifiedQueueOrder(next);
+        return next;
+      });
+      showActionToast({
+        message: "Removed from Queue",
+        icon: "queue",
+      });
+    },
+    [showActionToast],
+  );
 
   const handleClearNextUpQueue = useCallback(() => {
     const ids = displayedNextUpTasks.map((task) => task.id);
@@ -1077,14 +1157,9 @@ export function WorkplaceFocusCard({
     [onToggleComplete],
   );
 
-  const handleCompleteCurrentTask = useCallback(
-    (task: Task) => {
-      const head = resolveQueueHead();
-      onToggleComplete(task, true);
-      setNextUpTasks((current) =>
-        current.filter((item) => item.id !== task.id),
-      );
-
+  /** Shared focus handoff — activate queue head or clear to empty focus state. */
+  const activateQueueHeadOrEmpty = useCallback(
+    (head: SessionQueueHead | null) => {
       if (head?.kind === "task") {
         const nextTask = nextUpTasks.find((item) => item.id === head.id);
         if (nextTask) {
@@ -1099,7 +1174,6 @@ export function WorkplaceFocusCard({
           return;
         }
       }
-
       setActiveTaskId(null, "manual");
       quick.setFocusTarget(null);
     },
@@ -1108,44 +1182,63 @@ export function WorkplaceFocusCard({
       activateFocusTask,
       habits,
       nextUpTasks,
-      onToggleComplete,
       quick,
-      resolveQueueHead,
       setActiveTaskId,
     ],
   );
 
+  /** Leave current execution then focus the queue head (or empty state). */
+  const leaveCurrentAndAdvance = useCallback(
+    (task: Task) => {
+      const head = resolveQueueHead();
+      setNextUpTasks((current) =>
+        current.filter((item) => item.id !== task.id),
+      );
+      setUnifiedQueueOrder((prev) => {
+        const next = removeUnifiedQueueKey(prev, taskQueueKey(task.id));
+        persistUnifiedQueueOrder(next);
+        return next;
+      });
+      activateQueueHeadOrEmpty(head);
+    },
+    [activateQueueHeadOrEmpty, resolveQueueHead],
+  );
+
+  const handleCompleteCurrentTask = useCallback(
+    (task: Task) => {
+      onToggleComplete(task, true);
+      leaveCurrentAndAdvance(task);
+    },
+    [leaveCurrentAndAdvance, onToggleComplete],
+  );
+
   const handleFocusNextItem = useCallback(() => {
-    const head = resolveQueueHead();
-    if (!head) {
-      setActiveTaskId(null, "manual");
-      quick.setFocusTarget(null);
-      return;
-    }
-    if (head.kind === "task") {
-      const nextTask = nextUpTasks.find((item) => item.id === head.id);
-      if (nextTask) {
-        activateFocusTask(nextTask);
-        return;
-      }
-    } else {
-      const nextHabit = habits.find((item) => item.id === head.id);
-      if (nextHabit) {
-        activateFocusHabit(nextHabit);
-        return;
-      }
-    }
-    setActiveTaskId(null, "manual");
-    quick.setFocusTarget(null);
-  }, [
-    activateFocusHabit,
-    activateFocusTask,
-    habits,
-    nextUpTasks,
-    quick,
-    resolveQueueHead,
-    setActiveTaskId,
-  ]);
+    activateQueueHeadOrEmpty(resolveQueueHead());
+  }, [activateQueueHeadOrEmpty, resolveQueueHead]);
+
+  const handleMoveCurrentToTomorrow = useCallback(
+    (task: Task) => {
+      onContinueTomorrow(task);
+      leaveCurrentAndAdvance(task);
+    },
+    [leaveCurrentAndAdvance, onContinueTomorrow],
+  );
+
+  const handlePlanLaterCurrent = useCallback(
+    (task: Task) => {
+      onPlanLater(task);
+      leaveCurrentAndAdvance(task);
+    },
+    [leaveCurrentAndAdvance, onPlanLater],
+  );
+
+  const handleDeleteCurrentTask = useCallback(
+    (task: Task) => {
+      onDeleteTask(task.id);
+      leaveCurrentAndAdvance(task);
+    },
+    [leaveCurrentAndAdvance, onDeleteTask],
+  );
 
   const handleMoveCurrentToQueueEnd = useCallback(
     (task: Task) => {
@@ -1195,20 +1288,6 @@ export function WorkplaceFocusCard({
     },
     [refreshNextUpTasks],
   );
-
-  useEffect(() => {
-    const el = focusShellRef.current;
-    if (!el) return;
-
-    const sync = () => {
-      setQueueLayoutMode(resolveWorkplaceQueueLayoutMode(el.clientWidth));
-    };
-
-    const observer = new ResizeObserver(sync);
-    observer.observe(el);
-    sync();
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     if (!nextUpDrawerOpen) return;
@@ -1269,17 +1348,13 @@ export function WorkplaceFocusCard({
 
   return (
     <>
-      {/* Invisible layout shell — timer canvas keeps FOCUS_MIN; mid Queue overlays Focus. */}
+      {/* Invisible layout shell — Queue overlays Focus; no reserved rail width. */}
       <div
         ref={focusShellRef}
         data-focus-shell
         className="relative flex h-full min-h-0 w-full flex-1"
         style={{
-          minWidth:
-            WORKPLACE_FOCUS_MIN_PX +
-            (nextUpDrawerOpen && queueLayoutMode === "inline"
-              ? WORKPLACE_NEXT_UP_PANEL_PX
-              : WORKPLACE_NEXT_UP_RAIL_PX),
+          minWidth: WORKPLACE_FOCUS_MIN_PX,
         }}
       >
         <section
@@ -1290,9 +1365,17 @@ export function WorkplaceFocusCard({
           )}
           style={{ minWidth: WORKPLACE_FOCUS_MIN_PX }}
         >
+          <div className="relative flex min-h-0 flex-1 flex-col">
+          <div
+            className={cn(
+              "relative flex min-h-0 flex-1 flex-col transition-[opacity] duration-200 ease-out",
+              (dockOverlayOpen || nextUpDrawerOpen) &&
+                "workplace-focus-under-overlay",
+            )}
+          >
           <div className="relative shrink-0 px-3 pt-1.5 pb-1">
             <div className="relative flex items-start justify-between gap-2">
-              <div className="inline-flex h-7 items-center rounded-lg border border-border-subtle/70 bg-surface-base/50 p-0.5">
+              <div className="inline-flex h-7 items-center rounded-lg border-0 bg-surface-section/80 p-0.5">
                 {(["focus", "pomodoro"] as const).map((item) => (
                   <button
                     key={item}
@@ -1301,8 +1384,8 @@ export function WorkplaceFocusCard({
                     className={cn(
                       "h-6 rounded-md px-2.5 text-[13px] font-medium capitalize transition-[background-color,color,box-shadow] duration-150",
                       tab === item
-                        ? "bg-surface-raised text-foreground shadow-xs"
-                        : "text-muted-foreground hover:text-foreground",
+                        ? "bg-surface-base text-foreground shadow-xs"
+                        : "text-muted-foreground hover:bg-surface-ghost-hover hover:text-foreground",
                     )}
                   >
                     {item}
@@ -1314,15 +1397,15 @@ export function WorkplaceFocusCard({
                   className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between"
                   aria-live="polite"
                 >
-                  <p className="flex h-7 items-center font-mono text-[21px] font-semibold leading-none tracking-tight tabular-nums text-foreground">
+                  <p className="flow-type-display flex h-7 items-center font-mono text-[21px] leading-none tracking-tight tabular-nums">
                     {quick.clock}
                   </p>
                   <p
                     className={cn(
-                      "mt-0.5 text-[11px] font-semibold uppercase tracking-[0.12em]",
-                      quick.isOnBreak && "text-warning",
-                      quick.isPaused && "text-muted-foreground",
-                      !quick.isOnBreak && !quick.isPaused && "text-primary",
+                      "flow-type-label mt-0.5 text-[11px] uppercase tracking-[0.12em]",
+                      quick.isOnBreak || quick.isPaused
+                        ? "flow-type-meta"
+                        : "text-primary",
                     )}
                   >
                     {compactSessionStatus}
@@ -1338,22 +1421,34 @@ export function WorkplaceFocusCard({
                   className={cn(
                     "shrink-0 rounded-md px-2.5 text-[13px] font-medium shadow-none",
                     reflectionProminent
-                      ? "h-7 border-border-subtle bg-surface-raised text-foreground hover:bg-surface-hover"
-                      : "h-7 border-border-subtle/70 bg-surface-base/40 text-foreground/90 hover:border-border-subtle hover:bg-surface-hover hover:text-foreground",
+                      ? "h-7 border-border-subtle bg-surface-base text-foreground hover:bg-surface-hover"
+                      : "h-7 border-border-subtle/70 bg-surface-section/60 text-foreground/90 hover:border-border-subtle hover:bg-surface-hover hover:text-foreground",
                   )}
                 >
                   {reflectionProminent
                     ? "Reflect on this session"
                     : "Focus Reflection"}
                 </Button>
-                <p className="mt-0.5 text-[14px] font-medium tabular-nums text-muted-foreground/80">
+                <p className="flow-type-meta mt-0.5 text-[14px] tabular-nums">
                   {clockLabel}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 flex-col px-3 pb-3">
+          <div className="relative flex min-h-0 flex-1 flex-col px-3">
+            <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden pb-1">
+            {dockOverlayOpen && onDismissDockOverlay ? (
+              <button
+                type="button"
+                aria-label="Dismiss overlay"
+                className={cn(
+                  "absolute inset-0 z-30 cursor-default bg-transparent",
+                  dockOverlayScrimDisabled && "pointer-events-none opacity-0",
+                )}
+                onClick={onDismissDockOverlay}
+              />
+            ) : null}
             {habitDropNotice ? (
               <div className="mb-2 shrink-0 rounded-md border border-warning/40 bg-warning-muted/80 px-3 py-2 text-[13px] leading-snug text-warning">
                 {habitDropNotice}
@@ -1428,11 +1523,9 @@ export function WorkplaceFocusCard({
                                   : "In Focus"
                             }
                             statusTone={
-                              quick.isOnBreak
-                                ? "break"
-                                : quick.isPaused
-                                  ? "muted"
-                                  : "focus"
+                              quick.isOnBreak || quick.isPaused
+                                ? "muted"
+                                : "focus"
                             }
                           />
                           <TimerHoverControls>
@@ -1520,7 +1613,7 @@ export function WorkplaceFocusCard({
                         </div>
                         {(quick.currentFocusSeconds > 0 ||
                           quick.currentBreakSeconds > 0) && (
-                          <p className="mt-2 text-[13px] font-medium text-muted-foreground">
+                          <p className="flow-type-meta mt-2 text-[13px]">
                             Focused{" "}
                             {formatDurationCompact(quick.currentFocusSeconds)} ·
                             Break{" "}
@@ -1577,7 +1670,7 @@ export function WorkplaceFocusCard({
                           ref={pendingFocusBannerRef}
                           role="alertdialog"
                           aria-labelledby="pending-focus-title"
-                          className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border-subtle bg-surface-raised px-3 py-2 text-[13px]"
+                          className="flex flex-wrap items-center justify-between gap-2 rounded-lg border-0 bg-surface-base px-3 py-2 text-[13px]"
                         >
                           <p
                             id="pending-focus-title"
@@ -1614,9 +1707,11 @@ export function WorkplaceFocusCard({
                   </div>
 
                   <FocusCurrentTaskCard
-                    key={quick.isIdle ? "idle" : "active"}
+                    key={currentFocusTask?.id ?? "empty"}
                     task={currentFocusTask}
                     groups={groups}
+                    activeFocus={quick.isFocusing || quick.isOnBreak}
+                    focusSoftened={quick.isPaused || quick.isOnBreak}
                     hasQueueNext={Boolean(resolveQueueHead())}
                     focusedSeconds={
                       currentFocusTask && activeSession
@@ -1630,6 +1725,9 @@ export function WorkplaceFocusCard({
                     onCompleteTask={handleCompleteCurrentTask}
                     onFocusNext={handleFocusNextItem}
                     onMoveToQueueEnd={handleMoveCurrentToQueueEnd}
+                    onMoveToTomorrow={handleMoveCurrentToTomorrow}
+                    onPlanLater={handlePlanLaterCurrent}
+                    onDeleteTask={handleDeleteCurrentTask}
                     onChooseFromQueue={() => openNextUpDrawer("manual")}
                     onUpdateDescription={onUpdateDescription}
                   />
@@ -1648,10 +1746,30 @@ export function WorkplaceFocusCard({
                       onViewAll={() => openNextUpDrawer("manual")}
                       queueOpen={nextUpDrawerOpen}
                       onStartFocus={requestStartFocus}
+                      onToggleComplete={handleCompleteQueueTask}
                       onOpenTask={(task) => onOpenDetail(task.id)}
                       onMoveToTop={handleMoveQueueTaskToTop}
                       onMoveToEnd={handleMoveQueueTaskToEnd}
                       onRemove={(task) => handleRemoveQueueTask(task.id)}
+                      dropActive={dropActive && !habitDropBlocked}
+                      dropBeforeTaskId={(() => {
+                        if (!nextUpDropBeforeKey) return null;
+                        const parsed = parseUnifiedQueueKey(nextUpDropBeforeKey);
+                        return parsed?.sourceType === "task"
+                          ? parsed.sourceId
+                          : null;
+                      })()}
+                      onExternalDragOver={(taskId) =>
+                        setNextUpDropBeforeKey(
+                          taskId ? taskQueueKey(taskId) : null,
+                        )
+                      }
+                      onExternalDrop={(event, taskId) =>
+                        handleScheduleDrop(
+                          event,
+                          taskId ? taskQueueKey(taskId) : null,
+                        )
+                      }
                     />
                   ) : null}
                 </div>
@@ -1668,7 +1786,7 @@ export function WorkplaceFocusCard({
                     <p className="text-[13px] font-medium text-muted-foreground">
                       Session {sessionNumber}
                     </p>
-                    <p className="font-mono text-[3rem] font-semibold tabular-nums tracking-tight text-foreground/30">
+                    <p className="flow-type-display font-mono text-[3rem] tabular-nums tracking-tight text-foreground/30">
                       {pomodoro.clock}
                     </p>
                     <div className="grid w-full max-w-xs gap-3">
@@ -1728,7 +1846,7 @@ export function WorkplaceFocusCard({
                     <p className="text-[13px] font-medium text-muted-foreground">
                       Session {sessionNumber}
                     </p>
-                    <p className="font-mono text-[3.75rem] font-semibold tabular-nums tracking-tight text-foreground">
+                    <p className="flow-type-display font-mono text-[3.75rem] tabular-nums tracking-tight">
                       {pomodoro.clock}
                     </p>
                     <p className="text-[13px] text-muted-foreground">
@@ -1777,60 +1895,85 @@ export function WorkplaceFocusCard({
                 )}
               </div>
             )}
+            </div>
           </div>
-        </section>
+          </div>
+          </div>
 
-        {NEXT_UP_WORKPLACE_UI_ENABLED ? (
-          <NextUpDrawer
-            entries={nextUpEntries}
-            groups={groups}
-            currentTask={currentFocusTask}
-            open={nextUpDrawerOpen}
-            layoutMode={queueLayoutMode}
-            fetchError={nextUpFetchError}
-            onOpen={() => openNextUpDrawer("manual")}
-            onClose={closeNextUpDrawer}
-            onStartFocusTask={requestStartFocus}
-            onStartFocusHabit={activateFocusHabit}
-            onOpenTask={(task) => onOpenDetail(task.id)}
-            onOpenHabit={(habit) => {
-              if (onOpenHabit) onOpenHabit(habit.id);
-              else setActiveHabitId(habit.id, "manual");
-            }}
-            onRemoveTask={handleRemoveQueueTask}
-            onRemoveHabit={handleRemoveQueueHabit}
-            onReorder={handleReorderQueue}
-            onToggleComplete={handleCompleteQueueTask}
-            onClearAll={handleClearNextUpQueue}
-            hasQueueNext={Boolean(resolveQueueHead())}
-            onCompleteCurrentTask={handleCompleteCurrentTask}
-            onFocusNext={handleFocusNextItem}
-            onMoveCurrentToQueueEnd={handleMoveCurrentToQueueEnd}
-            continueTasks={continueTasks}
-            continueFocusSecondsByTaskId={continueFocusSecondsByTaskId}
-            onAddContinueToQueue={handleAddContinueToQueue}
-            onNowDrop={handleStartFocusDrop}
-            listRef={nextUpDrawerListRef}
-            onListScroll={() => {
-              if (nextUpDrawerListRef.current) {
-                nextUpDrawerScrollTopRef.current =
-                  nextUpDrawerListRef.current.scrollTop;
-              }
-            }}
-            dropZoneActive={dropActive && !habitDropBlocked}
-            dropInsertPosition={
-              nextUpDropBeforeKey
-                ? nextUpEntries.findIndex(
-                    (entry) => entry.key === nextUpDropBeforeKey,
-                  ) + 1
-                : nextUpEntries.length + 1
-            }
-            onDropZoneDrop={(event) => handleScheduleDrop(event, null)}
-            externalDropBeforeKey={nextUpDropBeforeKey}
-            onExternalDragOver={setNextUpDropBeforeKey}
-            onExternalDrop={handleScheduleDrop}
-          />
-        ) : null}
+            {dockFooter ? (
+              <div
+                className={cn(
+                  /* Same px-3 gutter as Focus content — left-align with Current Focus card */
+                  "relative z-50 shrink-0 border-t border-border-subtle px-3 py-3",
+                  "[border-top-width:var(--border-hairline-width)]",
+                )}
+                onClick={(event) => {
+                  if (!dockOverlayOpen || !onDismissDockOverlay) return;
+                  const target = event.target;
+                  if (!(target instanceof Element)) return;
+                  if (target.closest(".workplace-dock-launcher")) return;
+                  if (target.closest(".workplace-dock-popup")) return;
+                  onDismissDockOverlay();
+                }}
+              >
+                {dockFooter}
+              </div>
+            ) : null}
+
+            {NEXT_UP_WORKPLACE_UI_ENABLED ? (
+              <NextUpDrawer
+                entries={nextUpEntries}
+                groups={groups}
+                currentTask={currentFocusTask}
+                open={nextUpDrawerOpen}
+                fetchError={nextUpFetchError}
+                onClose={closeNextUpDrawer}
+                onStartFocusTask={requestStartFocus}
+                onStartFocusHabit={activateFocusHabit}
+                onOpenTask={(task) => onOpenDetail(task.id)}
+                onOpenHabit={(habit) => {
+                  if (onOpenHabit) onOpenHabit(habit.id);
+                  else setActiveHabitId(habit.id, "manual");
+                }}
+                onRemoveTask={handleRemoveQueueTask}
+                onRemoveHabit={handleRemoveQueueHabit}
+                onReorder={handleReorderQueue}
+                onToggleComplete={handleCompleteQueueTask}
+                onToggleHabitComplete={onToggleHabitComplete}
+                onClearAll={handleClearNextUpQueue}
+                hasQueueNext={Boolean(resolveQueueHead())}
+                onCompleteCurrentTask={handleCompleteCurrentTask}
+                onFocusNext={handleFocusNextItem}
+                onMoveCurrentToQueueEnd={handleMoveCurrentToQueueEnd}
+                onMoveCurrentToTomorrow={handleMoveCurrentToTomorrow}
+                onPlanLaterCurrent={handlePlanLaterCurrent}
+                onDeleteCurrentTask={handleDeleteCurrentTask}
+                continueTasks={continueTasks}
+                continueFocusSecondsByTaskId={continueFocusSecondsByTaskId}
+                onAddContinueToQueue={handleAddContinueToQueue}
+                onNowDrop={handleStartFocusDrop}
+                listRef={nextUpDrawerListRef}
+                onListScroll={() => {
+                  if (nextUpDrawerListRef.current) {
+                    nextUpDrawerScrollTopRef.current =
+                      nextUpDrawerListRef.current.scrollTop;
+                  }
+                }}
+                dropZoneActive={dropActive && !habitDropBlocked}
+                dropInsertPosition={
+                  nextUpDropBeforeKey
+                    ? nextUpEntries.findIndex(
+                        (entry) => entry.key === nextUpDropBeforeKey,
+                      ) + 1
+                    : nextUpEntries.length + 1
+                }
+                onDropZoneDrop={(event) => handleScheduleDrop(event, null)}
+                externalDropBeforeKey={nextUpDropBeforeKey}
+                onExternalDragOver={setNextUpDropBeforeKey}
+                onExternalDrop={handleScheduleDrop}
+              />
+            ) : null}
+        </section>
       </div>
 
       <WorkplaceFocusReflectionModal

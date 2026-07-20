@@ -10,7 +10,7 @@ export function FutureWorkPageContent() {
       />
 
       <div className="mx-auto max-w-2xl">
-        <section className="rounded-xl border border-border/60 bg-card px-5 py-4">
+        <section className="rounded-xl border-0 bg-surface-section px-5 py-4 shadow-none">
           <p className="text-sm text-muted-foreground">
             These features are intentionally hidden from the main navigation
             while core productivity modules are polished for release.

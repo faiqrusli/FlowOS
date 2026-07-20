@@ -20,7 +20,7 @@ import {
 
 const MENU_ARROW_PX = 10;
 const MENU_GAP_PX = 8;
-const MENU_ESTIMATED_WIDTH_PX = 220;
+const MENU_ESTIMATED_WIDTH_PX = 200;
 
 type WorkplaceTodayTaskMenuProps = {
   menuRef: RefObject<HTMLDivElement | null>;
@@ -133,7 +133,7 @@ export function WorkplaceTodayTaskMenu({
       <div
         ref={menuRef}
         data-timeline-context-menu
-        className="flow-surface-elevated fixed z-[100] w-[13.5rem] overflow-visible rounded-xl"
+        className="flow-surface-elevated fixed z-[100] w-[12.5rem] overflow-visible rounded-xl"
         style={{ left: position.left, top: position.top }}
         onClick={(event) => event.stopPropagation()}
       >
@@ -165,7 +165,7 @@ export function WorkplaceTodayTaskMenu({
           </>
         )}
 
-        <div className="border-b border-border/30 px-3 py-2">
+        <div className="border-b border-divider px-3 py-2">
           <p className="truncate text-sm font-semibold leading-snug text-foreground">
             {taskTitle}
           </p>

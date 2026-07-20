@@ -53,6 +53,7 @@ type NextUpQueueListProps = {
   onRemoveHabit: (habitId: string) => void;
   onReorder: (fromIndex: number, toIndex: number) => void;
   onToggleComplete: (task: Task) => void;
+  onToggleHabitComplete?: (habit: Habit) => void;
   listRef?: React.RefObject<HTMLDivElement | null>;
   onScroll?: () => void;
   externalDropActive?: boolean;
@@ -104,6 +105,7 @@ export function NextUpQueueList({
   onRemoveHabit,
   onReorder,
   onToggleComplete,
+  onToggleHabitComplete,
   listRef,
   onScroll,
   externalDropActive = false,
@@ -287,7 +289,7 @@ export function NextUpQueueList({
         handleExternalDrop(event);
       }}
       className={cn(
-        "min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-0.5 scrollbar-subtle",
+        "min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pr-0.5 scrollbar-subtle",
         className,
       )}
     >
@@ -297,8 +299,8 @@ export function NextUpQueueList({
             <TaskBoardInsertLine />
           </div>
         ) : (
-          <p className="px-1 py-2 text-[13px] text-muted-foreground/85">
-            Add a task or habit to choose what&apos;s next.
+          <p className="px-1 py-2 text-center text-[12px] text-muted-foreground">
+            Drag a task or habit here.
           </p>
         )
       ) : (
@@ -364,6 +366,7 @@ export function NextUpQueueList({
                       handleItemDragStart(entry.key, event)
                     }
                     onDragEnd={handleItemDragEnd}
+                    onToggleHabitComplete={onToggleHabitComplete}
                     onMove={(delta) => onReorder(index, index + delta)}
                     onMoveToTop={() => onReorder(index, 0)}
                     onMoveToBottom={() => onReorder(index, entries.length - 1)}

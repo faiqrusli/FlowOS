@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentType } from "react";
-import { CircleHelp, Palette, Settings, UserRound, X } from "lucide-react";
+import { BookOpen, Palette, Settings, UserRound, X } from "lucide-react";
 import { SettingsAccountPanel } from "@/components/settings/panels/settings-account-panel";
 import { SettingsAppearancePanel } from "@/components/settings/panels/settings-appearance-panel";
 import { SettingsHelpPanel } from "@/components/settings/panels/settings-help-panel";
@@ -20,12 +20,7 @@ const NAV_ITEMS: {
   { id: "account", label: "Account", icon: UserRound, title: "My Account" },
   { id: "settings", label: "Settings", icon: Settings, title: "Settings" },
   { id: "appearance", label: "Appearance", icon: Palette, title: "Appearance" },
-  {
-    id: "help",
-    label: "Help & Feedback",
-    icon: CircleHelp,
-    title: "Help & Feedback",
-  },
+  { id: "help", label: "About", icon: BookOpen, title: "About" },
 ];
 
 function SettingsPanelContent({ section }: { section: SettingsModalSection }) {
@@ -52,17 +47,18 @@ export function AppSettingsModal() {
     <Dialog open={open} onOpenChange={(next) => !next && closeSettings()}>
       <DialogContent
         showCloseButton={false}
-        className="flex h-[min(600px,85vh)] max-w-[min(880px,calc(100%-2rem))] flex-col gap-0 overflow-hidden p-0 sm:max-w-[min(880px,calc(100%-2rem))]"
+        className="flex h-[min(600px,85vh)] max-w-[min(880px,calc(100%-2rem))] flex-col gap-0 overflow-hidden bg-surface-7 p-0 [background:var(--surface-7)] [--color-selected:var(--surface-8)] [--color-surface-hover:var(--surface-8)] [--color-surface-selected:var(--surface-8)] [--selected:var(--surface-8)] [--surface-hover:var(--surface-8)] [--surface-selected:var(--surface-8)] sm:max-w-[min(880px,calc(100%-2rem))]"
       >
         <DialogTitle className="sr-only">{activeItem.title}</DialogTitle>
 
         <div className="flex min-h-0 flex-1">
-          <aside className="flex w-[200px] shrink-0 flex-col border-r border-border/60 bg-surface-raised">
+          {/* Rail: Surface 4 on modal Surface 7 — quiet chrome, hairline only. */}
+          <aside className="flex w-[200px] shrink-0 flex-col border-r border-border-subtle bg-surface-4">
             <div className="flex items-center px-2 pt-2">
               <button
                 type="button"
                 onClick={closeSettings}
-                className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+                className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-ghost-hover hover:text-foreground"
                 aria-label="Close settings"
               >
                 <X className="size-4 stroke-[1.5]" />
@@ -79,14 +75,23 @@ export function AppSettingsModal() {
                     key={item.id}
                     type="button"
                     onClick={() => setSection(item.id)}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors",
+                      "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[13px] transition-colors duration-150",
+                      /* Nav selected: primary-soft fill + primary icon (INTERACTION). No ring/shadow. */
                       isActive
-                        ? "bg-background font-medium text-foreground shadow-sm ring-1 ring-border/60"
-                        : "text-muted-foreground hover:bg-background/60 hover:text-foreground",
+                        ? "bg-primary-soft font-medium text-foreground"
+                        : "font-normal text-muted-foreground hover:bg-surface-ghost-hover hover:text-foreground",
                     )}
                   >
-                    <Icon className="size-4 shrink-0 stroke-[1.5]" />
+                    <Icon
+                      className={cn(
+                        "size-4 shrink-0 stroke-[1.5] transition-colors",
+                        isActive
+                          ? "text-primary"
+                          : "text-muted-foreground",
+                      )}
+                    />
                     <span className="truncate">{item.label}</span>
                   </button>
                 );
@@ -95,7 +100,7 @@ export function AppSettingsModal() {
           </aside>
 
           <main className="min-w-0 flex-1 overflow-y-auto px-6 py-5">
-            <h2 className="text-lg font-semibold tracking-tight">
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">
               {activeItem.title}
             </h2>
             <div className="mt-4">

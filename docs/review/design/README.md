@@ -45,6 +45,8 @@ Read each phase in order: **review → spec → implementation → post-review**
 | [today-v3-greenfield-design.md](./today-v3-greenfield-design.md) | `flowos-today-v3-greenfield-design.canvas.tsx` | First-principles Day Engine design (Concept B: NOW + NEXT + rest) |
 | [today-page-hierarchy-refinement-spec.md](./today-page-hierarchy-refinement-spec.md) | — | Visual hierarchy + PLAN→COMMIT→EXECUTE refinement of current Today (not a rebuild) |
 | [schedule-break-modal-spec.md](./schedule-break-modal-spec.md) | — | Schedule Break modal for quick focus — user-initiated reminders, not Pomodoro |
+| [notification-system-mvp-spec.md](./notification-system-mvp-spec.md) | — | Scheduled task/habit reminders — in-app toast + browser Notification API (MVP) |
+| [flowos-live-demo-spec.md](./flowos-live-demo-spec.md) | — | Guest live demo v1.2 — **approved**; includes schedule reminders MVP · runbook [flowos-live-demo.md](../../execution/runbooks/flowos-live-demo.md) |
 
 **Authoritative visual system:** [../../foundation/DESIGN_SYSTEM.md](../../foundation/DESIGN_SYSTEM.md) (v3.0) — global semantic visual contract; implementation via [design-system-v3-migration.md](../../execution/runbooks/design-system-v3-migration.md). Historical: [v2.0](../../foundation/DESIGN_SYSTEM_v2.md), [v1.0](../../foundation/DESIGN_SYSTEM_v1.md).
 

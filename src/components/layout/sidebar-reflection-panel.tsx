@@ -82,28 +82,31 @@ export function SidebarReflectionPanel() {
 
   return (
     <div className="h-full min-h-0 overflow-y-auto">
-      <div className="flex flex-col gap-8 p-4">
+      {/* Section titles on chrome; only content objects are cards. */}
+      <div className="flex flex-col gap-8 px-5 py-4">
         {error && (
           <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
             {error}
           </p>
         )}
 
-        <ReflectionQuestionsCard
-          wentWell={wentWell}
-          wentWrong={wentWrong}
-          onWentWellChange={(value) => {
-            setWentWell(value);
-            setDirty(true);
-          }}
-          onWentWrongChange={(value) => {
-            setWentWrong(value);
-            setDirty(true);
-          }}
-          disabled={saving}
-          hideTitle
-          flat
-        />
+        <section className="space-y-3">
+          <ReflectionQuestionsCard
+            wentWell={wentWell}
+            wentWrong={wentWrong}
+            onWentWellChange={(value) => {
+              setWentWell(value);
+              setDirty(true);
+            }}
+            onWentWrongChange={(value) => {
+              setWentWrong(value);
+              setDirty(true);
+            }}
+            disabled={saving}
+            hideTitle
+            flat
+          />
+        </section>
 
         <CustomEntriesSection
           entries={customEntries}
@@ -124,6 +127,8 @@ export function SidebarReflectionPanel() {
           disabled={saving}
           compact
           flat
+          title="Boards"
+          addLabel="Add board"
         />
       </div>
     </div>

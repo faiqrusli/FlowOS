@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,9 @@ type GrowthAreaIconChooserProps = {
   onOpenChange: (open: boolean) => void;
   value: string;
   onSelect: (emoji: string, label: string) => void;
+  /** When true, show a clear action to return to color-only identity. */
+  allowClear?: boolean;
+  onClear?: () => void;
 };
 
 export function GrowthAreaIconChooser({
@@ -26,6 +30,8 @@ export function GrowthAreaIconChooser({
   onOpenChange,
   value,
   onSelect,
+  allowClear = false,
+  onClear,
 }: GrowthAreaIconChooserProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -116,43 +122,60 @@ export function GrowthAreaIconChooser({
           ))}
         </div>
 
-        <div className="flex items-center justify-center gap-4 border-t border-border/30 px-4 py-3">
-          <button
-            type="button"
-            onClick={() => scrollToSlide(activeSlide - 1)}
-            disabled={activeSlide === 0}
-            className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/50 text-muted-foreground transition-colors hover:bg-surface-hover disabled:opacity-30"
-            aria-label="Previous icon group"
-          >
-            <ChevronLeft className="size-4" />
-          </button>
+        <div className="flex flex-col gap-2 border-t border-border/30 px-4 py-3">
+          {allowClear ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={() => {
+                onClear?.();
+                onOpenChange(false);
+              }}
+            >
+              Remove icon
+            </Button>
+          ) : null}
 
-          <div className="flex items-center gap-1.5">
-            {GROWTH_AREA_ICON_CATEGORIES.map((category, index) => (
-              <button
-                key={category.id}
-                type="button"
-                onClick={() => scrollToSlide(index)}
-                className={cn(
-                  "h-1.5 rounded-full transition-all",
-                  index === activeSlide
-                    ? "w-4 bg-foreground/70"
-                    : "w-1.5 bg-muted-foreground/35 hover:bg-surface-hover-foreground/55",
-                )}
-                aria-label={`Show ${category.label} icons`}
-              />
-            ))}
+          <div className="flex items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => scrollToSlide(activeSlide - 1)}
+              disabled={activeSlide === 0}
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/50 text-muted-foreground transition-colors hover:bg-surface-hover disabled:opacity-30"
+              aria-label="Previous icon group"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+
+            <div className="flex items-center gap-1.5">
+              {GROWTH_AREA_ICON_CATEGORIES.map((category, index) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => scrollToSlide(index)}
+                  className={cn(
+                    "h-1.5 rounded-full transition-all",
+                    index === activeSlide
+                      ? "w-4 bg-foreground/70"
+                      : "w-1.5 bg-muted-foreground/35 hover:bg-surface-hover-foreground/55",
+                  )}
+                  aria-label={`Show ${category.label} icons`}
+                />
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => scrollToSlide(activeSlide + 1)}
+              disabled={activeSlide === GROWTH_AREA_ICON_CATEGORIES.length - 1}
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/50 text-muted-foreground transition-colors hover:bg-surface-hover disabled:opacity-30"
+              aria-label="Next icon group"
+            >
+              <ChevronRight className="size-4" />
+            </button>
           </div>
-
-          <button
-            type="button"
-            onClick={() => scrollToSlide(activeSlide + 1)}
-            disabled={activeSlide === GROWTH_AREA_ICON_CATEGORIES.length - 1}
-            className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/50 text-muted-foreground transition-colors hover:bg-surface-hover disabled:opacity-30"
-            aria-label="Next icon group"
-          >
-            <ChevronRight className="size-4" />
-          </button>
         </div>
       </DialogContent>
     </Dialog>
