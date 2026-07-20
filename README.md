@@ -48,6 +48,10 @@ Capture and organize actionable work across Today, Inbox, Later, and custom grou
 
 A visual timeline for intentional work, plus Quick Schedule to drag unscheduled tasks onto the day.
 
+### Reminders
+
+Start alerts for tasks and habits — in-app toasts and optional browser notifications.
+
 ### Focus
 
 Continuous focus sessions with break support, session tracking, and a clear view of what you’re executing now.
