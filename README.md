@@ -100,7 +100,7 @@ Notes and boards for context without leaving the system.
 
 ## Product vision
 
-FlowOS aims to close the gap between **intention and execution** — not another place to collect tasks.
+FlowOS aims to close the gap between **intention and execution** — built to execute work, not just organize it.
 
 **Core loop:** Plan → Commit → Focus → Reflect → Improve
 
