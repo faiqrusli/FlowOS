@@ -38,35 +38,35 @@ Rather than helping you organize more tasks, FlowOS focuses on helping you **exe
 
 ### Today
 
-A centralized workspace for daily execution — capture, focus, Next Up, and the day’s timeline in one place.
+Central workspace for daily execution.
 
 ### Tasks
 
-Capture and organize actionable work across Today, Inbox, Later, and custom groups, with detail editing when you need it.
+Manage work across Today, Inbox, Later, and Groups.
 
 ### Schedule
 
-A visual timeline for intentional work, plus Quick Schedule to drag unscheduled tasks onto the day.
-
-### Reminders
-
-Start alerts for tasks and habits (in-app toasts and optional browser notifications), plus scheduled focus break prompts when it’s time to pause.
+Plan work visually using timeline scheduling.
 
 ### Focus
 
-Continuous focus sessions with scheduled breaks, session tracking, and a clear view of what you’re executing now.
+Continuous focus sessions with execution tracking.
 
 ### Habits
 
-Build consistent routines and keep them visible alongside the day’s work.
+Build consistent daily routines.
 
 ### Notes
 
-Lightweight contextual notes and boards so writing stays close to execution.
+Contextual notes and lightweight Kanban boards.
 
 ### Reflection
 
-Review what happened, understand why, and improve tomorrow.
+Review progress and improve tomorrow.
+
+### Reminders
+
+Task, habit, and focus reminders with browser notifications.
 
 ---
 
