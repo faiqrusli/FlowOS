@@ -36,6 +36,16 @@ When making a significant product decision:
 
 ## 2026 decisions
 
+### 2026-07-21 — Vision strategy split into chapters (authority path unchanged)
+
+**Context:** The Vision & Product Strategy monolith (~2600 lines) was hard to navigate day-to-day.  
+**Decision:** Keep [`flowos-vision-and-product-strategy.md`](../../strategy/flowos-vision-and-product-strategy.md) as the **canonical hub** (still priority 1). Move full §1–55 text into [`docs/strategy/vision/`](../../strategy/vision/) (five chapters with prev/next links). No philosophy rewrite; no second source of truth.  
+**Alternatives rejected:** Leaving the monolith intact; demoting authority; duplicating full text in hub and chapters.  
+**Outcome:** Hub = map + north star; chapters = full content. Supporting user-evolution doc linked from the hub (not merged into chapters).  
+**Related:** [vision/01-thesis-and-core-loop.md](../../strategy/vision/01-thesis-and-core-loop.md) · [flowos-user-evolution-and-market-positioning.md](../../strategy/flowos-user-evolution-and-market-positioning.md)
+
+---
+
 ### 2026-07-21 — Vision & Product Strategy is highest product authority
 
 **Context:** Founder authored a comprehensive FlowOS vision covering philosophy, core loop, positioning vs Akiflow/peers, Queue/Focus/Goals, risks, and development sequence (related: User Evolution and Market Positioning).  
