@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AlarmClock, Bell, Droplets, X, type LucideIcon } from "lucide-react";
+import { AlarmClock, Bell, Droplets, X } from "lucide-react";
 import {
   SCHEDULE_REMINDER_TOAST_MS,
   useScheduleReminderToasts,
@@ -11,10 +11,16 @@ import { cn } from "@/lib/utils";
 
 const EXIT_MS = 200;
 
-function toastIcon(toast: ScheduleReminderToast): LucideIcon {
-  if (toast.entity === "habit") return Droplets;
-  if (toast.kind === "reminder") return Bell;
-  return AlarmClock;
+function ToastIcon({ toast }: { toast: ScheduleReminderToast }) {
+  const className = "size-3.5";
+  const strokeWidth = 1.75;
+  if (toast.entity === "habit") {
+    return <Droplets className={className} strokeWidth={strokeWidth} />;
+  }
+  if (toast.kind === "reminder") {
+    return <Bell className={className} strokeWidth={strokeWidth} />;
+  }
+  return <AlarmClock className={className} strokeWidth={strokeWidth} />;
 }
 
 function ToastCard({
@@ -26,8 +32,6 @@ function ToastCard({
   exiting: boolean;
   onDismiss: () => void;
 }) {
-  const Icon = toastIcon(toast);
-
   return (
     <div
       role="status"
@@ -45,7 +49,7 @@ function ToastCard({
           className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary"
           aria-hidden
         >
-          <Icon className="size-3.5" strokeWidth={1.75} />
+          <ToastIcon toast={toast} />
         </span>
         <div className="min-w-0 flex-1 pt-px">
           <p className="truncate text-[13px] font-medium leading-snug text-foreground">
