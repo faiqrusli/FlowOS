@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 20, 2026
+**Last updated:** July 21, 2026
 
 ---
 
@@ -35,6 +35,14 @@ When making a significant product decision:
 ---
 
 ## 2026 decisions
+
+### 2026-07-21 — Quick focus continues across breaks; break clock unchanged
+
+**Context:** After focus → break → resume focus, the main quick-focus clock reset to `00:00` because it displayed only the new focus phase segment.
+**Decision:** While focusing, the hero clock shows continuous **focused** time for the session (never resets on Resume Focus). While on break, the hero still shows the break segment clock (same as before). Only Pause freezes time; Resume continues from where that mode left off.
+**Alternatives rejected:** (1) Freeze the focus clock during break (hides break elapsed on the hero); (2) Session wall-clock as the hero; (3) Keep phase-segment clock for focus (resets after every break).
+**Outcome:** Implemented on `tweak/continuous-focus-timer` (`getQuickClockSeconds` / `formatQuickClock`).
+**Related:** `src/lib/focus-active-session.ts`, workplace Focus tab
 
 ### 2026-07-20 — Settings modal surfaces locked (rail 4 / shell 7)
 

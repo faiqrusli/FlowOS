@@ -2,6 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createQuickFocusSession,
   finalizeCurrentTaskFocus,
+  formatQuickClock,
+  getQuickClockSeconds,
+  getQuickExecutionSeconds,
   getTaskFocusedSeconds,
   quickResumeFocus,
   quickStartBreak,
@@ -68,5 +71,58 @@ describe("task focus attribution", () => {
 
     const finalized = finalizeCurrentTaskFocus(session);
     expect(getTaskFocusedSeconds(finalized, "task-a")).toBe(180);
+  });
+});
+
+describe("continuous quick execution timer", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(START);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("shows break segment on break, then resumes focus from accumulated time", () => {
+    let session = createQuickFocusSession();
+
+    vi.advanceTimersByTime(45 * 60_000);
+    expect(getQuickClockSeconds(session)).toBe(45 * 60);
+    expect(formatQuickClock(session)).toBe("45:00");
+
+    session = quickStartBreak(session);
+    vi.advanceTimersByTime(5 * 60_000);
+    // Break clock counts break elapsed (same as before)
+    expect(getQuickClockSeconds(session)).toBe(5 * 60);
+    expect(formatQuickClock(session)).toBe("05:00");
+    // Focused total is preserved while on break
+    expect(getQuickExecutionSeconds(session)).toBe(45 * 60);
+
+    session = quickResumeFocus(session);
+    expect(getQuickClockSeconds(session)).toBe(45 * 60);
+    expect(formatQuickClock(session)).toBe("45:00");
+
+    vi.advanceTimersByTime(5 * 60_000);
+    expect(getQuickClockSeconds(session)).toBe(50 * 60);
+    expect(formatQuickClock(session)).toBe("50:00");
+  });
+
+  it("pause freezes the current clock; resume continues it", () => {
+    let session = createQuickFocusSession();
+    vi.advanceTimersByTime(10 * 60_000);
+    session = pauseSession(session);
+    vi.advanceTimersByTime(3 * 60_000);
+    expect(formatQuickClock(session)).toBe("10:00");
+
+    session = resumeSession(session);
+    vi.advanceTimersByTime(2 * 60_000);
+    expect(formatQuickClock(session)).toBe("12:00");
+  });
+
+  it("formats multi-hour sessions with an hours segment", () => {
+    const session = createQuickFocusSession();
+    vi.advanceTimersByTime(92 * 60_000 + 18_000);
+    expect(formatQuickClock(session)).toBe("1:32:18");
   });
 });
