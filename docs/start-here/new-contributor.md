@@ -8,9 +8,10 @@ Welcome to FlowOS. This path orients you for **GitHub review** and light contrib
 
 ## What is FlowOS?
 
-A personal productivity OS: **Today** (tasks + timeline + focus + habits), plus Schedule, Tasks board, Habits, Focus analytics, Reflection, and Notes. Built with Next.js, Supabase, and Tailwind.
+A personal **execution** system: **Today** (capture, focus, Next Up, timeline, habits), plus Schedule, Tasks, Focus, Reflection, and Notes — connected by one loop rather than separate tools. Built with Next.js, Supabase, and Tailwind.
 
 **Live app:** https://flowos-sage.vercel.app  
+**Vision (highest authority):** [flowos-vision-and-product-strategy.md](../strategy/flowos-vision-and-product-strategy.md)  
 **What’s shipped:** [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md)  
 **Live demo (guest):** [flowos-live-demo-spec.md](../review/design/flowos-live-demo-spec.md) · [runbook](../execution/runbooks/flowos-live-demo.md)  
 **Contributing:** [CONTRIBUTING.md](../../CONTRIBUTING.md)
@@ -21,10 +22,11 @@ A personal productivity OS: **Today** (tasks + timeline + focus + habits), plus 
 
 | Step | Document | Time |
 |------|----------|------|
-| 1 | [foundation/PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | 5 min — current north star |
-| 2 | [foundation/FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | 10 min — what exists today |
+| 1 | [Vision & Product Strategy](../strategy/flowos-vision-and-product-strategy.md) | 10–15 min — hub + start Thesis chapter |
+| 2 | [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | 10 min — what exists today |
 | 3 | [start-here/engineer.md](./engineer.md) | 15 min — codebase and setup |
-| 4 (optional origin story) | [archive/project/01-introduction.md](../archive/project/01-introduction.md) | 5 min — original thesis |
+| 4 (optional) | [User Evolution & Market Positioning](../strategy/flowos-user-evolution-and-market-positioning.md) | 10 min — who we serve |
+| 5 (optional origin) | [archive/project/01-introduction.md](../archive/project/01-introduction.md) | 5 min — original thesis |
 
 ---
 

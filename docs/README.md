@@ -1,17 +1,35 @@
 ﻿# FlowOS Documentation
 
-**FlowOS** is an integrated productivity and reflection system — a personal daily driver for tasks, habits, focus, scheduling, reflection, and notes.
+**FlowOS** is a **personal execution and continuous improvement system** — connecting planning, focused work, progress, and reflection into one continuous workflow.
+
+> Turn intention into execution.  
+> Turn execution into progress.  
+> Turn reflection into improvement.
+
+**Core loop:** Plan → Commit → Focus → Reflect → Improve
 
 **Status:** Implementation is **on hold for review** (GitHub + production dogfood + live demo). Prefer small fixes over new milestones until the hold is lifted.
 
-**Milestone:** [M2 — Founder Daily Driver](./execution/README.md) — engineering sessions shipped; recruiting/dogfood open; **no large new runbooks** while paused.
-
 **Production:** https://flowos-sage.vercel.app  
-**Live demo:** [flowos-live-demo-spec.md](./review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](./execution/runbooks/flowos-live-demo.md)
+**Live demo:** [flowos-live-demo-spec.md](./review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](./execution/runbooks/flowos-live-demo.md)  
+**GitHub product page:** [../README.md](../README.md)
 
 ---
 
-## Start here
+## Read first (best docs)
+
+| Document | Why |
+|----------|-----|
+| [**Vision & Product Strategy**](./strategy/flowos-vision-and-product-strategy.md) | **Highest authority** — philosophy, core loop, positioning, long-term architecture (hub + chapters) |
+| [User Evolution & Market Positioning](./strategy/flowos-user-evolution-and-market-positioning.md) | Who FlowOS serves — students through founders; native-complete vs execution layer |
+| [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | What’s shipped today vs deferred |
+| [execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 and exit gates |
+
+Vision chapters (full text): [strategy/vision/](./strategy/vision/)
+
+---
+
+## Start here by role
 
 | Role | Entry point |
 |------|-------------|
@@ -42,14 +60,15 @@ When documents conflict, this order wins:
 
 | Directory | Contents | Status |
 |-----------|----------|--------|
-| [strategy/](./strategy/) | Vision + execution masterplan | **Active** |
+| [strategy/](./strategy/) | Vision hub, chapters, user evolution, masterplan | **Active** |
 | [execution/](./execution/) | Runbooks, logs, ops | **Active** (hold = no new large runbooks) |
 | [review/](./review/) | SRAI + design specs | **Active** |
 | [design/](./design/) | Living feature design specifications | **Active** |
-| [foundation/](./foundation/) | Vision, features, architecture, design system | **Active** |
+| [foundation/](./foundation/) | Features, architecture, design system | **Active** |
 | [foundation/governance/](./foundation/governance/) | PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW | **Reference** |
 | [archive/](./archive/) | Thesis, design history, superseded plans/themes | **Archive** |
 | [meta/](./meta/document-map.md) | Full doc inventory | Meta |
+| [screenshots/](./screenshots/) | README product screenshots | Assets |
 
 **Operational docs outside `docs/`:** [supabase/APPLIED_STATE.md](../supabase/APPLIED_STATE.md)
 
@@ -63,7 +82,9 @@ When documents conflict, this order wins:
 
 | Document | Purpose |
 |----------|---------|
-| [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) | **Highest** — vision, philosophy, positioning, long-term architecture |
+| [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) | **Highest** — vision hub + chapter index |
+| [strategy/vision/](./strategy/vision/) | Full vision chapters (§1–55) |
+| [flowos-user-evolution-and-market-positioning.md](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting — user stages & market posture |
 | [execution-masterplan.md](./strategy/execution-masterplan.md) | Primary plan — milestones M0–M5 |
 | [execution/README.md](./execution/README.md) | Current ops index (hold / review mode) |
 | [flowos-live-demo.md](./execution/runbooks/flowos-live-demo.md) | Guest live demo runbook |
@@ -92,7 +113,7 @@ When documents conflict, this order wins:
 | [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract |
 | [design/focus/next-up.md](./design/focus/next-up.md) | Living Focus Next Up design |
 | [governance/GATES.md](./foundation/governance/GATES.md) | Launch gates, WAD, D7 definitions |
-| [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | Stub → [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) |
+| [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | Stub → [vision hub](./strategy/flowos-vision-and-product-strategy.md) |
 
 Full foundation index: [foundation/README.md](./foundation/README.md)
 
@@ -105,6 +126,7 @@ Full foundation index: [foundation/README.md](./foundation/README.md)
 | [roadmap-pre-masterplan.md](./archive/design/july-3/roadmap-pre-masterplan.md) (Phase 3+) | [execution-masterplan.md](./strategy/execution-masterplan.md) |
 | [launch-plan-july-2026.md](./archive/planning/launch-plan-july-2026.md) | Same masterplan |
 | [project-state-july-2026.md](./archive/design/july-3/project-state-july-2026.md) | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) + [execution/README.md](./execution/README.md) |
+| Short [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) body | [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) |
 | Alternate themes (v1/v2, Neutral Dark, Gruvbox, …) | [archive/design/themes/](./archive/design/themes/) · live: V3 + Tokyo |
 
 Full archive index: [archive/README.md](./archive/README.md)
@@ -120,7 +142,9 @@ Design Audit → Phase 0–2 (docs/archive/design/)
     ↓
 Foundation + governance (docs/foundation/)
     ↓
-Active strategy + execution (docs/strategy/, docs/execution/) ← current
+Vision hub + chapters + masterplan (docs/strategy/)  ← highest product authority
+    ↓
+Active execution (docs/execution/) ← ops / hold / logs
     ↓
 Review after each milestone (docs/review/) ← SRAI
 ```

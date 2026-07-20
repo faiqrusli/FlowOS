@@ -98,6 +98,21 @@ Notes and boards for context without leaving the system.
 
 ---
 
+## Product vision
+
+FlowOS aims to close the gap between **intention and execution** — not another place to collect tasks.
+
+**Core loop:** Plan → Commit → Focus → Reflect → Improve
+
+| Doc | What it is |
+|-----|------------|
+| [Vision & Product Strategy](./docs/strategy/flowos-vision-and-product-strategy.md) | **Highest authority** — philosophy, positioning, long-term architecture |
+| [User Evolution & Market Positioning](./docs/strategy/flowos-user-evolution-and-market-positioning.md) | How FlowOS serves students through founders |
+| [Documentation hub](./docs/README.md) | Full index, authority order, start-here paths |
+| [Feature inventory](./docs/foundation/FEATURE_INVENTORY.md) | What’s shipped vs deferred |
+
+---
+
 ## Tech Stack
 
 **Next.js · React · TypeScript · Tailwind CSS · Supabase · Vercel**
@@ -136,7 +151,7 @@ FlowOS is in an **implementation hold** for review — prefer small fixes and do
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) and [GIT_WORKFLOW.md](./docs/foundation/governance/GIT_WORKFLOW.md).
 
-**Docs:** [docs/README.md](./docs/README.md) · **Shipped surface:** [FEATURE_INVENTORY.md](./docs/foundation/FEATURE_INVENTORY.md)
+**Docs:** [docs/README.md](./docs/README.md) · **Vision:** [flowos-vision-and-product-strategy.md](./docs/strategy/flowos-vision-and-product-strategy.md) · **Shipped surface:** [FEATURE_INVENTORY.md](./docs/foundation/FEATURE_INVENTORY.md)
 
 ---
 

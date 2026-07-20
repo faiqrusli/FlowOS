@@ -35,6 +35,7 @@ Do **not** start Day Engine / large M2 addenda until you lift the hold in decisi
 | Read | Why |
 |------|-----|
 | [flowos-vision-and-product-strategy.md](../strategy/flowos-vision-and-product-strategy.md) | **Highest** — vision & product strategy |
+| [flowos-user-evolution-and-market-positioning.md](../strategy/flowos-user-evolution-and-market-positioning.md) | Who we serve — student → founder |
 | [governance/PRINCIPLES.md](../foundation/governance/PRINCIPLES.md) | Non-negotiable product rules |
 | [PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | Stub → vision strategy doc |
 | [decision-log.md](../execution/logs/decision-log.md) | Past decisions — append new ones here |
