@@ -1,5 +1,6 @@
 import { normalizeTaskPriority, type TaskPriority } from "@/lib/task-priority";
 import { sortByManualOrder } from "@/lib/manual-order";
+import { getStorageItem, setStorageItem } from "@/lib/safe-storage";
 import type { Task, TaskGroup } from "@/types/task";
 
 const LATER_COLUMN_ID = "__flowos_later_column__";
@@ -173,14 +174,9 @@ export function sortActiveAndCompletedForContext(
 const LATER_SORT_STORAGE_KEY = "flowos:later-column-sort-mode";
 
 function readLaterSortModeFromStorage(): TaskSortMode | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(LATER_SORT_STORAGE_KEY);
-    if (!raw) return null;
-    return normalizeTaskSortMode(raw);
-  } catch {
-    return null;
-  }
+  const raw = getStorageItem(LATER_SORT_STORAGE_KEY);
+  if (!raw) return null;
+  return normalizeTaskSortMode(raw);
 }
 
 export function getLaterColumnSortMode(): TaskSortMode {
@@ -188,8 +184,7 @@ export function getLaterColumnSortMode(): TaskSortMode {
 }
 
 export function setLaterColumnSortMode(mode: TaskSortMode): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(LATER_SORT_STORAGE_KEY, mode);
+  setStorageItem(LATER_SORT_STORAGE_KEY, mode);
 }
 
 export function getTaskGroupSortMode(group: TaskGroup): TaskSortMode {

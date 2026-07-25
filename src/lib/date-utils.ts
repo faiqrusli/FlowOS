@@ -132,9 +132,18 @@ export function getTomorrowDateString(timeZone: string = APP_TIMEZONE): string {
   return shiftDateKey(getTodayDateString(timeZone), 1);
 }
 
-export function shiftDateKey(dateKey: string, days: number): string {
+/**
+ * Converts a `YYYY-MM-DD` key into a `Date` at the given UTC hour (noon by
+ * default, which keeps the calendar day stable when reformatting across time
+ * zones).
+ */
+export function dateKeyToUtcDate(dateKey: string, hourUTC = 12): Date {
   const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day));
+  return new Date(Date.UTC(year, month - 1, day, hourUTC));
+}
+
+export function shiftDateKey(dateKey: string, days: number): string {
+  const date = dateKeyToUtcDate(dateKey, 0);
   date.setUTCDate(date.getUTCDate() + days);
 
   const y = date.getUTCFullYear();
@@ -147,8 +156,7 @@ export function formatShortDateLabel(
   dateKey: string,
   timeZone: string = APP_TIMEZONE
 ): string {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  const date = dateKeyToUtcDate(dateKey);
   return new Intl.DateTimeFormat(APP_LOCALE, {
     timeZone,
     day: "numeric",
@@ -179,8 +187,7 @@ export function formatWeekdayLabel(
   dateKey: string,
   timeZone: string = APP_TIMEZONE
 ): string {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  const date = dateKeyToUtcDate(dateKey);
   return weekdayLongFormatter.format(date);
 }
 
@@ -189,8 +196,7 @@ export function formatSidebarDateHeading(
   dateKey: string,
   timeZone: string = APP_TIMEZONE
 ): string {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  const date = dateKeyToUtcDate(dateKey);
   const dayMonth = new Intl.DateTimeFormat(APP_LOCALE, {
     timeZone,
     day: "numeric",
@@ -208,8 +214,7 @@ export function formatDailyNoteHeaderDate(
 }
 
 export function getWeekStartMonday(dateKey: string): string {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  const date = dateKeyToUtcDate(dateKey);
   const weekday = date.getUTCDay();
   const diff = weekday === 0 ? -6 : 1 - weekday;
   date.setUTCDate(date.getUTCDate() + diff);
@@ -217,8 +222,7 @@ export function getWeekStartMonday(dateKey: string): string {
 }
 
 export function getWeekDateKeys(weekStartMonday: string): string[] {
-  const [year, month, day] = weekStartMonday.split("-").map(Number);
-  const start = new Date(Date.UTC(year, month - 1, day, 12));
+  const start = dateKeyToUtcDate(weekStartMonday);
   return Array.from({ length: 7 }, (_, index) => {
     const date = new Date(start);
     date.setUTCDate(start.getUTCDate() + index);
@@ -231,8 +235,7 @@ export function formatDailyNoteTitle(
   dateKey: string,
   timeZone: string = APP_TIMEZONE
 ): string {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  const date = dateKeyToUtcDate(dateKey);
   const monthDay = new Intl.DateTimeFormat(APP_LOCALE, {
     timeZone,
     month: "short",

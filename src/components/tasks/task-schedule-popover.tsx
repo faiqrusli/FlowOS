@@ -19,6 +19,7 @@ import {
   timePickerPartsToScheduledTime,
 } from "@/lib/time-picker-utils";
 import { requestBrowserNotificationPermissionIfNeeded } from "@/lib/browser-notifications";
+import { dateKeyToUtcDate } from "@/lib/date-utils";
 import { cn } from "@/lib/utils";
 import type { Task } from "@/types/task";
 
@@ -26,8 +27,7 @@ const SCHEDULE_POPOVER_ESTIMATED_WIDTH_PX = 394;
 const SCHEDULE_POPOVER_ESTIMATED_HEIGHT_PX = 320;
 
 function formatScheduleDateLabel(dateKey: string): string {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day, 12));
+  const date = dateKeyToUtcDate(dateKey);
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",

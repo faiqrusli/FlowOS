@@ -1,3 +1,9 @@
+import {
+  readStorageJson,
+  setStorageItem,
+  writeStorageJson,
+} from "@/lib/safe-storage";
+
 export type ThemePreference = "dark";
 
 export type WeekStart = "monday" | "sunday";
@@ -51,35 +57,30 @@ export const DEFAULT_SETTINGS: SettingsPreferences = {
 };
 
 export function loadSettingsPreferences(): SettingsPreferences {
-  if (typeof window === "undefined") return DEFAULT_SETTINGS;
+  const parsed = readStorageJson<Partial<SettingsPreferences> | null>(
+    STORAGE_KEY,
+    null
+  );
+  if (!parsed) return DEFAULT_SETTINGS;
 
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_SETTINGS;
-
-    const parsed = JSON.parse(raw) as Partial<SettingsPreferences>;
-    return {
-      notifications: {
-        ...DEFAULT_SETTINGS.notifications,
-        ...parsed.notifications,
-      },
-      productivity: {
-        ...DEFAULT_SETTINGS.productivity,
-        ...parsed.productivity,
-      },
-      ai: {
-        ...DEFAULT_SETTINGS.ai,
-        ...parsed.ai,
-      },
-    };
-  } catch {
-    return DEFAULT_SETTINGS;
-  }
+  return {
+    notifications: {
+      ...DEFAULT_SETTINGS.notifications,
+      ...parsed.notifications,
+    },
+    productivity: {
+      ...DEFAULT_SETTINGS.productivity,
+      ...parsed.productivity,
+    },
+    ai: {
+      ...DEFAULT_SETTINGS.ai,
+      ...parsed.ai,
+    },
+  };
 }
 
 export function saveSettingsPreferences(preferences: SettingsPreferences): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
+  writeStorageJson(STORAGE_KEY, preferences);
 }
 
 const THEME_KEY = "flowos.theme";
@@ -90,8 +91,7 @@ export function loadThemePreference(): ThemePreference {
 }
 
 export function saveThemePreference(theme: ThemePreference): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(THEME_KEY, theme);
+  setStorageItem(THEME_KEY, theme);
 }
 
 export function resolveTheme(_theme?: ThemePreference): "dark" {

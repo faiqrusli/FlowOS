@@ -1,5 +1,6 @@
 import {
   APP_TIMEZONE,
+  dateKeyToUtcDate,
   getTodayDateString,
 } from "@/lib/date-utils";
 import type { Habit } from "@/types/habit";
@@ -20,8 +21,7 @@ const WEEKDAY_TO_ABBREV: Record<string, string> = {
 };
 
 export function offsetDateKey(dateKey: string, days: number): string {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day));
+  const date = dateKeyToUtcDate(dateKey, 0);
   date.setUTCDate(date.getUTCDate() + days);
 
   const y = date.getUTCFullYear();
@@ -31,8 +31,7 @@ export function offsetDateKey(dateKey: string, days: number): string {
 }
 
 export function getDayAbbrevFromDateKey(dateKey: string): string {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day, 4));
+  const date = dateKeyToUtcDate(dateKey, 4);
   const weekday = weekdayFormatter.format(date);
   return WEEKDAY_TO_ABBREV[weekday] ?? weekday;
 }

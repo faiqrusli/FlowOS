@@ -1,3 +1,5 @@
+import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
+
 export type FocusSettings = {
   focusMinutes: number;
   breakMinutes: number;
@@ -38,34 +40,25 @@ export const DEFAULT_FOCUS_SETTINGS: FocusSettings = {
 };
 
 export function readFocusSettings(): FocusSettings {
-  if (typeof window === "undefined") return DEFAULT_FOCUS_SETTINGS;
+  const parsed = readStorageJson<Partial<FocusSettings> | null>(
+    STORAGE_KEY,
+    null
+  );
+  if (!parsed) return DEFAULT_FOCUS_SETTINGS;
 
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_FOCUS_SETTINGS;
-    const parsed = JSON.parse(raw) as Partial<FocusSettings>;
-    return {
-      ...DEFAULT_FOCUS_SETTINGS,
-      ...parsed,
-      breakActivities:
-        parsed.breakActivities?.length
-          ? parsed.breakActivities
-          : DEFAULT_FOCUS_SETTINGS.breakActivities,
-      musicProviders: {
-        ...DEFAULT_FOCUS_SETTINGS.musicProviders,
-        ...parsed.musicProviders,
-      },
-    };
-  } catch {
-    return DEFAULT_FOCUS_SETTINGS;
-  }
+  return {
+    ...DEFAULT_FOCUS_SETTINGS,
+    ...parsed,
+    breakActivities: parsed.breakActivities?.length
+      ? parsed.breakActivities
+      : DEFAULT_FOCUS_SETTINGS.breakActivities,
+    musicProviders: {
+      ...DEFAULT_FOCUS_SETTINGS.musicProviders,
+      ...parsed.musicProviders,
+    },
+  };
 }
 
 export function writeFocusSettings(settings: FocusSettings): void {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  } catch {
-    // ignore storage errors
-  }
+  writeStorageJson(STORAGE_KEY, settings);
 }
