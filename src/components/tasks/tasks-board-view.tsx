@@ -200,7 +200,7 @@ const BOARD_EDGE_SCROLL_ZONE = 72;
  */
 const BOARD_EDGE_SCROLL_ZONE_OVER_COLUMN = 20;
 const BOARD_EDGE_SCROLL_SPEED = 8;
-const GROUP_COLUMN_WIDTH_CLASS = "w-full sm:w-[280px] md:w-[280px] lg:w-[300px]";
+const GROUP_COLUMN_WIDTH_CLASS = "w-[300px]";
 const GROUP_CHANGE_BLOCKED_HINT = "Task group can't be changed from here";
 const LATER_GROUP_CHANGE_BLOCKED_HINT =
   "Task group can't be changed from Later";
@@ -2631,7 +2631,7 @@ function TasksBoardViewContent({
                 }
                 void handleExternalTaskDrop(event);
               }}
-              className="tasks-board-scroll flex min-h-0 flex-1 gap-2 sm:gap-3 overflow-x-auto overscroll-x-contain pb-1 snap-x snap-mandatory"
+              className="tasks-board-scroll flex min-h-0 flex-1 gap-3 overflow-x-auto overscroll-x-contain pb-1"
             >
               {groups.map((group, columnIndex) =>
                 renderGroupColumn(group, columnIndex),

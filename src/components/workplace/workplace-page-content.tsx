@@ -1123,10 +1123,10 @@ export function WorkplacePageContent({
             <div
           ref={canvasScrollRef}
           data-workplace-canvas-scroll
-          className="workplace-canvas-scroll min-h-0 flex-1 overflow-x-auto overflow-y-hidden sm:overflow-x-auto sm:overflow-y-hidden"
+          className="workplace-canvas-scroll min-h-0 flex-1 overflow-x-auto overflow-y-hidden"
         >
               <div
-                className="flex h-full min-h-0 w-[max(100%,max-content)] flex-col sm:flex-row"
+                className="flex h-full min-h-0 w-[max(100%,max-content)]"
                 style={{ minWidth: canvasMinWidthPx }}
               >
                 <div
@@ -1332,7 +1332,7 @@ export function WorkplacePageContent({
 
                 <div
                   data-timeline-shell
-                  className="flex h-full min-h-0 shrink-0 overflow-hidden rounded-none border-0 bg-surface-canvas shadow-none hidden sm:flex"
+                  className="flex h-full min-h-0 shrink-0 overflow-hidden rounded-none border-0 bg-surface-canvas shadow-none"
                   style={{
                     width: timelineWidthPx,
                     minWidth: timelineWidthPx,

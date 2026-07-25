@@ -126,7 +126,7 @@ export function DashboardPageContent() {
   }
 
   return (
-    <div className="mx-auto max-w-full px-4 sm:px-6 md:max-w-3xl lg:max-w-5xl space-y-4">
+    <div className="mx-auto max-w-5xl space-y-4">
       <DashboardCommandHeader displayName={displayName} loading={loading} />
 
       {error && <ErrorBanner message={error} />}
@@ -141,7 +141,7 @@ export function DashboardPageContent() {
             onTrack={onTrack}
           />
 
-          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             <DashboardTasksCard
               tasks={data.tasks}
               pendingId={pendingId}
@@ -154,7 +154,7 @@ export function DashboardPageContent() {
             />
           </div>
 
-          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             <DashboardFocusCard stats={data.focus} />
             <DashboardReflectionCard reflection={data.reflection} />
             <DashboardSchedulePreview items={data.timeline} />

@@ -107,17 +107,14 @@ export function GlobalRightSidebar() {
           Outer overflow stays visible so left-edge drawer shadow isn’t clipped. */}
       <div
         className={cn(
-          "flow-shell-right-drawer fixed z-50 flex flex-col text-foreground",
-          "sm:inset-y-0 sm:right-0 sm:top-0 sm:bottom-0",
-          "bottom-0 left-0 right-0 sm:w-auto sm:h-full",
-          "h-[80vh] sm:h-full",
+          "flow-shell-right-drawer fixed inset-y-0 z-50 flex flex-col text-foreground",
           expanded && "flow-shell-right-drawer-elevated",
           !expanded && "pointer-events-none",
         )}
         style={{
           right: panelRightOffset,
           width: panelWidth,
-          transform: expanded ? "translateY(0) sm:translateX(0)" : "translateY(100%) sm:translateX(100%)",
+          transform: expanded ? "translateX(0)" : "translateX(100%)",
           transition: PANEL_SLIDE_TRANSITION,
           willChange: "transform",
         }}
@@ -175,7 +172,7 @@ export function GlobalRightSidebar() {
                 <button
                   type="button"
                   onClick={toggleExpanded}
-                  className={cn("group/panel-toggle min-h-[44px] min-w-[44px]", globalRailButtonClass())}
+                  className={cn("group/panel-toggle", globalRailButtonClass())}
                   aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
                   aria-expanded={expanded}
                 />
@@ -236,7 +233,7 @@ export function GlobalRightSidebar() {
                       <button
                         type="button"
                         onClick={() => openPanel(item.id)}
-                        className={cn("min-h-[44px] min-w-[44px]", globalRailButtonClass(active))}
+                        className={globalRailButtonClass(active)}
                         aria-label={item.label}
                       />
                     }
