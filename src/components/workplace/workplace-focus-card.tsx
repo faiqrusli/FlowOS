@@ -397,8 +397,9 @@ export function WorkplaceFocusCard({
           (session) => getDateKeyInTimezone(session.started_at) === todayKey,
         ).length,
       );
-    } catch {
-      /* keep last known session count */
+    } catch (error) {
+      // Keep last known session count.
+      console.error("[focus] session stats refresh failed", error);
     }
   }, []);
 
@@ -406,7 +407,8 @@ export function WorkplaceFocusCard({
     try {
       setNextUpTasks(await fetchNextUpTasks());
       setNextUpFetchError(null);
-    } catch {
+    } catch (error) {
+      console.error("[next-up] queue fetch failed", error);
       setNextUpTasks([]);
       setNextUpFetchError("Couldn't load Next Up. Retry by refreshing.");
     }
@@ -415,8 +417,9 @@ export function WorkplaceFocusCard({
   const refreshTodayFocusHistory = useCallback(async () => {
     try {
       setTodayFocusHistory(await fetchTodayFocusedTaskHistory());
-    } catch {
-      /* keep last known continue history */
+    } catch (error) {
+      // Keep last known continue history.
+      console.error("[focus] today focus history refresh failed", error);
     }
   }, []);
 
@@ -1095,9 +1098,20 @@ export function WorkplaceFocusCard({
         icon: "queue",
         actionLabel: "Undo",
         onAction: () => {
-          void appendTaskToNextUp(taskId).then(() => {
-            void refreshNextUpTasks();
-          });
+          void appendTaskToNextUp(taskId)
+            .then(() => {
+              void refreshNextUpTasks();
+            })
+            .catch((error: unknown) => {
+              showActionToast({
+                message:
+                  error instanceof Error
+                    ? error.message
+                    : "Couldn't restore this task to Next Up.",
+                tone: "warning",
+                icon: "warning",
+              });
+            });
         },
       });
     },

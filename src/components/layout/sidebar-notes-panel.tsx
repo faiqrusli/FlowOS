@@ -68,9 +68,9 @@ export function SidebarNotesPanel() {
   const [refreshing, setRefreshing] = useState(!cached);
   const [search, setSearch] = useState("");
   const [preview, setPreview] = useState(false);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">(
-    "idle",
-  );
+  const [saveState, setSaveState] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
   const [todayDailyNoteId, setTodayDailyNoteId] = useState<string | null>(null);
   const [collapsedAreas, setCollapsedAreas] = useState<Set<string>>(new Set());
   const [openMenuNoteId, setOpenMenuNoteId] = useState<string | null>(null);
@@ -168,8 +168,9 @@ export function SidebarNotesPanel() {
         updateFloatingNote(updated);
         setSaveState("saved");
         window.setTimeout(() => setSaveState("idle"), 1500);
-      } catch {
-        setSaveState("idle");
+      } catch (err) {
+        console.error("[notes] autosave failed", err);
+        setSaveState("error");
       }
     },
     [areas, updateFloatingNote],
@@ -370,12 +371,22 @@ export function SidebarNotesPanel() {
                 <Pin className="size-4" />
               )}
             </button>
-            <span className="shrink-0 text-xs text-foreground-secondary">
+            <span
+              className={cn(
+                "shrink-0 text-xs",
+                saveState === "error"
+                  ? "text-destructive"
+                  : "text-foreground-secondary",
+              )}
+              role={saveState === "error" ? "alert" : undefined}
+            >
               {saveState === "saving"
                 ? "Saving..."
                 : saveState === "saved"
                   ? "Saved"
-                  : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
+                  : saveState === "error"
+                    ? "Not saved — changes are only on this device"
+                    : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
             </span>
           </div>
 

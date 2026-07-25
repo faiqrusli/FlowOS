@@ -204,9 +204,16 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       completionHandledRef.current = true;
       updateSession(null);
 
-      const saved = await persistFocusSessionEnd(payload);
-      if (saved) {
-        setLastSavedSession(saved);
+      try {
+        const saved = await persistFocusSessionEnd(payload);
+        if (saved) {
+          setLastSavedSession(saved);
+        }
+      } catch (error) {
+        console.error("[focus] endSession failed to save", error);
+        setNotification(
+          "Focus session could not be saved. Check your connection — this session is missing from your history."
+        );
       }
     },
     [updateSession]

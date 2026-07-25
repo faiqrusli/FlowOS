@@ -13,6 +13,8 @@ import { ScheduleReminderProvider } from "@/contexts/schedule-reminder-context";
 import { SettingsModalProvider } from "@/contexts/settings-modal-context";
 import { ActionToastProvider } from "@/contexts/action-toast-context";
 import { DemoSessionProvider } from "@/contexts/demo-session-context";
+import { FocusNotificationHost } from "@/components/notifications/focus-notification-host";
+import { NotificationStack } from "@/components/notifications/notification-stack";
 import { ScheduleReminderToastHost } from "@/components/notifications/schedule-reminder-toast-host";
 import { DemoWorkspaceBanner } from "@/components/demo/demo-workspace-banner";
 import { useGlobalShortcuts } from "@/hooks/use-global-shortcuts";
@@ -50,7 +52,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <AppShellShortcuts />
                 <QuickCaptureDialog />
                 <GlobalFloatingNotes />
-                <ScheduleReminderToastHost />
+                <NotificationStack>
+                  <ScheduleReminderToastHost />
+                  <FocusNotificationHost />
+                </NotificationStack>
 
                 {/* Canvas workspace; left/right chrome use Navigation. */}
                 <div className="flex h-dvh overflow-hidden bg-surface-canvas">

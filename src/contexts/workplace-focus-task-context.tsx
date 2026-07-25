@@ -131,7 +131,10 @@ export function WorkplaceFocusTaskProvider({
     const refreshQueueState = () => {
       void fetchNextUpTasks()
         .then((queue) => setHasNextUpTasks(queue.length > 0))
-        .catch(() => setHasNextUpTasks(false));
+        .catch((error: unknown) => {
+          // Keep the last known queue state — a failed fetch is not an empty queue.
+          console.error("[next-up] queue state refresh failed", error);
+        });
     };
 
     refreshQueueState();

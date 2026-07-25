@@ -42,6 +42,7 @@ export function ReflectionHistory({
     null
   );
   const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
 
   const todayReflection = reflections.find(
     (r) => r.reflection_date === todayDate
@@ -58,18 +59,27 @@ export function ReflectionHistory({
     async function loadReview() {
       if (viewing!.reflection_date === todayDate && todayReview) {
         setViewingReview(todayReview);
+        setReviewError(null);
         setReviewLoading(false);
         return;
       }
 
       setReviewLoading(true);
       setViewingReview(null);
+      setReviewError(null);
 
       try {
         const review = await fetchReflectionDayReview(viewing!.reflection_date);
         if (!cancelled) setViewingReview(review);
-      } catch {
-        if (!cancelled) setViewingReview(null);
+      } catch (err) {
+        if (!cancelled) {
+          setViewingReview(null);
+          setReviewError(
+            err instanceof Error
+              ? err.message
+              : "Failed to load the day review.",
+          );
+        }
       } finally {
         if (!cancelled) setReviewLoading(false);
       }
@@ -166,6 +176,7 @@ export function ReflectionHistory({
                 reflection={viewing}
                 review={viewingReview}
                 reviewLoading={reviewLoading}
+                reviewError={reviewError}
               />
             </>
           )}

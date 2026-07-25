@@ -22,7 +22,6 @@ import {
   WorkplaceHabitsCard,
   type WorkplaceHabitsCardHandle,
 } from "@/components/workplace/workplace-habits-card";
-import { WorkplaceNotificationHost } from "@/components/workplace/workplace-notification-host";
 import { WorkplaceQuickAddCard } from "@/components/workplace/workplace-quick-add-card";
 import { WorkplaceTodayTaskMenu } from "@/components/workplace/workplace-today-task-menu";
 import {
@@ -1369,7 +1368,15 @@ export function WorkplacePageContent({
                         icon: "queue",
                         actionLabel: "Undo",
                         onAction: () => {
-                          void removeTaskFromNextUp(taskId);
+                          void removeTaskFromNextUp(taskId).catch(
+                            (err: unknown) => {
+                              setError(
+                                err instanceof TasksError
+                                  ? err.message
+                                  : "Failed to remove task from Queue.",
+                              );
+                            },
+                          );
                         },
                       });
                     }}
@@ -1404,8 +1411,6 @@ export function WorkplacePageContent({
               </div>
             </div>
 
-              <WorkplaceNotificationHost />
-
               {taskContextMenu ? (
                 <WorkplaceTodayTaskContextMenu
                   menuRef={taskContextMenuRef}
@@ -1418,16 +1423,32 @@ export function WorkplacePageContent({
                   }}
                   onAddToNextUp={() => {
                     const taskId = taskContextMenu.task.id;
-                    void appendTaskToNextUp(taskId).then(() => {
-                      showActionToast({
-                        message: "Added to Queue",
-                        icon: "queue",
-                        actionLabel: "Undo",
-                        onAction: () => {
-                          void removeTaskFromNextUp(taskId);
-                        },
+                    void appendTaskToNextUp(taskId)
+                      .then(() => {
+                        showActionToast({
+                          message: "Added to Queue",
+                          icon: "queue",
+                          actionLabel: "Undo",
+                          onAction: () => {
+                            void removeTaskFromNextUp(taskId).catch(
+                              (err: unknown) => {
+                                setError(
+                                  err instanceof TasksError
+                                    ? err.message
+                                    : "Failed to remove task from Queue.",
+                                );
+                              },
+                            );
+                          },
+                        });
+                      })
+                      .catch((err: unknown) => {
+                        setError(
+                          err instanceof TasksError
+                            ? err.message
+                            : "Failed to add task to Queue.",
+                        );
                       });
-                    });
                     setTaskContextMenu(null);
                   }}
                   onMoveToTomorrow={() => {
@@ -1559,7 +1580,9 @@ function WorkplaceTodayTaskContextMenu({
           id: task.id,
           label: task.title,
         };
-        void removeTaskFromNextUp(task.id);
+        void removeTaskFromNextUp(task.id).catch((err: unknown) => {
+          console.error("[next-up] failed to dequeue focused task", err);
+        });
         if (quick.isIdle) {
           prepareFocusTarget(target);
           quick.startFocus();

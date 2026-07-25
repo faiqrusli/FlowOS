@@ -1,10 +1,17 @@
 import { getTodayDateString } from "@/lib/date-utils";
-import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
+import { readStorageJson } from "@/lib/safe-storage";
 import { supabase } from "@/lib/supabase";
 
 const STORAGE_KEY = "flowos.habit.completions";
 
 export type HabitCompletionStore = Record<string, string[]>;
+
+export class HabitCompletionsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "HabitCompletionsError";
+  }
+}
 
 function readLocalCompletions(): HabitCompletionStore {
   const parsed = readStorageJson<HabitCompletionStore | null>(STORAGE_KEY, null);
@@ -12,7 +19,14 @@ function readLocalCompletions(): HabitCompletionStore {
 }
 
 function writeLocalCompletions(store: HabitCompletionStore): void {
-  writeStorageJson(STORAGE_KEY, store);
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+  } catch (error) {
+    // Private mode / quota: the remote write below stays the source of truth.
+    console.warn("[habits] local completion cache write failed", error);
+  }
 }
 
 function normalizeStore(store: HabitCompletionStore): HabitCompletionStore {
@@ -32,6 +46,7 @@ async function fetchRemoteCompletions(): Promise<HabitCompletionStore | null> {
     .select("habit_id, completion_date");
 
   if (error) {
+    console.warn("[habits] remote completions fetch failed", error.message);
     return null;
   }
 
@@ -95,7 +110,7 @@ async function persistRemoteCompletion(
     );
 
     if (error) {
-      console.warn("[habits] remote completion insert failed", error.message);
+      throw new HabitCompletionsError(error.message);
     }
 
     return;
@@ -108,7 +123,28 @@ async function persistRemoteCompletion(
     .eq("completion_date", dateKey);
 
   if (error) {
-    console.warn("[habits] remote completion delete failed", error.message);
+    throw new HabitCompletionsError(error.message);
+  }
+}
+
+/** Applies the optimistic cache update, rolling it back if the remote write fails. */
+async function commitCompletionChange(
+  next: HabitCompletionStore,
+  habitId: string,
+  dateKey: string,
+  action: "insert" | "delete"
+): Promise<void> {
+  const previous = getCachedHabitCompletions();
+
+  cachedCompletions = next;
+  writeLocalCompletions(next);
+
+  try {
+    await persistRemoteCompletion(habitId, dateKey, action);
+  } catch (error) {
+    cachedCompletions = previous;
+    writeLocalCompletions(previous);
+    throw error;
   }
 }
 
@@ -121,9 +157,7 @@ export async function recordHabitCompletion(
   dates.add(dateKey);
   store[habitId] = [...dates].sort();
 
-  cachedCompletions = store;
-  writeLocalCompletions(store);
-  await persistRemoteCompletion(habitId, dateKey, "insert");
+  await commitCompletionChange(store, habitId, dateKey, "insert");
 }
 
 export async function removeHabitCompletion(
@@ -133,9 +167,7 @@ export async function removeHabitCompletion(
   const store = { ...getCachedHabitCompletions() };
   store[habitId] = (store[habitId] ?? []).filter((date) => date !== dateKey);
 
-  cachedCompletions = store;
-  writeLocalCompletions(store);
-  await persistRemoteCompletion(habitId, dateKey, "delete");
+  await commitCompletionChange(store, habitId, dateKey, "delete");
 }
 
 export function removeAllHabitCompletions(habitId: string): void {
