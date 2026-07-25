@@ -295,9 +295,8 @@ export async function batchUpdateManualOrders(
 ): Promise<void> {
   if (updates.length === 0) return;
 
-  const userId = await requireUserId();
+  await requireUserId();
   const { error } = await supabase.rpc("batch_update_task_manual_orders", {
-    p_user_id: userId,
     p_updates: updates,
   });
 

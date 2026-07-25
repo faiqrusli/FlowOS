@@ -9,10 +9,6 @@ create table if not exists habit_completions (
 create index if not exists habit_completions_habit_id_idx
   on habit_completions (habit_id);
 
+-- RLS is enabled with no policies here: the table is deny-all until the
+-- per-user policies in auth_migration.sql are applied.
 alter table habit_completions enable row level security;
-
-create policy "Allow public access to habit_completions"
-  on habit_completions
-  for all
-  using (true)
-  with check (true);

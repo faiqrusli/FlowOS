@@ -10,10 +10,6 @@ create table if not exists tasks (
   created_at timestamp default now()
 );
 
+-- RLS is enabled with no policies here: the table is deny-all until the
+-- per-user policies in auth_migration.sql are applied.
 alter table tasks enable row level security;
-
-create policy "Allow public access to tasks"
-  on tasks
-  for all
-  using (true)
-  with check (true);

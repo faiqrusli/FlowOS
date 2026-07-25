@@ -61,8 +61,14 @@ All core rows have non-null `user_id` (verified before RLS lockdown).
 |------|--------------------------|---------|
 | `tasks_next_up_queue.sql` | Yes | Persistent task-only Next Up order and reorder RPC |
 | `focus_session_task_totals.sql` | Yes | RLS-protected per-task focus attribution during a quick-focus session |
+| `security_hardening.sql` | Yes | Removes the cross-user write path in `batch_update_task_manual_orders`, re-drops legacy public policies, locks down `demo_feedback` reads |
 
-These migrations are committed as SQL but have **not** been applied from this workspace: the Supabase CLI is not installed or linked here. Apply both in the project SQL editor or a linked Supabase CLI session, then update this record and repeat the two-account RLS test for `focus_session_task_totals`.
+`security_hardening.sql` must be applied together with the app deploy that ships
+the new one-argument `batch_update_task_manual_orders(jsonb)` signature: the old
+`(uuid, jsonb)` overload is dropped, so manual task reordering fails until both
+sides are updated.
+
+These migrations are committed as SQL but have **not** been applied from this workspace: the Supabase CLI is not installed or linked here. Apply them in the project SQL editor or a linked Supabase CLI session, then update this record and repeat the two-account RLS test for `focus_session_task_totals`.
 
 ## Two-account test (2026-07-04)
 

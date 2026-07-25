@@ -8,10 +8,6 @@ create table if not exists focus_sessions (
   created_at timestamptz default now()
 );
 
+-- RLS is enabled with no policies here: the table is deny-all until the
+-- per-user policies in auth_migration.sql are applied.
 alter table focus_sessions enable row level security;
-
-create policy "Allow public access to focus_sessions"
-  on focus_sessions
-  for all
-  using (true)
-  with check (true);

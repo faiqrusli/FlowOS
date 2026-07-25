@@ -30,11 +30,14 @@ function isAuthRoute(pathname: string): boolean {
   );
 }
 
+const STATIC_FILE_PATTERN =
+  /\.(?:ico|png|jpg|jpeg|gif|webp|svg|avif|css|js|map|txt|xml|json|woff|woff2|ttf|otf|webmanifest)$/i;
+
 function isProtectedRoute(pathname: string): boolean {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/auth") ||
-    pathname.includes(".")
+    STATIC_FILE_PATTERN.test(pathname)
   ) {
     return false;
   }

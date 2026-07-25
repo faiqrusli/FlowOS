@@ -6,10 +6,6 @@ create table if not exists reflection_entries (
   created_at timestamptz default now()
 );
 
+-- RLS is enabled with no policies here: the table is deny-all until the
+-- per-user policies in auth_migration.sql are applied.
 alter table reflection_entries enable row level security;
-
-create policy "Allow public access to reflection_entries"
-  on reflection_entries
-  for all
-  using (true)
-  with check (true);

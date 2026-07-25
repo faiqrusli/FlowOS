@@ -251,7 +251,7 @@ export type Database = {
     Views: Record<string, never>;
     Functions: {
       batch_update_task_manual_orders: {
-        Args: { p_user_id: string; p_updates: { id: string; sort_order: number }[] };
+        Args: { p_updates: { id: string; sort_order: number }[] };
         Returns: undefined;
       };
       batch_update_task_queue_orders: {
