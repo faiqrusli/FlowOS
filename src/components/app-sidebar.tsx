@@ -116,7 +116,7 @@ function SidebarBrand({
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="group/logo relative size-7 rounded-md"
+            className="group/logo relative size-7 sm:size-7 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-md"
             aria-label="Open sidebar"
           >
             <SidebarLogoMark className="transition-opacity duration-150 group-hover/logo:opacity-0" />
@@ -171,7 +171,7 @@ function SidebarNavLink({
   const Icon = item.icon;
 
   const linkClassName = cn(
-    "group/nav relative flex h-9 w-full items-center overflow-hidden rounded-md text-[13.5px] transition-[background-color,color] duration-[180ms] ease-out",
+    "group/nav relative flex h-9 min-h-[44px] w-full items-center overflow-hidden rounded-md text-[13.5px] transition-[background-color,color] duration-[180ms] ease-out",
     isActive
       ? "font-medium text-foreground"
       : "font-normal text-muted-foreground",
@@ -344,7 +344,7 @@ function SidebarPanel({
       }}
       className={cn(
         "flow-border-hairline-r flex h-full shrink-0 flex-col overflow-hidden bg-surface-nav text-sidebar-foreground",
-        overlay && "fixed inset-y-0 left-0 z-40",
+        overlay && "fixed inset-y-0 left-0 z-40 sm:relative sm:inset-y-auto sm:left-auto",
         className,
       )}
     >
@@ -516,7 +516,7 @@ export function MobileSidebarTrigger({ onOpen }: MobileSidebarTriggerProps) {
         type="button"
         onClick={onOpen}
         aria-label="Open navigation menu"
-        className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-surface-hover hover:text-foreground"
+        className="flex size-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-surface-hover hover:text-foreground"
       >
         <Menu className="size-4.5 stroke-[1.5]" />
       </button>

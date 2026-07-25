@@ -77,19 +77,19 @@ export function FocusPageContent() {
   );
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 pb-8">
+    <div className="mx-auto max-w-full px-4 sm:px-6 md:max-w-4xl lg:max-w-7xl space-y-6 pb-8">
       <PageHeader title="Focus" />
 
       {error ? <ErrorBanner message={error} /> : null}
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px]">
         <FocusCurrentSessionCard />
         <FocusTodaySummaryCard summary={todaySummary} loading={loading} />
       </div>
 
       <FocusAnalyticsStrip analytics={analytics} loading={loading} />
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
         <FocusDailyHistoryPanel
           sessions={sessions}
           loading={loading}
@@ -99,7 +99,7 @@ export function FocusPageContent() {
         <FocusHeatmap sessions={sessions} loading={loading} />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
         <FocusSessionHistoryList
           sessions={sessions}
           filterDate={selectedDate}
