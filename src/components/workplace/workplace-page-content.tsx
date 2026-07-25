@@ -22,7 +22,6 @@ import {
   WorkplaceHabitsCard,
   type WorkplaceHabitsCardHandle,
 } from "@/components/workplace/workplace-habits-card";
-import { WorkplaceNotificationHost } from "@/components/workplace/workplace-notification-host";
 import { WorkplaceQuickAddCard } from "@/components/workplace/workplace-quick-add-card";
 import { WorkplaceTodayTaskMenu } from "@/components/workplace/workplace-today-task-menu";
 import {
@@ -1411,8 +1410,6 @@ export function WorkplacePageContent({
                 </div>
               </div>
             </div>
-
-              <WorkplaceNotificationHost />
 
               {taskContextMenu ? (
                 <WorkplaceTodayTaskContextMenu
