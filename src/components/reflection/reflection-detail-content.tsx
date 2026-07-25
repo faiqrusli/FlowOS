@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorBanner } from "@/components/shared/error-banner";
 import { Label } from "@/components/ui/label";
 import { ReflectionCollapsibleSection } from "@/components/reflection/reflection-collapsible-section";
 import { ReflectionDayReviewSections } from "@/components/reflection/reflection-day-review-sections";
@@ -14,12 +15,14 @@ type ReflectionDetailContentProps = {
   reflection: Reflection;
   review: ReflectionDayReview | null;
   reviewLoading?: boolean;
+  reviewError?: string | null;
 };
 
 export function ReflectionDetailContent({
   reflection,
   review,
   reviewLoading,
+  reviewError,
 }: ReflectionDetailContentProps) {
   const customCount = reflection.custom_entries.length;
 
@@ -34,11 +37,15 @@ export function ReflectionDetailContent({
         </p>
       </div>
 
-      <ReflectionDayReviewSections
-        review={review}
-        loading={reviewLoading}
-        compactSummary
-      />
+      {reviewError ? (
+        <ErrorBanner message={reviewError} />
+      ) : (
+        <ReflectionDayReviewSections
+          review={review}
+          loading={reviewLoading}
+          compactSummary
+        />
+      )}
 
       <div className="space-y-2">
         <Label>What went well</Label>

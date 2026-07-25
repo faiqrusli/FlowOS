@@ -141,13 +141,21 @@ export async function toggleHabitComplete(habit: Habit): Promise<Habit> {
   const today = getTodayDateString();
   const isComplete = isHabitCompletedToday(habit);
 
-  if (isComplete) {
-    await removeHabitCompletion(habit.id, today);
-    return updateHabit(habit.id, { completed: false });
+  try {
+    if (isComplete) {
+      await removeHabitCompletion(habit.id, today);
+    } else {
+      await recordHabitCompletion(habit.id, today);
+    }
+  } catch (error) {
+    throw new HabitsError(
+      error instanceof Error
+        ? error.message
+        : "Failed to save the habit completion."
+    );
   }
 
-  await recordHabitCompletion(habit.id, today);
-  return updateHabit(habit.id, { completed: true });
+  return updateHabit(habit.id, { completed: !isComplete });
 }
 
 export async function deleteHabit(id: string): Promise<void> {

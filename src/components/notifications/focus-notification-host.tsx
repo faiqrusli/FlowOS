@@ -11,7 +11,8 @@ type ToastItem = {
 
 const TOAST_MS = 6000;
 
-export function WorkplaceNotificationHost() {
+/** Focus session notices (phase changes, failed saves) — app-wide. */
+export function FocusNotificationHost() {
   const { notification, clearNotification } = useFocusSessionContext();
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
@@ -29,10 +30,7 @@ export function WorkplaceNotificationHost() {
   if (toasts.length === 0) return null;
 
   return (
-    <div
-      className="pointer-events-none fixed top-4 right-4 z-[200] flex max-w-sm flex-col gap-2"
-      aria-live="polite"
-    >
+    <>
       {toasts.map((toast) => (
         <div
           key={toast.id}
@@ -44,6 +42,6 @@ export function WorkplaceNotificationHost() {
           {toast.message}
         </div>
       ))}
-    </div>
+    </>
   );
 }

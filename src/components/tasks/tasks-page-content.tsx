@@ -1063,7 +1063,13 @@ export function TasksPageContent() {
             icon: "queue",
             actionLabel: "Undo",
             onAction: () => {
-              void removeTaskFromNextUp(taskId);
+              void removeTaskFromNextUp(taskId).catch((err: unknown) => {
+                setError(
+                  err instanceof TasksError
+                    ? err.message
+                    : "Failed to remove task from Queue.",
+                );
+              });
             },
           });
         }}

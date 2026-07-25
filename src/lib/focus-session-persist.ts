@@ -14,6 +14,11 @@ function buildSaveKey(payload: FocusSessionSavePayload): string {
 let saveInFlight = false;
 let lastSavedKey: string | null = null;
 
+/**
+ * Persists a finished session. Returns null when the save was skipped
+ * (duplicate stop / save already in flight); throws when the save failed so
+ * callers can tell the user their session was not recorded.
+ */
 export async function persistFocusSessionEnd(
   payload: FocusSessionSavePayload & {
     focus_duration?: number;
@@ -51,7 +56,7 @@ export async function persistFocusSessionEnd(
     return saved;
   } catch (error) {
     console.error("[focus] saveSession failed", error);
-    return null;
+    throw error;
   } finally {
     saveInFlight = false;
   }
