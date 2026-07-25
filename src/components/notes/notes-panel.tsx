@@ -67,9 +67,9 @@ export function NotesPanel({
   );
   const [search, setSearch] = useState("");
   const [preview, setPreview] = useState(false);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">(
-    "idle",
-  );
+  const [saveState, setSaveState] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
   const [moveNoteId, setMoveNoteId] = useState<string | null>(null);
@@ -132,8 +132,9 @@ export function NotesPanel({
         onNotesChange(next);
         setSaveState("saved");
         setTimeout(() => setSaveState("idle"), 1500);
-      } catch {
-        setSaveState("idle");
+      } catch (err) {
+        console.error("[notes] autosave failed", err);
+        setSaveState("error");
       }
     },
     [notes, onNotesChange],
@@ -169,8 +170,14 @@ export function NotesPanel({
         tone: "success",
         icon: "note",
       });
-    } catch {
-      // parent shows errors
+    } catch (err) {
+      console.error("[notes] create note failed", err);
+      showActionToast({
+        message:
+          err instanceof Error ? err.message : "Failed to create note.",
+        tone: "warning",
+        icon: "warning",
+      });
     }
   }
 
@@ -192,8 +199,15 @@ export function NotesPanel({
         .then(() => {
           onAreasRefresh();
         })
-        .catch(() => {
+        .catch((err: unknown) => {
+          console.error("[notes] delete note failed", err);
           onNotesChange(insertNewNoteInList(notes, snapshot));
+          showActionToast({
+            message:
+              err instanceof Error ? err.message : "Failed to delete note.",
+            tone: "warning",
+            icon: "warning",
+          });
         });
     };
 
@@ -423,12 +437,22 @@ export function NotesPanel({
                 className="min-w-0 flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-muted-foreground"
                 placeholder="Note title"
               />
-              <span className="shrink-0 text-xs text-foreground-secondary">
+              <span
+                className={cn(
+                  "shrink-0 text-xs",
+                  saveState === "error"
+                    ? "text-destructive"
+                    : "text-foreground-secondary",
+                )}
+                role={saveState === "error" ? "alert" : undefined}
+              >
                 {saveState === "saving"
                   ? "Saving..."
                   : saveState === "saved"
                     ? "Saved"
-                    : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
+                    : saveState === "error"
+                      ? "Not saved — changes are only on this device"
+                      : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
               </span>
             </div>
 
