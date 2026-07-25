@@ -1,5 +1,6 @@
 import { normalizeTaskPriority, type TaskPriority } from "@/lib/task-priority";
 import { clampHabitDuration } from "@/lib/habit-duration";
+import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
 
 const STORAGE_KEY = "flowos.schedule.durations";
 
@@ -13,18 +14,11 @@ const HABIT_DEFAULT = 15;
 const DURATION_CHANGED_EVENT = "flowos:duration-changed";
 
 function loadMap(): Record<string, number> {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, number>) : {};
-  } catch {
-    return {};
-  }
+  return readStorageJson<Record<string, number>>(STORAGE_KEY, {});
 }
 
 function saveMap(map: Record<string, number>) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+  writeStorageJson(STORAGE_KEY, map);
 }
 
 export function durationKey(type: "task" | "habit", entityId: string): string {

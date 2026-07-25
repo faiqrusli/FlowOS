@@ -1,3 +1,5 @@
+import { getStorageItem, setStorageItem } from "@/lib/safe-storage";
+
 /** Width of the draggable divider between task list and timeline (px). */
 export const QUICK_SCHEDULE_DIVIDER_WIDTH_PX = 1;
 
@@ -44,17 +46,13 @@ export function getQuickScheduleTaskListWidth(): number {
     return QUICK_SCHEDULE_TASK_LIST_WIDTH_DEFAULT;
   }
 
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = Number(raw);
-      if (Number.isFinite(parsed)) {
-        cachedWidth = clampQuickScheduleTaskListWidth(parsed);
-        return cachedWidth;
-      }
+  const raw = getStorageItem(STORAGE_KEY);
+  if (raw) {
+    const parsed = Number(raw);
+    if (Number.isFinite(parsed)) {
+      cachedWidth = clampQuickScheduleTaskListWidth(parsed);
+      return cachedWidth;
     }
-  } catch {
-    // ignore storage errors
   }
 
   cachedWidth = QUICK_SCHEDULE_TASK_LIST_WIDTH_DEFAULT;
@@ -63,11 +61,7 @@ export function getQuickScheduleTaskListWidth(): number {
 
 export function setQuickScheduleTaskListWidth(width: number): void {
   cachedWidth = clampQuickScheduleTaskListWidth(width);
-  try {
-    window.localStorage.setItem(STORAGE_KEY, String(cachedWidth));
-  } catch {
-    // ignore storage errors
-  }
+  setStorageItem(STORAGE_KEY, String(cachedWidth));
 }
 
 /** Documented layout limits for Quick Schedule (drawer mode). */

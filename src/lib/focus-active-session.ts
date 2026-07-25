@@ -1,5 +1,10 @@
 import { parseTimestamp } from "@/lib/date-utils";
 import { formatTimerClock } from "@/lib/focus-utils";
+import {
+  readStorageJson,
+  removeStorageItem,
+  writeStorageJson,
+} from "@/lib/safe-storage";
 import type { FocusTargetType, PomodoroPhase, QuickFocusPhase } from "@/types/focus";
 import type { NextUpItem } from "@/types/next-up";
 
@@ -42,39 +47,31 @@ export type StoredActiveFocusSession = {
 };
 
 export function readActiveSession(): StoredActiveFocusSession | null {
-  if (typeof window === "undefined") return null;
-
-  try {
-    const raw = window.localStorage.getItem(FOCUS_ACTIVE_SESSION_KEY);
-    if (!raw) return null;
-
-    const parsed = JSON.parse(raw) as StoredActiveFocusSession;
-    if (
-      !parsed ||
-      (parsed.timer_type !== "quick" && parsed.timer_type !== "pomodoro") ||
-      (parsed.session_status !== "in_progress" &&
-        parsed.session_status !== "paused") ||
-      !parsed.started_at
-    ) {
-      return null;
-    }
-
-    return {
-      ...parsed,
-    };
-  } catch {
+  const parsed = readStorageJson<StoredActiveFocusSession | null>(
+    FOCUS_ACTIVE_SESSION_KEY,
+    null
+  );
+  if (
+    !parsed ||
+    (parsed.timer_type !== "quick" && parsed.timer_type !== "pomodoro") ||
+    (parsed.session_status !== "in_progress" &&
+      parsed.session_status !== "paused") ||
+    !parsed.started_at
+  ) {
     return null;
   }
+
+  return {
+    ...parsed,
+  };
 }
 
 export function writeActiveSession(session: StoredActiveFocusSession): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(FOCUS_ACTIVE_SESSION_KEY, JSON.stringify(session));
+  writeStorageJson(FOCUS_ACTIVE_SESSION_KEY, session);
 }
 
 export function clearActiveSession(): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.removeItem(FOCUS_ACTIVE_SESSION_KEY);
+  removeStorageItem(FOCUS_ACTIVE_SESSION_KEY);
 }
 
 export function getSegmentElapsedSeconds(

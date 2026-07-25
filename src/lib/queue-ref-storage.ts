@@ -4,35 +4,29 @@
  * See decision-log 2026-07-14.
  */
 
+import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
 import type { QueueItem } from "@/types/queue-item";
 
 const STORAGE_KEY = "flowos.next-up.habit-refs.v1";
 
 function readRaw(): QueueItem[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (item): item is QueueItem =>
-        !!item &&
-        typeof item === "object" &&
-        (item as QueueItem).sourceType === "habit" &&
-        typeof (item as QueueItem).sourceId === "string" &&
-        typeof (item as QueueItem).id === "string" &&
-        typeof (item as QueueItem).position === "number"
-    );
-  } catch {
-    return [];
-  }
+  const parsed = readStorageJson<unknown>(STORAGE_KEY, null);
+  if (!Array.isArray(parsed)) return [];
+  return parsed.filter(
+    (item): item is QueueItem =>
+      !!item &&
+      typeof item === "object" &&
+      (item as QueueItem).sourceType === "habit" &&
+      typeof (item as QueueItem).sourceId === "string" &&
+      typeof (item as QueueItem).id === "string" &&
+      typeof (item as QueueItem).position === "number"
+  );
 }
 
 function writeRaw(items: QueueItem[]) {
   if (typeof window === "undefined") return;
   const normalized = items.map((item, index) => ({ ...item, position: index }));
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+  writeStorageJson(STORAGE_KEY, normalized);
   window.dispatchEvent(new CustomEvent("flowos:habit-queue-updated"));
 }
 

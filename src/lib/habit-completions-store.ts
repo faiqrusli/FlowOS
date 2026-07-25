@@ -1,4 +1,5 @@
 import { getTodayDateString } from "@/lib/date-utils";
+import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
 import { supabase } from "@/lib/supabase";
 
 const STORAGE_KEY = "flowos.habit.completions";
@@ -6,22 +7,12 @@ const STORAGE_KEY = "flowos.habit.completions";
 export type HabitCompletionStore = Record<string, string[]>;
 
 function readLocalCompletions(): HabitCompletionStore {
-  if (typeof window === "undefined") return {};
-
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-
-    const parsed = JSON.parse(raw) as HabitCompletionStore;
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
+  const parsed = readStorageJson<HabitCompletionStore | null>(STORAGE_KEY, null);
+  return parsed && typeof parsed === "object" ? parsed : {};
 }
 
 function writeLocalCompletions(store: HabitCompletionStore): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+  writeStorageJson(STORAGE_KEY, store);
 }
 
 function normalizeStore(store: HabitCompletionStore): HabitCompletionStore {

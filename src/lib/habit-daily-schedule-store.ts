@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
 import type { Habit } from "@/types/habit";
 
 const STORAGE_KEY = "flowos.habit.daily-schedule";
@@ -16,22 +17,15 @@ function notifyListeners() {
 }
 
 function readLocalStore(): HabitDailyScheduleStore {
-  if (typeof window === "undefined") return {};
-
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-
-    const parsed = JSON.parse(raw) as HabitDailyScheduleStore;
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
+  const parsed = readStorageJson<HabitDailyScheduleStore | null>(
+    STORAGE_KEY,
+    null
+  );
+  return parsed && typeof parsed === "object" ? parsed : {};
 }
 
 function writeLocalStore(store: HabitDailyScheduleStore): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+  writeStorageJson(STORAGE_KEY, store);
 }
 
 export function getCachedHabitDailySchedules(): HabitDailyScheduleStore {

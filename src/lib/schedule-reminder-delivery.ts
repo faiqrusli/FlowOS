@@ -1,23 +1,17 @@
+import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
+
 const STORAGE_KEY = "flowos.schedule-reminders.delivered";
 
 function loadDelivered(): Set<string> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return new Set();
-    const parsed = JSON.parse(raw) as string[];
-    return new Set(Array.isArray(parsed) ? parsed : []);
-  } catch {
-    return new Set();
-  }
+  const parsed = readStorageJson<string[] | null>(STORAGE_KEY, null);
+  return new Set(Array.isArray(parsed) ? parsed : []);
 }
 
 function saveDelivered(ids: Set<string>) {
-  if (typeof window === "undefined") return;
   // Keep the set bounded — drop entries older than ~14 days of keys if huge.
   const list = [...ids];
   const trimmed = list.length > 500 ? list.slice(list.length - 500) : list;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+  writeStorageJson(STORAGE_KEY, trimmed);
 }
 
 export function isScheduleReminderDelivered(eventId: string): boolean {

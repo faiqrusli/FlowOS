@@ -4,6 +4,8 @@
  * habit-ref storage. This file owns interleaved display order only.
  */
 
+import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
+
 const STORAGE_KEY = "flowos.next-up.unified-order.v1";
 
 export type UnifiedQueueKey = `task:${string}` | `habit:${string}`;
@@ -29,20 +31,13 @@ export function parseUnifiedQueueKey(
 }
 
 function readRaw(): UnifiedQueueKey[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (item): item is UnifiedQueueKey =>
-        typeof item === "string" &&
-        (item.startsWith("task:") || item.startsWith("habit:"))
-    );
-  } catch {
-    return [];
-  }
+  const parsed = readStorageJson<unknown>(STORAGE_KEY, null);
+  if (!Array.isArray(parsed)) return [];
+  return parsed.filter(
+    (item): item is UnifiedQueueKey =>
+      typeof item === "string" &&
+      (item.startsWith("task:") || item.startsWith("habit:"))
+  );
 }
 
 export function fetchUnifiedQueueOrder(): UnifiedQueueKey[] {
@@ -50,8 +45,7 @@ export function fetchUnifiedQueueOrder(): UnifiedQueueKey[] {
 }
 
 export function persistUnifiedQueueOrder(keys: UnifiedQueueKey[]): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+  writeStorageJson(STORAGE_KEY, keys);
 }
 
 /** Keep stored order for live members; append any new tasks then habits. */
