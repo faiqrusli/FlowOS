@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Bell,
   CalendarDays,
@@ -36,6 +36,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { TaskPriorityPicker } from "@/components/tasks/task-priority-picker";
 import { TaskGroupPicker } from "@/components/tasks/task-group-picker";
+import { useWritingField } from "@/hooks/use-writing-field";
 import {
   normalizePlanningState,
   PLANNING_INTRO,
@@ -62,34 +63,6 @@ const DETAIL_PANEL_WIDTH_PX = GLOBAL_ACCESS_PANEL_WIDTH_PX;
 const DETAIL_PANEL_COLLAPSED_WIDTH_PX = GLOBAL_ACCESS_PANEL_COLLAPSED_WIDTH_PX;
 
 export { DETAIL_PANEL_WIDTH_PX, DETAIL_PANEL_COLLAPSED_WIDTH_PX };
-
-/** Keeps typing stable when a stale server sync arrives mid-edit. */
-function useTaskWritingField(taskId: string, serverValue: string) {
-  const [value, setValue] = useState(serverValue);
-  const focusedRef = useRef(false);
-
-  useEffect(() => {
-    setValue(serverValue);
-    focusedRef.current = false;
-  }, [taskId]);
-
-  useEffect(() => {
-    if (!focusedRef.current) {
-      setValue(serverValue);
-    }
-  }, [serverValue]);
-
-  return {
-    value,
-    onFocus: () => {
-      focusedRef.current = true;
-    },
-    onBlur: () => {
-      focusedRef.current = false;
-    },
-    setValue,
-  };
-}
 
 type TaskDetailPanelProps = {
   task: Task | null;
@@ -200,8 +173,8 @@ export function TaskDetailFields({
   const addedToNextUp = queuedOverride ?? task.queue_order !== null;
   const canAddToNextUp = isEligibleForNextUp(task) && !addedToNextUp;
   const showQueueControl = canAddToNextUp || addedToNextUp;
-  const titleField = useTaskWritingField(task.id, task.title);
-  const descriptionField = useTaskWritingField(task.id, task.description ?? "");
+  const titleField = useWritingField(task.id, task.title);
+  const descriptionField = useWritingField(task.id, task.description ?? "");
 
   useEffect(() => {
     setQueuedOverride(null);

@@ -38,6 +38,12 @@ import {
   updateNote,
 } from "@/lib/notes";
 import {
+  mergeNotePreserveLocalText,
+  mergeNoteTextPatch,
+  noteTextPatchStillDirty,
+  type NoteTextPatch,
+} from "@/lib/note-autosave";
+import {
   getSidebarNotesCache,
   removeSidebarNoteFromCache,
   setSidebarNotesCache,
@@ -69,15 +75,17 @@ export function SidebarNotesPanel() {
   const [refreshing, setRefreshing] = useState(!cached);
   const [search, setSearch] = useState("");
   const [preview, setPreview] = useState(false);
-  const [saveState, setSaveState] = useState<
-    "idle" | "saving" | "saved" | "error"
-  >("idle");
+  const [saveError, setSaveError] = useState(false);
   const [todayDailyNoteId, setTodayDailyNoteId] = useState<string | null>(null);
   const [collapsedAreas, setCollapsedAreas] = useState<Set<string>>(new Set());
   const [openMenuNoteId, setOpenMenuNoteId] = useState<string | null>(null);
   const [moveNoteId, setMoveNoteId] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const pendingPatchById = useRef(new Map<string, NoteTextPatch>());
+  const savingIds = useRef(new Set<string>());
+  const notesRef = useRef(notes);
+  notesRef.current = notes;
   const todayKey = getTodayDateString();
 
   const loadNotes = useCallback(
@@ -89,8 +97,23 @@ export function SidebarNotesPanel() {
           getDailyNoteByDate(todayKey),
         ]);
         setAreas(data.areas);
-        setNotes(data.notes);
-        setSidebarNotesCache(data.areas, data.notes);
+        setNotes((current) => {
+          if (pendingPatchById.current.size === 0) {
+            setSidebarNotesCache(data.areas, data.notes);
+            return data.notes;
+          }
+          // Keep in-progress text when a background refresh arrives mid-edit.
+          const localById = new Map(current.map((note) => [note.id, note]));
+          const merged = data.notes.map((remote) => {
+            const local = localById.get(remote.id);
+            if (local && pendingPatchById.current.has(remote.id)) {
+              return mergeNotePreserveLocalText(local, remote);
+            }
+            return remote;
+          });
+          setSidebarNotesCache(data.areas, merged);
+          return merged;
+        });
         setTodayDailyNoteId(todayNote?.id ?? null);
       } finally {
         setRefreshing(false);
@@ -156,46 +179,75 @@ export function SidebarNotesPanel() {
 
   const persistNote = useCallback(
     async (id: string, patch: { title?: string; content?: string }) => {
-      setSaveState("saving");
+      setSaveError(false);
+      savingIds.current.add(id);
+      const sentText: NoteTextPatch = {
+        title: patch.title,
+        content: patch.content,
+      };
       try {
         const updated = await updateNote(id, patch);
         setNotes((current) => {
           const next = current.map((note) =>
-            note.id === updated.id ? updated : note,
+            note.id === updated.id
+              ? mergeNotePreserveLocalText(note, updated)
+              : note,
           );
           setSidebarNotesCache(areas, next);
+          notesRef.current = next;
           return next;
         });
-        updateFloatingNote(updated);
-        setSaveState("saved");
-        window.setTimeout(() => setSaveState("idle"), 1500);
+        const local = notesRef.current.find((note) => note.id === id);
+        if (local) updateFloatingNote(local);
+
+        if (noteTextPatchStillDirty(pendingPatchById.current.get(id), sentText)) {
+          scheduleSave(id);
+        } else {
+          pendingPatchById.current.delete(id);
+        }
       } catch (err) {
         console.error("[notes] autosave failed", err);
-        setSaveState("error");
+        setSaveError(true);
+      } finally {
+        savingIds.current.delete(id);
       }
     },
     [areas, updateFloatingNote],
   );
 
-  function scheduleSave(
-    id: string,
-    patch: { title?: string; content?: string },
-  ) {
+  function scheduleSave(id: string) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      void persistNote(id, patch);
+      const pending = pendingPatchById.current.get(id);
+      if (!pending) return;
+      if (savingIds.current.has(id)) {
+        scheduleSave(id);
+        return;
+      }
+      void persistNote(id, { ...pending });
     }, 800);
   }
 
   function updateLocal(id: string, patch: Partial<Note>) {
+    setSaveError(false);
     setNotes((current) => {
       const next = current.map((note) =>
         note.id === id ? { ...note, ...patch } : note,
       );
       setSidebarNotesCache(areas, next);
+      notesRef.current = next;
       return next;
     });
-    scheduleSave(id, { title: patch.title, content: patch.content });
+    const textPatch: NoteTextPatch = {};
+    if (patch.title !== undefined) textPatch.title = patch.title;
+    if (patch.content !== undefined) textPatch.content = patch.content;
+    if (textPatch.title !== undefined || textPatch.content !== undefined) {
+      pendingPatchById.current.set(
+        id,
+        mergeNoteTextPatch(pendingPatchById.current.get(id), textPatch),
+      );
+      scheduleSave(id);
+    }
   }
 
   async function handleToggleMenuPin(note: Note) {
@@ -375,19 +427,15 @@ export function SidebarNotesPanel() {
             <span
               className={cn(
                 "shrink-0 text-xs",
-                saveState === "error"
+                saveError
                   ? "text-destructive"
                   : "text-foreground-secondary",
               )}
-              role={saveState === "error" ? "alert" : undefined}
+              role={saveError ? "alert" : undefined}
             >
-              {saveState === "saving"
-                ? "Saving..."
-                : saveState === "saved"
-                  ? "Saved"
-                  : saveState === "error"
-                    ? "Not saved — changes are only on this device"
-                    : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
+              {saveError
+                ? "Not saved — changes are only on this device"
+                : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
             </span>
           </div>
 

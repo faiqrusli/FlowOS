@@ -24,7 +24,6 @@ import {
   ChevronDown,
   Circle,
   Copy,
-  Plus,
   Trash2,
   type LucideIcon,
 } from "lucide-react";
@@ -694,21 +693,6 @@ function TaskDetailMenuPopover({
         submenuClassName="min-w-[9rem]"
         className="border-t border-border/40 pt-1"
       >
-        <div className="mb-1 flex items-center gap-1 border-b border-border/40 px-1 pb-1">
-          <span className="flex-1 px-1 text-[10px] font-medium text-muted-foreground">
-            Groups
-          </span>
-          {onRequestCreateGroup ? (
-            <button
-              type="button"
-              data-task-menu-action="create-group"
-              className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
-              aria-label="New group"
-            >
-              <Plus className="size-3.5" />
-            </button>
-          ) : null}
-        </div>
         {moveTargets.map((group) => {
           const appearance = getTaskGroupAppearance(group);
           return (

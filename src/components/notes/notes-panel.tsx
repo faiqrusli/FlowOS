@@ -38,6 +38,12 @@ import {
   resolveNewNoteTitle,
   sortNotesForList,
 } from "@/lib/notes-utils";
+import {
+  mergeNotePreserveLocalText,
+  mergeNoteTextPatch,
+  noteTextPatchStillDirty,
+  type NoteTextPatch,
+} from "@/lib/note-autosave";
 import { drawerWritingFieldClass } from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
 import type { GrowthAreaWithCounts, Note } from "@/types/notes";
@@ -68,9 +74,7 @@ export function NotesPanel({
   );
   const [search, setSearch] = useState("");
   const [preview, setPreview] = useState(false);
-  const [saveState, setSaveState] = useState<
-    "idle" | "saving" | "saved" | "error"
-  >("idle");
+  const [saveError, setSaveError] = useState(false);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
   const [moveNoteId, setMoveNoteId] = useState<string | null>(null);
@@ -78,6 +82,10 @@ export function NotesPanel({
   const [focusTitleNoteId, setFocusTitleNoteId] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const pendingPatchById = useRef(new Map<string, NoteTextPatch>());
+  const savingIds = useRef(new Set<string>());
+  const notesRef = useRef(notes);
+  notesRef.current = notes;
 
   const sortedNotes = useMemo(() => sortNotesForList(notes), [notes]);
   const selected = notes.find((note) => note.id === selectedId) ?? null;
@@ -120,35 +128,71 @@ export function NotesPanel({
       id: string,
       patch: { title?: string; content?: string; is_pinned?: boolean },
     ) => {
-      setSaveState("saving");
+      setSaveError(false);
+      savingIds.current.add(id);
+      const sentText: NoteTextPatch = {
+        title: patch.title,
+        content: patch.content,
+      };
       try {
         const updated = await updateNote(id, patch);
         const next = sortNotesForList(
-          notes.map((note) =>
+          notesRef.current.map((note) =>
             note.id === updated.id
-              ? { ...updated, is_pinned: updated.is_pinned ?? false }
+              ? mergeNotePreserveLocalText(
+                  { ...note, is_pinned: note.is_pinned ?? false },
+                  { ...updated, is_pinned: updated.is_pinned ?? false },
+                )
               : note,
           ),
         );
         onNotesChange(next);
-        setSaveState("saved");
-        setTimeout(() => setSaveState("idle"), 1500);
+
+        if (noteTextPatchStillDirty(pendingPatchById.current.get(id), sentText)) {
+          scheduleSave(id);
+        } else {
+          pendingPatchById.current.delete(id);
+        }
       } catch (err) {
         console.error("[notes] autosave failed", err);
-        setSaveState("error");
+        setSaveError(true);
+      } finally {
+        savingIds.current.delete(id);
       }
     },
-    [notes, onNotesChange],
+    [onNotesChange],
   );
 
-  function scheduleSave(
-    id: string,
-    patch: { title?: string; content?: string },
-  ) {
+  function scheduleSave(id: string) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      void persistNote(id, patch);
+      const pending = pendingPatchById.current.get(id);
+      if (!pending) return;
+      if (savingIds.current.has(id)) {
+        scheduleSave(id);
+        return;
+      }
+      void persistNote(id, { ...pending });
     }, 800);
+  }
+
+  function updateLocal(id: string, patch: Partial<Note>) {
+    setSaveError(false);
+    const next = notesRef.current.map((note) =>
+      note.id === id ? { ...note, ...patch } : note,
+    );
+    notesRef.current = next;
+    onNotesChange(next);
+    const textPatch: NoteTextPatch = {};
+    if (patch.title !== undefined) textPatch.title = patch.title;
+    if (patch.content !== undefined) textPatch.content = patch.content;
+    if (textPatch.title !== undefined || textPatch.content !== undefined) {
+      pendingPatchById.current.set(
+        id,
+        mergeNoteTextPatch(pendingPatchById.current.get(id), textPatch),
+      );
+      scheduleSave(id);
+    }
   }
 
   async function handleCreate() {
@@ -264,16 +308,6 @@ export function NotesPanel({
 
   function openFloatingCard(note: Note) {
     openFloatingNote(note);
-  }
-
-  function updateLocal(id: string, patch: Partial<Note>) {
-    onNotesChange(
-      notes.map((note) => (note.id === id ? { ...note, ...patch } : note)),
-    );
-    scheduleSave(id, {
-      title: patch.title,
-      content: patch.content,
-    });
   }
 
   return (
@@ -441,19 +475,15 @@ export function NotesPanel({
               <span
                 className={cn(
                   "shrink-0 text-xs",
-                  saveState === "error"
+                  saveError
                     ? "text-destructive"
                     : "text-foreground-secondary",
                 )}
-                role={saveState === "error" ? "alert" : undefined}
+                role={saveError ? "alert" : undefined}
               >
-                {saveState === "saving"
-                  ? "Saving..."
-                  : saveState === "saved"
-                    ? "Saved"
-                    : saveState === "error"
-                      ? "Not saved — changes are only on this device"
-                      : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
+                {saveError
+                  ? "Not saved — changes are only on this device"
+                  : `Last edited ${formatRelativeTime(selected.updated_at).toLowerCase()}`}
               </span>
             </div>
 

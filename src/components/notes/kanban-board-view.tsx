@@ -15,6 +15,7 @@ import {
 import { createPortal } from "react-dom";
 import {
   Archive,
+  ArrowRightLeft,
   ChevronDown,
   ChevronRight,
   MoreHorizontal,
@@ -37,6 +38,10 @@ import {
 } from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
 import { useActionToast } from "@/contexts/action-toast-context";
+import {
+  settleTextareaCaret,
+  syncTypewriterBottomPad,
+} from "@/lib/textarea-caret-scroll";
 import {
   cardBodyDraft,
   cardDragTargetsEqual,
@@ -175,6 +180,33 @@ export function KanbanBoardView({
       composeRef.current.focus();
     }
   }, [composingColumnId]);
+
+  const typewriterColumnId =
+    composingColumnId ??
+    (editingCardId
+      ? (board.columns.find((column) =>
+          column.cards.some((card) => card.id === editingCardId),
+        )?.id ?? null)
+      : null);
+
+  useLayoutEffect(() => {
+    const boardEl = boardRef.current;
+    if (!boardEl) return;
+
+    const cleanups: Array<() => void> = [];
+    boardEl
+      .querySelectorAll<HTMLElement>("[data-kanban-column-scroll]")
+      .forEach((el) => {
+        const columnId = el.dataset.kanbanColumnScroll ?? null;
+        cleanups.push(
+          syncTypewriterBottomPad(el, columnId === typewriterColumnId),
+        );
+      });
+
+    return () => {
+      cleanups.forEach((cleanup) => cleanup());
+    };
+  }, [typewriterColumnId, board.columns]);
 
   useEffect(() => {
     boardStateRef.current = board;
@@ -756,17 +788,52 @@ export function KanbanBoardView({
     }
   }
 
-  async function handleDeleteColumn(columnId: string) {
-    if (!confirm("Delete this list and all its cards?")) return;
-    await deleteKanbanColumn(columnId);
-    onBoardChange({
+  function handleDeleteColumn(columnId: string) {
+    const column = board.columns.find((item) => item.id === columnId);
+    if (!column) return;
+
+    const snapshot = board;
+    const nextBoard = {
       ...board,
-      columns: board.columns.filter((c) => c.id !== columnId),
-    });
+      columns: board.columns.filter((item) => item.id !== columnId),
+    };
+    boardStateRef.current = nextBoard;
+    onBoardChange(nextBoard);
     onAreasRefresh();
+
+    let committed = false;
+    const commitDelete = () => {
+      if (committed) return;
+      committed = true;
+      void deleteKanbanColumn(columnId)
+        .then(() => {
+          onAreasRefresh();
+        })
+        .catch((err: unknown) => {
+          console.error("[kanban] delete list failed", err);
+          boardStateRef.current = snapshot;
+          onBoardChange(snapshot);
+          onAreasRefresh();
+          showActionToast({
+            message:
+              err instanceof Error ? err.message : "Failed to delete list.",
+            tone: "warning",
+            icon: "warning",
+          });
+        });
+    };
+
     showActionToast({
-      message: "List deleted",
+      message: `"${column.title.trim() || "List"}" deleted`,
       icon: "trash",
+      actionLabel: "Undo",
+      onAction: () => {
+        committed = true;
+        boardStateRef.current = snapshot;
+        onBoardChange(snapshot);
+        onAreasRefresh();
+      },
+      onExpire: commitDelete,
     });
   }
 
@@ -853,19 +920,57 @@ export function KanbanBoardView({
     onAreasRefresh();
   }
 
-  async function handleDeleteCard(cardId: string) {
-    await deleteKanbanCard(cardId);
-    onBoardChange({
+  function handleDeleteCard(cardId: string) {
+    const card = board.columns
+      .flatMap((column) => column.cards)
+      .find((item) => item.id === cardId);
+    if (!card) return;
+
+    const snapshot = board;
+    const nextBoard = {
       ...board,
       columns: board.columns.map((col) => ({
         ...col,
-        cards: col.cards.filter((c) => c.id !== cardId),
+        cards: col.cards.filter((item) => item.id !== cardId),
       })),
-    });
+    };
+    boardStateRef.current = nextBoard;
+    onBoardChange(nextBoard);
     onAreasRefresh();
+
+    let committed = false;
+    const commitDelete = () => {
+      if (committed) return;
+      committed = true;
+      void deleteKanbanCard(cardId)
+        .then(() => {
+          onAreasRefresh();
+        })
+        .catch((err: unknown) => {
+          console.error("[kanban] delete card failed", err);
+          boardStateRef.current = snapshot;
+          onBoardChange(snapshot);
+          onAreasRefresh();
+          showActionToast({
+            message:
+              err instanceof Error ? err.message : "Failed to delete card.",
+            tone: "warning",
+            icon: "warning",
+          });
+        });
+    };
+
     showActionToast({
-      message: "Card deleted",
+      message: `"${card.title.trim() || "Card"}" deleted`,
       icon: "trash",
+      actionLabel: "Undo",
+      onAction: () => {
+        committed = true;
+        boardStateRef.current = snapshot;
+        onBoardChange(snapshot);
+        onAreasRefresh();
+      },
+      onExpire: commitDelete,
     });
   }
 
@@ -1055,6 +1160,7 @@ export function KanbanBoardView({
               </div>
 
               <div
+                data-kanban-column-scroll={column.id}
                 className="min-h-0 flex-1 overflow-y-auto"
                 onDragOver={(e) => handleColumnBodyDragOver(e, column.id)}
               >
@@ -1377,6 +1483,7 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
     ref,
   ) {
     const innerRef = useRef<HTMLTextAreaElement>(null);
+    const lastKeyRef = useRef<string | null>(null);
 
     useImperativeHandle(ref, () => innerRef.current as HTMLTextAreaElement);
 
@@ -1408,7 +1515,12 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
         value={value}
         onChange={(event) => {
           onChange(event.target.value);
-          requestAnimationFrame(resize);
+          const el = event.currentTarget;
+          const key = lastKeyRef.current;
+          requestAnimationFrame(() => {
+            resize();
+            settleTextareaCaret(el, key);
+          });
         }}
         placeholder={placeholder}
         rows={1}
@@ -1417,7 +1529,10 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
           className,
         )}
         style={{ minHeight: "2.25rem" }}
-        onKeyDown={onKeyDown}
+        onKeyDown={(event) => {
+          lastKeyRef.current = event.key;
+          onKeyDown?.(event);
+        }}
         onBlur={onBlur}
       />
     );
@@ -1543,48 +1658,14 @@ const KanbanCardRow = memo(function KanbanCardRow({
       }}
     >
       {!isEditing && (
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            className="absolute top-1.5 right-1.5 z-10 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-surface-hover"
-            aria-label="Card options"
-            onPointerDown={(event) => event.stopPropagation()}
-          >
-            <MoreHorizontal className="size-3.5" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="rounded-xl">
-            <DropdownMenuItem onClick={onStartEditAtEnd}>
-              <Pencil className="size-3.5" />
-              Edit card
-            </DropdownMenuItem>
-            {!card.is_archived && (
-              <DropdownMenuItem onClick={onArchive}>
-                <Archive className="size-3.5" />
-                Archive card
-              </DropdownMenuItem>
-            )}
-            {moveTargets.length > 0 && (
-              <>
-                <DropdownMenuSeparator />
-                <p className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
-                  Move to list
-                </p>
-                {moveTargets.map((column) => (
-                  <DropdownMenuItem
-                    key={column.id}
-                    onClick={() => onMoveToList(column.id)}
-                  >
-                    {column.title}
-                  </DropdownMenuItem>
-                ))}
-              </>
-            )}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive" onClick={onDelete}>
-              <Trash2 className="size-3.5" />
-              Delete card
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <KanbanCardOptionsMenu
+          moveTargets={moveTargets}
+          onStartEditAtEnd={onStartEditAtEnd}
+          onArchive={onArchive}
+          onMoveToList={onMoveToList}
+          onDelete={onDelete}
+          showArchive={!card.is_archived}
+        />
       )}
 
       {isEditing ? (
@@ -1611,6 +1692,153 @@ const KanbanCardRow = memo(function KanbanCardRow({
     </div>
   );
 });
+
+function KanbanMoveToSubmenu({
+  moveTargets,
+  onMoveToList,
+}: {
+  moveTargets: { id: string; title: string }[];
+  onMoveToList: (columnId: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [panelPos, setPanelPos] = useState<{ top: number; left: number } | null>(
+    null,
+  );
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const openPanel = () => {
+    clearCloseTimer();
+    const row = rowRef.current;
+    if (row) {
+      const rect = row.getBoundingClientRect();
+      const width = 144;
+      const padding = 8;
+      let left = rect.right + 4;
+      if (left + width > window.innerWidth - padding) {
+        left = rect.left - width - 4;
+      }
+      setPanelPos({
+        top: Math.max(padding, rect.top),
+        left: Math.max(padding, left),
+      });
+    }
+    setOpen(true);
+  };
+
+  const scheduleClose = () => {
+    clearCloseTimer();
+    closeTimerRef.current = setTimeout(() => {
+      setOpen(false);
+      setPanelPos(null);
+    }, 120);
+  };
+
+  useEffect(() => {
+    return () => clearCloseTimer();
+  }, []);
+
+  if (moveTargets.length === 0) return null;
+
+  return (
+    <div
+      ref={rowRef}
+      className="relative border-t border-border/40 pt-1"
+      onMouseEnter={openPanel}
+      onMouseLeave={scheduleClose}
+    >
+      <button
+        type="button"
+        className={cn(
+          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70",
+          open && "bg-surface-hover/70",
+        )}
+      >
+        <ArrowRightLeft className="size-3.5 shrink-0" />
+        Move to
+        <span className="ml-auto text-muted-foreground">›</span>
+      </button>
+      {open && panelPos
+        ? createPortal(
+            <div
+              className="flow-surface-elevated fixed z-[300] min-w-[9rem] overflow-hidden p-1"
+              style={{ top: panelPos.top, left: panelPos.left }}
+              onMouseEnter={openPanel}
+              onMouseLeave={scheduleClose}
+            >
+              {moveTargets.map((column) => (
+                <button
+                  key={column.id}
+                  type="button"
+                  className="flex w-full items-center rounded-md px-2 py-1.5 text-left text-xs transition-colors duration-100 hover:bg-surface-hover/70"
+                  onClick={() => onMoveToList(column.id)}
+                >
+                  {column.title.trim() || "Untitled list"}
+                </button>
+              ))}
+            </div>,
+            document.body,
+          )
+        : null}
+    </div>
+  );
+}
+
+function KanbanCardOptionsMenu({
+  moveTargets,
+  onStartEditAtEnd,
+  onArchive,
+  onMoveToList,
+  onDelete,
+  showArchive,
+}: {
+  moveTargets: { id: string; title: string }[];
+  onStartEditAtEnd: () => void;
+  onArchive: () => void;
+  onMoveToList: (targetColumnId: string) => void;
+  onDelete: () => void;
+  showArchive: boolean;
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className="absolute top-1.5 right-1.5 z-10 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-surface-hover"
+        aria-label="Card options"
+        onPointerDown={(event) => event.stopPropagation()}
+      >
+        <MoreHorizontal className="size-3.5" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[11rem] rounded-xl p-1">
+        <DropdownMenuItem onClick={onStartEditAtEnd}>
+          <Pencil className="size-3.5" />
+          Edit card
+        </DropdownMenuItem>
+        {showArchive ? (
+          <DropdownMenuItem onClick={onArchive}>
+            <Archive className="size-3.5" />
+            Archive card
+          </DropdownMenuItem>
+        ) : null}
+        <KanbanMoveToSubmenu
+          moveTargets={moveTargets}
+          onMoveToList={onMoveToList}
+        />
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="text-destructive" onClick={onDelete}>
+          <Trash2 className="size-3.5" />
+          Delete card
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 function useClampedMenuPosition(x: number, y: number) {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -1701,24 +1929,10 @@ function KanbanCardContextMenu({
             Archive card
           </button>
         ) : null}
-        {moveTargets.length > 0 ? (
-          <>
-            <div className="my-1 border-t border-border/40" />
-            <p className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
-              Move to list
-            </p>
-            {moveTargets.map((column) => (
-              <button
-                key={column.id}
-                type="button"
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs hover:bg-surface-hover"
-                onClick={() => onMoveToList(cardId, column.id)}
-              >
-                {column.title}
-              </button>
-            ))}
-          </>
-        ) : null}
+        <KanbanMoveToSubmenu
+          moveTargets={moveTargets}
+          onMoveToList={(columnId) => onMoveToList(cardId, columnId)}
+        />
         <div className="my-1 border-t border-border/40" />
         <button
           type="button"

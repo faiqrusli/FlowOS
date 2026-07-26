@@ -128,19 +128,19 @@ export function ReflectionPageContent() {
         wentWrong={wentWrong}
         onWentWellChange={setWentWell}
         onWentWrongChange={setWentWrong}
-        disabled={loading || saving}
+        disabled={loading}
       />
 
       <CustomEntriesSection
         entries={customEntries}
         onChange={setCustomEntries}
-        disabled={loading || saving}
+        disabled={loading}
       />
 
       <ReflectionKanbanSection
         kanbans={customKanbans}
         onChange={setCustomKanbans}
-        disabled={loading || saving}
+        disabled={loading}
       />
 
       <div className="flex justify-center pt-2">

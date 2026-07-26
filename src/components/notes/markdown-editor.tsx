@@ -14,6 +14,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { MarkdownPreview } from "@/components/notes/markdown-preview";
 import { insertMarkdown, wrapLines } from "@/lib/notes-utils";
+import {
+  settleTextareaCaret,
+  useTypewriterBottomPad,
+} from "@/lib/textarea-caret-scroll";
 import { cn } from "@/lib/utils";
 
 type MarkdownEditorProps = {
@@ -25,6 +29,8 @@ type MarkdownEditorProps = {
   className?: string;
 };
 
+const EDITOR_SCROLL_CLASS = "min-h-0 flex-1 overflow-y-auto px-5 pt-4";
+
 export function MarkdownEditor({
   value,
   onChange,
@@ -34,25 +40,29 @@ export function MarkdownEditor({
   className,
 }: MarkdownEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const lastKeyRef = useRef<string | null>(null);
+
+  useTypewriterBottomPad(textareaRef, !preview);
 
   function applyTransform(
     transform: (
       val: string,
       start: number,
-      end: number
-    ) => { next: string; cursor: number }
+      end: number,
+    ) => { next: string; cursor: number },
   ) {
     const el = textareaRef.current;
     if (!el) return;
     const { next, cursor } = transform(
       value,
       el.selectionStart,
-      el.selectionEnd
+      el.selectionEnd,
     );
     onChange(next);
     requestAnimationFrame(() => {
       el.focus();
       el.setSelectionRange(cursor, cursor);
+      settleTextareaCaret(el, "Enter");
     });
   }
 
@@ -63,7 +73,7 @@ export function MarkdownEditor({
           label="Heading"
           onClick={() =>
             applyTransform((val, start, end) =>
-              wrapLines(val, start, end, "## ")
+              wrapLines(val, start, end, "## "),
             )
           }
         >
@@ -73,7 +83,7 @@ export function MarkdownEditor({
           label="Bold"
           onClick={() =>
             applyTransform((val, start, end) =>
-              insertMarkdown(val, start, end, "**", "**")
+              insertMarkdown(val, start, end, "**", "**"),
             )
           }
         >
@@ -83,7 +93,7 @@ export function MarkdownEditor({
           label="Italic"
           onClick={() =>
             applyTransform((val, start, end) =>
-              insertMarkdown(val, start, end, "*", "*")
+              insertMarkdown(val, start, end, "*", "*"),
             )
           }
         >
@@ -93,7 +103,7 @@ export function MarkdownEditor({
           label="Bullet list"
           onClick={() =>
             applyTransform((val, start, end) =>
-              wrapLines(val, start, end, "- ")
+              wrapLines(val, start, end, "- "),
             )
           }
         >
@@ -119,7 +129,7 @@ export function MarkdownEditor({
           label="Checklist"
           onClick={() =>
             applyTransform((val, start, end) =>
-              wrapLines(val, start, end, "- [ ] ")
+              wrapLines(val, start, end, "- [ ] "),
             )
           }
         >
@@ -136,31 +146,42 @@ export function MarkdownEditor({
               className="h-7 gap-1.5 px-2 text-xs"
               onClick={() => onPreviewChange(!preview)}
             >
-            {preview ? (
-              <>
-                <EyeOff className="size-3.5" /> Edit
-              </>
-            ) : (
-              <>
-                <Eye className="size-3.5" /> Preview
-              </>
-            )}
-          </Button>
+              {preview ? (
+                <>
+                  <EyeOff className="size-3.5" /> Edit
+                </>
+              ) : (
+                <>
+                  <Eye className="size-3.5" /> Preview
+                </>
+              )}
+            </Button>
           </>
         )}
       </div>
 
       {preview ? (
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+        <div className={EDITOR_SCROLL_CLASS}>
           <MarkdownPreview content={value || "*Nothing to preview yet.*"} />
         </div>
       ) : (
         <textarea
           ref={textareaRef}
           value={value}
-          onChange={(event) => onChange(event.target.value)}
+          onKeyDown={(event) => {
+            lastKeyRef.current = event.key;
+          }}
+          onChange={(event) => {
+            onChange(event.target.value);
+            const el = event.currentTarget;
+            const key = lastKeyRef.current;
+            requestAnimationFrame(() => settleTextareaCaret(el, key));
+          }}
           placeholder={placeholder}
-          className="min-h-0 flex-1 resize-none overflow-y-auto bg-transparent px-5 py-4 text-[15px] leading-relaxed text-foreground outline-none placeholder:text-muted-foreground"
+          className={cn(
+            EDITOR_SCROLL_CLASS,
+            "resize-none bg-transparent text-[15px] leading-relaxed text-foreground outline-none placeholder:text-muted-foreground",
+          )}
         />
       )}
     </div>
