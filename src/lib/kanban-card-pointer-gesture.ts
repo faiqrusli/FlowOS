@@ -28,7 +28,7 @@ type UseKanbanCardPointerGestureOptions = {
   enabled: boolean;
   isInteractiveTarget: (target: EventTarget | null) => boolean;
   onSingleClickEdit: () => void;
-  onDoubleClickWord: (coords: KanbanCardPointerCoords) => void;
+  onDoubleClickAtPoint: (coords: KanbanCardPointerCoords) => void;
   onPointerDragStart: (coords: KanbanCardPointerCoords) => void;
   onPointerDragEnd: () => void;
 };
@@ -37,7 +37,7 @@ export function useKanbanCardPointerGesture({
   enabled,
   isInteractiveTarget,
   onSingleClickEdit,
-  onDoubleClickWord,
+  onDoubleClickAtPoint,
   onPointerDragStart,
   onPointerDragEnd,
 }: UseKanbanCardPointerGestureOptions) {
@@ -45,12 +45,12 @@ export function useKanbanCardPointerGesture({
   const lastTapRef = useRef<LastTapState | null>(null);
   const singleClickTimerRef = useRef<number | null>(null);
   const onSingleClickEditRef = useRef(onSingleClickEdit);
-  const onDoubleClickWordRef = useRef(onDoubleClickWord);
+  const onDoubleClickAtPointRef = useRef(onDoubleClickAtPoint);
   const onPointerDragStartRef = useRef(onPointerDragStart);
   const onPointerDragEndRef = useRef(onPointerDragEnd);
 
   onSingleClickEditRef.current = onSingleClickEdit;
-  onDoubleClickWordRef.current = onDoubleClickWord;
+  onDoubleClickAtPointRef.current = onDoubleClickAtPoint;
   onPointerDragStartRef.current = onPointerDragStart;
   onPointerDragEndRef.current = onPointerDragEnd;
 
@@ -124,7 +124,7 @@ export function useKanbanCardPointerGesture({
         if (isDoubleClick) {
           clearSingleClickTimer();
           lastTapRef.current = null;
-          onDoubleClickWordRef.current({
+          onDoubleClickAtPointRef.current({
             clientX: event.clientX,
             clientY: event.clientY,
           });
