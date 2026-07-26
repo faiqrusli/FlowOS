@@ -36,6 +36,20 @@ Copy the block below for each date. Replace `YYYY-MM-DD`.
 
 <!-- Add newest day at the top below this line -->
 
+## 2026-07-26
+
+| Field | Entry |
+|-------|-------|
+| **Open→first action (s)** | ~8–12 (Today load → capture/focus) |
+| **What** | Narrow window: left rail still expanded/icon while KPI vanished early; Timeline sheet mode removed focus+timeline side-by-side; Tasks board undraggable when Quick Schedule ate full width; focused-task menu missing Add description; Next Up closed too fast after Tasks→Queue drop; right drawer open/close felt abrupt. |
+| **When** | Morning pass shrinking viewport while using Today + Tasks dock drag to Queue / Timeline. |
+| **Cost** | ~2–4 min per shrink cycle fighting chrome; drag failed → re-open Tasks; Queue confirmation missed. |
+| **Loop** | Plan ☑ · Focus ☑ · Reflect ☐ |
+| **Module switches** | Today ↔ Tasks dock ↔ Queue |
+| **Evidence** | Fixed same day: shell 70%/50% stages; fixed Timeline + h-scroll; QS overlay &lt;1024; Add description restored; Queue hold 2.4s; right drawer slide restored. See july-log 2026-07-26. |
+
+---
+
 ## _Template — delete this header after first real entry_
 
 | Field | Entry |

@@ -2,7 +2,7 @@
 
 **Status:** Living document — append new entries at top  
 **Audience:** Founders, engineers, future contributors  
-**Last updated:** July 21, 2026
+**Last updated:** July 26, 2026
 
 ---
 
@@ -36,7 +36,24 @@ When making a significant product decision:
 
 ## 2026 decisions
 
-### 2026-07-21 — Vision strategy split into chapters (authority path unchanged)
+### 2026-07-26 — Shell density stages: 70% collapse, 50% top nav + KPI
+
+**Context:** Narrow Today layouts crushed Focus + Timeline and left/right chrome. Sheet/overlay Timeline was tried then rejected — founder wants Timeline fixed beside Focus with horizontal scroll when cramped. Left nav needed stepped density, not a single jump to hamburger.
+
+**Decision:** Ratios of full shell width (`SHELL_LAYOUT_FULL_PX` = 1600):
+1. **≥70% (≥1120px)** — expanded left rail (preference wins); KPI on  
+2. **50–70% (800–1119px)** — auto-collapse to icon rail (user may expand); KPI on  
+3. **&lt;50% (&lt;800px)** — left nav → hamburger top bar; KPI hides with that stage  
+
+Timeline stays fixed-width inline; Focus floor + Timeline floor force horizontal canvas scroll when needed. Compact right chrome uses FAB / bottom sheet below `lg`.
+
+**Alternatives rejected:** Timeline sheet/drawer on narrow widths (reverted — breaks “beside Focus” mental model); hiding KPI earlier than top-nav stage (desynced from left rail); Tailwind-only `xl`/`lg` breakpoints without ratio constants (drifted from founder %).
+
+**Outcome:** Shipped on `tweak/today-responsive-timeline` → `main` (2026-07-26).
+
+**Related:** `src/lib/shell-nav-layout.ts`, [july-log.md](./july-log.md)
+
+---
 
 **Context:** The Vision & Product Strategy monolith (~2600 lines) was hard to navigate day-to-day.  
 **Decision:** Keep [`flowos-vision-and-product-strategy.md`](../../strategy/flowos-vision-and-product-strategy.md) as the **canonical hub** (still priority 1). Move full §1–55 text into [`docs/strategy/vision/`](../../strategy/vision/) (five chapters with prev/next links). No philosophy rewrite; no second source of truth.  

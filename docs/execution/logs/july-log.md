@@ -22,6 +22,27 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-26 — Today responsive shell (density stages + fixed Timeline)
+
+**Branch:** `tweak/today-responsive-timeline` → `main`
+
+**Shipped:**
+- Shell density: ≥70% expanded preference; 50–70% auto-collapse left rail; &lt;50% hamburger top nav + KPI hide (`shell-nav-layout.ts`)
+- Timeline stays fixed beside Focus/Quick Capture; horizontal canvas scroll when Focus+Timeline floors don’t fit (sheet mode reverted)
+- Compact utility FAB + right drawer bottom sheet on small widths; desktop right drawer slide/fade restored
+- Tasks Quick Schedule overlays below 1024 so board stays draggable; `touch-none` on task rows
+- Focus card: Add/Edit description in ⋯ menu; description field 13px font, taller edit box; Next Up stays open 2.4s after drag-drop
+
+**Decisions:** [decision-log — 2026-07-26 shell density stages](./decision-log.md)
+
+**Friction:** [friction-log — 2026-07-26](./friction-log.md)
+
+**Checks:** `npm run build` + `npm run lint` (pre-merge)
+
+**Production:** https://flowos-sage.vercel.app
+
+---
+
 ## 2026-07-21 — Habit drop notice auto-dismiss
 
 **Branch:** `tweak/habit-drop-notice-dismiss` → `main` (`2256fe1`)

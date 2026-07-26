@@ -19,6 +19,9 @@ import {
 import { TIMELINE_DRAWER_WIDTH_PX } from "@/lib/timeline-drag";
 import { cn } from "@/lib/utils";
 
+/** Below this, Quick Schedule overlays so the Tasks board keeps drag width. */
+const QUICK_SCHEDULE_OVERLAY_BELOW_PX = 1024;
+
 type TimelineDrawerProps = Omit<TimelinePlannerProps, "variant" | "onClose"> & {
   open: boolean;
   onClose: () => void;
@@ -53,8 +56,47 @@ function TimelineTabButton({
   );
 }
 
+function TimelineDrawerPanel({
+  open,
+  showContent,
+  onClose,
+  className,
+  style,
+  ...props
+}: TimelineDrawerProps & {
+  showContent: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative h-full shrink-0 overflow-hidden bg-surface-canvas",
+        open && "shadow-[-8px_0_20px_rgba(0,0,0,0.22)]",
+        className,
+      )}
+      style={style}
+    >
+      <div
+        className={cn(
+          "relative h-full overflow-hidden",
+          open
+            ? "translate-x-0 opacity-100"
+            : "pointer-events-none translate-x-5 opacity-0",
+        )}
+        style={{ transition: panelSlideTransitionStyle() }}
+      >
+        {showContent ? (
+          <TimelinePlanner variant="drawer" onClose={onClose} {...props} />
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export function TimelineDrawer({ open, onClose, ...props }: TimelineDrawerProps) {
   const [showContent, setShowContent] = useState(open);
+  const [overlayMode, setOverlayMode] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -66,16 +108,70 @@ export function TimelineDrawer({ open, onClose, ...props }: TimelineDrawerProps)
     return () => window.clearTimeout(timer);
   }, [open]);
 
+  useEffect(() => {
+    const sync = () => {
+      setOverlayMode(window.innerWidth < QUICK_SCHEDULE_OVERLAY_BELOW_PX);
+    };
+    sync();
+    window.addEventListener("resize", sync);
+    return () => window.removeEventListener("resize", sync);
+  }, []);
+
+  const panelWidth = `min(100%, ${TIMELINE_DRAWER_WIDTH_PX}px)`;
+
+  // Narrow layouts: float over the board so columns keep width and stay draggable.
+  if (overlayMode) {
+    return (
+      <>
+        {open ? (
+          <button
+            type="button"
+            aria-label="Close Quick Schedule"
+            className="fixed inset-0 z-40 bg-black/35"
+            onClick={onClose}
+          />
+        ) : null}
+        <div
+          aria-hidden={!open}
+          className={cn(
+            "fixed inset-y-0 right-0 z-50 flex",
+            !open && "pointer-events-none",
+          )}
+          style={{
+            width: panelWidth,
+            transform: open ? "translateX(0)" : "translateX(100%)",
+            transition: panelSlideTransitionStyle(),
+          }}
+        >
+          {open ? (
+            <TimelineTabButton
+              active
+              onClick={onClose}
+              className="absolute top-1/2 -left-8 z-30 -translate-y-1/2"
+            />
+          ) : null}
+          <TimelineDrawerPanel
+            open={open}
+            showContent={showContent}
+            onClose={onClose}
+            className="w-full"
+            {...props}
+          />
+        </div>
+      </>
+    );
+  }
+
   return (
     <div
       aria-hidden={!open}
       className={cn(
         "relative h-full shrink-0 overflow-visible",
         open ? "z-30" : "z-0",
-        !open && "pointer-events-none"
+        !open && "pointer-events-none",
       )}
       style={{
-        width: open ? `min(100%, ${TIMELINE_DRAWER_WIDTH_PX}px)` : 0,
+        width: open ? panelWidth : 0,
         transition: panelWidthTransitionStyle(),
       }}
     >
@@ -86,27 +182,13 @@ export function TimelineDrawer({ open, onClose, ...props }: TimelineDrawerProps)
           className="absolute top-1/2 -left-8 z-30 -translate-y-1/2"
         />
       ) : null}
-      <div
-        className={cn(
-          "relative h-full shrink-0",
-          open && "shadow-[-8px_0_20px_rgba(0,0,0,0.22)]"
-        )}
-        style={{ width: `min(100%, ${TIMELINE_DRAWER_WIDTH_PX}px)` }}
-      >
-        <div
-          className={cn(
-            "relative h-full overflow-hidden",
-            open
-              ? "translate-x-0 opacity-100"
-              : "pointer-events-none translate-x-5 opacity-0"
-          )}
-          style={{ transition: panelSlideTransitionStyle() }}
-        >
-          {showContent ? (
-            <TimelinePlanner variant="drawer" onClose={onClose} {...props} />
-          ) : null}
-        </div>
-      </div>
+      <TimelineDrawerPanel
+        open={open}
+        showContent={showContent}
+        onClose={onClose}
+        style={{ width: panelWidth }}
+        {...props}
+      />
     </div>
   );
 }

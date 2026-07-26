@@ -192,7 +192,7 @@ export const WorkplaceCompactTaskRow = memo(function WorkplaceCompactTaskRow({
       onClick={() => onSelect?.()}
       className={cn(
         "group/row relative flex h-8 items-center gap-1.5 rounded-md border border-transparent px-2 transition-[background-color,border-color,box-shadow] duration-150 hover:bg-surface-hover",
-        canDrag && "cursor-grab active:cursor-grabbing",
+        canDrag && "cursor-grab touch-none active:cursor-grabbing",
         onSelect && !canDrag && !task.completed && "cursor-pointer",
         task.completed && "cursor-default opacity-70 hover:bg-transparent",
         dragging && "opacity-40",

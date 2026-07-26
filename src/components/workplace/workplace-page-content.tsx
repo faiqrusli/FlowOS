@@ -89,7 +89,9 @@ import {
   WORKPLACE_TIMELINE_RIGHT_GAP_PX,
   WORKPLACE_TIMELINE_WIDTH_PX,
 } from "@/lib/workplace-layout";
-import { WORKSPACE_PAGE_INSET_LEFT_CLASS } from "@/lib/workspace-layout";
+import {
+  WORKSPACE_PAGE_INSET_LEFT_CLASS,
+} from "@/lib/workspace-layout";
 import { fetchWorkplaceData, WorkplaceError } from "@/lib/workplace-data";
 import { registerContextMenuCloser } from "@/lib/task-detail-menu-coordinator";
 import {
@@ -1061,11 +1063,91 @@ export function WorkplacePageContent({
     WORKPLACE_TIMELINE_CONTENT_GAP_PX +
     WORKPLACE_TIMELINE_RIGHT_GAP_PX;
 
+  const focusColumnMinWidth = `max(${WORKPLACE_FOCUS_MIN_PX}px, max-content)`;
+
+  const layoutFocusMinStyle = {
+    ["--workplace-focus-min" as string]: `${WORKPLACE_FOCUS_MIN_PX}px`,
+  };
+
+  const timelinePlannerProps = {
+    viewDate: todayViewDate,
+    groups,
+    habits,
+    selectedTaskId,
+    selectedHabitId,
+    onSelectTask: (taskId: string | null) => {
+      selectTask(taskId, { openDetails: false });
+      if (taskId) setSelectedHabitId(null);
+    },
+    onSelectHabit: (habitId: string | null) => {
+      setSelectedHabitId(habitId);
+      if (habitId) selectTask(null, { openDetails: false });
+    },
+    onOpenDetail: (taskId: string) => selectTask(taskId),
+    onScheduleTask: handleScheduleTask,
+    onScheduleHabit: handleScheduleHabit,
+    onToggleComplete: handleToggleComplete,
+    onToggleHabitComplete: handleToggleHabitComplete,
+    onUpdateTask: handleUpdateTask,
+    onDeleteTask: handleDeleteTask,
+    onDuplicateTask: handleDuplicateTask,
+    onSetPlanningState: handleSetPlanningState,
+    onTaskQueued: (taskId: string) => {
+      showActionToast({
+        message: "Added to Queue",
+        icon: "queue" as const,
+        actionLabel: "Undo",
+        onAction: () => {
+          void removeTaskFromNextUp(taskId).catch((err: unknown) => {
+            setError(
+              err instanceof TasksError
+                ? err.message
+                : "Failed to remove task from Queue.",
+            );
+          });
+        },
+      });
+    },
+    onTaskUnscheduled: (
+      taskId: string,
+      previous: {
+        scheduled_date: string | null;
+        scheduled_time: string | null;
+      },
+    ) => {
+      showActionToast({
+        message: "Unscheduled",
+        icon: "calendar" as const,
+        actionLabel: "Undo",
+        onAction: () => {
+          if (previous.scheduled_date) {
+            void handleScheduleTask(taskId, {
+              scheduled_date: previous.scheduled_date,
+              scheduled_time: previous.scheduled_time,
+            });
+            return;
+          }
+          void handleUpdateTask(taskId, {
+            scheduled_date: null,
+            scheduled_time: previous.scheduled_time,
+          });
+        },
+      });
+    },
+    onFocusStarted: () => {
+      showActionToast({
+        message: "Focus started",
+        icon: "play" as const,
+      });
+    },
+  };
+
   if (loading) {
     return (
       <div
         data-workplace-layout
         className="relative flex h-full min-h-0 flex-1 flex-col"
+        style={layoutFocusMinStyle}
       >
         {statusRail}
         <div
@@ -1082,9 +1164,7 @@ export function WorkplacePageContent({
                 "flex min-h-0 flex-1 flex-col gap-2 pt-3 pb-3",
                 WORKSPACE_PAGE_INSET_LEFT_CLASS,
               )}
-              style={{
-                minWidth: `max(${WORKPLACE_FOCUS_MIN_PX}px, max-content)`,
-              }}
+              style={{ minWidth: focusColumnMinWidth }}
             >
               <div className="h-10 w-full shrink-0 animate-pulse rounded-xl bg-surface-base/40" />
               <div className="min-h-0 w-full flex-1 animate-pulse rounded-xl bg-surface-base/40" />
@@ -1116,10 +1196,11 @@ export function WorkplacePageContent({
           <div
             data-workplace-layout
             className="relative flex h-full min-h-0 flex-1 flex-col"
+            style={layoutFocusMinStyle}
           >
             {statusRail}
 
-            {/* Focus + Timeline row; horizontal bar appears below when cramped. */}
+            {/* Focus + Timeline row; horizontal bar when below focus + timeline floors. */}
             <div
           ref={canvasScrollRef}
           data-workplace-canvas-scroll
@@ -1135,7 +1216,7 @@ export function WorkplacePageContent({
                     WORKSPACE_PAGE_INSET_LEFT_CLASS,
                   )}
                   style={{
-                    minWidth: `max(${WORKPLACE_FOCUS_MIN_PX}px, max-content)`,
+                    minWidth: focusColumnMinWidth,
                   }}
                 >
                   {error ? (
@@ -1169,8 +1250,10 @@ export function WorkplacePageContent({
                                 "flow-floating-overlay workplace-dock-popup absolute bottom-full left-0 z-40 flex flex-col overflow-hidden",
                                 // Keep mounted while dragging so HTML5 drag isn't cancelled;
                                 // hide so Next Up is reachable on small layouts.
+                                // Prefer opacity over visibility — some engines cancel drag when
+                                // the source becomes visibility:hidden mid-gesture.
                                 scheduleDragActive &&
-                                  "pointer-events-none invisible",
+                                  "pointer-events-none opacity-0",
                               )}
                               style={{
                                 marginBottom: WORKPLACE_DOCK_POPUP_GAP_PX,
@@ -1339,74 +1422,7 @@ export function WorkplacePageContent({
                     marginRight: WORKPLACE_TIMELINE_RIGHT_GAP_PX,
                   }}
                 >
-                  <WorkplaceTimelinePlanner
-                    viewDate={todayViewDate}
-                    groups={groups}
-                    habits={habits}
-                    selectedTaskId={selectedTaskId}
-                    selectedHabitId={selectedHabitId}
-                    onSelectTask={(taskId) => {
-                      selectTask(taskId, { openDetails: false });
-                      if (taskId) setSelectedHabitId(null);
-                    }}
-                    onSelectHabit={(habitId) => {
-                      setSelectedHabitId(habitId);
-                      if (habitId) selectTask(null, { openDetails: false });
-                    }}
-                    onOpenDetail={(taskId) => selectTask(taskId)}
-                    onScheduleTask={handleScheduleTask}
-                    onScheduleHabit={handleScheduleHabit}
-                    onToggleComplete={handleToggleComplete}
-                    onToggleHabitComplete={handleToggleHabitComplete}
-                    onUpdateTask={handleUpdateTask}
-                    onDeleteTask={handleDeleteTask}
-                    onDuplicateTask={handleDuplicateTask}
-                    onSetPlanningState={handleSetPlanningState}
-                    onTaskQueued={(taskId) => {
-                      showActionToast({
-                        message: "Added to Queue",
-                        icon: "queue",
-                        actionLabel: "Undo",
-                        onAction: () => {
-                          void removeTaskFromNextUp(taskId).catch(
-                            (err: unknown) => {
-                              setError(
-                                err instanceof TasksError
-                                  ? err.message
-                                  : "Failed to remove task from Queue.",
-                              );
-                            },
-                          );
-                        },
-                      });
-                    }}
-                    onTaskUnscheduled={(taskId, previous) => {
-                      showActionToast({
-                        message: "Unscheduled",
-                        icon: "calendar",
-                        actionLabel: "Undo",
-                        onAction: () => {
-                          if (previous.scheduled_date) {
-                            void handleScheduleTask(taskId, {
-                              scheduled_date: previous.scheduled_date,
-                              scheduled_time: previous.scheduled_time,
-                            });
-                            return;
-                          }
-                          void handleUpdateTask(taskId, {
-                            scheduled_date: null,
-                            scheduled_time: previous.scheduled_time,
-                          });
-                        },
-                      });
-                    }}
-                    onFocusStarted={() => {
-                      showActionToast({
-                        message: "Focus started",
-                        icon: "play",
-                      });
-                    }}
-                  />
+                  <WorkplaceTimelinePlanner {...timelinePlannerProps} />
                 </div>
               </div>
             </div>

@@ -38,6 +38,7 @@ type CurrentTaskMenuProps = {
   x: number;
   y: number;
   hasQueueNext: boolean;
+  hasDescription?: boolean;
   onClose: () => void;
   onCompleteTask: () => void;
   onFocusNext: () => void;
@@ -46,6 +47,7 @@ type CurrentTaskMenuProps = {
   onMoveToTomorrow: () => void;
   onPlanLater: () => void;
   onDelete: () => void;
+  onEditDescription?: () => void;
 };
 
 const MENU_ITEM_CLASS =
@@ -55,6 +57,7 @@ export function CurrentTaskMenu({
   x,
   y,
   hasQueueNext,
+  hasDescription = false,
   onClose,
   onCompleteTask,
   onFocusNext,
@@ -63,6 +66,7 @@ export function CurrentTaskMenu({
   onMoveToTomorrow,
   onPlanLater,
   onDelete,
+  onEditDescription,
 }: CurrentTaskMenuProps) {
   if (typeof document === "undefined") return null;
 
@@ -72,8 +76,9 @@ export function CurrentTaskMenu({
   };
 
   const menuWidth = 220;
-  // Approx height for clamp — rows + separators (Focus next optional).
-  const menuHeight = hasQueueNext ? 320 : 284;
+  // Approx height for clamp — rows + separators (optional Focus next / description).
+  let menuHeight = hasQueueNext ? 320 : 284;
+  if (onEditDescription) menuHeight += 36;
 
   return createPortal(
     <>
@@ -126,6 +131,16 @@ export function CurrentTaskMenu({
           <ExternalLink className="size-3.5 shrink-0 text-muted-foreground" />
           Open details
         </button>
+        {onEditDescription ? (
+          <button
+            type="button"
+            className={MENU_ITEM_CLASS}
+            onClick={() => run(onEditDescription)}
+          >
+            <Pencil className="size-3.5 shrink-0 text-muted-foreground" />
+            {hasDescription ? "Edit description" : "Add description"}
+          </button>
+        ) : null}
         <div className="my-0.5 border-t border-border-subtle/70" />
         <button
           type="button"
@@ -353,7 +368,7 @@ export function FocusCurrentTaskCard({
             cn(
               "overflow-hidden",
               editing
-                ? "max-h-[318px]"
+                ? "max-h-[360px]"
                 : descExpanded
                   ? "max-h-[300px]"
                   : "max-h-[190px]",
@@ -514,10 +529,11 @@ export function FocusCurrentTaskCard({
                   saveEdit();
                 }
               }}
-              rows={3}
+              rows={4}
               placeholder="Add notes for this focus…"
+              style={{ fontSize: 13, lineHeight: 1.375 }}
               className={cn(
-                "mt-1 min-h-0 flex-1 resize-none overflow-y-auto field-sizing-fixed scrollbar-subtle",
+                "mt-1 min-h-[96px] flex-1 resize-none overflow-y-auto field-sizing-fixed scrollbar-subtle",
                 drawerWritingFieldClass,
               )}
             />
@@ -569,6 +585,7 @@ export function FocusCurrentTaskCard({
           x={menuPoint.x}
           y={menuPoint.y}
           hasQueueNext={hasQueueNext}
+          hasDescription={hasDescription}
           onClose={() => setMenuPoint(null)}
           onCompleteTask={() => onCompleteTask(task)}
           onFocusNext={onFocusNext}
@@ -577,6 +594,7 @@ export function FocusCurrentTaskCard({
           onMoveToTomorrow={() => onMoveToTomorrow(task)}
           onPlanLater={() => onPlanLater(task)}
           onDelete={() => onDeleteTask(task)}
+          onEditDescription={canEdit ? beginEdit : undefined}
         />
       ) : null}
     </>
