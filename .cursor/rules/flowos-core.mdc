@@ -30,6 +30,7 @@ alwaysApply: true
 - **Runbook session:** read `docs/execution/runbooks/m2-founder-daily-driver.md`; new branch per session; see `git-workflow.mdc`
 - **UI/UX idea:** `docs/execution/logs/inbox.md` first
 - **Product decision:** append `decision-log.md`
+- **Daily journal:** `docs/execution/logs/developer-log/YYYY-MM-DD.md` (timeline/WIP; see `developer-log.mdc`)
 - **After merge to main:** `docs/execution/logs/july-log.md`
 - **Scope:** M2 closed scope only — no command palette, new modules, monolith refactors unless runbook says so
 

@@ -36,7 +36,7 @@ import { formatDurationMinutes } from "@/lib/task-duration-options";
 import {
   TASK_ALERT_BEFORE_OPTIONS,
   applyPresetAlert,
-  formatAlertBeforeLabel,
+  formatAlertBeforeToastMessage,
 } from "@/lib/task-alert-before-options";
 import { requestBrowserNotificationPermissionIfNeeded } from "@/lib/browser-notifications";
 import { useOptionalActionToast } from "@/contexts/action-toast-context";
@@ -1227,18 +1227,11 @@ export const TaskRow = memo(function TaskRow({
             if (updates.notification_enabled) {
               void requestBrowserNotificationPermissionIfNeeded();
             }
-            const label = formatAlertBeforeLabel(
-              updates.notification_enabled,
-              updates.notification_lead_minutes,
-            );
-            const message = !updates.notification_enabled
-              ? "Alert silenced"
-              : updates.notification_lead_minutes == null ||
-                  updates.notification_lead_minutes <= 0
-                ? "Alert cleared"
-                : `Alert set · ${label}`;
             actionToast?.showActionToast({
-              message,
+              message: formatAlertBeforeToastMessage(
+                updates.notification_enabled,
+                updates.notification_lead_minutes,
+              ),
               tone: "success",
               icon: "check",
             });

@@ -34,50 +34,54 @@ export function TaskPriorityPicker({
   const currentConfig = TASK_PRIORITY_CONFIG[priority];
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger
-        className={cn(
-          "max-w-full justify-between gap-1.5 px-2 font-medium",
-          compactControlTriggerClass,
-          className,
-        )}
-        aria-label={`Priority: ${currentConfig.label}`}
-      >
-        <TaskPriorityFlagIcon priority={priority} />
-        <span className="truncate">{currentConfig.label}</span>
-        <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="bottom" align="start" className="w-40 p-1">
-        {TASK_PRIORITIES.map((option) => {
-          const config = TASK_PRIORITY_CONFIG[option];
-          const selected = priority === option;
+    // Fixed-height shell: Base UI mounts FocusGuards beside the trigger when open.
+    // Without this, those nodes reflow the detail form (Plan / Date / … jump).
+    <div className="relative h-8 w-full min-w-0">
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger
+          className={cn(
+            "h-full w-full max-w-full justify-between gap-1.5 px-2 font-medium",
+            compactControlTriggerClass,
+            className,
+          )}
+          aria-label={`Priority: ${currentConfig.label}`}
+        >
+          <TaskPriorityFlagIcon priority={priority} />
+          <span className="truncate">{currentConfig.label}</span>
+          <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="bottom" align="start" className="w-40 p-1">
+          {TASK_PRIORITIES.map((option) => {
+            const config = TASK_PRIORITY_CONFIG[option];
+            const selected = priority === option;
 
-          return (
-            <DropdownMenuItem
-              key={option}
-              onClick={() => {
-                onSelect(option);
-                setOpen(false);
-              }}
-              className={cn(
-                "gap-2 py-2 text-xs",
-                selected &&
-                  option === "high" &&
-                  "bg-destructive-muted font-medium text-destructive",
-                selected &&
-                  option === "medium" &&
-                  "bg-warning-muted font-medium text-warning",
-                selected &&
-                  option === "low" &&
-                  "bg-primary-soft font-medium text-foreground",
-              )}
-            >
-              <TaskPriorityFlagIcon priority={option} />
-              {config.label}
-            </DropdownMenuItem>
-          );
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
+            return (
+              <DropdownMenuItem
+                key={option}
+                onClick={() => {
+                  onSelect(option);
+                  setOpen(false);
+                }}
+                className={cn(
+                  "gap-2 py-2 text-xs",
+                  selected &&
+                    option === "high" &&
+                    "bg-destructive-muted font-medium text-destructive",
+                  selected &&
+                    option === "medium" &&
+                    "bg-warning-muted font-medium text-warning",
+                  selected &&
+                    option === "low" &&
+                    "bg-primary-soft font-medium text-foreground",
+                )}
+              >
+                <TaskPriorityFlagIcon priority={option} />
+                {config.label}
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }

@@ -27,6 +27,16 @@ export function formatAlertBeforeLabel(
   return formatDurationMinutes(leadMinutes);
 }
 
+/** Bottom success toast copy after changing Alert before. */
+export function formatAlertBeforeToastMessage(
+  notificationEnabled: boolean,
+  leadMinutes: number | null | undefined
+): string {
+  if (!notificationEnabled) return "Alert silenced";
+  if (leadMinutes == null || leadMinutes <= 0) return "Alert cleared";
+  return `Alert set · ${formatDurationMinutes(leadMinutes)}`;
+}
+
 export function isAlertBeforeConfigured(
   notificationEnabled: boolean,
   leadMinutes: number | null | undefined

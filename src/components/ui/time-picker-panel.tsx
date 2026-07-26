@@ -417,12 +417,21 @@ function TimePickerEditableHeader({
             {periodLabel}
             <ChevronDown className="size-3 text-muted-foreground" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-0 w-24 p-1">
+          <DropdownMenuContent
+            side="bottom"
+            align="end"
+            sideOffset={4}
+            className="min-w-0 w-24 p-1"
+          >
             {TIME_PICKER_PERIODS.map((period) => (
               <DropdownMenuItem
                 key={period}
-                onClick={() => {
-                  applyPeriod(period);
+                onClick={(event) => {
+                  event.preventDefault();
+                  // Update period only — do not call onDone (closes parent
+                  // schedule popover and can swallow the click).
+                  onChange({ ...value, period });
+                  setSequentialDigits("");
                   setPeriodMenuOpen(false);
                 }}
                 className={cn(

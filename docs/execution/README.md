@@ -62,6 +62,7 @@ Runbook index: [runbooks/README.md](./runbooks/README.md)
 |-----|---------|
 | [inbox.md](./logs/inbox.md) | Scratch UI/UX fixes — promote when scoped |
 | [friction-log.md](./logs/friction-log.md) | Live founder friction from production use |
+| [developer-log/](./logs/developer-log/) | Personal daily timeline (WIP, lessons) |
 | [decision-log.md](./logs/decision-log.md) | Product decisions with rationale |
 | [july-log.md](./logs/july-log.md) | July session narrative |
 

@@ -10,9 +10,11 @@ import {
   Clock,
   Flag,
   Folder,
+  ListMinus,
   ListPlus,
   type LucideIcon,
 } from "lucide-react";
+import { useOptionalActionToast } from "@/contexts/action-toast-context";
 import {
   GlobalAccessPanel,
   GLOBAL_ACCESS_PANEL_COLLAPSED_WIDTH_PX,
@@ -41,11 +43,15 @@ import {
   PLANNING_STATES,
   PLAN_SECTION_LABEL,
 } from "@/lib/task-planning";
-import { appendTaskToNextUp, isEligibleForNextUp } from "@/lib/task-next-up";
+import {
+  appendTaskToNextUp,
+  isEligibleForNextUp,
+  removeTaskFromNextUp,
+} from "@/lib/task-next-up";
 import { cn } from "@/lib/utils";
 import {
+  drawerTitleFieldClass,
   drawerWritingFieldClass,
-  surfaceInsetControlClass,
   compactControlChipActiveClass,
   compactControlChipClass,
   compactControlChipInactiveClass,
@@ -187,21 +193,63 @@ export function TaskDetailFields({
   onToggleComplete?: () => void;
 }) {
   const planningState = normalizePlanningState(task.planning_state);
-  const [addingToNextUp, setAddingToNextUp] = useState(false);
-  const [addedTaskId, setAddedTaskId] = useState<string | null>(null);
-  const addedToNextUp = task.queue_order !== null || addedTaskId === task.id;
+  const actionToast = useOptionalActionToast();
+  const [queueBusy, setQueueBusy] = useState(false);
+  /** Optimistic override — board `queue_order` may lag Next Up writes. */
+  const [queuedOverride, setQueuedOverride] = useState<boolean | null>(null);
+  const addedToNextUp = queuedOverride ?? task.queue_order !== null;
   const canAddToNextUp = isEligibleForNextUp(task) && !addedToNextUp;
+  const showQueueControl = canAddToNextUp || addedToNextUp;
   const titleField = useTaskWritingField(task.id, task.title);
   const descriptionField = useTaskWritingField(task.id, task.description ?? "");
 
+  useEffect(() => {
+    setQueuedOverride(null);
+  }, [task.id, task.queue_order]);
+
   const handleAddToNextUp = async () => {
-    if (!canAddToNextUp) return;
-    setAddingToNextUp(true);
+    if (!canAddToNextUp || queueBusy) return;
+    setQueueBusy(true);
     try {
       await appendTaskToNextUp(task.id);
-      setAddedTaskId(task.id);
+      setQueuedOverride(true);
+      actionToast?.showActionToast({
+        message: "Added to Queue",
+        icon: "queue",
+        actionLabel: "Undo",
+        onAction: () => {
+          setQueuedOverride(false);
+          void removeTaskFromNextUp(task.id).catch(() => {
+            setQueuedOverride(null);
+          });
+        },
+      });
     } finally {
-      setAddingToNextUp(false);
+      setQueueBusy(false);
+    }
+  };
+
+  const handleRemoveFromNextUp = async () => {
+    if (!addedToNextUp || queueBusy) return;
+    setQueueBusy(true);
+    try {
+      setQueuedOverride(false);
+      await removeTaskFromNextUp(task.id);
+      actionToast?.showActionToast({
+        message: "Removed from Queue",
+        icon: "queue",
+        actionLabel: "Undo",
+        onAction: () => {
+          setQueuedOverride(true);
+          void appendTaskToNextUp(task.id).catch(() => {
+            setQueuedOverride(null);
+          });
+        },
+      });
+    } catch {
+      setQueuedOverride(null);
+    } finally {
+      setQueueBusy(false);
     }
   };
 
@@ -241,14 +289,22 @@ export function TaskDetailFields({
           aria-label="Task title"
           className={cn(
             "h-9 min-w-0 flex-1 text-[15px] font-semibold tracking-tight",
-            surfaceInsetControlClass,
+            drawerTitleFieldClass,
           )}
         />
-        {canAddToNextUp || addedToNextUp ? (
+        {showQueueControl ? (
           <button
             type="button"
-            onClick={() => void handleAddToNextUp()}
-            disabled={!canAddToNextUp || addingToNextUp}
+            onClick={() =>
+              void (addedToNextUp
+                ? handleRemoveFromNextUp()
+                : handleAddToNextUp())
+            }
+            disabled={queueBusy}
+            aria-label={
+              addedToNextUp ? "Remove from Next Up" : "Add to Next Up queue"
+            }
+            title={addedToNextUp ? "Remove from Next Up" : "Add to Queue"}
             className={cn(
               "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-border-subtle bg-control-default px-2.5 text-xs font-medium text-foreground transition-colors",
               "hover:bg-control-hover focus-visible:bg-control-hover focus-visible:ring-1 focus-visible:ring-ring/40",
@@ -256,7 +312,11 @@ export function TaskDetailFields({
               addedToNextUp && "text-muted-foreground",
             )}
           >
-            <ListPlus className="size-3.5" />
+            {addedToNextUp ? (
+              <ListMinus className="size-3.5" />
+            ) : (
+              <ListPlus className="size-3.5" />
+            )}
             {addedToNextUp ? "In Next Up" : "Add to Queue"}
           </button>
         ) : null}

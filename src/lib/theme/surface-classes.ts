@@ -111,20 +111,31 @@ export const workspaceRowClass =
 export const surfaceInsetControlClass =
   "border-border-subtle bg-surface-inset hover:bg-surface-inset-hover focus-visible:bg-surface-inset-hover focus-visible:ring-1 focus-visible:ring-ring/40 dark:bg-surface-inset dark:hover:bg-surface-inset-hover dark:focus-visible:bg-surface-inset-hover";
 
-/** Writing fields — editor depth (Surface 5 → 6 on hover/focus). */
+/**
+ * Drawer / panel writing fill — Surface 5 → 6 on hover.
+ * Focus chrome lives on Input/Textarea (primary/40 border + ring-2 @ /40).
+ */
 export const drawerWritingFieldClass =
-  "border-border-subtle bg-surface-editor hover:bg-surface-inset-hover focus-visible:bg-surface-inset-hover focus-visible:ring-1 focus-visible:ring-ring/40 dark:bg-surface-editor dark:hover:bg-surface-inset-hover dark:focus-visible:bg-surface-inset-hover";
+  "border-border-subtle bg-surface-editor hover:bg-surface-inset-hover focus-visible:bg-surface-editor dark:bg-surface-editor dark:hover:bg-surface-inset-hover dark:focus-visible:bg-surface-editor";
+
+/** Same fill helper as drawerWritingFieldClass (title + description). */
+export const drawerTitleFieldClass = drawerWritingFieldClass;
+
+/** Focus ring utility for custom controls — matches Input/Textarea */
+export const focusRingClass =
+  "outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:border-primary/40";
 
 /**
  * Compact selector/button control (Date, Time, Duration, Alert, Priority, …).
  * Surface 5 fill + subtle edge; hover lights to Surface 6.
+ * Open/focus uses outline (no layout) — never change border width/color for open.
  */
 export const compactControlTriggerClass =
-  "inline-flex h-8 items-center rounded-lg border border-border-subtle bg-control-default text-xs text-foreground outline-none transition-colors duration-150 hover:bg-control-hover focus-visible:bg-control-hover focus-visible:ring-1 focus-visible:ring-ring/40 aria-expanded:bg-control-active aria-expanded:ring-1 aria-expanded:ring-primary/30 data-popup-open:bg-control-active data-popup-open:ring-1 data-popup-open:ring-primary/30 disabled:bg-control-default disabled:text-muted-foreground disabled:opacity-55";
+  "inline-flex box-border h-8 items-center rounded-lg border border-border-subtle bg-control-default text-xs text-foreground shadow-none outline-none outline-offset-0 ring-0 transition-[background-color] duration-150 hover:bg-control-hover focus-visible:bg-control-hover focus-visible:outline focus-visible:outline-1 focus-visible:outline-primary/40 focus-visible:-outline-offset-1 aria-expanded:bg-control-active aria-expanded:outline aria-expanded:outline-1 aria-expanded:outline-primary/40 aria-expanded:-outline-offset-1 data-popup-open:bg-control-active data-popup-open:outline data-popup-open:outline-1 data-popup-open:outline-primary/40 data-popup-open:-outline-offset-1 disabled:bg-control-default disabled:text-muted-foreground disabled:opacity-55";
 
 /** Open / pressed override when open state is class-driven (not aria-expanded). */
 export const compactControlTriggerOpenClass =
-  "bg-control-active ring-1 ring-primary/30";
+  "bg-control-active outline outline-1 outline-primary/40 -outline-offset-1";
 
 /** Segmented plan/state chips — same height as compact selectors. */
 export const compactControlChipClass =
@@ -154,7 +165,3 @@ export const selectedItemClass = "flow-selected text-foreground";
 
 /** Empty state / drop zone framing */
 export const emptyStateClass = "flow-empty";
-
-/** Focus ring utility for custom controls */
-export const focusRingClass =
-  "outline-none focus-visible:ring-3 focus-visible:ring-ring/45 focus-visible:border-primary/60";

@@ -1,6 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { Menu } from "@base-ui/react/menu";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +38,7 @@ function DropdownMenuContent({
         align={align}
         sideOffset={sideOffset}
         collisionAvoidance={collisionAvoidance}
-        className="z-50 outline-none"
+        className="z-[200] outline-none"
       >
         <Menu.Popup
           data-slot="dropdown-menu-content"
