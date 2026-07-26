@@ -60,9 +60,17 @@ function SchedulePickerPopover({
     if (!open) return;
 
     function handlePointerDown(event: MouseEvent) {
-      const target = event.target as Node;
+      const target = event.target;
+      if (!(target instanceof Node)) return;
       if (triggerRef.current?.contains(target)) return;
       if (popoverRef.current?.contains(target)) return;
+      // Portaled menus (e.g. time a.m./p.m.) live outside the popover DOM.
+      if (
+        target instanceof Element &&
+        target.closest("[data-slot='dropdown-menu-content']")
+      ) {
+        return;
+      }
       onClose();
     }
 

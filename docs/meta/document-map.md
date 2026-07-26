@@ -12,6 +12,7 @@
 | [../execution/](../execution/) | Runbooks, logs, ops (**hold** = no large new runbooks) |
 | [../review/](../review/) | SRAI + design specs |
 | [../execution/logs/inbox.md](../execution/logs/inbox.md) | Scratch UI/UX fix capture |
+| [../execution/logs/developer-log/](../execution/logs/developer-log/) | Personal daily timeline (not product authority) |
 | [../execution/logs/july-log.md](../execution/logs/july-log.md) | July session log |
 | [../foundation/PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | North star |
 | [../foundation/FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | Shipped features + IA |

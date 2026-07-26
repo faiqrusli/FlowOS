@@ -47,48 +47,52 @@ export function TaskGroupPicker({
   const currentName = getGroupDisplayTitle(currentGroup, todayViewDate);
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger
-        className={cn(
-          "max-w-full justify-between gap-1.5 px-2 font-medium",
-          compactControlTriggerClass,
-          className,
-        )}
-        aria-label={`Group: ${currentName}`}
-      >
-        <TaskGroupPill
-          variant="plain"
-          icon={currentAppearance.icon}
-          name={currentName}
-          appearance={currentAppearance}
-        />
-        <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="bottom" align="start" className="w-52 p-1">
-        {targets.map((group) => {
-          const appearance = getTaskGroupAppearance(group);
-          const name = getGroupDisplayTitle(group, todayViewDate);
-          const selected = group.id === currentGroup.id;
+    // Fixed-height shell: Base UI mounts FocusGuards beside the trigger when open.
+    // Without this, those nodes reflow the detail form (Plan / Date / … jump).
+    <div className="relative h-8 w-full min-w-0">
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger
+          className={cn(
+            "h-full w-full max-w-full justify-between gap-1.5 px-2 font-medium",
+            compactControlTriggerClass,
+            className,
+          )}
+          aria-label={`Group: ${currentName}`}
+        >
+          <TaskGroupPill
+            variant="plain"
+            icon={currentAppearance.icon}
+            name={currentName}
+            appearance={currentAppearance}
+          />
+          <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="bottom" align="start" className="w-52 p-1">
+          {targets.map((group) => {
+            const appearance = getTaskGroupAppearance(group);
+            const name = getGroupDisplayTitle(group, todayViewDate);
+            const selected = group.id === currentGroup.id;
 
-          return (
-            <DropdownMenuItem
-              key={group.id}
-              onClick={() => {
-                onSelect(group.id);
-                setOpen(false);
-              }}
-              className={cn("py-2", selected && "bg-primary-soft")}
-            >
-              <TaskGroupPill
-                variant="plain"
-                icon={appearance.icon}
-                name={name}
-                appearance={appearance}
-              />
-            </DropdownMenuItem>
-          );
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
+            return (
+              <DropdownMenuItem
+                key={group.id}
+                onClick={() => {
+                  onSelect(group.id);
+                  setOpen(false);
+                }}
+                className={cn("py-2", selected && "bg-primary-soft")}
+              >
+                <TaskGroupPill
+                  variant="plain"
+                  icon={appearance.icon}
+                  name={name}
+                  appearance={appearance}
+                />
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }

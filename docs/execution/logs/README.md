@@ -6,6 +6,7 @@ Append-only evidence, capture, and decision records.
 |-----|---------|
 | [inbox.md](./inbox.md) | **Scratch** — random UI/UX fix ideas (no template) |
 | [friction-log.md](./friction-log.md) | Daily dogfood evidence — what / when / cost |
+| [developer-log/](./developer-log/) | Personal daily timeline (WIP, lessons) — not product authority |
 | [july-log.md](./july-log.md) | July session narrative (after runbook chunks ship) |
 | [decision-log.md](./decision-log.md) | Product-level decisions |
 | [unmerged-branch-queue.md](./unmerged-branch-queue.md) | Founder-led priority queue of unfinished branches still worth landing on `main` |

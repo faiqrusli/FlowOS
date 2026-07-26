@@ -1,0 +1,50 @@
+---
+description: Daily developer log — when and how to update docs/execution/logs/developer-log
+alwaysApply: true
+---
+
+# Developer log (FlowOS)
+
+**Path:** `docs/execution/logs/developer-log/YYYY-MM-DD.md`  
+**Index:** `docs/execution/logs/developer-log/README.md`
+
+## What it is
+
+Personal daily journal (timeline + WIP). **Not** product authority.
+
+| Need | Doc |
+|------|-----|
+| Product why | `decision-log.md` |
+| Shipped on main | `july-log.md` |
+| Dogfood pain | `friction-log.md` |
+| Day timeline / lessons | **developer-log** |
+
+## Agent behavior
+
+1. **End of a meaningful coding session** (or when founder asks): create or append today’s `YYYY-MM-DD.md` (timezone = founder local; use user_info date when present).
+2. **Append Timeline** beats only for meaningful work (not every file save). Optional: summarize recent `git log` for that day.
+3. **Overview** — Done / Still open / Blockers. Skip empty sections.
+4. **Decisions** — one line + link to decision-log if product-level; do not duplicate full decision entries.
+5. **Next** — one first action for tomorrow / next session.
+6. **Do not** invent commits or claim merge to `main`. Do not replace july-log or decision-log.
+7. New day → new file from README template. Update the README index table when adding a day.
+
+## Template (slim)
+
+```markdown
+# YYYY-MM-DD
+
+## Overview
+- Done:
+- Still open:
+- Blockers:
+
+## Timeline
+HH:MM — …
+
+## Decisions
+- … → [decision-log](../decision-log.md)
+
+## Next
+- …
+```

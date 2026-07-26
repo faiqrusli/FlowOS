@@ -43,6 +43,7 @@ import {
   setSidebarNotesCache,
   upsertSidebarNoteInCache,
 } from "@/lib/sidebar-notes-cache";
+import { drawerWritingFieldClass } from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
 import type { GrowthAreaWithCounts, Note } from "@/types/notes";
 
@@ -434,7 +435,7 @@ export function SidebarNotesPanel() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search notes..."
-                className="h-8 pl-8 text-sm"
+                className={cn("h-8 pl-8 text-sm", drawerWritingFieldClass)}
               />
             </div>
           </div>
@@ -446,7 +447,7 @@ export function SidebarNotesPanel() {
               "flex w-full items-center gap-2 rounded-xl border-0 px-2.5 py-1.5 text-left transition-colors duration-150",
               todayDailyNoteId && selectedNoteId === todayDailyNoteId
                 ? "bg-primary-soft hover:bg-primary-soft"
-                : "bg-surface-raised hover:bg-surface-hover",
+                : "bg-surface-5 hover:bg-surface-hover",
             )}
           >
             <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-surface-board-header text-sm leading-none">

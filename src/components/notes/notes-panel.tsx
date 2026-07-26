@@ -38,6 +38,7 @@ import {
   resolveNewNoteTitle,
   sortNotesForList,
 } from "@/lib/notes-utils";
+import { drawerWritingFieldClass } from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
 import type { GrowthAreaWithCounts, Note } from "@/types/notes";
 
@@ -303,7 +304,7 @@ export function NotesPanel({
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search notes..."
-                  className="h-8 pl-8 text-sm"
+                  className={cn("h-8 pl-8 text-sm", drawerWritingFieldClass)}
                 />
               </div>
             </div>

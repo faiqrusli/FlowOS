@@ -16,10 +16,12 @@ import {
   applySilentAlert,
   formatAlertBeforeLabel,
   formatAlertBeforeTimeInput,
+  formatAlertBeforeToastMessage,
   isAlertBeforeConfigured,
   parseAlertBeforeTimeInput,
 } from "@/lib/task-alert-before-options";
 import { requestBrowserNotificationPermissionIfNeeded } from "@/lib/browser-notifications";
+import { useOptionalActionToast } from "@/contexts/action-toast-context";
 import { cn } from "@/lib/utils";
 import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 
@@ -151,6 +153,7 @@ export function TaskAlertBeforePicker({
   onOpenChange,
 }: TaskAlertBeforePickerProps) {
   const [open, setOpen] = useState(false);
+  const actionToast = useOptionalActionToast();
   const isTaskRow = variant === "task-row";
   const isDetail = variant === "detail";
   const configured = isAlertBeforeConfigured(notificationEnabled, leadMinutes);
@@ -161,19 +164,34 @@ export function TaskAlertBeforePicker({
     onOpenChange?.(nextOpen);
   }
 
+  function notifyAlertChange(updates: {
+    notification_enabled: boolean;
+    notification_lead_minutes: number | null;
+  }) {
+    onChange(updates);
+    actionToast?.showActionToast({
+      message: formatAlertBeforeToastMessage(
+        updates.notification_enabled,
+        updates.notification_lead_minutes,
+      ),
+      tone: "success",
+      icon: "check",
+    });
+  }
+
   function applySilent() {
-    onChange(applySilentAlert());
+    notifyAlertChange(applySilentAlert());
     setOpen(false);
   }
 
   function applyClear() {
-    onChange(applyClearAlert());
+    notifyAlertChange(applyClearAlert());
     void requestBrowserNotificationPermissionIfNeeded();
     setOpen(false);
   }
 
   function applyPreset(minutes: number) {
-    onChange(applyPresetAlert(minutes));
+    notifyAlertChange(applyPresetAlert(minutes));
     void requestBrowserNotificationPermissionIfNeeded();
     setOpen(false);
   }
