@@ -22,6 +22,23 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-26 — Right drawer pickers + global Soft Indigo field focus
+
+**Branch:** `tweak/right-drawer-time-ampm-picker` → `main` (`8f0b5b2`)
+
+**Shipped:**
+- Right-drawer time AM/PM picker polish (schedule/alert pickers, task detail controls)
+- Global Input/Textarea focus: `primary/40` border, `ring-2` @ `/40`, 150ms; hover lightens fill only
+- Developer log under `docs/execution/logs/developer-log/` + Cursor rule `developer-log.mdc`
+
+**Checks:** `npm run build` pass; lint 0 errors (warnings pre-existing).
+
+**Production:** https://flowos-sage.vercel.app
+
+**Related:** [developer-log 2026-07-26](./developer-log/2026-07-26.md)
+
+---
+
 ## 2026-07-26 — Today responsive shell (density stages + fixed Timeline)
 
 **Branch:** `tweak/today-responsive-timeline` → `main` (`fd4e0b7`)
