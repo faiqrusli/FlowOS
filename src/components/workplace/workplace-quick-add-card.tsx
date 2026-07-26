@@ -8,10 +8,7 @@ import {
   writeModuleVisibility,
   type WorkplaceModuleVisibility,
 } from "@/lib/workplace-module-visibility";
-import {
-  WORKPLACE_FOCUS_MIN_PX,
-  WORKPLACE_PANEL_TRAILING_INSET_CLASS,
-} from "@/lib/workplace-layout";
+import { WORKPLACE_PANEL_TRAILING_INSET_CLASS } from "@/lib/workplace-layout";
 import { cn } from "@/lib/utils";
 
 type WorkplaceQuickAddCardProps = {
@@ -45,7 +42,7 @@ export function WorkplaceQuickAddCard({
     <div
       className={cn("w-full shrink-0", WORKPLACE_PANEL_TRAILING_INSET_CLASS)}
       style={{
-        minWidth: WORKPLACE_FOCUS_MIN_PX,
+        minWidth: "var(--workplace-focus-min, 500px)",
       }}
     >
       <section

@@ -64,9 +64,6 @@ import {
   parseScheduleDrop,
 } from "@/lib/next-up-drag";
 import {
-  WORKPLACE_FOCUS_MIN_PX,
-} from "@/lib/workplace-layout";
-import {
   fetchHabitQueueRefs,
   insertHabitQueueRef,
   pruneHabitQueueRefs,
@@ -610,12 +607,13 @@ export function WorkplaceFocusCard({
     if (dragAutoCloseTimerRef.current) {
       clearTimeout(dragAutoCloseTimerRef.current);
     }
+    // Stay open long enough to confirm the drop landed in Queue.
     dragAutoCloseTimerRef.current = setTimeout(() => {
       if (queueOpenModeRef.current === "drag") {
         queueOpenModeRef.current = "closed";
         setNextUpDrawerOpen(false);
       }
-    }, 1200);
+    }, 2400);
   }, []);
 
   const handleScheduleDrop = useCallback(
@@ -1374,7 +1372,7 @@ export function WorkplaceFocusCard({
         data-focus-shell
         className="relative flex h-full min-h-0 w-full flex-1"
         style={{
-          minWidth: WORKPLACE_FOCUS_MIN_PX,
+          minWidth: "var(--workplace-focus-min, 500px)",
         }}
       >
         <section
@@ -1383,7 +1381,7 @@ export function WorkplaceFocusCard({
             "relative flex h-full min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden",
             workplaceFocusCanvasClassName,
           )}
-          style={{ minWidth: WORKPLACE_FOCUS_MIN_PX }}
+          style={{ minWidth: "var(--workplace-focus-min, 500px)" }}
         >
           <div className="relative flex min-h-0 flex-1 flex-col">
           <div

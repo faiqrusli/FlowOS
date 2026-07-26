@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { Menu, PanelLeft, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Menu, PanelLeft } from "lucide-react";
 import {
   sidebarPrimaryItem,
   sidebarWorkspaceItems,
@@ -17,9 +17,13 @@ import {
 } from "@/lib/user-profile";
 import { createClient } from "@/lib/supabase/client";
 import {
-  getSidebarCollapsed,
+  getSidebarCollapsedPreference,
   setSidebarCollapsed,
 } from "@/lib/sidebar-preference";
+import {
+  resolveShellNavStage,
+  type ShellNavStage,
+} from "@/lib/shell-nav-layout";
 import {
   PANEL_LAYOUT_EASE,
   PANEL_LAYOUT_MS,
@@ -96,14 +100,19 @@ type SidebarPanelProps = {
   className?: string;
   /** When true, aside is position:fixed and does not push the page. */
   overlay?: boolean;
+  /** Lock collapsed rail — F logo is not an expand control. */
+  expandLocked?: boolean;
 };
 
 function SidebarBrand({
   collapsed,
   onToggleCollapse,
+  expandLocked = false,
 }: {
   collapsed: boolean;
   onToggleCollapse: () => void;
+  /** When true, F logo is not a control — sidebar cannot be expanded from the rail. */
+  expandLocked?: boolean;
 }) {
   return (
     <div className="flex h-[43px] w-full shrink-0 items-center">
@@ -113,15 +122,19 @@ function SidebarBrand({
         style={{ width: SIDEBAR_WIDTH_COLLAPSED }}
       >
         {collapsed ? (
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            className="group/logo relative size-7 rounded-md"
-            aria-label="Open sidebar"
-          >
-            <SidebarLogoMark className="transition-opacity duration-150 group-hover/logo:opacity-0" />
-            <SidebarToggleIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover/logo:opacity-100" />
-          </button>
+          expandLocked ? (
+            <SidebarLogoMark />
+          ) : (
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              className="group/logo relative size-7 rounded-md"
+              aria-label="Open sidebar"
+            >
+              <SidebarLogoMark className="transition-opacity duration-150 group-hover/logo:opacity-0" />
+              <SidebarToggleIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover/logo:opacity-100" />
+            </button>
+          )
         ) : (
           <SidebarLogoMark />
         )}
@@ -141,16 +154,18 @@ function SidebarBrand({
             FlowOS
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onToggleCollapse}
-          className="group/collapse shrink-0 rounded-md transition-colors duration-150 ease-out"
-          aria-label="Collapse sidebar"
-          title="Collapse sidebar"
-          tabIndex={collapsed ? -1 : 0}
-        >
-          <SidebarToggleIcon />
-        </button>
+        {!expandLocked ? (
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            className="group/collapse shrink-0 rounded-md transition-colors duration-150 ease-out"
+            aria-label="Collapse sidebar"
+            title="Collapse sidebar"
+            tabIndex={collapsed ? -1 : 0}
+          >
+            <SidebarToggleIcon />
+          </button>
+        ) : null}
       </div>
     </div>
   );
@@ -332,6 +347,7 @@ function SidebarPanel({
   onNavigate,
   className,
   overlay = false,
+  expandLocked = false,
 }: SidebarPanelProps) {
   const width = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
 
@@ -348,7 +364,11 @@ function SidebarPanel({
         className,
       )}
     >
-      <SidebarBrand collapsed={collapsed} onToggleCollapse={onToggleCollapse} />
+      <SidebarBrand
+        collapsed={collapsed}
+        onToggleCollapse={onToggleCollapse}
+        expandLocked={expandLocked}
+      />
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <SidebarNav
@@ -385,10 +405,50 @@ export function AppSidebar({
   const [signingOut, setSigningOut] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [sidebarReady, setSidebarReady] = useState(false);
+  const [navStage, setNavStage] = useState<ShellNavStage>("comfortable");
+  const prevViewportWidthRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setCollapsed(getSidebarCollapsed());
+    const width = window.innerWidth;
+    const stage = resolveShellNavStage(width);
+    const preference = getSidebarCollapsedPreference();
+    prevViewportWidthRef.current = width;
+    setNavStage(stage);
+
+    // At/below 70%: default to icon rail when no preference yet.
+    // User can still expand; preference then wins until density crosses again.
+    if (stage === "collapsed" && preference === null) {
+      setCollapsed(true);
+      setSidebarCollapsed(true);
+    } else if (stage === "comfortable") {
+      setCollapsed(preference === true);
+    } else {
+      // collapsed or top — prefer collapsed for when returning to mid band
+      setCollapsed(preference === null ? true : preference === true);
+      if (preference === null) setSidebarCollapsed(true);
+    }
     setSidebarReady(true);
+
+    const onResize = () => {
+      const nextWidth = window.innerWidth;
+      const prevWidth = prevViewportWidthRef.current;
+      prevViewportWidthRef.current = nextWidth;
+      const nextStage = resolveShellNavStage(nextWidth);
+      setNavStage(nextStage);
+
+      if (prevWidth === null) return;
+
+      const prevStage = resolveShellNavStage(prevWidth);
+
+      // Crossing below 70% (from comfortable) → auto-collapse; user may expand.
+      if (prevStage === "comfortable" && nextStage !== "comfortable") {
+        setCollapsed(true);
+        setSidebarCollapsed(true);
+      }
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   function toggleCollapsed() {
@@ -463,11 +523,13 @@ export function AppSidebar({
 
   return (
     <>
-      {/* In-flow rail — expand/collapse pushes the main content with the width. */}
-      <SidebarPanel {...panelProps} className="flex" />
+      {/* ≥50%: in-flow left rail. <50%: CompactTopNav. At <70% auto-collapses. */}
+      {navStage !== "top" ? (
+        <SidebarPanel {...panelProps} className="flex" />
+      ) : null}
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-50">
+        <div className="fixed inset-0 z-[70]">
           <button
             type="button"
             aria-label="Close navigation menu"
@@ -481,19 +543,12 @@ export function AppSidebar({
               boxShadow: "var(--shadow-lg)",
             }}
           >
-            <button
-              type="button"
-              onClick={() => onMobileOpenChange(false)}
-              aria-label="Close navigation menu"
-              className="absolute top-3.5 right-3 z-10 flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-            >
-              <X className="size-4 stroke-[1.5]" />
-            </button>
             <SidebarPanel
               {...panelProps}
               collapsed={false}
               animateWidth={false}
               overlay={false}
+              onToggleCollapse={() => onMobileOpenChange(false)}
               onNavigate={() => onMobileOpenChange(false)}
               className="h-full border-r-0"
             />
@@ -511,12 +566,12 @@ type MobileSidebarTriggerProps = {
 export function MobileSidebarTrigger({ onOpen }: MobileSidebarTriggerProps) {
   return (
     // Merges into canvas — `--background`, not a floating `--surface` band.
-    <header className="flex h-[43px] shrink-0 items-center gap-3 bg-surface-canvas px-4 [&>*]:translate-y-px lg:hidden">
+    <header className="flex h-12 shrink-0 items-center gap-3 bg-surface-canvas px-3 [&>*]:translate-y-px lg:hidden">
       <button
         type="button"
         onClick={onOpen}
         aria-label="Open navigation menu"
-        className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-surface-hover hover:text-foreground"
+        className="flex size-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-surface-hover hover:text-foreground"
       >
         <Menu className="size-4.5 stroke-[1.5]" />
       </button>

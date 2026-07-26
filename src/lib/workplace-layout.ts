@@ -50,10 +50,21 @@ export const WORKPLACE_NEXT_UP_OVERLAY_WIDTH_CSS = "clamp(356px, 24vw, 412px)";
 export const WORKPLACE_NEXT_UP_OVERLAY_TOP_INSET_PX = 8;
 
 /**
- * Focus canvas floor (timer / current-task card) — never shrink below this.
- * Queue overlay does not reserve horizontal space.
+ * Focus canvas floor (timer / current-task card) — never shrink below this
+ * when Focus + Timeline sit side-by-side. Queue overlay does not reserve
+ * horizontal space. Below focus + timeline floors, the Today row scrolls
+ * horizontally instead of crushing either column.
  */
 export const WORKPLACE_FOCUS_MIN_PX = 500;
+
+/**
+ * @deprecated Sheet mode retired — Timeline stays fixed-width inline;
+ * narrow canvases use horizontal scroll (`canvasMinWidthPx`).
+ */
+export const WORKPLACE_TIMELINE_INLINE_MIN_PX =
+  WORKPLACE_FOCUS_MIN_PX +
+  WORKPLACE_TIMELINE_WIDTH_PX +
+  WORKPLACE_TIMELINE_CONTENT_GAP_PX;
 
 /**
  * Comfortable full Today workplace width (content column, not the window).

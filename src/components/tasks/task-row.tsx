@@ -1029,7 +1029,8 @@ export const TaskRow = memo(function TaskRow({
       className={cn(
         "group relative mx-0.5 flex min-w-0 select-none items-center gap-0 rounded-md border border-transparent py-1 pl-0.5 pr-0.5",
         !isSelected && "flow-row-interactive",
-        dragEnabled && "cursor-grab active:cursor-grabbing",
+        /* Prevent the board's overflow-x pan from stealing the pointer gesture. */
+        dragEnabled && "cursor-grab touch-none active:cursor-grabbing",
         scheduleOpen && "z-20",
         detailMenuOpen && "z-20",
         flagMenuOpen && "z-20",

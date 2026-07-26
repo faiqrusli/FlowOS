@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
+import { CompactTopNav } from "@/components/layout/compact-top-nav";
+import { CompactUtilityFab } from "@/components/layout/compact-utility-fab";
 import { GlobalRightSidebar } from "@/components/layout/global-right-sidebar";
 import { GlobalFloatingNotes } from "@/components/layout/global-floating-notes";
 import { QuickCaptureDialog } from "@/components/layout/quick-capture-dialog";
@@ -35,7 +37,6 @@ function AppShellShortcuts() {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const pathname = usePathname();
-  /** Today / Tasks / Schedule / Notes manage their own page inset; shell only applies rail gutter. */
   const todayBleed = pathname === "/";
   const tasksBleed = pathname === "/tasks";
   const scheduleBleed = pathname === "/schedule";
@@ -57,7 +58,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <FocusNotificationHost />
                 </NotificationStack>
 
-                {/* Canvas workspace; left/right chrome use Navigation. */}
                 <div className="flex h-dvh overflow-hidden bg-surface-canvas">
                   <AppSidebar
                     mobileOpen={mobileNavOpen}
@@ -65,6 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   />
 
                   <div className="flex min-h-0 min-w-0 flex-1 flex-col border-l-0 bg-surface-canvas">
+                    <CompactTopNav onOpenNav={() => setMobileNavOpen(true)} />
                     <DemoWorkspaceBanner />
                     <main
                       className={cn(
@@ -72,42 +73,41 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         pageBleed ? "overflow-hidden" : "overflow-y-auto",
                       )}
                     >
-                    {/* Gutter only — attaches workspace to rails (not page padding). */}
-                    <div
-                      className={cn(
-                        "w-full min-w-0",
-                        WORKSPACE_GUTTER_LEFT_CLASS,
-                        /* Full-height modules sit flush to the right rail. */
-                        !tasksBleed &&
-                          !scheduleBleed &&
-                          !notesBleed &&
-                          WORKSPACE_GUTTER_RIGHT_CLASS,
-                        pageBleed && "flex h-full min-h-0 flex-col",
-                      )}
-                    >
                       <div
                         className={cn(
                           "w-full min-w-0",
-                          pageBleed
-                            ? "flex h-full min-h-0 flex-col"
-                            : cn(
-                                WORKSPACE_PAGE_INSET_X_CLASS,
-                                WORKSPACE_PAGE_INSET_Y_CLASS,
-                                WORKSPACE_SECTION_GAP_CLASS,
-                              ),
+                          WORKSPACE_GUTTER_LEFT_CLASS,
+                          !tasksBleed &&
+                            !scheduleBleed &&
+                            !notesBleed &&
+                            WORKSPACE_GUTTER_RIGHT_CLASS,
+                          pageBleed && "flex h-full min-h-0 flex-col",
                         )}
                       >
-                        {children}
+                        <div
+                          className={cn(
+                            "w-full min-w-0",
+                            pageBleed
+                              ? "flex h-full min-h-0 flex-col"
+                              : cn(
+                                  WORKSPACE_PAGE_INSET_X_CLASS,
+                                  WORKSPACE_PAGE_INSET_Y_CLASS,
+                                  WORKSPACE_SECTION_GAP_CLASS,
+                                ),
+                          )}
+                        >
+                          {children}
+                        </div>
                       </div>
-                    </div>
-                  </main>
+                    </main>
+                  </div>
+
+                  <GlobalRightSidebar />
+                  <CompactUtilityFab />
                 </div>
 
-                <GlobalRightSidebar />
-              </div>
-
-              <AppSettingsModal />
-            </GlobalRightSidebarProvider>
+                <AppSettingsModal />
+              </GlobalRightSidebarProvider>
             </DemoSessionProvider>
           </ActionToastProvider>
         </SettingsModalProvider>
