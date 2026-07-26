@@ -33,6 +33,7 @@ import {
 import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
 import {
   kanbanCardClass,
+  kanbanCardEditingClass,
   kanbanColumnBodyClass,
   kanbanColumnHeaderClass,
 } from "@/lib/theme/surface-classes";
@@ -62,8 +63,10 @@ import {
 } from "@/lib/list-drag-utils";
 import { useKanbanCardPointerGesture } from "@/lib/kanban-card-pointer-gesture";
 import {
+  focusInputAtEnd,
+  focusInputAtPoint,
   focusTextareaAtEnd,
-  focusTextareaWithWordAtPoint,
+  focusTextareaAtPoint,
 } from "@/lib/kanban-text-selection";
 import {
   createTaskDragPreview,
@@ -96,7 +99,9 @@ type KanbanBoardViewProps = {
 
 type DragKind = "card" | "column" | null;
 
-type CardEditFocus = { mode: "end" } | { mode: "word"; x: number; y: number };
+type CardEditFocus = { mode: "end" } | { mode: "point"; x: number; y: number };
+
+type ColumnEditFocus = { mode: "end" } | { mode: "point"; x: number; y: number };
 
 function resolveCardDropBeforeId(
   columnBody: HTMLElement,
@@ -154,6 +159,9 @@ export function KanbanBoardView({
   );
   const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
   const [columnTitleDraft, setColumnTitleDraft] = useState("");
+  const [columnEditFocus, setColumnEditFocus] = useState<ColumnEditFocus | null>(
+    null,
+  );
   const [composingColumnId, setComposingColumnId] = useState<string | null>(
     null,
   );
@@ -722,14 +730,19 @@ export function KanbanBoardView({
     });
   }
 
-  function startEditColumn(column: KanbanColumn) {
+  function startEditColumn(
+    column: KanbanColumn,
+    focus: ColumnEditFocus = { mode: "end" },
+  ) {
     setEditingColumnId(column.id);
     setColumnTitleDraft(column.title);
+    setColumnEditFocus(focus);
   }
 
   async function saveColumnTitle(columnId: string) {
     const title = columnTitleDraft.trim() || "Untitled";
     setEditingColumnId(null);
+    setColumnEditFocus(null);
     const updated = await updateKanbanColumn(columnId, { title });
     onBoardChange({
       ...board,
@@ -783,6 +796,7 @@ export function KanbanBoardView({
       );
       setEditingColumnId(column.id);
       setColumnTitleDraft(column.title);
+      setColumnEditFocus({ mode: "end" });
     } catch {
       onBoardChange(snapshot);
     }
@@ -1100,27 +1114,27 @@ export function KanbanBoardView({
                   <ChevronDown className="size-3.5" />
                 </button>
 
-                {editingColumnId === column.id ? (
-                  <input
-                    value={columnTitleDraft}
-                    onChange={(e) => setColumnTitleDraft(e.target.value)}
-                    onBlur={() => void saveColumnTitle(column.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") void saveColumnTitle(column.id);
-                      if (e.key === "Escape") setEditingColumnId(null);
-                    }}
-                    className="min-w-0 flex-1 rounded-md border border-border/50 bg-surface-base px-2 py-1 text-sm font-medium outline-none"
-                    autoFocus
-                  />
-                ) : (
-                  <button
-                    type="button"
-                    onDoubleClick={() => startEditColumn(column)}
-                    className="min-w-0 flex-1 truncate px-1 text-left text-sm font-semibold text-foreground"
-                  >
-                    {column.title}
-                  </button>
-                )}
+                <KanbanColumnTitle
+                  title={column.title}
+                  isEditing={editingColumnId === column.id}
+                  draft={columnTitleDraft}
+                  editFocus={
+                    editingColumnId === column.id ? columnEditFocus : null
+                  }
+                  onDraftChange={setColumnTitleDraft}
+                  onStartEditAtPoint={(coords) =>
+                    startEditColumn(column, {
+                      mode: "point",
+                      x: coords.clientX,
+                      y: coords.clientY,
+                    })
+                  }
+                  onSave={() => void saveColumnTitle(column.id)}
+                  onCancel={() => {
+                    setEditingColumnId(null);
+                    setColumnEditFocus(null);
+                  }}
+                />
 
                 <DropdownMenu>
                   <DropdownMenuTrigger
@@ -1195,9 +1209,9 @@ export function KanbanBoardView({
                         onStartEditAtEnd={() =>
                           startEditCard(card, { mode: "end" })
                         }
-                        onStartEditWord={(coords) =>
+                        onStartEditAtPoint={(coords) =>
                           startEditCard(card, {
-                            mode: "word",
+                            mode: "point",
                             x: coords.clientX,
                             y: coords.clientY,
                           })
@@ -1321,9 +1335,9 @@ export function KanbanBoardView({
                                 onStartEditAtEnd={() =>
                                   startEditCard(card, { mode: "end" })
                                 }
-                                onStartEditWord={(coords) =>
+                                onStartEditAtPoint={(coords) =>
                                   startEditCard(card, {
-                                    mode: "word",
+                                    mode: "point",
                                     x: coords.clientX,
                                     y: coords.clientY,
                                   })
@@ -1484,6 +1498,7 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
   ) {
     const innerRef = useRef<HTMLTextAreaElement>(null);
     const lastKeyRef = useRef<string | null>(null);
+    const openedAtRef = useRef(0);
 
     useImperativeHandle(ref, () => innerRef.current as HTMLTextAreaElement);
 
@@ -1494,15 +1509,24 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
       el.style.height = `${el.scrollHeight}px`;
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
+      if (!editFocus) return;
       resize();
+      openedAtRef.current = Date.now();
       const el = innerRef.current;
       if (!el) return;
-      if (editFocus?.mode === "word") {
-        focusTextareaWithWordAtPoint(el, editFocus.x, editFocus.y);
-      } else {
-        focusTextareaAtEnd(el);
-      }
+
+      const focusField = () => {
+        if (editFocus.mode === "point") {
+          focusTextareaAtPoint(el, editFocus.x, editFocus.y);
+        } else {
+          focusTextareaAtEnd(el);
+        }
+      };
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(focusField);
+      });
     }, [editFocus, resize]);
 
     useEffect(() => {
@@ -1533,7 +1557,10 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(
           lastKeyRef.current = event.key;
           onKeyDown?.(event);
         }}
-        onBlur={onBlur}
+        onBlur={() => {
+          if (Date.now() - openedAtRef.current < 250) return;
+          onBlur?.();
+        }}
       />
     );
   },
@@ -1582,7 +1609,7 @@ const KanbanCardRow = memo(function KanbanCardRow({
   draft,
   onDraftChange,
   onStartEditAtEnd,
-  onStartEditWord,
+  onStartEditAtPoint,
   onSaveEdit,
   onCancelEdit,
   onArchive,
@@ -1600,7 +1627,7 @@ const KanbanCardRow = memo(function KanbanCardRow({
   draft: string;
   onDraftChange: (value: string) => void;
   onStartEditAtEnd: () => void;
-  onStartEditWord: (coords: { clientX: number; clientY: number }) => void;
+  onStartEditAtPoint: (coords: { clientX: number; clientY: number }) => void;
   onSaveEdit: () => void;
   onCancelEdit: () => void;
   onArchive: () => void;
@@ -1617,7 +1644,7 @@ const KanbanCardRow = memo(function KanbanCardRow({
     if (!(target instanceof Element)) return false;
     return Boolean(
       target.closest(
-        "button, textarea, input, [role='menu'], [data-radix-popper-content-wrapper]",
+        "button, textarea, input, [role='menu'], [data-slot='dropdown-menu-content'], [data-slot='dropdown-menu-item']",
       ),
     );
   }, []);
@@ -1626,7 +1653,7 @@ const KanbanCardRow = memo(function KanbanCardRow({
     enabled: !isEditing,
     isInteractiveTarget,
     onSingleClickEdit: onStartEditAtEnd,
-    onDoubleClickWord: onStartEditWord,
+    onDoubleClickAtPoint: onStartEditAtPoint,
     onPointerDragStart,
     onPointerDragEnd,
   });
@@ -1641,7 +1668,9 @@ const KanbanCardRow = memo(function KanbanCardRow({
       data-kanban-card={card.id}
       className={cn(
         "group relative min-w-0 touch-none overflow-hidden",
-        kanbanCardClass,
+        isEditing
+          ? "rounded-lg border border-primary/40 bg-surface-5 shadow-[var(--shadow-overlay)] transition-[background-color,border-color,box-shadow] duration-150"
+          : kanbanCardClass,
         card.is_archived && "opacity-75",
         !isEditing && "cursor-grab active:cursor-grabbing",
         isDragging && "pointer-events-none opacity-0",
@@ -1685,11 +1714,93 @@ const KanbanCardRow = memo(function KanbanCardRow({
           onBlur={saveDraft}
         />
       ) : (
-        <div className="w-full min-w-0 overflow-hidden px-3 py-2.5 pr-9 text-left select-text">
+        <div className="w-full min-w-0 overflow-hidden px-3 py-2.5 pr-9 text-left">
           <CardBodyDisplay text={body} />
         </div>
       )}
     </div>
+  );
+});
+
+const KanbanColumnTitle = memo(function KanbanColumnTitle({
+  title,
+  isEditing,
+  draft,
+  editFocus,
+  onDraftChange,
+  onStartEditAtPoint,
+  onSave,
+  onCancel,
+}: {
+  title: string;
+  isEditing: boolean;
+  draft: string;
+  editFocus: ColumnEditFocus | null;
+  onDraftChange: (value: string) => void;
+  onStartEditAtPoint: (coords: { clientX: number; clientY: number }) => void;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const openedAtRef = useRef(0);
+
+  const titlePointer = useKanbanCardPointerGesture({
+    enabled: !isEditing,
+    isInteractiveTarget: () => false,
+    onSingleClickEdit: () => {},
+    onDoubleClickAtPoint: onStartEditAtPoint,
+    onPointerDragStart: () => {},
+    onPointerDragEnd: () => {},
+  });
+
+  useLayoutEffect(() => {
+    if (!isEditing) return;
+    openedAtRef.current = Date.now();
+    const el = inputRef.current;
+    if (!el) return;
+
+    const focusField = () => {
+      if (editFocus?.mode === "point") {
+        focusInputAtPoint(el, editFocus.x, editFocus.y);
+      } else {
+        focusInputAtEnd(el);
+      }
+    };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(focusField);
+    });
+  }, [isEditing, editFocus]);
+
+  if (isEditing) {
+    return (
+      <input
+        ref={inputRef}
+        value={draft}
+        onChange={(event) => onDraftChange(event.target.value)}
+        onBlur={() => {
+          if (Date.now() - openedAtRef.current < 250) return;
+          onSave();
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") onSave();
+          if (event.key === "Escape") onCancel();
+        }}
+        className="min-w-0 flex-1 rounded-md border border-border/50 bg-surface-base px-2 py-1 text-sm font-medium outline-none"
+      />
+    );
+  }
+
+  return (
+    <span
+      className="min-w-0 flex-1 cursor-text truncate px-1 text-left text-sm font-semibold text-foreground"
+      onPointerDown={titlePointer.onPointerDown}
+      onPointerMove={titlePointer.onPointerMove}
+      onPointerUp={titlePointer.onPointerUp}
+      onPointerCancel={titlePointer.onPointerCancel}
+    >
+      {title}
+    </span>
   );
 });
 
@@ -1816,7 +1927,12 @@ function KanbanCardOptionsMenu({
         <MoreHorizontal className="size-3.5" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[11rem] rounded-xl p-1">
-        <DropdownMenuItem onClick={onStartEditAtEnd}>
+        <DropdownMenuItem
+          onClick={(event) => {
+            event.preventDefault();
+            onStartEditAtEnd();
+          }}
+        >
           <Pencil className="size-3.5" />
           Edit card
         </DropdownMenuItem>

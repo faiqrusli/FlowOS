@@ -774,6 +774,17 @@
     background: var(--surface-hover);
   }
 
+  /* Kanban card editing — elevated state with subtle border + shadow */
+  .flow-kanban-card-editing {
+    background-color: var(--surface-5) !important;
+    border: 1px solid var(--border-elevated) !important;
+    box-shadow: var(--shadow-overlay) !important;
+  }
+
+  .flow-kanban-card-editing:hover {
+    background-color: var(--surface-6) !important;
+  }
+
   /*
    * Current Focus Task — premium in-focus cue.
    * Real border-left (not a clipped strip) so BOTH edges follow the card

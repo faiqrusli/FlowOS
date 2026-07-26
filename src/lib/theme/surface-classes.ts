@@ -54,7 +54,11 @@ export const kanbanColumnHeaderClass =
  * Kanban card — one step above the list well; hover lifts further.
  */
 export const kanbanCardClass =
-  "rounded-lg border-0 bg-surface-6 shadow-none transition-[background-color] duration-150 hover:bg-surface-7";
+  "rounded-lg border-0 bg-surface-6 shadow-none transition-[background-color] duration-150 hover:bg-surface-7 flow-kanban-card-base";
+
+/** Kanban card editing state — elevated with border + shadow */
+export const kanbanCardEditingClass =
+  "flow-kanban-card-editing";
 
 /** Navigation chrome (sidebars, drawers) */
 export const surfaceChromeClass = "bg-surface-nav text-sidebar-foreground";
