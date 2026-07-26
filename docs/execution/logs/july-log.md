@@ -24,7 +24,7 @@ Low ceremony — bullets are fine.
 
 ## 2026-07-26 — Today responsive shell (density stages + fixed Timeline)
 
-**Branch:** `tweak/today-responsive-timeline` → `main`
+**Branch:** `tweak/today-responsive-timeline` → `main` (`fd4e0b7`)
 
 **Shipped:**
 - Shell density: ≥70% expanded preference; 50–70% auto-collapse left rail; &lt;50% hamburger top nav + KPI hide (`shell-nav-layout.ts`)
