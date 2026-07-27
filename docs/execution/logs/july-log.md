@@ -22,6 +22,23 @@ Low ceremony — bullets are fine.
 
 ---
 
+## 2026-07-28 — Feature usage tracking (Supabase)
+
+**Branch:** `main` (`7853954`)
+
+**Shipped:**
+- `feature_usage` table + RLS (`supabase/feature_usage.sql`) — run in Supabase SQL Editor
+- `trackFeatureUsage()` wired across Tasks, Schedule, Habits, Notes, Focus (view + key actions)
+- `FEATURE_INVENTORY.md` updated (feature usage + Vercel Analytics)
+
+**Checks:** `npm run build` pass; lint pre-existing warnings only (1 error in untouched `use-task-drag-session-selector.ts`).
+
+**Production:** https://flowos-sage.vercel.app
+
+**Note:** Apply `supabase/feature_usage.sql` in Supabase before events appear.
+
+---
+
 ## 2026-07-26 — Right drawer pickers + global Soft Indigo field focus
 
 **Branch:** `tweak/right-drawer-time-ampm-picker` → `main` (`8f0b5b2`)
