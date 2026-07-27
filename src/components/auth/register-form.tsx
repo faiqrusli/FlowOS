@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
+import { track } from "@vercel/analytics/react";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -54,6 +55,8 @@ export function RegisterForm() {
       setSubmitting(false);
       return;
     }
+
+    track("sign_up_button_click");
 
     if (data.session) {
       router.push("/");
