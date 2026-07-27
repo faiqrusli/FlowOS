@@ -8,6 +8,7 @@ import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import { useActionToast } from "@/contexts/action-toast-context";
 import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
 import { getTodayDateString } from "@/lib/date-utils";
+import { trackFeatureUsage } from "@/lib/feature-usage";
 import {
   fetchHabitsWithCompletions,
   HabitsError,
@@ -92,6 +93,7 @@ export function SchedulePageContent() {
 
   useEffect(() => {
     void loadBoard();
+    trackFeatureUsage("schedule", "view");
   }, [loadBoard]);
 
   useEffect(() => {
@@ -162,6 +164,10 @@ export function SchedulePageContent() {
     try {
       const updated = await updateTask(taskId, updates);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      trackFeatureUsage("schedule", "update", {
+        task_id: updated.id,
+        kind: "schedule",
+      });
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to schedule task.",
@@ -238,6 +244,10 @@ export function SchedulePageContent() {
 
     try {
       await persistTaskBoardLayout(next, { todayViewDate });
+      trackFeatureUsage("schedule", "update", {
+        task_id: taskId,
+        kind: "move",
+      });
     } catch (err) {
       setError(
         err instanceof TaskGroupsError ? err.message : "Failed to move task.",
@@ -362,6 +372,9 @@ export function SchedulePageContent() {
     try {
       const updated = await toggleTaskComplete(task);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      if (updated.completed) {
+        trackFeatureUsage("schedule", "complete", { task_id: updated.id });
+      }
       if (!options?.silent) {
         showActionToast({
           message: updated.completed
@@ -460,6 +473,7 @@ export function SchedulePageContent() {
     const commitDelete = () => {
       if (committed) return;
       committed = true;
+      trackFeatureUsage("schedule", "delete", { task_id: taskId });
       void deleteTask(taskId).catch((err) => {
         setError(
           err instanceof TasksError ? err.message : "Failed to delete task.",

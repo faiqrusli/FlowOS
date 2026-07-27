@@ -14,6 +14,7 @@ import {
   toggleHabitComplete,
   updateHabit,
 } from "@/lib/habits";
+import { trackFeatureUsage } from "@/lib/feature-usage";
 import type { Habit, HabitInsert } from "@/types/habit";
 
 export function HabitsPageContent() {
@@ -45,6 +46,7 @@ export function HabitsPageContent() {
 
   useEffect(() => {
     loadHabits();
+    trackFeatureUsage("habits", "view");
   }, [loadHabits]);
 
   async function handleSave(input: HabitInsert, habitId?: string): Promise<Habit> {
@@ -53,11 +55,13 @@ export function HabitsPageContent() {
       setHabits((prev) =>
         prev.map((h) => (h.id === updated.id ? updated : h))
       );
+      trackFeatureUsage("habits", "update", { habit_id: updated.id });
       return updated;
     }
 
     const created = await createHabit(input);
     setHabits((prev) => [created, ...prev]);
+    trackFeatureUsage("habits", "create", { habit_id: created.id });
     showActionToast({
       message: "Habit created",
       tone: "success",
@@ -79,6 +83,9 @@ export function HabitsPageContent() {
         prev.map((h) => (h.id === updated.id ? updated : h))
       );
       setCompletionsVersion((version) => version + 1);
+      if (updated.completed) {
+        trackFeatureUsage("habits", "complete", { habit_id: updated.id });
+      }
       if (!options?.silent) {
         showActionToast({
           message: updated.completed
@@ -113,6 +120,7 @@ export function HabitsPageContent() {
     const commitDelete = () => {
       if (committed) return;
       committed = true;
+      trackFeatureUsage("habits", "delete", { habit_id: id });
       void deleteHabit(id)
         .then(() => {
           setCompletionsVersion((version) => version + 1);

@@ -39,6 +39,7 @@ import {
 } from "@/lib/focus-active-session";
 import { persistFocusSessionEnd } from "@/lib/focus-session-persist";
 import { persistFocusTaskTotals } from "@/lib/focus-task-totals";
+import { trackFeatureUsage } from "@/lib/feature-usage";
 import {
   playAlertSound,
   showBrowserNotification,
@@ -201,6 +202,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     async (
       payload: Parameters<typeof persistFocusSessionEnd>[0]
     ): Promise<void> => {
+      const timerType = sessionRef.current?.timer_type ?? null;
       completionHandledRef.current = true;
       updateSession(null);
 
@@ -208,6 +210,10 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
         const saved = await persistFocusSessionEnd(payload);
         if (saved) {
           setLastSavedSession(saved);
+          trackFeatureUsage("focus", "stop", {
+            timer_type: timerType,
+            session_id: saved.id,
+          });
         }
       } catch (error) {
         console.error("[focus] endSession failed to save", error);
@@ -333,6 +339,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       label: pending?.label,
     });
     updateSession(next);
+    trackFeatureUsage("focus", "start", { timer_type: "quick" });
   }, [updateSession]);
 
   const quickPause = useCallback(() => {
@@ -425,6 +432,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       breakMinutesRef.current
     );
     updateSession(next);
+    trackFeatureUsage("focus", "start", { timer_type: "pomodoro" });
   }, [updateSession]);
 
   const pomodoroPause = useCallback(() => {

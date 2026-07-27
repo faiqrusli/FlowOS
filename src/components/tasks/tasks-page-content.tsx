@@ -20,6 +20,7 @@ import {
 import { useActionToast } from "@/contexts/action-toast-context";
 import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
 import { getTodayDateString } from "@/lib/date-utils";
+import { trackFeatureUsage } from "@/lib/feature-usage";
 import {
   addTaskToBoard,
   createTaskGroup,
@@ -154,6 +155,7 @@ export function TasksPageContent() {
 
   useEffect(() => {
     void loadBoard();
+    trackFeatureUsage("tasks", "view");
   }, [loadBoard]);
 
   useEffect(() => {
@@ -312,6 +314,7 @@ export function TasksPageContent() {
       });
 
       setGroups((prev) => addTaskToBoard(prev, created, todayViewDate));
+      trackFeatureUsage("tasks", "create", { task_id: created.id });
       showActionToast({
         message: "Task created successfully",
         tone: "success",
@@ -382,6 +385,9 @@ export function TasksPageContent() {
     try {
       const updated = await toggleTaskComplete(task);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      if (updated.completed) {
+        trackFeatureUsage("tasks", "complete", { task_id: updated.id });
+      }
       if (!options?.silent) {
         showActionToast({
           message: updated.completed
@@ -562,6 +568,7 @@ export function TasksPageContent() {
     const commitDelete = () => {
       if (committed) return;
       committed = true;
+      trackFeatureUsage("tasks", "delete", { task_id: taskId });
       void deleteTask(taskId).catch((err) => {
         setError(
           err instanceof TasksError ? err.message : "Failed to delete task.",

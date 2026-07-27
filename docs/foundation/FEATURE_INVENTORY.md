@@ -201,6 +201,8 @@ Logic: `flowos/src/lib/dashboard-command.ts`
 | Global search | **Not built** | Part of command palette v1 |
 | Onboarding | **Not built** | Post Phase 3.1 |
 | Right sidebar (hover) | Shipped | Hover-reveal — accessibility concern |
+| Feature usage tracking | Shipped | `src/lib/feature-usage.ts` + `supabase/feature_usage.sql` — module view/create/update/delete/complete/focus start-stop (owner reads via service role) |
+| Vercel Web Analytics | Shipped | `@vercel/analytics` in root layout |
 
 ---
 

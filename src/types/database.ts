@@ -247,6 +247,28 @@ export type Database = {
         };
         Relationships: [];
       };
+      feature_usage: {
+        Row: {
+          id: string;
+          created_at: string;
+          user_id: string;
+          feature: string;
+          action: string;
+          metadata: Record<string, unknown>;
+        };
+        Insert: {
+          user_id: string;
+          feature: string;
+          action: string;
+          metadata?: Record<string, unknown>;
+          id?: string;
+          created_at?: string;
+        };
+        Update: {
+          metadata?: Record<string, unknown>;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

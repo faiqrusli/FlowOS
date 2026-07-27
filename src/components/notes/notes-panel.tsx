@@ -24,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useActionToast } from "@/contexts/action-toast-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
+import { trackFeatureUsage } from "@/lib/feature-usage";
 import {
   createNote,
   deleteNote,
@@ -207,6 +208,7 @@ export function NotesPanel({
       });
       const normalized = { ...created, is_pinned: created.is_pinned ?? false };
       onNotesChange(insertNewNoteInList(notes, normalized));
+      trackFeatureUsage("notes", "create", { note_id: normalized.id });
       setSelectedId(normalized.id);
       setFocusTitleNoteId(normalized.id);
       onAreasRefresh();
@@ -240,6 +242,7 @@ export function NotesPanel({
     const commitDelete = () => {
       if (committed) return;
       committed = true;
+      trackFeatureUsage("notes", "delete", { note_id: note.id });
       void deleteNote(note.id)
         .then(() => {
           onAreasRefresh();

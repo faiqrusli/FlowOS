@@ -21,6 +21,7 @@ import {
   computeFocusTodaySummary,
 } from "@/lib/focus-analytics";
 import { getTodayDateString } from "@/lib/date-utils";
+import { trackFeatureUsage } from "@/lib/feature-usage";
 import {
   fetchFocusSessions,
   mergeFocusSessions,
@@ -60,6 +61,7 @@ export function FocusPageContent() {
 
   useEffect(() => {
     void loadFocusHub();
+    trackFeatureUsage("focus", "view");
   }, [loadFocusHub]);
 
   useEffect(() => {

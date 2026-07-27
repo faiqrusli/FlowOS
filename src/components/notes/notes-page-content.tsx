@@ -24,6 +24,7 @@ import {
   KanbanError,
 } from "@/lib/kanban";
 import { fetchNotesByArea, NotesError } from "@/lib/notes";
+import { trackFeatureUsage } from "@/lib/feature-usage";
 import type {
   GrowthArea,
   GrowthAreaWithCounts,
@@ -102,6 +103,7 @@ export function NotesPageContent() {
 
   useEffect(() => {
     void loadAreas();
+    trackFeatureUsage("notes", "view");
   }, [loadAreas]);
 
   useEffect(() => {
