@@ -11,7 +11,7 @@ import { getSafeRedirectPath } from "@/lib/auth-redirect";
 import { isEmailNotConfirmedError } from "@/lib/auth";
 import { enterDemoSession } from "@/lib/demo/session";
 import { createClient } from "@/lib/supabase/client";
-import { track } from "@vercel/analytics/react";
+import { trackClick } from "@/lib/click-tracking";
 
 export function LoginForm() {
   const router = useRouter();
@@ -61,7 +61,7 @@ export function LoginForm() {
     setError(null);
     try {
       await enterDemoSession();
-      track("demo_button_click");
+      void trackClick("demo_button_click");
       router.push("/");
       router.refresh();
     } catch (err) {
