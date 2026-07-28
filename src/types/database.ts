@@ -45,6 +45,8 @@ type WeeklyReflectionLayoutRow = {
   updated_at: string;
 };
 
+type ClickTrackingEventType = "demo_button_click" | "sign_up_button_click";
+
 export type Database = {
   public: {
     Tables: {
@@ -266,6 +268,31 @@ export type Database = {
         };
         Update: {
           metadata?: Record<string, unknown>;
+        };
+        Relationships: [];
+      };
+      click_tracking: {
+        Row: {
+          id: string;
+          created_at: string;
+          event_type: ClickTrackingEventType;
+          page_path: string;
+          user_agent: string;
+          referrer: string;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          event_type: ClickTrackingEventType;
+          page_path: string;
+          user_agent: string;
+          referrer: string;
+        };
+        Update: {
+          event_type?: ClickTrackingEventType;
+          page_path?: string;
+          user_agent?: string;
+          referrer?: string;
         };
         Relationships: [];
       };
