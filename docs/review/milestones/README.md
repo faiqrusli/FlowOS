@@ -1,6 +1,6 @@
 # Execution Milestone Reviews
 
-**Authority:** Exit criteria from [execution-masterplan.md](../../strategy/execution-masterplan.md)  
+**Authority:** Historical exit criteria from [execution-masterplan.md](../../strategy/execution-masterplan.md). Current implementation sequencing is governed by the [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md).
 **Template:** [../template.md](../template.md)
 
 Each milestone gets one SRAI review when its exit gate is evaluated — pass or fail.

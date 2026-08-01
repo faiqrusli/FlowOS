@@ -14,9 +14,11 @@ This folder is the index for **how FlowOS ships**. The [Roadmap](../07-strategy-
 | Document | Purpose |
 |----------|---------|
 | [roadmap.md](../07-strategy-and-delivery/roadmap.md) | Canonical outcome sequence and investment gates |
-| [execution-masterplan.md](../strategy/execution-masterplan.md) | Transitional detailed milestone-delivery context |
+| [mvp-implementation-masterplan.md](../07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation phases and readiness gates |
+| [documentation-refinement-plan.md](../07-strategy-and-delivery/documentation-refinement-plan.md) | Documentation reconciliation plan before MVP implementation |
+| [execution-masterplan.md](../strategy/execution-masterplan.md) | Transitional historical milestone context; not an implementation source |
 
-**Authority:** The Roadmap governs current strategic sequence. The masterplan preserves current milestone detail and supersedes [roadmap-pre-masterplan.md](../archive/design/july-3/roadmap-pre-masterplan.md) (Phase 3+) and [launch-plan-july-2026.md](../archive/planning/launch-plan-july-2026.md) (timeline).
+**Authority:** The Roadmap governs outcome sequence and investment gates. The MVP Implementation Masterplan governs the next implementation phases. The older masterplan preserves historical milestone detail only and cannot start new work.
 
 ---
 

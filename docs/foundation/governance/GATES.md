@@ -8,6 +8,8 @@ Objective gates for each stage. Per-feature DOD: [QUALITY_GATES.md](./QUALITY_GA
 
 **Production:** https://flowos-sage.vercel.app · **M1 complete** · **M2 in progress**
 
+**Current implementation authority:** [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md). The M0–M2 gates below are a historical implementation snapshot and do not authorize new work by themselves.
+
 ---
 
 ## Current status (July 4, 2026)
@@ -62,7 +64,7 @@ Internal Development
 
 ## 3. M2 — Founder Daily Driver (current)
 
-From [execution-masterplan.md](../../strategy/execution-masterplan.md) and [m2 runbook](../../execution/runbooks/m2-founder-daily-driver.md):
+Historical M2 baseline from [execution-masterplan.md](../../strategy/execution-masterplan.md) and [m2 runbook](../../execution/runbooks/m2-founder-daily-driver.md). Current work must be admitted through the [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md):
 
 | Required |
 |----------|
@@ -212,6 +214,7 @@ Full historical definitions: [../archive/foundation/SUCCESS_METRICS.md](../archi
 
 ## Related
 
-- [../../strategy/execution-masterplan.md](../../strategy/execution-masterplan.md)
+- [../../07-strategy-and-delivery/mvp-implementation-masterplan.md](../../07-strategy-and-delivery/mvp-implementation-masterplan.md) — current implementation authority
+- [../../strategy/execution-masterplan.md](../../strategy/execution-masterplan.md) — historical milestone context
 - [../../execution/runbooks/m2-founder-daily-driver.md](../../execution/runbooks/m2-founder-daily-driver.md)
 - [../../execution/ops/recruiting-pipeline.md](../../execution/ops/recruiting-pipeline.md) — M3 recruiting criteria

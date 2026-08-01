@@ -5,6 +5,7 @@ This is a non-normative directory index. Design documents express approved produ
 | Document | Responsibility | Status | Owner | Parent |
 |---|---|---|---|---|
 | [Design System Architecture](./design-system-architecture.md) | Design-document boundaries and reusable design-layer ownership | Active | Design leadership | Experience architecture |
+| [Design Implementation Map](./design-implementation-map.md) | Reconciliation of canonical design layers, current UI implementation, and legacy references | Active implementation reference | Design leadership | Design System Architecture |
 | [Content Standards](./content-standards.md) | Reusable interface language for state, authority, and recovery | Active | Design and product leadership | Glossary, experience, and design architecture |
 | [Accessibility Standards](./accessibility-standards.md) | Reusable obligations for perception, operation, understanding, and recovery | Active | Design and engineering leadership | Experience, design, content, and quality architecture |
 | [Feature Design Specifications](./feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design | Active | Design leadership | Design system and behavior contracts |

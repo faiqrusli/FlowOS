@@ -2,8 +2,8 @@
 
 **Date:** July 4, 2026
 **Author role:** Founding Engineer / Principal Architect / Staff PM / Startup CTO — strategic advisor to the CEO
-**Status:** **Active — supersedes `docs/archive/design/roadmap-pre-masterplan.md` (Phase 3+) and `docs/archive/planning/launch-plan-july-2026.md` timeline.** Location: `docs/strategy/execution-masterplan.md`. (Release gates and metric definitions: [../foundation/governance/GATES.md](../foundation/governance/GATES.md).)
-**Role:** Transitional detailed milestone delivery plan. The [FlowOS Roadmap](../07-strategy-and-delivery/roadmap.md) owns current outcome sequencing, commitment classes, and evidence gates; this masterplan must remain within those boundaries.
+**Status:** **Transitional historical reference — superseded as the implementation source by [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md).** It retains dated milestone context and unresolved-work inventory; no new implementation may start from it without explicit re-admission through the new masterplan. (Release gates and metric definitions: [../foundation/governance/GATES.md](../foundation/governance/GATES.md).)
+**Role:** Historical detailed milestone delivery plan. The [FlowOS Roadmap](../07-strategy-and-delivery/roadmap.md) owns current outcome sequencing, commitment classes, and evidence gates; the [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md) owns the current pre-dogfood implementation sequence.
 **Foundation:** Builds directly on `archive/foundation/FOUNDATION_VALIDATION_REPORT.md`. Its conclusions are treated as fact and are not re-argued here.
 
 **Standing rule this document lives under:** The validation report's single recommendation was that FlowOS produce no further internal artifacts until the product is deployed, secured, and used by a stranger. This masterplan is the one deliberate exception — the operating manual that makes that recommendation executable. It is written to be the **last planning document until real-user evidence exists**. Every future document should quote a user or a metric.

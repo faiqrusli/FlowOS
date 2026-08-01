@@ -77,7 +77,7 @@ The current roadmap is a sequence of conditional product outcomes. It deliberate
 | 4 | **Repeatable value and trust** | Can the product sustain valuable, trustworthy use across a broader but still bounded set of people without losing coherence? | Outcome and guardrail evidence sufficient to justify broader delivery, operational, and support investment. | Conditional on outcome 3 |
 | 5 | **Deliberate expansion decision** | Is there sufficient evidence to expand audience, product surface, integrations, intelligence, or commercial investment—or should FlowOS remain focused or contract? | A recorded go, narrow, defer, or retire decision supported by the Success Model, research, measurement, and review. | Conditional on outcome 4 |
 
-This sequence is intentionally outcome-level. The active detailed milestone plan currently lives in [execution-masterplan.md](../strategy/execution-masterplan.md) as a transitional delivery plan. That plan must not add or reorder an outcome without an explicit Roadmap update and decision record.
+This sequence is intentionally outcome-level. The detailed pre-dogfood implementation sequence currently lives in the [MVP Implementation Masterplan](./mvp-implementation-masterplan.md). The older [execution-masterplan.md](../strategy/execution-masterplan.md) is transitional historical context only. The MVP masterplan must not add or reorder an outcome without an explicit Roadmap update and decision record.
 
 ---
 
@@ -171,13 +171,13 @@ A feature brief may proceed only when it names the active roadmap outcome, evide
 | **Review record** | Assessment of an existing outcome, delivery, release, or feature contract. | Silent roadmap revision or raw evidence storage. |
 | **Decision record** | The dated consequential choice to advance, narrow, defer, retire, or revise. | The ongoing roadmap state or delivery execution. |
 
-### Transitional masterplan
+### Current implementation masterplan
 
-[execution-masterplan.md](../strategy/execution-masterplan.md) remains active as the detailed milestone delivery plan during the documentation transition. It owns its current milestone coordination, scope controls, and delivery detail. This Roadmap owns the outcome sequence and gate logic to which future delivery planning must link.
+The [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) owns the current pre-dogfood implementation sequence, scope controls, and readiness gates. The older [execution-masterplan.md](../strategy/execution-masterplan.md) is transitional historical context only. This Roadmap owns the outcome sequence and gate logic to which the MVP masterplan and future delivery plans must link.
 
 When a masterplan milestone is materially updated, added, deferred, retired, or expanded, the owner must confirm the linked roadmap outcome, evidence gap, and decision gate. When a roadmap outcome changes, the owner must assess whether the masterplan, active feature briefs, delivery designs, validation plans, and reviews remain valid.
 
-No duplicate roadmap may be maintained in a milestone plan, release plan, or feature backlog. If the current masterplan and this Roadmap appear to disagree, this Roadmap governs outcome sequencing; the masterplan must be revised or its delivery work paused pending a decision record.
+No duplicate roadmap may be maintained in a masterplan, release plan, or feature backlog. If the MVP masterplan and this Roadmap appear to disagree, this Roadmap governs outcome sequencing; the masterplan must be revised or its delivery work paused pending a decision record.
 
 ---
 

@@ -108,6 +108,9 @@ When this glossary and another active document appear to use a term differently,
 | **decision record** | An append-only record of one consequential choice and its rationale. | Preserving why an option was chosen. | A living specification or retrospective. |
 | **evidence record** | A factual record from research or measurement. | Referring collectively to study and measurement records. | An insight, roadmap decision, or recommendation. |
 | **review record** | An assessment of an existing artifact, feature, release, or system against its stated contract. | Determining whether a bounded scope met defined criteria. | A replacement specification or raw research store. |
+| **feature catalog** | An implementation reference that maps bounded product domains to their current status, owner, and next documentation artifact. | Discovering whether a feature domain is shipped, partial, embedded, derived, placeholder, deferred, or unknown. | A feature behavior contract, roadmap, or implementation backlog. |
+| **implementation masterplan** | The evidence-gated sequence of product, design, engineering, validation, and release work required to deliver a defined implementation outcome. | Coordinating implementation phases beneath the Roadmap. | A product vision, outcome roadmap, sprint backlog, or release procedure. |
+| **documentation refinement plan** | The bounded plan for reconciling documentation sources, responsibilities, lifecycle labels, and missing contracts. | Organizing documentation cleanup before or alongside implementation. | A feature specification, implementation masterplan, or archive index. |
 
 ---
 

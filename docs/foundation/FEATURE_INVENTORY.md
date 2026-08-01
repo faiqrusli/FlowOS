@@ -20,7 +20,7 @@ For SRS future enhancements (FE-1–FE-13), see [../archive/project/03-future-en
 
 [Information Structure](../03-experience/information-structure.md) owns the current organization, grouping, labels, and experiential role of primary destinations. This inventory owns delivery status and implementation-level notes for the modules that realize it.
 
-The currently configured navigation is an implementation reference at `src/config/sidebar-navigation.tsx`. Current sequencing and unresolved delivery work belong in [execution-masterplan.md](../strategy/execution-masterplan.md) and the relevant delivery records, not in this inventory.
+The currently configured navigation is an implementation reference at `src/config/sidebar-navigation.tsx`. Current sequencing and unresolved delivery work belong in the [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md) and the relevant delivery records, not in this inventory. The [Feature Catalog](../04-features/feature-catalog.md) is the canonical bridge from this detailed snapshot to feature dossiers.
 
 ---
 
@@ -215,6 +215,8 @@ Full detail: [../archive/project/03-future-enhancements.md](../archive/project/0
 ## Related documents
 
 - [../archive/project/03-future-enhancements.md](../archive/project/03-future-enhancements.md) — SRS FE-1–FE-13  
-- [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md) — current milestone plan  
+- [../04-features/feature-catalog.md](../04-features/feature-catalog.md) — canonical feature-domain coverage and documentation status
+- [../07-strategy-and-delivery/mvp-implementation-masterplan.md](../07-strategy-and-delivery/mvp-implementation-masterplan.md) — current pre-dogfood implementation sequence
+- [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md) — transitional historical milestone context
 - [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) — implementation stack  
 - [../archive/foundation/INFORMATION_ARCHITECTURE.md](../archive/foundation/INFORMATION_ARCHITECTURE.md) — full IA doc (archived)  

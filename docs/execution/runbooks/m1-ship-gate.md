@@ -1,7 +1,7 @@
 ﻿# M1 Ship Gate Runbook
 
 **Scope:** M0 (Custody) + M1 (Deployed & Secure) only.  
-**Authority:** Exit criteria in `docs/strategy/execution-masterplan.md` Step 2 (M0 + M1). This runbook does not add criteria.  
+**Authority:** Historical M0 + M1 exit criteria from `docs/strategy/execution-masterplan.md` Step 2. This runbook does not add criteria; current implementation begins from the [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md).
 **Repo root for all commands:** `flowos/` (the git repository).  
 **Platform note:** Founder environment is Windows 10 — CRLF/line-ending noise is expected in M0 git steps.
 

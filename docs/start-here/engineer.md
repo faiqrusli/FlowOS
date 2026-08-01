@@ -9,9 +9,12 @@
 | Read | Why |
 |------|-----|
 | [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | What's shipped, partial, and deferred |
+| [Feature Catalog](../04-features/feature-catalog.md) | Current feature-domain status and documentation coverage |
 | [TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) | Stack, data model, auth, known debt |
 | [DESIGN_SYSTEM_V3.md](../foundation/DESIGN_SYSTEM_V3.md) | Visual philosophy + Surface 0–10 |
 | [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract |
+| [Design Implementation Map](../05-design/design-implementation-map.md) | Which design source is current, transitional, or historical |
+| [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md) | Current pre-dogfood implementation phases and gates |
 | [execution/README.md](../execution/README.md) | Hold / review mode + runbook status |
 
 **Code truth for paint:** `src/app/globals.css`

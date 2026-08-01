@@ -1,7 +1,7 @@
 ﻿# M2 Founder Daily Driver Runbook
 
 **Scope:** M2 only — Founder Daily Driver (weeks 2–4).  
-**Authority:** Exit criteria and closed scope list in `docs/strategy/execution-masterplan.md` Step 2 (M2). This runbook does not add, remove, defer, or weaken any M2 exit criterion.  
+**Authority:** Historical M2 exit criteria and closed scope list from `docs/strategy/execution-masterplan.md` Step 2. This runbook does not add, remove, defer, or weaken any historical criterion; current implementation begins from the [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md).
 **Repo root for all commands:** `flowos/` (the git repository).  
 **Production baseline (Ship Gate complete):** https://flowos-sage.vercel.app  
 **Docs path:** `flowos/docs/` (tracked in VCS since M0).  

@@ -34,7 +34,9 @@
 | [Behavior Contracts](./04-features/behavior-contracts.md) | Standard for defining and governing observable feature behavior |
 | [Delivery Designs](./04-features/delivery-designs.md) | Standard for feature-specific technical designs, rollout, and recovery |
 | [Validation Plans](./04-features/validation-plans.md) | Standard for feature validation, evidence planning, and assessment boundaries |
+| [Feature Catalog](./04-features/feature-catalog.md) | Current feature-domain implementation status and documentation coverage |
 | [Design System Architecture](./05-design/design-system-architecture.md) | Architecture for design-system responsibilities, documents, and implementation boundaries |
+| [Design Implementation Map](./05-design/design-implementation-map.md) | Current design references, code authority, and migration ownership |
 | [Content Standards](./05-design/content-standards.md) | Reusable interface language for state, authority, provenance, uncertainty, and recovery |
 | [Accessibility Standards](./05-design/accessibility-standards.md) | Reusable obligations for perception, operation, understanding, and recovery |
 | [Feature Design Specifications](./05-design/feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design |
@@ -48,6 +50,8 @@
 | [Operations Architecture](./06-engineering/operations-architecture.md) | Architecture for deployment, observability, incident response, and recovery boundaries |
 | [Client Architecture](./06-engineering/client-architecture.md) | Architecture for client rendering, navigation, state, resilience, and accessibility |
 | [Roadmap](./07-strategy-and-delivery/roadmap.md) | Current outcome sequencing, investment gates, and roadmap governance |
+| [MVP Implementation Masterplan](./07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood implementation phases and readiness gates |
+| [Documentation Refinement Plan](./07-strategy-and-delivery/documentation-refinement-plan.md) | Plan to reconcile current and legacy documentation before MVP implementation |
 | [Delivery Plans](./07-strategy-and-delivery/delivery-plans.md) | Standard for bounded cross-functional delivery coordination |
 | [Release Plans](./07-strategy-and-delivery/release-plans.md) | Standard for bounded release, rollout, recovery, and review coordination |
 | [Decision Records](./08-decisions/decision-records.md) | Standard for consequential decisions, alternatives, impact, and historical correction |
@@ -59,7 +63,8 @@
 | [Post-Release Learning Records](./10-reviews/post-release-learning-records.md) | Standard for preserving what a bounded release taught FlowOS under real conditions |
 | [User Evolution & Market Positioning](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting strategy — target users and entry points |
 | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | What’s shipped today vs deferred |
-| [execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 and exit gates |
+| [mvp-implementation-masterplan.md](./07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation phases and exit gates |
+| [documentation-refinement-plan.md](./07-strategy-and-delivery/documentation-refinement-plan.md) | Plan to reconcile feature, design, and legacy documentation |
 
 Previous vision chapters (historical reference): [strategy/vision/](./strategy/vision/)
 
@@ -110,17 +115,19 @@ When documents conflict, use the subject-authority and conflict-resolution rules
 | 27 | [06-engineering/operations-architecture.md](./06-engineering/operations-architecture.md) | Architecture for deployment, observability, incident response, and recovery boundaries |
 | 28 | [06-engineering/client-architecture.md](./06-engineering/client-architecture.md) | Architecture for client rendering, navigation, state, resilience, and accessibility |
 | 29 | [07-strategy-and-delivery/roadmap.md](./07-strategy-and-delivery/roadmap.md) | Current outcome sequencing, investment gates, and roadmap governance |
-| 30 | [07-strategy-and-delivery/delivery-plans.md](./07-strategy-and-delivery/delivery-plans.md) | Standard for bounded cross-functional delivery coordination |
-| 31 | [07-strategy-and-delivery/release-plans.md](./07-strategy-and-delivery/release-plans.md) | Standard for bounded release, rollout, recovery, and review coordination |
-| 32 | [08-decisions/decision-records.md](./08-decisions/decision-records.md) | Standard for consequential decisions, alternatives, impact, and historical correction |
-| 33 | [09-evidence/research-program.md](./09-evidence/research-program.md) | Standard for decision-relevant research, evidence integrity, participant protection, and synthesis boundaries |
-| 34 | [09-evidence/measurement-specifications.md](./09-evidence/measurement-specifications.md) | Standard for metric meaning, collection boundaries, provenance, quality, and revision |
-| 35 | [10-reviews/review-records.md](./10-reviews/review-records.md) | Standard for bounded contract assessment, evidence-linked findings, and disposition history |
-| 36 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Historical decision collection; cannot override the vision |
-| 37 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Transitional detailed milestone delivery plan |
-| 38 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
-| 39 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
-| 40 | [archive/](./archive/) | Historical reference only |
+| 30 | [07-strategy-and-delivery/mvp-implementation-masterplan.md](./07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation sequence and readiness gates |
+| 31 | [07-strategy-and-delivery/documentation-refinement-plan.md](./07-strategy-and-delivery/documentation-refinement-plan.md) | Documentation reconciliation plan for MVP implementation |
+| 32 | [07-strategy-and-delivery/delivery-plans.md](./07-strategy-and-delivery/delivery-plans.md) | Standard for bounded cross-functional delivery coordination |
+| 33 | [07-strategy-and-delivery/release-plans.md](./07-strategy-and-delivery/release-plans.md) | Standard for bounded release, rollout, recovery, and review coordination |
+| 34 | [08-decisions/decision-records.md](./08-decisions/decision-records.md) | Standard for consequential decisions, alternatives, impact, and historical correction |
+| 35 | [09-evidence/research-program.md](./09-evidence/research-program.md) | Standard for decision-relevant research, evidence integrity, participant protection, and synthesis boundaries |
+| 36 | [09-evidence/measurement-specifications.md](./09-evidence/measurement-specifications.md) | Standard for metric meaning, collection boundaries, provenance, quality, and revision |
+| 37 | [10-reviews/review-records.md](./10-reviews/review-records.md) | Standard for bounded contract assessment, evidence-linked findings, and disposition history |
+| 38 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Historical decision collection; cannot override the vision |
+| 39 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Transitional historical milestone context; not an implementation source |
+| 40 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
+| 41 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
+| 42 | [archive/](./archive/) | Historical reference only |
 
 **Visual / UI:** [Design System Architecture](./05-design/design-system-architecture.md) governs design-document ownership. The active visual-foundation family is [DESIGN_SYSTEM_V3.md](./foundation/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md); code actuality is `src/app/globals.css`. Do not treat Neutral Dark, Gruvbox, Everforest, or legacy navy `DESIGN_SYSTEM.md` as live paint authority.
 
@@ -168,7 +175,9 @@ When documents conflict, use the subject-authority and conflict-resolution rules
 | [strategy/vision/](./strategy/vision/) | Previous vision chapters — historical reference |
 | [flowos-user-evolution-and-market-positioning.md](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting — user stages & market posture |
 | [roadmap.md](./07-strategy-and-delivery/roadmap.md) | Canonical outcome sequencing, investment gates, and roadmap governance |
-| [execution-masterplan.md](./strategy/execution-masterplan.md) | Transitional detailed milestone delivery plan |
+| [mvp-implementation-masterplan.md](./07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation sequence |
+| [documentation-refinement-plan.md](./07-strategy-and-delivery/documentation-refinement-plan.md) | Feature/design/documentation cleanup plan |
+| [execution-masterplan.md](./strategy/execution-masterplan.md) | Transitional historical milestone context |
 | [execution/README.md](./execution/README.md) | Current ops index (hold / review mode) |
 | [flowos-live-demo.md](./execution/runbooks/flowos-live-demo.md) | Guest live demo runbook |
 | [friction-log.md](./execution/logs/friction-log.md) | Live founder dogfood log |

@@ -1,7 +1,7 @@
 # M2 — Today UX Polish Runbook
 
 **Scope:** M2 only — inbox-promoted Today/workplace UX fixes (does not add M2 exit criteria).  
-**Authority:** Closed scope and exit criteria remain in [execution-masterplan.md](../../strategy/execution-masterplan.md) Step 2 (M2). This runbook implements [inbox.md](../logs/inbox.md) items only; it does **not** weaken or replace M2 Sessions 1–6 in [m2-founder-daily-driver.md](./m2-founder-daily-driver.md).  
+**Authority:** Historical closed scope and exit criteria remain in [execution-masterplan.md](../../strategy/execution-masterplan.md) Step 2 (M2). This runbook implements [inbox.md](../logs/inbox.md) items only; current implementation begins from the [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md).
 **Repo root:** repository root (Next.js app).  
 **Production baseline:** https://flowos-sage.vercel.app  
 **Docs path:** `docs/` (tracked in VCS)  

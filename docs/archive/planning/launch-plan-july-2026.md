@@ -1,6 +1,6 @@
 ﻿# Launch Plan
 
-> **Status: Superseded** — Timeline and milestone planning moved to [execution-masterplan.md](../strategy/execution-masterplan.md) (July 4, 2026). This file is retained for historical alpha/beta stage detail only. Do not use for current planning.
+> **Status: Superseded** — Timeline and milestone planning moved first to [execution-masterplan.md](../../strategy/execution-masterplan.md), which is now itself superseded as an implementation source by the [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md). This file is retained for historical alpha/beta stage detail only. Do not use for current planning.
 
 **Status:** Archive (superseded)  
 **Audience:** Founder  

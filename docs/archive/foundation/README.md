@@ -16,4 +16,4 @@ Historical foundation and governance documents. **Not maintained** — see activ
 | [COMPETITOR_ANALYSIS.md](./COMPETITOR_ANALYSIS.md) | Reference only; not daily use |
 | [RISK_REGISTER.md](./RISK_REGISTER.md) | Stale risks; track live issues in friction-log |
 
-**Active plan:** [../../strategy/execution-masterplan.md](../../strategy/execution-masterplan.md)
+**Historical plan:** [../../strategy/execution-masterplan.md](../../strategy/execution-masterplan.md). Current implementation authority is the [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md).

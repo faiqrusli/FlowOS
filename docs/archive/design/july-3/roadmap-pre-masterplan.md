@@ -1,6 +1,6 @@
 ﻿# FlowOS Design Roadmap
 
-> **Status: Superseded (Phase 3+ planning)** — For milestones M0–M5 and current execution, use [execution-masterplan.md](../../strategy/execution-masterplan.md) and [execution/README.md](../../execution/README.md). This file remains as **historical reference** for Phase 0–2 (complete) and the original Phase 3 UX outline.
+> **Status: Superseded (Phase 3+ planning)** — For current implementation, use the [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md). The older [execution-masterplan.md](../../strategy/execution-masterplan.md) and this file remain historical references only.
 
 **Last updated:** July 3, 2026  
 **Baseline:** Phase 2 complete (`9f7e7c4`)

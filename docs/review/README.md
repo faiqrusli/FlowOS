@@ -4,7 +4,7 @@
 **Cycle:** **S**ummarize → **R**eview → **A**udit → **I**mprove (SRAI)  
 **Last updated:** July 4, 2026
 
-**Transition:** New durable reviews follow [Review Records](../10-reviews/review-records.md) and are created in `docs/10-reviews/records/`. This layer remains an accessible historical collection for existing SRAI materials until they are materially revised or explicitly archived. Consequential choices now use [Decision Records](../08-decisions/decision-records.md).
+**Transition:** New durable reviews follow [Review Records](../10-reviews/review-records.md) and are created in `docs/10-reviews/records/`. This layer remains an accessible historical collection for existing SRAI materials until they are materially revised or explicitly archived. Current implementation sequencing comes from the [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md). Consequential choices now use [Decision Records](../08-decisions/decision-records.md).
 
 ---
 

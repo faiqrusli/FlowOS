@@ -10,8 +10,10 @@
 |------|-----|
 | [execution/README.md](../execution/README.md) | Hold / review mode, what’s complete |
 | [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | Shipped surface for reviewers |
+| [Feature Catalog](../04-features/feature-catalog.md) | What is admitted, embedded, derived, placeholder, or deferred |
 | [roadmap.md](../07-strategy-and-delivery/roadmap.md) | Canonical outcome sequence and investment gates |
-| [execution-masterplan.md](../strategy/execution-masterplan.md) | Transitional detailed milestone-delivery context |
+| [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md) | Current pre-dogfood implementation sequence |
+| [Documentation Refinement Plan](../07-strategy-and-delivery/documentation-refinement-plan.md) | How current and legacy docs are being reconciled |
 
 **Production:** https://flowos-sage.vercel.app  
 **Live demo:** [flowos-live-demo-spec.md](../review/design/flowos-live-demo-spec.md) · [runbook](../execution/runbooks/flowos-live-demo.md)

@@ -15,6 +15,7 @@ Current implementation references for FlowOS features, stack, and visual system.
 |------|---------|
 | [PRODUCT_VISION.md](./PRODUCT_VISION.md) | Redirect → [Vision.md](../strategy/Vision.md) |
 | [FEATURE_INVENTORY.md](./FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
+| [../04-features/feature-catalog.md](../04-features/feature-catalog.md) | Canonical feature-domain coverage and next documentation artifact |
 | [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt, deployment |
 
 **Canonical counterparts:** [Product Index](../01-product/README.md) · [Engineering Index](../06-engineering/README.md) · [Design Index](../05-design/README.md) · [Document Map](../meta/document-map.md)
@@ -56,7 +57,9 @@ Historical / alternate themes: [../archive/design/themes/](../archive/design/the
 | File | Purpose |
 |------|---------|
 | [roadmap.md](../07-strategy-and-delivery/roadmap.md) | Canonical outcome sequencing and investment gates |
-| [execution-masterplan.md](../strategy/execution-masterplan.md) | Transitional detailed milestone-delivery context |
+| [mvp-implementation-masterplan.md](../07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation sequence |
+| [documentation-refinement-plan.md](../07-strategy-and-delivery/documentation-refinement-plan.md) | Documentation reconciliation plan |
+| [execution-masterplan.md](../strategy/execution-masterplan.md) | Transitional historical milestone context |
 | [execution/README.md](../execution/README.md) | Ops index (hold / review mode) |
 | [review/milestones/](../review/milestones/) | SRAI reviews after milestone exit |
 | [decision-register.md](../08-decisions/decision-register.md) | Canonical consequential decision discovery |

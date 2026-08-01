@@ -1,6 +1,6 @@
 # M0 — Custody SRAI Review
 
-**Runbook:** [execution-masterplan.md § M0](../../strategy/execution-masterplan.md)  
+**Runbook:** Historical [execution-masterplan.md § M0](../../strategy/execution-masterplan.md); current implementation sequencing is in the [MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md).
 **Review date:** 2026-07-04  
 **Verdict:** **Pass**
 

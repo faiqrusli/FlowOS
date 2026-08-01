@@ -24,7 +24,7 @@ Pass 3 reorganization — July 4, 2026 · Hold cleanup themes/runbooks — July 
 
 | Document | Notes |
 |----------|-------|
-| [roadmap-pre-masterplan.md](./design/july-3/roadmap-pre-masterplan.md) | Phase 0–2 complete; Phase 3+ superseded by [execution-masterplan.md](../strategy/execution-masterplan.md) |
+| [roadmap-pre-masterplan.md](./design/july-3/roadmap-pre-masterplan.md) | Phase 0–2 complete; Phase 3+ superseded by the [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md) |
 | [project-state-july-2026.md](./design/july-3/project-state-july-2026.md) | Frozen at Phase 2 — use [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) instead |
 | [launch-plan-july-2026.md](./planning/launch-plan-july-2026.md) | Superseded by execution masterplan |
 | [documentation-planning-2026-08-01.md](./documentation/documentation-planning-2026-08-01.md) | Superseded by [Documentation Architecture](../00-constitution/documentation-architecture.md) and current folder indexes |
