@@ -111,6 +111,59 @@ The durable documentation ecosystem uses the following folders. A folder is a re
 
 ---
 
+### 4.1 Feature Dossier Structure
+
+Each feature receives **one dossier** (folder) containing all knowledge about that bounded capability from decision through shipping and learning.
+
+**Canonical standard:** [Feature Dossier Standard](../04-features/feature-dossier-standard.md)
+
+**Complete structure:**
+```
+04-features/<feature-name>/                ← ONE dossier per feature
+  ├── feature-brief.md                     ← Why (product decision)
+  ├── behavior-contract.md                 ← What (the contract)
+  ├── design/                              ← How it looks
+  │   ├── <feature>-design-spec.md
+  │   ├── <feature>-accessibility-spec.md
+  │   └── <feature>-content-spec.md
+  ├── implementation/                      ← How to build
+  │   ├── delivery-design.md
+  │   ├── <feature>-v1-runbook.md
+  │   ├── <feature>-v1.1-runbook.md       ← Versioned per iteration
+  │   └── migration-plan.md
+  ├── validation/                          ← How to test
+  │   ├── validation-plan.md
+  │   ├── test-results-v1.md
+  │   └── acceptance-checklist-v1.md
+  ├── reviews/                             ← Pre-ship approval
+  │   ├── design-review-YYYY-MM-DD.md
+  │   ├── security-review-YYYY-MM-DD.md
+  │   └── acceptance-review-YYYY-MM-DD.md
+  ├── releases/                            ← What shipped when
+  │   ├── v1.0-release-YYYY-MM-DD.md
+  │   └── v1.1-release-YYYY-MM-DD.md
+  ├── post-release/                        ← What we learned
+  │   ├── v1-learning-record.md
+  │   ├── v1-incident-log.md
+  │   └── v1-usage-evidence.md
+  └── decisions/                           ← Why we chose
+      ├── 001-decision-title.md
+      └── 002-decision-title.md
+```
+
+**Key principles:**
+- **One dossier per feature:** The dossier is the folder, not a single document
+- **Progressive creation:** Create subfolders only when you have documents for them
+- **Versioned iterations:** New runbooks, test results, and learning records for each major version; don't update old ones
+- **Append-only records:** Reviews, releases, learning records, and decisions are never edited after close
+- **Lifecycle phases:** Decision → Design → Build → Test → Review → Release → Learn → Adapt
+
+**Templates:** See `04-features/_templates/` for runbook, test-results, acceptance-checklist, review, release, and learning-record templates.
+
+**Lifecycle guide:** See [start-here/complete-feature-dossier-lifecycle.md](../start-here/complete-feature-dossier-lifecycle.md) for detailed implementation guide.
+
+---
+
 ## 5. Required Metadata
 
 Every durable document must begin with the following fields:
