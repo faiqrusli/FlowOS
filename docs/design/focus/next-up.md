@@ -4,7 +4,7 @@
 **Last updated:** July 21, 2026 (status pass)  
 **Owner:** FlowOS Product  
 **Primary surface:** Today → Workplace → Quick Focus / Queue  
-**Authoritative decisions:** [Decision log](../../execution/logs/decision-log.md) wins if this document conflicts with it.
+**Authority transition:** This is a transitional legacy feature-design artifact. Current consequential decisions use [Decision Records](../../08-decisions/decision-records.md); material design revision moves to [Feature Design Specifications](../../05-design/feature-design-specifications.md).
 
 ---
 

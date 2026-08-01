@@ -19,7 +19,7 @@ Definition of done for any feature shipment. Release stages: [GATES.md](./GATES.
 | **Performance** | Large lists, new fetches | No obvious regression |
 | **Security** | Auth, RLS, middleware | User-scoped data |
 | **Deployment** | Shipped to hosted env | Build green; production verified |
-| **Documentation** | Behavior changes | FEATURE_INVENTORY + decision-log if significant |
+| **Documentation** | Behavior changes | FEATURE_INVENTORY + Decision Record if consequential |
 
 Solo founder: self-review checklist, still mandatory.
 
@@ -59,7 +59,7 @@ Solo founder: self-review checklist, still mandatory.
 ## Documentation gate
 
 - [ ] [FEATURE_INVENTORY.md](../FEATURE_INVENTORY.md) updated if user-visible
-- [ ] [decision-log.md](../../execution/logs/decision-log.md) for Build/Kill decisions
+- [ ] [Decision Records](../../08-decisions/decision-records.md) for consequential Build/Kill decisions
 
 ---
 

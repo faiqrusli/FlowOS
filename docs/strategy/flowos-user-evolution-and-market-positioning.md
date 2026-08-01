@@ -1,11 +1,16 @@
 # FlowOS User Evolution & Market Positioning
 
-## Supporting Document to the FlowOS Vision & Product Strategy
+## Supporting Market Context
 
-**Status:** Active — supporting strategy (under the vision hub)  
-**Purpose:** Define how FlowOS serves users at different stages of life and work, from students and novices to professionals and founders.  
-**Canonical vision:** [flowos-vision-and-product-strategy.md](./flowos-vision-and-product-strategy.md)  
-**Last updated:** July 21, 2026  
+**Status:** Active
+**Authority:** Supporting analysis of stage-specific user context, entry needs, and market implications
+**Owner:** Product leadership
+**Parent:** [Vision](./Vision.md) · [Product Strategy](../01-product/product-strategy.md)
+**Children:** Research questions, feature briefs, positioning hypotheses, and roadmap inputs
+**Last reviewed:** 2026-08-01
+**Review trigger:** Material evidence changes the relevant user stages, entry context, market implication, or relationship to the active Product Strategy.
+
+**Purpose:** Define how FlowOS serves users at different stages of life and work, from students and novices to professionals and founders. It supports but does not override the active Product Strategy.
 
 ---
 

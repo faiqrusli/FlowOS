@@ -1,8 +1,16 @@
 # Documentation Planning
 
-**Status:** Planning document — defines proposed documentation architecture  
-**Authority:** Describes future structure; does not override existing documents until implementation  
-**Last updated:** 2026-08-01
+**Status:** Superseded historical planning record
+**Authority:** Historical account of the proposed documentation architecture; does not govern active FlowOS documentation
+**Owner:** Product and documentation leadership
+**Parent:** [Documentation Architecture](../../00-constitution/documentation-architecture.md)
+**Children:** None; active implementation is governed by the Documentation Architecture and current folder indexes
+**Last reviewed:** 2026-08-01
+**Review trigger:** Historical correction only; any active documentation change belongs in the current documentation ecosystem.
+
+---
+
+> **Superseded:** The implemented documentation ecosystem is governed by [Documentation Architecture](./documentation-architecture.md), the [Document Map](../meta/document-map.md), and the active folder indexes. This planning record is retained only to preserve the history of the original proposed structure; its proposed paths, statuses, implementation order, and "next" indicators must not be used for current work.
 
 ---
 

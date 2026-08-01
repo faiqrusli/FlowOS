@@ -1,6 +1,6 @@
 ﻿# FlowOS Foundation Documentation
 
-Product truth documents — vision, features, architecture, visual system.
+Current implementation references for FlowOS features, stack, and visual system. Canonical product and engineering authority lives in the 00–10 documentation ecosystem.
 
 **Status:** Implementation hold for review — see [../execution/README.md](../execution/README.md)  
 **Governance:** [governance/README.md](./governance/README.md)
@@ -16,6 +16,8 @@ Product truth documents — vision, features, architecture, visual system.
 | [PRODUCT_VISION.md](./PRODUCT_VISION.md) | Redirect → [Vision.md](../strategy/Vision.md) |
 | [FEATURE_INVENTORY.md](./FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
 | [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt, deployment |
+
+**Canonical counterparts:** [Product Index](../01-product/README.md) · [Engineering Index](../06-engineering/README.md) · [Design Index](../05-design/README.md) · [Document Map](../meta/document-map.md)
 
 **Metrics and release gates:** [governance/GATES.md](./governance/GATES.md) (WAD, D7, alpha/beta thresholds)
 
@@ -43,7 +45,7 @@ Historical / alternate themes: [../archive/design/themes/](../archive/design/the
 | [PRINCIPLES.md](./governance/PRINCIPLES.md) | Product rules + build/defer/reject |
 | [GATES.md](./governance/GATES.md) | Release stages + metric definitions |
 | [QUALITY_GATES.md](./governance/QUALITY_GATES.md) | Definition of done |
-| [ENGINEERING.md](./governance/ENGINEERING.md) | Technical tradeoffs |
+| [ENGINEERING.md](./governance/ENGINEERING.md) | Transitional M2 execution context; reusable practice is [Engineering Standards](../06-engineering/engineering-standards.md) |
 | [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md) | Code conventions (TS, React, styling) |
 | [GIT_WORKFLOW.md](./governance/GIT_WORKFLOW.md) | Branches; merge to `main` needs founder approval |
 
@@ -53,10 +55,12 @@ Historical / alternate themes: [../archive/design/themes/](../archive/design/the
 
 | File | Purpose |
 |------|---------|
-| [execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5 |
+| [roadmap.md](../07-strategy-and-delivery/roadmap.md) | Canonical outcome sequencing and investment gates |
+| [execution-masterplan.md](../strategy/execution-masterplan.md) | Transitional detailed milestone-delivery context |
 | [execution/README.md](../execution/README.md) | Ops index (hold / review mode) |
 | [review/milestones/](../review/milestones/) | SRAI reviews after milestone exit |
-| [decision-log.md](../execution/logs/decision-log.md) | Product decisions |
+| [decision-register.md](../08-decisions/decision-register.md) | Canonical consequential decision discovery |
+| [decision-log.md](../execution/logs/decision-log.md) | Historical decision collection |
 | [friction-log.md](../execution/logs/friction-log.md) | Live friction |
 
 ---

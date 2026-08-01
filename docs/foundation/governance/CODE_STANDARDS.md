@@ -156,7 +156,7 @@ ESLint: Next.js core-web-vitals + TypeScript ([eslint.config.mjs](../../../eslin
 - **In scope:** Today home, routing, inline capture, focus visibility, error boundaries.
 - **Out of scope:** command palette, new modules, dnd-kit migration, monolith file splits, visual polish sweeps.
 
-Record significant Build/Kill in [decision-log.md](../../execution/logs/decision-log.md).
+Record consequential Build/Kill choices in [Decision Records](../../08-decisions/decision-records.md).
 
 ---
 

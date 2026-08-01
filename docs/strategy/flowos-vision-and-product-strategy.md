@@ -2,17 +2,17 @@
 
 ## A Personal Execution and Continuous Improvement System
 
-**Status:** Active — **highest product authority** (philosophy, positioning, long-term architecture)  
-**Document purpose:** Long-term product vision, philosophy, strategic direction, and product architecture  
+**Status:** Historical reference — superseded by [Vision.md](./Vision.md), [Product Strategy](../01-product/product-strategy.md), and the active 00–10 documentation ecosystem
+**Document purpose:** Historical vision and strategy synthesis; not an active authority
 **Product:** FlowOS  
 **Related:** [User Evolution & Market Positioning](./flowos-user-evolution-and-market-positioning.md)  
 **Current stage:** Final Year Project evolving toward a potential real-world SaaS product  
 **Core vision:** Connect intention, planning, execution, progress, reflection, and improvement into one continuous system.  
 **Last updated:** July 21, 2026  
 
-**Authority note:** This document is the north star for *what FlowOS is becoming*. Dated choices that amend strategy belong in [decision-log.md](../execution/logs/decision-log.md). Milestone sequencing stays in [execution-masterplan.md](./execution-masterplan.md). When those conflict with this vision, an explicit decision-log entry wins for that amendment; otherwise this document wins.
+**Authority note:** This historical synthesis does not govern current work. The immutable [Vision](./Vision.md) is the highest authority; current market choices belong in [Product Strategy](../01-product/product-strategy.md), sequencing belongs in the [Roadmap](../07-strategy-and-delivery/roadmap.md), and consequential choices are preserved in [Decision Records](../08-decisions/decision-records.md).
 
-**Supersedes:** [PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) (stub → this file)
+**Superseded by:** [Vision.md](./Vision.md) and [Product Strategy](../01-product/product-strategy.md)
 
 **Supporting:** [User Evolution & Market Positioning](./flowos-user-evolution-and-market-positioning.md) — who FlowOS serves at each life stage (native-complete vs execution-layer); not a second authority, reads under this hub.
 
@@ -32,10 +32,10 @@ FlowOS is a **personal execution and continuous improvement system** — not mer
 
 ## How to use this hub
 
-- **This page** is the map and the canonical authority path (do not fork a second “source of truth”).
+- **This page** is historical context, not a canonical authority path.
 - **Chapters** hold the full text (sections §1–55), split for readability.
 - Read in order the first time; later jump by theme.
-- Product decisions that amend the vision still go in the [decision-log](../execution/logs/decision-log.md).
+- Consequential current choices use [Decision Records](../08-decisions/decision-records.md); they cannot amend the immutable Vision.
 
 ---
 

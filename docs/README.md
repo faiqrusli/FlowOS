@@ -35,9 +35,28 @@
 | [Delivery Designs](./04-features/delivery-designs.md) | Standard for feature-specific technical designs, rollout, and recovery |
 | [Validation Plans](./04-features/validation-plans.md) | Standard for feature validation, evidence planning, and assessment boundaries |
 | [Design System Architecture](./05-design/design-system-architecture.md) | Architecture for design-system responsibilities, documents, and implementation boundaries |
+| [Content Standards](./05-design/content-standards.md) | Reusable interface language for state, authority, provenance, uncertainty, and recovery |
+| [Accessibility Standards](./05-design/accessibility-standards.md) | Reusable obligations for perception, operation, understanding, and recovery |
 | [Feature Design Specifications](./05-design/feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design |
 | [Engineering Architecture](./06-engineering/engineering-architecture.md) | Architecture for technical domains, product-semantic preservation, and operations boundaries |
+| [Engineering Standards](./06-engineering/engineering-standards.md) | Standard for safe, accountable engineering change across code, data, infrastructure, and dependencies |
 | [Data Architecture](./06-engineering/data-architecture.md) | Architecture for durable information, lineage, lifecycle, integrity, and access |
+| [Identity and Access Architecture](./06-engineering/identity-and-access-architecture.md) | Architecture for identity, bounded authority, delegation, revocation, and audit |
+| [Integration Architecture](./06-engineering/integration-architecture.md) | Architecture for connected systems, exchange, synchronization, and external effects |
+| [Intelligence and Trust Architecture](./06-engineering/intelligence-and-trust-architecture.md) | Architecture for technical computational-assistance controls and trust safeguards |
+| [Quality Architecture](./06-engineering/quality-architecture.md) | Architecture for assurance domains, evidence traceability, and verification governance |
+| [Operations Architecture](./06-engineering/operations-architecture.md) | Architecture for deployment, observability, incident response, and recovery boundaries |
+| [Client Architecture](./06-engineering/client-architecture.md) | Architecture for client rendering, navigation, state, resilience, and accessibility |
+| [Roadmap](./07-strategy-and-delivery/roadmap.md) | Current outcome sequencing, investment gates, and roadmap governance |
+| [Delivery Plans](./07-strategy-and-delivery/delivery-plans.md) | Standard for bounded cross-functional delivery coordination |
+| [Release Plans](./07-strategy-and-delivery/release-plans.md) | Standard for bounded release, rollout, recovery, and review coordination |
+| [Decision Records](./08-decisions/decision-records.md) | Standard for consequential decisions, alternatives, impact, and historical correction |
+| [Decision Register](./08-decisions/decision-register.md) | Discovery index for canonical consequential decision records |
+| [Research Program](./09-evidence/research-program.md) | Standard for decision-relevant research, evidence integrity, participant protection, and synthesis boundaries |
+| [Measurement Specifications](./09-evidence/measurement-specifications.md) | Standard for metric meaning, collection boundaries, provenance, quality, and revision |
+| [Insight Syntheses](./09-evidence/insight-syntheses.md) | Standard for cross-record evidence interpretation, confidence, and conditional implications |
+| [Review Records](./10-reviews/review-records.md) | Standard for bounded contract assessment, evidence-linked findings, and disposition history |
+| [Post-Release Learning Records](./10-reviews/post-release-learning-records.md) | Standard for preserving what a bounded release taught FlowOS under real conditions |
 | [User Evolution & Market Positioning](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting strategy — target users and entry points |
 | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | What’s shipped today vs deferred |
 | [execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 and exit gates |
@@ -56,9 +75,9 @@ Previous vision chapters (historical reference): [strategy/vision/](./strategy/v
 
 ---
 
-## Authority hierarchy
+## Authority and reading sequence
 
-When documents conflict, this order wins:
+When documents conflict, use the subject-authority and conflict-resolution rules in [Documentation Architecture](./00-constitution/documentation-architecture.md). The sequence below is a reading shortcut, not a flat substitute for those rules. The [Document Map](./meta/document-map.md) contains the complete active normative set.
 
 | Priority | Source | Role |
 |----------|--------|------|
@@ -84,11 +103,24 @@ When documents conflict, this order wins:
 | 20 | [05-design/feature-design-specifications.md](./05-design/feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design |
 | 21 | [06-engineering/engineering-architecture.md](./06-engineering/engineering-architecture.md) | Architecture for technical domains, product-semantic preservation, and operations boundaries |
 | 22 | [06-engineering/data-architecture.md](./06-engineering/data-architecture.md) | Architecture for durable information, lineage, lifecycle, integrity, and access |
-| 23 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions; cannot override the vision without a deliberate revision of it |
-| 24 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 |
-| 25 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
-| 26 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
-| 27 | [archive/](./archive/) | Historical reference only |
+| 23 | [06-engineering/identity-and-access-architecture.md](./06-engineering/identity-and-access-architecture.md) | Architecture for identity, bounded authority, delegation, revocation, and audit |
+| 24 | [06-engineering/integration-architecture.md](./06-engineering/integration-architecture.md) | Architecture for connected systems, exchange, synchronization, and external effects |
+| 25 | [06-engineering/intelligence-and-trust-architecture.md](./06-engineering/intelligence-and-trust-architecture.md) | Architecture for technical computational-assistance controls and trust safeguards |
+| 26 | [06-engineering/quality-architecture.md](./06-engineering/quality-architecture.md) | Architecture for assurance domains, evidence traceability, and verification governance |
+| 27 | [06-engineering/operations-architecture.md](./06-engineering/operations-architecture.md) | Architecture for deployment, observability, incident response, and recovery boundaries |
+| 28 | [06-engineering/client-architecture.md](./06-engineering/client-architecture.md) | Architecture for client rendering, navigation, state, resilience, and accessibility |
+| 29 | [07-strategy-and-delivery/roadmap.md](./07-strategy-and-delivery/roadmap.md) | Current outcome sequencing, investment gates, and roadmap governance |
+| 30 | [07-strategy-and-delivery/delivery-plans.md](./07-strategy-and-delivery/delivery-plans.md) | Standard for bounded cross-functional delivery coordination |
+| 31 | [07-strategy-and-delivery/release-plans.md](./07-strategy-and-delivery/release-plans.md) | Standard for bounded release, rollout, recovery, and review coordination |
+| 32 | [08-decisions/decision-records.md](./08-decisions/decision-records.md) | Standard for consequential decisions, alternatives, impact, and historical correction |
+| 33 | [09-evidence/research-program.md](./09-evidence/research-program.md) | Standard for decision-relevant research, evidence integrity, participant protection, and synthesis boundaries |
+| 34 | [09-evidence/measurement-specifications.md](./09-evidence/measurement-specifications.md) | Standard for metric meaning, collection boundaries, provenance, quality, and revision |
+| 35 | [10-reviews/review-records.md](./10-reviews/review-records.md) | Standard for bounded contract assessment, evidence-linked findings, and disposition history |
+| 36 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Historical decision collection; cannot override the vision |
+| 37 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Transitional detailed milestone delivery plan |
+| 38 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
+| 39 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
+| 40 | [archive/](./archive/) | Historical reference only |
 
 **Visual / UI:** [Design System Architecture](./05-design/design-system-architecture.md) governs design-document ownership. The active visual-foundation family is [DESIGN_SYSTEM_V3.md](./foundation/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md); code actuality is `src/app/globals.css`. Do not treat Neutral Dark, Gruvbox, Everforest, or legacy navy `DESIGN_SYSTEM.md` as live paint authority.
 
@@ -105,11 +137,15 @@ When documents conflict, this order wins:
 | [04-features/](./04-features/) | Bounded feature briefs, behavior contracts, delivery designs, and validation plans | **Active** |
 | [05-design/](./05-design/) | Design-system architecture and future reusable design standards | **Active** |
 | [06-engineering/](./06-engineering/) | Engineering architecture and future data, integration, quality, and operations standards | **Active** |
+| [07-strategy-and-delivery/](./07-strategy-and-delivery/) | Outcome roadmap and future delivery and release coordination | **Active** |
+| [08-decisions/](./08-decisions/) | Append-only consequential decision records and successor history | **Active** |
+| [09-evidence/](./09-evidence/) | Research and measurement evidence standards, records, and synthesis | **Active** |
+| [10-reviews/](./10-reviews/) | Evidence-linked reviews, dispositions, and successor history | **Active** |
 | [strategy/](./strategy/) | Canonical vision, supporting strategy, historical chapters, masterplan | **Active** |
 | [execution/](./execution/) | Runbooks, logs, ops | **Active** (hold = no new large runbooks) |
-| [review/](./review/) | SRAI + design specs | **Active** |
+| [review/](./review/) | Historical SRAI materials and transitional review artifacts | **Transitional** |
 | [design/](./design/) | Transitional legacy feature design specifications; migrate on material revision | **Transitional** |
-| [foundation/](./foundation/) | Features, architecture, design system | **Active** |
+| [foundation/](./foundation/) | Current implementation references for features, architecture, and design | **Reference** |
 | [foundation/governance/](./foundation/governance/) | PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW | **Reference** |
 | [archive/](./archive/) | Thesis, design history, superseded plans/themes | **Archive** |
 | [meta/](./meta/document-map.md) | Full doc inventory | Meta |
@@ -121,7 +157,7 @@ When documents conflict, this order wins:
 
 ---
 
-## Quick index — active documents
+## Quick index — operational and transitional references
 
 ### Strategy and execution
 
@@ -131,7 +167,8 @@ When documents conflict, this order wins:
 | [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) | Previous vision and strategy synthesis — historical reference |
 | [strategy/vision/](./strategy/vision/) | Previous vision chapters — historical reference |
 | [flowos-user-evolution-and-market-positioning.md](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting — user stages & market posture |
-| [execution-masterplan.md](./strategy/execution-masterplan.md) | Primary plan — milestones M0–M5 |
+| [roadmap.md](./07-strategy-and-delivery/roadmap.md) | Canonical outcome sequencing, investment gates, and roadmap governance |
+| [execution-masterplan.md](./strategy/execution-masterplan.md) | Transitional detailed milestone delivery plan |
 | [execution/README.md](./execution/README.md) | Current ops index (hold / review mode) |
 | [flowos-live-demo.md](./execution/runbooks/flowos-live-demo.md) | Guest live demo runbook |
 | [friction-log.md](./execution/logs/friction-log.md) | Live founder dogfood log |
@@ -140,16 +177,16 @@ When documents conflict, this order wins:
 | [decision-log.md](./execution/logs/decision-log.md) | Product decisions (append-only) |
 | [recruiting-pipeline.md](./execution/ops/recruiting-pipeline.md) | M3 recruiting prep |
 
-### Review
+### Legacy review materials
 
 | Document | Purpose |
 |----------|---------|
-| [review/README.md](./review/README.md) | SRAI cycle |
+| [review/README.md](./review/README.md) | Transitional SRAI collection; new durable reviews use [10-reviews/](./10-reviews/) |
 | [review/milestones/](./review/milestones/) | M0–M5 milestone reviews |
 | [review/design/](./review/design/) | Specs + historical design index → [archive/design/july-3/](./archive/design/july-3/) |
 | [review/template.md](./review/template.md) | Blank SRAI template |
 
-### Product and engineering
+### Current implementation references
 
 | Document | Purpose |
 |----------|---------|
@@ -179,7 +216,25 @@ Full archive index: [archive/README.md](./archive/README.md)
 
 ---
 
-## Document lineage
+## Current authority flow
+
+```text
+Vision
+  -> Documentation Architecture
+  -> Product model, strategy, and success model
+  -> Systems and experience
+  -> Feature, design, and engineering contracts
+  -> Roadmap and delivery coordination
+  -> Decision, evidence, review, and post-release records
+```
+
+Evidence and reviews can require a lower-level change or a decision; they do not override their parent authority. See [Documentation Architecture](./00-constitution/documentation-architecture.md) for the governing conflict-resolution rule.
+
+---
+
+## Historical document lineage
+
+This traces the origin of earlier documentation. It is not a current authority hierarchy.
 
 ```
 Thesis & SRS (docs/archive/project/)        ← origin

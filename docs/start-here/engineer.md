@@ -43,7 +43,8 @@ While the hold is on, keep scope tiny (docs, bugs, demo polish).
 | Read | Why |
 |------|-----|
 | [CONTRIBUTING.md](../../CONTRIBUTING.md) | Hold rules + branch expectations |
-| [execution-masterplan.md](../strategy/execution-masterplan.md) | Scope rules — what's in/out |
+| [Roadmap](../07-strategy-and-delivery/roadmap.md) | Current outcome sequence and investment gates |
+| [execution-masterplan.md](../strategy/execution-masterplan.md) | Transitional detailed milestone context |
 | [GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Branch per change; merge to `main` needs founder yes |
 | [flowos-live-demo.md](../execution/runbooks/flowos-live-demo.md) | Guest demo workstream (allowed under hold) |
 

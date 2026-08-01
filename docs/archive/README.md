@@ -15,6 +15,7 @@ Pass 3 reorganization — July 4, 2026 · Hold cleanup themes/runbooks — July 
 | [design/themes/](./design/themes/) | Superseded visual themes (v1/v2, Neutral Dark, Gruvbox, Everforest, Borderless, legacy navy) | July 2026 |
 | [runbooks/](./runbooks/) | Historical / superseded execution runbooks + agent prompt | July 2026 |
 | [planning/](./planning/) | Superseded launch timeline | July 2026 |
+| [documentation/](./documentation/) | Superseded documentation-planning history | August 2026 |
 | [foundation/](./foundation/) | Merged foundation drafts (IA, personas, CEO review, …) | July 2026 |
 
 ---
@@ -26,6 +27,7 @@ Pass 3 reorganization — July 4, 2026 · Hold cleanup themes/runbooks — July 
 | [roadmap-pre-masterplan.md](./design/july-3/roadmap-pre-masterplan.md) | Phase 0–2 complete; Phase 3+ superseded by [execution-masterplan.md](../strategy/execution-masterplan.md) |
 | [project-state-july-2026.md](./design/july-3/project-state-july-2026.md) | Frozen at Phase 2 — use [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) instead |
 | [launch-plan-july-2026.md](./planning/launch-plan-july-2026.md) | Superseded by execution masterplan |
+| [documentation-planning-2026-08-01.md](./documentation/documentation-planning-2026-08-01.md) | Superseded by [Documentation Architecture](../00-constitution/documentation-architecture.md) and current folder indexes |
 | [ux-friction-review.md](./design/july-3/ux-friction-review.md) | Simulated July 3 audit — live evidence in [friction-log.md](../execution/logs/friction-log.md) |
 | [design/themes/](./design/themes/) | Not live paint — live: [DESIGN_SYSTEM_V3.md](../foundation/DESIGN_SYSTEM_V3.md) + Tokyo |
 

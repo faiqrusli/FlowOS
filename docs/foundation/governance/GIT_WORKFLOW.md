@@ -155,7 +155,7 @@ If blocked mid-session:
 
 1. Commit WIP on the **session branch** with message `WIP: Session N blocked — {reason}` or stash  
 2. **Do not** merge to `main`  
-3. Log blocker in [decision-log.md](../../execution/logs/decision-log.md)  
+3. Record a consequential blocker or choice in [Decision Records](../../08-decisions/decision-records.md)
 4. Resume on the **same branch** and session number  
 
 ---

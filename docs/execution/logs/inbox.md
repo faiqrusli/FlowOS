@@ -12,7 +12,7 @@
 |------|----------|
 | **This inbox** | "That button feels wrong", "this should stay on Today", quick UI/UX ideas |
 | [friction-log.md](./friction-log.md) | Daily dogfood evidence — what / when / cost / loop metrics (M2 exit) |
-| [decision-log.md](./decision-log.md) | Product *choices* with rationale and rejected alternatives |
+| [Decision Records](../../08-decisions/decision-records.md) | Consequential product choices with rationale and rejected alternatives |
 
 Ideas can start here and later move to friction-log if they become recurring, measured pain.
 
@@ -24,7 +24,7 @@ Ideas can start here and later move to friction-log if they become recurring, me
 inbox (scratch)
     → runbook session / WP when scoped
         → july-log when that chunk ships
-            → review/SRAI when milestone exits
+            → review record when a bounded scope is assessed
 ```
 
 | Stage | File |
@@ -32,7 +32,7 @@ inbox (scratch)
 | Capture | **This file** — Inbox section |
 | Scoped | **Promoted** section + link to runbook session |
 | Shipped | **Done** section + one line in [july-log.md](./july-log.md) |
-| Milestone close | [review/milestones/](../../review/milestones/) SRAI |
+| Milestone close | [Review Records](../../10-reviews/review-records.md) and post-release learning where applicable |
 
 **Rule:** Do not open a new doc per idea. Do not skip july-log when a runbook session lands — that's the session memory.
 

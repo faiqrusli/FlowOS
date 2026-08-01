@@ -8,6 +8,8 @@
 
 ## Purpose
 
+**Transition:** This is an append-only historical collection. New consequential decisions follow [Decision Records](../../08-decisions/decision-records.md) and are created in `docs/08-decisions/records/`.
+
 Permanent record of **product-level** decisions with context, rationale, and rejected alternatives. Design-phase decisions remain in [../../archive/design/july-3/AUDIT_HISTORY.md](../../archive/design/july-3/AUDIT_HISTORY.md). This log covers company direction, launch strategy, and cross-cutting product choices.
 
 ---

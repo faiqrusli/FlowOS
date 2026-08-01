@@ -4,6 +4,8 @@
 **Cycle:** **S**ummarize → **R**eview → **A**udit → **I**mprove (SRAI)  
 **Last updated:** July 4, 2026
 
+**Transition:** New durable reviews follow [Review Records](../10-reviews/review-records.md) and are created in `docs/10-reviews/records/`. This layer remains an accessible historical collection for existing SRAI materials until they are materially revised or explicitly archived. Consequential choices now use [Decision Records](../08-decisions/decision-records.md).
+
 ---
 
 ## How review fits the doc stack
@@ -16,7 +18,7 @@
 | **Foundation** | What is true about the product? | [../foundation/](../foundation/) |
 | **Archive** | Frozen history | [../archive/](../archive/) |
 
-**Authority:** Review conclusions that change direction go to [decision-log.md](../execution/logs/decision-log.md). Review does not override the decision log or masterplan — it feeds them.
+**Authority:** This historical SRAI layer does not override the Vision or active contracts. New consequential choices use [Decision Records](../08-decisions/decision-records.md); new durable assessments use [Review Records](../10-reviews/review-records.md).
 
 ```
 Runbook (execution) → ship work → july-log → SRAI review → update logs + foundation → next runbook

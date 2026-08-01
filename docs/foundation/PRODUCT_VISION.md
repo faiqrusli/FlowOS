@@ -9,5 +9,5 @@ This file previously held the short north-star / positioning brief.
 
 **Use instead:** [FlowOS Vision](../strategy/Vision.md) — highest product authority for timeless philosophy, product boundaries, and long-term direction.
 
-Dated decisions: [../execution/logs/decision-log.md](../execution/logs/decision-log.md)
-Milestone plan: [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md)
+Consequential decisions: [../08-decisions/decision-records.md](../08-decisions/decision-records.md)
+Outcome sequence: [../07-strategy-and-delivery/roadmap.md](../07-strategy-and-delivery/roadmap.md)

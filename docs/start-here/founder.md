@@ -10,7 +10,8 @@
 |------|-----|
 | [execution/README.md](../execution/README.md) | Hold / review mode, what’s complete |
 | [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | Shipped surface for reviewers |
-| [execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5 and exit gates |
+| [roadmap.md](../07-strategy-and-delivery/roadmap.md) | Canonical outcome sequence and investment gates |
+| [execution-masterplan.md](../strategy/execution-masterplan.md) | Transitional detailed milestone-delivery context |
 
 **Production:** https://flowos-sage.vercel.app  
 **Live demo:** [flowos-live-demo-spec.md](../review/design/flowos-live-demo-spec.md) · [runbook](../execution/runbooks/flowos-live-demo.md)
@@ -26,7 +27,7 @@
 | [recruiting-pipeline.md](../execution/ops/recruiting-pipeline.md) | M3 recruiting prep (parallel) |
 | [flowos-live-demo.md](../execution/runbooks/flowos-live-demo.md) | Guest demo workstream |
 
-Do **not** start Day Engine / large M2 addenda until you lift the hold in decision-log.
+Do **not** start Day Engine / large M2 addenda until the hold is lifted through the appropriate roadmap, delivery, and decision process.
 
 ---
 
@@ -34,11 +35,11 @@ Do **not** start Day Engine / large M2 addenda until you lift the hold in decisi
 
 | Read | Why |
 |------|-----|
-| [flowos-vision-and-product-strategy.md](../strategy/flowos-vision-and-product-strategy.md) | **Highest** — vision & product strategy |
+| [Vision.md](../strategy/Vision.md) | **Highest** — immutable product constitution |
+| [Product Strategy](../01-product/product-strategy.md) | Current market choices and strategic hypotheses |
 | [flowos-user-evolution-and-market-positioning.md](../strategy/flowos-user-evolution-and-market-positioning.md) | Who we serve — student → founder |
 | [governance/PRINCIPLES.md](../foundation/governance/PRINCIPLES.md) | Non-negotiable product rules |
-| [PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | Stub → vision strategy doc |
-| [decision-log.md](../execution/logs/decision-log.md) | Past decisions — append new ones here |
+| [Decision Register](../08-decisions/decision-register.md) | Canonical consequential decisions and their history |
 | [GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Approve merges to `main` explicitly |
 
 ---
@@ -59,7 +60,7 @@ Do **not** start Day Engine / large M2 addenda until you lift the hold in decisi
 1. Use **production** FlowOS as your daily driver  
 2. Small idea → [inbox.md](../execution/logs/inbox.md)  
 3. Recurring pain → [friction-log.md](../execution/logs/friction-log.md)  
-4. Product decisions → [decision-log.md](../execution/logs/decision-log.md)  
+4. Consequential product decisions → [Decision Records](../08-decisions/decision-records.md)
 5. After a merge → [july-log.md](../execution/logs/july-log.md)  
 6. Check [execution/README.md](../execution/README.md) before approving new scope  
-7. When a milestone exits, complete SRAI in [review/milestones/](../review/milestones/)
+7. When a milestone exits, create the appropriate [Review Record](../10-reviews/review-records.md) and post-release learning record when the release observation window closes

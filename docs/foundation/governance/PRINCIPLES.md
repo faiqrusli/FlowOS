@@ -4,7 +4,7 @@
 **Audience:** Founder, engineers  
 **Last updated:** July 4, 2026 (consolidates former Principles, Philosophy rules, Decision Framework)
 
-North star: [../PRODUCT_VISION.md](../PRODUCT_VISION.md). Current plan: [../../strategy/execution-masterplan.md](../../strategy/execution-masterplan.md).
+North star: [../../strategy/Vision.md](../../strategy/Vision.md). Current outcome sequence: [../../07-strategy-and-delivery/roadmap.md](../../07-strategy-and-delivery/roadmap.md). The masterplan remains transitional milestone context.
 
 ---
 
@@ -80,7 +80,7 @@ If any **no** → default **defer or reject**.
 
 | Outcome | Meaning |
 |---------|---------|
-| **Build** | In current milestone; add to masterplan + decision log |
+| **Build** | Fits an active roadmap outcome; coordinate through the appropriate delivery artifact and record a consequential choice when required |
 | **Defer** | Valid; blocked by gate, capacity, or dependency |
 | **Reject** | Violates principles or non-goals |
 | **Kill** | Remove existing surface; simplify |
@@ -101,7 +101,7 @@ If any **no** → default **defer or reject**.
 
 ## Defer queue (standing)
 
-Valid but **not now** — see masterplan for milestone timing:
+Valid but **not now** — see the Roadmap for outcome sequence and investment timing:
 
 - Goals (FE-1), AI (FE-4), Calendar sync (FE-11), Mobile (FE-9)
 - Notes kanban expansion
@@ -114,12 +114,12 @@ Valid but **not now** — see masterplan for milestone timing:
 
 ```
 Idea → Feature test (above)
-    → Build: masterplan + decision-log
-    → Defer: note reason in decision-log
-    → Reject/Kill: decision-log + remove from codebase if applicable
+    → Build: roadmap and applicable delivery artifact
+    → Defer: record the rationale in the appropriate roadmap or decision artifact
+    → Reject/Kill: Decision Record + remove from codebase if applicable
 ```
 
-Record every Build/Kill in [decision-log.md](../../execution/logs/decision-log.md).
+Record every consequential Build/Kill in [Decision Records](../../08-decisions/decision-records.md).
 
 ---
 

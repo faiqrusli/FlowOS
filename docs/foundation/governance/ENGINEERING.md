@@ -1,8 +1,10 @@
 # Engineering Rules
 
-**Status:** Active  
+**Status:** Transitional M2 execution context
 **Audience:** Engineers, founder  
 **Last updated:** July 4, 2026 (consolidates former Engineering Decision Framework; M1 blockers removed)
+
+**Transition:** The reusable standard for engineering change now lives in [Engineering Standards](../../06-engineering/engineering-standards.md). This document preserves current M2 execution context and must not redefine the active engineering, quality, operations, data, or access architecture.
 
 Product scope: [PRINCIPLES.md](./PRINCIPLES.md). Stack detail: [../TECHNICAL_ARCHITECTURE.md](../TECHNICAL_ARCHITECTURE.md).
 
@@ -88,7 +90,7 @@ M1 resolved: production build, RLS two-account test, production deploy.
 1. No new top-level `lib/` domains without FEATURE_INVENTORY update.
 2. Supabase schema changes require SQL migration in `supabase/` + RLS review.
 3. New routes require middleware + navigation audit.
-4. Record significant choices in [decision-log.md](../../execution/logs/decision-log.md).
+4. Record consequential choices in [Decision Records](../../08-decisions/decision-records.md).
 
 ---
 

@@ -1,95 +1,79 @@
-﻿# FlowOS Document Map
+# FlowOS Document Map
 
-**Last updated:** July 21, 2026 (implementation hold cleanup)
+**Last updated:** 2026-08-01
 
----
+This is a non-normative discovery view. [Documentation Architecture](../00-constitution/documentation-architecture.md) governs document authority, lifecycle, templates, registers, and archival treatment. The canonical [Vision](../strategy/Vision.md) remains immutable and is not restated here.
 
-## Active docs (what to use)
+## Active Normative Documents
 
-| Path | Role |
-|------|------|
-| [../strategy/Vision.md](../strategy/Vision.md) | **Highest product authority** — timeless purpose, philosophy, boundaries, and north star |
-| [../00-constitution/documentation-architecture.md](../00-constitution/documentation-architecture.md) | Documentation ownership, authority, lifecycle, and anti-duplication rules |
-| [../01-product/product-model.md](../01-product/product-model.md) | Canonical conceptual model for FlowOS product objects and relationships |
-| [../01-product/product-glossary.md](../01-product/product-glossary.md) | Canonical vocabulary for product concepts and documentation artifacts |
-| [../01-product/product-strategy.md](../01-product/product-strategy.md) | Current market choices, initial audience, positioning, and strategic hypotheses |
-| [../01-product/success-model.md](../01-product/success-model.md) | Product outcomes, success signals, metric meanings, and anti-metrics |
-| [../02-systems/direction-and-commitment.md](../02-systems/direction-and-commitment.md) | System rules for chosen direction, present commitments, and their history |
-| [../02-systems/action-and-evidence.md](../02-systems/action-and-evidence.md) | System rules for actual action, factual evidence, outcomes, and provenance |
-| [../02-systems/sensemaking-and-adaptation.md](../02-systems/sensemaking-and-adaptation.md) | System rules for reflection, insight, and deliberate adaptation |
-| [../02-systems/continuity-and-interoperability.md](../02-systems/continuity-and-interoperability.md) | System rules for continuity of context, source relationships, and portability |
-| [../02-systems/intelligence-and-trust.md](../02-systems/intelligence-and-trust.md) | System rules for computational assistance, user control, and trust |
-| [../03-experience/experience-architecture.md](../03-experience/experience-architecture.md) | Cross-surface rules for product context, states, choices, and system transitions |
-| [../03-experience/information-structure.md](../03-experience/information-structure.md) | Current organization of experience domains, destinations, labels, and access relationships |
-| [../03-experience/journey-contracts.md](../03-experience/journey-contracts.md) | Standard for bounded end-to-end experience journey contracts |
-| [../04-features/feature-briefs.md](../04-features/feature-briefs.md) | Standard for deciding, scoping, and governing bounded feature briefs |
-| [../04-features/behavior-contracts.md](../04-features/behavior-contracts.md) | Standard for defining and governing observable feature behavior |
-| [../04-features/delivery-designs.md](../04-features/delivery-designs.md) | Standard for feature-specific technical designs, rollout, and recovery |
-| [../04-features/validation-plans.md](../04-features/validation-plans.md) | Standard for feature validation, evidence planning, and assessment boundaries |
-| [../05-design/design-system-architecture.md](../05-design/design-system-architecture.md) | Architecture for design-system responsibilities, documents, and implementation boundaries |
-| [../05-design/feature-design-specifications.md](../05-design/feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design |
-| [../06-engineering/engineering-architecture.md](../06-engineering/engineering-architecture.md) | Architecture for technical domains, product-semantic preservation, and operations boundaries |
-| [../06-engineering/data-architecture.md](../06-engineering/data-architecture.md) | Architecture for durable information, lineage, lifecycle, integrity, and access |
-| [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5 |
-| [../execution/](../execution/) | Runbooks, logs, ops (**hold** = no large new runbooks) |
-| [../review/](../review/) | SRAI + design specs |
-| [../execution/logs/inbox.md](../execution/logs/inbox.md) | Scratch UI/UX fix capture |
-| [../execution/logs/developer-log/](../execution/logs/developer-log/) | Personal daily timeline (not product authority) |
-| [../execution/logs/july-log.md](../execution/logs/july-log.md) | July session log |
-| [../foundation/PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) | North star |
-| [../foundation/FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | Shipped features + IA |
-| [../foundation/TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) | Stack and debt |
-| [../foundation/DESIGN_SYSTEM_V3.md](../foundation/DESIGN_SYSTEM_V3.md) | Visual philosophy + Surface 0–10 |
-| [../foundation/DESIGN_SYSTEM_V3_WORKSPACE.md](../foundation/DESIGN_SYSTEM_V3_WORKSPACE.md) | Workspace / shell maps |
-| [../foundation/DESIGN_SYSTEM_V3_INTERACTION.md](../foundation/DESIGN_SYSTEM_V3_INTERACTION.md) | Interaction / motion / states |
-| [../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract |
-| [../foundation/governance/PRINCIPLES.md](../foundation/governance/PRINCIPLES.md) | Product rules |
-| [../foundation/governance/GATES.md](../foundation/governance/GATES.md) | Release stages + metrics |
-| [../foundation/governance/QUALITY_GATES.md](../foundation/governance/QUALITY_GATES.md) | Definition of done |
-| [../foundation/governance/ENGINEERING.md](../foundation/governance/ENGINEERING.md) | Technical rules |
-| [../foundation/governance/GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Branches, merge to main (founder approval) |
-| [../execution/runbooks/flowos-live-demo.md](../execution/runbooks/flowos-live-demo.md) | Guest live demo |
+| Path | Responsibility | Status | Owner | Parent |
+|---|---|---|---|---|
+| [../strategy/Vision.md](../strategy/Vision.md) | Constitutional product authority | Immutable | Product leadership | None |
+| [../00-constitution/documentation-architecture.md](../00-constitution/documentation-architecture.md) | Documentation structure, authority, lifecycle, and discovery | Active | Product and documentation leadership | Vision |
+| [../01-product/product-model.md](../01-product/product-model.md) | Product concepts, relationships, and invariants | Active | Product leadership | Vision and Documentation Architecture |
+| [../01-product/product-glossary.md](../01-product/product-glossary.md) | Canonical product and documentation vocabulary | Active | Product leadership | Product Model |
+| [../01-product/product-strategy.md](../01-product/product-strategy.md) | Current market choices and strategic hypotheses | Active | Product leadership | Vision and Product Model |
+| [../strategy/flowos-user-evolution-and-market-positioning.md](../strategy/flowos-user-evolution-and-market-positioning.md) | Stage-specific user context, entry needs, and market implications | Active | Product leadership | Vision and Product Strategy |
+| [../01-product/success-model.md](../01-product/success-model.md) | Outcomes, signals, metrics, and anti-metrics | Active | Product leadership | Vision and Product Strategy |
+| [../02-systems/direction-and-commitment.md](../02-systems/direction-and-commitment.md) | Direction and commitment semantics | Active | Product leadership | Product Model |
+| [../02-systems/action-and-evidence.md](../02-systems/action-and-evidence.md) | Action, outcome, evidence, and provenance semantics | Active | Product leadership | Product Model |
+| [../02-systems/sensemaking-and-adaptation.md](../02-systems/sensemaking-and-adaptation.md) | Reflection, insight, and adaptation semantics | Active | Product leadership | Product Model |
+| [../02-systems/continuity-and-interoperability.md](../02-systems/continuity-and-interoperability.md) | Continuity, source relationships, and portability semantics | Active | Product leadership | Product Model |
+| [../02-systems/intelligence-and-trust.md](../02-systems/intelligence-and-trust.md) | Computational assistance, person control, and trust semantics | Active | Product leadership | Product Model |
+| [../03-experience/experience-architecture.md](../03-experience/experience-architecture.md) | Cross-surface context, state, choice, and transition rules | Active | Product and design leadership | Product Model and systems |
+| [../03-experience/information-structure.md](../03-experience/information-structure.md) | Current destinations, labels, access relationships, and findability | Active | Product and design leadership | Experience Architecture |
+| [../03-experience/journey-contracts.md](../03-experience/journey-contracts.md) | Bounded end-to-end experience contract standard | Active | Product and design leadership | Experience Architecture and Information Structure |
+| [../04-features/feature-briefs.md](../04-features/feature-briefs.md) | Feature-problem, outcome, scope, and non-goal standard | Active | Product leadership | Product Strategy and systems |
+| [../04-features/behavior-contracts.md](../04-features/behavior-contracts.md) | Observable feature-behavior standard | Active | Product leadership | Feature Briefs and systems |
+| [../04-features/delivery-designs.md](../04-features/delivery-designs.md) | Feature-specific technical-delivery standard | Active | Engineering leadership | Behavior Contracts and Engineering Architecture |
+| [../04-features/validation-plans.md](../04-features/validation-plans.md) | Feature-validation planning standard | Active | Product and engineering leadership | Feature and behavior contracts |
+| [../05-design/design-system-architecture.md](../05-design/design-system-architecture.md) | Design-document boundaries and reusable design-layer ownership | Active | Design leadership | Experience Architecture |
+| [../05-design/content-standards.md](../05-design/content-standards.md) | Reusable interface language for state, authority, and recovery | Active | Design and product leadership | Glossary, experience, and design architecture |
+| [../05-design/accessibility-standards.md](../05-design/accessibility-standards.md) | Reusable obligations for perception, operation, understanding, and recovery | Active | Design and engineering leadership | Experience, design, content, and quality architecture |
+| [../05-design/feature-design-specifications.md](../05-design/feature-design-specifications.md) | Feature-specific visual, interaction, content, and accessibility design standard | Active | Design leadership | Design system and behavior contracts |
+| [../06-engineering/engineering-architecture.md](../06-engineering/engineering-architecture.md) | Technical-domain ownership and semantic-preservation rules | Active | Engineering leadership | Documentation Architecture and product systems |
+| [../06-engineering/data-architecture.md](../06-engineering/data-architecture.md) | Information lifecycle, lineage, integrity, and access rules | Active | Engineering leadership | Engineering Architecture and systems |
+| [../06-engineering/identity-and-access-architecture.md](../06-engineering/identity-and-access-architecture.md) | Identity, bounded authority, delegation, revocation, and audit rules | Active | Engineering leadership | Engineering Architecture and product authority |
+| [../06-engineering/integration-architecture.md](../06-engineering/integration-architecture.md) | Connected-system exchange, synchronization, and external-effect rules | Active | Engineering leadership | Engineering Architecture and interoperability system |
+| [../06-engineering/intelligence-and-trust-architecture.md](../06-engineering/intelligence-and-trust-architecture.md) | Technical controls for computational assistance and trust safeguards | Active | Engineering leadership | Engineering Architecture and trust system |
+| [../06-engineering/quality-architecture.md](../06-engineering/quality-architecture.md) | Quality domains, evidence traceability, and verification governance | Active | Engineering leadership | Engineering Architecture |
+| [../06-engineering/operations-architecture.md](../06-engineering/operations-architecture.md) | Deployment, observability, support, incident, and recovery boundaries | Active | Engineering leadership | Engineering Architecture |
+| [../06-engineering/client-architecture.md](../06-engineering/client-architecture.md) | Client rendering, navigation, interaction, resilience, and accessibility boundaries | Active | Engineering leadership | Engineering Architecture and experience architecture |
+| [../06-engineering/engineering-standards.md](../06-engineering/engineering-standards.md) | Safe and accountable engineering-change practice | Active | Engineering leadership | Engineering and quality architecture |
+| [../07-strategy-and-delivery/roadmap.md](../07-strategy-and-delivery/roadmap.md) | Evidence-gated outcome sequence and investment governance | Active | Product leadership | Product Strategy and Success Model |
+| [../07-strategy-and-delivery/delivery-plans.md](../07-strategy-and-delivery/delivery-plans.md) | Bounded cross-functional delivery-coordination standard | Active | Product and delivery leadership | Roadmap and feature contracts |
+| [../07-strategy-and-delivery/release-plans.md](../07-strategy-and-delivery/release-plans.md) | Bounded release, rollout, recovery, and review-coordination standard | Active | Product, engineering, and operations leadership | Roadmap and delivery plans |
+| [../08-decisions/decision-records.md](../08-decisions/decision-records.md) | Consequential decision, correction, and supersession standard | Active | Accountable decision owner | Documentation Architecture |
+| [../08-decisions/decision-register.md](../08-decisions/decision-register.md) | Discovery index for canonical decision records | Active | Product and documentation leadership | Decision Records |
+| [../09-evidence/research-program.md](../09-evidence/research-program.md) | Responsible research method, evidence integrity, and participant protection | Active | Product research leadership | Product Strategy and Roadmap |
+| [../09-evidence/measurement-specifications.md](../09-evidence/measurement-specifications.md) | Metric meaning, collection, provenance, quality, and revision standard | Active | Product, data, and engineering leadership | Success Model and engineering architecture |
+| [../09-evidence/insight-syntheses.md](../09-evidence/insight-syntheses.md) | Cross-record evidence interpretation and confidence-boundary standard | Active | Product and research leadership | Research Program and Measurement Specifications |
+| [../10-reviews/review-records.md](../10-reviews/review-records.md) | Contract-assessment, findings, and disposition standard | Active | Accountable review owner | Quality Architecture and Roadmap |
+| [../10-reviews/post-release-learning-records.md](../10-reviews/post-release-learning-records.md) | Real-condition release-learning record standard | Active | Product, engineering, and operations leadership | Release Plans, evidence, and reviews |
 
-**Code visual truth:** `src/app/globals.css`
+## Transitional and Operational References
 
----
+| Location | Current role | Status | Successor or boundary |
+|---|---|---|---|
+| [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md) | Detailed milestone-delivery context | Transitional | Roadmap owns outcome sequence and investment gates. |
+| [../foundation/governance/ENGINEERING.md](../foundation/governance/ENGINEERING.md) | M2 execution context | Transitional | Engineering Standards owns reusable engineering-change practice. |
+| [../foundation/governance/CODE_STANDARDS.md](../foundation/governance/CODE_STANDARDS.md) | Repository-specific implementation conventions | Current implementation reference | Does not replace Engineering Standards or engineering architecture. |
+| [../foundation/](../foundation/) | Current product, stack, and visual implementation references | Current implementation reference | Active canonical contracts live in the 00–10 structure. |
+| [../execution/](../execution/) | Current runbooks, operational logs, and execution context | Operational | Does not define durable product or engineering authority. |
+| [../review/](../review/) | Historical SRAI materials and legacy review artifacts | Transitional historical collection | New durable assessments use `10-reviews/`. |
+| [../design/](../design/) | Legacy feature-design materials | Transitional historical collection | New design specifications use `05-design/`. |
 
-## Deleted (merged)
+## Historical Locations
 
-| Former file | Merged into |
-|-------------|-------------|
-| `governance/PRODUCT_PRINCIPLES.md` | PRINCIPLES.md |
-| `governance/PRODUCT_DECISION_FRAMEWORK.md` | PRINCIPLES.md |
-| `foundation/PRODUCT_PHILOSOPHY.md` | PRINCIPLES.md |
-| `governance/RELEASE_CRITERIA.md` | GATES.md |
-| `governance/ALPHA_SUCCESS_CRITERIA.md` | GATES.md |
-| `governance/BETA_SUCCESS_CRITERIA.md` | GATES.md |
-| `governance/ENGINEERING_DECISION_FRAMEWORK.md` | ENGINEERING.md |
-| `foundation/DEPLOYMENT_READINESS.md` | GATES.md (archived copy kept) |
-| `foundation/INFORMATION_ARCHITECTURE.md` | FEATURE_INVENTORY.md (IA section) |
-| `foundation/SUCCESS_METRICS.md` | GATES.md (Metric definitions) |
-| `foundation/USER_PERSONAS.md` | PRODUCT_VISION + recruiting-pipeline.md |
+| Location | Historical role | Current replacement |
+|---|---|---|
+| [../archive/documentation/documentation-planning-2026-08-01.md](../archive/documentation/documentation-planning-2026-08-01.md) | Original proposed documentation architecture | Documentation Architecture and current folder indexes |
+| [../archive/](../archive/) | Archived strategy, foundation, design, planning, runbook, and project history | Relevant active or transitional document above |
 
----
+## Discovery Views and Templates
 
-## Archived (historical, not maintained)
+The root [documentation index](../README.md) and the `README.md` in each canonical folder are navigational only. Reusable starter forms are listed in their folder indexes and are non-normative; they do not appear in the active-document table.
 
-| Path | Contents |
-|------|----------|
-| [../archive/foundation/](../archive/foundation/) | IA, metrics, personas, CEO review, validation, strategy drafts |
-| [../archive/design/july-3/](../archive/design/july-3/) | Design program Phase 0–2 |
-| [../archive/design/themes/](../archive/design/themes/) | Superseded visual themes (v1/v2, Neutral Dark, Gruvbox, Everforest, Borderless, legacy navy) |
-| [../archive/runbooks/](../archive/runbooks/) | Historical / superseded runbooks |
-| [../archive/planning/](../archive/planning/) | Launch plan (superseded by masterplan) |
+## Map Maintenance
 
----
-
-## Authority hierarchy
-
-1. [Vision.md](../strategy/Vision.md) — timeless product purpose and principles
-2. [documentation-architecture.md](../00-constitution/documentation-architecture.md) — documentation ownership, structure, and lifecycle
-3. decision-log.md — dated decisions; cannot override the vision without a deliberate revision of it
-4. execution-masterplan.md — milestones and sequencing
-5. governance/ (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW)
-6. foundation/ + execution/ (V3 + Tokyo for visuals)
-7. archive/
+Update this map when an active normative document is created, renamed, retired, superseded, or changes owner or parent. Do not use it to assign an authority outcome that belongs to the Documentation Architecture or an active document.

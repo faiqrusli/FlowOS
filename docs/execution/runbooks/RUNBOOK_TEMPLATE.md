@@ -1,7 +1,7 @@
 # {M#} — {Runbook Title}
 
 **Scope:** {M#} only — {one-line milestone name}.  
-**Authority:** Exit criteria in [execution-masterplan.md](../../strategy/execution-masterplan.md) Step 2 ({M#}). This runbook does **not** add, remove, defer, or weaken any exit criterion from the masterplan.  
+**Authority:** The applicable [Roadmap](../../07-strategy-and-delivery/roadmap.md) outcome, delivery plan, and release plan. This runbook does **not** add, remove, defer, or weaken their scope, evidence gate, or parent contracts.
 **Repo root:** repository root (Next.js app).  
 **Production baseline:** https://flowos-sage.vercel.app  
 **Docs path:** `docs/` (tracked in VCS)  
@@ -26,7 +26,7 @@ Use when a session is blocked (env failure, ambiguous product decision, producti
 | Step | Action |
 |------|--------|
 | 1 | **Stop** at the session stop/fail condition — do not skip to a dependent session. |
-| 2 | **Record blocker** in [decision-log.md](../logs/decision-log.md): date, session #, WP id, symptom, what was tried, next action. |
+| 2 | **Record blocker** in the delivery artifact or operational log: date, work item, symptom, what was tried, next action. Create a [Decision Record](../../08-decisions/decision-records.md) only if a consequential choice is required. |
 | 3 | **Git:** commit WIP on the **session branch** (`WIP: Session N blocked — {reason}`) or `git stash`. Do **not** merge to `main`. See [GIT_WORKFLOW.md](../../foundation/governance/GIT_WORKFLOW.md). |
 | 4 | **Resume** the same session number when unblocked. |
 | 5 | **Respect dependencies** — see session dependency table below. |
@@ -143,7 +143,7 @@ Run on **production** after Session {N}. Reference from session verification.
 
 ## Decision points _(optional — founder only, max 3)_
 
-Use only when truly blocked. Record choice in [decision-log.md](../logs/decision-log.md).
+Use only when truly blocked. Record a consequential choice in [Decision Records](../../08-decisions/decision-records.md).
 
 | # | Decision | Options | Runbook default |
 |---|----------|---------|-----------------|
@@ -208,10 +208,10 @@ Copy exit criteria from masterplan. Check only when evidence exists.
 
 ## After runbook complete
 
-1. Complete SRAI review → [review/milestones/m{N}-{name}.md](../../review/milestones/) (create if missing).  
+1. Complete the appropriate [Review Record](../../10-reviews/review-records.md).
 2. Update [GATES.md](../../foundation/governance/GATES.md) status if milestone exited.  
 3. Final [july-log.md](../logs/july-log.md) entry with commits and production verification.  
-4. Archive or freeze this runbook — do not rewrite history; append decision-log if scope changed mid-flight.
+4. Archive or freeze this runbook — do not rewrite history; create a Decision Record if scope changed through a consequential choice.
 
 ---
 

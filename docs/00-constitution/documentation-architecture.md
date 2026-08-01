@@ -3,6 +3,10 @@
 **Status:** Active
 **Authority:** Governs documentation structure and lifecycle; subordinate to [Vision.md](../strategy/Vision.md)
 **Owner:** Product and documentation leadership
+**Parent:** [Vision.md](../strategy/Vision.md)
+**Children:** Active documentation standards, folder indexes, templates, registers, and historical-transition records
+**Last reviewed:** 2026-08-01
+**Review trigger:** A proposed change alters a document responsibility, authority boundary, lifecycle rule, template/register rule, discovery rule, or archival treatment.
 **Purpose:** Ensure every durable piece of FlowOS knowledge has one authoritative home, one responsibility, and a clear relationship to higher- and lower-level documents.
 
 ---
@@ -245,7 +249,24 @@ Every active document is reviewed on its declared trigger. A review can confirm 
 
 ---
 
-## 12. Non-Goals
+## 12. Templates, Registers, and Discovery Views
+
+Templates, registers, and discovery views support the documentation system without becoming competing sources of truth.
+
+| Artifact | Sole responsibility | Must not contain |
+|---|---|---|
+| Folder index | Makes the documents and starter artifacts within one folder discoverable. | A summary or replacement of a listed document. |
+| Template | Provides a copyable structure for one future document or record type. | Normative requirements copied from its governing standard, factual records, or product decisions. |
+| Register | Makes permanent records discoverable by stable identifier, status, owner, domain, and links. | The record's rationale, findings, or raw evidence. |
+| Document map | Gives an organization-wide view of active normative documents and transitional or historical locations. | A second authority hierarchy or a summary of document contents. |
+
+Templates are non-normative starter artifacts. They link to the active standard that governs their required contents and must be updated when that standard changes. They are excluded from the global document map because they are not authorities; their folder index makes them discoverable.
+
+Folder indexes and the root documentation index are navigational views. They may list a document's title, responsibility, status, owner, parent, and location, but their listings never override the listed document. The global document map must show every active normative document's path, responsibility, status, owner, and parent.
+
+---
+
+## 13. Non-Goals
 
 This document does not:
 

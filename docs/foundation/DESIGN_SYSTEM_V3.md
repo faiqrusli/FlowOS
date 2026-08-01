@@ -330,7 +330,7 @@ Within visual design:
 1. **This file** wins for surface hexes and brand spend rules.
 2. **V3 Workspace** wins for layout, shell, borderless, per-page maps.
 3. **V3 Interaction** wins for type, space, motion, state recipes.
-4. [decision-log.md](../execution/logs/decision-log.md) wins for product-level overrides.
+4. Consequential current product-level overrides require [Decision Records](../08-decisions/decision-records.md).
 5. Older theme docs (Tokyo Night Warm, Gruvbox, Everforest, Neutral Dark, Navy) are **reference / history** unless explicitly re-activated.
 
 Code must still follow [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md) (smallest diff, semantic tokens, no fake UI).

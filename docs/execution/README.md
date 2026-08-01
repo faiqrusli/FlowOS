@@ -5,7 +5,7 @@
 **Production:** https://flowos-sage.vercel.app  
 **Live demo:** [runbooks/flowos-live-demo.md](./runbooks/flowos-live-demo.md) · [spec](../review/design/flowos-live-demo-spec.md)
 
-This folder is the index for **how FlowOS ships**. Strategy lives in the masterplan; these docs are the operating manual.
+This folder is the index for **how FlowOS ships**. The [Roadmap](../07-strategy-and-delivery/roadmap.md) owns outcome sequence and investment gates; the masterplan is transitional detailed milestone context; these docs are operating materials.
 
 ---
 
@@ -13,9 +13,10 @@ This folder is the index for **how FlowOS ships**. Strategy lives in the masterp
 
 | Document | Purpose |
 |----------|---------|
-| [execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5, exit gates, scope rules |
+| [roadmap.md](../07-strategy-and-delivery/roadmap.md) | Canonical outcome sequence and investment gates |
+| [execution-masterplan.md](../strategy/execution-masterplan.md) | Transitional detailed milestone-delivery context |
 
-**Authority:** The masterplan supersedes [roadmap-pre-masterplan.md](../archive/design/july-3/roadmap-pre-masterplan.md) (Phase 3+) and [launch-plan-july-2026.md](../archive/planning/launch-plan-july-2026.md) (timeline).
+**Authority:** The Roadmap governs current strategic sequence. The masterplan preserves current milestone detail and supersedes [roadmap-pre-masterplan.md](../archive/design/july-3/roadmap-pre-masterplan.md) (Phase 3+) and [launch-plan-july-2026.md](../archive/planning/launch-plan-july-2026.md) (timeline).
 
 ---
 
@@ -43,7 +44,7 @@ This folder is the index for **how FlowOS ships**. Strategy lives in the masterp
 
 Runbook index: [runbooks/README.md](./runbooks/README.md)
 
-**After milestone exit:** SRAI in [../review/milestones/](../review/milestones/) — see [../review/README.md](../review/README.md).
+**After milestone exit:** Create an appropriate [Review Record](../10-reviews/review-records.md), then a [Post-Release Learning Record](../10-reviews/post-release-learning-records.md) after the relevant observation window. Existing SRAI material remains historical reference.
 
 ---
 
@@ -63,7 +64,7 @@ Runbook index: [runbooks/README.md](./runbooks/README.md)
 | [inbox.md](./logs/inbox.md) | Scratch UI/UX fixes — promote when scoped |
 | [friction-log.md](./logs/friction-log.md) | Live founder friction from production use |
 | [developer-log/](./logs/developer-log/) | Personal daily timeline (WIP, lessons) |
-| [decision-log.md](./logs/decision-log.md) | Product decisions with rationale |
+| [decision-log.md](./logs/decision-log.md) | Historical decision collection; new consequential decisions use [Decision Records](../08-decisions/decision-records.md) |
 | [july-log.md](./logs/july-log.md) | July session narrative |
 
 Log index: [logs/README.md](./logs/README.md)

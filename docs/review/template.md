@@ -81,11 +81,11 @@ Ground-truth check — code and production, not docs alone.
 
 ### Required updates
 
-- [ ] [decision-log.md](../execution/logs/decision-log.md) — if direction changed  
+- [ ] [Decision Records](../08-decisions/decision-records.md) — if a consequential choice is required
 - [ ] [friction-log.md](../execution/logs/friction-log.md) — if new live friction  
 - [ ] [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) — if product state changed  
 - [ ] [TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) — if stack/debt changed  
-- [ ] Next runbook / masterplan — if scope adjustment needed  
+- [ ] Roadmap, delivery plan, or release plan — if scope or sequencing adjustment is needed
 
 ### Actions before next milestone
 
