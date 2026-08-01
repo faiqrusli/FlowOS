@@ -16,53 +16,11 @@ For SRS future enhancements (FE-1–FE-13), see [../archive/project/03-future-en
 
 ---
 
-## Information architecture
+## Navigation status
 
-### Current navigation
+[Information Structure](../03-experience/information-structure.md) owns the current organization, grouping, labels, and experiential role of primary destinations. This inventory owns delivery status and implementation-level notes for the modules that realize it.
 
-Home + Workspace workflow. Source: `src/config/sidebar-navigation.tsx`. Product decision 2026-07-09; runbook [m2-global-navigation.md](../execution/runbooks/m2-global-navigation.md).
-
-```
-HOME
-  └── Today          (/)              LayoutDashboard
-
-WORKSPACE
-  ├── Tasks          (/tasks)         CheckSquare
-  ├── Habits         (/habits)        Repeat
-  ├── Schedule       (/schedule)      CalendarDays
-  ├── Focus          (/focus)         Timer
-  ├── Notes          (/notes)         BookOpen
-  └── Reflection     (/reflection)    NotebookPen
-```
-
-**Supersedes:** M2 Session 3 “sidebar ≤ 5 / demote Schedule & Notes” for primary nav only — Schedule and Notes are first-class Workspace items again. Today shortcuts remain convenience; sidebar is the source of truth.
-
-**Still open (M2/M3):** three scheduling surfaces; focus as destination vs mode; no command layer. Diagnosis history: [../archive/design/july-3/ux-friction-review.md](../archive/design/july-3/ux-friction-review.md).
-
-### Target navigation (post M2/M3)
-
-| Tier | Modules |
-|------|---------|
-| **Home** | Today (`/`) — execution + inline intelligence; focus as overlay mode |
-| **Workspace** | Tasks, Habits, Schedule, Focus, Notes, Reflection (global one-click) |
-| **Later sections** | Goals, Projects, Analytics, AI — append to `sidebarSections` when evidenced |
-
-**Target flow:** Open → Today → plan (Schedule) / execute / focus → evening reflection. Command palette (`Cmd+K`) for search and jump (post-M2).
-
-### Module roles (current + near-term)
-
-| Module | Route | Verdict |
-|--------|-------|---------|
-| Today | `/` | Default home — execution + inline intelligence |
-| Tasks | `/tasks` | Primary Workspace nav; inline capture on Today |
-| Habits | `/habits` | Primary Workspace nav; primary completion on Today |
-| Schedule | `/schedule` | Primary Workspace nav — fullscreen planner (not demoted) |
-| Focus | `/focus` | Primary Workspace nav; long-term: mode on Today, page = history |
-| Notes | `/notes` | Primary Workspace nav (not demoted); no kanban expansion until loop proven |
-| Reflection | `/reflection` | Primary Workspace nav; unify save behavior; evening nudge |
-| Overview | `/overview` | Not built — do not create in M2 |
-
-**M2 MVP bundle:** Today as home, next-action stays on Today, Home + Workspace global nav, inline capture, visible focus controls. Full plan: [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md).
+The currently configured navigation is an implementation reference at `src/config/sidebar-navigation.tsx`. Current sequencing and unresolved delivery work belong in [execution-masterplan.md](../strategy/execution-masterplan.md) and the relevant delivery records, not in this inventory.
 
 ---
 

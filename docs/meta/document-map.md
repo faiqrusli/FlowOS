@@ -18,6 +18,18 @@
 | [../02-systems/action-and-evidence.md](../02-systems/action-and-evidence.md) | System rules for actual action, factual evidence, outcomes, and provenance |
 | [../02-systems/sensemaking-and-adaptation.md](../02-systems/sensemaking-and-adaptation.md) | System rules for reflection, insight, and deliberate adaptation |
 | [../02-systems/continuity-and-interoperability.md](../02-systems/continuity-and-interoperability.md) | System rules for continuity of context, source relationships, and portability |
+| [../02-systems/intelligence-and-trust.md](../02-systems/intelligence-and-trust.md) | System rules for computational assistance, user control, and trust |
+| [../03-experience/experience-architecture.md](../03-experience/experience-architecture.md) | Cross-surface rules for product context, states, choices, and system transitions |
+| [../03-experience/information-structure.md](../03-experience/information-structure.md) | Current organization of experience domains, destinations, labels, and access relationships |
+| [../03-experience/journey-contracts.md](../03-experience/journey-contracts.md) | Standard for bounded end-to-end experience journey contracts |
+| [../04-features/feature-briefs.md](../04-features/feature-briefs.md) | Standard for deciding, scoping, and governing bounded feature briefs |
+| [../04-features/behavior-contracts.md](../04-features/behavior-contracts.md) | Standard for defining and governing observable feature behavior |
+| [../04-features/delivery-designs.md](../04-features/delivery-designs.md) | Standard for feature-specific technical designs, rollout, and recovery |
+| [../04-features/validation-plans.md](../04-features/validation-plans.md) | Standard for feature validation, evidence planning, and assessment boundaries |
+| [../05-design/design-system-architecture.md](../05-design/design-system-architecture.md) | Architecture for design-system responsibilities, documents, and implementation boundaries |
+| [../05-design/feature-design-specifications.md](../05-design/feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design |
+| [../06-engineering/engineering-architecture.md](../06-engineering/engineering-architecture.md) | Architecture for technical domains, product-semantic preservation, and operations boundaries |
+| [../06-engineering/data-architecture.md](../06-engineering/data-architecture.md) | Architecture for durable information, lineage, lifecycle, integrity, and access |
 | [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5 |
 | [../execution/](../execution/) | Runbooks, logs, ops (**hold** = no large new runbooks) |
 | [../review/](../review/) | SRAI + design specs |

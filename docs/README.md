@@ -26,6 +26,18 @@
 | [Action and Evidence System](./02-systems/action-and-evidence.md) | System rules for actual action, factual evidence, outcomes, and provenance |
 | [Sensemaking and Adaptation System](./02-systems/sensemaking-and-adaptation.md) | System rules for reflection, insight, and deliberate adaptation |
 | [Continuity and Interoperability System](./02-systems/continuity-and-interoperability.md) | System rules for context across time, source relationships, and portability |
+| [Intelligence and Trust System](./02-systems/intelligence-and-trust.md) | System rules for computational assistance, user control, and trust |
+| [Experience Architecture](./03-experience/experience-architecture.md) | Cross-surface rules for product context, states, choices, and system transitions |
+| [Information Structure](./03-experience/information-structure.md) | Current organization of experience domains, destinations, labels, and access relationships |
+| [Journey Contracts](./03-experience/journey-contracts.md) | Standard for bounded end-to-end experience journey contracts |
+| [Feature Briefs](./04-features/feature-briefs.md) | Standard for deciding, scoping, and governing bounded feature briefs |
+| [Behavior Contracts](./04-features/behavior-contracts.md) | Standard for defining and governing observable feature behavior |
+| [Delivery Designs](./04-features/delivery-designs.md) | Standard for feature-specific technical designs, rollout, and recovery |
+| [Validation Plans](./04-features/validation-plans.md) | Standard for feature validation, evidence planning, and assessment boundaries |
+| [Design System Architecture](./05-design/design-system-architecture.md) | Architecture for design-system responsibilities, documents, and implementation boundaries |
+| [Feature Design Specifications](./05-design/feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design |
+| [Engineering Architecture](./06-engineering/engineering-architecture.md) | Architecture for technical domains, product-semantic preservation, and operations boundaries |
+| [Data Architecture](./06-engineering/data-architecture.md) | Architecture for durable information, lineage, lifecycle, integrity, and access |
 | [User Evolution & Market Positioning](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting strategy — target users and entry points |
 | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | What’s shipped today vs deferred |
 | [execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 and exit gates |
@@ -60,13 +72,25 @@ When documents conflict, this order wins:
 | 8 | [02-systems/action-and-evidence.md](./02-systems/action-and-evidence.md) | System rules for actual action, factual evidence, outcomes, and provenance |
 | 9 | [02-systems/sensemaking-and-adaptation.md](./02-systems/sensemaking-and-adaptation.md) | System rules for reflection, insight, and deliberate adaptation |
 | 10 | [02-systems/continuity-and-interoperability.md](./02-systems/continuity-and-interoperability.md) | System rules for context across time, source relationships, and portability |
-| 11 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions; cannot override the vision without a deliberate revision of it |
-| 12 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 |
-| 13 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
-| 14 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
-| 15 | [archive/](./archive/) | Historical reference only |
+| 11 | [02-systems/intelligence-and-trust.md](./02-systems/intelligence-and-trust.md) | System rules for computational assistance, user control, and trust |
+| 12 | [03-experience/experience-architecture.md](./03-experience/experience-architecture.md) | Cross-surface rules for product context, states, choices, and system transitions |
+| 13 | [03-experience/information-structure.md](./03-experience/information-structure.md) | Current organization of experience domains, destinations, labels, and access relationships |
+| 14 | [03-experience/journey-contracts.md](./03-experience/journey-contracts.md) | Standard for bounded end-to-end experience journey contracts |
+| 15 | [04-features/feature-briefs.md](./04-features/feature-briefs.md) | Standard for deciding, scoping, and governing bounded feature briefs |
+| 16 | [04-features/behavior-contracts.md](./04-features/behavior-contracts.md) | Standard for defining and governing observable feature behavior |
+| 17 | [04-features/delivery-designs.md](./04-features/delivery-designs.md) | Standard for feature-specific technical designs, rollout, and recovery |
+| 18 | [04-features/validation-plans.md](./04-features/validation-plans.md) | Standard for feature validation, evidence planning, and assessment boundaries |
+| 19 | [05-design/design-system-architecture.md](./05-design/design-system-architecture.md) | Architecture for design-system responsibilities, documents, and implementation boundaries |
+| 20 | [05-design/feature-design-specifications.md](./05-design/feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design |
+| 21 | [06-engineering/engineering-architecture.md](./06-engineering/engineering-architecture.md) | Architecture for technical domains, product-semantic preservation, and operations boundaries |
+| 22 | [06-engineering/data-architecture.md](./06-engineering/data-architecture.md) | Architecture for durable information, lineage, lifecycle, integrity, and access |
+| 23 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions; cannot override the vision without a deliberate revision of it |
+| 24 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 |
+| 25 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
+| 26 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
+| 27 | [archive/](./archive/) | Historical reference only |
 
-**Visual / UI:** [DESIGN_SYSTEM_V3.md](./foundation/DESIGN_SYSTEM_V3.md) family + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md). Code truth: `src/app/globals.css`. Do not treat Neutral Dark, Gruvbox, Everforest, or legacy navy `DESIGN_SYSTEM.md` as live paint authority.
+**Visual / UI:** [Design System Architecture](./05-design/design-system-architecture.md) governs design-document ownership. The active visual-foundation family is [DESIGN_SYSTEM_V3.md](./foundation/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md); code actuality is `src/app/globals.css`. Do not treat Neutral Dark, Gruvbox, Everforest, or legacy navy `DESIGN_SYSTEM.md` as live paint authority.
 
 ---
 
@@ -77,10 +101,14 @@ When documents conflict, this order wins:
 | [00-constitution/](./00-constitution/) | Documentation governance; Vision remains at `strategy/Vision.md` | **Active** |
 | [01-product/](./01-product/) | Product model and future product-level documents | **Active** |
 | [02-systems/](./02-systems/) | Enduring product-system definitions and future interface contracts | **Active** |
+| [03-experience/](./03-experience/) | Cross-surface experience architecture and future information-structure and journey contracts | **Active** |
+| [04-features/](./04-features/) | Bounded feature briefs, behavior contracts, delivery designs, and validation plans | **Active** |
+| [05-design/](./05-design/) | Design-system architecture and future reusable design standards | **Active** |
+| [06-engineering/](./06-engineering/) | Engineering architecture and future data, integration, quality, and operations standards | **Active** |
 | [strategy/](./strategy/) | Canonical vision, supporting strategy, historical chapters, masterplan | **Active** |
 | [execution/](./execution/) | Runbooks, logs, ops | **Active** (hold = no new large runbooks) |
 | [review/](./review/) | SRAI + design specs | **Active** |
-| [design/](./design/) | Living feature design specifications | **Active** |
+| [design/](./design/) | Transitional legacy feature design specifications; migrate on material revision | **Transitional** |
 | [foundation/](./foundation/) | Features, architecture, design system | **Active** |
 | [foundation/governance/](./foundation/governance/) | PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW | **Reference** |
 | [archive/](./archive/) | Thesis, design history, superseded plans/themes | **Archive** |
