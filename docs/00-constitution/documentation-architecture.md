@@ -1,0 +1,259 @@
+# FlowOS Documentation Architecture
+
+**Status:** Active
+**Authority:** Governs documentation structure and lifecycle; subordinate to [Vision.md](../strategy/Vision.md)
+**Owner:** Product and documentation leadership
+**Purpose:** Ensure every durable piece of FlowOS knowledge has one authoritative home, one responsibility, and a clear relationship to higher- and lower-level documents.
+
+---
+
+## 1. Scope
+
+This document governs the architecture of FlowOS documentation. It determines:
+
+- which kinds of documents exist;
+- what each kind of document owns;
+- how documents inherit authority;
+- how documents are created, changed, reviewed, replaced, and archived; and
+- how the team prevents duplication and contradiction.
+
+It does not define product philosophy, product behavior, technical architecture, roadmap priorities, or design decisions. Those belong to the documents this architecture governs.
+
+The canonical Vision remains at [`docs/strategy/Vision.md`](../strategy/Vision.md). It is immutable. No duplicate Vision, philosophy, or constitutional summary may be created elsewhere.
+
+---
+
+## 2. Governing Rule
+
+Every document must answer one primary question.
+
+If a document starts answering a second kind of question, it must link to the document that owns that question instead of copying its content.
+
+The required distinction is:
+
+| Knowledge type | Question it answers | Document family that owns it |
+|---|---|---|
+| Constitutional | Why does FlowOS exist and what may not be violated? | Vision |
+| Product | What is the product, for whom, and what outcome must it create? | Product |
+| System | What enduring mechanism makes the product coherent? | Systems |
+| Experience | Where does information live and how do product states connect? | Experience |
+| Feature | What bounded capability is being introduced and how must it behave? | Features |
+| Design | How is the experience expressed consistently? | Design |
+| Engineering | How is the product built, secured, tested, and operated? | Engineering |
+| Delivery | What validated work is next and how is a release coordinated? | Strategy and delivery |
+| Decision | Why was one consequential option selected? | Decisions |
+| Evidence | What was observed or measured? | Evidence |
+| Review | Did an artifact or release meet its existing contract, and what was learned? | Reviews |
+
+No document may use a conclusion from another family as though it owns that conclusion. For example, a roadmap may sequence work, but it may not redefine product behavior; a review may identify a failure, but it may not silently rewrite the specification it assessed.
+
+---
+
+## 3. Authority Model
+
+Authority flows downward. Information and evidence may flow upward to prompt a revision, but they do not silently override a higher-level document.
+
+```text
+Vision
+  ↓
+Documentation Architecture
+  ↓
+Product Model and Product Strategy
+  ↓
+Systems and Experience
+  ↓
+Feature Contracts and Design
+  ↓
+Engineering and Delivery
+  ↓
+Reviews, Evidence, and Decisions
+```
+
+The sequence describes authority, not a one-way workflow. Evidence, reviews, and decision records can identify that a lower document must change. They cannot amend the Vision. A conflict with the Vision means the lower document is invalid and must be corrected or retired.
+
+### Subject authority
+
+Each document is authoritative only within its responsibility:
+
+- The Vision is authoritative on constitutional product intent.
+- This document is authoritative on documentation structure and lifecycle.
+- A product model is authoritative on its conceptual model.
+- A system document is authoritative on its system boundaries and invariants.
+- A feature behavior contract is authoritative on the observable behavior of that feature.
+- An engineering architecture document is authoritative on its technical domain.
+- A roadmap is authoritative on sequencing, not product definition.
+- A decision record is authoritative on the historical decision it records, not on every document it cites.
+- Evidence and reviews are authoritative on what they observed, not on what should be built next.
+
+---
+
+## 4. Documentation Layers
+
+The durable documentation ecosystem uses the following folders. A folder is a responsibility boundary, not merely a filing preference.
+
+| Folder | Owns | Must not contain |
+|---|---|---|
+| `00-constitution/` | Documentation governance and constitutional references | Product or implementation specifications |
+| `01-product/` | Product model, canonical vocabulary, strategy, and success definitions | System implementation and feature behavior |
+| `02-systems/` | Enduring product mechanisms and their semantic contracts | Page design, schemas, and roadmaps |
+| `03-experience/` | Information architecture and cross-surface experience rules | Component tokens and feature implementation |
+| `04-features/` | Bounded feature contracts and delivery artifacts | Reusable system definitions |
+| `05-design/` | Shared visual, component, and content standards | Product strategy and engineering topology |
+| `06-engineering/` | Technical, data, integration, trust, quality, and operations architecture | Product rationale or feature discovery |
+| `07-strategy-and-delivery/` | Outcome sequencing and bounded release coordination | Feature specifications and retrospective findings |
+| `08-decisions/` | Append-only records of consequential choices | Living specifications or raw research |
+| `09-evidence/` | Research, measurement definitions, and factual reports | Roadmap commitments or undocumented interpretation |
+| `10-reviews/` | Assessment against an existing contract and post-release learning | Replacement specifications or raw evidence stores |
+
+---
+
+## 5. Required Metadata
+
+Every durable document must begin with the following fields:
+
+```text
+Status: Draft | Active | Superseded | Archived
+Authority: The specific domain it governs
+Owner: The role accountable for accuracy
+Parent: The document from which it inherits
+Children: Documents it constrains, if any
+Last reviewed: YYYY-MM-DD
+Review trigger: The event that requires reconsideration
+```
+
+Records with permanent historical value — decisions, completed studies, measurement reports, closed reviews, and post-release learning records — also include:
+
+```text
+Created: YYYY-MM-DD
+Evidence links: Relevant sources
+Disposition: Accepted | Superseded | Closed
+```
+
+Metadata identifies responsibility and lifecycle. It must not be used to restate the document’s substantive contents.
+
+---
+
+## 6. Writing and Reference Rules
+
+### Link instead of repeat
+
+When a higher-level document already owns a principle, definition, or decision, lower documents link to the exact heading rather than paraphrasing it.
+
+### State the boundary
+
+Every document begins by stating what it owns and what it does not own. This makes overlap visible before it becomes drift.
+
+### Separate intent, contract, plan, and record
+
+These four forms must never be collapsed:
+
+- **Intent** states the desired outcome.
+- **Contract** states what must be true.
+- **Plan** states the proposed sequence of work.
+- **Record** states what was decided, observed, or learned.
+
+### Preserve historical truth
+
+Accepted decision records, completed studies, measurement reports, reviews, and post-release learning records are append-only. Errors are corrected by a linked correction or superseding record, never by silently rewriting history.
+
+### Use canonical vocabulary
+
+Product terms must come from the product glossary. New terms require a glossary update before they become normative in another document.
+
+### Keep evidence separate from interpretation
+
+Observed facts belong in study and measurement records. Cross-record interpretation belongs in insight synthesis. A product or roadmap decision requires its own decision record.
+
+---
+
+## 7. Lifecycle
+
+### Draft
+
+A document is being developed and has no authority beyond its stated scope of exploration.
+
+### Active
+
+The document is the current authority for its defined responsibility.
+
+### Superseded
+
+A newer active document owns the same responsibility. The old document remains available with a direct link to its replacement.
+
+### Archived
+
+The document is historical reference only. It must not be used to make current decisions.
+
+### Retirement rule
+
+A document may be retired only when its responsibility has moved explicitly to one named replacement or is no longer needed. Deleting a document without resolving its responsibility creates institutional amnesia and is prohibited.
+
+---
+
+## 8. Change Control
+
+The level of required review increases with authority.
+
+| Document layer | Change rule |
+|---|---|
+| Vision | Immutable. It is never revised through normal documentation work. |
+| Documentation architecture | Rare change; requires explicit confirmation that the change does not create duplicate authority. |
+| Product, system, experience, design, and engineering architecture | Change requires a linked decision record and an impact check on child documents. |
+| Feature contracts and delivery designs | Change requires affected parent and child links to be reviewed before implementation continues. |
+| Roadmaps and release plans | Change requires updated evidence or a documented decision. |
+| Evidence, reviews, and historical records | Never silently edited after close; use corrections or successor records. |
+
+Any change to a parent document requires a child-impact review. The owner must identify whether each child remains valid, requires revision, or should be retired.
+
+---
+
+## 9. Creation Gate
+
+Before creating a document, the author must answer:
+
+1. What single question does this document answer?
+2. Which existing document already owns the closest adjacent question?
+3. Why is linking to that document insufficient?
+4. What lower-level documents will inherit from this one?
+5. What event will require this document to be reviewed or retired?
+
+If the first question cannot be stated in one sentence, the document is not ready to exist. If an existing document already owns the answer, create a link, a record, or a section within that document instead of a new file.
+
+---
+
+## 10. Conflict Resolution
+
+When two documents disagree:
+
+1. Identify the responsibility each document claims.
+2. Use the document with the narrower, valid subject authority.
+3. If one document has exceeded its responsibility, remove or replace the conflicting claim from that document.
+4. If both documents legitimately own adjacent parts of the question, create or revise a system interface contract.
+5. Record consequential resolutions in `08-decisions/`.
+
+The answer is never to maintain two competing sources of truth.
+
+---
+
+## 11. Discovery and Maintenance
+
+The document map is the discovery index for active documentation. It must show each active document’s path, responsibility, status, owner, and parent.
+
+Each folder maintains only an index of the documents it contains. Folder indexes do not summarize the contents of those documents.
+
+Every active document is reviewed on its declared trigger. A review can confirm that the document remains accurate; it does not require a change for its own sake.
+
+---
+
+## 12. Non-Goals
+
+This document does not:
+
+- restate or interpret the Vision;
+- decide the product model or product strategy;
+- prescribe feature behavior;
+- define implementation details;
+- replace decision records, evidence, or reviews; or
+- create a requirement to produce documentation without a real responsibility to own.
+
+Documentation exists to preserve clear reasoning and coordinated action. It is not an output to optimize for on its own.

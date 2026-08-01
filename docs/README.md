@@ -17,6 +17,15 @@
 | Document | Why |
 |----------|-----|
 | [**Vision**](./strategy/Vision.md) | **Highest authority** — timeless purpose, philosophy, boundaries, and north star |
+| [Documentation Architecture](./00-constitution/documentation-architecture.md) | Where every durable document belongs, what it owns, and how it changes |
+| [Product Model](./01-product/product-model.md) | Canonical product concepts, relationships, and invariants |
+| [Product Glossary](./01-product/product-glossary.md) | Canonical vocabulary for product concepts and documentation artifacts |
+| [Product Strategy](./01-product/product-strategy.md) | Current audience, positioning, strategic choices, and hypotheses |
+| [Success Model](./01-product/success-model.md) | Product outcomes, success signals, metric meanings, and anti-metrics |
+| [Direction and Commitment System](./02-systems/direction-and-commitment.md) | System rules for chosen direction, present commitments, and their history |
+| [Action and Evidence System](./02-systems/action-and-evidence.md) | System rules for actual action, factual evidence, outcomes, and provenance |
+| [Sensemaking and Adaptation System](./02-systems/sensemaking-and-adaptation.md) | System rules for reflection, insight, and deliberate adaptation |
+| [Continuity and Interoperability System](./02-systems/continuity-and-interoperability.md) | System rules for context across time, source relationships, and portability |
 | [User Evolution & Market Positioning](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting strategy — target users and entry points |
 | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | What’s shipped today vs deferred |
 | [execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 and exit gates |
@@ -42,11 +51,20 @@ When documents conflict, this order wins:
 | Priority | Source | Role |
 |----------|--------|------|
 | 1 | [strategy/Vision.md](./strategy/Vision.md) | **Highest** — timeless product vision, philosophy, boundaries, and north star |
-| 2 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions; cannot override the vision without a deliberate revision of it |
-| 3 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 |
-| 4 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
-| 5 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
-| 6 | [archive/](./archive/) | Historical reference only |
+| 2 | [00-constitution/documentation-architecture.md](./00-constitution/documentation-architecture.md) | Documentation ownership, structure, and lifecycle |
+| 3 | [01-product/product-model.md](./01-product/product-model.md) | Canonical product concepts, relationships, and invariants |
+| 4 | [01-product/product-glossary.md](./01-product/product-glossary.md) | Canonical product vocabulary |
+| 5 | [01-product/product-strategy.md](./01-product/product-strategy.md) | Current market choices, initial audience, positioning, and strategic hypotheses |
+| 6 | [01-product/success-model.md](./01-product/success-model.md) | Product outcomes, success signals, metric meanings, and anti-metrics |
+| 7 | [02-systems/direction-and-commitment.md](./02-systems/direction-and-commitment.md) | System rules for chosen direction, present commitments, and their history |
+| 8 | [02-systems/action-and-evidence.md](./02-systems/action-and-evidence.md) | System rules for actual action, factual evidence, outcomes, and provenance |
+| 9 | [02-systems/sensemaking-and-adaptation.md](./02-systems/sensemaking-and-adaptation.md) | System rules for reflection, insight, and deliberate adaptation |
+| 10 | [02-systems/continuity-and-interoperability.md](./02-systems/continuity-and-interoperability.md) | System rules for context across time, source relationships, and portability |
+| 11 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions; cannot override the vision without a deliberate revision of it |
+| 12 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 |
+| 13 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
+| 14 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
+| 15 | [archive/](./archive/) | Historical reference only |
 
 **Visual / UI:** [DESIGN_SYSTEM_V3.md](./foundation/DESIGN_SYSTEM_V3.md) family + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md). Code truth: `src/app/globals.css`. Do not treat Neutral Dark, Gruvbox, Everforest, or legacy navy `DESIGN_SYSTEM.md` as live paint authority.
 
@@ -56,6 +74,9 @@ When documents conflict, this order wins:
 
 | Directory | Contents | Status |
 |-----------|----------|--------|
+| [00-constitution/](./00-constitution/) | Documentation governance; Vision remains at `strategy/Vision.md` | **Active** |
+| [01-product/](./01-product/) | Product model and future product-level documents | **Active** |
+| [02-systems/](./02-systems/) | Enduring product-system definitions and future interface contracts | **Active** |
 | [strategy/](./strategy/) | Canonical vision, supporting strategy, historical chapters, masterplan | **Active** |
 | [execution/](./execution/) | Runbooks, logs, ops | **Active** (hold = no new large runbooks) |
 | [review/](./review/) | SRAI + design specs | **Active** |

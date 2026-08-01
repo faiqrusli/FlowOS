@@ -9,6 +9,15 @@
 | Path | Role |
 |------|------|
 | [../strategy/Vision.md](../strategy/Vision.md) | **Highest product authority** — timeless purpose, philosophy, boundaries, and north star |
+| [../00-constitution/documentation-architecture.md](../00-constitution/documentation-architecture.md) | Documentation ownership, authority, lifecycle, and anti-duplication rules |
+| [../01-product/product-model.md](../01-product/product-model.md) | Canonical conceptual model for FlowOS product objects and relationships |
+| [../01-product/product-glossary.md](../01-product/product-glossary.md) | Canonical vocabulary for product concepts and documentation artifacts |
+| [../01-product/product-strategy.md](../01-product/product-strategy.md) | Current market choices, initial audience, positioning, and strategic hypotheses |
+| [../01-product/success-model.md](../01-product/success-model.md) | Product outcomes, success signals, metric meanings, and anti-metrics |
+| [../02-systems/direction-and-commitment.md](../02-systems/direction-and-commitment.md) | System rules for chosen direction, present commitments, and their history |
+| [../02-systems/action-and-evidence.md](../02-systems/action-and-evidence.md) | System rules for actual action, factual evidence, outcomes, and provenance |
+| [../02-systems/sensemaking-and-adaptation.md](../02-systems/sensemaking-and-adaptation.md) | System rules for reflection, insight, and deliberate adaptation |
+| [../02-systems/continuity-and-interoperability.md](../02-systems/continuity-and-interoperability.md) | System rules for continuity of context, source relationships, and portability |
 | [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5 |
 | [../execution/](../execution/) | Runbooks, logs, ops (**hold** = no large new runbooks) |
 | [../review/](../review/) | SRAI + design specs |
@@ -66,8 +75,9 @@
 ## Authority hierarchy
 
 1. [Vision.md](../strategy/Vision.md) — timeless product purpose and principles
-2. decision-log.md — dated decisions; cannot override the vision without a deliberate revision of it
-3. execution-masterplan.md — milestones and sequencing
-4. governance/ (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW)
-5. foundation/ + execution/ (V3 + Tokyo for visuals)
-6. archive/
+2. [documentation-architecture.md](../00-constitution/documentation-architecture.md) — documentation ownership, structure, and lifecycle
+3. decision-log.md — dated decisions; cannot override the vision without a deliberate revision of it
+4. execution-masterplan.md — milestones and sequencing
+5. governance/ (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW)
+6. foundation/ + execution/ (V3 + Tokyo for visuals)
+7. archive/
