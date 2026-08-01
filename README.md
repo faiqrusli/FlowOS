@@ -1,10 +1,8 @@
 # FlowOS
 
-A personal execution system that connects planning, focused work, progress, and reflection into one continuous workflow.
+An operating system for self-direction that connects chosen direction, deliberate action, evidence, reflection, and adaptation.
 
-> Turn intention into execution.  
-> Turn execution into progress.  
-> Turn reflection into improvement.
+> Direction → Commitment → Action → Evidence → Sensemaking → Adaptation
 
 **Live app:** [flowos-sage.vercel.app](https://flowos-sage.vercel.app)
 
@@ -106,7 +104,8 @@ FlowOS aims to close the gap between **intention and execution** — built to ex
 
 | Doc | What it is |
 |-----|------------|
-| [Vision & Product Strategy](./docs/strategy/flowos-vision-and-product-strategy.md) | **Highest authority** — philosophy, positioning, long-term architecture |
+| [Vision](./docs/strategy/Vision.md) | **Highest authority** — timeless philosophy, product boundaries, and long-term direction |
+| [Previous Vision & Product Strategy](./docs/strategy/flowos-vision-and-product-strategy.md) | Historical reference |
 | [User Evolution & Market Positioning](./docs/strategy/flowos-user-evolution-and-market-positioning.md) | How FlowOS serves students through founders |
 | [Documentation hub](./docs/README.md) | Full index, authority order, start-here paths |
 | [Feature inventory](./docs/foundation/FEATURE_INVENTORY.md) | What’s shipped vs deferred |

@@ -1,12 +1,15 @@
 # Active Strategy
 
-Current strategic planning documents.
+Current strategic planning documents. Start with the canonical vision; all other strategy documents are subordinate to it.
 
 | Document | Purpose |
 |----------|---------|
-| [flowos-vision-and-product-strategy.md](./flowos-vision-and-product-strategy.md) | **Highest product authority** — hub + reading order |
-| [vision/](./vision/) | Full vision chapters (§1–55), split for readability |
-| [flowos-user-evolution-and-market-positioning.md](./flowos-user-evolution-and-market-positioning.md) | Supporting — user stages, native vs execution-layer |
-| [execution-masterplan.md](./execution-masterplan.md) | Milestones M0–M5 — execution plan under the vision |
+| [Vision.md](./Vision.md) | **Highest product authority** — timeless purpose, philosophy, boundaries, and north star |
+| [execution-masterplan.md](./execution-masterplan.md) | Milestones and evidence-based sequencing under the vision |
+| [flowos-user-evolution-and-market-positioning.md](./flowos-user-evolution-and-market-positioning.md) | Supporting strategy for user stages and entry points |
+| [flowos-vision-and-product-strategy.md](./flowos-vision-and-product-strategy.md) | Previous vision and strategy synthesis — historical reference |
+| [vision/](./vision/) | Previous vision chapters — historical reference |
 
-See also: [../execution/README.md](../execution/README.md) · [../foundation/PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) (stub)
+The canonical vision defines enduring product intent. The masterplan governs current milestones; decision logs record dated decisions; supporting strategy must remain consistent with the vision.
+
+See also: [../execution/README.md](../execution/README.md) · [../foundation/PRODUCT_VISION.md](../foundation/PRODUCT_VISION.md) (redirect)

@@ -1,12 +1,8 @@
 ﻿# FlowOS Documentation
 
-**FlowOS** is a **personal execution and continuous improvement system** — connecting planning, focused work, progress, and reflection into one continuous workflow.
+**FlowOS** is an **operating system for self-direction** — helping people turn chosen direction into deliberate action, learn from reality, and adapt with agency.
 
-> Turn intention into execution.  
-> Turn execution into progress.  
-> Turn reflection into improvement.
-
-**Core loop:** Plan → Commit → Focus → Reflect → Improve
+> Direction → Commitment → Action → Evidence → Sensemaking → Adaptation
 
 **Status:** Implementation is **on hold for review** (GitHub + production dogfood + live demo). Prefer small fixes over new milestones until the hold is lifted.
 
@@ -20,12 +16,12 @@
 
 | Document | Why |
 |----------|-----|
-| [**Vision & Product Strategy**](./strategy/flowos-vision-and-product-strategy.md) | **Highest authority** — philosophy, core loop, positioning, long-term architecture (hub + chapters) |
-| [User Evolution & Market Positioning](./strategy/flowos-user-evolution-and-market-positioning.md) | Who FlowOS serves — students through founders; native-complete vs execution layer |
+| [**Vision**](./strategy/Vision.md) | **Highest authority** — timeless purpose, philosophy, boundaries, and north star |
+| [User Evolution & Market Positioning](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting strategy — target users and entry points |
 | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | What’s shipped today vs deferred |
 | [execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 and exit gates |
 
-Vision chapters (full text): [strategy/vision/](./strategy/vision/)
+Previous vision chapters (historical reference): [strategy/vision/](./strategy/vision/)
 
 ---
 
@@ -45,8 +41,8 @@ When documents conflict, this order wins:
 
 | Priority | Source | Role |
 |----------|--------|------|
-| 1 | [strategy/flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) | **Highest** — product vision, philosophy, positioning, long-term architecture |
-| 2 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions (explicit amendments win for that change) |
+| 1 | [strategy/Vision.md](./strategy/Vision.md) | **Highest** — timeless product vision, philosophy, boundaries, and north star |
+| 2 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Dated product decisions; cannot override the vision without a deliberate revision of it |
 | 3 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Milestones M0–M5 |
 | 4 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
 | 5 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
@@ -60,7 +56,7 @@ When documents conflict, this order wins:
 
 | Directory | Contents | Status |
 |-----------|----------|--------|
-| [strategy/](./strategy/) | Vision hub, chapters, user evolution, masterplan | **Active** |
+| [strategy/](./strategy/) | Canonical vision, supporting strategy, historical chapters, masterplan | **Active** |
 | [execution/](./execution/) | Runbooks, logs, ops | **Active** (hold = no new large runbooks) |
 | [review/](./review/) | SRAI + design specs | **Active** |
 | [design/](./design/) | Living feature design specifications | **Active** |
@@ -82,8 +78,9 @@ When documents conflict, this order wins:
 
 | Document | Purpose |
 |----------|---------|
-| [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) | **Highest** — vision hub + chapter index |
-| [strategy/vision/](./strategy/vision/) | Full vision chapters (§1–55) |
+| [Vision.md](./strategy/Vision.md) | **Highest** — canonical vision and product constitution |
+| [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) | Previous vision and strategy synthesis — historical reference |
+| [strategy/vision/](./strategy/vision/) | Previous vision chapters — historical reference |
 | [flowos-user-evolution-and-market-positioning.md](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting — user stages & market posture |
 | [execution-masterplan.md](./strategy/execution-masterplan.md) | Primary plan — milestones M0–M5 |
 | [execution/README.md](./execution/README.md) | Current ops index (hold / review mode) |
@@ -113,7 +110,7 @@ When documents conflict, this order wins:
 | [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract |
 | [design/focus/next-up.md](./design/focus/next-up.md) | Living Focus Next Up design |
 | [governance/GATES.md](./foundation/governance/GATES.md) | Launch gates, WAD, D7 definitions |
-| [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | Stub → [vision hub](./strategy/flowos-vision-and-product-strategy.md) |
+| [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | Redirect → [Vision.md](./strategy/Vision.md) |
 
 Full foundation index: [foundation/README.md](./foundation/README.md)
 
@@ -126,7 +123,7 @@ Full foundation index: [foundation/README.md](./foundation/README.md)
 | [roadmap-pre-masterplan.md](./archive/design/july-3/roadmap-pre-masterplan.md) (Phase 3+) | [execution-masterplan.md](./strategy/execution-masterplan.md) |
 | [launch-plan-july-2026.md](./archive/planning/launch-plan-july-2026.md) | Same masterplan |
 | [project-state-july-2026.md](./archive/design/july-3/project-state-july-2026.md) | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) + [execution/README.md](./execution/README.md) |
-| Short [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) body | [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) |
+| Short [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) body | [Vision.md](./strategy/Vision.md) |
 | Alternate themes (v1/v2, Neutral Dark, Gruvbox, …) | [archive/design/themes/](./archive/design/themes/) · live: V3 + Tokyo |
 
 Full archive index: [archive/README.md](./archive/README.md)
@@ -142,7 +139,7 @@ Design Audit → Phase 0–2 (docs/archive/design/)
     ↓
 Foundation + governance (docs/foundation/)
     ↓
-Vision hub + chapters + masterplan (docs/strategy/)  ← highest product authority
+Vision.md + supporting strategy + masterplan (docs/strategy/)  ← highest product authority
     ↓
 Active execution (docs/execution/) ← ops / hold / logs
     ↓

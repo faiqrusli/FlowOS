@@ -8,6 +8,7 @@
 
 | Path | Role |
 |------|------|
+| [../strategy/Vision.md](../strategy/Vision.md) | **Highest product authority** — timeless purpose, philosophy, boundaries, and north star |
 | [../strategy/execution-masterplan.md](../strategy/execution-masterplan.md) | Milestones M0–M5 |
 | [../execution/](../execution/) | Runbooks, logs, ops (**hold** = no large new runbooks) |
 | [../review/](../review/) | SRAI + design specs |
@@ -64,8 +65,9 @@
 
 ## Authority hierarchy
 
-1. decision-log.md
-2. execution-masterplan.md
-3. governance/ (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW)
-4. foundation/ + execution/ (V3 + Tokyo for visuals)
-5. archive/
+1. [Vision.md](../strategy/Vision.md) — timeless product purpose and principles
+2. decision-log.md — dated decisions; cannot override the vision without a deliberate revision of it
+3. execution-masterplan.md — milestones and sequencing
+4. governance/ (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW)
+5. foundation/ + execution/ (V3 + Tokyo for visuals)
+6. archive/
