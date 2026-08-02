@@ -7,6 +7,31 @@
 
 ---
 
+## 🎯 Active Configuration: 6-Role
+
+**FlowOS is currently using the 6-role configuration for active development.**
+
+**👉 START HERE: [Active 6-Role Configuration](./active-6-role/README.md)**
+
+The 6 active roles are:
+1. **Founder** (Human) — Decision authority
+2. **Product Architect** — Product definition and strategy  
+3. **Design Architect** — Complete design ownership
+4. **Engineering Architect** — Technical architecture
+5. **Implementation Engineer** — Full-stack development
+6. **Release Manager** — Quality assurance and deployment
+
+**Use these role documents for actual work assignments.**
+
+---
+
+## Alternative Configurations
+
+- **[Streamlined Organization](./streamlined-organization.md)** — 4-role, 6-role, and 8-role options
+- **[Full 11-Role Organization](./roles/)** — Maximum specialization for mature teams
+
+---
+
 ## Purpose
 
 This is the **permanent organizational operating system** for building FlowOS.
