@@ -541,10 +541,29 @@ Don't let it drift from reality.
 
 ---
 
+## Phase-End Normalization (MANDATORY after every phase closes)
+
+When a phase ends (its gate passes), normalize the docs so the active sprint stays light and history is preserved. Do this at every phase transition.
+
+### Steps
+1. **Archive the full sprint record.** Copy the complete implementation detail + checklist from `docs/current-phase/current-sprint.md` into the phase's archive folder as `phase-<N>-sprint.md` (e.g., `docs/11-archive/phases/phase-0/phase-0-sprint.md`). Keep the checklist with it.
+2. **Rewrite `current-sprint.md` to be short.** Keep only:
+   - A brief summary of the prior (now-closed) phase — what it did, a link to its archived sprint record.
+   - The new phase's sprint structure: overview, objectives, role assignments, gate link, risks.
+   - Do NOT keep the full implementation detail — that lives in the archive.
+3. **Update gate checklist status** to reflect the sprint reality (created/active).
+4. **Reference the archived record** from both the new sprint and the phase README so history is findable.
+5. **Update phase/status everywhere** (`AGENTS.md`, `.ai/context.md`, `.ai/sprint-context.md`, tool configs, `start-here`, `docs/README.md`) — see [Phase Transition procedure].
+6. **Log it** in `august-log.md` / developer-log.
+
+**Home of the full implementation record:** the phase archive, not `current-sprint.md`.
+
+---
+
 ## Integration with Other Workflows
 
 **Used during:** All workflows (session start, code review, merge prep)
-**Related:** `.ai/workflows/merge-prep.md` (august-log update post-merge)
+**Related:** `.ai/workflows/merge-prep.md` (august-log update post-merge), Phase Transition procedure
 
 ---
 

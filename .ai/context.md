@@ -26,9 +26,9 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 
 **Phase:** Phase 1 — Establish Implementation Truth
 
-**Current Sprint:** Week of 2026-08-04 (Phase 1 sprint creation pending)
+**Current Sprint:** 2026-08-04 → 2026-08-08 (active)
 
-**Status:** Authorized — Gate 0 PASSED (2026-08-04); Phase 1 sprint to be created
+**Status:** Active — Phase 1 sprint running (2026-08-04 → 2026-08-08)
 
 **📋 Quick Reference:**
 - **[Current Sprint](../docs/current-phase/current-sprint.md)** — What phase, what tasks, what status
@@ -47,7 +47,7 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 - Run baseline quality, accessibility, security, and production checks
 - Create only the feature briefs and behavior contracts needed to describe admitted MVP behavior
 
-**Phase 1 Status:** Authorized — sprint creation pending.
+**Phase 1 Status:** Active — sprint running 2026-08-04 → 2026-08-08.
 
 ---
 
@@ -204,12 +204,12 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 - ✅ Gate 0 PASSED 2026-08-04; Phase 0 archived to `docs/11-archive/phases/phase-0/`
 
 **Gate 1 Progress:**
-- Phase 1 authorized; sprint creation pending
+- Phase 1 sprint active (2026-08-04 → 2026-08-08)
 - MVP Masterplan remains the implementation source
 - Feature Catalog is the coverage map
 - Implementation truth backlog (archived with Phase 0) is the starting question list
 
-**Gate 1 Status:** Authorized — sprint creation pending.
+**Gate 1 Status:** In progress — sprint active (2026-08-04 → 2026-08-08).
 
 ---
 

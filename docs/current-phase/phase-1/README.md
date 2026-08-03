@@ -25,7 +25,7 @@ Per the [MVP Implementation Masterplan](../mvp-implementation-masterplan.md):
 ## Phase 1 Documents
 
 - **[post-phase-0-audit.md](./post-phase-0-audit.md)** — First Phase 1 document. Post-Phase-0 documentation & workflow audit (findings scheduled into Phase 1; does not gate Phase 1).
-- **[gate-checklist.md](./gate-checklist.md)** — Gate 1 completion criteria and progress tracking (scaffold created 2026-08-04; to be filled with the Phase 1 sprint)
+- **[gate-checklist.md](./gate-checklist.md)** — Gate 1 completion criteria and progress tracking (Phase 1 sprint active 2026-08-04 → 2026-08-08)
 
 ## Phase 0 Archive
 
@@ -34,11 +34,11 @@ Phase 0 closed on 2026-08-04 with Gate 0 PASSED. Its records (gate checklist, re
 ## Starting Phase 1 Work
 
 1. Read the [post-phase-0 audit](./post-phase-0-audit.md) — Phase 1's first document.
-2. Create the Phase 1 sprint in [current-sprint.md](../current-sprint.md).
-2. Wear the 6-hat workflow: [Solo Founder Workflow](../../start-here/solo-founder-workflow.md).
-3. Use the [implementation truth backlog](../../11-archive/phases/phase-0/implementation-truth-backlog.md) as the starting question list.
-4. Track Gate 1 evidence in `gate-checklist.md`.
+2. Execute the Phase 1 sprint in [current-sprint.md](../current-sprint.md) (created 2026-08-04).
+3. Wear the 6-hat workflow: [Solo Founder Workflow](../../start-here/solo-founder-workflow.md).
+4. Use the [implementation truth backlog](../../11-archive/phases/phase-0/implementation-truth-backlog.md) as the starting question list.
+5. Track Gate 1 evidence in `gate-checklist.md`.
 
 ---
 
-**Phase 1 work authorized. Sprint creation is the next step.**
+**Phase 1 sprint is active (2026-08-04 → 2026-08-08). Gate 1 target.**

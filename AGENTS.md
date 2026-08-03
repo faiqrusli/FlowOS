@@ -36,6 +36,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `.ai/checklists/security.md` — 6-point security checklist (before every merge)
 - `.ai/checklists/quality.md` — Build, lint, test verification
 - `.ai/testing-guide.md` — How to run tests (npm test, vitest, build, lint)
+- `.ai/workflows/documentation.md` — Includes **Phase-End Normalization** (archive phase sprint + checklist; shorten current-sprint at every phase close) — read this before/after phase transitions
 
 ---
 
@@ -65,14 +66,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## 🔄 Current Status (Phase 1)
 
 **Phase:** Phase 1 — Establish Implementation Truth  
-**Sprint:** Week of 2026-08-04 (Phase 1 sprint creation pending)  
+**Sprint:** 2026-08-04 → 2026-08-08 (active)  
 **Gate 1:** Every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)  
-**Progress:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 authorized  
-**Prior phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority (closed 2026-08-04, archived to `docs/11-archive/phases/phase-0/`)
+**Progress:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 sprint active  
+**Prior phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority (closed 2026-08-04, archived to `docs/11-archive/phases/phase-0/`, full record in `phase-0-sprint.md`)
 
 **Phase 1 Status:**
 - ✅ Gate 0 passed and Phase 0 closed (2026-08-04)
-- 🟡 Phase 1 sprint creation pending (next step)
+- ✅ Phase 1 sprint created 2026-08-04 → 2026-08-08
 - 📋 Gate 1 checklist: `docs/current-phase/phase-1/gate-checklist.md`
 
 ---

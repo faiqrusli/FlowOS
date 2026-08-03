@@ -1,6 +1,6 @@
 # FlowOS Current Sprint Context (Quick Reference)
 
-**Sprint Period:** Beginning week of 2026-08-04  
+**Sprint Period:** 2026-08-04 → 2026-08-08 (active)  
 **Phase:** Phase 1 — Establish Implementation Truth  
 **Gate Target:** Gate 1 — for every admitted MVP domain, demonstrate current behavior, data path, known gaps, and owner  
 **Last Updated:** 2026-08-04
@@ -42,13 +42,11 @@
 
 ## Current Sprint Assignments (Phase 1)
 
-*To be created — the Phase 1 sprint is the next step.*
-
-Likely tracks (from the MVP Masterplan and prior Phase 0 preview):
-- Document current behavior of Today and Tasks domains
-- Reconcile design system (V3 / Tokyo Night Warm) with implementation
-- Baseline quality, accessibility, security, and production checks
-- Identify dead code, placeholder routes, dual save paths, undocumented states
+Sprint active 2026-08-04 → 2026-08-08. See [current-sprint.md](../docs/current-phase/current-sprint.md) for full role assignments. Tracks (from the MVP Masterplan and prior Phase 0 preview):
+- Document current behavior of Today and Tasks domains (Product Architect)
+- Reconcile design system (V3 / Tokyo Night Warm) with implementation (Design Architect)
+- Baseline quality, accessibility, security, and production checks (Engineering Architect + Release Manager)
+- Identify dead code, placeholder routes, dual save paths, undocumented states (Implementation Engineer)
 
 ---
 
@@ -122,7 +120,7 @@ Likely tracks (from the MVP Masterplan and prior Phase 0 preview):
 ## Quick Reference
 
 **When someone asks "What should I work on?"**
-→ Check the Phase 1 sprint assignments (being created)
+→ Check the [Phase 1 sprint assignments](../docs/current-phase/current-sprint.md)
 
 **When someone asks "Should I write contracts?"**
 → Not yet. Phase 1 is about establishing truth. Phase 2 is contracts.
