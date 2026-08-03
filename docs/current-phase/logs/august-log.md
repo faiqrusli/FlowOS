@@ -7,6 +7,22 @@
 
 ---
 
+## 2026-08-04 — Post-Phase-0 Audit Created; Docs-Hygiene Fixes
+
+**Owner:** Documentation Manager (6-hat)
+
+**Decision:** None — audit findings scheduled into Phase 1; Phase 1 not blocked.
+
+- Created `docs/current-phase/phase-1/post-phase-0-audit.md` (first Phase 1 doc; 9-section audit).
+- Added Audit Decisions (items 1–6) to `phase-1/gate-checklist.md`; gate is solved when those decisions/problems are properly resolved (Founder confirmation + decision record where required).
+- Docs-hygiene: updated tool configs to Phase 1 / Gate 1 (`.cursor/flowos-core.mdc`, `.idea/ai-rules.md`, `.aiassistant/Ai.md`, `AGENTS.md`).
+- Fixed broken links: roadmap↔masterplan cross-links, governance `../` links (13), archived-log path (7), decision-log refs, current-sprint archived refs, `.ai/context.md` root-relative links.
+- Softened unverified Zod security claim in tool configs (Zod not installed — pending Founder decision 6).
+
+**Next:** Founder decisions (audit §8) to unblock Gate-1; then Phase 1 sprint creation.
+
+---
+
 ## 2026-08-04 — Gate 0 PASSED: Phase 0 Closed, Phase 1 Authorized
 
 **Owner:** Founder
