@@ -59,3 +59,51 @@ ext-up.md spec, July logs, M2 runbooks, and recruiting ops)
 - Measurement Specifications: Joint ownership (Product Architect + Engineering Architect)
 
 **Phases / milestones touched:** Phase 0 (Freeze Ambiguity and Establish Document Authority)
+
+---
+
+## 2026-08-03 — Design Architect Phase 0 Documentation Updates
+
+**Branch:** main (commit 378f10a - landed on main due to concurrent process)
+
+**Shipped:**
+- Updated 10 Design Architect-owned documents with 6-role ownership structure
+- Added Owner: Design Architect (or joint ownership where appropriate)
+- Added Approval Required: Founder
+- Added Document Ownership sections with modification process and authority level
+- Updated Last Updated: 2026-08-03
+
+**Documents updated:**
+- Design documents: design-system-architecture.md, design-implementation-map.md, content-standards.md, accessibility-standards.md, feature-design-specifications.md
+- Experience documents: experience-architecture.md, information-structure.md, journey-contracts.md
+- Index files: README.md (both design and experience)
+
+**Special cases:**
+- Experience documents: Joint review with Product Architect
+- Accessibility standards: Joint review with Engineering Architect
+
+**Phases / milestones touched:** Phase 0 (Freeze Ambiguity and Establish Document Authority)
+
+---
+
+## 2026-08-03 — Engineering Architect Phase 0 Documentation Updates
+
+**Branch:** main (commit 01e5d70)
+
+**Shipped:**
+- Updated 10 Engineering Architect-owned documents with 6-role ownership structure
+- Added Owner: Engineering Architect (or Engineering Architect + Design Architect for joint ownership)
+- Added Approval Required: Founder
+- Added Document Ownership sections with modification process and authority level
+- Updated Last Updated: 2026-08-03
+
+**Documents updated:**
+- Engineering documents: engineering-architecture.md, engineering-standards.md, data-architecture.md, identity-and-access-architecture.md, integration-architecture.md, intelligence-and-trust-architecture.md, quality-architecture.md, operations-architecture.md
+- Client architecture: client-architecture.md (joint ownership with Design Architect)
+- Foundation: TECHNICAL_ARCHITECTURE.md
+- Index: README.md
+
+**Special cases:**
+- Client Architecture: Joint ownership (Engineering Architect + Design Architect)
+
+**Phases / milestones touched:** Phase 0 (Freeze Ambiguity and Establish Document Authority)
