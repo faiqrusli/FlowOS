@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS connected-system boundaries, exchange, synchronization, compatibility, reliability, and external effects
-**Owner:** Engineering and integration leadership
+**Owner:** Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Engineering Architecture](./engineering-architecture.md) · [Data Architecture](./data-architecture.md) · [Identity and Access Architecture](./identity-and-access-architecture.md) · [Continuity and Interoperability System](../02-systems/continuity-and-interoperability.md) · [Action and Evidence System](../02-systems/action-and-evidence.md)
 **Children:** Provider integration specifications, connector contracts, source-mapping specifications, synchronization designs, external-action specifications, compatibility policies, integration operation runbooks, and integration reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters a connected-system boundary, source identity, exchange direction, synchronization model, source mapping, delegated credential, compatibility rule, failure or recovery behavior, external effect, or integration observability requirement.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect
+**Responsibility:** Maintain the integration architecture, propose connected-system boundaries and source-mapping rules that preserve source ownership and bounded authority
+
+### Modification Process
+1. Engineering Architect proposes changes (based on delivery design needs or integration evidence)
+2. Submit to Founder for approval
+3. Founder reviews for alignment with data and identity and access architectures
+4. If approved: Engineering Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Engineering Architect can: propose and maintain integration architecture, define connected-system boundaries and exchange rules
+- Requires approval for: any change to source identity, synchronization model, or external action boundaries
 
 ---
 

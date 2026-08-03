@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical architecture for technical controls that deliver computational assistance, inference, recommendations, automation, explanation, correction, evaluation, and withdrawal within FlowOS trust boundaries
-**Owner:** Engineering, product, and trust leadership
+**Owner:** Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Engineering Architecture](./engineering-architecture.md) · [Data Architecture](./data-architecture.md) · [Identity and Access Architecture](./identity-and-access-architecture.md) · [Integration Architecture](./integration-architecture.md) · [Intelligence and Trust System](../02-systems/intelligence-and-trust.md)
 **Children:** Assistance capability specifications, model and tool boundary specifications, evaluation plans, automation-control specifications, explanation and provenance specifications, correction and withdrawal procedures, AI safety reviews, and intelligence-operation runbooks
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters technical input scope, assistance typing, inference or recommendation delivery, automation control, explanation or provenance, correction or withdrawal, evaluation, data use, safety boundary, or operational monitoring for computational assistance.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect
+**Responsibility:** Maintain the intelligence and trust architecture, propose technical controls that deliver computational assistance within trust boundaries and preserve product authority
+
+### Modification Process
+1. Engineering Architect proposes changes (based on delivery design needs or trust evidence)
+2. Submit to Founder for approval
+3. Founder reviews for alignment with the Intelligence and Trust System and product model
+4. If approved: Engineering Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Engineering Architect can: propose and maintain intelligence and trust architecture, define assistance and automation boundaries
+- Requires approval for: any change to trust boundaries, automation control, or explanation and provenance rules
 
 ---
 

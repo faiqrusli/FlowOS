@@ -2,10 +2,11 @@
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS deployment, configuration, observability, incident response, support, backup, recovery, and operational access boundaries
-**Owner:** Engineering and operations leadership
+**Owner:** Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Engineering Architecture](./engineering-architecture.md) · [Data Architecture](./data-architecture.md) · [Identity and Access Architecture](./identity-and-access-architecture.md) · [Integration Architecture](./integration-architecture.md) · [Intelligence and Trust Architecture](./intelligence-and-trust-architecture.md) · [Quality Architecture](./quality-architecture.md)
 **Children:** Environment standards, deployment and configuration specifications, observability standards, incident-response procedures, backup and recovery plans, support-access procedures, operational runbooks, continuity exercises, release-readiness records, and operations reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters deployment or configuration control, operational access, observability, incident handling, backup, recovery, continuity, support, external dependency operation, or the relationship between operational state and product truth.
 
 ---

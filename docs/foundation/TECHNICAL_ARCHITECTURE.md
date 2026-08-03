@@ -1,8 +1,31 @@
 ﻿# Technical Architecture
 
-**Status:** Living document  
-**Audience:** Engineers  
-**Last updated:** July 4, 2026 (Pass 5 — M1 auth gap resolved)
+**Status:** Living document
+**Audience:** Engineers
+**Owner:** Engineering Architect
+**Approval Required:** Founder
+**Last Updated:** 2026-08-03
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect
+**Responsibility:** Maintain technical architecture documentation, ensure engineering alignment with product semantics, and coordinate with Engineering Architect on system boundaries
+
+### Modification Process
+1. Engineering Architect proposes technical architecture changes (based on system evolution or technical debt)
+2. Review with relevant system owners for impact assessment
+3. Submit to Founder for approval
+4. Founder reviews for Vision and product alignment
+5. If approved: Engineering Architect updates document
+6. Document change in decision record if consequential
+7. Update Last Updated date
+
+### Authority Level
+- Engineering Architect can: Propose technical architecture updates, maintain engineering alignment, coordinate with system owners
+- Requires approval for: Changes to technical boundaries, data models, or deployment requirements
 
 ---
 

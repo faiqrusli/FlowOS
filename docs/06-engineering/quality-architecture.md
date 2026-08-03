@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS quality domains, assurance boundaries, evidence traceability, verification design, defect handling, and release-readiness inputs
-**Owner:** Engineering, product, design, and quality leadership
+**Owner:** Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Engineering Architecture](./engineering-architecture.md) · [Data Architecture](./data-architecture.md) · [Identity and Access Architecture](./identity-and-access-architecture.md) · [Integration Architecture](./integration-architecture.md) · [Intelligence and Trust Architecture](./intelligence-and-trust-architecture.md) · [Behavior Contracts](../04-features/behavior-contracts.md) · [Validation Plans](../04-features/validation-plans.md)
 **Children:** Quality plans, test-strategy specifications, accessibility assessment standards, reliability and performance specifications, security and privacy verification standards, test-data standards, release-readiness records, defect records, regression suites, quality-operation runbooks, and quality reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters quality-domain ownership, assurance evidence, verification boundary, test-data policy, defect or regression handling, release-readiness input, or the relationship between quality evidence and product decisions.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect
+**Responsibility:** Maintain the quality architecture, propose quality domains and verification boundaries that enable independent assurance of contracted behavior
+
+### Modification Process
+1. Engineering Architect proposes changes (in coordination with the Release Manager / QA)
+2. Submit to Founder for approval
+3. Founder reviews for alignment with engineering architecture and behavior contracts
+4. If approved: Engineering Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Engineering Architect can: propose and maintain quality architecture, define quality domains and verification strategy
+- Requires approval for: any change to quality-domain ownership, assurance evidence, or release-readiness input
 
 ---
 

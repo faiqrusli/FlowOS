@@ -2,11 +2,35 @@
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS client rendering, navigation, interaction state, data presentation, accessibility support, resilience, and performance boundaries
-**Owner:** Engineering and design leadership
+**Owner:** Engineering Architect + Design Architect
+**Approval Required:** Founder
 **Parent:** [Engineering Architecture](./engineering-architecture.md) · [Data Architecture](./data-architecture.md) · [Identity and Access Architecture](./identity-and-access-architecture.md) · [Quality Architecture](./quality-architecture.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Information Structure](../03-experience/information-structure.md) · [Design System Architecture](../05-design/design-system-architecture.md)
 **Children:** Client state specifications, navigation and routing specifications, data-loading contracts, interaction implementation standards, accessibility implementation standards, performance budgets, client error and recovery standards, feature delivery designs, and client reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters client ownership, navigation, rendering, local or remote state, authority enforcement, data freshness, optimistic behavior, error recovery, accessibility support, performance, or the relationship between implemented UI and product truth.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect + Design Architect
+**Responsibility:** Engineering Architect maintains technical implementation; Design Architect maintains UX/UI alignment
+
+### Modification Process
+1. Engineering Architect proposes technical changes (rendering, navigation, state, performance)
+2. Design Architect proposes UX/UI changes (interaction, accessibility, visual implementation)
+3. Both architects review cross-functional implications
+4. Submit to Founder for approval
+5. Founder reviews for Vision and product alignment
+6. If approved: Both architects update document
+7. Document change in decision record if consequential
+8. Update Last Updated date
+
+### Authority Level
+- Engineering Architect can: Propose technical implementation changes, maintain client engineering standards
+- Design Architect can: Propose UX/UI changes, maintain design system alignment
+- Requires approval for: Changes to client boundaries, performance budgets, or accessibility standards
 
 ---
 

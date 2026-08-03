@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS durable information representation, lifecycle, lineage, integrity, access, portability, and data-quality controls
-**Owner:** Engineering and data leadership
+**Owner:** Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Engineering Architecture](./engineering-architecture.md) · [Product Model](../01-product/product-model.md) · [Action and Evidence System](../02-systems/action-and-evidence.md) · [Continuity and Interoperability System](../02-systems/continuity-and-interoperability.md) · [Intelligence and Trust System](../02-systems/intelligence-and-trust.md)
 **Children:** Data-model specifications, schema contracts, migration designs, retention and deletion policies, data-quality rules, data-access specifications, portability formats, data-operation runbooks, and data reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters durable data ownership, representation, lifecycle, lineage, mutation, derivation, access, retention, deletion, portability, integrity, or data-quality behavior.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect
+**Responsibility:** Maintain the data architecture, propose data model changes and schema boundaries that preserve product semantics and authority
+
+### Modification Process
+1. Engineering Architect proposes data architecture changes (based on delivery design needs or data evidence)
+2. Submit to Founder for approval
+3. Founder reviews for alignment with product model and system documents
+4. If approved: Engineering Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Engineering Architect can: propose and maintain data architecture, define data boundaries and lifecycle
+- Requires approval for: any change to durable data ownership, representation, or lifecycle
 
 ---
 

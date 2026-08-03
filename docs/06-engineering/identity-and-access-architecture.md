@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS identity, authentication, authorization, delegation, session, revocation, and audit boundaries
-**Owner:** Engineering and security leadership
+**Owner:** Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Engineering Architecture](./engineering-architecture.md) · [Data Architecture](./data-architecture.md) · [Product Model](../01-product/product-model.md) · [Continuity and Interoperability System](../02-systems/continuity-and-interoperability.md) · [Intelligence and Trust System](../02-systems/intelligence-and-trust.md)
 **Children:** Authentication specifications, authorization policies, access-control specifications, delegation and source-credential specifications, session-management standards, audit-access standards, account-recovery procedures, security reviews, and access-operation runbooks
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters identity proof, product authorization, delegated authority, source access, session behavior, revocation, operational access, auditability, or account-recovery behavior.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect
+**Responsibility:** Maintain the identity and access architecture, propose authentication and authorization boundaries that preserve person authority and narrowest scope
+
+### Modification Process
+1. Engineering Architect proposes changes (based on delivery design needs or security evidence)
+2. Submit to Founder for approval
+3. Founder reviews for alignment with data architecture and system documents
+4. If approved: Engineering Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Engineering Architect can: propose and maintain identity and access architecture, define auth/authz boundaries
+- Requires approval for: any change to identity proof, authorization model, or delegated authority
 
 ---
 

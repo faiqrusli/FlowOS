@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical architecture for how FlowOS technical systems preserve product semantics, authority, trust, reliability, and operational understanding
-**Owner:** Engineering leadership
+**Owner:** Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Product Model](../01-product/product-model.md) · [System Documents](../02-systems/) · [Behavior Contracts](../04-features/behavior-contracts.md) · [Delivery Designs](../04-features/delivery-designs.md)
 **Children:** Data architecture, client architecture, integration architecture, identity and access architecture, intelligence and trust architecture, quality architecture, operations architecture, delivery designs, implementation plans, runbooks, and engineering reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters the enduring technical boundary, ownership model, data lifecycle, authority enforcement, integration model, reliability requirement, operational model, or relationship between technical architecture and product behavior.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect
+**Responsibility:** Maintain the engineering architecture, propose changes that preserve product semantics and authority across technical systems
+
+### Modification Process
+1. Engineering Architect proposes changes (based on engineering evidence or delivery design needs)
+2. Submit to Founder for approval
+3. Founder reviews for alignment with Vision, product model, and system documents
+4. If approved: Engineering Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Engineering Architect can: propose and maintain engineering architecture, define technical boundaries and patterns, set quality and operations architecture
+- Requires approval for: any change to enduring technical boundaries, ownership model, or relationship between architecture and product behavior
 
 ---
 

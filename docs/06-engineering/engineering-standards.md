@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical standard for how FlowOS engineering work changes product software, data, infrastructure, dependencies, and technical documentation safely and accountably
-**Owner:** Engineering leadership
+**Owner:** Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Engineering Architecture](./engineering-architecture.md) · [Data Architecture](./data-architecture.md) · [Identity and Access Architecture](./identity-and-access-architecture.md) · [Quality Architecture](./quality-architecture.md) · [Operations Architecture](./operations-architecture.md)
 **Children:** Engineering change proposals, implementation plans, code and schema changes, dependency assessments, technical reviews, migrations, runbooks, and engineering decision records
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed document changes the durable engineering practices for implementing, reviewing, verifying, documenting, releasing, recovering, or retiring product software and technical dependencies.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect
+**Responsibility:** Maintain engineering standards, define SDLC processes and code quality expectations, establish testing standards
+
+### Modification Process
+1. Engineering Architect proposes changes (based on engineering evidence or delivery design needs)
+2. Submit to Founder for approval
+3. Founder reviews for alignment with engineering architecture and product integrity
+4. If approved: Engineering Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Engineering Architect can: maintain engineering standards within approved architecture, define SDLC and quality expectations
+- Requires approval for: material changes to engineering practices or standards
 
 ---
 
