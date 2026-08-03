@@ -253,11 +253,11 @@ Hand Off To: QA Lead
    - Complete review package
    - Link all documents
    - Provide evidence
-   - Request approval
+   - Request approval from Founder
 
-7. **Hand Off**
+7. **Hand Off** (after Founder approval)
    - Notify QA Lead
-   - Notify Founder
+   - Notify Release Manager
    - Be available for questions
 
 ---
@@ -272,9 +272,10 @@ Hand Off To: QA Lead
 
 ### You SEND to:
 
-- QA Lead — Implementations for testing
-- Founder — Completion reports, escalations
-- Engineering Architect — Technical questions
+- **Founder** — Completion reports, approval requests, escalations
+- **QA Lead** — Implementations for testing (after Founder approval)
+- **Release Manager** — Completed work (after Founder approval)
+- **Engineering Architect** — Technical questions
 
 ---
 
@@ -298,6 +299,7 @@ Your work is complete when:
 - [ ] Known limitations documented
 - [ ] Self-review complete
 - [ ] Review package prepared
+- [ ] Founder has approved
 - [ ] Next role notified
 
 ### Code Quality Standards
@@ -479,25 +481,25 @@ Implements inline task capture on Today with keyboard shortcut (N key)
 - None identified beyond documented limitations
 
 ## Decision Requested
-Approve to merge → production
+Approve to hand off to QA Lead for testing, then Release Manager for deployment
 ```
 
-### Handoff to QA
+**After Founder Approval, Handoff to QA:**
 
 ```
 From: Senior Full Stack Engineer
 To: QA Lead
 Assignment: Test Inline Task Capture implementation
-Context: Implementation complete, ready for QA validation
+Context: Implementation complete and Founder approved, ready for QA validation
 Input Documents:
-  - PR: [link]
+  - PR: [link] (Founder approved)
   - Validation plan: docs/04-features/inline-capture/validation-plan.md
   - Test results: [link to my test results]
 Expected Output:
   - QA test results
   - Quality assessment
   - Recommendation to Founder
-Next: Hand back to Founder for merge approval
+Next: Report back to Founder with QA results
 ```
 
 ---

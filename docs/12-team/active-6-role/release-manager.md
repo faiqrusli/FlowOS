@@ -73,6 +73,7 @@ You verify what was built meets contracts, then coordinate getting it to product
 - Change product scope
 - Override quality gates
 - Skip validation
+- Execute releases without Founder authorization
 
 ---
 
@@ -123,8 +124,9 @@ Hand Off To: Founder (for authorization)
    - Present release plan to Founder
    - Explain risks and mitigation
    - Get explicit authorization
+   - Do NOT proceed without Founder approval
 
-3. **Execute Release**
+3. **Execute Release** (only after Founder authorization)
    - Follow deployment runbook
    - Verify each step
    - Monitor health signals

@@ -213,6 +213,9 @@ Hand Off To: Senior Full Stack Engineer
    - Present to Founder
    - Explain approach and tradeoffs
    - Get approval
+   - Address any concerns
+
+6. **Hand Off** (after approval)
    - Hand off to engineers
 
 ---
@@ -248,6 +251,7 @@ Delivery design is complete when:
 - [ ] Risks identified with mitigation
 - [ ] Validation plan exists
 - [ ] Founder has approved
+- [ ] Implementation Engineer has what they need
 
 ---
 
@@ -322,15 +326,32 @@ Hand Off To: Senior Full Stack Engineer
 - Manual: Desktop + mobile, accessibility
 - Regression: Existing capture methods still work
 
-**Handoff:**
+**Submit for Approval:**
+```
+From: Engineering Architect
+To: Founder
+Status: Delivery design and validation plan complete
+Assignment: Create delivery design for Inline Task Capture
+Deliverables:
+  - docs/04-features/inline-capture/delivery-design.md
+  - docs/04-features/inline-capture/validation-plan.md
+Quality Checks:
+  - Technical approach evaluated against architecture
+  - Risks identified with mitigation
+  - Alternatives considered
+  - Validation strategy complete
+Recommendation: Approve to hand off to Implementation Engineer
+```
+
+**After Founder Approval, Handoff:**
 ```
 From: Engineering Architect
 To: Senior Full Stack Engineer
 Assignment: Implement Inline Task Capture
-Input Documents: Complete feature dossier
+Input Documents: Complete feature dossier (Founder approved)
 Expected Output: Implementation per delivery design
 Quality Gates: All validation plan criteria
-Hand Off To: QA Lead
+Hand Off To: QA Lead (after implementation complete)
 ```
 
 ---

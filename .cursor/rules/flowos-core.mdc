@@ -5,34 +5,54 @@ alwaysApply: true
 
 # FlowOS core context
 
-**Product:** Personal daily productivity OS (tasks, habits, focus, schedule, reflection, notes).  
-**Production:** https://flowos-sage.vercel.app  
-**Stack:** Next.js App Router, React, TypeScript, Tailwind, Supabase. Repo root = app root.
+**🎯 CRITICAL: Before ANY work, read these in order:**
 
-**Current milestone:** M2 Founder Daily Driver (see `docs/execution/README.md`).
+1. **`.ai/context.md`** — Universal AI context (product, tech stack, 6-role team, Phase 0)
+2. **`docs/07-strategy-and-delivery/current-sprint.md`** — Current sprint assignments
+3. **Your role document** (if assigned): `docs/12-team/active-6-role/[role-name].md`
+
+**Then use:**
+- **`.ai/workflows/role-assignment.md`** — How to execute when assigned a role
+- **`.ai/checklists/security.md`** — Security checklist (run before every merge)
+- **`.ai/checklists/quality.md`** — Quality checklist (build, lint, test)
+- **`.ai/testing-guide.md`** — How to test (npm test, vitest, build, lint)
+
+---
+
+**Quick Reference (if you already read .ai/context.md):**
+
+**Product:** Operating system for self-direction (Direction → Action → Evidence → Adaptation)  
+**Production:** https://flowos-sage.vercel.app  
+**Stack:** Next.js App Router, React, TypeScript, Tailwind, Supabase
+
+**Current Phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority  
+**Current Sprint:** Week of 2026-08-02 (updated 2026-08-03)  
+**Gate 0 Target:** Every MVP work item traces to feature domain, parent system, and masterplan phase
+
+**Team:** 6-role configuration (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager)
 
 ## Doc authority (conflicts — higher wins)
 
-1. `docs/strategy/flowos-vision-and-product-strategy.md` — product vision, philosophy, positioning (highest)
-2. `docs/execution/logs/decision-log.md` — dated decisions (explicit amendments win for that change)
-3. `docs/strategy/execution-masterplan.md`
-4. `docs/foundation/governance/` (PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW)
-5. `docs/foundation/` + `docs/execution/`
-6. `docs/archive/` — history only; never for current planning
+1. `docs/strategy/Vision.md` — product vision, philosophy (highest)
+2. `docs/00-constitution/documentation-architecture.md` — documentation governance
+3. `docs/01-product/` through `docs/12-team/` — canonical numbered structure
+4. `docs/07-strategy-and-delivery/mvp-implementation-masterplan.md` — current implementation source
+5. `docs/07-strategy-and-delivery/current-sprint.md` — **current Phase 0 sprint assignments**
+6. `docs/foundation/governance/` (PRINCIPLES, GATES, CODE_STANDARDS, GIT_WORKFLOW)
+7. `.ai/context.md` — universal AI reference
 
 ## Do not use for current work
 
-- `docs/archive/design/` except `july-3/` for history
-- Superseded roadmaps / launch plans — use execution masterplan
+- `docs/strategy/execution-masterplan.md` — historical milestone context (use MVP Masterplan)
+- `docs/archive/` — history only; never for current planning
 
-## Working norms
+## Working norms (Phase 0)
 
-- **Runbook session:** read `docs/execution/runbooks/m2-founder-daily-driver.md`; new branch per session; see `git-workflow.mdc`
-- **UI/UX idea:** `docs/execution/logs/inbox.md` first
-- **Product decision:** append `decision-log.md`
-- **Daily journal:** `docs/execution/logs/developer-log/YYYY-MM-DD.md` (timeline/WIP; see `developer-log.mdc`)
-- **After merge to main:** `docs/execution/logs/july-log.md`
-- **Scope:** M2 closed scope only — no command palette, new modules, monolith refactors unless runbook says so
+- **Role-based:** You are assigned ONE role — read `docs/12-team/active-6-role/[role-name].md`
+- **Sprint-driven:** Check `docs/07-strategy-and-delivery/current-sprint.md` for Phase 0 assignments
+- **Phase 0 focus:** Update docs with 6-role ownership, mark legacy docs, create implementation backlog
+- **Approval gates:** Work requires Founder approval before proceeding
+- **Never:** Merge to main without Founder authorization
 
 ## Code truth
 

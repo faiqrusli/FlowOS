@@ -192,10 +192,14 @@ Hand Off To: Design Architect
    - Update feature catalog
    - Note dependencies
 
-6. **Hand Off**
+6. **Submit for Approval**
    - Package: Brief + Contract + Context
+   - Submit to: Founder for approval
+   - Wait for: Explicit approval or change requests
+
+7. **Hand Off** (after approval)
+   - Package: Approved Brief + Contract + Context
    - Next: Design Architect
-   - Notify: Founder (for awareness/approval)
 
 ---
 
@@ -342,21 +346,38 @@ Hand Off To: Design Architect
 
 **Updated:** feature-catalog.md (added inline-capture: Admitted to MVP Phase 2)
 
-**Handoff:**
+**Submit for Approval:**
+```
+From: Product Architect
+To: Founder
+Status: Complete
+Assignment: Define Inline Task Capture feature
+Deliverables:
+  - docs/04-features/inline-capture/feature-brief.md
+  - docs/04-features/inline-capture/behavior-contract.md
+  - Updated feature-catalog.md
+Quality Checks:
+  - Product model consistency verified
+  - Canonical terminology used
+  - Strategic alignment confirmed
+Decision Requested: Approve to hand off to Design Architect
+```
+
+**After Founder Approval, Handoff:**
 ```
 From: Product Architect
 To: Design Architect
 Assignment: Design Inline Task Capture UI/UX
 Input Documents:
-  - docs/04-features/inline-capture/feature-brief.md
-  - docs/04-features/inline-capture/behavior-contract.md
+  - docs/04-features/inline-capture/feature-brief.md (Founder approved)
+  - docs/04-features/inline-capture/behavior-contract.md (Founder approved)
   - docs/05-design/design-system-architecture.md
 Expected Output:
   - Complete design specification
   - All states designed (inactive, active, saving, error)
   - Responsive behavior (desktop + mobile)
   - Interaction patterns
-Hand Off To: Engineering Architect
+Hand Off To: Engineering Architect (after Founder approval)
 ```
 
 ---
