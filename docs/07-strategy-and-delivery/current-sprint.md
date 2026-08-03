@@ -20,9 +20,9 @@
 - ✅ Adopt Feature Catalog as current feature coverage map
 - ✅ Adopt Design Implementation Map as current design reconciliation
 - ✅ Start Documentation Refinement Plan
-- ⏳ Mark legacy execution-masterplan.md as historical/transitional
+- ✅ Clean up legacy directories and archive superseded specs, logs, and runbooks to `docs/archive/`
 - ⏳ Create clean list of unresolved implementation truth
-- ⏳ Ensure all AI skills reference new structure (6-role team, MVP Masterplan, sprint workflow)
+- ✅ Deploy active August operations setup and AI developer logging rules (Cursor/WebStorm)
 - ⏳ Update team documentation with 6-role ownership
 
 **Gate 0 Target:** Every proposed MVP work item points to a feature domain, parent system, design/engineering contract, and this masterplan phase. Work that cannot do so pauses.
@@ -34,7 +34,7 @@
 ### Primary Goals (Phase 0 Completion)
 1. ✅ Complete AI Skills System v2.0 (6-role team, sprint workflow, testing guide)
 2. ⏳ Update all core documentation with 6-role ownership
-3. ⏳ Mark legacy documents as historical
+3. ✅ Clean up and archive legacy documents and specs
 4. ⏳ Create implementation truth backlog (not speculative features)
 5. ⏳ Verify all proposed work traces to masterplan phase
 
@@ -43,7 +43,9 @@
 - [⏳] Core product docs updated with 6-role ownership (Batch 1)
 - [⏳] Core design docs updated with 6-role ownership (Batch 1)
 - [⏳] Core engineering docs updated with 6-role ownership (Batch 1)
-- [⏳] Legacy execution-masterplan.md marked historical
+- [✅] Legacy execution-masterplan.md verified with historical warning banner
+- [✅] Legacy folders and runbooks cleaned up and moved to `docs/archive/`
+- [✅] Fresh August 2026 operations setup established with real-time AI logging rules
 - [⏳] Implementation truth backlog created
 - [⏳] Gate 0 readiness assessment complete
 

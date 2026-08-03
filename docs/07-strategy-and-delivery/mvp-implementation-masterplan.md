@@ -80,7 +80,9 @@ MVP admission is a product decision, not an engineering convenience. If evidence
 - [Feature Catalog](../04-features/feature-catalog.md) adopted as the current feature coverage map;
 - [Design Implementation Map](../05-design/design-implementation-map.md) adopted as the current design reconciliation;
 - [Documentation Refinement Plan](./documentation-refinement-plan.md) started;
+- legacy folders and files (including old specs, M2 runbooks, recruiting ops, and legacy logs) archived to `docs/archive/` and removed from active directories;
 - legacy `docs/strategy/execution-masterplan.md` marked historical/transitional and not used to start work;
+- fresh August 2026 operations setup established with active developer logging rules;
 - a clean list of unresolved implementation truth, not a new speculative backlog.
 
 **Gate 0 — Authority aligned:** Every proposed MVP work item points to a feature domain, parent system, design/engineering contract, and this masterplan phase. Work that cannot do so pauses.

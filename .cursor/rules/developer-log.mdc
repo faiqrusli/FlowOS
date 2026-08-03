@@ -14,20 +14,20 @@ Personal daily journal (timeline + WIP). **Not** product authority.
 
 | Need | Doc |
 |------|-----|
-| Product why | `decision-log.md` |
-| Shipped on main | `july-log.md` |
-| Dogfood pain | `friction-log.md` |
-| Day timeline / lessons | **developer-log** |
+| Product why | `docs/08-decisions/decision-records.md` |
+| Shipped on main | `docs/execution/logs/august-log.md` (or current active month log) |
+| Day timeline / lessons / active changes | **developer-log** |
 
 ## Agent behavior
 
-1. **End of a meaningful coding session** (or when founder asks): create or append today’s `YYYY-MM-DD.md` (timezone = founder local; use user_info date when present).
-2. **Append Timeline** beats only for meaningful work (not every file save). Optional: summarize recent `git log` for that day.
-3. **Overview** — Done / Still open / Blockers. Skip empty sections.
-4. **Decisions** — one line + link to decision-log if product-level; do not duplicate full decision entries.
-5. **Next** — one first action for tomorrow / next session.
-6. **Do not** invent commits or claim merge to `main`. Do not replace july-log or decision-log.
-7. New day → new file from README template. Update the README index table when adding a day.
+1. **Mandatory Documentation/Code Logging:** Whenever you create, update, or delete any file under `docs/` or make any code change, you MUST immediately append a timestamped timeline beat to today's developer log (`docs/execution/logs/developer-log/YYYY-MM-DD.md`) with the exact local time and details of the modification.
+2. **End of a meaningful coding session** (or when founder asks): create or append today's `YYYY-MM-DD.md` (timezone = founder local; use user_info date when present).
+3. **Append Timeline** beats for all meaningful work and changes with the exact current time.
+4. **Overview** — Done / Still open / Blockers. Skip empty sections.
+5. **Decisions** — one line + link to `decision-records.md` if product-level; do not duplicate full decision entries.
+6. **Next** — one first action for tomorrow / next session.
+7. **Do not** invent commits or claim merge to `main`. Do not replace monthly-log or decision-records.
+8. New day → new file from README template. Update the README index table when adding a day.
 
 ## Template (slim)
 
@@ -43,7 +43,7 @@ Personal daily journal (timeline + WIP). **Not** product authority.
 HH:MM — …
 
 ## Decisions
-- … → [decision-log](../decision-log.md)
+- … → [decision-records](../../../08-decisions/decision-records.md)
 
 ## Next
 - …

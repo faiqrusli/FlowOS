@@ -1,4 +1,9 @@
-﻿# FlowOS Archive
+﻿> ### ⚠️ HISTORICAL CONTEXT — DO NOT USE FOR CURRENT IMPLEMENTATION
+> This document is part of our legacy Milestone 2 execution history and contains outdated product assumptions. 
+> For our current authoritative MVP implementation roadmap and active sprint gates, please refer to:
+> **[MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md)**
+
+# FlowOS Archive
 
 Frozen historical documentation. **Do not use for current planning** — see [../README.md](../README.md) for active docs.
 
@@ -17,6 +22,10 @@ Pass 3 reorganization — July 4, 2026 · Hold cleanup themes/runbooks — July 
 | [planning/](./planning/) | Superseded launch timeline | July 2026 |
 | [documentation/](./documentation/) | Superseded documentation-planning history | August 2026 |
 | [foundation/](./foundation/) | Merged foundation drafts (IA, personas, CEO review, …) | July 2026 |
+| [design/focus/](./design/focus/) | Superseded Focus Next Up design specification | July 2026 |
+| [execution/logs/](./execution/logs/) | Archived July 2026 execution logs (july-log, decision-log, friction-log, developer-log) | July 2026 |
+| [execution/runbooks/](./execution/runbooks/) | Archived Milestone 2 (M2) execution runbooks | July 2026 |
+| [execution/ops/](./execution/ops/) | Archived recruiting pipeline ops reference | July 2026 |
 
 ---
 
@@ -30,6 +39,8 @@ Pass 3 reorganization — July 4, 2026 · Hold cleanup themes/runbooks — July 
 | [documentation-planning-2026-08-01.md](./documentation/documentation-planning-2026-08-01.md) | Superseded by [Documentation Architecture](../00-constitution/documentation-architecture.md) and current folder indexes |
 | [ux-friction-review.md](./design/july-3/ux-friction-review.md) | Simulated July 3 audit — live evidence in [friction-log.md](../execution/logs/friction-log.md) |
 | [design/themes/](./design/themes/) | Not live paint — live: [DESIGN_SYSTEM_V3.md](../foundation/DESIGN_SYSTEM_V3.md) + Tokyo |
+| [next-up.md](./design/focus/next-up.md) | Superseded Focus Next Up design specification |
+| [july-log.md](./execution/logs/july-log.md) | Legacy July 2026 developer narrative log |
 
 **Review index for design phases:** [../review/design/README.md](../review/design/README.md)
 

@@ -149,9 +149,8 @@ When documents conflict, use the subject-authority and conflict-resolution rules
 | [09-evidence/](./09-evidence/) | Research and measurement evidence standards, records, and synthesis | **Active** |
 | [10-reviews/](./10-reviews/) | Evidence-linked reviews, dispositions, and successor history | **Active** |
 | [strategy/](./strategy/) | Canonical vision, supporting strategy, historical chapters, masterplan | **Active** |
-| [execution/](./execution/) | Runbooks, logs, ops | **Active** (hold = no new large runbooks) |
+| [execution/](./execution/) | Fresh August 2026 operational and developer logs | **Active** |
 | [review/](./review/) | Historical SRAI materials and transitional review artifacts | **Transitional** |
-| [design/](./design/) | Transitional legacy feature design specifications; migrate on material revision | **Transitional** |
 | [foundation/](./foundation/) | Current implementation references for features, architecture, and design | **Reference** |
 | [foundation/governance/](./foundation/governance/) | PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW | **Reference** |
 | [archive/](./archive/) | Thesis, design history, superseded plans/themes | **Archive** |
@@ -178,13 +177,9 @@ When documents conflict, use the subject-authority and conflict-resolution rules
 | [mvp-implementation-masterplan.md](./07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation sequence |
 | [documentation-refinement-plan.md](./07-strategy-and-delivery/documentation-refinement-plan.md) | Feature/design/documentation cleanup plan |
 | [execution-masterplan.md](./strategy/execution-masterplan.md) | Transitional historical milestone context |
-| [execution/README.md](./execution/README.md) | Current ops index (hold / review mode) |
-| [flowos-live-demo.md](./execution/runbooks/flowos-live-demo.md) | Guest live demo runbook |
-| [friction-log.md](./execution/logs/friction-log.md) | Live founder dogfood log |
-| [inbox.md](./execution/logs/inbox.md) | Scratch UI/UX fix ideas |
-| [july-log.md](./execution/logs/july-log.md) | July session narrative |
-| [decision-log.md](./execution/logs/decision-log.md) | Product decisions (append-only) |
-| [recruiting-pipeline.md](./execution/ops/recruiting-pipeline.md) | M3 recruiting prep |
+| [execution/README.md](./execution/README.md) | Current ops index |
+| [august-log.md](./execution/logs/august-log.md) | Fresh August 2026 narrative log |
+| [developer-log/](./execution/logs/developer-log/) | Active daily developer journals (August) |
 
 ### Legacy review materials
 
@@ -203,7 +198,6 @@ When documents conflict, use the subject-authority and conflict-resolution rules
 | [TECHNICAL_ARCHITECTURE.md](./foundation/TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt |
 | [DESIGN_SYSTEM_V3.md](./foundation/DESIGN_SYSTEM_V3.md) | Visual philosophy + Surface 0–10 |
 | [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract |
-| [design/focus/next-up.md](./design/focus/next-up.md) | Living Focus Next Up design |
 | [governance/GATES.md](./foundation/governance/GATES.md) | Launch gates, WAD, D7 definitions |
 | [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | Redirect → [Vision.md](./strategy/Vision.md) |
 
