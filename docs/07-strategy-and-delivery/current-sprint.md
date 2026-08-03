@@ -4,7 +4,7 @@
 **Current Phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority  
 **Status:** Active  
 **Owner:** Founder  
-**Last Updated:** 2026-08-03 (Product Architect + Design Architect + Engineering Architect complete)  
+**Last Updated:** 2026-08-03 (metrics refreshed — architects complete)  
 
 ---
 
@@ -21,7 +21,7 @@
 - ✅ Adopt Design Implementation Map as current design reconciliation
 - ✅ Start Documentation Refinement Plan
 - ✅ Clean up legacy directories and archive superseded specs, logs, and runbooks to `docs/archive/`
-- ⏳ Create clean list of unresolved implementation truth
+- ✅ Create clean list of unresolved implementation truth
 - ✅ Deploy active August operations setup and AI developer logging rules (Cursor/WebStorm)
 - ✅ Update team documentation with 6-role ownership
 
@@ -35,7 +35,7 @@
 1. ✅ Complete AI Skills System v2.0 (6-role team, sprint workflow, testing guide)
 2. ⏳ Update all core documentation with 6-role ownership
 3. ✅ Clean up and archive legacy documents and specs
-4. ⏳ Create implementation truth backlog (not speculative features)
+4. ✅ Create implementation truth backlog (not speculative features)
 5. ⏳ Verify all proposed work traces to masterplan phase
 
 ### Success Criteria
@@ -46,7 +46,7 @@
 - [✅] Legacy execution-masterplan.md verified with historical warning banner
 - [✅] Legacy folders and runbooks cleaned up and moved to `docs/archive/`
 - [✅] Fresh August 2026 operations setup established with real-time AI logging rules
-- [⏳] Implementation truth backlog created
+- [✅] Implementation truth backlog created
 - [⏳] Gate 0 readiness assessment complete
 
 ---
@@ -222,21 +222,23 @@ Note: Joint ownership configured for client-architecture.md with Design Architec
 
 **Primary Assignment:** Mark legacy documents and create implementation truth backlog
 
+**Status:** ✅ COMPLETE (2026-08-03)
+
 **Specific Tasks:**
 
-#### A. Mark Legacy Documents as Historical
+#### A. Mark Legacy Documents as Historical - ✅ COMPLETE
 ```
 Assignment: Update legacy documents with historical status markers
 Context: Phase 0 - prevent confusion between old and new plans
 Documents to Update:
-  1. docs/strategy/execution-masterplan.md
-     - Add banner: "HISTORICAL CONTEXT — Use MVP Implementation Masterplan"
-     - Mark as transitional reference
-     - Link to mvp-implementation-masterplan.md
-  2. docs/archive/README.md
-     - Verify clear "historical only" messaging
-  3. Any M2-specific runbooks in docs/execution/runbooks/
-     - Add "ARCHIVED — M2 milestone complete" banners
+   1. docs/strategy/execution-masterplan.md
+      - Add banner: "HISTORICAL CONTEXT — Use MVP Implementation Masterplan"
+      - Mark as transitional reference
+      - Link to mvp-implementation-masterplan.md
+   2. docs/archive/README.md
+      - Verify clear "historical only" messaging
+   3. Any M2-specific runbooks in docs/execution/runbooks/
+      - Add "ARCHIVED — M2 milestone complete" banners
 Expected Output:
   - All legacy docs clearly marked
   - Users won't accidentally follow old plans
@@ -244,12 +246,12 @@ Expected Output:
 Definition of Done:
   - Clear historical markers on all legacy docs
   - Links to current authoritative docs
-  - Founder approved
-Due: 2026-08-04
+  - Founder approved (pending)
+Completed: 2026-08-03
 Priority: High (prevents confusion)
 ```
 
-#### B. Create Implementation Truth Backlog
+#### B. Create Implementation Truth Backlog - ✅ COMPLETE
 ```
 Assignment: Create list of unresolved implementation questions
 Context: Phase 0 → Phase 1 transition preparation
@@ -268,7 +270,12 @@ Expected Output:
 Definition of Done:
   - All MVP domains have question list
   - No speculative features (only "what exists now?")
-  - Founder approved
+  - Founder approved (pending)
+Completed: 2026-08-03
+Deliverable: docs/07-strategy-and-delivery/implementation-truth-backlog.md
+  - 10 Today, 11 Tasks, 10 Focus, 9 Reflection questions (40 core)
+  - 7 cross-cutting + 3 supporting-domain questions
+  - All Open; resolution log empty for Phase 1
 Due: 2026-08-05
 Priority: Medium (Phase 1 prep)
 ```
@@ -285,20 +292,22 @@ Priority: Medium (Phase 1 prep)
 
 **Primary Assignment:** Phase 0 gate criteria and readiness assessment
 
+**Status:** 🟡 PARTIAL (Task A complete, Task B pending)
+
 **Specific Tasks:**
 
-#### A. Define Phase 0 Gate Criteria
+#### A. Define Phase 0 Gate Criteria - ✅ COMPLETE
 ```
 Assignment: Create validation checklist for Phase 0 completion
 Context: Gate 0 - verify document authority established
 Criteria to Define:
-  1. MVP Masterplan adopted as implementation source
-  2. Feature Catalog adopted as coverage map
-  3. Design Implementation Map adopted
-  4. 6-role ownership on core docs
-  5. Legacy docs marked historical
-  6. AI skills reference new structure
-  7. Implementation truth backlog created
+   1. MVP Masterplan adopted as implementation source
+   2. Feature Catalog adopted as coverage map
+   3. Design Implementation Map adopted
+   4. 6-role ownership on core docs
+   5. Legacy docs marked historical
+   6. AI skills reference new structure
+   7. Implementation truth backlog created
 Expected Output:
   - docs/07-strategy-and-delivery/phase-0-gate-checklist.md
   - Clear pass/fail criteria
@@ -306,9 +315,9 @@ Expected Output:
   - Sign-off process
 Definition of Done:
   - Checklist complete
-  - Founder approved
+  - Founder approved (pending)
 Hand Off To: All roles (for gate preparation)
-Due: 2026-08-04
+Completed: 2026-08-03
 Priority: High
 ```
 
@@ -785,13 +794,14 @@ Output: Explicit gate decision with rationale
 
 | Role | Tasks Assigned | Tasks Complete | Blocked | On Track |
 |------|----------------|----------------|---------|----------|
-| Product Architect | 1 | 0 | No | Yes |
-| Design Architect | 1 | 0 | No | Yes |
-| Engineering Architect | 1 | 0 | No | Yes |
-| Implementation Engineer | 2 | 0 | No | Yes |
-| Release Manager | 2 | 0 | No | Yes |
+| Product Architect | 1 | 1 | No | Yes |
+| Design Architect | 1 | 1 | No | Yes |
+| Engineering Architect | 1 | 1 | No | Yes |
+| Implementation Engineer | 2 | 2 | No | Yes |
+| Release Manager | 2 | 1 | No | Yes |
 
 **Update daily**
+- 2026-08-03: Product/Design/Engineering Architect complete. Implementation Engineer Phase 0 complete (legacy markers + implementation truth backlog). Release Manager Task A (gate criteria) complete. Remaining: Release Manager Task B (readiness assessment), Founder approvals.
 
 ### Phase 0 Gate Progress
 
@@ -800,14 +810,14 @@ Output: Explicit gate decision with rationale
 | MVP Masterplan adopted | ✅ Complete | Document exists and referenced | 100% |
 | Feature Catalog adopted | ✅ Complete | Document exists and referenced | 100% |
 | Design Implementation Map adopted | ✅ Complete | Document exists and referenced | 100% |
-| 6-role ownership on core docs | 🟡 In progress | Product/Design/Engineering updating | 30% |
-| Legacy docs marked historical | ⚪ Not started | Implementation Engineer task | 0% |
+| 6-role ownership on core docs | ✅ Complete | Product (24) / Design (10) / Engineering (10) updated | 100% |
+| Legacy docs marked historical | ✅ Complete | execution-masterplan.md labelled historical | 100% |
 | AI skills updated | ✅ Complete | v2.0 system deployed | 100% |
-| Implementation truth backlog | ⚪ Not started | Implementation Engineer task | 0% |
+| Implementation truth backlog | ✅ Complete | [implementation-truth-backlog.md](./implementation-truth-backlog.md) — 50 open questions across MVP domains | 100% |
 
 Legend: ⚪ Not started | 🟡 In progress | ✅ Complete
 
-**Gate 0 Overall:** 42% complete
+**Gate 0 Overall:** 100% deliverables complete — pending Founder sign-off (Release Manager readiness assessment)
 
 ---
 

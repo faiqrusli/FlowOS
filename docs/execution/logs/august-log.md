@@ -107,3 +107,21 @@ ext-up.md spec, July logs, M2 runbooks, and recruiting ops)
 - Client Architecture: Joint ownership (Engineering Architect + Design Architect)
 
 **Phases / milestones touched:** Phase 0 (Freeze Ambiguity and Establish Document Authority)
+
+---
+
+## 2026-08-03 — Implementation Engineer Phase 0 Complete
+
+**Branch:** main (uncommitted doc updates)
+
+**Shipped:**
+- Task A (previously complete): Legacy historical markers verified on execution-masterplan.md, docs/archive/README.md, and archived M2 runbooks
+- Task B: Created `docs/07-strategy-and-delivery/implementation-truth-backlog.md`
+  - 40 core questions across Today (10), Tasks (11), Focus (10), Reflection (9)
+  - 7 cross-cutting + 3 supporting-domain questions
+  - All items Open — resolution deferred to Phase 1
+- Updated current-sprint.md and phase-0-gate-checklist.md (Criterion 7 Pass)
+
+**Phases / milestones touched:** Phase 0 Gate 0 Criterion 7 — Implementation truth backlog created
+
+**Hand off:** Release Manager for Gate 0 readiness assessment; Founder for approval
