@@ -8,8 +8,8 @@ alwaysApply: true
 **🎯 CRITICAL: Before ANY work, read these in order:**
 
 1. **`.ai/context.md`** — Universal AI context (product, tech stack, 6-role team, Phase 0)
-2. **`docs/07-strategy-and-delivery/current-sprint.md`** — Current sprint assignments
-3. **Your role document** (if assigned): `docs/12-team/active-6-role/[role-name].md`
+2. **`docs/current-phase/current-sprint.md`** — Current sprint assignments
+3. **Your role document** (if assigned): `docs/10-team/6-role-hats/[role-name].md`
 
 **Then use:**
 - **`.ai/workflows/role-assignment.md`** — How to execute when assigned a role
@@ -28,32 +28,34 @@ alwaysApply: true
 **Current Phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority  
 **Current Sprint:** Week of 2026-08-02 (updated 2026-08-03)  
 **Gate 0 Target:** Every MVP work item traces to feature domain, parent system, and masterplan phase
+**Status:** Phase 0 extended under Founder ownership; Gate 0 is held pending cleanup confirmation and Criterion 5 re-verification
+**Founder decision:** All Phase 0 role deliverables approved on 2026-08-03; Phase 1 is not authorized
 
 **Team:** 6-role configuration (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager)
 
 ## Doc authority (conflicts — higher wins)
 
-1. `docs/strategy/Vision.md` — product vision, philosophy (highest)
+1. `docs/00-constitution/Vision.md` — product vision, philosophy (highest)
 2. `docs/00-constitution/documentation-architecture.md` — documentation governance
-3. `docs/01-product/` through `docs/12-team/` — canonical numbered structure
-4. `docs/07-strategy-and-delivery/mvp-implementation-masterplan.md` — current implementation source
-5. `docs/07-strategy-and-delivery/current-sprint.md` — **current Phase 0 sprint assignments**
-6. `docs/foundation/governance/` (PRINCIPLES, GATES, CODE_STANDARDS, GIT_WORKFLOW)
+3. `docs/01-product/` through `docs/10-team/` — canonical numbered structure
+4. `docs/current-phase/mvp-implementation-masterplan.md` — current implementation source
+5. `docs/current-phase/current-sprint.md` — **current Phase 0 sprint assignments**
+6. `docs/00-constitution/governance/` (PRINCIPLES, GATES, CODE_STANDARDS, GIT_WORKFLOW)
 7. `.ai/context.md` — universal AI reference
 
 ## Do not use for current work
 
-- `docs/strategy/execution-masterplan.md` — historical milestone context (use MVP Masterplan)
-- `docs/archive/` — history only; never for current planning
+- `docs/11-archive/strategy/execution-masterplan.md` — historical milestone context (use MVP Masterplan)
+- `docs/11-archive/` — history only; never for current planning
 
 ## Working norms (Phase 0)
 
-- **Role-based:** You are assigned ONE role — read `docs/12-team/active-6-role/[role-name].md`
-- **Sprint-driven:** Check `docs/07-strategy-and-delivery/current-sprint.md` for Phase 0 assignments
+- **Role-based:** You are assigned ONE role — read `docs/10-team/6-role-hats/[role-name].md`
+- **Sprint-driven:** Check `docs/current-phase/current-sprint.md` for Phase 0 assignments
 - **Phase 0 focus:** Update docs with 6-role ownership, mark legacy docs, create implementation backlog
 - **Approval gates:** Work requires Founder approval before proceeding
 - **Never:** Merge to main without Founder authorization
 
 ## Code truth
 
-Prefer `docs/foundation/FEATURE_INVENTORY.md` + codebase over archived project-state docs.
+Prefer `docs/04-features/FEATURE_INVENTORY.md` + codebase over archived project-state docs.

@@ -7,8 +7,8 @@ import type { StoredActiveFocusSession } from "@/lib/focus-active-session";
 
 /**
  * Next Up queue — pure helpers only. No React, no side effects.
- * See docs/review/design/next-up-queue-spec.md and
- * docs/execution/runbooks/m2-next-up-queue.md.
+ * See docs/archive/review/design/next-up-queue-spec.md and
+ * docs/archive/execution/runbooks/m2-next-up-queue.md.
  */
 
 export function sortByPosition(items: NextUpItem[]): NextUpItem[] {

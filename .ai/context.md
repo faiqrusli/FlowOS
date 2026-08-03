@@ -1,6 +1,6 @@
-# FlowOS AI Context
+﻿# FlowOS AI Context
 
-**Universal AI skills reference for FlowOS development (v2.0 — Updated for 6-Role Team)**
+**Universal AI skills reference for FlowOS development (v2.0 — Solo Founder with 6-Hat Quality)**
 
 This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) working on FlowOS. Read this first, then reference specific skill files as needed.
 
@@ -24,87 +24,100 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 
 ## Current Status
 
-**Phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority
+**Phase:** Phase 1 — Establish Implementation Truth
 
-**Current Sprint:** Week of 2026-08-02 (updated 2026-08-03)
+**Current Sprint:** Week of 2026-08-04 (Phase 1 sprint creation pending)
 
-**Status:** Active — Documentation ownership updates in progress
+**Status:** Authorized — Gate 0 PASSED (2026-08-04); Phase 1 sprint to be created
 
-**Gate 0 Target:** Every proposed MVP work item points to feature domain, parent system, design/engineering contract, and masterplan phase. Work that cannot do so pauses.
+**📋 Quick Reference:**
+- **[Current Sprint](docs/current-phase/current-sprint.md)** — What phase, what tasks, what status
+- **[Phase 1](docs/current-phase/phase-1/README.md)** — Current phase work (Gate 1)
+- **[MVP Masterplan](docs/current-phase/mvp-implementation-masterplan.md)** — Implementation roadmap
 
-**Active Work:** 
-- Update all core docs with 6-role ownership (Product, Design, Engineering Architects)
-- Mark legacy documents as historical (Implementation Engineer)
-- Create implementation truth backlog (Implementation Engineer)
-- Define Phase 0 gate criteria (Release Manager)
-- Assess gate readiness (Release Manager)
+**Gate 1 Target:** For every admitted MVP domain, demonstrate the current behavior, data path, known gaps, and owner. Unknown status is not allowed to pass into implementation.
 
-**Gate 0 Progress:** 42% complete
+**Gate 0 (Phase 0):** PASSED — 2026-08-04. Phase 0 closed and archived to `docs/11-archive/phases/phase-0/`. See [D-003](docs/08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md).
+
+**Phase 1 Focus (from MVP Masterplan):**
+- Verify routes, entry points, data ownership, persistence, permissions, and current error/recovery behavior
+- Reconcile the Feature Catalog with code and FEATURE_INVENTORY
+- Reconcile V3/Tokyo Night Warm references, CSS tokens, component usage, legacy design
+- Identify dead code, placeholder routes, duplicate scheduling surfaces, dual save paths, undocumented states
+- Run baseline quality, accessibility, security, and production checks
+- Create only the feature briefs and behavior contracts needed to describe admitted MVP behavior
+
+**Phase 1 Status:** Authorized — sprint creation pending.
 
 ---
 
-## Team Organization: 6-Role Active Configuration
+## Development Workflow: Solo Founder with 6-Hat Quality Procedures
 
-**FlowOS uses a role-based AI-first development team.**
+**FlowOS is developed by a solo founder using 6-role procedures for quality, without coordination overhead.**
 
-### Active Roles
+**👉 Complete guide:** `docs/start-here/solo-founder-workflow.md`  
+**👉 Quick reference:** `docs/start-here/how-to-develop-flowos.md`
 
-| Role | What They Do | Key Outputs |
-|------|-------------|-------------|
-| **Founder** (Human) | Final authority, approves all work | Decisions, approvals, releases |
-| **Product Architect** | Define product and strategy | Feature briefs, behavior contracts |
-| **Design Architect** | Design UX and visual | Design specifications |
-| **Engineering Architect** | Design technical approach | Delivery designs, validation plans |
-| **Implementation Engineer** | Build features | Code, tests, documentation |
-| **Release Manager** | Test and deploy | Test results, releases |
+### The Core Concept
 
-### How This Works
+**The 6 roles define WHAT quality work looks like.**  
+**You execute all 6 roles yourself, in sequence, without approval delays.**
 
-**When assigned a role:**
-1. You are told: "You are the [Role Name]"
-2. Read your role document: `docs/12-team/active-6-role/[role-name].md`
-3. Read the current sprint: `docs/07-strategy-and-delivery/current-sprint.md`
-4. Read required input documents
-5. Execute according to your role's workflow
-6. Produce expected outputs
-7. Hand off to next role (or request approval)
+Think of roles as "hats" you wear:
+- Each hat has specific responsibilities and deliverables
+- You wear each hat in sequence
+- You maintain the same quality standards
+- But you don't wait for yourself to approve yourself
 
-**Standard Feature Workflow (with Approval Gates):**
+**The procedures stay. The coordination theater goes.**
+
+### The 6 Hats (3 Modes)
+
+**Mode 1: Plan (Product & Design Thinking)**
+- **Hat 1: Product Architect** — Define WHAT to build and WHY (brief, contract)
+- **Hat 2: Design Architect** — Define HOW it should look and feel (design spec)
+
+**Mode 2: Build (Engineering)**
+- **Hat 3: Engineering Architect** — Define HOW to build it technically (delivery design, validation plan)
+- **Hat 4: Implementation Engineer** — BUILD it (code, tests, runbook)
+
+**Mode 3: Ship (Release)**
+- **Hat 5: Release Manager** — VERIFY and SHIP it (validation, deployment, release record)
+
+**Hat 6: Founder** — Decide when uncertain (used during any hat as needed)
+
+### Standard Major Feature Workflow
+
 ```
-Founder assigns
+Hat 1 (Product Architect): Write feature brief + behavior contract
+  ↓ (no approval, just move to next hat)
+Hat 2 (Design Architect): Write design specification
   ↓
-Product Architect creates feature brief + behavior contract
-  ↓ (submits for approval)
-Founder approves
+Hat 3 (Engineering Architect): Write delivery design + validation plan
   ↓
-Design Architect creates design specification
-  ↓ (submits for review then approval)
-Product Architect reviews → Founder approves
+Hat 4 (Implementation Engineer): Build code + tests + runbook
+  • Security checklist (6 points, non-negotiable)
+  • Build + lint + test pass
+  • Manual smoke test
   ↓
-Engineering Architect creates delivery design + validation plan
-  ↓ (submits for approval)
-Founder approves
-  ↓
-Implementation Engineer builds code + tests + docs
-  ↓ (submits for approval)
-Founder approves
-  ↓
-Release Manager tests + prepares release
-  ↓ (requests authorization)
-Founder authorizes release
-  ↓
-Production deployment
+Hat 5 (Release Manager): Verify + Deploy + Document
+  • Run validation plan checks
+  • Merge to main
+  • Deploy to production
+  • Update FEATURE_INVENTORY + logs
+  • Create release record
 ```
 
-**Role Documents Location:** `docs/12-team/active-6-role/`
-- `founder.md` — Final authority
-- `product-architect.md` — Product definition
-- `design-architect.md` — Complete design
-- `engineering-architect.md` — Technical architecture
-- `implementation-engineer.md` — Full-stack development
-- `release-manager.md` — QA and deployment
+**Quality maintained through:**
+- Wearing each hat's responsibilities (6-role procedures as checklists)
+- Security checklist (always)
+- Build/lint/test verification (always)
+- Standards and patterns (CODE_STANDARDS, PRINCIPLES)
+- Pattern matching (copy before inventing)
 
-**Current Sprint Assignments:** `docs/07-strategy-and-delivery/current-sprint.md`
+**Time savings vs. 6-person team:** 3-4 hours per major feature (17-20% faster) by eliminating approval delays while maintaining quality.
+
+**Reference documents for each hat:** `docs/10-team/6-role-hats/[role-name].md` (defines responsibilities, quality checks, deliverables for each hat)
 
 ---
 
@@ -128,67 +141,75 @@ Production deployment
 
 ### Documentation Authority (When Conflicts — Higher Wins)
 
-1. **`docs/strategy/Vision.md`** — Timeless philosophy, product boundaries (HIGHEST)
-2. **`docs/00-constitution/documentation-architecture.md`** — Documentation governance
-3. **`docs/01-product/`** — Product model, strategy, glossary, success model
-4. **`docs/02-systems/`** — System definitions (direction, action, evidence, sensemaking, continuity, intelligence)
-5. **`docs/03-experience/`** — Experience architecture, information structure, journey contracts
-6. **`docs/04-features/`** — Feature briefs, behavior contracts, delivery designs, validation plans
-7. **`docs/05-design/`** — Design system architecture, feature design specifications
-8. **`docs/06-engineering/`** — Engineering architecture, standards, SDLC
-9. **`docs/07-strategy-and-delivery/`** — **MVP Implementation Masterplan, Roadmap, Current Sprint**
-10. **`docs/08-decisions/`** — Decision records
-11. **`docs/09-evidence/`** — Research and measurements
-12. **`docs/10-reviews/`** — Review records
-13. **`docs/12-team/`** — **6-role team organization**
-14. **`docs/execution/logs/`** — decision-log, july-log, developer-log (historical)
-15. **`docs/foundation/governance/`** — PRINCIPLES, CODE_STANDARDS, GIT_WORKFLOW, GATES
-16. **`docs/archive/`** — Historical reference only (DO NOT use for current work)
+1. **`docs/00-constitution/Vision.md`** — Timeless philosophy, product boundaries (HIGHEST)
+2. **`docs/current-phase/`** — **Current implementation phase work** (Sprint, MVP Masterplan, Gate checklists)
+3. **`docs/00-constitution/documentation-architecture.md`** — Documentation governance
+4. **`docs/01-product/`** — Product model, strategy, glossary, success model
+5. **`docs/02-systems/`** — System definitions (direction, action, evidence, sensemaking, continuity, intelligence)
+6. **`docs/03-experience/`** — Experience architecture, information structure, journey contracts
+7. **`docs/04-features/`** — Feature briefs, behavior contracts, delivery designs, validation plans
+8. **`docs/05-design/`** — Design system architecture, feature design specifications
+9. **`docs/06-engineering/`** — Engineering architecture, standards, SDLC
+10. **`docs/07-strategy-and-delivery/`** — Strategic planning, roadmap, delivery standards (timeless guidance)
+11. **`docs/08-decisions/`** — Decision records
+12. **`docs/12-deferred/evidence/`** — Research and measurements (deferred until post-Gate 0)
+13. **`docs/09-reviews/`** — Review records
+14. **`docs/10-team/`** — **Team organization, 6-role-hats quality procedures**
+15. **`docs/current-phase/logs/`** — Operational logs
+16. **`docs/00-constitution/governance/`** — PRINCIPLES, CODE_STANDARDS, GIT_WORKFLOW, GATES
+17. **`docs/11-archive/`** — Historical reference only (DO NOT use for current work)
 
 ### Key Documents to Know
 
+**Start here every day:**
+- `docs/current-phase/current-sprint.md` — **Current sprint and phase work**
+- `docs/current-phase/phase-1/README.md` — **Current phase work (Gate 1)**
+- `docs/current-phase/mvp-implementation-masterplan.md` — **Implementation roadmap**
+
 **Essential reading:**
-- `docs/strategy/Vision.md` — Highest authority
+- `docs/00-constitution/Vision.md` — Highest authority
+- `docs/start-here/solo-founder-workflow.md` — **Complete 6-hat workflow**
+- `docs/start-here/how-to-develop-flowos.md` — **Quick workflow reference**
 - `docs/00-constitution/documentation-architecture.md` — Where everything belongs
 - `docs/01-product/product-model.md` — Product concepts
 - `docs/01-product/product-glossary.md` — Canonical vocabulary
-- `docs/07-strategy-and-delivery/mvp-implementation-masterplan.md` — **Current implementation source**
-- `docs/07-strategy-and-delivery/current-sprint.md` — **Current sprint assignments**
-- `docs/07-strategy-and-delivery/development-handbook.md` — **How work flows**
-- `docs/12-team/active-6-role/README.md` — **Team structure**
-- `docs/start-here/engineer.md` — Engineering quickstart
-- `docs/foundation/FEATURE_INVENTORY.md` — What's shipped vs deferred
+- `docs/10-team/README.md` — **Team organization and 6-role-hats**
+- `docs/10-team/6-role-hats/` — **Detailed hat procedures**
+- `docs/start-here/founder.md` — Quick reference
+- `docs/04-features/FEATURE_INVENTORY.md` — What's shipped vs deferred
 
-**For your role:**
-- Read `docs/12-team/active-6-role/[your-role].md` when assigned
+**For working on FlowOS:**
+- Read `docs/start-here/solo-founder-workflow.md` for complete 6-hat workflow
+- Read `docs/start-here/how-to-develop-flowos.md` for quick reference
+- Follow security checklist before every merge
+- Check CODE_STANDARDS and PRINCIPLES
 
 **Legacy documents (DO NOT start new work from these):**
-- `docs/strategy/execution-masterplan.md` — Historical milestone context (use MVP Masterplan instead)
-- `docs/archive/runbooks/m2-*.md` — Old M2 sessions (archived)
+- `docs/11-archive/strategy/execution-masterplan.md` — Historical milestone context (use MVP Masterplan instead)
+- `docs/11-archive/execution/runbooks/m2-*.md` — Old M2 sessions (archived)
+- `docs/11-archive/strategy/documentation-refinement-plan.md` — Completed (replaced by audit)
+- `docs/11-archive/strategy/documentation-update-plan.md` — Completed (role ownership done)
 
 ---
 
 ## Current Sprint Context
 
-**Always check:** `docs/07-strategy-and-delivery/current-sprint.md` for current assignments.
+**Always check:** `docs/current-phase/current-sprint.md` for current assignments.
 
-**Phase 0 Focus:**
-- Update all core docs with 6-role ownership
-- Mark legacy documents as historical
-- Create implementation truth backlog (questions, not features)
-- Define Phase 0 gate criteria
-- Assess gate readiness
+**Phase 1 gate checklist:** `docs/current-phase/phase-1/gate-checklist.md` for completion criteria (to be created with the sprint).
 
-**Gate 0 Exit Criteria:**
-- MVP Masterplan adopted as implementation source
-- Feature Catalog adopted as coverage map
-- Design Implementation Map adopted
-- 6-role ownership on all core docs
-- Legacy docs marked historical
-- AI skills reference new structure
-- Implementation truth backlog created
+**Phase 0 History (closed):**
+- ✅ Solo-founder workflow with 6-hat quality procedures created
+- ✅ Current-phase folder structure established
+- ✅ Gate 0 PASSED 2026-08-04; Phase 0 archived to `docs/11-archive/phases/phase-0/`
 
-**Gate 0 Progress:** 42% complete (target: 2026-08-06)
+**Gate 1 Progress:**
+- Phase 1 authorized; sprint creation pending
+- MVP Masterplan remains the implementation source
+- Feature Catalog is the coverage map
+- Implementation truth backlog (archived with Phase 0) is the starting question list
+
+**Gate 1 Status:** Authorized — sprint creation pending.
 
 ---
 
@@ -214,47 +235,78 @@ Production deployment
 
 ## Core Development Principles
 
-### 1. Role-Based Execution
-**You are assigned ONE role at a time.**
+### 1. 6-Hat Quality Workflow
+**Solo founder wears 6 quality hats in sequence.**
 
-- Read your role document immediately
-- Understand your authority and limitations
-- Know what inputs you need
-- Know what outputs you produce
-- Know who you hand off to
-- **Stay in your role's scope**
+**Complete guide:** `docs/start-here/solo-founder-workflow.md`
+
+**The 6 hats (organized into 3 modes):**
+
+**Mode 1: Plan**
+- Hat 1: Product Architect (feature brief, behavior contract)
+- Hat 2: Design Architect (design specification)
+
+**Mode 2: Build**
+- Hat 3: Engineering Architect (delivery design, validation plan)
+- Hat 4: Implementation Engineer (code, tests, runbook)
+
+**Mode 3: Ship**
+- Hat 5: Release Manager (verification, deployment, release record)
+
+**Hat 6: Founder (decision-making when uncertain)**
+
+**Each hat has quality responsibilities. You wear all 6 yourself, in sequence, without approval delays.**
+
+**Hat references:** `docs/10-team/6-role-hats/[role-name].md` defines responsibilities for each hat.
 
 ### 2. Sprint-Driven Work
 **Work comes from the current sprint.**
 
-- Check `docs/07-strategy-and-delivery/current-sprint.md`
-- Understand current phase (Phase 0: Freeze Ambiguity and Establish Document Authority)
-- Know your sprint assignments
+- Check `docs/current-phase/current-sprint.md`
+- Understand current phase
+- Know sprint objectives
+- Check gate checklist: `docs/current-phase/phase-1/gate-checklist.md`
 - Align work with phase gate criteria
 - Document progress
 
-### 3. Approval Gates
-**Work requires approval before proceeding.**
+### 3. Quality Gates (Not Approval Gates)
+**Quality maintained through verification, not self-approval.**
 
-- Product Architect → Founder approves → Design Architect
-- Design Architect → Product Architect reviews + Founder approves → Engineering Architect
-- Engineering Architect → Founder approves → Implementation Engineer
-- Implementation Engineer → Founder approves → Release Manager
-- Release Manager → Founder authorizes → Production
+- Security checklist (6 points, non-negotiable)
+- Build + lint + test pass
+- Manual smoke test
+- Pattern matching
+- Standards compliance
 
-**Never skip approval. Never merge without authorization.**
+**Never merge without verification. Never skip security checks.**
 
-### 4. Contract Before Implementation
-**Contracts define behavior, then code implements.**
+### 4. Feature Documentation (Feature Dossier Standard)
+**Match documentation to feature complexity.**
 
-- Feature Brief (what and why)
-- Behavior Contract (observable behavior)
-- Design Specification (visual, interaction, content, accessibility)
-- Delivery Design (technical approach)
-- Validation Plan (how to verify)
-- Implementation (code, tests, docs)
+**For major features (Today, Tasks, Focus, Schedule, Notes):**
+- Use complete feature dossier structure
+- Follow 6-hat workflow: Product Architect → Design Architect → Engineering Architect → Implementation Engineer → Release Manager
+- Create: Feature brief, Behavior contract, Design specification, Delivery design, Validation plan, Implementation artifacts
+- See: `docs/04-features/feature-dossier-standard.md` for complete lifecycle
 
-**Sequence matters. Don't skip upstream contracts.**
+**For medium features (4-16 hours):**
+- Feature brief (1-2 pages)
+- Code + tests
+- Update FEATURE_INVENTORY
+
+**For small features (< 4 hours):**
+- Decision log entry only
+- Code comments and commit messages
+
+**Standard documents:**
+- `docs/04-features/feature-briefs.md` — Brief standard
+- `docs/04-features/behavior-contracts.md` — Contract standard
+- `docs/05-design/feature-design-specifications.md` — Design spec standard
+- `docs/04-features/delivery-designs.md` — Delivery design standard
+- `docs/04-features/validation-plans.md` — Validation plan standard
+- `docs/04-features/feature-dossier-standard.md` — Complete lifecycle guide
+
+**Key principle:** Core features ARE FlowOS. Deep documentation enables coherent evolution over time.
 
 ### 5. Security First (Non-Negotiable)
 **User data must be scoped. No shortcuts.**
@@ -301,23 +353,21 @@ Production deployment
 flowos/
 ├── .ai/                           # AI skills and workflows
 ├── docs/
-│   ├── 00-constitution/           # Documentation governance
-│   ├── 01-product/                # Product model, strategy, glossary
+│   ├── current-phase/             # **Current implementation phase** (Sprint, MVP Masterplan, Gate checklists, Logs)
+│   ├── start-here/                # **Onboarding and workflow guides** (solo-founder-workflow, how-to-develop)
+│   ├── 00-constitution/           # Vision + documentation & governance rules
+│   ├── 01-product/                # Product model, strategy, glossary, success model
 │   ├── 02-systems/                # System definitions
 │   ├── 03-experience/             # Experience architecture
-│   ├── 04-features/               # Feature briefs, behavior contracts
+│   ├── 04-features/               # Feature briefs, contracts, FEATURE_INVENTORY
 │   ├── 05-design/                 # Design system architecture
-│   ├── 06-engineering/            # Engineering architecture
-│   ├── 07-strategy-and-delivery/  # MVP Masterplan, Roadmap, Sprints
+│   ├── 06-engineering/            # Engineering architecture, standards
+│   ├── 07-strategy-and-delivery/  # Roadmap, delivery and release standards
 │   ├── 08-decisions/              # Decision records
-│   ├── 09-evidence/               # Research and measurements
-│   ├── 10-reviews/                # Review records
-│   ├── 12-team/                   # Team organization (6 roles)
-│   ├── strategy/                  # Vision (highest authority)
-│   ├── foundation/                # FEATURE_INVENTORY, governance
-│   ├── execution/                 # Logs (historical)
-│   ├── start-here/                # Onboarding guides
-│   └── archive/                   # Historical (DO NOT use)
+│   ├── 09-reviews/                # Review records
+│   ├── 10-team/                   # **Team organization, 6-role-hats quality procedures**
+│   ├── 12-deferred/               # Deferred docs (evidence, onboarding, team) — not active
+│   └── 11-archive/                # Historical (DO NOT use)
 ├── src/
 │   ├── app/(main)/                # Authenticated routes
 │   ├── components/                # UI components
@@ -375,8 +425,7 @@ flowos/
 - [ ] Input validation present (Zod schemas)
 - [ ] No hardcoded secrets or API keys
 - [ ] RLS on new database tables
-- [ ] Auth middleware on new API routes
-- [ ] New auth routes added to `PROTECTED_PREFIXES` in `middleware.ts`
+- [ ] Auth middleware on new API routes (new routes added to `PROTECTED_PREFIXES` in `middleware.ts`)
 - [ ] Error messages don't leak sensitive information
 
 ---
@@ -425,9 +474,9 @@ git push origin main
 | Event | Action |
 |-------|--------|
 | Product-level decision | Create decision record in `docs/08-decisions/records/` |
-| Sprint work complete | Update `docs/07-strategy-and-delivery/current-sprint.md` |
-| Feature complete | Update `docs/foundation/FEATURE_INVENTORY.md` |
-| After merge to main | Update `docs/execution/logs/july-log.md` |
+| Sprint work complete | Update `docs/current-phase/current-sprint.md` |
+| Feature complete | Update `docs/04-features/FEATURE_INVENTORY.md` |
+| After merge to main | Update the active `docs/current-phase/logs/august-log.md` |
 | Technical/architecture change | Update relevant docs in `docs/06-engineering/` |
 
 ---
@@ -437,10 +486,10 @@ git push origin main
 ### What to Do
 
 ✅ **Read your role document first**
-When assigned a role, immediately read `docs/12-team/active-6-role/[role-name].md`
+When assigned a role, immediately read `docs/10-team/6-role-hats/[role-name].md`
 
 ✅ **Check current sprint**
-Read `docs/07-strategy-and-delivery/current-sprint.md` to understand context
+Read `docs/current-phase/current-sprint.md` to understand context
 
 ✅ **Stay in your role's scope**
 If assigned Implementation Engineer, don't make product decisions
@@ -475,7 +524,7 @@ Even if all checks pass, Founder must authorize
 Security is non-negotiable, no exceptions
 
 ❌ **Never use archived docs for new work**
-`docs/archive/` is historical only
+`docs/11-archive/` is historical only
 
 ❌ **Never assume "should work"**
 Verify everything with evidence
@@ -486,8 +535,9 @@ Verify everything with evidence
 
 See detailed workflow files:
 - `.ai/workflows/role-assignment.md` — How to start work when assigned a role
-- `.ai/workflows/feature-workflow.md` — Complete feature lifecycle
-- `.ai/workflows/approval-gates.md` — How approval gates work
+- `.ai/workflows/code-review.md` — How to review code before merge
+- `.ai/workflows/merge-prep.md` — How to prepare a merge
+- `.ai/workflows/documentation.md` — How to update documentation
 - `.ai/checklists/security.md` — Security checklist
 
 ---
@@ -515,13 +565,13 @@ Than to:
 ## References
 
 **Essential Reading:**
-- `docs/strategy/Vision.md` — Product philosophy (highest authority)
-- `docs/07-strategy-and-delivery/mvp-implementation-masterplan.md` — Current implementation source
-- `docs/07-strategy-and-delivery/current-sprint.md` — Current sprint assignments
-- `docs/07-strategy-and-delivery/development-handbook.md` — How work flows
-- `docs/12-team/active-6-role/README.md` — Team structure
-- `docs/foundation/governance/CODE_STANDARDS.md` — Coding standards
-- `docs/foundation/governance/GIT_WORKFLOW.md` — Git workflow details
+- `docs/00-constitution/Vision.md` — Product philosophy (highest authority)
+- `docs/current-phase/mvp-implementation-masterplan.md` — Current implementation source
+- `docs/current-phase/current-sprint.md` — Current sprint assignments
+- `docs/start-here/solo-founder-workflow.md` — Complete 6-hat workflow
+- `docs/10-team/6-role-hats/README.md` — Team structure
+- `docs/00-constitution/governance/CODE_STANDARDS.md` — Coding standards
+- `docs/00-constitution/governance/GIT_WORKFLOW.md` — Git workflow details
 
 **Skill Files:**
 - `.ai/workflows/` — Common development workflows

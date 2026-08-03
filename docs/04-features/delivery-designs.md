@@ -1,10 +1,10 @@
-# Delivery Designs
+﻿# Delivery Designs
 
 **Status:** Active
 **Authority:** Canonical standard for feature-specific technical delivery designs that preserve approved observable behavior
 **Owner:** Engineering leadership
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Feature Briefs](./feature-briefs.md) · [Behavior Contracts](./behavior-contracts.md) · [Engineering Architecture](../06-engineering/engineering-architecture.md)
-**Current implementation references:** [Technical Architecture](../foundation/TECHNICAL_ARCHITECTURE.md) · [Engineering Rules](../foundation/governance/ENGINEERING.md)
+**Current implementation references:** [Technical Architecture](../06-engineering/TECHNICAL_ARCHITECTURE.md) · [Engineering Rules](../00-constitution/governance/ENGINEERING.md)
 **Children:** Individual delivery designs in `04-features/delivery/`, implementation plans, migrations, operational runbooks, rollout plans, validation plans, and delivery reviews
 **Last reviewed:** 2026-08-01
 **Review trigger:** A proposed document changes the definition, required contents, authority boundary, lifecycle, or review standard of a FlowOS feature-specific technical delivery design.

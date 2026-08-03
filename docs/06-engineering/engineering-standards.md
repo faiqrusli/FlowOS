@@ -1,4 +1,4 @@
-# Engineering Standards
+﻿# Engineering Standards
 
 **Status:** Active
 **Authority:** Canonical standard for how FlowOS engineering work changes product software, data, infrastructure, dependencies, and technical documentation safely and accountably
@@ -6,8 +6,9 @@
 **Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Engineering Architecture](./engineering-architecture.md) · [Data Architecture](./data-architecture.md) · [Identity and Access Architecture](./identity-and-access-architecture.md) · [Quality Architecture](./quality-architecture.md) · [Operations Architecture](./operations-architecture.md)
 **Children:** Engineering change proposals, implementation plans, code and schema changes, dependency assessments, technical reviews, migrations, runbooks, and engineering decision records
-**Last Updated:** 2026-08-03
+**Last Updated:** 2026-08-03 (consolidated SDLC docs)
 **Review trigger:** A proposed document changes the durable engineering practices for implementing, reviewing, verifying, documenting, releasing, recovering, or retiring product software and technical dependencies.
+**Note:** Comprehensive SDLC documentation (123KB, archived Aug 2026) captured detailed lifecycle processes. This document now serves as the single SDLC authority, covering essential engineering standards established in practice.
 
 ---
 
@@ -133,7 +134,7 @@ After a release, incident, or material correction, engineers preserve factual ev
 
 ## 9. Relationship to Existing Implementation References
 
-[ENGINEERING.md](../foundation/governance/ENGINEERING.md) remains a transitional M2 execution-context reference. [CODE_STANDARDS.md](../foundation/governance/CODE_STANDARDS.md) remains the detailed repository-convention reference until it receives an explicit successor. [QUALITY_GATES.md](../foundation/governance/QUALITY_GATES.md) and current runbooks remain factual and operational references within their stated scope.
+[ENGINEERING.md](../00-constitution/governance/ENGINEERING.md) remains a transitional M2 execution-context reference. [CODE_STANDARDS.md](../00-constitution/governance/CODE_STANDARDS.md) remains the detailed repository-convention reference until it receives an explicit successor. [GATES.md](../00-constitution/governance/GATES.md) and current runbooks remain factual and operational references within their stated scope.
 
 New reusable engineering-change practice belongs here. Existing implementation references do not override this standard, Engineering Architecture, or their parent contracts; they are revised or retired through their own transition path when their scope materially changes.
 

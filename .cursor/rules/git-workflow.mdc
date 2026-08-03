@@ -26,7 +26,7 @@ git checkout -b m2/session-N-short-name
 
 ## End of session — required agent behavior
 
-Report: branch, commits, build/lint, which **merge bundle** (B1–B5, see `docs/foundation/governance/GIT_WORKFLOW.md`).
+Report: branch, commits, build/lint, which **merge bundle** (B1–B5, see `docs/00-constitution/governance/GIT_WORKFLOW.md`).
 
 **Ask:** "Merge to `main`? (requires your approval)"
 
@@ -43,6 +43,6 @@ npm run build && npm run lint
 git push origin main
 ```
 
-Verify production URL; append [july-log.md](docs/execution/logs/july-log.md).
+Verify production URL; append to the active [August log](docs/current-phase/logs/august-log.md).
 
-Full rules: [docs/foundation/governance/GIT_WORKFLOW.md](docs/foundation/governance/GIT_WORKFLOW.md)
+Full rules: [docs/00-constitution/governance/GIT_WORKFLOW.md](docs/00-constitution/governance/GIT_WORKFLOW.md)

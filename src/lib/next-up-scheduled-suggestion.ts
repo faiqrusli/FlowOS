@@ -11,7 +11,7 @@ import type { StoredActiveFocusSession } from "@/lib/focus-active-session";
 
 /**
  * Next Up scheduled suggestions — pure helpers only.
- * See docs/review/design/next-up-queue-spec.md §11–12.
+ * See docs/archive/review/design/next-up-queue-spec.md §11–12.
  */
 
 export const NEXT_UP_SUGGESTION_SNOOZE_MS = 5 * 60 * 1000;

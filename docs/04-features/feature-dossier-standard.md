@@ -1,4 +1,47 @@
-# Feature Dossier Standard
+﻿# Feature Dossier Standard
+
+**Status:** Active  
+**Authority:** Standard for complete feature lifecycle documentation  
+**Owner:** Product Architect  
+**Last Updated:** 2026-08-03  
+
+---
+
+## What a Feature Dossier Is
+
+**A feature dossier is the complete lifetime of a major FlowOS feature.**
+
+It is NOT "documentation for one build." It is "everything about this feature, forever."
+
+**For major features** (Today, Tasks, Focus, Schedule, Notes):
+- The dossier lives as long as the feature exists
+- Foundational docs (brief, contract) evolve slowly
+- Implementation artifacts accumulate over time
+- Complete history preserved
+
+### Two Levels
+
+**1. Foundational Documents (Top-level files)**
+
+Written once, updated rarely when fundamental behavior changes:
+
+- `feature-brief.md` — What is this feature? Why does it exist? Scope boundaries.
+- `behavior-contract.md` — How should it work? States, actions, rules, edge cases.
+
+**These are comprehensive.** They define the feature's essence.
+
+**2. Implementation Artifacts (Subfolders)**
+
+Accumulate over the feature's lifetime:
+
+- `implementation/` — Every version, every iteration, every significant change
+- `validation/` — Test results per iteration
+- `reviews/` — Pre-ship reviews
+- `releases/` — What shipped when
+- `post-release/` — Learning records, incidents, usage evidence
+- `decisions/` — Feature-specific decisions
+
+**These grow over time.** Each iteration adds new artifacts.
 
 **Status:** Active
 **Authority:** Canonical standard for organizing all feature documentation in FlowOS
@@ -116,7 +159,7 @@ Created before implementation. Contains technical architecture, step-by-step bui
 ```
 
 **Created:** Before implementation begins (MVP Phase 2-3)  
-**Governed by:** [Delivery Designs](./delivery-designs.md), [Technical Architecture](../06-engineering/technical-architecture.md)
+**Governed by:** [Delivery Designs](./delivery-designs.md), [Technical Architecture](../06-engineering/engineering-architecture.md)
 
 #### What's a Runbook?
 
@@ -146,7 +189,7 @@ Created before implementation. Contains test plans, test results, and acceptance
 ```
 
 **Created:** Before implementation begins  
-**Governed by:** [Validation Plans](./validation-plans.md), [Quality Strategy](../06-engineering/quality-strategy.md)
+**Governed by:** [Validation Plans](./validation-plans.md), [Quality Strategy](../06-engineering/quality-architecture.md)
 
 **Validation plan = Test cases (what to test)**  
 **Test results = Evidence (did it pass?)**  
@@ -169,7 +212,7 @@ Created during validation phase. Contains formal reviews that approve the featur
 ```
 
 **Created:** During Phase 4 (Trust, quality, and release readiness)  
-**Governed by:** [Quality Strategy](../06-engineering/quality-strategy.md), [Trust Architecture](../06-engineering/trust-architecture.md)
+**Governed by:** [Quality Strategy](../06-engineering/quality-architecture.md), [Trust Architecture](../06-engineering/intelligence-and-trust-architecture.md)
 
 **Reviews are append-only.** Each review is a dated record of approval or rejection.
 
@@ -215,7 +258,7 @@ Created after shipping. Contains evidence from real use, incidents, and learning
 ```
 
 **Created:** 7-14 days after shipping  
-**Governed by:** [Post-Release Learning](../10-reviews/post-release/)
+**Governed by:** [Post-Release Learning](../09-reviews/post-release/)
 
 **Learning records drive adaptation.** Evidence from real use informs whether to:
 - Expand (evidence positive)
@@ -464,7 +507,7 @@ OR Update: behavior-contract.md (if behavior must change)
 ```
 Create: decisions/00X-defer-rationale.md
 Update: Feature-catalog.md (mark as deferred)
-Archive: Dossier (move to archive/ with reason)
+Archive: Dossier (move to 11-archive/ with reason)
 ```
 
 ---
@@ -646,11 +689,11 @@ Every dossier should include a root README.md for quick navigation:
 
 ## 10. Templates and Examples
 
-**Templates:** See [_templates/](../_templates/) for starter documents
+**Templates:** See [_templates/](./_templates/) for starter documents
 
-**Complete Example:** See [_examples/complete-dossier-example/](../_examples/complete-dossier-example/) for a full dossier structure
+**Complete Example:** A complete example dossier is planned; use the folder structure above as the reference until it is admitted to the active docs.
 
-**Quick Start:** See [start-here/implementing-a-feature.md](../../start-here/implementing-a-feature.md) for step-by-step guide
+**Quick Start:** See [start-here/implementing-a-feature.md](../start-here/implementing-a-feature.md) for the step-by-step guide
 
 ---
 
@@ -668,3 +711,183 @@ Every dossier should include a root README.md for quick navigation:
 8. ✅ **Learning drives adaptation** (evidence → update contract → new runbook → repeat)
 
 **The dossier is the complete story of a feature from inception to current state.** 📚
+
+
+
+---
+
+## How Features Evolve
+
+### Initial Creation
+
+```
+04-features/today/
+  ├── feature-brief.md              ← Write this first (foundational)
+  ├── behavior-contract.md          ← Write this second (foundational)
+  ├── implementation/
+  │   └── v1.0-initial.md           ← First implementation
+  └── validation/
+      └── v1.0-tests.md             ← Initial validation
+```
+
+### Small Improvement (v1.1)
+
+**Example:** Add inline task capture
+
+**Process:**
+1. Create `implementation/v1.1-inline-capture.md` (new runbook)
+2. IF behavior changes: Update `behavior-contract.md`
+3. Create `validation/v1.1-tests.md`
+4. Ship and create `releases/v1.1-release.md`
+
+**The dossier grows:**
+```
+04-features/today/
+  ├── feature-brief.md              ← Unchanged
+  ├── behavior-contract.md          ← Updated (new capture behavior)
+  ├── implementation/
+  │   ├── v1.0-initial.md
+  │   └── v1.1-inline-capture.md    ← NEW
+  ├── validation/
+  │   ├── v1.0-tests.md
+  │   └── v1.1-tests.md             ← NEW
+  └── releases/
+      ├── v1.0-release.md
+      └── v1.1-release.md           ← NEW
+```
+
+### Bug Fix (v1.1.1)
+
+**Example:** Fix timeline scroll bug
+
+**Process:**
+1. Create `implementation/v1.1.1-bug-fixes.md` (document the fix)
+2. Behavior contract unchanged (no behavior change)
+3. Ship and log in `post-release/v1.1-incident-log.md`
+
+### Major Redesign (v2.0)
+
+**Example:** Completely redesign Today page
+
+**Process:**
+1. UPDATE `behavior-contract.md` (major behavior changes)
+2. MAYBE update `feature-brief.md` (if scope changed)
+3. Create `implementation/v2.0-redesign.md`
+4. Create `design/v2-design-spec.md`
+5. Full validation, review, release cycle
+
+---
+
+## When to Update Foundational Docs
+
+### Update `feature-brief.md` when:
+- Feature scope changes significantly
+- The "why" changes
+- Boundaries shift
+
+**Rare** — maybe once or twice over the feature's lifetime.
+
+### Update `behavior-contract.md` when:
+- New user-facing behavior added
+- States or actions change
+- Error handling changes
+- Edge cases discovered
+
+**Occasional** — when behavior evolves, not for every bug fix.
+
+### Always create new implementation artifacts:
+- Every meaningful change gets a runbook
+- Every release gets a release record
+- Every learning gets a learning record
+
+**Frequent** — the dossier accumulates history.
+
+---
+
+## Small Fixes and Improvements
+
+**Question:** "I fixed a small bug. Do I update the behavior contract?"
+
+**Answer:**
+
+**If the bug fix changes observable behavior:**
+- YES, update `behavior-contract.md`
+- Document in `implementation/vX.X.X-bug-fixes.md`
+
+**If the bug fix doesn't change behavior (just makes existing behavior work correctly):**
+- NO, don't update contract
+- Document in `implementation/vX.X.X-bug-fixes.md` or `post-release/incident-log.md`
+
+**Even small fixes are tracked.** The dossier shows everything.
+
+---
+
+## The Value Over Time
+
+**After 6 months of Today page evolution:**
+
+```
+04-features/today/
+  ├── feature-brief.md              ← Updated once
+  ├── behavior-contract.md          ← Updated 3 times
+  ├── design/
+  │   ├── v1-design.md
+  │   └── v2-redesign.md
+  ├── implementation/
+  │   ├── v1.0-initial.md
+  │   ├── v1.1-inline-capture.md
+  │   ├── v1.2-focus-polish.md
+  │   ├── v1.3-bug-fixes.md
+  │   ├── v1.4-timeline-improvement.md
+  │   └── v2.0-major-redesign.md    ← 6 iterations
+  ├── validation/
+  │   └── [6 test result files]
+  ├── releases/
+  │   └── [6 release records]
+  ├── post-release/
+  │   ├── v1.0-learning.md
+  │   ├── v1.1-incident-log.md
+  │   ├── v1.2-usage-evidence.md
+  │   └── v2.0-learning.md          ← Learning from each release
+  └── decisions/
+      ├── 001-inline-capture-approach.md
+      └── 002-v2-redesign-rationale.md
+```
+
+**You can now:**
+- Understand what Today page is (brief)
+- Understand how it should work (contract)
+- See every iteration (implementation/)
+- Understand what worked/didn't work (post-release/)
+- Avoid repeating mistakes
+- Build coherently on previous work
+
+**This is why dossiers are valuable for major features.**
+
+---
+
+## Summary
+
+**Feature dossier = Complete feature lifetime**
+
+**Foundational docs (top-level):**
+- Written once
+- Updated when fundamentals change
+- Comprehensive and authoritative
+
+**Implementation artifacts (subfolders):**
+- Accumulate over time
+- Every iteration adds to history
+- Complete record of evolution
+
+**For major features (Today, Tasks, Focus):**
+- Worth the upfront investment (6-14 hours)
+- Prevents rebuilding from scratch
+- Enables coherent evolution
+
+**For small features:**
+- Don't need full dossier
+- Decision log + code is fine
+
+**The dossier grows with the feature. It's not created once — it's maintained forever.**
+

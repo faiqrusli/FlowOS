@@ -1,10 +1,10 @@
-# Action and Evidence System
+﻿# Action and Evidence System
 
 **Status:** Active
 **Authority:** Canonical system rules for actual action, factual evidence, outcomes, and record provenance
 **Owner:** Product Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** System interface contracts, experience architecture, feature briefs, behavior contracts, data architecture, measurement specification
 **Last Updated:** 2026-08-03
 **Review trigger:** A proposed capability changes how FlowOS represents occurrence, factual evidence, outcome, provenance, correction, or the relationship between action and commitment.

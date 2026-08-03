@@ -1,12 +1,12 @@
 ---
-description: Daily developer log — when and how to update docs/execution/logs/developer-log
+description: Daily developer log — when and how to update docs/current-phase/logs/developer-log
 alwaysApply: true
 ---
 
 # Developer log (FlowOS)
 
-**Path:** `docs/execution/logs/developer-log/YYYY-MM-DD.md`  
-**Index:** `docs/execution/logs/developer-log/README.md`
+**Path:** `docs/current-phase/logs/developer-log/YYYY-MM-DD.md`  
+**Index:** `docs/current-phase/logs/developer-log/README.md`
 
 ## What it is
 
@@ -15,12 +15,12 @@ Personal daily journal (timeline + WIP). **Not** product authority.
 | Need | Doc |
 |------|-----|
 | Product why | `docs/08-decisions/decision-records.md` |
-| Shipped on main | `docs/execution/logs/august-log.md` (or current active month log) |
+| Shipped on main | `docs/current-phase/logs/august-log.md` (or current active month log) |
 | Day timeline / lessons / active changes | **developer-log** |
 
 ## Agent behavior
 
-1. **Mandatory Documentation/Code Logging:** Whenever you create, update, or delete any file under `docs/` or make any code change, you MUST immediately append a timestamped timeline beat to today's developer log (`docs/execution/logs/developer-log/YYYY-MM-DD.md`) with the exact local time and details of the modification.
+1. **Mandatory Documentation/Code Logging:** Whenever you create, update, or delete any file under `docs/` or make any code change, you MUST immediately append a timestamped timeline beat to today's developer log (`docs/current-phase/logs/developer-log/YYYY-MM-DD.md`) with the exact local time and details of the modification.
 2. **End of a meaningful coding session** (or when founder asks): create or append today's `YYYY-MM-DD.md` (timezone = founder local; use user_info date when present).
 3. **Append Timeline** beats for all meaningful work and changes with the exact current time.
 4. **Overview** — Done / Still open / Blockers. Skip empty sections.

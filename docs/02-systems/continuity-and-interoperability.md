@@ -1,10 +1,10 @@
-# Continuity and Interoperability System
+﻿# Continuity and Interoperability System
 
 **Status:** Active
 **Authority:** Canonical system rules for continuity of context, source relationships, and movement of information across product boundaries
 **Owner:** Product Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** System interface contracts, experience architecture, feature briefs, behavior contracts, integration architecture, data architecture, portability and deletion policies
 **Last Updated:** 2026-08-03
 **Review trigger:** A proposed capability changes how FlowOS preserves context over time, connects to a source, represents source ownership or provenance, synchronizes information, or enables a person to take information in or out of FlowOS.

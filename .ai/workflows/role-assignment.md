@@ -1,4 +1,4 @@
-# AI Workflow: Role Assignment
+﻿# AI Workflow: Role Assignment
 
 **When to use:** When Founder assigns you a role and task.
 
@@ -23,8 +23,8 @@ Expected output: [deliverable]
 Acknowledged. I am the [Role Name].
 
 Reading:
-1. docs/12-team/active-6-role/[role-name].md
-2. docs/07-strategy-and-delivery/current-sprint.md
+1. docs/10-team/6-role-hats/[role-name].md
+2. docs/current-phase/current-sprint.md
 3. [Input documents]
 
 [After reading]
@@ -47,7 +47,7 @@ Beginning work...
 
 ### 1. Read Your Role Document
 
-**Action:** Read `docs/12-team/active-6-role/[your-role].md`
+**Action:** Read `docs/10-team/6-role-hats/[your-role].md`
 
 **Understand:**
 - **Mission:** What is your role's purpose?
@@ -61,10 +61,10 @@ Beginning work...
 
 ### 2. Check Current Sprint
 
-**Action:** Read `docs/07-strategy-and-delivery/current-sprint.md`
+**Action:** Read `docs/current-phase/current-sprint.md`
 
 **Understand:**
-- Current phase (Phase 1: Establish Implementation Truth)
+- Current phase (Phase 1 — Establish Implementation Truth)
 - Sprint objectives
 - Your role's assignments in this sprint
 - Context for the work
@@ -74,27 +74,27 @@ Beginning work...
 **Based on your role:**
 
 **Product Architect:**
-- `docs/strategy/Vision.md`
+- `docs/00-constitution/Vision.md`
 - `docs/01-product/product-model.md`
 - `docs/01-product/product-glossary.md`
-- `docs/07-strategy-and-delivery/mvp-implementation-masterplan.md`
+- `docs/current-phase/mvp-implementation-masterplan.md`
 
 **Design Architect:**
 - Feature brief + Behavior contract (Founder approved)
 - `docs/05-design/design-system-architecture.md`
-- `docs/foundation/DESIGN_SYSTEM_V3.md`
-- `docs/foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md`
+- `docs/05-design/DESIGN_SYSTEM_V3.md`
+- `docs/05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md`
 
 **Engineering Architect:**
 - Behavior contract + Design spec (Founder approved)
 - `docs/06-engineering/engineering-architecture.md`
 - `docs/06-engineering/engineering-standards.md`
-- `docs/foundation/TECHNICAL_ARCHITECTURE.md`
+- `docs/06-engineering/TECHNICAL_ARCHITECTURE.md`
 
 **Implementation Engineer:**
 - Complete feature dossier (all Founder approved)
-- `docs/foundation/governance/CODE_STANDARDS.md`
-- `docs/foundation/governance/GIT_WORKFLOW.md`
+- `docs/00-constitution/governance/CODE_STANDARDS.md`
+- `docs/00-constitution/governance/GIT_WORKFLOW.md`
 - Current codebase (similar files for pattern matching)
 
 **Release Manager:**
@@ -253,13 +253,13 @@ You are the Product Architect for FlowOS.
 
 Assignment: Define Inline Task Capture feature
 
-Context: Phase 1 current sprint - need faster task entry from Today page
+Context: Current sprint - need faster task entry from Today page
 Users report friction in current add-task flow
 
 Input documents:
-- docs/strategy/Vision.md
+- docs/00-constitution/Vision.md
 - docs/01-product/product-model.md
-- docs/07-strategy-and-delivery/current-sprint.md
+- docs/current-phase/current-sprint.md
 - docs/02-systems/direction-and-commitment.md
 
 Expected output:
@@ -275,9 +275,9 @@ Hand off to: Submit to me for approval, then Design Architect
 Acknowledged. I am the Product Architect.
 
 Reading:
-1. docs/12-team/active-6-role/product-architect.md
-2. docs/07-strategy-and-delivery/current-sprint.md
-3. docs/strategy/Vision.md
+1. docs/10-team/6-role-hats/product-architect.md
+2. docs/current-phase/current-sprint.md
+3. docs/00-constitution/Vision.md
 4. docs/01-product/product-model.md
 5. docs/02-systems/direction-and-commitment.md
 
@@ -292,8 +292,8 @@ Role understood:
 
 Current sprint context:
 - Phase 1: Establish Implementation Truth
-- Sprint objective: Document current behavior, begin feature briefs for MVP
-- Current issue: Task capture friction on Today page
+- Sprint objective: Verify current build behavior, reconcile catalog/design with code, run baselines
+- Current issue: Task capture behavior on Today page not yet baseline-documented
 
 Beginning work on Inline Task Capture feature brief...
 
@@ -347,8 +347,8 @@ Input documents:
 - docs/04-features/inline-task-capture/brief.md (Founder approved)
 - docs/04-features/inline-task-capture/behavior-contract.md (Founder approved)
 - docs/05-design/design-system-architecture.md
-- docs/foundation/DESIGN_SYSTEM_V3.md
-- docs/foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md
+- docs/05-design/DESIGN_SYSTEM_V3.md
+- docs/05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md
 
 Expected output:
 - Design specification (visual, interaction, content, accessibility)

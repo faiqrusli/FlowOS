@@ -1,102 +1,54 @@
 # FlowOS Current Sprint Context (Quick Reference)
 
-**Sprint Period:** Week of 2026-08-02  
-**Phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority  
-**Gate Target:** Every proposed MVP work item traces to feature domain, parent system, and masterplan phase  
-**Last Updated:** 2026-08-03
+**Sprint Period:** Beginning week of 2026-08-04  
+**Phase:** Phase 1 — Establish Implementation Truth  
+**Gate Target:** Gate 1 — for every admitted MVP domain, demonstrate current behavior, data path, known gaps, and owner  
+**Last Updated:** 2026-08-04
 
 ---
 
 ## Quick Overview
 
-**What we're doing:** Establishing document authority before assessing implementation.
+**What we're doing:** Determining what the current build actually does before changing it.
 
-**Why:** Vision changed. Old plans don't match. Need clear authority before we start documenting current behavior.
+**Why:** The MVP Masterplan is the source of truth. Phase 1 establishes the baseline truth of the shipped code so later contract and implementation work is evidence-based.
 
-**Who:** All 6 roles updating documentation with role ownership.
-
----
-
-## Phase 0 Objectives
-
-1. ✅ Adopt MVP Implementation Masterplan as implementation source
-2. ✅ Adopt Feature Catalog as coverage map
-3. ✅ Adopt Design Implementation Map
-4. ✅ Start Documentation Refinement Plan
-5. ⏳ Mark legacy execution-masterplan.md as historical
-6. ⏳ Update all core docs with 6-role ownership
-7. ✅ Ensure AI skills reference new structure
-8. ⏳ Create implementation truth backlog
+**Who:** Executed via the solo-founder 6-hat workflow.
 
 ---
 
-## Gate 0 Exit Criteria
+## Phase 1 Objectives (from MVP Masterplan)
 
-**For Gate 0 to pass:**
-- [✅] MVP Masterplan adopted (100%)
-- [✅] Feature Catalog adopted (100%)
-- [✅] Design Implementation Map adopted (100%)
-- [🟡] 6-role ownership on core docs (30% - in progress)
-- [⏳] Legacy docs marked historical (0%)
-- [✅] AI skills updated (100%)
-- [⏳] Implementation truth backlog created (0%)
-
-**Overall:** 42% complete
-
-**No work proceeds to Phase 1 until Gate 0 passes.**
+1. Verify routes, entry points, data ownership, persistence, permissions, and current error/recovery behavior
+2. Reconcile the Feature Catalog with code and FEATURE_INVENTORY
+3. Reconcile V3/Tokyo Night Warm references, CSS tokens, component usage, and legacy design material
+4. Identify dead code, placeholder routes, duplicate scheduling surfaces, dual save paths, and undocumented states
+5. Run baseline quality, accessibility, security, and production checks
+6. Create only the feature briefs and behavior contracts needed to describe admitted MVP behavior
 
 ---
 
-## Current Sprint Assignments (Phase 0)
+## Gate 1 Exit Criteria
 
-### Product Architect
-**Primary:** Update product documentation with 6-role ownership
+**For Gate 1 to pass:**
+- [ ] Every admitted MVP domain has documented current behavior
+- [ ] Every admitted MVP domain has a mapped data path
+- [ ] Known gaps and owners are identified
+- [ ] No unknown status passes into implementation
 
-**Deliverables:**
-- Update 10 product docs (product-model, glossary, strategy, systems, features)
-- Add Document Ownership sections
-- Change "Product leadership" → "Product Architect"
+**Phase 0 history:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04. Archived to `docs/11-archive/phases/phase-0/`. See [D-003](../docs/08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md).
 
-**Due:** 2026-08-05
+---
 
-### Design Architect
-**Primary:** Update design documentation with 6-role ownership
+## Current Sprint Assignments (Phase 1)
 
-**Deliverables:**
-- Update 8 design docs (design system, experience architecture, standards)
-- Add Document Ownership sections
-- Change "Design leadership" → "Design Architect"
+*To be created — the Phase 1 sprint is the next step.*
 
-**Due:** 2026-08-05
-
-### Engineering Architect
-**Primary:** Update engineering documentation with 6-role ownership
-
-**Deliverables:**
-- Update 10 engineering docs (architecture, standards, technical architecture)
-- Add Document Ownership sections
-- Change "Engineering leadership" → "Engineering Architect"
-
-**Due:** 2026-08-05
-
-### Implementation Engineer
-**Primary:** Mark legacy documents and create implementation backlog
-
-**Deliverables:**
-- Add historical banners to execution-masterplan.md and M2 runbooks
-- Create implementation-truth-backlog.md (questions about current state)
-
-**Due:** 2026-08-04 (legacy markers), 2026-08-05 (backlog)
-
-### Release Manager
-**Primary:** Phase 0 gate criteria and readiness assessment
-
-**Deliverables:**
-- Phase 0 gate checklist (validation criteria)
-- Continuous gate tracking
-- Gate readiness report
-
-**Due:** 2026-08-04 (checklist), 2026-08-06 (gate report)
+Likely tracks (from the MVP Masterplan and prior Phase 0 preview):
+- Document current behavior of Today and Tasks domains
+- Reconcile design system (V3 / Tokyo Night Warm) with implementation
+- Baseline quality, accessibility, security, and production checks
+- Identify dead code, placeholder routes, dual save paths, undocumented states
 
 ---
 
@@ -123,68 +75,64 @@
 ## Key Documents for This Sprint
 
 **Read these:**
-1. `docs/07-strategy-and-delivery/mvp-implementation-masterplan.md` — Phase 1 details
-2. `docs/07-strategy-and-delivery/current-sprint.md` — Full sprint plan
-3. `docs/strategy/Vision.md` — Why we're doing this
+1. `docs/current-phase/mvp-implementation-masterplan.md` — Phase 1 details
+2. `docs/current-phase/current-sprint.md` — Sprint plan
+3. `docs/00-constitution/Vision.md` — Why we're doing this
 4. `docs/01-product/product-model.md` — What FlowOS is
+5. `docs/11-archive/phases/phase-0/implementation-truth-backlog.md` — Starting question list
 
 **Reference:**
-- `docs/foundation/FEATURE_INVENTORY.md` — Current shipped features
+- `docs/04-features/FEATURE_INVENTORY.md` — Current shipped features
 - `docs/04-features/feature-catalog.md` — Feature domain status
-- `docs/foundation/DESIGN_SYSTEM_V3.md` — Design system
-- `docs/foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md` — Active palette
+- `docs/05-design/DESIGN_SYSTEM_V3.md` — Design system
+- `docs/05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md` — Active palette
 
 ---
 
-## What's In Scope This Sprint (Phase 0)
+## What's In Scope This Sprint (Phase 1)
 
-✅ Updating documentation with 6-role ownership  
-✅ Marking legacy documents as historical  
-✅ Creating implementation truth backlog (questions, not features)  
-✅ Establishing document authority  
-✅ Gate 0 readiness assessment  
+✅ Verifying routes, entry points, data ownership, persistence, permissions, error/recovery behavior  
+✅ Reconciling Feature Catalog and design references with code  
+✅ Identifying dead code, placeholder routes, duplicate scheduling surfaces, dual save paths  
+✅ Running baseline quality, accessibility, security, and production checks  
+✅ Creating feature briefs/behavior contracts needed to describe admitted MVP behavior
 
 ---
 
 ## What's Out of Scope This Sprint
 
-❌ Documenting current behavior (Phase 1)  
-❌ Writing feature briefs or contracts (Phase 2)  
-❌ Implementing new features  
-❌ Refactoring code  
-❌ Quality baselines (Phase 1)  
-
-**Focus:** Document authority first, then we can assess implementation.
+❌ Writing the coherent MVP loop contracts (Phase 2)  
+❌ Implementing or hardening the core loop (Phase 3)  
+❌ Trust/quality/release readiness (Phase 4)  
+❌ Any feature implementation or refactor beyond documenting truth
 
 ---
 
 ## Next Phase Preview
 
-**Phase 1:** Establish Implementation Truth
-- Document current behavior of Today, Tasks, Focus, Reflection
-- Reconcile design system with implementation
-- Run baseline quality checks
-- Identify dead code and gaps
-- Create feature briefs for admitted MVP behavior
+**Phase 2:** Contract the Coherent MVP Loop
+- Write Today, Tasks, Focus, Reflection feature briefs and behavior contracts
+- Write the bounded journey contract
+- Create feature design specifications
 
-**Not starting Phase 1 until Gate 0 complete.**
+**Not starting Phase 2 until Gate 1 passes.**
 
 ---
 
 ## Quick Reference
 
 **When someone asks "What should I work on?"**
-→ Check your role's Phase 0 assignment above
+→ Check the Phase 1 sprint assignments (being created)
 
-**When someone asks "Should I document current behavior?"**
-→ Not yet. Phase 0 is about document ownership. Phase 1 is implementation truth.
+**When someone asks "Should I write contracts?"**
+→ Not yet. Phase 1 is about establishing truth. Phase 2 is contracts.
 
 **When someone asks "What's the goal?"**
-→ Gate 0: Establish document authority with 6-role ownership
+→ Gate 1: Current build does not pass into implementation if its behavior is unknown.
 
 **When someone asks "When do we assess implementation?"**
-→ Phase 1, after Gate 0 complete (target: 2026-08-06)
+→ Phase 1 — establishing the baseline now.
 
 ---
 
-**This is Phase 0. We're establishing who owns which documents before we start documenting what the code does.**
+**This is Phase 1. We're determining what the code actually does before we branch contracts.

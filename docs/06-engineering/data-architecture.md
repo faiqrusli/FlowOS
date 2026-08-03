@@ -1,4 +1,4 @@
-# Data Architecture
+﻿# Data Architecture
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS durable information representation, lifecycle, lineage, integrity, access, portability, and data-quality controls
@@ -234,7 +234,7 @@ Migration validation must assess semantic integrity, access control, lineage, cu
 
 ## 10. Current Implementation References and Transition
 
-[TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) remains the current reference for the implemented data model, stack, known debt, and deployment facts. Current schema, migration, and database configuration artifacts remain actual implementation evidence.
+[TECHNICAL_ARCHITECTURE.md](../06-engineering/TECHNICAL_ARCHITECTURE.md) remains the current reference for the implemented data model, stack, known debt, and deployment facts. Current schema, migration, and database configuration artifacts remain actual implementation evidence.
 
 All new reusable data architecture, data-model specifications, lifecycle policies, and migration designs belong in `06-engineering/`. Existing implementation references remain active for their factual scope until a material revision creates an explicit successor. Do not copy current schema listings or migration history into this architecture; link to the implementation reference and define only the durable rule it lacks.
 

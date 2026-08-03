@@ -1,4 +1,4 @@
-# Operations Architecture
+﻿# Operations Architecture
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS deployment, configuration, observability, incident response, support, backup, recovery, and operational access boundaries
@@ -206,7 +206,7 @@ Continuity exercises must be planned, scoped, reversible or repairable, monitore
 
 ## 9. Current Implementation References and Transition
 
-[TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) remains the current reference for deployed stack, deployment facts, current dependencies, and technical debt. [ENGINEERING.md](../foundation/governance/ENGINEERING.md), [QUALITY_GATES.md](../foundation/governance/QUALITY_GATES.md), and the `docs/execution/` runbooks remain current references for active operating rules, quality checks, and operational procedures.
+[TECHNICAL_ARCHITECTURE.md](../06-engineering/TECHNICAL_ARCHITECTURE.md) remains the current reference for deployed stack, deployment facts, current dependencies, and technical debt. [ENGINEERING.md](../00-constitution/governance/ENGINEERING.md), [GATES.md](../00-constitution/governance/GATES.md), and the active runbooks in `docs/current-phase/logs/` remain current references for active operating rules, quality checks, and operational procedures.
 
 All new reusable operations architecture, environment and configuration specifications, observability standards, incident procedures, backup and recovery plans, support-access standards, and operational runbooks belong in `06-engineering/`. Existing references remain active for factual scope until a material revision creates an explicit successor. Do not copy deployment status, commands, dashboards, alert history, incident findings, or runbook steps into this architecture; link to them and define only the durable boundary they do not own.
 

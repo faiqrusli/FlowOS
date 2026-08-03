@@ -1,10 +1,10 @@
-# FlowOS Product Strategy
+﻿# FlowOS Product Strategy
 
 **Status:** Active
 **Authority:** Current market, audience, positioning, and strategic-choice authority
 **Owner:** Product Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](./product-model.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](./product-model.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Success Model, Roadmap, Research Program, Feature Briefs
 **Last Updated:** 2026-08-03
 **Review trigger:** Material user evidence, market change, a failed strategic assumption, or a decision to enter a new audience, category, or distribution channel.

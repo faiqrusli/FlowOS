@@ -1,10 +1,10 @@
-# Experience Architecture
+﻿# Experience Architecture
 
 **Status:** Active
 **Authority:** Canonical cross-surface rules for how FlowOS makes product context, choices, states, and system transitions understandable in use
 **Owner:** Product Architect + Design Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md) · [System Documents](../02-systems/)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md) · [System Documents](../02-systems/)
 **Children:** Information structure, journey contracts, feature briefs, behavior contracts, interaction specifications, content standards, accessibility standards, design-system applications
 **Last Updated:** 2026-08-03
 **Review trigger:** A proposed capability changes where a person finds or acts on core product context, how a system state is represented across surfaces, how a consequential transition is understood, or the cross-surface relationship among direction, commitment, action, evidence, sensemaking, adaptation, connected context, and computational assistance.

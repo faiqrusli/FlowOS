@@ -1,4 +1,4 @@
-# Client Architecture
+﻿# Client Architecture
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS client rendering, navigation, interaction state, data presentation, accessibility support, resilience, and performance boundaries
@@ -197,7 +197,7 @@ Client implementation must respect the experience and design constraints around 
 
 ## 9. Current Implementation References and Transition
 
-[TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) remains the current reference for the implemented application shell, client framework, directory structure, current routes, and client dependencies. [DESIGN_SYSTEM_V3.md](../foundation/DESIGN_SYSTEM_V3.md), [DESIGN_SYSTEM_V3_WORKSPACE.md](../foundation/DESIGN_SYSTEM_V3_WORKSPACE.md), [DESIGN_SYSTEM_V3_INTERACTION.md](../foundation/DESIGN_SYSTEM_V3_INTERACTION.md), and implementation code remain current references for visual and interaction implementation facts.
+[TECHNICAL_ARCHITECTURE.md](../06-engineering/TECHNICAL_ARCHITECTURE.md) remains the current reference for the implemented application shell, client framework, directory structure, current routes, and client dependencies. [DESIGN_SYSTEM_V3.md](../05-design/DESIGN_SYSTEM_V3.md), [DESIGN_SYSTEM_V3_WORKSPACE.md](../05-design/DESIGN_SYSTEM_V3_WORKSPACE.md), [DESIGN_SYSTEM_V3_INTERACTION.md](../05-design/DESIGN_SYSTEM_V3_INTERACTION.md), and implementation code remain current references for visual and interaction implementation facts.
 
 All new reusable client architecture, navigation and routing specifications, client state standards, data-loading contracts, accessibility implementation standards, performance budgets, and client recovery standards belong in `06-engineering/`. Existing references remain active for factual scope until a material revision creates an explicit successor. Do not copy route lists, component trees, framework APIs, CSS, or implementation code into this architecture; link to them and define only the durable boundary they do not own.
 

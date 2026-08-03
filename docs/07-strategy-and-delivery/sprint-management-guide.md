@@ -1,399 +1,335 @@
-# Sprint Management Guide
+﻿# Sprint Management Guide (Solo Founder with 6-Hat Workflow)
 
-**Purpose:** How to use the sprint system to coordinate work across the 6-role organization  
-**Owner:** Founder  
-**Last Updated:** 2026-08-02  
-
----
-
-## What is a Sprint?
-
-A sprint is a time-boxed period (typically 1 week) where all roles execute coordinated work toward a specific phase gate in the MVP Implementation Masterplan.
-
-**Sprint = Phase work + Role assignments + Approval workflows + Gate progress tracking**
+**Status:** Active  
+**Last Updated:** 2026-08-04  
+**Audience:** Founder, AI assistants  
+**Replaces:** Old sprint-management-guide.md (archived to phase-0/)  
 
 ---
 
-## Sprint Lifecycle
+## Purpose
 
-### 1. Sprint Planning (End of previous sprint)
+This guide explains how to manage sprints and phases for solo founder development using the 6-hat quality workflow.
 
-**Who:** Founder with input from all roles
-
-**Activities:**
-1. Review previous sprint outcomes
-2. Check MVP Masterplan for current phase
-3. Identify phase objectives
-4. Break down work into role assignments
-5. Map dependencies between roles
-6. Set sprint duration (usually 1 week)
-7. Create new sprint document from template
-
-**Output:** New sprint document with all role assignments
-
-**Time:** 2-3 hours
+**No approval gates. No coordination theater. Just quality work with clear tracking.**
 
 ---
 
-### 2. Sprint Kickoff (Day 1)
+## Sprint Structure
 
-**Who:** All roles
+### What is a Sprint?
 
-**Activities:**
-1. Founder shares sprint document
-2. Each role reviews their assignments
-3. Roles ask clarifying questions
-4. Founder confirms priorities
-5. Work begins
+**A sprint is one week of focused work within a phase.**
 
-**Format:**
-```
-Founder: Here's the sprint document: [link]
-Founder: Phase [X] focus is [Y]
-Founder: Questions before we start?
-[Roles ask questions]
-Founder: [Answers and clarifications]
-Founder: Let's begin. First standup tomorrow.
-```
+- **Duration:** 1 week (Monday to Sunday)
+- **Planning:** 30 minutes at start
+- **Review:** 30 minutes at end
+- **Documentation:** `current-phase/current-sprint.md`
 
-**Time:** 30 minutes
+### Sprint vs Phase
+
+| Concept | Duration | Purpose | Documented In |
+|---------|----------|---------|---------------|
+| **Phase** | 1-4 weeks | Complete a gate (Phase 0, 1, 2, etc.) | `current-phase/phase-N/` |
+| **Sprint** | 1 week | Weekly execution cycle within phase | `current-phase/current-sprint.md` |
+| **Session** | 2-4 hours | Focused work block | Daily logs |
+
+**Example:** Phase 1 might have 3 sprints (3 weeks), each sprint has multiple sessions.
 
 ---
 
-### 3. Daily Standup (Every day)
+## Sprint Workflow (Using 6 Hats)
 
-**Who:** All roles + Founder
+### Monday Morning: Sprint Planning (30 min)
 
-**Format:**
-```
-Each role reports:
-1. Yesterday: [What I completed]
-2. Today: [What I'm working on]
-3. Blockers: [What's stopping me]
-4. Needs approval: [What's waiting for Founder]
-5. Dependencies: [What I'm waiting for from others]
+**Founder hat: Decide what to work on**
 
-Founder responds:
-- Approves completed work
-- Unblocks issues
-- Adjusts priorities if needed
-```
+1. **Read current phase goals**
+   - Check `current-phase/phase-N/gate-checklist.md`
+   - What needs to be done to complete the current gate?
 
-**Time:** 15-30 minutes
+2. **Pick sprint tasks (3-5 tasks max)**
+   - Small: < 4 hours (decision log only)
+   - Medium: 4-16 hours (brief + code)
+   - Large: > 16 hours (full 6-hat dossier)
 
-**When:** Same time each day
-
----
-
-### 4. Work Execution (Throughout sprint)
-
-**Roles follow this pattern:**
-
-```
-1. Read assignment from sprint doc
-2. Read input documents
-3. Execute work per role workflow
-4. Submit for approval (per approval workflow)
-5. Wait for Founder approval
-6. Hand off to next role (after approval)
-7. Update sprint doc with completion
-```
-
-**Key principles:**
-- Follow your role document workflow
-- Follow approval workflows (upstream review before downstream handoff)
-- Don't skip steps to go faster
-- Escalate blockers immediately
-- Update sprint doc as you complete work
-
----
-
-### 5. Mid-Sprint Check (Day 3-4)
-
-**Who:** Founder reviews progress
-
-**Activities:**
-1. Check sprint metrics
-2. Review completion tracking
-3. Identify at-risk items
-4. Adjust assignments if needed
-5. Communicate changes to roles
-
-**Output:** Any necessary priority/scope adjustments
-
-**Time:** 30-60 minutes
-
----
-
-### 6. Sprint Review (Last day)
-
-**Who:** All roles + Founder
-
-**Activities:**
-1. Review all completed work
-2. Check gate progress
-3. Identify incomplete items
-4. Assess phase gate readiness
-5. Make gate decision (pass/extend/adjust)
-6. Celebrate wins
-7. Capture learnings
-
-**Format:**
-```
-Founder: Sprint review - let's assess Gate [X]
-[Review each domain/deliverable]
-Founder: Gate status: [Assessment]
-Founder: Decision: [Pass/Extend/Adjust]
-Founder: What went well?
-[Roles share]
-Founder: What can improve?
-[Roles share]
-Founder: Next sprint planning on [Date]
-```
-
-**Output:** 
-- Gate decision
-- Sprint retrospective notes
-- Input for next sprint
-
-**Time:** 1-2 hours
-
----
-
-## Sprint Document Structure
-
-### Essential Sections
-
-1. **Sprint Overview**
-   - Phase context from masterplan
-   - Sprint objectives
-   - Success criteria
-
-2. **Role Assignments** (one per role)
-   - Primary assignment
-   - Specific tasks with clear deliverables
-   - Time allocation
-   - Blockers and dependencies
-
-3. **Sprint Metrics**
-   - Completion tracking table
-   - Gate progress tracker
-   - Visual status (⚪🟡🟢)
-
-4. **Dependencies Map**
-   - Visual representation of who depends on whom
-   - Critical path highlighted
-
-5. **Daily Standup Format**
-   - Consistent structure for updates
-
-6. **Sprint Cadence**
-   - Day-by-day key events
-
-7. **Risks & Mitigation**
-   - Identified risks with mitigation plans
-
----
-
-## Role Assignment Format
-
-**Every assignment should have:**
-
-```
-Assignment: [Clear, specific task]
-Context: [Why this matters to phase/MVP]
-Input Documents:
-  - [Specific documents to read]
-Expected Output:
-  - [Concrete deliverables]
-Definition of Done:
-  - [Testable completion criteria]
-  - [Approval requirements]
-Hand Off To: [Next role after approval]
-Due: [Specific date]
-```
-
-**Bad assignment:**
-```
-Assignment: Work on Tasks feature
-Output: Make progress
-Due: This week
-```
-
-**Good assignment:**
-```
-Assignment: Document Tasks domain current behavior
-Context: Phase 1 implementation truth assessment
-Input Documents:
-  - docs/01-product/product-model.md
-  - Current implementation (src/app/tasks/*)
-Expected Output:
-  - docs/04-features/tasks/current-behavior.md
-  - Document: CRUD operations, states, data model, persistence
-Definition of Done:
-  - All task operations documented
-  - State machine mapped
-  - Known issues identified
-  - Founder approved
-Hand Off To: Design Architect (for design reconciliation)
-Due: 2026-08-05
-```
-
----
-
-## Managing Dependencies
-
-### Types of Dependencies
-
-1. **Sequential:** B can't start until A completes
-   ```
-   Product Architect (behavior doc)
-     ↓ must complete first
-   Design Architect (design reconciliation)
+3. **Update current-sprint.md**
+   ```markdown
+   ## Sprint Tasks
+   
+   ### Priority 1: [Task Name]
+   - Size: Large (16h)
+   - Hats needed: All 6
+   - Goal: [Specific outcome]
+   
+   ### Priority 2: [Task Name]
+   - Size: Medium (8h)
+   - Hats needed: 3-4-5
+   - Goal: [Specific outcome]
    ```
 
-2. **Parallel:** A and B can work simultaneously
-   ```
-   Engineering Architect (quality baseline)
-   Product Architect (behavior doc)
-   [Both work at same time, different inputs]
+4. **Estimate hours**
+   - Don't overfill (aim for 30-35 hours, not 40)
+   - Leave buffer for unexpected work
+
+### Daily Work: Execute with 6 Hats
+
+**Wear appropriate hats for each task:**
+
+#### For Major Features (Full 6-Hat Workflow)
+
+**Day 1-2: Plan Mode**
+- **Hat 1 (Product Architect):** Write feature brief + behavior contract (4-8h)
+- **Hat 2 (Design Architect):** Write design specification (2-4h)
+
+**Day 3: Engineering Mode**
+- **Hat 3 (Engineering Architect):** Write delivery design + validation plan (2-4h)
+
+**Day 4-5: Build Mode**
+- **Hat 4 (Implementation Engineer):** Build code + tests + runbook (6-12h)
+
+**Day 5: Ship Mode**
+- **Hat 5 (Release Manager):** Verify + Deploy + Document (1-2h)
+
+#### For Medium Features (Hats 3-4-5)
+
+**Day 1:** Engineering Architect + Implementation Engineer (4-8h)  
+**Day 2:** Implementation Engineer continues (4-8h)  
+**Day 3:** Release Manager verifies and ships (1-2h)
+
+#### For Small Features (Hats 4-5)
+
+**Session 1:** Implementation Engineer (1-3h)  
+**Session 2:** Release Manager (30min)
+
+### Daily: Log Progress
+
+**In daily developer log** (`current-phase/logs/developer-log/YYYY-MM-DD.md`):
+
+```markdown
+## [Time] - [Task Name]
+
+**Hat worn:** Product Architect (Hat 1)
+
+**What I did:**
+- Wrote feature brief for [feature]
+- Defined scope and success criteria
+
+**Output:**
+- `04-features/[feature]/feature-brief.md`
+
+**Next:** Wear Design Architect hat (Hat 2)
+```
+
+### Friday Afternoon: Sprint Review (30 min)
+
+**Founder hat: Review what was accomplished**
+
+1. **Check completed tasks**
+   - What shipped to production?
+   - What's in progress?
+   - What's blocked?
+
+2. **Update sprint doc**
+   ```markdown
+   ## Sprint Results
+   
+   ### Completed
+   - ✅ [Task 1] — Shipped to production
+   - ✅ [Task 2] — Documentation complete
+   
+   ### In Progress
+   - 🟡 [Task 3] — 60% done, will finish next sprint
+   
+   ### Blocked
+   - ❌ [Task 4] — Blocked by [reason]
    ```
 
-3. **Convergent:** C needs both A and B
-   ```
-   Product Architect → \
-                        → Release Manager (gate assessment)
-   Design Architect  → /
-   ```
+3. **Update phase gate checklist**
+   - Check off completed gate criteria
+   - Update status
 
-### Dependency Management
-
-**In sprint planning:**
-1. Identify all dependencies
-2. Sequence work to minimize blocking
-3. Start parallel tracks where possible
-4. Have backup tasks for blocked roles
-
-**During sprint:**
-1. Upstream roles prioritize completing work that unblocks others
-2. Downstream roles can prepare (read docs, set up environment)
-3. Founder expedites approvals on blocking work
-4. Blocked roles work on parallel tasks or next sprint prep
+4. **Reflect**
+   - What went well?
+   - What slowed me down?
+   - What to improve next sprint?
 
 ---
 
-## Approval Workflow in Sprints
+## Phase Management
 
-**Standard pattern:**
+### Starting a New Phase
 
-```
-1. Role completes work
-2. Role submits for approval:
-   From: [Role]
-   To: [Reviewing Role/Founder]
-   Status: Complete
-   Deliverables: [Links]
-   Quality Checks: [What was verified]
-   Decision Requested: Approve to hand off to [Next Role]
+**When:** Previous phase gate passes
 
-3. Founder reviews (or delegated reviewer)
-4. Founder responds:
-   ✅ Approved - proceed to handoff
-   🔄 Changes requested - [specific feedback]
-   ❌ Rejected - [rationale]
+1. **Archive previous phase**
+   ```bash
+   mv current-phase/phase-N/ 11-archive/phases/phase-N/
+   ```
 
-5. If approved, role hands off to next role
-6. Role updates sprint doc completion status
-```
+2. **Create new phase folder**
+   ```bash
+   mkdir current-phase/phase-N+1/
+   ```
 
-**Time expectations:**
-- Critical path items: Same day approval
-- Normal items: Within 24 hours
-- Non-blocking items: Within 2 days
+3. **Create gate checklist**
+   - Copy template from MVP Masterplan
+   - Customize for this phase
+
+4. **Update current-sprint.md**
+   - Change phase reference
+   - Set first sprint goals
+
+### Completing a Phase
+
+**When:** All gate criteria met
+
+1. **Verify gate completion**
+   - Review `phase-N/gate-checklist.md`
+   - All items checked?
+   - All deliverables created?
+
+2. **Founder decision: Gate pass/fail**
+   - Record decision in `phase-N/gate-N-decision.md`
+   - If fail: What needs fixing?
+   - If pass: Move to next phase
+
+3. **Archive phase folder**
+   - Move to `11-archive/phases/phase-N/`
+   - Keep current-phase/ clean
+
+4. **Create next phase**
+   - Follow "Starting a New Phase" above
 
 ---
 
-## Sprint Metrics
+## Task Sizing Guide
 
-### Track These Daily
+### Small Tasks (< 4 hours)
 
-**Completion Tracking:**
-- Tasks assigned vs. completed per role
-- Blocked items
-- On track vs. at risk
+**Hats needed:** 4-5 (Implementation + Release)
 
-**Gate Progress:**
-- Domain-by-domain completion (⚪🟡🟢)
-- Percentage complete per gate criterion
-- Days remaining vs. work remaining
+**Documentation:**
+- Decision log entry
+- Code comments
+- Commit messages
 
-**Velocity:**
-- Avg time from assignment to completion
-- Avg time from completion to approval
-- Avg time from approval to handoff
+**Examples:**
+- Fix button alignment
+- Add keyboard shortcut
+- Small UI polish
 
-**Quality:**
-- Rework requests per deliverable
-- Escalations requiring Founder decision
+**Sprint capacity:** 8-10 small tasks per sprint
+
+### Medium Tasks (4-16 hours)
+
+**Hats needed:** 3-4-5 (Engineering + Implementation + Release) or 1-4-5 (Product + Implementation + Release)
+
+**Documentation:**
+- 1-2 page brief
+- Code + tests
+- Update FEATURE_INVENTORY
+
+**Examples:**
+- Inline task capture
+- Keyboard navigation improvements
+- API integration
+
+**Sprint capacity:** 2-3 medium tasks per sprint
+
+### Large Tasks (> 16 hours)
+
+**Hats needed:** All 6 (Full workflow)
+
+**Documentation:**
+- Feature brief
+- Behavior contract
+- Design specification
+- Delivery design
+- Validation plan
+- Implementation artifacts
+
+**Examples:**
+- Today page rebuild
+- New major feature
+- Complete redesign
+
+**Sprint capacity:** 1 large task per sprint (or spans multiple sprints)
+
+---
+
+## Sprint Logs
+
+### Where to Log
+
+1. **Daily developer log** (`current-phase/logs/developer-log/YYYY-MM-DD.md`)
+   - What you did today
+   - What hats you wore
+   - What you learned
+
+2. **Monthly narrative log** (`current-phase/logs/MONTH-log.md`)
+   - Weekly summaries
+   - Major achievements
+   - Key decisions
+
+3. **Current sprint doc** (`current-phase/current-sprint.md`)
+   - Sprint goals
+   - Task status
+   - Sprint results
+
+### What to Log
+
+**Daily:**
+- Tasks worked on
+- Hats worn
+- Output created
+- Time spent
 - Blockers encountered
 
----
+**Weekly:**
+- Sprint results (what shipped)
+- What went well
+- What to improve
 
-## Common Sprint Patterns
-
-### Phase Assessment Sprint
-**Purpose:** Understand current state before changing it
-
-**Pattern:**
-- Product Architect: Document current behavior
-- Design Architect: Audit design vs. implementation
-- Engineering Architect: Assess quality and architecture
-- Implementation Engineer: Support with tooling and cleanup
-- Release Manager: Define gate criteria and baseline
-
-**Duration:** 1 week
+**Monthly:**
+- Major milestones
+- Production deployments
+- Key learnings
 
 ---
 
-### Feature Definition Sprint
-**Purpose:** Contract new features before implementation
+## Working with AI Assistants
 
-**Pattern:**
-- Product Architect: Feature briefs and behavior contracts
-- Design Architect: Design specifications (after approval)
-- Engineering Architect: Delivery designs (after approval)
-- Implementation Engineer: Prepare environment, review contracts
-- Release Manager: Validation plan preparation
+### Starting Work
 
-**Duration:** 1-2 weeks
+**Give AI clear context:**
 
----
+```
+Context:
+- Phase: Phase 1
+- Sprint: Week of 2026-08-04
+- Current task: Write behavior contract for Today page
+- Hat: Product Architect (Hat 1)
 
-### Implementation Sprint
-**Purpose:** Build contracted features
+Task: Help me write the behavior contract...
+```
 
-**Pattern:**
-- Implementation Engineer: Primary implementation work
-- Engineering Architect: Technical guidance and reviews
-- Design Architect: Design clarifications and assets
-- Product Architect: Behavior clarifications
-- Release Manager: Continuous testing and quality checks
+### During Work
 
-**Duration:** 1-2 weeks
+**Reference sprint doc:**
+- "Check current-phase/current-sprint.md for context"
+- "Update sprint doc with task completion"
 
----
+### AI Hat Responsibilities
 
-### Release Sprint
-**Purpose:** Prepare and execute production release
+**AI can help with any hat:**
+- Hat 1: Draft feature briefs
+- Hat 2: Draft design specs
+- Hat 3: Draft delivery designs
+- Hat 4: Write code + tests
+- Hat 5: Run verification checklists
 
-**Pattern:**
-- Release Manager: Release plan, final QA, deployment
-- Implementation Engineer: Fix issues, support release
-- Engineering Architect: Rollback procedures, monitoring
-- Product Architect: Release communication, success criteria
-- Design Architect: Final design verification
-
-**Duration:** 3-5 days
+**Founder wears Hat 6 (decisions) — AI can't decide for you**
 
 ---
 
@@ -401,127 +337,80 @@ Due: 2026-08-05
 
 ### ❌ Don't Do This
 
-1. **Vague assignments**
-   - "Work on feature X"
-   - "Make progress"
-   - No clear deliverable
+1. **Overfill sprint** — Aim for 30-35h, not 40h
+2. **Skip hat responsibilities** — Each hat has quality checks
+3. **No sprint review** — Always review what you accomplished
+4. **Ignore blockers** — Log and address them
+5. **Work without logging** — Hard to learn without records
 
-2. **Skip approval workflows**
-   - Hand off work without approval
-   - Assume silence is approval
-   - Move to next phase without gate decision
+### ✅ Do This Instead
 
-3. **Overload one role**
-   - Give one role 80% of the work
-   - Create single points of failure
-   - Ignore parallel work opportunities
-
-4. **Ignore dependencies**
-   - Assign work that can't start yet
-   - Don't communicate blocks
-   - Let roles sit idle
-
-5. **No mid-sprint check**
-   - Wait until end to discover problems
-   - Don't adjust when things go wrong
-   - Ignore warning signs
-
-6. **Carry over incomplete work silently**
-   - Don't reassess scope
-   - Don't capture why work didn't finish
-   - Just copy to next sprint
+1. **Conservative estimates** — Better to finish early
+2. **Wear each hat properly** — Maintain quality
+3. **Weekly reflection** — Learn and improve
+4. **Address blockers immediately** — Don't let them pile up
+5. **Log as you go** — Brief entries, daily
 
 ---
 
-## Sprint Retrospective Questions
+## Example Sprint
 
-**After each sprint, discuss:**
+### Sprint: Week of 2026-08-04 (Phase 1)
 
-1. **What went well?**
-   - What helped us make progress?
-   - What workflows felt smooth?
-   - What should we keep doing?
+**Phase Goal:** Write behavior contracts for major features
 
-2. **What can improve?**
-   - What slowed us down?
-   - What was confusing?
-   - What should we change?
+**Sprint Goals:**
+1. ✅ Write Today page behavior contract (Large, 12h)
+2. ✅ Write Tasks board behavior contract (Large, 12h)
+3. 🟡 Write Focus mode behavior contract (Large, 8h — in progress)
 
-3. **Gate-specific:**
-   - Did we meet gate criteria?
-   - What evidence is strong?
-   - What evidence is weak?
+**Monday:**
+- Hat 1: Started Today behavior contract (4h)
 
-4. **Process:**
-   - Were assignments clear?
-   - Were dependencies managed well?
-   - Were approvals timely?
+**Tuesday:**
+- Hat 1: Finished Today behavior contract (4h)
+- Hat 1: Started Tasks behavior contract (2h)
 
-5. **Next sprint:**
-   - What should we do differently?
-   - What's the biggest risk?
-   - What's the critical path?
+**Wednesday:**
+- Hat 1: Finished Tasks behavior contract (6h)
 
-**Document answers in sprint notes section**
+**Thursday:**
+- Hat 1: Started Focus behavior contract (4h)
 
----
+**Friday:**
+- Hat 1: Continued Focus behavior contract (4h) — 60% done
+- Sprint review: 2 of 3 complete, good progress
 
-## Tools & Templates
-
-**Available documents:**
-- [Current Sprint](./current-sprint.md) — Active sprint
-- [Sprint Template](./sprint-template.md) — For new sprints
-- [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) — Phase authority
-- [Active 6-Role Configuration](../12-team/active-6-role/README.md) — Role details
-
-**Update locations:**
-- Sprint doc: Update completion status daily
-- Standup: Update verbally or in chat daily
-- Metrics: Update in sprint doc after standup
+**Next Sprint:** Finish Focus, start Schedule
 
 ---
 
-## Quick Reference: Founder's Sprint Checklist
+## Summary
 
-### Sprint Planning
-- [ ] Review previous sprint outcomes
-- [ ] Identify current phase objectives
-- [ ] Create sprint document from template
-- [ ] Assign work to each role
-- [ ] Map dependencies
-- [ ] Set dates and cadence
-- [ ] Share with team
+**Sprint workflow:**
+1. **Monday:** Plan (decide what to work on)
+2. **Tuesday-Friday:** Execute (wear appropriate hats)
+3. **Friday:** Review (reflect and update)
 
-### During Sprint
-- [ ] Conduct daily standup
-- [ ] Review submitted work
-- [ ] Provide approvals/feedback
-- [ ] Unblock roles
-- [ ] Track metrics
-- [ ] Mid-sprint check (day 3-4)
-- [ ] Adjust scope if needed
+**Key principles:**
+- 1 week sprints within multi-week phases
+- 3-5 tasks per sprint max
+- Wear appropriate hats for each task
+- Log daily, review weekly
+- Archive phases when complete
 
-### Sprint End
-- [ ] Review all deliverables
-- [ ] Assess gate progress
-- [ ] Make gate decision
-- [ ] Conduct retrospective
-- [ ] Document learnings
-- [ ] Plan next sprint
+**No approval gates. Just quality work with clear tracking.**
 
 ---
 
-## Success Metrics
+## Related Documents
 
-**Sprint is successful when:**
-- ✅ All roles know what to do
-- ✅ Dependencies are managed proactively
-- ✅ Approvals don't become bottlenecks
-- ✅ Gate progress is visible daily
-- ✅ Issues are escalated and resolved quickly
-- ✅ Phase gate decision is made with evidence
-- ✅ Team learns and improves each sprint
+- **[Solo Founder Workflow](../start-here/solo-founder-workflow.md)** — Complete 6-hat workflow
+- **[How to Develop FlowOS](../start-here/how-to-develop-flowos.md)** — Quick reference
+- **[Current Sprint](../current-phase/current-sprint.md)** — Active sprint
+- **[MVP Masterplan](../current-phase/mvp-implementation-masterplan.md)** — All phases
+- **[6-Role-Hats](../10-team/6-role-hats/)** — Detailed hat procedures
 
 ---
 
-**Use this system to coordinate the 6-role organization toward MVP completion.**
+**Simple sprints. Quality work. Clear progress.**

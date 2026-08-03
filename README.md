@@ -1,4 +1,4 @@
-# FlowOS
+﻿# FlowOS
 
 An operating system for self-direction that connects chosen direction, deliberate action, evidence, reflection, and adaptation.
 
@@ -104,11 +104,11 @@ FlowOS aims to close the gap between **intention and execution** — built to ex
 
 | Doc | What it is |
 |-----|------------|
-| [Vision](./docs/strategy/Vision.md) | **Highest authority** — timeless philosophy, product boundaries, and long-term direction |
-| [Previous Vision & Product Strategy](./docs/strategy/flowos-vision-and-product-strategy.md) | Historical reference |
-| [User Evolution & Market Positioning](./docs/strategy/flowos-user-evolution-and-market-positioning.md) | How FlowOS serves students through founders |
+| [Vision](./docs/00-constitution/Vision.md) | **Highest authority** — timeless philosophy, product boundaries, and long-term direction |
+| [Previous Vision & Product Strategy](./docs/11-archive/strategy/flowos-vision-and-product-strategy.md) | Historical reference |
+| [User Evolution & Market Positioning](./docs/01-product/user-evolution-and-market-positioning.md) | How FlowOS serves students through founders |
 | [Documentation hub](./docs/README.md) | Full index, authority order, start-here paths |
-| [Feature inventory](./docs/foundation/FEATURE_INVENTORY.md) | What’s shipped vs deferred |
+| [Feature inventory](./docs/04-features/FEATURE_INVENTORY.md) | What’s shipped vs deferred |
 
 ---
 
@@ -128,7 +128,7 @@ cd FlowOS
 npm install
 ```
 
-Create `.env.local` with your Supabase keys (see [TECHNICAL_ARCHITECTURE.md](./docs/foundation/TECHNICAL_ARCHITECTURE.md)).
+Create `.env.local` with your Supabase keys (see [TECHNICAL_ARCHITECTURE.md](./docs/06-engineering/TECHNICAL_ARCHITECTURE.md)).
 
 ```bash
 npm run dev
@@ -148,9 +148,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 FlowOS is in an **implementation hold** for review — prefer small fixes and docs clarity over large new features.
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) and [GIT_WORKFLOW.md](./docs/foundation/governance/GIT_WORKFLOW.md).
+See [CONTRIBUTING.md](./CONTRIBUTING.md) and [GIT_WORKFLOW.md](./docs/00-constitution/governance/GIT_WORKFLOW.md).
 
-**Docs:** [docs/README.md](./docs/README.md) · **Vision:** [flowos-vision-and-product-strategy.md](./docs/strategy/flowos-vision-and-product-strategy.md) · **Shipped surface:** [FEATURE_INVENTORY.md](./docs/foundation/FEATURE_INVENTORY.md)
+**Docs:** [docs/README.md](./docs/README.md) · **Vision:** [Vision.md](./docs/00-constitution/Vision.md) · **Shipped surface:** [FEATURE_INVENTORY.md](./docs/04-features/FEATURE_INVENTORY.md)
 
 ---
 
@@ -158,4 +158,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) and [GIT_WORKFLOW.md](./docs/foundation
 
 **Production:** [https://flowos-sage.vercel.app](https://flowos-sage.vercel.app)
 
-Guest live-demo workspace: [spec](./docs/review/design/flowos-live-demo-spec.md) · [runbook](./docs/execution/runbooks/flowos-live-demo.md)
+Historical live-demo references: [spec](./docs/11-archive/review/design/flowos-live-demo-spec.md) · [runbook](./docs/11-archive/execution/runbooks/flowos-live-demo.md)

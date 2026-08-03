@@ -1,4 +1,4 @@
-# Integration Architecture
+﻿# Integration Architecture
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS connected-system boundaries, exchange, synchronization, compatibility, reliability, and external effects
@@ -227,7 +227,7 @@ Material configuration, authorization, scope change, receive, send, synchronizat
 
 ## 10. Current Implementation References and Transition
 
-[TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) remains the current reference for implemented integrations, application stack, dependencies, and known technical debt. Existing source credentials, configuration, migrations, jobs, logs, and code remain actual implementation evidence.
+[TECHNICAL_ARCHITECTURE.md](../06-engineering/TECHNICAL_ARCHITECTURE.md) remains the current reference for implemented integrations, application stack, dependencies, and known technical debt. Existing source credentials, configuration, migrations, jobs, logs, and code remain actual implementation evidence.
 
 All new reusable integration architecture, provider contracts, source mappings, synchronization designs, and external-effect specifications belong in `06-engineering/`. Existing implementation references remain active for factual scope until a material revision creates an explicit successor. Do not copy provider manuals, credentials, code paths, or raw operational history into this architecture; link to them and define only the durable boundary they do not own.
 

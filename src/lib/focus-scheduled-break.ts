@@ -6,8 +6,8 @@ import {
 
 /**
  * Schedule Break — pure helpers only. No React, no side effects.
- * See docs/review/design/schedule-break-modal-spec.md for the product spec
- * and docs/execution/runbooks/m2-schedule-break.md for the implementation plan.
+ * Historical references: docs/archive/review/design/schedule-break-modal-spec.md
+ * and docs/archive/execution/runbooks/m2-schedule-break.md.
  */
 
 export const BREAK_AT_PRESET_MINUTES = [25, 45, 60, 90, 120] as const;

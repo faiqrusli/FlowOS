@@ -1,10 +1,10 @@
-# Direction and Commitment System
+﻿# Direction and Commitment System
 
 **Status:** Active
 **Authority:** Canonical system rules for chosen direction and present commitments
 **Owner:** Product Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** System interface contracts, experience architecture, feature briefs, behavior contracts, delivery designs
 **Last Updated:** 2026-08-03
 **Review trigger:** A proposed capability changes the meaning, lifecycle, ownership, or relationship of direction and commitment; or evidence shows that the current distinction is not understandable to users.

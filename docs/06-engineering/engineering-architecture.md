@@ -1,10 +1,10 @@
-# Engineering Architecture
+﻿# Engineering Architecture
 
 **Status:** Active
 **Authority:** Canonical architecture for how FlowOS technical systems preserve product semantics, authority, trust, reliability, and operational understanding
 **Owner:** Engineering Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Product Model](../01-product/product-model.md) · [System Documents](../02-systems/) · [Behavior Contracts](../04-features/behavior-contracts.md) · [Delivery Designs](../04-features/delivery-designs.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Product Model](../01-product/product-model.md) · [System Documents](../02-systems/) · [Behavior Contracts](../04-features/behavior-contracts.md) · [Delivery Designs](../04-features/delivery-designs.md)
 **Children:** Data architecture, client architecture, integration architecture, identity and access architecture, intelligence and trust architecture, quality architecture, operations architecture, delivery designs, implementation plans, runbooks, and engineering reviews
 **Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters the enduring technical boundary, ownership model, data lifecycle, authority enforcement, integration model, reliability requirement, operational model, or relationship between technical architecture and product behavior.
@@ -214,9 +214,9 @@ The following documents remain the current implementation references while their
 
 | Current reference | Current role | Long-term destination |
 |---|---|---|
-| [TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) | Actual stack, current data model, dependencies, deployment facts, and known technical debt. | Engineering-domain architecture documents and implementation references. |
-| [ENGINEERING.md](../foundation/governance/ENGINEERING.md) | Current technical operating rules and delivery guardrails. | Quality, operations, and engineering delivery standards. |
-| [CODE_STANDARDS.md](../foundation/governance/CODE_STANDARDS.md) | Current code-level conventions. | Engineering implementation standards. |
+| [TECHNICAL_ARCHITECTURE.md](../06-engineering/TECHNICAL_ARCHITECTURE.md) | Actual stack, current data model, dependencies, deployment facts, and known technical debt. | Engineering-domain architecture documents and implementation references. |
+| [ENGINEERING.md](../00-constitution/governance/ENGINEERING.md) | Current technical operating rules and delivery guardrails. | Quality, operations, and engineering delivery standards. |
+| [CODE_STANDARDS.md](../00-constitution/governance/CODE_STANDARDS.md) | Current code-level conventions. | Engineering implementation standards. |
 | Implementation code and infrastructure | Actual current behavior and configuration. | Remain implementation evidence; linked from the relevant architecture or delivery design. |
 
 All new reusable engineering architecture belongs in `06-engineering/`. Existing references remain active for their current implementation facts and rules until materially revised, superseded, or explicitly retired. Do not duplicate their content in new architecture documents; create a successor with an explicit responsibility transfer when migration is necessary.

@@ -1,10 +1,10 @@
-# FlowOS Product Model
+﻿# FlowOS Product Model
 
 **Status:** Active
 **Authority:** Canonical conceptual model for the FlowOS product
 **Owner:** Product Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** System documents, experience architecture, feature briefs, product glossary
 **Last Updated:** 2026-08-03
 **Review trigger:** A proposed product capability introduces a new enduring concept, changes a conceptual relationship, or exposes an ambiguity that system contracts cannot resolve.

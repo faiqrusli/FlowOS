@@ -1,4 +1,4 @@
-# FlowOS AI Skills System
+﻿# FlowOS AI Skills System
 
 **Universal AI assistant configuration for FlowOS development**
 
@@ -12,13 +12,16 @@ This directory contains context, workflows, and checklists that any AI tool (CLI
 .ai/
 ├── README.md              # This file
 ├── context.md             # Universal AI context (START HERE)
+├── sprint-context.md      # Current sprint quick reference
+├── testing-guide.md       # How to test before merge
 ├── workflows/             # Step-by-step workflows
-│   ├── session-start.md   # How to begin work sessions
+│   ├── role-assignment.md # How to start work when assigned a role
 │   ├── code-review.md     # Comprehensive review process
 │   ├── merge-prep.md      # Pre-merge verification
 │   └── documentation.md   # Documentation update workflow
 └── checklists/            # Non-negotiable checks
-    └── security.md        # 6-point security checklist
+    ├── security.md        # 6-point security checklist
+    └── quality.md         # Pre-merge quality verification
 ```
 
 ---
@@ -35,8 +38,8 @@ This directory contains context, workflows, and checklists that any AI tool (CLI
 
 **Starting a work session?**
 
-1. Follow: `.ai/workflows/session-start.md`
-2. User says "Start M2 session 3" → Read session guide, create branch, summarize goals
+1. Follow: `.ai/workflows/role-assignment.md`
+2. Read your role document and the current sprint, then summarize goals and wait for confirmation
 
 **Reviewing code?**
 
@@ -73,16 +76,16 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 
 **Contains:**
 - Product identity and philosophy
-- Current milestone (M2) and scope
+- Current phase (Phase 1 — Establish Implementation Truth)
 - Tech stack and architecture
 - Documentation authority hierarchy
+- Solo-founder workflow with 6-hat quality procedures
 - Who you're assisting (founder profile)
-- Core development principles (6 key principles)
+- Core development principles (8 key principles)
 - Project structure and conventions
 - Code quality standards
 - Git workflow rules
 - Documentation discipline
-- Runbook session process
 - AI behavior guidelines
 - Quality philosophy
 
@@ -90,26 +93,25 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 
 ---
 
-### workflows/session-start.md
+### workflows/role-assignment.md
 
-**How to begin a work session properly.**
+**How to begin work properly when the Founder assigns you a role.**
 
 **Steps:**
-1. Acknowledge and gather context
-2. Read runbook session
-3. Check current git state
-4. Create new branch
-5. Verify prerequisites
-6. Summarize session context
-7. Wait for confirmation
+1. Read your role document in `docs/10-team/6-role-hats/`
+2. Check current sprint (`docs/current-phase/current-sprint.md`)
+3. Read required input documents
+4. Execute according to role workflow
+5. Produce expected outputs
+6. Request approval or hand off
 
-**Use when:** User says "Start M2 session N" or "Begin work on [feature]"
+**Use when:** User says "You are the [Role Name]" or "Begin work on [feature]"
 
 **Prevents:**
-- Starting without context
-- Creating branch with uncommitted changes
-- Missing merge bundle info
-- Skipping pattern reference identification
+- Starting without role context
+- Working outside assigned scope
+- Skipping the current sprint
+- Missing explicit handoffs
 
 ---
 
@@ -149,12 +151,11 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 3. Manual testing done
 4. Session goals met
 5. Documentation updated
-6. Merge bundle ready
-7. Breaking changes assessed
+6. Breaking changes assessed
 
 **Post-merge:**
 1. Verify production
-2. Update july-log
+2. Update active month log (`docs/current-phase/logs/august-log.md`)
 3. Clean up branch (optional)
 
 **Use when:** After code review passes, before suggesting merge.
@@ -172,9 +173,9 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 **Keep docs in sync with code and decisions.**
 
 **Covers:**
-- Decision log (product decisions)
+- Decision records (consequential decisions)
 - Developer log (session timeline)
-- July log (what shipped, post-merge only)
+- Monthly narrative log (what shipped, post-merge only)
 - Feature inventory (new routes/features)
 - Technical docs (architecture changes)
 
@@ -283,7 +284,7 @@ Every session starts on new branch from main.
 
 **Why:** Clean history, easy rollback, safe experimentation.
 
-**How:** `m2/session-N-name`, never push to main without approval.
+**How:** `[role]/[feature-name]`, never push to main without approval.
 
 ### 5. Quality > Speed
 Ship simple, working code over complex, buggy code.
@@ -298,12 +299,25 @@ Ship simple, working code over complex, buggy code.
 
 **When docs conflict, higher wins:**
 
-1. **`docs/strategy/Vision.md`** — Timeless philosophy (highest)
-2. **`docs/strategy/flowos-vision-and-product-strategy.md`** — Product vision
-3. **`docs/execution/logs/decision-log.md`** — Dated decisions
-4. **`docs/foundation/governance/`** — PRINCIPLES, CODE_STANDARDS, GIT_WORKFLOW
-5. **`.ai/context.md`** — Universal AI reference
-6. **`docs/foundation/`** and **`docs/execution/`**
+1. **`docs/00-constitution/Vision.md`** — Timeless philosophy (highest)
+2. **`docs/current-phase/`** — Current implementation phase work (Sprint, MVP Masterplan, Gate checklists)
+3. **`docs/00-constitution/documentation-architecture.md`** — Documentation governance
+4. **`docs/01-product/`** — Product model, strategy, glossary, success model
+5. **`docs/02-systems/`** — System definitions
+6. **`docs/03-experience/`** — Experience architecture
+7. **`docs/04-features/`** — Feature briefs, behavior contracts, FEATURE_INVENTORY
+8. **`docs/05-design/`** — Design system architecture, design specifications
+9. **`docs/06-engineering/`** — Engineering architecture, standards
+10. **`docs/07-strategy-and-delivery/`** — Roadmap, delivery and release standards
+11. **`docs/08-decisions/`** — Decision records
+12. **`docs/09-reviews/`** — Review records
+13. **`docs/10-team/`** — Team organization, 6-role-hats quality procedures
+14. **`docs/current-phase/logs/`** — Operational logs
+15. **`docs/00-constitution/governance/`** — PRINCIPLES, CODE_STANDARDS, GIT_WORKFLOW, GATES
+16. **`docs/11-archive/`** — Historical reference only (DO NOT use for current work)
+
+**Current sprint:** `docs/current-phase/current-sprint.md`
+**Phase 1 gate checklist:** `docs/current-phase/phase-1/gate-checklist.md`
 
 ---
 
@@ -320,8 +334,8 @@ Security is non-negotiable, no exceptions.
 ❌ **Never invent patterns without checking existing code**
 Pattern matching first, invention last.
 
-❌ **Never expand scope beyond M2**
-Closed scope — no command palette, new modules, or monolith refactors.
+❌ **Never expand scope beyond the current sprint**
+Closed scope — current phase assignments only.
 
 ❌ **Never assume approval**
 Wait for explicit "yes" before merging, deploying, or major changes.
@@ -341,18 +355,18 @@ Address immediately, not in "next refactor."
 
 ## 🧪 Testing the System
 
-### Scenario 1: New Session
+### Scenario 1: Role Assignment
 
-**User says:** "Start M2 session 3"
+**User says:** "You are the Product Architect for FlowOS."
 
 **Expected AI behavior:**
-1. Reads `.ai/workflows/session-start.md`
-2. Reads `docs/execution/runbooks/m2-founder-daily-driver.md`
-3. Creates branch `m2/session-3-name`
-4. Summarizes goals, pattern references, merge bundle
+1. Reads `docs/10-team/6-role-hats/product-architect.md`
+2. Reads `docs/current-phase/current-sprint.md`
+3. Reads required input documents
+4. Summarizes role understanding, sprint context, and deliverables
 5. Waits for user confirmation
 
-**Fail if:** AI starts coding without context, skips runbook, or doesn't wait for confirmation.
+**Fail if:** AI starts working without reading role doc, skips sprint context, or doesn't confirm scope.
 
 ### Scenario 2: Code Review
 
@@ -430,7 +444,7 @@ Helps improve AI skills over time
 **Update context.md when:**
 - Major tech stack change
 - New governance principle
-- Milestone transition
+- Phase transition
 - Architecture shift
 
 **Add checklist when:**
@@ -460,9 +474,9 @@ Helps improve AI skills over time
 
 **For questions about:**
 - **AI skills system:** See this README or `.ai/context.md`
-- **Product decisions:** See `docs/strategy/Vision.md`
-- **Code standards:** See `docs/foundation/governance/CODE_STANDARDS.md`
-- **Git workflow:** See `docs/foundation/governance/GIT_WORKFLOW.md`
+- **Product decisions:** See `docs/00-constitution/Vision.md`
+- **Code standards:** See `docs/00-constitution/governance/CODE_STANDARDS.md`
+- **Git workflow:** See `docs/00-constitution/governance/GIT_WORKFLOW.md`
 
 **Found an issue?**
 - Update the relevant `.ai/` file

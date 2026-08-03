@@ -1,4 +1,4 @@
-# AI Workflow: Documentation
+﻿# AI Workflow: Documentation
 
 **When to use:** End of session, after significant decisions, before/after merge, when user says "update docs".
 
@@ -22,7 +22,7 @@
 - Routine tasks
 
 ### Developer Log
-**Files:** `docs/execution/logs/developer-log/YYYY-MM-DD.md`
+**Files:** `docs/current-phase/logs/developer-log/YYYY-MM-DD.md`
 
 **When to update:**
 - **MANDATORY:** Real-time log update whenever any file under `docs/` or in the codebase is modified (add timestamped timeline beat).
@@ -38,7 +38,7 @@
 - Current state / next steps
 
 ### Monthly Narrative Log
-**File:** `docs/execution/logs/august-log.md (or current active month log)`
+**File:** `docs/current-phase/logs/august-log.md (or current active month log)`
 
 **When to update:**
 - **After** merge to main (not before)
@@ -52,7 +52,7 @@
 - User impact
 
 ### Feature Inventory
-**File:** `docs/foundation/FEATURE_INVENTORY.md`
+**File:** `docs/04-features/FEATURE_INVENTORY.md`
 
 **When to update:**
 - New route added
@@ -66,7 +66,7 @@
 - Current state of FlowOS
 
 ### Technical Docs
-**Files:** `docs/foundation/*.md`, `docs/foundation/governance/*.md`
+**Files:** Relevant docs in `docs/06-engineering/`, `docs/05-design/`, `docs/00-constitution/governance/`, and `docs/04-features/`
 
 **When to update:**
 - Architecture changes
@@ -141,18 +141,18 @@
 
 **Action:**
 ```
-Append entry to docs/execution/logs/decision-log.md
+Create or update the applicable record in docs/08-decisions/records/
 ```
 
 **Location:** Add at the bottom (most recent last) or top (most recent first) — check existing format.
 
 **Prompt user:**
 ```
-Decision log entry drafted:
+Decision record drafted:
 
 [show entry]
 
-Should I add this to decision-log.md?
+Should I add this to docs/08-decisions/records/?
 ```
 
 ---
@@ -161,7 +161,7 @@ Should I add this to decision-log.md?
 
 ### 1. Check Today's File Exists
 
-**Action:** Check if `docs/execution/logs/developer-log/YYYY-MM-DD.md` exists.
+**Action:** Check if `docs/current-phase/logs/developer-log/YYYY-MM-DD.md` exists.
 
 **If not:**
 ```
@@ -271,11 +271,11 @@ Should I add this?
 **Only update august-log after successful merge to main.**
 
 ```
-⚠️ July log updates after merge to main.
+⚠️ August log updates after merge to main.
 
 Current status: [branch-name] not yet merged
 
-Update july-log after merge? [y/n]
+Update august-log after merge? [y/n]
 ```
 
 ### 2. Draft Entry
@@ -326,20 +326,20 @@ Update july-log after merge? [y/n]
 **Bundle:** Part of Bundle B2 (Session 3), merges with Session 4 after completion.
 ```
 
-### 3. Add to July Log
+### 3. Add to August Log
 
 **Action:**
 ```
-Append entry to docs/execution/logs/august-log.md
+Append entry to docs/current-phase/logs/august-log.md
 ```
 
 **Prompt user:**
 ```
-July log entry drafted:
+August log entry drafted:
 
 [show entry]
 
-Add to july-log.md?
+Add to august-log.md?
 ```
 
 ---
@@ -360,7 +360,7 @@ Add to july-log.md?
 
 ### 2. Locate in Feature Inventory
 
-**File:** `docs/foundation/FEATURE_INVENTORY.md`
+**File:** `docs/04-features/FEATURE_INVENTORY.md`
 
 **Sections:**
 - Shipped (what's live)
@@ -395,7 +395,7 @@ Add to july-log.md?
 Feature inventory needs update:
 
 Change: [description]
-Section: [Shipped/Deferred/etc]
+Section: [Shipped/12-deferred/etc]
 
 [show proposed change]
 
@@ -409,10 +409,10 @@ Update feature inventory?
 ### 1. Identify Affected Docs
 
 **Common docs:**
-- `docs/foundation/TECHNICAL_ARCHITECTURE.md` — Architecture, data model, auth
-- `docs/foundation/governance/CODE_STANDARDS.md` — Coding patterns, conventions
-- `docs/foundation/governance/GIT_WORKFLOW.md` — Git process
-- `docs/foundation/governance/PRINCIPLES.md` — Core principles
+- `docs/06-engineering/TECHNICAL_ARCHITECTURE.md` — Architecture, data model, auth
+- `docs/00-constitution/governance/CODE_STANDARDS.md` — Coding patterns, conventions
+- `docs/00-constitution/governance/GIT_WORKFLOW.md` — Git process
+- `docs/00-constitution/governance/PRINCIPLES.md` — Core principles
 
 ### 2. Assess Impact
 
@@ -471,7 +471,7 @@ Update [doc name]?
 - [ ] Decision log updated (if product decision made)
 - [ ] Feature inventory updated (if new feature/status change)
 - [ ] Technical docs updated (if architecture/pattern change)
-- [ ] July log ready for post-merge (drafted, waiting for merge)
+- [ ] August log ready for post-merge (drafted, waiting for merge)
 
 **Prompt:**
 ```
@@ -481,7 +481,7 @@ Documentation checklist:
 - [✅/❌/N/A] Decision log
 - [✅/❌/N/A] Feature inventory
 - [✅/❌/N/A] Technical docs
-- [⏳] July log (post-merge)
+- [⏳] August log (post-merge)
 
 All documentation current.
 ```
@@ -490,12 +490,12 @@ All documentation current.
 
 ## Anti-Patterns (Don't Do This)
 
-❌ **Updating july-log before merge**
+❌ **Updating august-log before merge**
 ```
-"Updating july-log.md with changes..."
+"Updating august-log.md with changes..."
 [branch not merged yet]
 ```
-Problem: July log is for what shipped, not what's on branch.
+Problem: August log is for what shipped, not what's on branch.
 
 ❌ **Skipping developer log**
 ```
@@ -530,7 +530,7 @@ Future-you will thank you for details.
 ✅ **Link decisions to authority docs**
 Helps trace reasoning chain.
 
-✅ **Keep july-log user-facing**
+✅ **Keep august-log user-facing**
 Describe impact, not just technical changes.
 
 ✅ **Prompt before updating**
@@ -544,7 +544,7 @@ Don't let it drift from reality.
 ## Integration with Other Workflows
 
 **Used during:** All workflows (session start, code review, merge prep)
-**Related:** `.ai/workflows/merge-prep.md` (july-log update post-merge)
+**Related:** `.ai/workflows/merge-prep.md` (august-log update post-merge)
 
 ---
 

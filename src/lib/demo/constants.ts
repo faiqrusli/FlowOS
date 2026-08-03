@@ -1,4 +1,4 @@
-/** Live demo constants — authority: docs/review/design/flowos-live-demo-spec.md */
+/** Live demo constants — authority: docs/archive/review/design/flowos-live-demo-spec.md */
 
 export const DEMO_SEED_VERSION = "2026-07-20.4";
 

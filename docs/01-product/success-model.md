@@ -1,10 +1,10 @@
-# FlowOS Success Model
+﻿# FlowOS Success Model
 
 **Status:** Active
 **Authority:** Canonical definition of product outcomes, success signals, metric meaning, and anti-metrics
 **Owner:** Product Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](./product-model.md) · [Product Strategy](./product-strategy.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](./product-model.md) · [Product Strategy](./product-strategy.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Measurement Specification, Measurement Reports, Validation Plans, Roadmap, Release Plans, Review Records
 **Last Updated:** 2026-08-03
 **Review trigger:** New strategic evidence, a change to an outcome or metric definition, a discovered metric failure mode, or a request to use a metric as a release or investment criterion.

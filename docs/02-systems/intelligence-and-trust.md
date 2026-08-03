@@ -1,10 +1,10 @@
-# Intelligence and Trust System
+﻿# Intelligence and Trust System
 
 **Status:** Active
 **Authority:** Canonical system rules for computational assistance, inference, recommendations, automation, explanation, correction, and user control
 **Owner:** Product Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** System interface contracts, experience architecture, feature briefs, behavior contracts, AI and automation policies, trust architecture, safety evaluation, validation plans
 **Last Updated:** 2026-08-03
 **Review trigger:** A proposed capability changes how FlowOS derives information, makes a recommendation, automates work, represents uncertainty, explains assistance, receives correction, or allocates authority between a person and a computational system.

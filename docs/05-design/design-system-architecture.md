@@ -1,10 +1,10 @@
-# Design System Architecture
+﻿# Design System Architecture
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS design-system responsibilities, design-document ownership, and the relationship between product semantics, design standards, feature specifications, and implemented UI
 **Owner:** Design Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../strategy/Vision.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Information Structure](../03-experience/information-structure.md) · [Behavior Contracts](../04-features/behavior-contracts.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Information Structure](../03-experience/information-structure.md) · [Behavior Contracts](../04-features/behavior-contracts.md)
 **Children:** Visual foundation, workspace architecture, interaction and content standards, accessibility standards, component standards, feature design specifications, design reviews, and design implementation references
 **Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters the responsibility boundary, authority order, reusable design layer, semantic-expression rule, or relationship between design documentation and implemented UI.
@@ -108,7 +108,7 @@ The visual-foundation document owns reusable visual foundations: semantic color 
 
 It must state what each foundation communicates and its permitted use. It must not use token names or decorative emphasis to change product state meaning or imply authority that the behavior contract does not grant.
 
-**Current implementation family:** [DESIGN_SYSTEM_V3.md](../foundation/DESIGN_SYSTEM_V3.md) is the active visual-foundation reference for the Surface 0–10 hierarchy and core visual language. [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) is the active palette implementation reference within that family.
+**Current implementation family:** [DESIGN_SYSTEM_V3.md](../05-design/DESIGN_SYSTEM_V3.md) is the active visual-foundation reference for the Surface 0–10 hierarchy and core visual language. [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) is the active palette implementation reference within that family.
 
 ### 4.2 Workspace architecture
 
@@ -116,7 +116,7 @@ The workspace-architecture document owns reusable spatial composition: applicati
 
 It applies Information Structure without redefining it. It does not decide which destinations exist, what their labels mean, or which product system owns a displayed object.
 
-**Current implementation reference:** [DESIGN_SYSTEM_V3_WORKSPACE.md](../foundation/DESIGN_SYSTEM_V3_WORKSPACE.md).
+**Current implementation reference:** [DESIGN_SYSTEM_V3_WORKSPACE.md](../05-design/DESIGN_SYSTEM_V3_WORKSPACE.md).
 
 ### 4.3 Interaction and content standards
 
@@ -124,7 +124,7 @@ Interaction and content standards own reusable expression of state and action: c
 
 They must make state, uncertainty, authority, provenance, and recovery understandable. They must not use a repeated interaction pattern to create a hidden product workflow or change a system’s semantic rules.
 
-**Current implementation reference for interaction, type, and motion:** [DESIGN_SYSTEM_V3_INTERACTION.md](../foundation/DESIGN_SYSTEM_V3_INTERACTION.md).
+**Current implementation reference for interaction, type, and motion:** [DESIGN_SYSTEM_V3_INTERACTION.md](../05-design/DESIGN_SYSTEM_V3_INTERACTION.md).
 
 ### 4.4 Accessibility standards
 

@@ -4,10 +4,10 @@
 
 > Direction → Commitment → Action → Evidence → Sensemaking → Adaptation
 
-**Status:** Implementation is **on hold for review** (GitHub + production dogfood + live demo). Prefer small fixes over new milestones until the hold is lifted.
+**Status:** Phase 0 CLOSED — Gate 0 PASSED (2026-08-04). Phase 1 (Establish Implementation Truth) authorized; sprint creation pending.
 
 **Production:** https://flowos-sage.vercel.app  
-**Live demo:** [flowos-live-demo-spec.md](./review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](./execution/runbooks/flowos-live-demo.md)  
+**Historical live-demo references:** [flowos-live-demo-spec.md](./11-archive/review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](./11-archive/execution/runbooks/flowos-live-demo.md)  
 **GitHub product page:** [../README.md](../README.md)
 
 ---
@@ -16,7 +16,12 @@
 
 | Document | Why |
 |----------|-----|
-| [**Vision**](./strategy/Vision.md) | **Highest authority** — timeless purpose, philosophy, boundaries, and north star |
+| [**Vision**](./00-constitution/Vision.md) | **Highest authority** — timeless purpose, philosophy, boundaries, and north star |
+| [**Current Sprint**](./current-phase/current-sprint.md) | **What to work on NOW** — Current phase, tasks, status |
+| [**Phase 1**](./current-phase/phase-1/README.md) | **Current phase work** — Establish Implementation Truth (Gate 1) |
+| [**MVP Masterplan**](./current-phase/mvp-implementation-masterplan.md) | **Implementation roadmap** — All MVP phases and gates |
+| [**Solo Founder Workflow**](./start-here/solo-founder-workflow.md) | **Complete 6-hat workflow** — Use 6-role procedures for quality without coordination overhead |
+| [**How to Develop FlowOS**](./start-here/how-to-develop-flowos.md) | **Quick reference** — Simple 3-mode approach (Plan/Build/Ship) for solo development |
 | [Documentation Architecture](./00-constitution/documentation-architecture.md) | Where every durable document belongs, what it owns, and how it changes |
 | [Product Model](./01-product/product-model.md) | Canonical product concepts, relationships, and invariants |
 | [Product Glossary](./01-product/product-glossary.md) | Canonical vocabulary for product concepts and documentation artifacts |
@@ -50,23 +55,21 @@
 | [Operations Architecture](./06-engineering/operations-architecture.md) | Architecture for deployment, observability, incident response, and recovery boundaries |
 | [Client Architecture](./06-engineering/client-architecture.md) | Architecture for client rendering, navigation, state, resilience, and accessibility |
 | [Roadmap](./07-strategy-and-delivery/roadmap.md) | Current outcome sequencing, investment gates, and roadmap governance |
-| [MVP Implementation Masterplan](./07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood implementation phases and readiness gates |
-| [Documentation Refinement Plan](./07-strategy-and-delivery/documentation-refinement-plan.md) | Plan to reconcile current and legacy documentation before MVP implementation |
+| [MVP Implementation Masterplan](./current-phase/mvp-implementation-masterplan.md) | Canonical pre-dogfood implementation phases and readiness gates |
+| [Documentation Refinement Plan](./11-archive/strategy/documentation-refinement-plan.md) | Completed plan that reconciled current and legacy documentation before MVP implementation (historical) |
 | [Delivery Plans](./07-strategy-and-delivery/delivery-plans.md) | Standard for bounded cross-functional delivery coordination |
 | [Release Plans](./07-strategy-and-delivery/release-plans.md) | Standard for bounded release, rollout, recovery, and review coordination |
 | [Decision Records](./08-decisions/decision-records.md) | Standard for consequential decisions, alternatives, impact, and historical correction |
 | [Decision Register](./08-decisions/decision-register.md) | Discovery index for canonical consequential decision records |
-| [Research Program](./09-evidence/research-program.md) | Standard for decision-relevant research, evidence integrity, participant protection, and synthesis boundaries |
-| [Measurement Specifications](./09-evidence/measurement-specifications.md) | Standard for metric meaning, collection boundaries, provenance, quality, and revision |
-| [Insight Syntheses](./09-evidence/insight-syntheses.md) | Standard for cross-record evidence interpretation, confidence, and conditional implications |
-| [Review Records](./10-reviews/review-records.md) | Standard for bounded contract assessment, evidence-linked findings, and disposition history |
-| [Post-Release Learning Records](./10-reviews/post-release-learning-records.md) | Standard for preserving what a bounded release taught FlowOS under real conditions |
-| [User Evolution & Market Positioning](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting strategy — target users and entry points |
-| [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | What’s shipped today vs deferred |
-| [mvp-implementation-masterplan.md](./07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation phases and exit gates |
-| [documentation-refinement-plan.md](./07-strategy-and-delivery/documentation-refinement-plan.md) | Plan to reconcile feature, design, and legacy documentation |
+| [Research Program](./12-deferred/evidence/research-program.md) | Standard for decision-relevant research, evidence integrity, participant protection, and synthesis boundaries (deferred) |
+| [Measurement Specifications](./12-deferred/evidence/measurement-specifications.md) | Standard for metric meaning, collection boundaries, provenance, quality, and revision (deferred) |
+| [Insight Syntheses](./12-deferred/evidence/insight-syntheses.md) | Standard for cross-record evidence interpretation, confidence, and conditional implications (deferred) |
+| [Review Records](./09-reviews/review-records.md) | Standard for bounded contract assessment, evidence-linked findings, and disposition history |
+| [Post-Release Learning Records](./09-reviews/post-release-learning-records.md) | Standard for preserving what a bounded release taught FlowOS under real conditions |
+| [User Evolution & Market Positioning](./01-product/user-evolution-and-market-positioning.md) | Supporting strategy — target users and entry points |
+| [FEATURE_INVENTORY.md](./04-features/FEATURE_INVENTORY.md) | What’s shipped today vs deferred |
 
-Previous vision chapters (historical reference): [strategy/vision/](./strategy/vision/)
+Previous vision chapters (historical reference): [11-archive/strategy/vision/](./11-archive/strategy/vision/)
 
 ---
 
@@ -75,18 +78,18 @@ Previous vision chapters (historical reference): [strategy/vision/](./strategy/v
 | Role | Entry point |
 |------|-------------|
 | **Founder / product** | [start-here/founder.md](./start-here/founder.md) |
-| **Engineer** | [start-here/engineer.md](./start-here/engineer.md) |
-| **New contributor / reviewer** | [start-here/new-contributor.md](./start-here/new-contributor.md) |
+| **Engineer** | [12-deferred/onboarding/engineer.md](./12-deferred/onboarding/engineer.md) |
+| **New contributor / reviewer** | [12-deferred/onboarding/new-contributor.md](./12-deferred/onboarding/new-contributor.md) |
 
 ---
 
 ## Authority and reading sequence
 
-When documents conflict, use the subject-authority and conflict-resolution rules in [Documentation Architecture](./00-constitution/documentation-architecture.md). The sequence below is a reading shortcut, not a flat substitute for those rules. The [Document Map](./meta/document-map.md) contains the complete active normative set.
+When documents conflict, use the subject-authority and conflict-resolution rules in [Documentation Architecture](./00-constitution/documentation-architecture.md). The sequence below is a reading shortcut, not a flat substitute for those rules. The [Document Map](./00-constitution/document-map.md) contains the complete active normative set.
 
 | Priority | Source | Role |
 |----------|--------|------|
-| 1 | [strategy/Vision.md](./strategy/Vision.md) | **Highest** — timeless product vision, philosophy, boundaries, and north star |
+| 1 | [00-constitution/Vision.md](./00-constitution/Vision.md) | **Highest** — timeless product vision, philosophy, boundaries, and north star |
 | 2 | [00-constitution/documentation-architecture.md](./00-constitution/documentation-architecture.md) | Documentation ownership, structure, and lifecycle |
 | 3 | [01-product/product-model.md](./01-product/product-model.md) | Canonical product concepts, relationships, and invariants |
 | 4 | [01-product/product-glossary.md](./01-product/product-glossary.md) | Canonical product vocabulary |
@@ -115,21 +118,21 @@ When documents conflict, use the subject-authority and conflict-resolution rules
 | 27 | [06-engineering/operations-architecture.md](./06-engineering/operations-architecture.md) | Architecture for deployment, observability, incident response, and recovery boundaries |
 | 28 | [06-engineering/client-architecture.md](./06-engineering/client-architecture.md) | Architecture for client rendering, navigation, state, resilience, and accessibility |
 | 29 | [07-strategy-and-delivery/roadmap.md](./07-strategy-and-delivery/roadmap.md) | Current outcome sequencing, investment gates, and roadmap governance |
-| 30 | [07-strategy-and-delivery/mvp-implementation-masterplan.md](./07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation sequence and readiness gates |
-| 31 | [07-strategy-and-delivery/documentation-refinement-plan.md](./07-strategy-and-delivery/documentation-refinement-plan.md) | Documentation reconciliation plan for MVP implementation |
-| 32 | [07-strategy-and-delivery/delivery-plans.md](./07-strategy-and-delivery/delivery-plans.md) | Standard for bounded cross-functional delivery coordination |
-| 33 | [07-strategy-and-delivery/release-plans.md](./07-strategy-and-delivery/release-plans.md) | Standard for bounded release, rollout, recovery, and review coordination |
-| 34 | [08-decisions/decision-records.md](./08-decisions/decision-records.md) | Standard for consequential decisions, alternatives, impact, and historical correction |
-| 35 | [09-evidence/research-program.md](./09-evidence/research-program.md) | Standard for decision-relevant research, evidence integrity, participant protection, and synthesis boundaries |
-| 36 | [09-evidence/measurement-specifications.md](./09-evidence/measurement-specifications.md) | Standard for metric meaning, collection boundaries, provenance, quality, and revision |
-| 37 | [10-reviews/review-records.md](./10-reviews/review-records.md) | Standard for bounded contract assessment, evidence-linked findings, and disposition history |
-| 38 | [execution/logs/decision-log.md](./execution/logs/decision-log.md) | Historical decision collection; cannot override the vision |
-| 39 | [strategy/execution-masterplan.md](./strategy/execution-masterplan.md) | Transitional historical milestone context; not an implementation source |
-| 40 | [foundation/governance/](./foundation/governance/) | Rules and release gates |
-| 41 | [foundation/](./foundation/) + [execution/](./execution/) | Current product and ops truth |
-| 42 | [archive/](./archive/) | Historical reference only |
+| 30 | [07-strategy-and-delivery/roadmap.md](./07-strategy-and-delivery/roadmap.md) | Canonical outcome sequencing, investment gates, and roadmap governance |
+| 31 | [current-phase/mvp-implementation-masterplan.md](./current-phase/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation sequence and readiness gates |
+| 32 | [11-archive/strategy/documentation-refinement-plan.md](./11-archive/strategy/documentation-refinement-plan.md) | Completed documentation reconciliation plan (historical) |
+| 33 | [07-strategy-and-delivery/delivery-plans.md](./07-strategy-and-delivery/delivery-plans.md) | Standard for bounded cross-functional delivery coordination |
+| 34 | [07-strategy-and-delivery/release-plans.md](./07-strategy-and-delivery/release-plans.md) | Standard for bounded release, rollout, recovery, and review coordination |
+| 35 | [08-decisions/decision-records.md](./08-decisions/decision-records.md) | Standard for consequential decisions, alternatives, impact, and historical correction |
+| 36 | [12-deferred/evidence/research-program.md](./12-deferred/evidence/research-program.md) | Research and measurement standards (deferred) |
+| 37 | [09-reviews/review-records.md](./09-reviews/review-records.md) | Standard for bounded contract assessment, evidence-linked findings, and disposition history |
+| 38 | [11-archive/execution/logs/decision-log.md](./11-archive/execution/logs/decision-log.md) | Historical decision collection; cannot override the vision |
+| 39 | [11-archive/strategy/execution-masterplan.md](./11-archive/strategy/execution-masterplan.md) | Archived historical milestone context; not an implementation source |
+| 40 | [00-constitution/governance/](./00-constitution/governance/) | Rules and release gates |
+| 41 | [current-phase/logs/](./current-phase/logs/) | Active operational logs (dev journals, month log) |
+| 42 | [11-archive/](./11-archive/) | Historical reference only |
 
-**Visual / UI:** [Design System Architecture](./05-design/design-system-architecture.md) governs design-document ownership. The active visual-foundation family is [DESIGN_SYSTEM_V3.md](./foundation/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md); code actuality is `src/app/globals.css`. Do not treat Neutral Dark, Gruvbox, Everforest, or legacy navy `DESIGN_SYSTEM.md` as live paint authority.
+**Visual / UI:** [Design System Architecture](./05-design/design-system-architecture.md) governs design-document ownership. The active visual-foundation family is [DESIGN_SYSTEM_V3.md](./05-design/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md); code actuality is `src/app/globals.css`. Do not treat Neutral Dark, Gruvbox, Everforest, or legacy navy `DESIGN_SYSTEM.md` as live paint authority.
 
 ---
 
@@ -137,29 +140,29 @@ When documents conflict, use the subject-authority and conflict-resolution rules
 
 | Directory | Contents | Status |
 |-----------|----------|--------|
-| [00-constitution/](./00-constitution/) | Documentation governance; Vision remains at `strategy/Vision.md` | **Active** |
-| [01-product/](./01-product/) | Product model and future product-level documents | **Active** |
-| [02-systems/](./02-systems/) | Enduring product-system definitions and future interface contracts | **Active** |
-| [03-experience/](./03-experience/) | Cross-surface experience architecture and future information-structure and journey contracts | **Active** |
-| [04-features/](./04-features/) | Bounded feature briefs, behavior contracts, delivery designs, and validation plans | **Active** |
-| [05-design/](./05-design/) | Design-system architecture and future reusable design standards | **Active** |
-| [06-engineering/](./06-engineering/) | Engineering architecture and future data, integration, quality, and operations standards | **Active** |
-| [07-strategy-and-delivery/](./07-strategy-and-delivery/) | Outcome roadmap and future delivery and release coordination | **Active** |
-| [08-decisions/](./08-decisions/) | Append-only consequential decision records and successor history | **Active** |
-| [09-evidence/](./09-evidence/) | Research and measurement evidence standards, records, and synthesis | **Active** |
-| [10-reviews/](./10-reviews/) | Evidence-linked reviews, dispositions, and successor history | **Active** |
-| [strategy/](./strategy/) | Canonical vision, supporting strategy, historical chapters, masterplan | **Active** |
-| [execution/](./execution/) | Fresh August 2026 operational and developer logs | **Active** |
-| [review/](./review/) | Historical SRAI materials and transitional review artifacts | **Transitional** |
-| [foundation/](./foundation/) | Current implementation references for features, architecture, and design | **Reference** |
-| [foundation/governance/](./foundation/governance/) | PRINCIPLES, GATES, QUALITY, ENGINEERING, CODE_STANDARDS, GIT_WORKFLOW | **Reference** |
-| [archive/](./archive/) | Thesis, design history, superseded plans/themes | **Archive** |
-| [meta/](./meta/document-map.md) | Full doc inventory | Meta |
+| [current-phase/](./current-phase/) | **Current implementation phase work** — Sprint, MVP Masterplan, Gate checklists, Logs | **Active** |
+| [00-constitution/](./00-constitution/) | **Highest authority** — Vision, documentation governance, governance rules | **Active** |
+| [01-product/](./01-product/) | Product model, strategy, glossary, success model | **Active** |
+| [02-systems/](./02-systems/) | Enduring product-system definitions and interface contracts | **Active** |
+| [03-experience/](./03-experience/) | Cross-surface experience architecture, information structure, journey contracts | **Active** |
+| [04-features/](./04-features/) | Feature briefs, behavior contracts, delivery designs, validation plans, **FEATURE_INVENTORY** | **Active** |
+| [05-design/](./05-design/) | Design system architecture, design standards, active design system docs | **Active** |
+| [06-engineering/](./06-engineering/) | Engineering architecture, technical architecture, data architecture | **Active** |
+| [07-strategy-and-delivery/](./07-strategy-and-delivery/) | **Strategic planning** — Roadmap, delivery/release standards (timeless guidance) | **Active** |
+| [08-decisions/](./08-decisions/) | Consequential decision records and history | **Active** |
+| [09-reviews/](./09-reviews/) | Review records, dispositions, and history | **Active** |
+| [10-team/](./10-team/) | Team organization, 6-role-hats quality procedures | **Active** |
+| [start-here/](./start-here/) | **Onboarding guides and workflow docs** — Founder guide, solo-founder-workflow, how-to-develop | **Active** |
+| [11-archive/](./11-archive/) | Historical reference — superseded strategies, reviews, themes | **Archive** |
 | [screenshots/](./screenshots/) | README product screenshots | Assets |
 
-**Operational docs outside `docs/`:** [supabase/APPLIED_STATE.md](../supabase/APPLIED_STATE.md)
-
-**Legacy redirects:** `foundation/LAUNCH_PLAN.md` stub → [archive/planning/](./archive/planning/). Historical design program: [archive/design/july-3/](./archive/design/july-3/). Alternate palettes: [archive/design/themes/](./archive/design/themes/).
+**Removed folders (as of 2026-08-03/04):**
+- `foundation/` — Content moved to numbered folders (00-constitution/, 05-design/, 06-engineering/)
+- `strategy/` — Vision moved to 00-constitution/, user-evolution moved to 01-product/
+- `meta/` — document-map.md moved to 00-constitution/
+- `09-evidence/` — Moved to 12-deferred/ (not needed for Phase 0-2)
+- `11-shipped-inventory/` — FEATURE_INVENTORY.md moved to 04-features/ (alongside feature-catalog.md)
+- `execution/` — Logs moved to current-phase/logs/
 
 ---
 
@@ -169,39 +172,40 @@ When documents conflict, use the subject-authority and conflict-resolution rules
 
 | Document | Purpose |
 |----------|---------|
-| [Vision.md](./strategy/Vision.md) | **Highest** — canonical vision and product constitution |
-| [flowos-vision-and-product-strategy.md](./strategy/flowos-vision-and-product-strategy.md) | Previous vision and strategy synthesis — historical reference |
-| [strategy/vision/](./strategy/vision/) | Previous vision chapters — historical reference |
-| [flowos-user-evolution-and-market-positioning.md](./strategy/flowos-user-evolution-and-market-positioning.md) | Supporting — user stages & market posture |
+| [Vision.md](./00-constitution/Vision.md) | **Highest** — canonical vision and product constitution |
+| [current-phase/current-sprint.md](./current-phase/current-sprint.md) | **Current sprint** — What phase, what tasks |
+| [current-phase/mvp-implementation-masterplan.md](./current-phase/mvp-implementation-masterplan.md) | **MVP Masterplan** — Canonical implementation roadmap |
+| [11-archive/strategy/flowos-vision-and-product-strategy.md](./11-archive/strategy/flowos-vision-and-product-strategy.md) | Previous vision and strategy synthesis — historical reference |
+| [11-archive/strategy/vision/](./11-archive/strategy/vision/) | Previous vision chapters — historical reference |
+| [user-evolution-and-market-positioning.md](./01-product/user-evolution-and-market-positioning.md) | Supporting — user stages & market posture |
 | [roadmap.md](./07-strategy-and-delivery/roadmap.md) | Canonical outcome sequencing, investment gates, and roadmap governance |
-| [mvp-implementation-masterplan.md](./07-strategy-and-delivery/mvp-implementation-masterplan.md) | Canonical pre-dogfood MVP implementation sequence |
-| [documentation-refinement-plan.md](./07-strategy-and-delivery/documentation-refinement-plan.md) | Feature/design/documentation cleanup plan |
-| [execution-masterplan.md](./strategy/execution-masterplan.md) | Transitional historical milestone context |
-| [execution/README.md](./execution/README.md) | Current ops index |
-| [august-log.md](./execution/logs/august-log.md) | Fresh August 2026 narrative log |
-| [developer-log/](./execution/logs/developer-log/) | Active daily developer journals (August) |
+| [11-archive/strategy/documentation-refinement-plan.md](./11-archive/strategy/documentation-refinement-plan.md) | Feature/design/documentation cleanup plan (Archived — completed) |
+| [11-archive/strategy/execution-masterplan.md](./11-archive/strategy/execution-masterplan.md) | Archived historical milestone context |
+| [current-phase/logs/README.md](./current-phase/logs/README.md) | Current ops index |
+| [august-log.md](./current-phase/logs/august-log.md) | Fresh August 2026 narrative log |
+| [developer-log/](./current-phase/logs/developer-log/) | Active daily developer journals (August) |
 
-### Legacy review materials
+### Archived review materials
 
 | Document | Purpose |
 |----------|---------|
-| [review/README.md](./review/README.md) | Transitional SRAI collection; new durable reviews use [10-reviews/](./10-reviews/) |
-| [review/milestones/](./review/milestones/) | M0–M5 milestone reviews |
-| [review/design/](./review/design/) | Specs + historical design index → [archive/design/july-3/](./archive/design/july-3/) |
-| [review/template.md](./review/template.md) | Blank SRAI template |
+| [11-archive/review/README.md](./11-archive/review/README.md) | Historical SRAI collection; new durable reviews use [09-reviews/](./09-reviews/) |
+| [11-archive/review/milestones/](./11-archive/review/milestones/) | M0–M5 milestone reviews |
+| [11-archive/review/design/](./11-archive/review/design/) | Historical design and feature specs |
+| [11-archive/review/template.md](./11-archive/review/template.md) | Historical SRAI template |
 
 ### Current implementation references
 
 | Document | Purpose |
 |----------|---------|
-| [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
-| [TECHNICAL_ARCHITECTURE.md](./foundation/TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt |
-| [DESIGN_SYSTEM_V3.md](./foundation/DESIGN_SYSTEM_V3.md) | Visual philosophy + Surface 0–10 |
-| [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./foundation/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract |
-| [governance/GATES.md](./foundation/governance/GATES.md) | Launch gates, WAD, D7 definitions |
-| [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) | Redirect → [Vision.md](./strategy/Vision.md) |
-
-Full foundation index: [foundation/README.md](./foundation/README.md)
+| [current-phase/current-sprint.md](./current-phase/current-sprint.md) | **What to work on NOW** |
+| [current-phase/mvp-implementation-masterplan.md](./current-phase/mvp-implementation-masterplan.md) | **MVP roadmap** |
+| [current-phase/phase-1/README.md](./current-phase/phase-1/README.md) | **Current phase work** (Gate 1 checklists in phase-1/) |
+| [FEATURE_INVENTORY.md](./04-features/FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
+| [TECHNICAL_ARCHITECTURE.md](./06-engineering/TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt |
+| [DESIGN_SYSTEM_V3.md](./05-design/DESIGN_SYSTEM_V3.md) | Visual philosophy + Surface 0–10 |
+| [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract |
+| [governance/GATES.md](./00-constitution/governance/GATES.md) | Launch gates, WAD, D7 definitions |
 
 ---
 
@@ -209,26 +213,43 @@ Full foundation index: [foundation/README.md](./foundation/README.md)
 
 | Document | Superseded by |
 |----------|---------------|
-| [roadmap-pre-masterplan.md](./archive/design/july-3/roadmap-pre-masterplan.md) (Phase 3+) | [execution-masterplan.md](./strategy/execution-masterplan.md) |
-| [launch-plan-july-2026.md](./archive/planning/launch-plan-july-2026.md) | Same masterplan |
-| [project-state-july-2026.md](./archive/design/july-3/project-state-july-2026.md) | [FEATURE_INVENTORY.md](./foundation/FEATURE_INVENTORY.md) + [execution/README.md](./execution/README.md) |
-| Short [PRODUCT_VISION.md](./foundation/PRODUCT_VISION.md) body | [Vision.md](./strategy/Vision.md) |
-| Alternate themes (v1/v2, Neutral Dark, Gruvbox, …) | [archive/design/themes/](./archive/design/themes/) · live: V3 + Tokyo |
+| [roadmap-pre-masterplan.md](./11-archive/design/july-3/roadmap-pre-masterplan.md) (Phase 3+) | MVP Implementation Masterplan (now in current-phase/) |
+| [launch-plan-july-2026.md](./11-archive/planning/launch-plan-july-2026.md) | Same masterplan |
+| [project-state-july-2026.md](./11-archive/design/july-3/project-state-july-2026.md) | [FEATURE_INVENTORY.md](./04-features/FEATURE_INVENTORY.md) + [current-phase/logs/README.md](./current-phase/logs/README.md) |
+| Short former Product Vision redirect | [Vision.md](./00-constitution/Vision.md) |
+| Alternate themes (v1/v2, Neutral Dark, Gruvbox, …) | [11-archive/design/themes/](./11-archive/design/themes/) · live: V3 + Tokyo (now in 05-design/) |
+| foundation/ folder | Content moved to 00-constitution/, 05-design/, 06-engineering/ |
+| strategy/ folder | Vision moved to 00-constitution/, user-evolution moved to 01-product/ |
+| meta/ folder | document-map.md moved to 00-constitution/ |
 
-Full archive index: [archive/README.md](./archive/README.md)
+Full archive index: [11-archive/README.md](./11-archive/README.md)
 
 ---
 
 ## Current authority flow
 
 ```text
-Vision
-  -> Documentation Architecture
-  -> Product model, strategy, and success model
-  -> Systems and experience
-  -> Feature, design, and engineering contracts
-  -> Roadmap and delivery coordination
-  -> Decision, evidence, review, and post-release records
+00-constitution/Vision.md (HIGHEST)
+  ↓
+current-phase/ (current implementation: Sprint, MVP Masterplan, Gates)
+  ↓
+00-constitution/documentation-architecture.md
+  ↓
+01-product/ (model, strategy, success)
+  ↓
+02-systems/ (product system rules)
+  ↓
+03-experience/ (experience architecture)
+  ↓
+04-features/ (feature contracts, FEATURE_INVENTORY)
+  ↓
+05-design/ (design specifications)
+  ↓
+06-engineering/ (engineering architecture)
+  ↓
+07-strategy-and-delivery/ (strategic planning)
+  ↓
+08-decisions/, 09-reviews/ (records)
 ```
 
 Evidence and reviews can require a lower-level change or a decision; they do not override their parent authority. See [Documentation Architecture](./00-constitution/documentation-architecture.md) for the governing conflict-resolution rule.
@@ -240,17 +261,19 @@ Evidence and reviews can require a lower-level change or a decision; they do not
 This traces the origin of earlier documentation. It is not a current authority hierarchy.
 
 ```
-Thesis & SRS (docs/archive/project/)        ← origin
+Thesis & SRS (docs/11-archive/project/)        ← origin
     ↓
-Design Audit → Phase 0–2 (docs/archive/design/)
+Design Audit → Phase 0–2 (docs/11-archive/design/)
     ↓
-Foundation + governance (docs/foundation/)
+Foundation + governance (docs/11-archive/foundation/)
     ↓
-Vision.md + supporting strategy + masterplan (docs/strategy/)  ← highest product authority
+Vision.md + supporting strategy + masterplan (docs/11-archive/strategy/)  ← highest product authority
     ↓
-Active execution (docs/execution/) ← ops / hold / logs
+Active execution (docs/current-phase/logs/) ← ops / hold / logs
     ↓
-Review after each milestone (docs/review/) ← SRAI
+Review after each milestone (11-archive/review/) ← historical SRAI; new assessments use `09-reviews/`
 ```
 
-Doc map: [meta/document-map.md](./meta/document-map.md)
+The `docs/foundation/`, `docs/strategy/`, and `docs/execution/` folders no longer exist; their content was reorganized into the numbered structure and archived (2026-08-03/04).
+
+Doc map: [00-constitution/document-map.md](./00-constitution/document-map.md)

@@ -1,6 +1,6 @@
-# Product Index
+﻿# Product Index
 
-This is a non-normative directory index. Product documents inherit from the [Vision](../strategy/Vision.md) and [Documentation Architecture](../00-constitution/documentation-architecture.md).
+This is a non-normative directory index. Product documents inherit from the [Vision](../00-constitution/Vision.md) and [Documentation Architecture](../00-constitution/documentation-architecture.md).
 
 | Document | Responsibility | Status | Owner | Parent |
 |---|---|---|---|---|

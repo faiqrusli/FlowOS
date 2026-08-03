@@ -1,9 +1,9 @@
-# FlowOS Documentation Architecture
+﻿# FlowOS Documentation Architecture
 
 **Status:** Active
-**Authority:** Governs documentation structure and lifecycle; subordinate to [Vision.md](../strategy/Vision.md)
+**Authority:** Governs documentation structure and lifecycle; subordinate to [Vision.md](../00-constitution/Vision.md)
 **Owner:** Product and documentation leadership
-**Parent:** [Vision.md](../strategy/Vision.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md)
 **Children:** Active documentation standards, folder indexes, templates, registers, and historical-transition records
 **Last reviewed:** 2026-08-01
 **Review trigger:** A proposed change alters a document responsibility, authority boundary, lifecycle rule, template/register rule, discovery rule, or archival treatment.
@@ -23,7 +23,7 @@ This document governs the architecture of FlowOS documentation. It determines:
 
 It does not define product philosophy, product behavior, technical architecture, roadmap priorities, or design decisions. Those belong to the documents this architecture governs.
 
-The canonical Vision remains at [`docs/strategy/Vision.md`](../strategy/Vision.md). It is immutable. No duplicate Vision, philosophy, or constitutional summary may be created elsewhere.
+The canonical Vision remains at [`docs/00-constitution/Vision.md`](../00-constitution/Vision.md). It is immutable. No duplicate Vision, philosophy, or constitutional summary may be created elsewhere.
 
 ---
 
@@ -106,8 +106,8 @@ The durable documentation ecosystem uses the following folders. A folder is a re
 | `06-engineering/` | Technical, data, integration, trust, quality, and operations architecture | Product rationale or feature discovery |
 | `07-strategy-and-delivery/` | Outcome sequencing and bounded release coordination | Feature specifications and retrospective findings |
 | `08-decisions/` | Append-only records of consequential choices | Living specifications or raw research |
-| `09-evidence/` | Research, measurement definitions, and factual reports | Roadmap commitments or undocumented interpretation |
-| `10-reviews/` | Assessment against an existing contract and post-release learning | Replacement specifications or raw evidence stores |
+| `12-deferred/evidence/` | Research, measurement definitions, and factual reports (deferred until post-Gate 0) | Roadmap commitments or undocumented interpretation |
+| `09-reviews/` | Assessment against an existing contract and post-release learning | Replacement specifications or raw evidence stores |
 
 ---
 

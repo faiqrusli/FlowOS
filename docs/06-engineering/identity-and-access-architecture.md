@@ -1,4 +1,4 @@
-# Identity and Access Architecture
+﻿# Identity and Access Architecture
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS identity, authentication, authorization, delegation, session, revocation, and audit boundaries
@@ -216,7 +216,7 @@ Recovery must distinguish restoration of access from restoration of product stat
 
 ## 10. Current Implementation References and Transition
 
-[TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) remains the current reference for implemented authentication flow, session behavior, and current application access facts. [ENGINEERING.md](../foundation/governance/ENGINEERING.md) remains the current reference for active engineering guardrails, including security and row-level access review.
+[TECHNICAL_ARCHITECTURE.md](../06-engineering/TECHNICAL_ARCHITECTURE.md) remains the current reference for implemented authentication flow, session behavior, and current application access facts. [ENGINEERING.md](../00-constitution/governance/ENGINEERING.md) remains the current reference for active engineering guardrails, including security and row-level access review.
 
 All new reusable identity, access, delegation, session, audit, and recovery architecture belongs in `06-engineering/`. Existing implementation references remain active for factual scope until a material revision creates an explicit successor. Do not duplicate implementation-specific provider, credential, route, or policy details here; link to the current reference and define only the durable architecture rule it lacks.
 

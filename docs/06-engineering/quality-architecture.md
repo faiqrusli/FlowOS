@@ -1,4 +1,4 @@
-# Quality Architecture
+﻿# Quality Architecture
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS quality domains, assurance boundaries, evidence traceability, verification design, defect handling, and release-readiness inputs
@@ -215,7 +215,7 @@ Evidence of material authority violation, security or privacy exposure, data los
 
 ## 10. Current Implementation References and Transition
 
-[QUALITY_GATES.md](../foundation/governance/QUALITY_GATES.md) remains the current reference for active per-change definition-of-done checks. [GATES.md](../foundation/governance/GATES.md) remains the current reference for staged release gates. Existing test suites, CI configuration, dashboards, deployment checks, review templates, incident records, and quality logs remain actual implementation evidence.
+[GATES.md](../00-constitution/governance/GATES.md) remains the current reference for active per-change definition-of-done checks and staged release gates. Existing test suites, CI configuration, dashboards, deployment checks, review templates, incident records, and quality logs remain actual implementation evidence.
 
 All new reusable quality architecture, quality plans, test-strategy specifications, accessibility assessment standards, test-data standards, release-readiness records, defect standards, and quality-operation runbooks belong in `06-engineering/`. Existing references remain active for factual scope until a material revision creates an explicit successor. Do not duplicate checklists, test output, or release status here; link to them and define only the durable quality boundary they do not own.
 

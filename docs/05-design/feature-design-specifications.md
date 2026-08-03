@@ -1,4 +1,4 @@
-# Feature Design Specifications
+﻿# Feature Design Specifications
 
 **Status:** Active
 **Authority:** Canonical standard for defining and governing feature-specific visual, interaction, content, responsive, and accessibility design specifications
@@ -279,7 +279,7 @@ All new feature design specifications belong in `05-design/features/` and follow
 
 When an existing specification is next changed materially, its owner must either migrate it to this standard or create a successor under `05-design/features/` that identifies the legacy document, current parent contracts, and disposition. Do not duplicate the same feature design in both locations.
 
-The transitional `docs/design/` directory is not a source of new architecture. It remains discoverable for active legacy feature specifications while the responsibility migration is completed through normal feature work.
+The former `docs/design/` directory is no longer active. Historical feature specifications remain discoverable under `docs/11-archive/review/design/`; new authoritative specifications belong in `docs/05-design/` and the admitted feature dossier.
 
 ---
 

@@ -1,4 +1,4 @@
-# D-001: Adopt the Canonical FlowOS Documentation Ecosystem
+﻿# D-001: Adopt the Canonical FlowOS Documentation Ecosystem
 
 **Status:** Accepted
 **Authority:** Historical record of the decision to operate FlowOS documentation through the canonical 00–10 ecosystem
@@ -8,7 +8,7 @@
 **Last reviewed:** 2026-08-01
 **Review trigger:** A proposed change alters the constitutional location, authority, lifecycle, or responsibility boundaries of the active documentation ecosystem.
 **Created:** 2026-08-01
-**Evidence links:** [Documentation Architecture](../../00-constitution/documentation-architecture.md) · [Document Map](../../meta/document-map.md) · [Historical Documentation Planning](../../archive/documentation/documentation-planning-2026-08-01.md)
+**Evidence links:** [Documentation Architecture](../../00-constitution/documentation-architecture.md) · [Document Map](../../00-constitution/document-map.md) · [Historical Documentation Planning](../../11-archive/documentation/documentation-planning-2026-08-01.md)
 **Disposition:** Accepted
 
 ---

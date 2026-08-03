@@ -1,4 +1,4 @@
-# Intelligence and Trust Architecture
+﻿# Intelligence and Trust Architecture
 
 **Status:** Active
 **Authority:** Canonical architecture for technical controls that deliver computational assistance, inference, recommendations, automation, explanation, correction, evaluation, and withdrawal within FlowOS trust boundaries
@@ -236,7 +236,7 @@ Evaluation outputs, monitoring observations, test results, incidents, and review
 
 ## 10. Current Implementation References and Transition
 
-[TECHNICAL_ARCHITECTURE.md](../foundation/TECHNICAL_ARCHITECTURE.md) remains the current reference for implemented application and data boundaries. Existing provider configurations, model or tool code, prompts, experiments, logs, feature flags, evaluation artifacts, and runbooks remain actual implementation evidence.
+[TECHNICAL_ARCHITECTURE.md](../06-engineering/TECHNICAL_ARCHITECTURE.md) remains the current reference for implemented application and data boundaries. Existing provider configurations, model or tool code, prompts, experiments, logs, feature flags, evaluation artifacts, and runbooks remain actual implementation evidence.
 
 All new reusable intelligence and trust architecture, assistance capability specifications, model and tool boundary specifications, evaluation plans, automation controls, and withdrawal procedures belong in `06-engineering/`. Existing implementation references remain active for factual scope until a material revision creates an explicit successor. Do not copy prompts, provider settings, raw traces, or experiments into this architecture; link to them and define only the durable safeguard they do not own.
 

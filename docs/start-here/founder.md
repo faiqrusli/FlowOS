@@ -1,68 +1,158 @@
-﻿# Start Here — Founder
+﻿# Start Here: Founder
 
-~10 minute reading path for product direction during the **implementation hold**.
+**Audience:** You (the founder)  
+**Purpose:** Quick reference for daily work  
+**Last Updated:** 2026-08-03  
 
 ---
 
-## 1. Where we are (5 min)
+## Your Workflow
 
-| Read | Why |
+**👉 See: [How to Develop FlowOS](../start-here/how-to-develop-flowos.md)**
+
+**Simple:** Plan → Build → Ship
+
+- **Plan:** Decide what to build (5 min - 2 hours)
+- **Build:** Implement with quality (varies)
+- **Ship:** Deploy and document (30 min - 1 hour)
+
+Quality maintained through checklists and standards, not process.
+
+---
+
+## Daily Reference
+
+### What You Check Daily
+
+1. **[Current Sprint](../current-phase/current-sprint.md)** — What phase am I in? What's the current task?
+2. **[Gate Checklist](../current-phase/phase-1/gate-checklist.md)** — What needs to be done for Gate 1?
+3. **[Vision](../00-constitution/Vision.md)** — When making product decisions
+4. **[Product Principles](../00-constitution/governance/PRINCIPLES.md)** — Build/Defer/Reject test
+
+### Before Every Merge
+
+1. **Security Checklist** (`.ai/checklists/security.md`) — 6 non-negotiable checks
+2. **Build + Lint + Test** — Must pass
+3. **Manual Smoke Test** — Verify the changed flow works
+
+### After Shipping
+
+1. **Update [FEATURE_INVENTORY](../04-features/FEATURE_INVENTORY.md)** — If user-visible
+2. **Log Decision** (`docs/08-decisions/`) — If consequential
+3. **Update Sprint** ([Current Sprint](../current-phase/current-sprint.md)) — Track progress
+4. **Brief Log Entry** (`docs/current-phase/logs/august-log.md`) — What shipped
+
+---
+
+## Feature Documentation Quick Guide
+
+**Match documentation depth to feature complexity:**
+
+### Small Features (< 4 hours)
+**Documentation:**
+- Decision log entry only (why, what, when)
+- Code comments and commit messages
+
+**Examples:** Fix button alignment, add keyboard shortcut, small UI polish
+
+### Medium Features (4-16 hours)
+**Documentation:**
+- 1-page brief (problem, solution, scope, security)
+- Code + tests
+- Update FEATURE_INVENTORY
+
+**Examples:** Inline task capture, keyboard navigation improvements
+
+### Large/Major Features (> 16 hours)
+**Documentation (Full feature dossier using all 6 hats):**
+- **Hat 1 (Product Architect):** Feature brief + Behavior contract
+- **Hat 2 (Design Architect):** Design specification
+- **Hat 3 (Engineering Architect):** Delivery design + Validation plan
+- **Hat 4 (Implementation Engineer):** Code + Tests + Runbook
+- **Hat 5 (Release Manager):** Test results + Release record
+
+**Why the depth matters:**
+- Core features ARE FlowOS (Today, Tasks, Focus, Schedule, Notes)
+- Will evolve over many cycles
+- Need coherent improvement over time
+- Future-you needs to understand decisions
+
+**Standards:** See `docs/04-features/README.md` and individual standard docs in `docs/04-features/`
+
+**Reference:** See `docs/10-team/6-role-hats/` for detailed responsibilities of each hat
+
+---
+
+## Working with AI
+
+### Clear Instructions
+
+✅ "Build inline task capture. Reference tasks/task-dialog.tsx. Run security checklist."
+
+❌ "Make tasks better"
+
+### Point to Standards
+
+- **Design:** `docs/05-design/DESIGN_SYSTEM_V3.md`
+- **Code:** `docs/00-constitution/governance/CODE_STANDARDS.md`
+- **Security:** `.ai/checklists/security.md`
+- **Git:** `docs/00-constitution/governance/GIT_WORKFLOW.md`
+
+### Request Verification
+
+- "Run security checklist"
+- "Verify build and lint pass"
+- "Review against CODE_STANDARDS"
+
+---
+
+## Essential Docs
+
+| Need | Doc |
 |------|-----|
-| [execution/README.md](../execution/README.md) | Hold / review mode, what’s complete |
-| [FEATURE_INVENTORY.md](../foundation/FEATURE_INVENTORY.md) | Shipped surface for reviewers |
-| [Feature Catalog](../04-features/feature-catalog.md) | What is admitted, embedded, derived, placeholder, or deferred |
-| [roadmap.md](../07-strategy-and-delivery/roadmap.md) | Canonical outcome sequence and investment gates |
-| [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md) | Current pre-dogfood implementation sequence |
-| [Documentation Refinement Plan](../07-strategy-and-delivery/documentation-refinement-plan.md) | How current and legacy docs are being reconciled |
-
-**Production:** https://flowos-sage.vercel.app  
-**Live demo:** [flowos-live-demo-spec.md](../review/design/flowos-live-demo-spec.md) · [runbook](../execution/runbooks/flowos-live-demo.md)
-
----
-
-## 2. What to do while paused (5 min)
-
-| Read | Why |
-|------|-----|
-| [inbox.md](../execution/logs/inbox.md) | Drop small UI/UX ideas (no large builds) |
-| [friction-log.md](../execution/logs/friction-log.md) | Log friction from daily production use |
-| [recruiting-pipeline.md](../execution/ops/recruiting-pipeline.md) | M3 recruiting prep (parallel) |
-| [flowos-live-demo.md](../execution/runbooks/flowos-live-demo.md) | Guest demo workstream |
-
-Do **not** start Day Engine / large M2 addenda until the hold is lifted through the appropriate roadmap, delivery, and decision process.
+| **Current phase work** | **[Current Sprint](../current-phase/current-sprint.md)** |
+| **Gate 1 checklist** | **[Gate 1 Checklist](../current-phase/phase-1/gate-checklist.md)** |
+| **MVP roadmap** | **[MVP Masterplan](../current-phase/mvp-implementation-masterplan.md)** |
+| Product direction | [Vision](../00-constitution/Vision.md) |
+| Product rules | [PRINCIPLES](../00-constitution/governance/PRINCIPLES.md) |
+| What's shipped | [FEATURE_INVENTORY](../04-features/FEATURE_INVENTORY.md) |
+| Code standards | [CODE_STANDARDS](../00-constitution/governance/CODE_STANDARDS.md) |
+| Git workflow | [GIT_WORKFLOW](../00-constitution/governance/GIT_WORKFLOW.md) |
+| Design system | [DESIGN_SYSTEM_V3](../05-design/DESIGN_SYSTEM_V3.md) |
+| Tech stack | [TECHNICAL_ARCHITECTURE](../06-engineering/TECHNICAL_ARCHITECTURE.md) |
+| Full workflow | [Solo Founder Workflow](../start-here/solo-founder-workflow.md) |
+| Quick reference | [How to Develop FlowOS](../start-here/how-to-develop-flowos.md) |
 
 ---
 
-## 3. Decision rules (when stuck)
+## Quality Philosophy
 
-| Read | Why |
-|------|-----|
-| [Vision.md](../strategy/Vision.md) | **Highest** — immutable product constitution |
-| [Product Strategy](../01-product/product-strategy.md) | Current market choices and strategic hypotheses |
-| [flowos-user-evolution-and-market-positioning.md](../strategy/flowos-user-evolution-and-market-positioning.md) | Who we serve — student → founder |
-| [governance/PRINCIPLES.md](../foundation/governance/PRINCIPLES.md) | Non-negotiable product rules |
-| [Decision Register](../08-decisions/decision-register.md) | Canonical consequential decisions and their history |
-| [GIT_WORKFLOW.md](../foundation/governance/GIT_WORKFLOW.md) | Approve merges to `main` explicitly |
+**Excellence through clarity, not process.**
 
----
+Quality comes from:
+- ✅ Security checklist (always)
+- ✅ Standards and patterns (CODE_STANDARDS, PRINCIPLES)
+- ✅ Build/lint/test verification (always)
+- ✅ Pattern matching (copy before inventing)
 
-## 4. Strategic context (optional)
-
-| Read | Why |
-|------|-----|
-| [CEO_REVIEW_JULY_2026.md](../archive/foundation/CEO_REVIEW_JULY_2026.md) | July 2026 strategic assessment (historical) |
-| [governance/GATES.md](../foundation/governance/GATES.md) | What to measure; what to ignore |
-
-**Do not use for current planning:** [launch-plan-july-2026.md](../archive/planning/launch-plan-july-2026.md), [roadmap-pre-masterplan.md](../archive/design/july-3/roadmap-pre-masterplan.md) — superseded by the masterplan.
+Not from:
+- ❌ Approval gates where you approve yourself
+- ❌ Role switching
+- ❌ Heavy documentation for small features
+- ❌ Coordination theater
 
 ---
 
-## Daily loop (hold edition)
+## Historical Context
 
-1. Use **production** FlowOS as your daily driver  
-2. Small idea → [inbox.md](../execution/logs/inbox.md)  
-3. Recurring pain → [friction-log.md](../execution/logs/friction-log.md)  
-4. Consequential product decisions → [Decision Records](../08-decisions/decision-records.md)
-5. After a merge → [july-log.md](../execution/logs/july-log.md)  
-6. Check [execution/README.md](../execution/README.md) before approving new scope  
-7. When a milestone exits, create the appropriate [Review Record](../10-reviews/review-records.md) and post-release learning record when the release observation window closes
+**Previously:** 6-role team structure with 5 approval gates per feature (archived Aug 2026)
+
+**Now:** Simple 3-mode workflow
+
+**Why:** You don't coordinate with yourself. Quality maintained through checklists and standards.
+
+**Bring back when:** You hire team members and need actual coordination.
+
+---
+
+**Keep it simple. Build excellent software.**

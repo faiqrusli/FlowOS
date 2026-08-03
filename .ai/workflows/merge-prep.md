@@ -1,4 +1,4 @@
-# AI Workflow: Merge Preparation
+﻿# AI Workflow: Merge Preparation
 
 **When to use:** Before suggesting merge, after code review passes, when user says "prepare for merge".
 
@@ -103,10 +103,10 @@ Should we:
 
 | Change Type | Doc to Update |
 |-------------|---------------|
-| Product decision | `docs/execution/logs/decision-log.md` |
-| Session timeline | `docs/execution/logs/developer-log/YYYY-MM-DD.md` |
-| New feature/route | `docs/foundation/FEATURE_INVENTORY.md` |
-| Architecture change | Relevant `docs/foundation/` file |
+| Product decision | `docs/08-decisions/records/` |
+| Session timeline | `docs/current-phase/logs/developer-log/YYYY-MM-DD.md` |
+| New feature/route | `docs/04-features/FEATURE_INVENTORY.md` |
+| Architecture change | Relevant active doc (e.g., `docs/06-engineering/`, `docs/05-design/`) |
 
 **Prompt user:**
 ```
@@ -233,7 +233,7 @@ No issues found.
 ✅ Developer log updated (YYYY-MM-DD.md)
 ✅ Feature inventory updated (added Habits module)
 [ ] Decision log (no product decisions this session)
-[ ] July log (will update after merge)
+[ ] August log (will update after merge)
 
 ---
 
@@ -312,7 +312,7 @@ Commits merged:
 
 Next steps:
 1. Verify production deployment: https://flowos-sage.vercel.app
-2. Update july-log.md with merge details
+2. Update august-log.md with merge details
 3. Monitor for any issues
 
 Production deployment in progress...
@@ -356,7 +356,7 @@ Files changed: X (+YYY / -ZZZ lines)
 
 Next steps:
 1. Verify production
-2. Update july-log.md (note bundle merge)
+2. Update august-log.md (note bundle merge)
 3. Monitor deployment
 ```
 
@@ -383,9 +383,9 @@ Testing deployed changes:
 Rollback recommended? [explain]
 ```
 
-### 2. Update July Log
+### 2. Update August Log
 
-**Action:** Append entry to `docs/execution/logs/july-log.md`
+**Action:** Append entry to `docs/current-phase/logs/august-log.md`
 
 **Format:**
 ```markdown
@@ -409,11 +409,11 @@ Rollback recommended? [explain]
 
 **Prompt user:**
 ```
-July log entry drafted:
+August log entry drafted:
 
 [show entry]
 
-Should I add this to july-log.md?
+Should I add this to august-log.md?
 ```
 
 ### 3. Clean Up Branch (Optional)
@@ -511,12 +511,12 @@ Problem: NEVER merge without explicit founder approval.
 ```
 Problem: Main might have changed. Always verify before push.
 
-❌ **Forgetting july-log update**
+❌ **Forgetting august-log update**
 ```
 "✅ Merged successfully!"
 [doesn't mention documentation]
 ```
-Problem: July log tracks what ships. Always update after merge.
+Problem: August log tracks what ships. Always update after merge.
 
 ❌ **Not verifying production**
 ```
@@ -540,7 +540,7 @@ Preserves branch history, makes rollback easier.
 ✅ **Verify production immediately**
 Catch issues while context is fresh.
 
-✅ **Update july-log same session**
+✅ **Update august-log same session**
 Don't defer documentation.
 
 ✅ **Keep calm if issues arise**

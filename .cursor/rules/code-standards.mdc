@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Code standards (FlowOS)
 
-Full doc: [docs/foundation/governance/CODE_STANDARDS.md](docs/foundation/governance/CODE_STANDARDS.md)
+Full doc: [docs/00-constitution/governance/CODE_STANDARDS.md](docs/00-constitution/governance/CODE_STANDARDS.md)
 
 ## Default behavior
 
@@ -23,7 +23,7 @@ Full doc: [docs/foundation/governance/CODE_STANDARDS.md](docs/foundation/governa
 | `src/lib/` | Pure logic, palettes, Supabase helpers |
 | `src/hooks/`, `src/contexts/`, `src/config/`, `src/types/` | As named |
 
-New `lib/` domains → update `FEATURE_INVENTORY.md`. Files: `kebab-case`; components: `PascalCase`; imports: `@/…`.
+New `lib/` domains → update `docs/04-features/FEATURE_INVENTORY.md`. Files: `kebab-case`; components: `PascalCase`; imports: `@/…`.
 
 ## React
 

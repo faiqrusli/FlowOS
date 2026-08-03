@@ -1,13 +1,14 @@
-# Feature Catalog and Documentation Coverage
+﻿# Feature Catalog and Documentation Coverage
 
 **Status:** Active implementation reference
 **Authority:** Canonical inventory of FlowOS feature domains, their current implementation state, and the next documentation artifact required for each
 **Owner:** Product Architect
 **Approval Required:** Founder
-**Parent:** [Information Structure](../03-experience/information-structure.md) · [Feature Briefs](./feature-briefs.md) · [Behavior Contracts](./behavior-contracts.md) · [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md)
-**Children:** Individual feature briefs, behavior contracts, feature design specifications, delivery designs, validation plans, and feature reviews
-**Last Updated:** 2026-08-03
+**Parent:** [Information Structure](../03-experience/information-structure.md) · [Feature Standards](./README.md) · [MVP Implementation Masterplan](../current-phase/mvp-implementation-masterplan.md)
+**Children:** Individual feature dossiers with briefs, behavior contracts, design specs, delivery designs, and validation plans (matched to complexity)
+**Last Updated:** 2026-08-03 (adapted for solo founder development)
 **Review trigger:** A route, product role, implementation status, feature disposition, or required feature-document set changes.
+**Note:** Feature standards kept (essential for major features like Today, Tasks, Focus). Changed: no role-based handoffs, no approval gates before building. You write the specs you need, then build.
 
 ---
 
@@ -82,21 +83,49 @@ The distinction is now explicit:
 3. Individual dossiers are created only when a domain is admitted for refinement or delivery. A dossier is not created merely because a route exists.
 4. `05-design/design-implementation-map.md` performs the equivalent reconciliation for design references and code.
 
-## 5. Target dossier shape
+## 5. Feature documentation approach
 
-When a domain enters the refinement queue, create a bounded dossier under `docs/04-features/dossiers/<feature-slug>/`:
+**Standards kept, coordination removed (Aug 2026).**
 
-```text
-feature-brief.md       # why this bounded capability exists and its limits
-behavior-contract.md   # observable states, actions, permissions, and recovery
-design-specification.md# feature-specific visual, interaction, content, and a11y expression
-delivery-design.md     # technical approach, data, migration, rollout, and recovery
-validation-plan.md     # checks and evidence required before release
+**See:** `docs/04-features/README.md` for complete guidance.
+
+### When to Use Feature Dossiers
+
+**Major features** (Today, Tasks, Focus, Schedule, Notes):
+- Full dossier with brief, behavior contract, design spec, delivery design, validation plan
+- These ARE FlowOS — depth is essential
+- 6-14 hours upfront thinking prevents rebuilding from scratch
+- **Changed:** You write all docs (no role handoffs, no approval gates)
+
+**Medium features** (4-16 hours):
+- Brief (1 page) if helpful
+- Code + tests
+- Update FEATURE_INVENTORY
+
+**Small features** (< 4 hours):
+- Decision log only
+- Code + tests
+
+### Feature Dossier Structure
+
+```
+04-features/<feature-name>/
+  ├── feature-brief.md           # Why, scope, approach
+  ├── behavior-contract.md       # States, actions, edge cases
+  ├── design-spec.md             # UI, interactions, accessibility
+  ├── delivery-design.md         # Architecture, data model
+  └── validation-plan.md         # Test cases, verification
 ```
 
-Not every domain needs every child immediately. The masterplan and refinement plan admit the minimum set required by risk. A derived or embedded concept may instead receive an addendum to its owning feature document.
+**Key insight:** Problem wasn't "too much documentation." Problem was "too much coordination overhead."
 
-The planned coverage map is therefore:
+**Standards:**
+- `feature-briefs.md` — Standard for briefs
+- `behavior-contracts.md` — Standard for contracts
+- `feature-design-specifications.md` — Standard for design
+- `delivery-designs.md` — Standard for technical
+- `validation-plans.md` — Standard for validation
+- `feature-dossier-standard.md` — Complete lifecycle
 
 ```text
 04-features/
@@ -115,11 +144,11 @@ The planned coverage map is therefore:
     └── ai-coach/                        # deferred; trust decision required first
 ```
 
-This is a future implementation tree, not permission to create empty files. The [Documentation Refinement Plan](../07-strategy-and-delivery/documentation-refinement-plan.md) specifies the order and minimum package for each domain.
+This is a future implementation tree, not permission to create empty files. The [Documentation Refinement Plan](../11-archive/strategy/documentation-refinement-plan.md) specifies the order and minimum package for each domain.
 
 ## 6. Relationship to legacy references
 
-`docs/foundation/FEATURE_INVENTORY.md` remains useful as a detailed implementation snapshot, but it is not the authority for future sequencing. Its shipped/deferred observations are imported here and must be reconciled during Phase 1 of the [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md).
+`docs/04-features/FEATURE_INVENTORY.md` remains useful as a detailed implementation snapshot, but it is not the authority for future sequencing. Its shipped/deferred observations are imported here and must be reconciled during Phase 1 of the [MVP Implementation Masterplan](../current-phase/mvp-implementation-masterplan.md).
 
 The old SRS feature IDs, placeholder pages, and route names are evidence about prior intent. They do not override the current Vision, Product Model, systems, or this catalog's explicit disposition.
 
