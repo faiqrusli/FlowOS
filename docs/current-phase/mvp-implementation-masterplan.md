@@ -4,7 +4,7 @@
 **Authority:** Current sequence of product, design, engineering, validation, and release work required before FlowOS is offered to real users
 **Owner:** Product Architect + Engineering Architect
 **Approval Required:** Founder
-**Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Roadmap](./roadmap.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
+**Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Roadmap](../07-strategy-and-delivery/roadmap.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Delivery plans, feature dossiers, design specifications, engineering designs, validation plans, release plans, decisions, and reviews
 **Last Updated:** 2026-08-03
 **Review trigger:** A change to the MVP boundary, an evidence gate, a phase dependency, a feature disposition, or the readiness decision for founder or external dogfood.
@@ -40,7 +40,7 @@ FlowOS has a substantial working implementation, but it is not yet ready for dog
 
 This masterplan is therefore the new source of the next implementation roadmap. It converts the current product model into an evidence-gated sequence for one coherent MVP. It is intentionally narrower than the existing application surface: a route, placeholder, or old future enhancement is not automatically part of MVP.
 
-The [Roadmap](./roadmap.md) remains the authority for outcome sequence and investment governance. This document owns the implementation order that earns each Roadmap gate. A delivery plan may coordinate one bounded phase, but it may not skip a gate or admit a feature that this document has not admitted.
+The [Roadmap](../07-strategy-and-delivery/roadmap.md) remains the authority for outcome sequence and investment governance. This document owns the implementation order that earns each Roadmap gate. A delivery plan may coordinate one bounded phase, but it may not skip a gate or admit a feature that this document has not admitted.
 
 ## 2. The MVP outcome
 
@@ -103,7 +103,7 @@ MVP admission is a product decision, not an engineering convenience. If evidence
 - this masterplan adopted as the implementation source;
 - [Feature Catalog](../04-features/feature-catalog.md) adopted as the current feature coverage map;
 - [Design Implementation Map](../05-design/design-implementation-map.md) adopted as the current design reconciliation;
-- [Documentation Refinement Plan](./documentation-refinement-plan.md) started;
+- [Documentation Refinement Plan](../11-archive/strategy/documentation-refinement-plan.md) started;
 - legacy folders and files (including old specs, review materials, M2 runbooks, recruiting ops, and legacy logs) archived to `docs/11-archive/` and removed from active directories;
 - superseded strategy material, including the former execution masterplan, archived under `docs/11-archive/strategy/` and not used to start work;
 - fresh August 2026 operations setup established with active developer logging rules;

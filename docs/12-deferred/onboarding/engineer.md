@@ -87,4 +87,4 @@ Visual design phases 0–2 and alternate themes are archived:
 
 - [11-archive/design/july-3/README.md](../11-archive/design/july-3/README.md)
 - [11-archive/design/themes/](../11-archive/design/themes/)
-- Historical friction: [friction-log.md](../11-archive/current-phase/logs/friction-log.md)
+- Historical friction: [friction-log.md](../11-archive/execution/logs/friction-log.md)

@@ -14,10 +14,13 @@
 
 ## Gate 1 Exit Criteria
 
+Gate 1 is solved when every listed decision and problem below is properly resolved.
+
 - [ ] Every admitted MVP domain has documented current behavior
 - [ ] Every admitted MVP domain has a mapped data path
 - [ ] Known gaps and owners are identified
 - [ ] No unknown status passes into implementation
+- [ ] Every audit decision (below) is resolved
 
 ## Gate 1 Work Domains
 
@@ -43,6 +46,23 @@
 - [ ] Accessibility baseline
 - [ ] Security baseline
 - [ ] Production / operational baseline
+
+---
+
+## Audit Decisions (from post-phase-0-audit.md)
+
+Gate 1 is solved when these decision/problems are properly resolved. Source: [post-phase-0-audit.md](./post-phase-0-audit.md) §8.
+
+| # | Decision | Status |
+|---|---|---|
+| **1** | **`authority-matrix.md` / `streamlined-organization.md`** — promote to `10-team/`, or declare obsolete and fix references | ☐ Pending Founder |
+| **2** | **Legacy light-theme tokens** in `globals.css` (`:root` block) — retire now (dark-only), or keep for a planned light theme | ☐ Pending Founder |
+| **3** | **`11-archive/runbooks/*` duplicates** — consolidate into `11-archive/execution/runbooks/`, or keep both | ☐ Pending Founder |
+| **4** | **Repo-root cruft** (`eslint-report.*`, `lint*.txt`, `hs_err_*`, `replay_*`, `tsconfig.tsbuildinfo`) — delete + gitignore, or keep local | ☐ Pending Founder |
+| **5** | **CI test gate** — add `npm test` to `.github/workflows/ci.yml` now | ☐ Pending Founder |
+| **6** | **Zod input-validation claim** — add Zod, or rewrite the security claim to match current validation | ☐ Pending Founder |
+
+Gate rule: Decision statuses above become `Resolved` only with Founder confirmation and (where required) a decision record. The gate is solved when items 1–6 are properly resolved alongside the domain truth work.
 
 ---
 

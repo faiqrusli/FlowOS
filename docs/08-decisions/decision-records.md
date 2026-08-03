@@ -124,7 +124,7 @@ Supersession is not failure. It is the correct outcome when new evidence, change
 
 ## 8. Legacy Decision-Log Transition
 
-[decision-log.md](../11-archive/current-phase/logs/decision-log.md) remains an append-only historical collection of prior decisions. All new consequential decisions belong in `08-decisions/records/` and follow this standard. Existing entries are not rewritten or duplicated; when one must be revisited, create a linked successor or correction record.
+[decision-log.md](../11-archive/execution/logs/decision-log.md) remains an append-only historical collection of prior decisions. All new consequential decisions belong in `08-decisions/records/` and follow this standard. Existing entries are not rewritten or duplicated; when one must be revisited, create a linked successor or correction record.
 
 The legacy log remains discoverable until its historical entries are indexed or explicitly archived. It must not receive new records that compete with the individual-record authority model.
 

@@ -31,13 +31,13 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 **Status:** Authorized — Gate 0 PASSED (2026-08-04); Phase 1 sprint to be created
 
 **📋 Quick Reference:**
-- **[Current Sprint](docs/current-phase/current-sprint.md)** — What phase, what tasks, what status
-- **[Phase 1](docs/current-phase/phase-1/README.md)** — Current phase work (Gate 1)
-- **[MVP Masterplan](docs/current-phase/mvp-implementation-masterplan.md)** — Implementation roadmap
+- **[Current Sprint](../docs/current-phase/current-sprint.md)** — What phase, what tasks, what status
+- **[Phase 1](../docs/current-phase/phase-1/README.md)** — Current phase work (Gate 1)
+- **[MVP Masterplan](../docs/current-phase/mvp-implementation-masterplan.md)** — Implementation roadmap
 
 **Gate 1 Target:** For every admitted MVP domain, demonstrate the current behavior, data path, known gaps, and owner. Unknown status is not allowed to pass into implementation.
 
-**Gate 0 (Phase 0):** PASSED — 2026-08-04. Phase 0 closed and archived to `docs/11-archive/phases/phase-0/`. See [D-003](docs/08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md).
+**Gate 0 (Phase 0):** PASSED — 2026-08-04. Phase 0 closed and archived to `docs/11-archive/phases/phase-0/`. See [D-003](../docs/08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md).
 
 **Phase 1 Focus (from MVP Masterplan):**
 - Verify routes, entry points, data ownership, persistence, permissions, and current error/recovery behavior
@@ -196,7 +196,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 
 **Always check:** `docs/current-phase/current-sprint.md` for current assignments.
 
-**Phase 1 gate checklist:** `docs/current-phase/phase-1/gate-checklist.md` for completion criteria (to be created with the sprint).
+**Phase 1 gate checklist:** `docs/current-phase/phase-1/gate-checklist.md` for completion criteria (scaffold created 2026-08-04; filled with the sprint).
 
 **Phase 0 History (closed):**
 - ✅ Solo-founder workflow with 6-hat quality procedures created

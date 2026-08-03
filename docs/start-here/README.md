@@ -15,7 +15,7 @@
 **Read:** [how-to-develop-flowos.md](./how-to-develop-flowos.md) — Quick workflow reference
 
 ### For Engineers (Future)
-**Read:** [engineer.md](./engineer.md) — Technical onboarding (currently archived)
+**Read:** [engineer.md](../12-deferred/onboarding/engineer.md) — Technical onboarding (currently archived)
 
 ---
 

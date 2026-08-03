@@ -689,11 +689,11 @@ Every dossier should include a root README.md for quick navigation:
 
 ## 10. Templates and Examples
 
-**Templates:** See [_templates/](./_templates/) for starter documents
+**Templates:** Deferred — starter templates were archived with the Phase-0 cleanup. Use the folder structure in this standard as the reference until templates are re-admitted (tracked in Phase 1).
 
 **Complete Example:** A complete example dossier is planned; use the folder structure above as the reference until it is admitted to the active docs.
 
-**Quick Start:** See [start-here/implementing-a-feature.md](../start-here/implementing-a-feature.md) for the step-by-step guide
+**Quick Start:** See [12-deferred/onboarding/implementing-a-feature.md](../12-deferred/onboarding/implementing-a-feature.md) for the step-by-step guide
 
 ---
 

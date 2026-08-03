@@ -13,14 +13,14 @@ apply: always
 **Before starting ANY work:**
 
 1. **`.ai/context.md`** ← START HERE
-   - Product identity, tech stack, 6-role team
-   - Current Phase 0 status and objectives
+   - Product identity, tech stack, 6-hat workflow
+   - Current Phase 1 status and objectives
    - Documentation authority hierarchy
    - Core development principles
 
 2. **`docs/current-phase/current-sprint.md`** ← Current sprint
-   - Phase 0 assignments per role
-   - Gate 0 criteria and timeline (2026-08-06)
+   - Phase 1 assignments per role
+   - Gate 1 criteria
    - What's in/out of scope
 
 3. **`docs/10-team/6-role-hats/[your-role].md`** ← Your role (if assigned)
@@ -44,20 +44,20 @@ apply: always
 **Stack:** Next.js App Router, React 19, TypeScript, Tailwind CSS, Supabase, Vercel  
 **Production:** https://flowos-sage.vercel.app  
 
-**Current Phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority  
-**Current Sprint:** Week of 2026-08-02 (updated 2026-08-03)  
-**Gate 0 Target:** Every MVP work item traces to feature domain and masterplan phase  
-**Progress:** 42% complete  
-**Decision:** 2026-08-06  
+**Current Phase:** Phase 1 — Establish Implementation Truth  
+**Current Sprint:** Week of 2026-08-04 (Phase 1 sprint creation pending)  
+**Gate 1 Target:** Every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)  
+**Progress:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 authorized (D-003)  
+**Decision:** D-003 — Pass Gate 0 and Authorize Phase 1
 
-**Team:** 6 roles (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager)
+**Team:** 6 roles (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager) — solo founder wears all hats
 
 ---
 
 ## Core Principles
 
 1. **Role-Based Execution** — You are ONE role, stay in scope
-2. **Sprint-Driven Work** — Check current sprint for Phase 0 context
+2. **Sprint-Driven Work** — Check current sprint for Phase 1 context
 3. **Approval Gates** — Request approval before proceeding downstream
 4. **Security Non-Negotiable** — 6-point checklist every merge
 5. **Pattern Matching** — Copy similar files before inventing
@@ -68,7 +68,7 @@ apply: always
 ## Security Checklist (Always Run Before Merge)
 
 - [ ] User-scoped data access only (no `using (true)` on user data)
-- [ ] Input validation present (Zod schemas)
+- [ ] Input validation present (runtime schema validation, e.g. see `.ai/checklists/security.md`)
 - [ ] No hardcoded secrets or API keys
 - [ ] RLS on new database tables
 - [ ] Auth middleware on new API routes
@@ -126,7 +126,7 @@ Higher wins:
 2. `docs/00-constitution/documentation-architecture.md`
 3. `docs/01-product/` through `docs/10-team/`
 4. `docs/current-phase/mvp-implementation-masterplan.md`
-5. `docs/current-phase/current-sprint.md` (current Phase 0 work)
+5. `docs/current-phase/current-sprint.md` (current Phase 1 work)
 6. `docs/00-constitution/governance/`
 7. `.ai/context.md`
 

@@ -4,7 +4,7 @@
 **Audience:** Engineers, AI agents  
 **Last updated:** July 4, 2026
 
-Line-level conventions for FlowOS. Decision rules live in [ENGINEERING.md](./ENGINEERING.md); ship checklist in [GATES.md](./GATES.md); stack layout in [../TECHNICAL_ARCHITECTURE.md](../TECHNICAL_ARCHITECTURE.md).
+Line-level conventions for FlowOS. Decision rules live in [ENGINEERING.md](./ENGINEERING.md); ship checklist in [GATES.md](./GATES.md); stack layout in [../../06-engineering/TECHNICAL_ARCHITECTURE.md](../../06-engineering/TECHNICAL_ARCHITECTURE.md).
 
 ---
 
@@ -31,7 +31,7 @@ During M2, defer large refactors, new primitives, and palette sweeps unless the 
 | `src/types/` | Shared TypeScript types (`database.ts`, domain types) |
 | `supabase/` | SQL migrations (apply manually; see `APPLIED_STATE.md`) |
 
-**Do not** add new top-level `lib/` domains without updating [FEATURE_INVENTORY.md](../FEATURE_INVENTORY.md).
+**Do not** add new top-level `lib/` domains without updating [FEATURE_INVENTORY.md](../../04-features/FEATURE_INVENTORY.md).
 
 ---
 
@@ -86,7 +86,7 @@ export function getChannelStyle(type, priority?) { … }
 
 ## Styling
 
-1. **Tokens first** — use CSS variables and semantic Tailwind classes from [globals.css](../../../src/app/globals.css), not page-specific hex, slate/gray, border, shadow, radius, or text-scale combinations. Follow [DESIGN_SYSTEM_V3.md](../DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) (Workspace / Interaction for layout and states).
+1. **Tokens first** — use CSS variables and semantic Tailwind classes from [globals.css](../../../src/app/globals.css), not page-specific hex, slate/gray, border, shadow, radius, or text-scale combinations. Follow [DESIGN_SYSTEM_V3.md](../../05-design/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../../05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) (Workspace / Interaction for layout and states).
 2. **Centralize channel colors** — schedule, habits, task groups go through `lib/*-appearance.ts` or `schedule-palette.ts`, not one-off hex in JSX.
 3. **No light theme** — dark-only; do not add theme switching.
 4. **Visible controls** — critical actions must not be hover-only ([PRINCIPLES.md](./PRINCIPLES.md) #10).
@@ -112,7 +112,7 @@ New authenticated route:
 
 1. Add page under `src/app/(main)/…`
 2. Add prefix to `PROTECTED_PREFIXES` in [middleware.ts](../../../src/middleware.ts) if not already covered
-3. Update [sidebar-navigation.tsx](../../../src/config/sidebar-navigation.tsx) and [FEATURE_INVENTORY.md](../FEATURE_INVENTORY.md) if user-visible
+3. Update [sidebar-navigation.tsx](../../../src/config/sidebar-navigation.tsx) and [FEATURE_INVENTORY.md](../../04-features/FEATURE_INVENTORY.md) if user-visible
 4. Smoke: unauthenticated → redirect to `/login?next=…`
 
 Placeholder modules (`/goals`, `/ai-coach`, …) stay behind placeholder handling until FEATURE_INVENTORY marks them shipped.
@@ -181,5 +181,5 @@ Record consequential Build/Kill choices in [Decision Records](../../08-decisions
 | [GATES.md](./GATES.md) | Full gate matrix |
 | [PRINCIPLES.md](./PRINCIPLES.md) | Product rules that affect code |
 | [GIT_WORKFLOW.md](./GIT_WORKFLOW.md) | Branches and merge approval |
-| [TECHNICAL_ARCHITECTURE.md](../TECHNICAL_ARCHITECTURE.md) | Stack, entities, key files |
+| [TECHNICAL_ARCHITECTURE.md](../../06-engineering/TECHNICAL_ARCHITECTURE.md) | Stack, entities, key files |
 | [m2-founder-daily-driver.md](../../11-archive/execution/runbooks/m2-founder-daily-driver.md) | Historical session scope example |

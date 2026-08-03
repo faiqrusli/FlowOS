@@ -133,7 +133,7 @@ Merge when **all** of the following are true:
 
 ## Ad-hoc UI/UX tweaks
 
-1. Capture idea in the archived [inbox.md](../../11-archive/current-phase/logs/inbox.md)  
+1. Capture idea in the archived [inbox.md](../../11-archive/execution/logs/inbox.md)  
 2. `git checkout -b tweak/short-description` from `main`  
 3. Fix, build, lint, commit, push branch  
 4. Ask founder to merge — same approval rule  

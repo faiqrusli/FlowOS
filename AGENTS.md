@@ -15,7 +15,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 1. **`.ai/context.md`** ← START HERE (Universal AI context)
    - Product identity, tech stack, 6-hat workflow
-   - Current Phase 0 status and objectives
+   - Current Phase 1 status and objectives
    - Documentation authority hierarchy
    - Core development principles
 

@@ -841,11 +841,11 @@ Output: Explicit gate decision with rationale
 | 6-role ownership on core docs | ✅ Complete | Product (24) / Design (10) / Engineering (10) updated | 100% |
 | Legacy docs marked historical | 🟡 Founder verification | Review layer and superseded strategy/foundation material archived; active references checked | Pending re-verification |
 | AI skills updated | ✅ Complete | v2.0 system deployed | 100% |
-| Implementation truth backlog | ✅ Complete | [implementation-truth-backlog.md](./implementation-truth-backlog.md) — 50 open questions across MVP domains | 100% |
+| Implementation truth backlog | ✅ Complete | [implementation-truth-backlog.md](../11-archive/phases/phase-0/implementation-truth-backlog.md) — 50 open questions across MVP domains | 100% |
 
 Legend: ⚪ Not started | 🟡 In progress | ✅ Complete
 
-**Gate 0 Overall:** HOLD — 6/7 criteria Pass; Criterion 5 pending Founder confirmation and re-verification. See [gate-0-readiness-report.md](./gate-0-readiness-report.md).
+**Gate 0 Overall:** HOLD — 6/7 criteria Pass; Criterion 5 pending Founder confirmation and re-verification. See [gate-0-readiness-report.md](../11-archive/phases/phase-0/gate-0-readiness-report.md).
 
 ---
 
@@ -956,7 +956,7 @@ No blocking dependencies remain between the completed role documentation updates
 - [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) — Phase authority (Phase 1 definition)
 - [Phase 1 README](./phase-1/README.md) — Phase 1 overview
 - [Phase 0 Archive](../11-archive/phases/phase-0/) — Historical Phase 0 records (Gate 0 PASS)
-- [Roadmap](./roadmap.md) — Strategic context
+- [Roadmap](../07-strategy-and-delivery/roadmap.md) — Strategic context
 - [Feature Catalog](../04-features/feature-catalog.md) — Current inventory
 - [AI Skills System](../../.ai/README.md) — AI context and workflows
 

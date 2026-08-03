@@ -75,7 +75,7 @@ Historical M2 baseline from [execution-masterplan.md](../../11-archive/strategy/
 | Inline task capture on Today |
 | Error/loading boundaries on `(main)` |
 | Founder uses production **≥ 5 days/week** |
-| Friction logged in [friction-log.md](../../11-archive/current-phase/logs/friction-log.md) |
+| Friction logged in [friction-log.md](../../11-archive/execution/logs/friction-log.md) |
 | **≥ 3 recruiting candidates** for M3 |
 
 **Exit:** All M2 exit criteria pass → start M3 recruitment.
@@ -235,7 +235,7 @@ Definition of done for any feature shipment before it can pass through the relea
 |------|---------------|---------------|
 | **Product** | User-facing change | [PRINCIPLES.md](./PRINCIPLES.md) feature test |
 | **UX** | Workflow, nav, routing, capture | Reduces clicks/switches |
-| **Architecture** | Routes, data model, lib boundaries | Matches [TECHNICAL_ARCHITECTURE.md](../TECHNICAL_ARCHITECTURE.md) |
+| **Architecture** | Routes, data model, lib boundaries | Matches [TECHNICAL_ARCHITECTURE.md](../../06-engineering/TECHNICAL_ARCHITECTURE.md) |
 | **Accessibility** | Interactive controls | No hover-only critical controls |
 | **Performance** | Large lists, new fetches | No obvious regression |
 | **Security** | Auth, RLS, middleware | User-scoped data |
@@ -271,6 +271,6 @@ Solo founder: self-review checklist, still mandatory.
 
 ### Documentation Gate
 
-- [ ] [FEATURE_INVENTORY.md](../FEATURE_INVENTORY.md) updated if user-visible
+- [ ] [FEATURE_INVENTORY.md](../../04-features/FEATURE_INVENTORY.md) updated if user-visible
 - [ ] [Decision Records](../../08-decisions/decision-records.md) for consequential Build/Kill decisions
 

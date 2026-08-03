@@ -7,8 +7,8 @@
 ## 🚨 CRITICAL: Read These First
 
 **Before starting ANY work:**
-1. **`.ai/context.md`** — Full product context, 6-role team, Phase 0 status
-2. **`docs/current-phase/current-sprint.md`** — Current Phase 0 sprint assignments
+1. **`.ai/context.md`** — Full product context, 6-hat workflow, Phase 1 status
+2. **`docs/current-phase/current-sprint.md`** — Current Phase 1 sprint assignments
 3. **Your role document** (if assigned): `docs/10-team/6-role-hats/[role-name].md`
 
 **Then use:**
@@ -26,12 +26,12 @@
 **Stack:** Next.js App Router, React, TypeScript, Tailwind, Supabase  
 **Production:** https://flowos-sage.vercel.app  
 
-**Current Phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority  
-**Current Sprint:** Week of 2026-08-02 (updated 2026-08-03)  
-**Gate 0 Target:** Every MVP work item traces to feature domain and masterplan phase  
-**Progress:** 42% complete (decision: 2026-08-06)
+**Current Phase:** Phase 1 — Establish Implementation Truth  
+**Current Sprint:** Week of 2026-08-04 (Phase 1 sprint creation pending)  
+**Gate 1 Target:** Every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)  
+**Progress:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 authorized (D-003)
 
-**Team:** 6 roles (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager)
+**Team:** 6 roles (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager) — solo founder wears all hats
 
 ---
 
@@ -39,7 +39,7 @@
 
 **Before starting work:**
 1. Read `.ai/context.md` — Full product context, principles, 6-role team
-2. Check `docs/current-phase/current-sprint.md` — Phase 0 assignments
+2. Check `docs/current-phase/current-sprint.md` — Phase 1 assignments
 3. Review your role: `docs/10-team/6-role-hats/[role-name].md`
 
 **During code review:**
@@ -67,9 +67,9 @@
 
 ### 2. Sprint-Driven Work
 **Work comes from current sprint.**
-- Current Phase: **Phase 0** (Freeze Ambiguity and Establish Document Authority)
-- Check `docs/current-phase/current-sprint.md` for your Phase 0 assignments
-- Gate 0 target: 2026-08-06
+- Current Phase: **Phase 1** (Establish Implementation Truth)
+- Check `docs/current-phase/current-sprint.md` for your Phase 1 assignments
+- Gate 1 target: every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)
 
 ### 3. Pattern Matching First
 Always check similar files before writing new code. Copy existing patterns.
@@ -116,7 +116,7 @@ When docs conflict, higher wins:
 2. `docs/00-constitution/documentation-architecture.md`
 3. `docs/01-product/` through `docs/10-team/` (canonical numbered structure)
 4. `docs/current-phase/mvp-implementation-masterplan.md` (current implementation source)
-5. `docs/current-phase/current-sprint.md` (current Phase 0 work)
+5. `docs/current-phase/current-sprint.md` (current Phase 1 work)
 6. `docs/00-constitution/governance/` (PRINCIPLES, CODE_STANDARDS, GIT_WORKFLOW)
 7. `.ai/context.md` (universal AI reference)
 
@@ -170,7 +170,7 @@ When docs conflict, higher wins:
 - Follow existing patterns
 - Check security every time
 - Review diffs thoroughly
-- Respect scope (M2 closed)
+- Respect scope (Phase 1 — truth establishment, no feature implementation)
 - Wait for merge approval
 
 ### ❌ Don't
@@ -179,7 +179,7 @@ When docs conflict, higher wins:
 - Skip security checks
 - Invent new patterns
 - Add dependencies without asking
-- Expand scope beyond M2
+- Expand scope beyond Phase 1
 - Skip build/lint
 - Merge without testing
 
@@ -195,7 +195,7 @@ AI:
 1. Read .ai/workflows/role-assignment.md
 2. Read docs/10-team/6-role-hats/product-architect.md
 3. Read docs/current-phase/current-sprint.md
-4. Acknowledge role, understand Phase 0 assignments
+4. Acknowledge role, understand Phase 1 assignments
 5. Execute according to role workflow
 ```
 
@@ -240,13 +240,13 @@ Run before every merge:
 
 ---
 
-## Out of Scope (M2)
+## Out of Scope (Phase 1)
 
-❌ Command palette  
+❌ Feature implementation or refactors (Phase 3)  
+❌ Contract writing (Phase 2)  
 ❌ New modules  
-❌ dnd-kit migration  
-❌ Monolith refactors  
-❌ Visual polish (unless runbook says so)
+❌ Monolith refactors unless needed to document truth  
+❌ Visual polish (unless a design reconciliation item)
 
 ---
 

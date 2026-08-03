@@ -7,7 +7,7 @@ alwaysApply: true
 
 **🎯 CRITICAL: Before ANY work, read these in order:**
 
-1. **`.ai/context.md`** — Universal AI context (product, tech stack, 6-role team, Phase 0)
+1. **`.ai/context.md`** — Universal AI context (product, tech stack, 6-hat workflow, Phase 1)
 2. **`docs/current-phase/current-sprint.md`** — Current sprint assignments
 3. **Your role document** (if assigned): `docs/10-team/6-role-hats/[role-name].md`
 
@@ -25,13 +25,13 @@ alwaysApply: true
 **Production:** https://flowos-sage.vercel.app  
 **Stack:** Next.js App Router, React, TypeScript, Tailwind, Supabase
 
-**Current Phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority  
-**Current Sprint:** Week of 2026-08-02 (updated 2026-08-03)  
-**Gate 0 Target:** Every MVP work item traces to feature domain, parent system, and masterplan phase
-**Status:** Phase 0 extended under Founder ownership; Gate 0 is held pending cleanup confirmation and Criterion 5 re-verification
-**Founder decision:** All Phase 0 role deliverables approved on 2026-08-03; Phase 1 is not authorized
+**Current Phase:** Phase 1 — Establish Implementation Truth  
+**Current Sprint:** Week of 2026-08-04 (Phase 1 sprint creation pending)  
+**Gate 1 Target:** Every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)  
+**Status:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 authorized. See [D-003](../../docs/08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md)
+**Founder decision:** Gate 0 passed; Phase 0 closed and archived; Phase 1 authorized (2026-08-04)
 
-**Team:** 6-role configuration (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager)
+**Team:** 6-role configuration (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager) — solo founder wears all hats
 
 ## Doc authority (conflicts — higher wins)
 
@@ -39,7 +39,7 @@ alwaysApply: true
 2. `docs/00-constitution/documentation-architecture.md` — documentation governance
 3. `docs/01-product/` through `docs/10-team/` — canonical numbered structure
 4. `docs/current-phase/mvp-implementation-masterplan.md` — current implementation source
-5. `docs/current-phase/current-sprint.md` — **current Phase 0 sprint assignments**
+5. `docs/current-phase/current-sprint.md` — **current Phase 1 sprint assignments**
 6. `docs/00-constitution/governance/` (PRINCIPLES, GATES, CODE_STANDARDS, GIT_WORKFLOW)
 7. `.ai/context.md` — universal AI reference
 
@@ -48,11 +48,11 @@ alwaysApply: true
 - `docs/11-archive/strategy/execution-masterplan.md` — historical milestone context (use MVP Masterplan)
 - `docs/11-archive/` — history only; never for current planning
 
-## Working norms (Phase 0)
+## Working norms (Phase 1)
 
 - **Role-based:** You are assigned ONE role — read `docs/10-team/6-role-hats/[role-name].md`
-- **Sprint-driven:** Check `docs/current-phase/current-sprint.md` for Phase 0 assignments
-- **Phase 0 focus:** Update docs with 6-role ownership, mark legacy docs, create implementation backlog
+- **Sprint-driven:** Check `docs/current-phase/current-sprint.md` for Phase 1 assignments
+- **Phase 1 focus:** Establish implementation truth — document current behavior, data paths, known gaps, owners for admitted MVP domains (see `docs/current-phase/phase-1/`)
 - **Approval gates:** Work requires Founder approval before proceeding
 - **Never:** Merge to main without Founder authorization
 

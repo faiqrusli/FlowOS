@@ -158,9 +158,9 @@ Each feature receives **one dossier** (folder) containing all knowledge about th
 - **Append-only records:** Reviews, releases, learning records, and decisions are never edited after close
 - **Lifecycle phases:** Decision → Design → Build → Test → Review → Release → Learn → Adapt
 
-**Templates:** See `04-features/_templates/` for runbook, test-results, acceptance-checklist, review, release, and learning-record templates.
+**Templates:** Deferred — starter templates were archived with the Phase-0 cleanup; see `docs/12-deferred/` pending re-admission.
 
-**Lifecycle guide:** See [start-here/complete-feature-dossier-lifecycle.md](../start-here/complete-feature-dossier-lifecycle.md) for detailed implementation guide.
+**Lifecycle guide:** See [12-deferred/onboarding/complete-feature-dossier-lifecycle.md](../12-deferred/onboarding/complete-feature-dossier-lifecycle.md) for detailed implementation guide.
 
 ---
 

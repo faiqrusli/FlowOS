@@ -14,7 +14,7 @@
 
 This register makes decision records discoverable by identifier, status, owner, date, domain, and link. It does not repeat any record's context, alternatives, evidence, rationale, or consequences.
 
-The register lists only decisions governed by [Decision Records](./decision-records.md). The historical [legacy decision log](../11-archive/current-phase/logs/decision-log.md) remains separate and append-only; its entries are not silently converted into individual records.
+The register lists only decisions governed by [Decision Records](./decision-records.md). The historical [legacy decision log](../11-archive/execution/logs/decision-log.md) remains separate and append-only; its entries are not silently converted into individual records.
 
 ## Current Records
 

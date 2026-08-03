@@ -6,7 +6,7 @@
 
 **Transition:** The reusable standard for engineering change now lives in [Engineering Standards](../../06-engineering/engineering-standards.md). This document preserves current M2 execution context and must not redefine the active engineering, quality, operations, data, or access architecture.
 
-Product scope: [PRINCIPLES.md](./PRINCIPLES.md). Stack detail: [../TECHNICAL_ARCHITECTURE.md](../TECHNICAL_ARCHITECTURE.md).
+Product scope: [PRINCIPLES.md](./PRINCIPLES.md). Stack detail: [../../06-engineering/TECHNICAL_ARCHITECTURE.md](../../06-engineering/TECHNICAL_ARCHITECTURE.md).
 
 ---
 
@@ -23,7 +23,7 @@ Security and RLS are never deferred for features.
 1. **Security** — Does this expose user data or bypass auth? Fix first.
 2. **Build** — Does `npm run build` pass?
 3. **Scope** — Smallest diff that solves the problem?
-4. **Convention** — Matches [TECHNICAL_ARCHITECTURE.md](../TECHNICAL_ARCHITECTURE.md)?
+4. **Convention** — Matches [TECHNICAL_ARCHITECTURE.md](../../06-engineering/TECHNICAL_ARCHITECTURE.md)?
 5. **Rollback** — Can founder revert if production breaks?
 6. **Docs** — Update FEATURE_INVENTORY or TECHNICAL_ARCHITECTURE if behavior changes?
 

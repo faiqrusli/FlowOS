@@ -39,6 +39,6 @@ New or changed work
 | [../../06-engineering/engineering-standards.md](../../06-engineering/engineering-standards.md) | Reusable engineering-change practice |
 | [GATES.md](./GATES.md) | Release gates and metric definitions |
 | [../../08-decisions/decision-register.md](../../08-decisions/decision-register.md) | Canonical decision-record discovery |
-| [../../11-archive/current-phase/logs/decision-log.md](../../11-archive/current-phase/logs/decision-log.md) | Historical decision collection |
+| [../../11-archive/execution/logs/decision-log.md](../../11-archive/execution/logs/decision-log.md) | Historical decision collection |
 
 Historical audits: [../../11-archive/foundation/](../../11-archive/foundation/)
