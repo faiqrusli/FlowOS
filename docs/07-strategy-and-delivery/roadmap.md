@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical current sequence of evidence-gated product outcomes, strategic bets, and investment decisions
-**Owner:** Product leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Product Strategy](../01-product/product-strategy.md) · [Success Model](../01-product/success-model.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Delivery plans, release plans, feature briefs, research programs, validation plans, decision records, and roadmap reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** Material evidence, a changed strategic assumption, a decision gate, a material shift in outcome sequence or investment, a new commitment, or a decision to defer, simplify, retire, or expand a roadmap outcome.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain outcome sequence, ensure evidence-gated investment decisions, and coordinate delivery planning with strategic priorities
+
+### Modification Process
+1. Product Architect proposes roadmap changes (based on evidence, strategic shifts, or decision gates)
+2. Submit to Founder for approval
+3. Founder reviews for Vision and strategic alignment
+4. If approved: Product Architect updates document
+5. Document change in decision record if consequential
+6. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose outcome sequence updates, maintain commitment classes, track strategic assumptions
+- Requires approval for: Changes to outcome sequence, investment decisions, or strategic priorities
 
 ---
 

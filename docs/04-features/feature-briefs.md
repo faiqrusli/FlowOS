@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical standard for deciding, scoping, and governing bounded FlowOS feature briefs
-**Owner:** Product leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Product Model](../01-product/product-model.md) · [Product Strategy](../01-product/product-strategy.md) · [Success Model](../01-product/success-model.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Journey Contracts](../03-experience/journey-contracts.md)
 **Children:** Individual feature briefs in `04-features/briefs/`, behavior contracts, delivery designs, validation plans, decision records, and feature reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed document changes the definition, admission criteria, required contents, lifecycle, or ownership boundary of a FlowOS feature brief.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain feature brief standards, ensure feature admission criteria align with product strategy, and coordinate with Design Architect on experience implications
+
+### Modification Process
+1. Product Architect proposes brief standard changes (based on process improvements or strategic shifts)
+2. Submit to Founder for approval
+3. Founder reviews for Vision and strategic alignment
+4. If approved: Product Architect updates document
+5. Document change in decision record if consequential
+6. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose brief standard updates, maintain admission criteria, coordinate with Design Architect
+- Requires approval for: Changes to feature admission criteria, required contents, or lifecycle rules
 
 ---
 

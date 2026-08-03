@@ -4,8 +4,8 @@ This is a non-normative directory index. Strategy and delivery documents sequenc
 
 | Document | Responsibility | Status | Owner | Parent |
 |---|---|---|---|---|
-| [Roadmap](./roadmap.md) | Evidence-gated outcomes, investment sequence, and roadmap governance | Active | Product leadership | Product Strategy and Success Model |
-| [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) | Canonical pre-dogfood implementation phases, feature admission, and readiness gates | Active | Product and engineering leadership | Vision, Product Model, and Roadmap |
+| [Roadmap](./roadmap.md) | Evidence-gated outcomes, investment sequence, and roadmap governance | Active | Product Architect | Product Strategy and Success Model |
+| [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) | Canonical pre-dogfood implementation phases, feature admission, and readiness gates | Active | Product Architect + Engineering Architect | Vision, Product Model, and Roadmap |
 | **[Current Sprint](./current-sprint.md)** | **Active sprint with role assignments, tasks, dependencies, and gate progress** | **Active** | **Founder** | **MVP Implementation Masterplan** |
 | **[System Analysis & Improvement Plan](./system-analysis-and-improvement-plan.md)** | **Critical issues, gaps, and improvements identified by expert analysis** | **Action Required** | **Founder** | **All systems** |
 | [Sprint Management Guide](./sprint-management-guide.md) | How to plan, execute, and review sprints across the 6-role organization | Guide | Founder | MVP Implementation Masterplan and Team Structure |
@@ -14,8 +14,8 @@ This is a non-normative directory index. Strategy and delivery documents sequenc
 | [Documentation Update Example](./documentation-update-example.md) | Concrete before/after examples and templates for document updates | Guide | Founder | Documentation Update Plan |
 | [Development Handbook](./development-handbook.md) | Lightweight founder-led operating model for implementing, reviewing, approving, documenting, and releasing work | Active | Founder | Documentation Architecture, MVP Implementation Masterplan, and Engineering Standards |
 | [Engineering Lifecycle and SDLC Guide](../06-engineering/engineering-lifecycle-and-sdlc.md) | End-to-end engineering procedure and document/role map for implementation through release and learning | Active | Founder | Development Handbook and engineering architecture |
-| [Documentation Refinement Plan](./documentation-refinement-plan.md) | Plan for reconciling current, transitional, and historical documentation before MVP implementation | Active | Product and documentation leadership | Documentation Architecture and MVP Implementation Masterplan |
-| [Delivery Plans](./delivery-plans.md) | Standard for bounded cross-functional delivery coordination | Active | Product and delivery leadership | Roadmap and feature contracts |
+| [Documentation Refinement Plan](./documentation-refinement-plan.md) | Plan for reconciling current, transitional, and historical documentation before MVP implementation | Active | Product Architect | Documentation Architecture and MVP Implementation Masterplan |
+| [Delivery Plans](./delivery-plans.md) | Standard for bounded cross-functional delivery coordination | Active | Product Architect | Roadmap and feature contracts |
 | [Release Plans](./release-plans.md) | Standard for bounded release, rollout, recovery, and review coordination | Active | Product, engineering, and operations leadership | Roadmap and delivery plans |
 | [Delivery plan template](./plans/delivery-plan-template.md) | Starter form for an individual delivery plan | Starter artifact | N/A | Delivery Plans |
 | [Release plan template](./releases/release-plan-template.md) | Starter form for an individual release plan | Starter artifact | N/A | Release Plans |

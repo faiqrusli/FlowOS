@@ -4,7 +4,7 @@
 **Current Phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority  
 **Status:** Active  
 **Owner:** Founder  
-**Last Updated:** 2026-08-03  
+**Last Updated:** 2026-08-03 (Product Architect complete)  
 
 ---
 
@@ -20,10 +20,10 @@
 - ✅ Adopt Feature Catalog as current feature coverage map
 - ✅ Adopt Design Implementation Map as current design reconciliation
 - ✅ Start Documentation Refinement Plan
-- ⏳ Mark legacy execution-masterplan.md as historical/transitional
+- ✅ Clean up legacy directories and archive superseded specs, logs, and runbooks to `docs/archive/`
 - ⏳ Create clean list of unresolved implementation truth
-- ⏳ Ensure all AI skills reference new structure (6-role team, MVP Masterplan, sprint workflow)
-- ⏳ Update team documentation with 6-role ownership
+- ✅ Deploy active August operations setup and AI developer logging rules (Cursor/WebStorm)
+- ✅ Update team documentation with 6-role ownership
 
 **Gate 0 Target:** Every proposed MVP work item points to a feature domain, parent system, design/engineering contract, and this masterplan phase. Work that cannot do so pauses.
 
@@ -34,16 +34,18 @@
 ### Primary Goals (Phase 0 Completion)
 1. ✅ Complete AI Skills System v2.0 (6-role team, sprint workflow, testing guide)
 2. ⏳ Update all core documentation with 6-role ownership
-3. ⏳ Mark legacy documents as historical
+3. ✅ Clean up and archive legacy documents and specs
 4. ⏳ Create implementation truth backlog (not speculative features)
 5. ⏳ Verify all proposed work traces to masterplan phase
 
 ### Success Criteria
 - [✅] AI Skills System v2.0 complete and integrated
-- [⏳] Core product docs updated with 6-role ownership (Batch 1)
+- [✅] Core product docs updated with 6-role ownership (Product Architect complete - 24 docs)
 - [⏳] Core design docs updated with 6-role ownership (Batch 1)
 - [⏳] Core engineering docs updated with 6-role ownership (Batch 1)
-- [⏳] Legacy execution-masterplan.md marked historical
+- [✅] Legacy execution-masterplan.md verified with historical warning banner
+- [✅] Legacy folders and runbooks cleaned up and moved to `docs/archive/`
+- [✅] Fresh August 2026 operations setup established with real-time AI logging rules
 - [⏳] Implementation truth backlog created
 - [⏳] Gate 0 readiness assessment complete
 
@@ -55,9 +57,11 @@
 
 **Primary Assignment:** Update product documentation with 6-role ownership
 
+**Status:** ✅ COMPLETE (2026-08-03)
+
 **Specific Tasks:**
 
-#### A. Update Core Product Documents (Batch 1)
+#### A. Update Core Product Documents (Batch 1) - ✅ COMPLETE
 ```
 Assignment: Update product documents with 6-role ownership structure
 Context: Phase 0 - establish document authority before Phase 1 assessment work
@@ -66,19 +70,35 @@ Input Documents:
   - docs/12-team/authority-matrix.md
   - docs/12-team/active-6-role/product-architect.md
 Documents to Update:
-  1. docs/01-product/product-model.md
-  2. docs/01-product/product-glossary.md
-  3. docs/01-product/product-strategy.md
-  4. docs/01-product/success-model.md
-  5. docs/02-systems/direction-and-commitment.md
-  6. docs/02-systems/action-and-evidence.md
-  7. docs/02-systems/sensemaking-and-adaptation.md
-  8. docs/04-features/feature-catalog.md
-  9. docs/04-features/feature-briefs.md
-  10. docs/04-features/behavior-contracts.md
+  1. docs/01-product/product-model.md ✅
+  2. docs/01-product/product-glossary.md ✅
+  3. docs/01-product/product-strategy.md ✅
+  4. docs/01-product/success-model.md ✅
+  5. docs/02-systems/direction-and-commitment.md ✅
+  6. docs/02-systems/action-and-evidence.md ✅
+  7. docs/02-systems/sensemaking-and-adaptation.md ✅
+  8. docs/04-features/feature-catalog.md ✅
+  9. docs/04-features/feature-briefs.md ✅
+  10. docs/04-features/behavior-contracts.md ✅
+  Additional docs (extended scope):
+  11. docs/01-product/README.md ✅
+  12. docs/02-systems/continuity-and-interoperability.md ✅
+  13. docs/02-systems/intelligence-and-trust.md ✅
+  14. docs/02-systems/README.md ✅
+  15. docs/04-features/feature-dossier-standard.md ✅
+  16. docs/04-features/README.md ✅
+  17. docs/07-strategy-and-delivery/roadmap.md ✅
+  18. docs/07-strategy-and-delivery/mvp-implementation-masterplan.md ✅ (joint ownership)
+  19. docs/07-strategy-and-delivery/delivery-plans.md ✅
+  20. docs/07-strategy-and-delivery/documentation-refinement-plan.md ✅
+  21. docs/07-strategy-and-delivery/README.md ✅
+  22. docs/09-evidence/research-program.md ✅
+  23. docs/09-evidence/measurement-specifications.md ✅ (joint ownership)
+  24. docs/09-evidence/insight-syntheses.md ✅
+  25. docs/09-evidence/README.md ✅
 Expected Output:
-  - All 10 docs updated with:
-    - Owner: Product Architect
+  - All 24 docs updated with:
+    - Owner: Product Architect (or Product Architect + Engineering Architect for joint ownership)
     - Approval Required: Founder
     - Document Ownership section
     - Last Updated: 2026-08-03
@@ -88,16 +108,12 @@ Definition of Done:
   - Document Ownership sections added
   - Modification process documented
   - Authority levels specified
-  - Founder approved
-Due: 2026-08-05
+  - Founder approved (pending)
+Completed: 2026-08-03
 Priority: High (Phase 0 gate criteria)
+Branch: docs/phase0-cleanup
+Commit: 2ed9e4d
 ```
-
-**Time Allocation:** 8 hours (1 day)
-
-**Blockers:** None currently
-
-**Dependencies:** None
 
 ---
 

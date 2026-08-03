@@ -2,11 +2,33 @@
 
 **Status:** Active
 **Authority:** Canonical standard for framing, conducting, preserving, synthesizing, and governing decision-relevant FlowOS research
-**Owner:** Product research leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Product Strategy](../01-product/product-strategy.md) · [Success Model](../01-product/success-model.md) · [Roadmap](../07-strategy-and-delivery/roadmap.md) · [Validation Plans](../04-features/validation-plans.md)
 **Children:** Individual research records in `09-evidence/research/`, research protocols, participant-protection records, recruitment plans, research syntheses, and linked decision or review records
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed document changes the definition, required contents, integrity boundary, participant-protection rule, lifecycle, or relationship between research, evidence, synthesis, and decisions.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain research program standards, ensure research integrity and participant protection, and coordinate with Release Manager on evidence and validation implications
+
+### Modification Process
+1. Product Architect proposes research program changes (based on process improvements or evidence needs)
+2. Release Manager reviews for validation and evidence implications
+3. Submit to Founder for approval
+4. Founder reviews for Vision and product alignment
+5. If approved: Product Architect updates document
+6. Document change in decision record if consequential
+7. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose research program updates, maintain research standards, coordinate with Release Manager
+- Requires approval for: Changes to research integrity rules, participant protection, or evidence boundaries
 
 ---
 

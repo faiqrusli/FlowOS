@@ -2,11 +2,33 @@
 
 **Status:** Active
 **Authority:** Canonical standard for organizing all feature documentation in FlowOS
-**Owner:** Product and documentation leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Product Model](../01-product/product-model.md)
 **Children:** Individual feature dossiers in `04-features/<feature-name>/`, feature templates, feature examples
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters dossier structure, document types, lifecycle phases, folder organization, or ownership boundaries.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain feature dossier structure standards, ensure documentation organization supports feature lifecycle, and coordinate with Design Architect and Engineering Architect on cross-role documentation needs
+
+### Modification Process
+1. Product Architect proposes dossier standard changes (based on process improvements or cross-role coordination needs)
+2. Design Architect and Engineering Architect review for design and engineering implications
+3. Submit to Founder for approval
+4. Founder reviews for Vision and documentation architecture alignment
+5. If approved: Product Architect updates document
+6. Document change in decision record if consequential
+7. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose dossier structure updates, maintain organization standards, coordinate with Design and Engineering Architects
+- Requires approval for: Changes to dossier structure, document types, or lifecycle phases
 
 ---
 

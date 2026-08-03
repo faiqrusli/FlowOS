@@ -18,10 +18,10 @@ This is a non-normative directory index. Create an individual feature dossier on
 
 | Document | Responsibility | Status | Owner | Parent |
 |---|---|---|---|---|
-| [Feature Dossier Standard](./feature-dossier-standard.md) | **Complete dossier structure and lifecycle** | Active | Product and documentation leadership | Documentation Architecture |
-| [Feature Catalog](./feature-catalog.md) | Current implementation coverage, feature-domain status, and next documentation artifact | Active implementation reference | Product leadership | Information Structure and feature standards |
-| [Feature Briefs](./feature-briefs.md) | Standard for deciding and scoping a bounded capability | Active | Product leadership | Product Strategy and systems |
-| [Behavior Contracts](./behavior-contracts.md) | Standard for externally observable feature behavior | Active | Product leadership | Feature Briefs and systems |
+| [Feature Dossier Standard](./feature-dossier-standard.md) | **Complete dossier structure and lifecycle** | Active | Product Architect | Documentation Architecture |
+| [Feature Catalog](./feature-catalog.md) | Current implementation coverage, feature-domain status, and next documentation artifact | Active implementation reference | Product Architect | Information Structure and feature standards |
+| [Feature Briefs](./feature-briefs.md) | Standard for deciding and scoping a bounded capability | Active | Product Architect | Product Strategy and systems |
+| [Behavior Contracts](./behavior-contracts.md) | Standard for externally observable feature behavior | Active | Product Architect | Feature Briefs and systems |
 | [Delivery Designs](./delivery-designs.md) | Standard for feature-specific technical approach and recovery | Active | Engineering leadership | Behavior Contracts and engineering architecture |
 | [Validation Plans](./validation-plans.md) | Standard for pre-release assessment planning | Active | Product and engineering leadership | Feature and behavior contracts |
 

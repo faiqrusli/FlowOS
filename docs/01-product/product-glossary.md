@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical vocabulary for FlowOS product documentation
-**Owner:** Product leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Product Model](./product-model.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** System documents, experience architecture, feature contracts, design standards, engineering architecture, strategy, evidence, and reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A new durable product concept is introduced, an existing term becomes ambiguous, or two active documents use different words for the same concept.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain canonical vocabulary, propose terminology changes, ensure consistent terminology across all product documents
+
+### Modification Process
+1. Product Architect proposes terminology changes (based on ambiguity, new concepts, or consistency needs)
+2. Submit to Founder for approval
+3. Founder reviews for Vision and product model alignment
+4. If approved: Product Architect updates document
+5. Document change in decision record if consequential
+6. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose terminology definitions, maintain glossary, ensure consistency
+- Requires approval for: New canonical terms, changes to core concept definitions, terminology that affects multiple documents
 
 ---
 

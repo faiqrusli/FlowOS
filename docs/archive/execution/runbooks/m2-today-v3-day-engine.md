@@ -1,3 +1,8 @@
+> ### ⚠️ HISTORICAL CONTEXT — DO NOT USE FOR CURRENT IMPLEMENTATION
+> This document is part of our legacy Milestone 2 execution history and contains outdated product assumptions. 
+> For our current authoritative MVP implementation roadmap and active sprint gates, please refer to:
+> **[MVP Implementation Masterplan](../../07-strategy-and-delivery/mvp-implementation-masterplan.md)**
+
 # Today V3 — The Day Engine (owns all of Today until fully shipped)
 
 **Status:** **Deferred indefinitely** during implementation hold (2026-07-21). Do not start Phase C / Sessions 6–12 until the hold is lifted and founder re-approves. Early sessions (1–5) remain historical on `main` where shipped.  

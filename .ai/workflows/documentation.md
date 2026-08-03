@@ -8,8 +8,8 @@
 
 ## Documentation Map
 
-### Decision Log
-**File:** `docs/execution/logs/decision-log.md`
+### Decision Records
+**File:** `docs/08-decisions/decision-records.md`
 
 **When to update:**
 - Product-level decisions (features, UX, scope)
@@ -25,6 +25,7 @@
 **Files:** `docs/execution/logs/developer-log/YYYY-MM-DD.md`
 
 **When to update:**
+- **MANDATORY:** Real-time log update whenever any file under `docs/` or in the codebase is modified (add timestamped timeline beat).
 - End of each work session
 - When switching tasks
 - At major milestones within session
@@ -36,8 +37,8 @@
 - Solutions tried
 - Current state / next steps
 
-### July Log
-**File:** `docs/execution/logs/july-log.md`
+### Monthly Narrative Log
+**File:** `docs/execution/logs/august-log.md (or current active month log)`
 
 **When to update:**
 - **After** merge to main (not before)
@@ -263,11 +264,11 @@ Should I add this?
 
 ---
 
-## Workflow: Update July Log (Post-Merge)
+## Workflow: Update Monthly Narrative Log (Post-Merge)
 
 ### 1. Verify Merge Complete
 
-**Only update july-log after successful merge to main.**
+**Only update august-log after successful merge to main.**
 
 ```
 ⚠️ July log updates after merge to main.
@@ -329,7 +330,7 @@ Update july-log after merge? [y/n]
 
 **Action:**
 ```
-Append entry to docs/execution/logs/july-log.md
+Append entry to docs/execution/logs/august-log.md
 ```
 
 **Prompt user:**
