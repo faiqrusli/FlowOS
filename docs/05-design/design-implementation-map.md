@@ -2,11 +2,32 @@
 
 **Status:** Active implementation reference
 **Authority:** Canonical reconciliation of design-system documents, current UI implementation, and legacy design material
-**Owner:** Design leadership
+**Owner:** Design Architect
+**Approval Required:** Founder
 **Parent:** [Design System Architecture](./design-system-architecture.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Feature Design Specifications](./feature-design-specifications.md) · [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md)
 **Children:** Feature design specifications, component specifications, design reviews, and implementation migrations
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A design reference, code authority, token family, component boundary, feature surface, or migration disposition changes.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Design Architect
+**Responsibility:** Maintain the reconciliation of design-system documents, current UI implementation, and legacy design material so every visual decision has one clear source.
+
+### Modification Process
+1. Design Architect proposes changes (based on design evidence or implementation reconciliation)
+2. Submit to Founder for approval
+3. Founder reviews for alignment with Design System Architecture and the MVP Masterplan
+4. If approved: Design Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Design Architect can: Maintain the map, reconcile design references with implementation, and record migration dispositions
+- Requires approval for: Any change to authority order, source ownership, feature-surface coverage, or design-cleanup exit conditions
 
 ---
 

@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical standard for defining and governing feature-specific visual, interaction, content, responsive, and accessibility design specifications
-**Owner:** Design leadership
+**Owner:** Design Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Design System Architecture](./design-system-architecture.md) · [Information Structure](../03-experience/information-structure.md) · [Journey Contracts](../03-experience/journey-contracts.md) · [Behavior Contracts](../04-features/behavior-contracts.md) · [Delivery Designs](../04-features/delivery-designs.md)
 **Children:** Individual feature design specifications in `05-design/features/`, interaction specifications, content specifications, annotated prototypes, implementation handoffs, accessibility assessments, design reviews, and design-debt records
-**Last reviewed:** 2026-08-01
+**Last Reviewed:** 2026-08-01
 **Review trigger:** A proposed document changes the definition, required contents, authority boundary, lifecycle, or review standard of a FlowOS feature design specification.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Design Architect
+**Responsibility:** Define and govern what a feature design specification is, when one is required, and the single responsibility each specification must own.
+
+### Modification Process
+1. Design Architect proposes standard changes (based on design evidence or feature requirements)
+2. Product Architect reviews behavior-contract alignment where applicable
+3. Submit to Founder for approval
+4. If approved: Design Architect updates document
+5. Document change in decision record if consequential
+6. Update the Last Reviewed date
+
+### Authority Level
+- Design Architect can: Define the feature-design-specification standard, document required contents, and govern the specification lifecycle
+- Requires approval for: Any change to what a feature design specification is, when it is required, or its authority boundary
 
 ---
 

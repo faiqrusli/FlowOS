@@ -2,11 +2,36 @@
 
 **Status:** Active
 **Authority:** Canonical current organization of FlowOS experience domains, primary destinations, labels, and access relationships
-**Owner:** Product and design leadership
+**Owner:** Design Architect
+**Approval Required:** Founder
 **Parent:** [Experience Architecture](./experience-architecture.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [System Documents](../02-systems/)
 **Children:** Journey contracts, feature briefs, behavior contracts, navigation specifications, content standards, interaction specifications, accessibility standards
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change adds, removes, renames, groups, promotes, demotes, or materially repurposes a primary destination, route, global access mechanism, or cross-surface object path.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Design Architect
+**Responsibility:** Maintain the current organization of experience domains, primary destinations, labels, and access relationships.
+
+### Contribution
+**Role:** Product Architect
+**Responsibility:** Review information-structure changes for product-concept and system-boundary alignment before Founder approval where applicable.
+
+### Modification Process
+1. Design Architect proposes information-structure changes (based on design or product evidence)
+2. Product Architect reviews for product-concept alignment where applicable
+3. Submit to Founder for approval
+4. If approved: Design Architect updates document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Design Architect can: Maintain the current primary structure, destination labels, grouping, and access relationships
+- Requires approval for: Any change that adds, removes, renames, groups, promotes, or repurposes a primary destination, route, global access mechanism, or cross-surface object path
 
 ---
 

@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical standard for reusable FlowOS interface language, state disclosure, action language, error and recovery language, and assistive-capability disclosure
-**Owner:** Design and product leadership
+**Owner:** Design Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Product Glossary](../01-product/product-glossary.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Design System Architecture](./design-system-architecture.md) · [Intelligence and Trust System](../02-systems/intelligence-and-trust.md)
 **Children:** Feature content specifications, component content guidance, empty and error-state copy, confirmation and recovery language, source and authority disclosures, assistive-capability disclosures, and content reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed document changes the reusable language rules for product state, person authority, provenance, uncertainty, action, recovery, accessibility, or assistive capability.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Design Architect
+**Responsibility:** Maintain reusable interface language and keep it consistent with the Product Glossary, product semantics, and design-system expression.
+
+### Modification Process
+1. Design Architect proposes content-rule changes (based on content evidence or feature requirements)
+2. Submit to Founder for approval
+3. Founder reviews for Vision and product alignment
+4. If approved: Design Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Design Architect can: Define and maintain reusable interface language, state-disclosure, action, error, and recovery language
+- Requires approval for: Any change to durable language rules governing authority, consent, state, provenance, uncertainty, consequence, recovery, or assisted behavior
 
 ---
 

@@ -2,11 +2,36 @@
 
 **Status:** Active
 **Authority:** Canonical cross-surface rules for how FlowOS makes product context, choices, states, and system transitions understandable in use
-**Owner:** Product and design leadership
+**Owner:** Product Architect + Design Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md) · [System Documents](../02-systems/)
 **Children:** Information structure, journey contracts, feature briefs, behavior contracts, interaction specifications, content standards, accessibility standards, design-system applications
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed capability changes where a person finds or acts on core product context, how a system state is represented across surfaces, how a consequential transition is understood, or the cross-surface relationship among direction, commitment, action, evidence, sensemaking, adaptation, connected context, and computational assistance.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Design Architect
+**Responsibility:** Maintain the cross-surface experience architecture and ensure product context, system states, and consequential transitions remain legible across surfaces.
+
+### Contribution
+**Role:** Product Architect
+**Responsibility:** Review experience-architecture changes for product-concept and system-boundary alignment before Founder approval.
+
+### Modification Process
+1. Design Architect proposes experience-architecture changes (based on design or product evidence)
+2. Product Architect reviews for product-concept and system-boundary alignment where applicable
+3. Submit to Founder for approval
+4. If approved: Design Architect updates document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Design Architect can: Propose and maintain cross-surface experience rules, define availability and legibility requirements, and apply product/system semantics in use
+- Requires approval for: Any change to what context must be available, how product distinctions remain legible, or how consequential system transitions are understood
 
 ---
 

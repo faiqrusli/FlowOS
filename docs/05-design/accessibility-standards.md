@@ -2,11 +2,36 @@
 
 **Status:** Active
 **Authority:** Canonical standard for reusable FlowOS accessibility obligations across perception, operation, understanding, timing, error recovery, and assistive technology support
-**Owner:** Design and engineering leadership
+**Owner:** Design Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Design System Architecture](./design-system-architecture.md) · [Content Standards](./content-standards.md) · [Quality Architecture](../06-engineering/quality-architecture.md)
 **Children:** Component accessibility specifications, feature design specifications, behavior contracts, client implementations, validation plans, accessibility assessments, and review records
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed document changes reusable accessibility obligations, supported interaction patterns, assistive-technology behavior, recovery requirements, or validation expectations.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Design Architect
+**Responsibility:** Define and maintain reusable accessibility obligations for perceivability, operability, understanding, timing, and recovery.
+
+### Contribution
+**Role:** Engineering Architect
+**Responsibility:** Reviews technical conformance and validation expectations where applicable.
+
+### Modification Process
+1. Design Architect proposes changes (based on accessibility evidence or feature requirements)
+2. Engineering Architect reviews technical conformance where applicable
+3. Submit to Founder for approval
+4. If approved: Design Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Design Architect can: Define and maintain reusable accessibility obligations, supported interaction patterns, and recovery requirements
+- Requires approval for: Any change to durable accessibility obligations, supported interaction expectations, or verification boundaries
 
 ---
 

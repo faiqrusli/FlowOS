@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical standard for creating, governing, and reviewing bounded end-to-end experience journey contracts
-**Owner:** Product and design leadership
+**Owner:** Design Architect
+**Approval Required:** Founder
 **Parent:** [Experience Architecture](./experience-architecture.md) · [Information Structure](./information-structure.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Individual journey contracts in `03-experience/journeys/`, related feature briefs, behavior contracts, interaction specifications, validation plans, and journey reviews
-**Last reviewed:** 2026-08-01
-**Review trigger:** A proposed document changes the definition, scope, required contents, ownership boundary, lifecycle, or review standard of a bounded FlowOS experience journey.
+**Last Updated:** 2026-08-03
+**Review trigger:** A proposed document changes the definition, scope, or authority boundary of a bounded FlowOS experience journey.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Design Architect
+**Responsibility:** Maintain the journey-contract standard and ensure bounded end-to-end journeys preserve orientation, truthful state, and person authority.
+
+### Modification Process
+1. Design Architect proposes standard changes (based on design or product evidence)
+2. Product Architect reviews product and system alignment where applicable
+3. Submit to Founder for approval
+4. If approved: Design Architect updates document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Design Architect can: propose and maintain the journey-contract standard, define required contents, and govern journey lifecycle
+- Requires Founder approval for: any change to what a journey contract is, when one is required, or its authority boundary
 
 ---
 

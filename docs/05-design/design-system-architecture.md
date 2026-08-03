@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical architecture for FlowOS design-system responsibilities, design-document ownership, and the relationship between product semantics, design standards, feature specifications, and implemented UI
-**Owner:** Design leadership
+**Owner:** Design Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Information Structure](../03-experience/information-structure.md) · [Behavior Contracts](../04-features/behavior-contracts.md)
 **Children:** Visual foundation, workspace architecture, interaction and content standards, accessibility standards, component standards, feature design specifications, design reviews, and design implementation references
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed change alters the responsibility boundary, authority order, reusable design layer, semantic-expression rule, or relationship between design documentation and implemented UI.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Design Architect
+**Responsibility:** Maintain the design-system architecture, define design-layer responsibility and authority, and keep the relationship between normative design and implemented UI explicit and correctable.
+
+### Modification Process
+1. Design Architect proposes changes (based on design evidence or feature requirements)
+2. Submit to Founder for approval
+3. Founder reviews for Vision and product alignment
+4. If approved: Design Architect updates document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Design Architect can: Propose design-system changes, define design-layer responsibility and authority, and maintain design documentation as the owner
+- Requires approval for: Any change to design responsibility boundaries, authority order, reusable design layers, or the relationship between normative design and implemented UI
 
 ---
 
