@@ -11,6 +11,26 @@
 
 ---
 
+## Document Ownership
+
+### Owner
+**Role:** Engineering Architect
+**Responsibility:** Maintain the operations architecture, propose deployment, observability, and recovery boundaries that keep operational state from becoming hidden product authority
+
+### Modification Process
+1. Engineering Architect proposes changes (in coordination with the Release Manager)
+2. Submit to Founder for approval
+3. Founder reviews for alignment with engineering and quality architectures
+4. If approved: Engineering Architect updates the document
+5. Document change in decision record if consequential
+6. Update the Last Updated date
+
+### Authority Level
+- Engineering Architect can: propose and maintain operations architecture, define deployment and observability boundaries
+- Requires approval for: any change to operational access, incident handling, or recovery boundaries
+
+---
+
 ## 1. Scope
 
 This document defines how FlowOS is operated as a live product so technical change, degradation, incident response, recovery, support, and continuity preserve approved product behavior, person authority, privacy, security, and historical truth.
