@@ -2,11 +2,35 @@
 
 **Status:** Active
 **Authority:** Canonical standard for defining, instrumenting, qualifying, governing, and revising FlowOS measurements
-**Owner:** Product, data, and engineering leadership
+**Owner:** Product Architect + Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Success Model](../01-product/success-model.md) · [Roadmap](../07-strategy-and-delivery/roadmap.md) · [Data Architecture](../06-engineering/data-architecture.md) · [Quality Architecture](../06-engineering/quality-architecture.md) · [Operations Architecture](../06-engineering/operations-architecture.md)
 **Children:** Individual measurement specifications in `09-evidence/measurements/`, instrumentation contracts, data-quality assessments, metric change records, measurement evidence records, and linked analyses or reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed document changes the definition, required contents, authority boundary, collection limit, quality rule, lifecycle, or revision process for FlowOS measurements.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect + Engineering Architect
+**Responsibility:** Product Architect maintains metric meaning and product alignment; Engineering Architect maintains technical implementation and data quality
+
+### Modification Process
+1. Product Architect proposes metric definition changes (based on product strategy or success model needs)
+2. Engineering Architect proposes technical implementation changes (based on data architecture or quality needs)
+3. Both architects review cross-functional implications
+4. Submit to Founder for approval
+5. Founder reviews for Vision and product alignment
+6. If approved: Product Architect and Engineering Architect update document
+7. Document change in decision record if consequential
+8. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose metric definition updates, maintain product alignment, coordinate with Engineering Architect
+- Engineering Architect can: Propose technical implementation updates, maintain data quality, coordinate with Product Architect
+- Requires approval for: Changes to metric meaning, collection limits, or quality rules
 
 ---
 

@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical system rules for reflection, sensemaking, insight, and deliberate adaptation
-**Owner:** Product leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** System interface contracts, experience architecture, feature briefs, behavior contracts, intelligence and trust system, validation plans
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed capability changes how FlowOS represents reflection, context, insight, uncertainty, adaptation, or the boundary between interpretation and factual evidence.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain system rules for sensemaking and adaptation, ensure interpretation/fact distinction, and coordinate with Design Architect on experience implications
+
+### Modification Process
+1. Product Architect proposes system changes (based on feature requirements or user evidence)
+2. Submit to Founder for approval
+3. Founder reviews for Vision and product model alignment
+4. If approved: Product Architect updates document
+5. Document change in decision record if consequential
+6. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose system rule updates, maintain interpretation/fact boundaries, coordinate with Design Architect
+- Requires approval for: Changes to sensemaking/adaptation meaning, state rules, or system invariants
 
 ---
 

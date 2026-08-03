@@ -2,11 +2,33 @@
 
 **Status:** Active
 **Authority:** Canonical plan for reconciling FlowOS's current implementation references into the documentation architecture before MVP dogfood
-**Owner:** Product and documentation leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) · [Roadmap](./roadmap.md)
 **Children:** Feature dossiers, design specifications, engineering delivery designs, evidence records, decisions, and reviews created by this plan
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A documentation source is added, removed, renamed, promoted, archived, or its responsibility or authority changes.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain documentation refinement plan, ensure documentation architecture alignment, and coordinate with Design Architect and Engineering Architect on cross-role documentation needs
+
+### Modification Process
+1. Product Architect proposes refinement plan changes (based on documentation gaps or architectural updates)
+2. Design Architect and Engineering Architect review for design and engineering documentation implications
+3. Submit to Founder for approval
+4. Founder reviews for Vision and documentation architecture alignment
+5. If approved: Product Architect updates document
+6. Document change in decision record if consequential
+7. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose refinement plan updates, maintain documentation priorities, coordinate with Design and Engineering Architects
+- Requires approval for: Changes to documentation architecture, work package sequencing, or disposition rules
 
 ---
 

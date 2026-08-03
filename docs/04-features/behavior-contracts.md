@@ -2,11 +2,33 @@
 
 **Status:** Active
 **Authority:** Canonical standard for defining and governing observable behavior of bounded FlowOS features
-**Owner:** Product, design, and engineering leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Product Model](../01-product/product-model.md) · [System Documents](../02-systems/) · [Experience Architecture](../03-experience/experience-architecture.md) · [Journey Contracts](../03-experience/journey-contracts.md) · [Feature Briefs](./feature-briefs.md)
 **Children:** Individual behavior contracts in `04-features/behavior/`, delivery designs, interaction specifications, validation plans, test cases, and feature reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed document changes the definition, required contents, authority boundary, lifecycle, or review standard of an observable FlowOS feature behavior contract.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain behavior contract standards, ensure observable behavior definitions align with product model and system rules, and coordinate with Design Architect and Engineering Architect on experience and technical implications
+
+### Modification Process
+1. Product Architect proposes contract standard changes (based on process improvements or cross-role coordination needs)
+2. Design Architect and Engineering Architect review for experience and technical implications
+3. Submit to Founder for approval
+4. Founder reviews for Vision and product alignment
+5. If approved: Product Architect updates document
+6. Document change in decision record if consequential
+7. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose contract standard updates, maintain behavior definition rules, coordinate with Design and Engineering Architects
+- Requires approval for: Changes to required contents, authority boundaries, or lifecycle rules
 
 ---
 

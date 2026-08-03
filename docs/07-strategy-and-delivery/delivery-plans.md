@@ -2,11 +2,33 @@
 
 **Status:** Active
 **Authority:** Canonical standard for coordinating bounded delivery of an active FlowOS roadmap outcome
-**Owner:** Product and delivery leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Roadmap](./roadmap.md) · [Feature Briefs](../04-features/feature-briefs.md) · [Delivery Designs](../04-features/delivery-designs.md) · [Validation Plans](../04-features/validation-plans.md)
 **Children:** Individual delivery plans in `07-strategy-and-delivery/plans/`, release plans, implementation plans, rollout plans, risk records, delivery updates, and delivery reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed document changes the definition, required contents, authority boundary, lifecycle, or review standard of a FlowOS delivery plan.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain delivery plan standards, ensure coordination aligns with roadmap outcomes, and coordinate with Engineering Architect and Release Manager on implementation and delivery implications
+
+### Modification Process
+1. Product Architect proposes delivery plan standard changes (based on process improvements or cross-role coordination needs)
+2. Engineering Architect and Release Manager review for implementation and delivery implications
+3. Submit to Founder for approval
+4. Founder reviews for Vision and strategic alignment
+5. If approved: Product Architect updates document
+6. Document change in decision record if consequential
+7. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose delivery plan standard updates, maintain coordination rules, coordinate with Engineering Architect and Release Manager
+- Requires approval for: Changes to delivery plan definition, required contents, or authority boundaries
 
 ---
 

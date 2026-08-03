@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical definition of product outcomes, success signals, metric meaning, and anti-metrics
-**Owner:** Product leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](./product-model.md) · [Product Strategy](./product-strategy.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Measurement Specification, Measurement Reports, Validation Plans, Roadmap, Release Plans, Review Records
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** New strategic evidence, a change to an outcome or metric definition, a discovered metric failure mode, or a request to use a metric as a release or investment criterion.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain outcome definitions, success signals, metric meaning, and ensure success model aligns with Vision and product strategy
+
+### Modification Process
+1. Product Architect proposes success model changes (based on evidence, strategic shifts, or metric learnings)
+2. Submit to Founder for approval
+3. Founder reviews for Vision alignment and strategic coherence
+4. If approved: Product Architect updates document
+5. Document change in decision record if consequential
+6. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose outcome definition updates, maintain success signals, track metric meaning
+- Requires approval for: Changes to core outcome dimensions, new success signals, metric definition changes, or anti-metric additions
 
 ---
 

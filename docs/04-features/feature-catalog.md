@@ -2,11 +2,32 @@
 
 **Status:** Active implementation reference
 **Authority:** Canonical inventory of FlowOS feature domains, their current implementation state, and the next documentation artifact required for each
-**Owner:** Product leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Information Structure](../03-experience/information-structure.md) · [Feature Briefs](./feature-briefs.md) · [Behavior Contracts](./behavior-contracts.md) · [MVP Implementation Masterplan](../07-strategy-and-delivery/mvp-implementation-masterplan.md)
 **Children:** Individual feature briefs, behavior contracts, feature design specifications, delivery designs, validation plans, and feature reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A route, product role, implementation status, feature disposition, or required feature-document set changes.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain feature inventory, track implementation status, and ensure feature documentation coverage aligns with MVP masterplan
+
+### Modification Process
+1. Product Architect proposes catalog updates (based on implementation changes or new feature admission)
+2. Submit to Founder for approval
+3. Founder reviews for strategic alignment and masterplan consistency
+4. If approved: Product Architect updates document
+5. Document change in decision record if consequential
+6. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose status updates, maintain inventory, track documentation needs
+- Requires approval for: New feature admission, status changes that affect strategic priorities, or documentation requirement changes
 
 ---
 

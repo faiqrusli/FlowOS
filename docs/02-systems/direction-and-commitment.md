@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical system rules for chosen direction and present commitments
-**Owner:** Product leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](../01-product/product-model.md) · [Product Glossary](../01-product/product-glossary.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** System interface contracts, experience architecture, feature briefs, behavior contracts, delivery designs
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed capability changes the meaning, lifecycle, ownership, or relationship of direction and commitment; or evidence shows that the current distinction is not understandable to users.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain system rules for direction and commitment, ensure system invariants are preserved, and coordinate with Design Architect on experience implications
+
+### Modification Process
+1. Product Architect proposes system changes (based on feature requirements or user evidence)
+2. Submit to Founder for approval
+3. Founder reviews for Vision and product model alignment
+4. If approved: Product Architect updates document
+5. Document change in decision record if consequential
+6. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose system rule updates, maintain invariants, coordinate with Design Architect
+- Requires approval for: Changes to direction/commitment meaning, lifecycle rules, or system invariants
 
 ---
 

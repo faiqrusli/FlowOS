@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Canonical conceptual model for the FlowOS product
-**Owner:** Product leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** System documents, experience architecture, feature briefs, product glossary
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed product capability introduces a new enduring concept, changes a conceptual relationship, or exposes an ambiguity that system contracts cannot resolve.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain product model, propose changes based on product evidence, ensure conceptual consistency across product documents
+
+### Modification Process
+1. Product Architect proposes changes (based on product evidence or system requirements)
+2. Submit to Founder for approval
+3. Founder reviews for Vision alignment
+4. If approved: Product Architect updates document
+5. Document change in decision record if consequential
+6. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose conceptual model changes, maintain definitions, ensure consistency
+- Requires approval for: Any change to core concepts, relationships, or invariants
 
 ---
 

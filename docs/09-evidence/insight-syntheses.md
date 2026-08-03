@@ -2,11 +2,33 @@
 
 **Status:** Active
 **Authority:** Canonical standard for interpreting multiple FlowOS evidence records into bounded, traceable, decision-relevant insights
-**Owner:** Product and research leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Research Program](./research-program.md) · [Measurement Specifications](./measurement-specifications.md) · [Product Strategy](../01-product/product-strategy.md) · [Success Model](../01-product/success-model.md)
 **Children:** Individual insight syntheses in `09-evidence/insights/`, evidence analyses, follow-up research questions, and linked roadmap, review, or decision records
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A proposed document changes the definition, required contents, evidence boundary, confidence model, lifecycle, or relationship between observation, interpretation, recommendation, and decision.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain insight synthesis standards, ensure evidence interpretation discipline, and coordinate with Release Manager on evidence and validation implications
+
+### Modification Process
+1. Product Architect proposes insight synthesis standard changes (based on process improvements or evidence needs)
+2. Release Manager reviews for validation and evidence implications
+3. Submit to Founder for approval
+4. Founder reviews for Vision and product alignment
+5. If approved: Product Architect updates document
+6. Document change in decision record if consequential
+7. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose insight synthesis standard updates, maintain interpretation discipline, coordinate with Release Manager
+- Requires approval for: Changes to evidence boundaries, confidence models, or interpretation rules
 
 ---
 

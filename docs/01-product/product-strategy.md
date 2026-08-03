@@ -2,11 +2,32 @@
 
 **Status:** Active
 **Authority:** Current market, audience, positioning, and strategic-choice authority
-**Owner:** Product leadership
+**Owner:** Product Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](./product-model.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Success Model, Roadmap, Research Program, Feature Briefs
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** Material user evidence, market change, a failed strategic assumption, or a decision to enter a new audience, category, or distribution channel.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect
+**Responsibility:** Maintain strategic positioning, audience definition, and strategic choices based on market evidence and Vision alignment
+
+### Modification Process
+1. Product Architect proposes strategic changes (based on market evidence, user research, or strategic shifts)
+2. Submit to Founder for approval
+3. Founder reviews for Vision alignment and strategic viability
+4. If approved: Product Architect updates document
+5. Document change in decision record if consequential
+6. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose strategic positioning updates, maintain audience definitions, track strategic assumptions
+- Requires approval for: Changes to target audience, strategic positioning, strategic choices, or market approach
 
 ---
 

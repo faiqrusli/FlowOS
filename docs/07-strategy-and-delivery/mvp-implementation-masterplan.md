@@ -2,11 +2,35 @@
 
 **Status:** Active — canonical implementation source for the pre-dogfood MVP
 **Authority:** Current sequence of product, design, engineering, validation, and release work required before FlowOS is offered to real users
-**Owner:** Product and engineering leadership
+**Owner:** Product Architect + Engineering Architect
+**Approval Required:** Founder
 **Parent:** [Vision.md](../strategy/Vision.md) · [Product Model](../01-product/product-model.md) · [Roadmap](./roadmap.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Delivery plans, feature dossiers, design specifications, engineering designs, validation plans, release plans, decisions, and reviews
-**Last reviewed:** 2026-08-01
+**Last Updated:** 2026-08-03
 **Review trigger:** A change to the MVP boundary, an evidence gate, a phase dependency, a feature disposition, or the readiness decision for founder or external dogfood.
+
+---
+
+## Document Ownership
+
+### Owner
+**Role:** Product Architect + Engineering Architect
+**Responsibility:** Product Architect maintains product sequencing and feature admission; Engineering Architect maintains technical implementation order and delivery design
+
+### Modification Process
+1. Product Architect proposes product-level changes (feature admission, phase sequencing, evidence gates)
+2. Engineering Architect proposes technical-level changes (implementation order, delivery design, validation requirements)
+3. Both architects review cross-functional implications
+4. Submit to Founder for approval
+5. Founder reviews for Vision and strategic alignment
+6. If approved: Product Architect and Engineering Architect update document
+7. Document change in decision record if consequential
+8. Update Last Updated date
+
+### Authority Level
+- Product Architect can: Propose feature admission, phase sequencing, evidence gates
+- Engineering Architect can: Propose implementation order, technical requirements, validation criteria
+- Requires approval for: Changes to MVP boundary, phase dependencies, or feature disposition
 
 ---
 
