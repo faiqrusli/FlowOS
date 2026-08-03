@@ -130,7 +130,7 @@ ext-up.md spec, July logs, M2 runbooks, and recruiting ops)
 
 ## 2026-08-03 — Release Manager Gate 0 Readiness Assessment
 
-**Branch:** main (pending commit)
+**Branch:** main (commit 151971e)
 
 **Shipped:**
 - Verified Gate 0 Criteria 1–3 and 6 Pass (Criteria 4, 5, 7 previously verified)
