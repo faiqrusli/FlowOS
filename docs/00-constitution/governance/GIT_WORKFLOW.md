@@ -16,6 +16,7 @@
 | **Commit on branch** | Commit as often as needed on the branch. Multiple commits per session is fine. |
 | **Push branch** | Push the feature branch to `origin` for backup — **not** the same as merging to `main`. |
 | **Test local** | `npm run build` && `npm run lint` && `npm test` on the branch before asking to merge. |
+| **Pair the logs** | Every commit updates both today’s developer log and the active monthly narrative log; the monthly entry states whether work is committed, merged, or shipped. |
 | **Main = founder approval** | Merge to `main` and push `main` **only** when the founder explicitly agrees. |
 | **AI must ask** | Agents never merge, never push `main`, never assume approval. |
 
@@ -53,6 +54,7 @@ Confirm clean build on `main` before branching if the prior merge was large.
 npm run build
 npm run lint
 npm test
+# update developer-log/YYYY-MM-DD.md and the active month log
 git add -A
 git commit -m "feature: describe the outcome"
 git push -u origin HEAD
@@ -83,7 +85,7 @@ npm test
 git push origin main
 ```
 
-Then verify https://flowos-sage.vercel.app and add a block to the active [August log](../../current-phase/logs/august-log.md).
+Then verify https://flowos-sage.vercel.app and confirm the active [August log](../../current-phase/logs/august-log.md) records the merged/shipped state.
 
 **Rollback:** `git revert` the merge commit on `main` — never force-push `main`.
 
@@ -106,7 +108,7 @@ A **merge bundle** groups one or more sessions where merging to `main` makes sen
 | Session ends | "Session N done on `{branch}`. Merge bundle Bx {complete \| not yet}. Merge to `main`? (needs your approval)" |
 | Merge bundle complete | "Bundle Bx complete (sessions …). App stable locally. **Ready to merge to `main` — do you approve?**" |
 | Multiple sessions without merge | "Sessions N–M are on branch(es) not yet on `main`. Production may be behind local work." |
-| Founder says yes | Merge, push `main`, verify production, update july-log |
+| Founder says yes | Merge, push `main`, verify production, confirm the active month log records the merged/shipped state |
 | Founder says not yet | Stay on branch; do not push `main` |
 
 Documentation-only work may use `docs/` branches; it still requires Founder approval before merging to `main`.

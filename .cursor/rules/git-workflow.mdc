@@ -22,6 +22,7 @@ git checkout -b m2/session-N-short-name
 
 - Commit on the branch (multiple commits per session OK).
 - Push branch to `origin` for backup — **not** `main`.
+- Before each commit, update both today’s developer log and the active monthly narrative log; mark unmerged work as committed, not shipped.
 - Before merge ask: `npm run build` && `npm run lint` pass locally.
 
 ## End of session — required agent behavior
@@ -43,6 +44,6 @@ npm run build && npm run lint
 git push origin main
 ```
 
-Verify production URL; append to the active [August log](docs/current-phase/logs/august-log.md).
+Verify production URL; confirm the active [August log](docs/current-phase/logs/august-log.md) distinguishes committed, merged, and shipped state.
 
 Full rules: [docs/00-constitution/governance/GIT_WORKFLOW.md](docs/00-constitution/governance/GIT_WORKFLOW.md)

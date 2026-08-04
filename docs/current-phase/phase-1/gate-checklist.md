@@ -3,6 +3,7 @@
 **Status:** OPEN — implementation-ready; Phase 1 sprint active (2026-08-04 → 2026-08-08)
 **Owner:** Founder (executed via 6-hat solo workflow)  
 **Parent:** [Phase 1 README](./README.md) · [MVP Implementation Masterplan](../mvp-implementation-masterplan.md)  
+**Future template:** [gate-checklist-template.md](../templates/gate-checklist-template.md) — this active checklist remains the source example.
 **Created:** 2026-08-04  
 **Last Updated:** 2026-08-04
 

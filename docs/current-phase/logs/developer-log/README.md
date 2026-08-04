@@ -1,7 +1,7 @@
 ﻿# Developer log
 
 **Purpose:** Personal daily journal — timeline of meaningful work, WIP, and lessons.  
-**Not authority:** Product decisions stay in [decision-records.md](../../../08-decisions/decision-records.md). Shipped narrative stays in [august-log.md](../august-log.md).
+**Not authority:** Product decisions stay in [decision-records.md](../../../08-decisions/decision-records.md). The monthly narrative stays in [august-log.md](../august-log.md) and distinguishes committed, merged, and shipped state.
 
 ## Rules
 
@@ -10,6 +10,7 @@
 3. **Timeline = meaningful beats**, not every commit. Optional: paste git log --oneline --since=midnight under Timeline.
 4. **Decisions:** one line + link to decision-records when something is product-level. Don’t duplicate full entries.
 5. **Don’t** update FEATURE_INVENTORY or catalog from here — do that when behavior ships.
+6. **Every commit:** update both today’s developer log and the active monthly narrative log in the same commit. The monthly entry must distinguish committed, merged, and shipped state.
 
 ## Template
 

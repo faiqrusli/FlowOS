@@ -7,6 +7,21 @@
 
 ---
 
+## 2026-08-04 — Future Sprint and Gate Templates; Paired Commit Logs
+
+**Owner:** Founder (6-hat solo workflow)
+
+**Status:** `merged` on `main`; this documentation-only update is not a production release.
+
+- Added reusable current-sprint and gate-checklist templates under `docs/current-phase/templates/`.
+- Kept the active `current-sprint.md` and `phase-1/gate-checklist.md` as the source examples; templates use distinct `TEMPLATE — REFERENCE ONLY` / `TEMPLATE — UNASSIGNED` states.
+- Made the template layout flexible so the Founder can explicitly add, improve, rename, reorder, or remove sections before future use.
+- Corrected the 2026-08-04 developer log and updated documentation, merge-prep, Git, and IDE guidance to require both daily and monthly logs for every commit.
+
+**Next:** Continue Phase 1 implementation-truth work; verify production separately for any release-bearing change.
+
+---
+
 ## 2026-08-04 — Phase 1 Sprint Execution Contract Finalized
 
 **Owner:** Founder (6-hat solo workflow)
@@ -76,9 +91,9 @@
 
 ## How to use
 
-After a session (or doc pass) ships, add a dated block:
+After every commit, add or update a dated block. Use `committed` for branch work, `merged` for work on `main`, and `shipped` only after the production result is verified:
 
-- What shipped (commits, production check)  
+- What changed (commit, merge, or production check)
 - Ideas or scratchpads worth remembering  
 - Decisions **promoted** to decision-records (link — don't duplicate full text)  
 - Phases / milestones touched  

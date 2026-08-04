@@ -15,7 +15,7 @@ Personal daily journal (timeline + WIP). **Not** product authority.
 | Need | Doc |
 |------|-----|
 | Product why | `docs/08-decisions/decision-records.md` |
-| Shipped on main | `docs/current-phase/logs/august-log.md` (or current active month log) |
+| Commit / ship narrative | `docs/current-phase/logs/august-log.md` (or current active month log) |
 | Day timeline / lessons / active changes | **developer-log** |
 
 ## Agent behavior
@@ -28,6 +28,7 @@ Personal daily journal (timeline + WIP). **Not** product authority.
 6. **Next** — one first action for tomorrow / next session.
 7. **Do not** invent commits or claim merge to `main`. Do not replace monthly-log or decision-records.
 8. New day → new file from README template. Update the README index table when adding a day.
+9. **Commit pairing:** Every commit must include an update to both today’s developer log and the active monthly narrative log. Mark monthly work as committed/unmerged until it is actually on `main`.
 
 ## Template (slim)
 

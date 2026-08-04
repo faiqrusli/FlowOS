@@ -41,15 +41,16 @@
 **File:** `docs/current-phase/logs/august-log.md (or current active month log)`
 
 **When to update:**
-- **After** merge to main (not before)
-- Captures what actually shipped
-- Brief, user-facing description
+- **For every commit** that changes the repository, in the same commit as the developer-log update
+- After merge to main, confirm or revise the entry to record what actually shipped
+- Brief, user-facing description with an explicit `committed`, `merged`, or `shipped` state
 
 **Content:**
 - Date and title
 - What changed
 - Files modified
 - User impact
+- Commit / merge state; never call unmerged work shipped
 
 ### Feature Inventory
 **File:** `docs/04-features/FEATURE_INVENTORY.md`
@@ -264,28 +265,29 @@ Should I add this?
 
 ---
 
-## Workflow: Update Monthly Narrative Log (Post-Merge)
+## Workflow: Update Monthly Narrative Log
 
-### 1. Verify Merge Complete
+### 1. Update at Commit and Confirm at Merge
 
-**Only update august-log after successful merge to main.**
+Update the active month log in the same commit as the developer log. Use the state to distinguish work that is committed on a branch from work that is merged or shipped.
 
 ```
-⚠️ August log updates after merge to main.
+Updating the active month log with state: committed / merged / shipped.
 
-Current status: [branch-name] not yet merged
+Current status: [branch-name] — [committed | merged | shipped]
 
-Update august-log after merge? [y/n]
+After merge, confirm the entry reflects the production/shipped result.
 ```
 
 ### 2. Draft Entry
 
 **Format:**
 ```markdown
-## YYYY-MM-DD: [What Shipped - User-Facing Title]
+## YYYY-MM-DD: [What Changed - User-Facing Title]
 
 **Branch:** [branch-name]
 **Session:** [session name if applicable]
+**State:** `committed` / `merged` / `shipped`
 
 **Changes:**
 - [User-facing change 1]
@@ -466,22 +468,21 @@ Update [doc name]?
 ## Documentation Checklist
 
 **At end of session:**
-
 - [ ] Developer log updated (timeline, state, blockers)
+- [ ] Active monthly narrative log updated for the same commit (state is accurate)
 - [ ] Decision log updated (if product decision made)
 - [ ] Feature inventory updated (if new feature/status change)
 - [ ] Technical docs updated (if architecture/pattern change)
-- [ ] August log ready for post-merge (drafted, waiting for merge)
 
 **Prompt:**
 ```
 Documentation checklist:
 
 - [✅/❌/N/A] Developer log
+- [✅/❌/N/A] Active monthly narrative log
 - [✅/❌/N/A] Decision log
 - [✅/❌/N/A] Feature inventory
 - [✅/❌/N/A] Technical docs
-- [⏳] August log (post-merge)
 
 All documentation current.
 ```
@@ -563,7 +564,7 @@ When a phase ends (its gate passes), normalize the docs so the active sprint sta
 ## Integration with Other Workflows
 
 **Used during:** All workflows (session start, code review, merge prep)
-**Related:** `.ai/workflows/merge-prep.md` (august-log update post-merge), Phase Transition procedure
+**Related:** `.ai/workflows/merge-prep.md` (paired log and merge confirmation), Phase Transition procedure
 
 ---
 

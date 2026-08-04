@@ -475,7 +475,7 @@ git push origin main
 | Product-level decision | Create decision record in `docs/08-decisions/records/` |
 | Sprint work complete | Update `docs/current-phase/current-sprint.md` |
 | Feature complete | Update `docs/04-features/FEATURE_INVENTORY.md` |
-| After merge to main | Update the active `docs/current-phase/logs/august-log.md` |
+| Every commit | Update today’s developer log and the active `docs/current-phase/logs/august-log.md` in the same commit; state whether work is committed, merged, or shipped |
 | Technical/architecture change | Update relevant docs in `docs/06-engineering/` |
 
 ---

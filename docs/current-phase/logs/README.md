@@ -2,7 +2,7 @@
 
 This directory contains only current operational logs. Historical July decisions, friction, inbox, and merge records are preserved under [docs/11-archive/execution/logs/](../../11-archive/execution/logs/).
 
-Append-only evidence, capture, and decision records.
+Append-only evidence, capture, and decision records. For every commit, update the daily developer log and the active monthly narrative together; the monthly entry must not call unmerged work shipped.
 
 | Log | Purpose |
 |-----|---------|

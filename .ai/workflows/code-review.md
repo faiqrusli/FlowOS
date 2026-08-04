@@ -429,7 +429,7 @@ All checks pass. Code follows patterns, security is solid, functionality is comp
 **Next steps:**
 1. Manual test: Add habit → complete → verify shows on Today
 2. Merge to main (requires founder approval)
-3. Update august-log.md after merge
+3. Ensure the developer log and active month log are updated in the same commit; confirm shipped state after merge
 
 **Ready to merge?**
 ```

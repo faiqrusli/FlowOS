@@ -105,6 +105,7 @@ Should we:
 |-------------|---------------|
 | Product decision | `docs/08-decisions/records/` |
 | Session timeline | `docs/current-phase/logs/developer-log/YYYY-MM-DD.md` |
+| Commit narrative | `docs/current-phase/logs/august-log.md` (or active month log) |
 | New feature/route | `docs/04-features/FEATURE_INVENTORY.md` |
 | Architecture change | Relevant active doc (e.g., `docs/06-engineering/`, `docs/05-design/`) |
 
@@ -113,6 +114,7 @@ Should we:
 Documentation check:
 - [ ] Decision log (if product-level decision made)
 - [ ] Developer log (session timeline)
+- [ ] Active monthly narrative log (same commit; state is committed/merged/shipped accurately)
 - [ ] Feature inventory (if new feature/route)
 - [ ] Technical docs (if architecture changed)
 
@@ -233,7 +235,7 @@ No issues found.
 ✅ Developer log updated (YYYY-MM-DD.md)
 ✅ Feature inventory updated (added Habits module)
 [ ] Decision log (no product decisions this session)
-[ ] August log (will update after merge)
+✅ Active month log updated with `committed` / `merged` / `shipped` state
 
 ---
 
@@ -312,7 +314,7 @@ Commits merged:
 
 Next steps:
 1. Verify production deployment: https://flowos-sage.vercel.app
-2. Update august-log.md with merge details
+2. Confirm the active month log with merge/shipped details
 3. Monitor for any issues
 
 Production deployment in progress...
@@ -385,7 +387,7 @@ Rollback recommended? [explain]
 
 ### 2. Update August Log
 
-**Action:** Append entry to `docs/current-phase/logs/august-log.md`
+**Action:** Append or update the entry in `docs/current-phase/logs/august-log.md` (or the active month log) for every commit. After merge, confirm the entry reflects what shipped.
 
 **Format:**
 ```markdown

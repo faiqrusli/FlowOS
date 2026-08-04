@@ -10,6 +10,7 @@
 **🗺️ MVP Masterplan:** [mvp-implementation-masterplan.md](./mvp-implementation-masterplan.md)  
 **🎯 Workflow:** [Solo Founder Workflow](../start-here/solo-founder-workflow.md)  
 **📝 First Phase 1 doc:** [post-phase-0-audit.md](./phase-1/post-phase-0-audit.md)
+**🧩 Future template:** [current-sprint-template.md](./templates/current-sprint-template.md) — this active sprint remains the source example.
 
 ---
 

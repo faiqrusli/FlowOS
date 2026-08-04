@@ -155,7 +155,7 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 
 **Post-merge:**
 1. Verify production
-2. Update active month log (`docs/current-phase/logs/august-log.md`)
+2. Confirm the active month log (`docs/current-phase/logs/august-log.md`) distinguishes committed, merged, and shipped state
 3. Clean up branch (optional)
 
 **Use when:** After code review passes, before suggesting merge.
@@ -175,7 +175,7 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 **Covers:**
 - Decision records (consequential decisions)
 - Developer log (session timeline)
-- Monthly narrative log (what shipped, post-merge only)
+- Monthly narrative log (commit narrative with committed/merged/shipped state)
 - Feature inventory (new routes/features)
 - Technical docs (architecture changes)
 

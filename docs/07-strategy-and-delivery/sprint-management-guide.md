@@ -26,6 +26,9 @@ This guide explains how to manage sprints and phases for solo founder developmen
 - **Planning:** 30 minutes at start
 - **Review:** 30 minutes at end
 - **Documentation:** `current-phase/current-sprint.md`
+- **Future-use templates:** `current-phase/templates/current-sprint-template.md` and `current-phase/templates/gate-checklist-template.md`
+
+The active current sprint and gate checklist are the source examples for the templates. Templates are marked `TEMPLATE — REFERENCE ONLY`, are not live evidence, and are intentionally not a strict layout. The Founder may add, improve, rename, reorder, or remove sections before copying one for a future phase.
 
 ### Sprint vs Phase
 
@@ -269,9 +272,9 @@ This guide explains how to manage sprints and phases for solo founder developmen
    - What you learned
 
 2. **Monthly narrative log** (`current-phase/logs/MONTH-log.md`)
-   - Weekly summaries
-   - Major achievements
-   - Key decisions
+   - Committed checkpoint for every commit
+   - Weekly summaries and major achievements
+   - Key decisions and whether work is committed, merged, or shipped
 
 3. **Current sprint doc** (`current-phase/current-sprint.md`)
    - Sprint goals
@@ -286,6 +289,11 @@ This guide explains how to manage sprints and phases for solo founder developmen
 - Output created
 - Time spent
 - Blockers encountered
+
+**Every commit:**
+- Update the daily developer log and the active monthly narrative log in the same commit.
+- Keep the developer log chronological and personal; keep the monthly log concise and status-accurate.
+- Mark work as committed or unmerged until it reaches `main`; do not call it shipped early.
 
 **Weekly:**
 - Sprint results (what shipped)

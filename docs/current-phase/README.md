@@ -22,6 +22,7 @@
 | Document | Purpose |
 |----------|---------|
 | [Current Sprint](./current-sprint.md) | Active work for the current sprint/phase |
+| [Current-Phase Templates](./templates/) | Flexible future-use templates; active sprint and gate records are the source examples |
 | [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) | **Highest authority** for MVP phases and gates |
 | [Phase 1 Folder](./phase-1/) | **Current phase work** — Gate 1 checklist, sprint tracking |
 | [Phase 1.5 Technology Integration](../06-engineering/technology-integration-masterplan.md) | Scheduled validation-policy and technical-integration work |
@@ -36,6 +37,7 @@ current-phase/
   ├── README.md                           ← You are here
   ├── current-sprint.md                   ← Current active work
   ├── mvp-implementation-masterplan.md    ← Canonical implementation roadmap
+  ├── templates/                           ← Future sprint and gate starting points
   ├── logs/                               ← Operational logs (August 2026)
   │   ├── august-log.md                   ← Narrative log
   │   └── developer-log/                  ← Daily developer journals
@@ -77,6 +79,8 @@ current-phase/
 2. **[MVP Masterplan](./mvp-implementation-masterplan.md)** — What's the roadmap
 3. **[Phase 1 Gate Checklist](./phase-1/gate-checklist.md)** — What needs to be done
 4. **[Solo Founder Workflow](../start-here/solo-founder-workflow.md)** — How to execute work using 6 hats
+
+Future phase setup can start from the [template index](./templates/), but the active sprint and gate records remain authoritative for current work.
 
 **Then start executing with the 6-hat workflow. Phase 1.5 work is scheduled separately and does not change the Phase 1 Gate 1 definition.**
 
