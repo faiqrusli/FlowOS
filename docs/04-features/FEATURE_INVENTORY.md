@@ -2,7 +2,7 @@
 
 **Status:** Living document  
 **Audience:** Engineers, product lead  
-**Last updated:** July 13, 2026 (Visual Design System v3.0 migration sessions 1–4 complete on branch)
+**Last updated:** August 4, 2026 (Phase 1 implementation-truth baseline)
 
 **Visual system:** [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) (Surface 0–10 live in `globals.css`). Historical themes: [11-archive/design/themes/](../11-archive/design/themes/). Canonical helpers: `src/lib/theme/surface-classes.ts`, `src/lib/theme/tokens.ts`.
 
@@ -10,7 +10,13 @@
 
 ## Purpose
 
-Single source of truth for what FlowOS has **shipped**, **partially built**, **placeholder**, or **deferred** — and how modules relate in navigation. Prevents re-debating built vs planned features.
+Single source of truth for implementation status and how modules relate in navigation. `Status` describes code reality only; MVP admission is tracked separately in the Feature Catalog and current-phase Gate 1 records.
+
+### Status semantics
+
+- **Shipped / In progress / Partial / Dead code / Removed / Placeholder / Deferred:** implementation status observed in the repository.
+- **MVP admission:** product-scope status (`Admitted`, `Supporting`, `Deferred`, or `Not admitted`) owned by [feature-catalog.md](./feature-catalog.md) and the current phase masterplan.
+- Never infer MVP admission from `Shipped`; a shipped supporting or experimental module is not automatically an admitted MVP domain.
 
 For SRS future enhancements (FE-1–FE-13), see [../11-archive/project/03-future-enhancements.md](../11-archive/project/03-future-enhancements.md).
 
@@ -26,15 +32,15 @@ The currently configured navigation is an implementation reference at `src/confi
 
 ## Shipped modules (nav-visible)
 
-| Module | Route | Status | SRL phase | Phase 3 impact |
-|--------|-------|--------|-----------|----------------|
-| Today | `/` | **Shipped** — default home (execution + intelligence) | Performance | Keep; focus as mode long-term |
-| Schedule | `/schedule` | **Shipped** — primary Workspace nav | Forethought | Keep global; simplify third scheduling surface later |
-| Tasks | `/tasks` | **Shipped** | Forethought | Keep; secondary access via command palette + inline capture |
-| Habits | `/habits` | **Shipped** | Forethought + Performance | Keep; inline on Today |
-| Focus | `/focus` | **Shipped** | Performance | Reframe page as history/analytics; focus becomes mode |
-| Reflection | `/reflection` | **Shipped** | Self-reflection | Keep; unify save behavior; evening nudge |
-| Notes | `/notes` | **Shipped** — primary Workspace nav | Self-reflection (supplementary) | Keep global; no kanban expansion in Phase 3 |
+| Module | Route | Code status | MVP admission | SRL phase | Phase 3 impact |
+|--------|-------|-------------|---------------|-----------|----------------|
+| Today | `/` | **Shipped** — default home (execution + intelligence) | **Admitted** | Performance | Keep; focus as mode long-term |
+| Schedule | `/schedule` | **Shipped** — primary Workspace nav | **Supporting** | Forethought | Keep global; simplify third scheduling surface later |
+| Tasks | `/tasks` | **Shipped** | **Admitted** | Forethought | Keep; secondary access via command palette + inline capture |
+| Habits | `/habits` | **Shipped** | **Supporting** | Forethought + Performance | Keep; inline on Today |
+| Focus | `/focus` | **Shipped** | **Admitted** | Performance | Reframe page as history/analytics; focus becomes mode |
+| Reflection | `/reflection` | **Shipped** | **Admitted** | Self-reflection | Keep; unify save behavior; evening nudge |
+| Notes | `/notes` | **Shipped** — primary Workspace nav | **Supporting** | Self-reflection (supplementary) | Keep global; no kanban expansion in Phase 3 |
 
 ---
 

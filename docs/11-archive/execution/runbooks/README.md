@@ -2,7 +2,7 @@
 
 Milestone-specific operating manuals. **New runbook:** copy [RUNBOOK_TEMPLATE.md](./RUNBOOK_TEMPLATE.md).
 
-**Hold (2026-07-21):** Do not open large new runbooks while implementation is paused for review. Prefer docs fixes and small tweaks.
+**Hold (historical):** Do not open large new runbooks while implementation is paused for review. Current work is governed by `docs/current-phase/`.
 
 | Runbook | Milestone | Status |
 |---------|-----------|--------|
@@ -17,12 +17,12 @@ Milestone-specific operating manuals. **New runbook:** copy [RUNBOOK_TEMPLATE.md
 | [m2-today-v3-day-engine.md](./m2-today-v3-day-engine.md) | Today V3 Day Engine | **Deferred indefinitely** during hold |
 | [RUNBOOK_TEMPLATE.md](./RUNBOOK_TEMPLATE.md) | Template for M3+ | Reference |
 
-**Stubs → archive:** [m2-surface-hierarchy.md](./m2-surface-hierarchy.md), [m2-visual-design-v2.md](./m2-visual-design-v2.md), [m2-next-up-queue.md](./m2-next-up-queue.md) → [../../11-archive/runbooks/](../../11-archive/runbooks/)
+**Consolidated archive:** The historical runbooks formerly under `docs/11-archive/runbooks/` are retained here.
 
-**Visual authority:** [DESIGN_SYSTEM_V3.md](../05-design/DESIGN_SYSTEM_V3.md) · [Tokyo Night Warm](../05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md)
+**Visual authority:** [DESIGN_SYSTEM_V3.md](../../../05-design/DESIGN_SYSTEM_V3.md) · [Tokyo Night Warm](../../../05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md)
 
 **Unfinished branches:** [unmerged-branch-queue.md](../logs/unmerged-branch-queue.md)
 
-**Git workflow:** [GIT_WORKFLOW.md](../00-constitution/governance/GIT_WORKFLOW.md)
+**Git workflow:** [GIT_WORKFLOW.md](../../../00-constitution/governance/GIT_WORKFLOW.md)
 
-Index: [../README.md](../README.md)
+Index: [Archive README](../../README.md)

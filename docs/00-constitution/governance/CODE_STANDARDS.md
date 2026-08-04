@@ -1,8 +1,8 @@
 ﻿# Code Standards
 
-**Status:** Active (M2 baseline)  
+**Status:** Active — current engineering conventions; M2 scope notes are historical context  
 **Audience:** Engineers, AI agents  
-**Last updated:** July 4, 2026
+**Last updated:** August 4, 2026
 
 Line-level conventions for FlowOS. Decision rules live in [ENGINEERING.md](./ENGINEERING.md); ship checklist in [GATES.md](./GATES.md); stack layout in [../../06-engineering/TECHNICAL_ARCHITECTURE.md](../../06-engineering/TECHNICAL_ARCHITECTURE.md).
 
@@ -12,7 +12,7 @@ Line-level conventions for FlowOS. Decision rules live in [ENGINEERING.md](./ENG
 
 **Smallest diff that solves the user-visible problem.** Match existing patterns in the touched area. Do not “clean up” unrelated files in the same PR.
 
-During M2, defer large refactors, new primitives, and palette sweeps unless the current runbook session explicitly calls for them.
+Keep changes small and phase-aligned. Phase-specific scope comes from `docs/current-phase/current-sprint.md` and the MVP Implementation Masterplan.
 
 ---
 
@@ -67,7 +67,7 @@ During M2, defer large refactors, new primitives, and palette sweeps unless the 
 
 - Prefer derived state over syncing with `useEffect`.
 - Legacy code may trigger `react-hooks/*` ESLint **warnings**; do not introduce new violations in touched files when avoidable.
-- Do not refactor hook patterns repo-wide in M2.
+- Do not refactor hook patterns repo-wide without an admitted phase objective.
 
 ### Business logic
 
@@ -86,7 +86,7 @@ export function getChannelStyle(type, priority?) { … }
 
 ## Styling
 
-1. **Tokens first** — use CSS variables and semantic Tailwind classes from [globals.css](../../../src/app/globals.css), not page-specific hex, slate/gray, border, shadow, radius, or text-scale combinations. Follow [DESIGN_SYSTEM_V3.md](../../05-design/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../../05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) (Workspace / Interaction for layout and states).
+1. **Tokens first** — use CSS variables and semantic Tailwind classes from [globals.css](../../../src/app/globals.css), not page-specific hex, slate/gray, border, shadow, radius, or text-scale combinations. Follow the active design standards and [design-implementation-map.md](../../05-design/design-implementation-map.md); archived workspace/interaction documents are historical.
 2. **Centralize channel colors** — schedule, habits, task groups go through `lib/*-appearance.ts` or `schedule-palette.ts`, not one-off hex in JSX.
 3. **No light theme** — dark-only; do not add theme switching.
 4. **Visible controls** — critical actions must not be hover-only ([PRINCIPLES.md](./PRINCIPLES.md) #10).
@@ -119,9 +119,9 @@ Placeholder modules (`/goals`, `/ai-coach`, …) stay behind placeholder handlin
 
 ---
 
-## Error and loading (target state)
+## Error and loading
 
-Before private alpha (runbook Session 6+):
+For primary flows:
 
 - Add `error.tsx` / `loading.tsx` at appropriate route segments for primary flows.
 - Prefer graceful empty states over thrown errors in UI.
@@ -132,9 +132,9 @@ Until boundaries exist, match the error-handling style of the sibling file you e
 
 ## Testing
 
-- **No automated test requirement** during M2.
-- Manual smoke before merge: login → primary flow touched → logout.
-- Automated suite expansion is **beta gate** ([ENGINEERING.md](./ENGINEERING.md)).
+- Automated tests are required where the repository has coverage; run `npm test` before merge.
+- Manual smoke remains required: login → primary flow touched → logout.
+- Add tests for new business logic, negative paths, and edge cases.
 
 ---
 
@@ -144,17 +144,18 @@ Until boundaries exist, match the error-handling style of the sibling file you e
 |---------|------|
 | `npm run build` | Before every merge to `main` |
 | `npm run lint` | Before every merge; no **new errors** in touched files |
+| `npm test` | Before every merge; all relevant tests pass |
 | `npm run dev` | Local verification |
 
 ESLint: Next.js core-web-vitals + TypeScript ([eslint.config.mjs](../../../eslint.config.mjs)). Warnings on legacy hook patterns are accepted until M4 refactor pass.
 
 ---
 
-## Git and scope (M2)
+## Git and scope
 
 - Branch per runbook session — see [GIT_WORKFLOW.md](./GIT_WORKFLOW.md).
-- **In scope:** Today home, routing, inline capture, focus visibility, error boundaries.
-- **Out of scope:** command palette, new modules, dnd-kit migration, monolith file splits, visual polish sweeps.
+- **In scope:** Current sprint assignments and admitted MVP implementation truth.
+- **Out of scope:** Work excluded by the current phase masterplan or an explicit Founder decision.
 
 Record consequential Build/Kill choices in [Decision Records](../../08-decisions/decision-records.md).
 
@@ -165,7 +166,7 @@ Record consequential Build/Kill choices in [Decision Records](../../08-decisions
 - [ ] Smallest diff; no drive-by refactors
 - [ ] Matches folder conventions above
 - [ ] Auth + RLS if data/route change
-- [ ] `npm run build` && `npm run lint` pass
+- [ ] `npm run build`, `npm run lint`, and `npm test` pass
 - [ ] Manual smoke on changed flow
 - [ ] FEATURE_INVENTORY / decision-log if behavior changed
 - [ ] Founder approval before merge to `main`

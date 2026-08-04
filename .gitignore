@@ -24,6 +24,14 @@
 .DS_Store
 *.pem
 
+# local generated reports and crash/replay artifacts
+/eslint-report.*
+/lint*.txt
+/hs_err_pid*.log
+/replay_pid*.log
+/.output.txt
+/.tmp-review/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

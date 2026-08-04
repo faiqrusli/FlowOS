@@ -26,13 +26,13 @@
 
 Today, Tasks, Focus, Schedule, Notes — these ARE FlowOS. Without detailed specifications, you lose the ability to improve them coherently over time.
 
-The 6-role structure added **coordination overhead**, not documentation quality. The solution is to keep the depth while removing the approval theater.
+The 6-hat structure adds quality checkpoints, not coordination overhead. The solution is to keep the depth while making Founder self-approval brief and evidence-based.
 
 ---
 
 ## What Changed (Aug 2026)
 
-### Before (6-Role Structure)
+### Historical multi-person structure
 ```
 Product Architect writes feature brief
   ↓ (wait for approval)
@@ -49,7 +49,7 @@ Founder approves
 Build...
 ```
 
-**Problem:** 3 separate people, 3 approval gates, 3 handoffs BEFORE you even start coding.
+**Problem:** Separate people introduced handoff and waiting overhead before coding.
 
 ### After (Solo Founder)
 ```
@@ -62,7 +62,7 @@ You write what you need:
 Then you build.
 ```
 
-**Solution:** Same depth, no handoffs, no approval gates.
+**Solution:** Same depth, six authoritative hats grouped into Plan, Build, and Ship, with short Founder checkpoints at mode transitions.
 
 ---
 
@@ -191,7 +191,7 @@ Then you build.
 - Future-you needs complete context
 - Prevents rebuilding from scratch
 
-**You write them all yourself (no handoffs, no approval gates), but you still write them for major features.**
+**You write them all yourself, progressing through the six hats and recording consequential Founder decisions without a separate handoff queue.**
 
 **See:** `feature-dossier-standard.md` for complete lifecycle guide.
 
@@ -224,8 +224,8 @@ Then you build.
 |--------|-----------------|----------------------|
 | **Depth** | Detailed specs | Detailed specs (same) |
 | **Roles** | 3 separate people | You |
-| **Approval gates** | 3 gates | 0 gates |
-| **Handoffs** | 3 handoffs | 0 handoffs |
+| **Approval flow** | Multi-person gates | 3 short Founder checkpoints |
+| **Handoffs** | 3 handoffs | Same-session hat progression |
 | **Time overhead** | 3-4 hours (waiting, context switching) | 0 hours |
 | **Total time** | 9-18 hours | 6-14 hours |
 | **Quality** | Same depth | Same depth |
@@ -243,11 +243,11 @@ Then you build.
 3. **Write the docs you need** (all in one session, or spread over a few days)
 4. **Then build**
 
-**You're not waiting for approval. You're thinking through the problem.**
+**You're not waiting in a coordination queue. You're thinking through the problem and completing the applicable Founder checkpoint.**
 
-**No one reviews your brief before you write the spec. You write both when you're ready.**
+**The Founder reviews scope and design at the Plan checkpoint before Build.**
 
-**No handoffs. Just deep thinking, then building.**
+**No unnecessary handoff queue. Just deep thinking, quick approval, then building.**
 
 ---
 
@@ -283,9 +283,9 @@ Hat 5 (Release Manager):
   - Verify + Deploy + Document
 ```
 
-**Time:** 6-14 hours (no approval waits)
+**Time:** 6-14 hours plus brief decision checkpoints as needed
 
-**You wear all 6 hats yourself, in sequence, maintaining each hat's quality standards but without coordination delays.**
+**You wear all 6 hats yourself, in sequence, maintaining each hat's quality standards with short Founder self-approval checkpoints.**
 
 **See:** `docs/start-here/solo-founder-workflow.md` for complete 6-hat workflow with practical examples.
 

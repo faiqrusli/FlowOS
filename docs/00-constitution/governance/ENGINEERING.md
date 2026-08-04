@@ -1,10 +1,10 @@
 ﻿# Engineering Rules
 
-**Status:** Transitional M2 execution context
+**Status:** Active engineering decision rules; historical M2 examples retained below
 **Audience:** Engineers, founder  
-**Last updated:** July 4, 2026 (consolidates former Engineering Decision Framework; M1 blockers removed)
+**Last updated:** August 4, 2026
 
-**Transition:** The reusable standard for engineering change now lives in [Engineering Standards](../../06-engineering/engineering-standards.md). This document preserves current M2 execution context and must not redefine the active engineering, quality, operations, data, or access architecture.
+**Authority:** The reusable standard for engineering change lives in [Engineering Standards](../../06-engineering/engineering-standards.md). Current phase scope lives in [current-sprint.md](../../current-phase/current-sprint.md) and the MVP Implementation Masterplan.
 
 Product scope: [PRINCIPLES.md](./PRINCIPLES.md). Stack detail: [../../06-engineering/TECHNICAL_ARCHITECTURE.md](../../06-engineering/TECHNICAL_ARCHITECTURE.md).
 
@@ -31,14 +31,13 @@ Security and RLS are never deferred for features.
 
 ## Build vs defer vs reject
 
-### Build now (M2 / current)
+### Build now (current phase)
 
 | Item | Why |
 |------|-----|
-| M2 runbook sessions | Current milestone |
-| Routing fixes on Today | Product loop |
-| Inline capture, visible focus controls | Product loop |
-| Error/loading boundaries | Alpha reliability |
+| Phase 1 implementation-truth work | Current sprint |
+| Baseline quality, security, and production checks | Gate 1 evidence |
+| P0/P1 fixes that affect admitted MVP truth | Current phase objective |
 
 ### Defer (until beta or user evidence)
 
@@ -48,7 +47,7 @@ Security and RLS are never deferred for features.
 | `tasks-board-view.tsx` split | Large refactor |
 | Select/SegmentedControl primitives | Functional patterns exist |
 | Hardcoded palette cleanup | Visual debt |
-| Automated test suite expansion | Before closed beta |
+| New validation-library integration | Phase 1.5 technical integration |
 | Command palette | M4 unless users ask |
 
 ### Reject (near-term)
@@ -96,10 +95,10 @@ M1 resolved: production build, RLS two-account test, production deploy.
 
 ## Deploy cadence
 
-**Branch workflow:** [GIT_WORKFLOW.md](./GIT_WORKFLOW.md) — work on branches; merge to `main` only with founder approval.
+**Branch workflow:** [GIT_WORKFLOW.md](./GIT_WORKFLOW.md) — work on branches; merge to `main` only with Founder approval and passing build, lint, and test checks.
 
 ```
-branch → npm run build && npm run lint → commit → push branch
+branch → npm run build && npm run lint && npm test → commit → push branch
     → founder approves → merge to main → push main → verify production
 ```
 

@@ -4,7 +4,7 @@
 **Audience:** Engineers
 **Owner:** Engineering Architect
 **Approval Required:** Founder
-**Last Updated:** 2026-08-03
+**Last Updated:** 2026-08-04
 
 ---
 
@@ -31,7 +31,7 @@
 
 ## Purpose
 
-Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For the active visual contract, see [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md); code truth is `src/app/globals.css`. The July 3 project-state document is historical only.
+Describe FlowOS's application stack, data model, authentication, key libraries, known technical debt, and deployment requirements. For the active visual contract, see [DESIGN_SYSTEM_V3.md](../05-design/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md); code truth is `src/app/globals.css`. The July 3 project-state document is historical only.
 
 ---
 
@@ -53,7 +53,7 @@ Describe FlowOS's application stack, data model, authentication, key libraries, 
 
 | Layer | Technology | Location |
 |-------|------------|----------|
-| Framework | Next.js 16.2.7 App Router | `flowos/` |
+| Framework | Next.js 16.2.11 App Router | repository root |
 | Styling | Tailwind v4 + CSS variables | `src/app/globals.css` |
 | Components | shadcn / Base UI | `src/components/ui/` |
 | Backend | Supabase | `src/lib/supabase/` |
@@ -78,7 +78,7 @@ flowos/
 │   ├── lib/              # Business logic, Supabase, palettes
 │   └── types/            # TypeScript types (database.ts)
 ├── supabase/             # SQL migrations (manual apply)
-└── .env.example          # Required environment variables
+└── package.json           # Scripts and dependencies
 ```
 
 ---
@@ -118,13 +118,13 @@ SQL migrations live in `flowos/supabase/`. Apply manually to Supabase project.
 
 All tables use **Row Level Security (RLS)**. Verify policies scope to `auth.uid()` before production — early migrations may use permissive policies for development.
 
-Types: `flowos/src/types/database.ts`
+Types: `src/types/database.ts`
 
 ---
 
 ## Central design libraries
 
-Visual semantics are specified by [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md). Code truth: `src/app/globals.css`.
+Visual semantics are specified by [DESIGN_SYSTEM_V3.md](../05-design/DESIGN_SYSTEM_V3.md) + [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md). Code truth: `src/app/globals.css`.
 
 | Library | Purpose |
 |---------|---------|
@@ -160,9 +160,9 @@ Navigation config: `src/config/sidebar-navigation.tsx`
 
 | Item | Severity | Target |
 |------|----------|--------|
-| Zero automated tests | High | Before beta |
-| No `error.tsx` / `loading.tsx` boundaries | High | Before alpha |
-| 542 hardcoded palette references (post-Phase 2 baseline) | Medium | Ongoing |
+| Test coverage and current behavior baseline | High | Phase 1 Gate 1 |
+| Error/loading boundary coverage by route | Medium | Phase 1 Gate 1 |
+| Remaining hardcoded palette references | Medium | Phase 1 design reconciliation |
 | dnd-kit dual system (passive context + legacy pointer drag) | Medium | Engineering track |
 | `timeline-planner.tsx` monolith | Medium | Engineering track |
 | Duplicate context menus across task surfaces | Low | Phase 3+ |
@@ -182,13 +182,13 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-jwt-key
 ```
 
-See `flowos/.env.example`. Use the **anon JWT** (`eyJ...`), not publishable keys.
+Configure these values in the local environment and deployment host. Use the **anon JWT** (`eyJ...`), not publishable keys.
 
 ### Build and run
 
 ```bash
-cd flowos
 npm install
+npm test
 npm run build
 npm start
 ```
@@ -200,8 +200,7 @@ Recommended host: **Vercel** (Next.js native). Supabase project must have all SQ
 - [ ] All Supabase migrations applied  
 - [ ] RLS policies verified for production (user-scoped)  
 - [ ] Environment variables set on host  
-- [ ] Fake Agenda card removed  
-- [ ] Error/loading boundaries on main routes  
+- [ ] Current route behavior and error/loading boundaries verified  
 
 Full gates: [governance/GATES.md](./governance/GATES.md)
 
@@ -209,12 +208,12 @@ Full gates: [governance/GATES.md](./governance/GATES.md)
 
 ## Engineering tracks (separate from design phases)
 
-These are background engineering work, not blocking Phase 3:
+These are background engineering work; Phase 1.5 owns validation-policy and technical-integration decisions:
 
 - **dnd-kit migration** — replace custom pointer drag on Tasks board  
 - **Monolith splits** — `timeline-planner.tsx` decomposition  
 - **Select primitive consolidation** — Phase 4+ evaluation  
-- **Test coverage** — critical paths before beta  
+- **Test coverage** — current baseline and critical paths in Phase 1
 
 Do not document these in design phase contracts. Consider `docs/engineering/` if a dedicated track doc is needed later.
 

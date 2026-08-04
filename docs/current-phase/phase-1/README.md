@@ -6,6 +6,7 @@
 **Owner:** Founder (executed via 6-hat solo workflow)  
 **Gate:** Gate 1 — Current build truth  
 **Created:** 2026-08-04  
+**Execution plan:** [Current Sprint](../current-sprint.md) — dated implementation-truth work for 2026-08-04 → 2026-08-08
 
 ---
 
@@ -19,6 +20,8 @@ Per the [MVP Implementation Masterplan](../mvp-implementation-masterplan.md):
 - identify dead code, placeholder routes, duplicate scheduling surfaces, dual save paths, and undocumented states;
 - run baseline quality, accessibility, security, and production checks;
 - create only the feature briefs and behavior contracts needed to describe admitted MVP behavior.
+
+The [current sprint](../current-sprint.md) is the operational reference for the five-day sequence, domain evidence contract, hat responsibilities, and daily exit conditions. The [Gate 1 checklist](./gate-checklist.md) is the evidence register and final decision record. Accepted post-Phase-0 documentation improvements run in parallel; they are not blanket Gate 1 criteria.
 
 **Gate 1 — Current build truth:** For every admitted MVP domain, the team can demonstrate the current behavior, data path, known gaps, and owner. Unknown status is not allowed to pass into implementation.
 
@@ -34,7 +37,7 @@ Phase 0 closed on 2026-08-04 with Gate 0 PASSED. Its records (gate checklist, re
 ## Starting Phase 1 Work
 
 1. Read the [post-phase-0 audit](./post-phase-0-audit.md) — Phase 1's first document.
-2. Execute the Phase 1 sprint in [current-sprint.md](../current-sprint.md) (created 2026-08-04).
+2. Execute the dated work packages and domain matrix in the [current sprint](../current-sprint.md).
 3. Wear the 6-hat workflow: [Solo Founder Workflow](../../start-here/solo-founder-workflow.md).
 4. Use the [implementation truth backlog](../../11-archive/phases/phase-0/implementation-truth-backlog.md) as the starting question list.
 5. Track Gate 1 evidence in `gate-checklist.md`.

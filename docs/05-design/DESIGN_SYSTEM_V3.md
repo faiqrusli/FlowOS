@@ -7,7 +7,7 @@
 | **Version** | 3.0 |
 | **Theme** | Tokyo Night + Soft Indigo |
 | **Date** | July 19, 2026 (consolidated Aug 3, 2026) |
-| **Supersedes (visual)** | Ad-hoc surface ladders; Borderless Workspace policy lives in V3 Workspace ([archive snapshot](../11-archive/design/themes/DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md)) |
+| **Supersedes (visual)** | Ad-hoc surface ladders; stable workspace rules are reconciled through the [design implementation map](./design-implementation-map.md) |
 | **Note** | V3 Workspace and V3 Interaction guidance (archived Aug 2026) is established in practice. This doc + Tokyo Night Warm are the active design references. |
 | **Related** | [Tokyo Night Warm palette](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) · [Code standards](./governance/CODE_STANDARDS.md) · [Product principles](./governance/PRINCIPLES.md) |
 
@@ -22,7 +22,7 @@ This is the **core** of Design System v3. It defines:
 3. The **Surface 0–10** lighting ladder (single source of background color).
 4. Soft Indigo brand rules (when color may be spent).
 
-It does **not** cover page layouts, shell chrome maps, typography scales, spacing, motion, or hover recipes — those live in the supporter docs below so each file stays authoritative for one concern.
+It does **not** cover page layouts, shell chrome maps, typography scales, spacing, motion, or hover recipes. Archived workspace and interaction documents are evidence only; stable rules must be promoted into active standards through the design implementation map.
 
 ### How to use this family (implementation order)
 
@@ -31,13 +31,13 @@ It does **not** cover page layouts, shell chrome maps, typography scales, spacin
 | 1 | **This file (V3)** | What elevation is this? May I invent a new hex? Core design philosophy and Surface 0-10 |
 | 2 | [Tokyo Night Warm](./DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md) | Active palette contract and color tokens |
 
-**Workspace & interaction guidance** (formerly separate docs, archived Aug 2026) is established in practice:
+**Workspace & interaction guidance** is established in active code and the design implementation map; the former separate documents are archived:
 - Borderless workspace with luminance hierarchy
 - Typography, spacing, radius, motion standards  
 - Hover/selection via surface elevation
 - Critical controls visible without hover
 
-**Rule:** Before shipping UI on any FlowOS page, the component must map to a Surface level here and follow established patterns in code (`globals.css`, component libraries) without inventing parallel tokens.
+**Rule:** Before shipping UI on any FlowOS page, the component must map to a Surface level here and follow active standards and established patterns in code (`globals.css`, component libraries) without inventing parallel tokens.
 
 ---
 
@@ -116,7 +116,7 @@ Workspace → Canvas → Card → Input → Hover → Selected → Popup
 
 Borders are not hierarchy. Brightness is hierarchy.
 
-Most components use `border: none`. Borders are reserved for inputs, keyboard focus, drag targets, active drop zones, and accessibility. Full border policy: [V3 Workspace](./DESIGN_SYSTEM_V3_WORKSPACE.md).
+Most components use `border: none`. Borders are reserved for inputs, keyboard focus, drag targets, active drop zones, and accessibility. Reconcile border decisions through the active design standards and [design implementation map](./design-implementation-map.md); the former V3 Workspace document is historical.
 
 ### 5. Color is Reserved
 
@@ -158,7 +158,7 @@ Color is expensive. Only spend Soft Indigo where attention matters. Most of the 
 - Section backgrounds “to make it pop”
 - Competing brand accents (amber, teal experiments) for chrome
 
-Module identity colors (Tasks blue, Habits green, …) may label **content** (timeline events, chips) but must not redefine shell or workspace lighting. See [V3 Interaction](./DESIGN_SYSTEM_V3_INTERACTION.md#semantic--module-color).
+Module identity colors (Tasks blue, Habits green, …) may label **content** (timeline events, chips) but must not redefine shell or workspace lighting. Stable interaction guidance is reconciled through [design implementation map](./design-implementation-map.md); the former V3 Interaction document is historical.
 
 ---
 
@@ -334,9 +334,9 @@ Implementation may alias these to existing names (`--surface-canvas` → Surface
 Within visual design:
 
 1. **This file** wins for surface hexes and brand spend rules.
-2. **V3 Workspace** wins for layout, shell, borderless, per-page maps.
-3. **V3 Interaction** wins for type, space, motion, state recipes.
+2. **Active design standards and the implementation map** win for layout, shell, borderless, type, space, motion, and state recipes.
+3. **Archived V3 Workspace and V3 Interaction** provide historical evidence only.
 4. Consequential current product-level overrides require [Decision Records](../08-decisions/decision-records.md).
-5. Older theme docs (Tokyo Night Warm, Gruvbox, Everforest, Neutral Dark, Navy) are **reference / history** unless explicitly re-activated.
+5. Older theme docs (Gruvbox, Everforest, Neutral Dark, Navy) are **reference / history**; Tokyo Night Warm is an active palette contract.
 
 Code must still follow [CODE_STANDARDS.md](./governance/CODE_STANDARDS.md) (smallest diff, semantic tokens, no fake UI).

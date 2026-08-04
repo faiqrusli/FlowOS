@@ -53,23 +53,23 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 
 ## Development Workflow: Solo Founder with 6-Hat Quality Procedures
 
-**FlowOS is developed by a solo founder using 6-role procedures for quality, without coordination overhead.**
+**FlowOS is developed by a solo founder using 6-hat procedures for quality, grouped into three fast execution modes.**
 
 **👉 Complete guide:** `docs/start-here/solo-founder-workflow.md`  
 **👉 Quick reference:** `docs/start-here/how-to-develop-flowos.md`
 
 ### The Core Concept
 
-**The 6 roles define WHAT quality work looks like.**  
-**You execute all 6 roles yourself, in sequence, without approval delays.**
+**The 6 hats define WHAT quality work looks like.**  
+**You execute all 6 hats yourself, in sequence, with short Founder self-approval checkpoints.**
 
 Think of roles as "hats" you wear:
 - Each hat has specific responsibilities and deliverables
 - You wear each hat in sequence
 - You maintain the same quality standards
-- But you don't wait for yourself to approve yourself
+- The Founder approves consequential decisions, but checkpoints are brief and evidence-based
 
-**The procedures stay. The coordination theater goes.**
+**The procedures stay. Long handoff queues go.**
 
 ### The 6 Hats (3 Modes)
 
@@ -83,14 +83,13 @@ Think of roles as "hats" you wear:
 
 **Mode 3: Ship (Release)**
 - **Hat 5: Release Manager** — VERIFY and SHIP it (validation, deployment, release record)
-
-**Hat 6: Founder** — Decide when uncertain (used during any hat as needed)
+- **Hat 6: Founder** — Approve or reject release from evidence and production readiness
 
 ### Standard Major Feature Workflow
 
 ```
 Hat 1 (Product Architect): Write feature brief + behavior contract
-  ↓ (no approval, just move to next hat)
+  ↓ Plan checkpoint: Founder approves scope, behavior, and design readiness
 Hat 2 (Design Architect): Write design specification
   ↓
 Hat 3 (Engineering Architect): Write delivery design + validation plan
@@ -99,23 +98,23 @@ Hat 4 (Implementation Engineer): Build code + tests + runbook
   • Security checklist (6 points, non-negotiable)
   • Build + lint + test pass
   • Manual smoke test
-  ↓
+  ↓ Build checkpoint: Founder approves quality evidence and known gaps
 Hat 5 (Release Manager): Verify + Deploy + Document
   • Run validation plan checks
-  • Merge to main
+  • Request Founder release approval
   • Deploy to production
   • Update FEATURE_INVENTORY + logs
   • Create release record
 ```
 
 **Quality maintained through:**
-- Wearing each hat's responsibilities (6-role procedures as checklists)
+- Wearing each hat's responsibilities (six-hat procedures as checklists)
 - Security checklist (always)
 - Build/lint/test verification (always)
 - Standards and patterns (CODE_STANDARDS, PRINCIPLES)
 - Pattern matching (copy before inventing)
 
-**Time savings vs. 6-person team:** 3-4 hours per major feature (17-20% faster) by eliminating approval delays while maintaining quality.
+**Time savings vs. a multi-person team:** Reduced coordination overhead while maintaining the same hat deliverables and quality checks.
 
 **Reference documents for each hat:** `docs/10-team/6-role-hats/[role-name].md` (defines responsibilities, quality checks, deliverables for each hat)
 
@@ -154,7 +153,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 11. **`docs/08-decisions/`** — Decision records
 12. **`docs/12-deferred/evidence/`** — Research and measurements (deferred until post-Gate 0)
 13. **`docs/09-reviews/`** — Review records
-14. **`docs/10-team/`** — **Team organization, 6-role-hats quality procedures**
+14. **`docs/10-team/`** — **Team organization and six-hat quality procedures**
 15. **`docs/current-phase/logs/`** — Operational logs
 16. **`docs/00-constitution/governance/`** — PRINCIPLES, CODE_STANDARDS, GIT_WORKFLOW, GATES
 17. **`docs/11-archive/`** — Historical reference only (DO NOT use for current work)
@@ -173,7 +172,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 - `docs/00-constitution/documentation-architecture.md` — Where everything belongs
 - `docs/01-product/product-model.md` — Product concepts
 - `docs/01-product/product-glossary.md` — Canonical vocabulary
-- `docs/10-team/README.md` — **Team organization and 6-role-hats**
+- `docs/10-team/README.md` — **Team organization and six-hat workflow**
 - `docs/10-team/6-role-hats/` — **Detailed hat procedures**
 - `docs/start-here/founder.md` — Quick reference
 - `docs/04-features/FEATURE_INVENTORY.md` — What's shipped vs deferred
@@ -255,7 +254,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 
 **Hat 6: Founder (decision-making when uncertain)**
 
-**Each hat has quality responsibilities. You wear all 6 yourself, in sequence, without approval delays.**
+**Each hat has quality responsibilities. You wear all 6 yourself, in sequence, with brief approval checkpoints.**
 
 **Hat references:** `docs/10-team/6-role-hats/[role-name].md` defines responsibilities for each hat.
 
@@ -269,8 +268,8 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 - Align work with phase gate criteria
 - Document progress
 
-### 3. Quality Gates (Not Approval Gates)
-**Quality maintained through verification, not self-approval.**
+### 3. Quality Gates and Founder Approval
+**Quality maintained through verification and explicit, brief Founder self-approval.**
 
 - Security checklist (6 points, non-negotiable)
 - Build + lint + test pass
@@ -314,7 +313,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 - User-scoped database queries only
 - No `using (true)` on user data
 - RLS (Row Level Security) on all user tables
-- Input validation always (Zod schemas)
+- Input validation always (runtime validation; Zod adoption is scheduled for Phase 1.5)
 - No hardcoded secrets
 - Auth middleware on routes
 - Error messages don't leak sensitive info
@@ -365,7 +364,7 @@ flowos/
 │   ├── 07-strategy-and-delivery/  # Roadmap, delivery and release standards
 │   ├── 08-decisions/              # Decision records
 │   ├── 09-reviews/                # Review records
-│   ├── 10-team/                   # **Team organization, 6-role-hats quality procedures**
+│   ├── 10-team/                   # **Team organization, six-hat quality procedures**
 │   ├── 12-deferred/               # Deferred docs (evidence, onboarding, team) — not active
 │   └── 11-archive/                # Historical (DO NOT use)
 ├── src/
@@ -422,7 +421,7 @@ flowos/
 ### Security Checklist (Run Before Every Merge)
 
 - [ ] User-scoped data access only (no `using (true)` on user data)
-- [ ] Input validation present (Zod schemas)
+- [ ] Input validation present (runtime validation; Zod adoption is tracked in Phase 1.5)
 - [ ] No hardcoded secrets or API keys
 - [ ] RLS on new database tables
 - [ ] Auth middleware on new API routes (new routes added to `PROTECTED_PREFIXES` in `middleware.ts`)
@@ -494,14 +493,14 @@ Read `docs/current-phase/current-sprint.md` to understand context
 ✅ **Stay in your role's scope**
 If assigned Implementation Engineer, don't make product decisions
 
-✅ **Request approval at gates**
-Product Architect → submit to Founder for approval before handoff
+✅ **Record consequential checkpoint decisions**
+Founder reviews scope/design, build quality, and release evidence before proceeding
 
 ✅ **Provide evidence**
 "Verified user-scoped queries in TaskService.ts" > "Security looks good"
 
-✅ **Hand off explicitly**
-State deliverables, completion status, next role, any blockers
+✅ **Progress explicitly**
+State deliverables, checkpoint status, next hat, and any blockers
 
 ✅ **Ask when uncertain**
 Better to ask than make assumptions
@@ -511,8 +510,8 @@ Better to ask than make assumptions
 ❌ **Never skip your role document**
 Don't assume you know what the role does
 
-❌ **Never skip approval gates**
-Work requires approval before proceeding downstream
+❌ **Never skip Founder checkpoints**
+Consequential scope, build, and release decisions require explicit Founder authorization
 
 ❌ **Never work outside your role**
 Implementation Engineer shouldn't write feature briefs
@@ -549,8 +548,8 @@ See detailed workflow files:
 Better to:
 - ✅ Read role document and understand scope
 - ✅ Check current sprint for context
-- ✅ Follow approval gates
-- ✅ Request approval before proceeding
+- ✅ Follow the applicable Founder checkpoints
+- ✅ Record authorization before merge or release
 - ✅ Ship simple, working code
 
 Than to:

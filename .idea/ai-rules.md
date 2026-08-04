@@ -27,18 +27,18 @@
 **Production:** https://flowos-sage.vercel.app  
 
 **Current Phase:** Phase 1 — Establish Implementation Truth  
-**Current Sprint:** Week of 2026-08-04 (Phase 1 sprint creation pending)  
+**Current Sprint:** 2026-08-04 → 2026-08-08 (Phase 1 sprint active)  
 **Gate 1 Target:** Every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)  
 **Progress:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 authorized (D-003)
 
-**Team:** 6 roles (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager) — solo founder wears all hats
+**Team:** Six authoritative hats grouped into Plan, Build, and Ship — solo founder wears all hats
 
 ---
 
 ## Essential References
 
 **Before starting work:**
-1. Read `.ai/context.md` — Full product context, principles, 6-role team
+1. Read `.ai/context.md` — Full product context, principles, six-hat workflow
 2. Check `docs/current-phase/current-sprint.md` — Phase 1 assignments
 3. Review your role: `docs/10-team/6-role-hats/[role-name].md`
 
@@ -59,11 +59,11 @@
 ## Core Principles
 
 ### 1. Role-Based Execution
-**You are assigned ONE role at a time.**
-- Read `docs/10-team/6-role-hats/[role-name].md` when assigned
-- Stay in your role's scope
-- Request approval at gates
-- Hand off to next role
+**The Founder wears one hat at a time, progressing through the six procedures.**
+- Read the relevant `docs/10-team/6-role-hats/[role-name].md`
+- Stay within that hat's scope and deliverables
+- Self-approve at the three short mode checkpoints
+- Continue to the next hat in the same session
 
 ### 2. Sprint-Driven Work
 **Work comes from current sprint.**
@@ -84,7 +84,7 @@ Always check similar files before writing new code. Copy existing patterns.
 ### 4. Security Non-Negotiable
 - User-scoped queries only
 - No hardcoded secrets
-- Input validation always (Zod schemas)
+- Input validation always (runtime server-side validation; Zod decision is scheduled for Phase 1.5)
 - RLS on user tables
 - Auth middleware on routes
 

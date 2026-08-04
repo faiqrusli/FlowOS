@@ -1,20 +1,20 @@
 ﻿# FlowOS Team Organization
 
 **Status:** Active  
-**Last Updated:** 2026-08-03  
+**Last Updated:** 2026-08-04  
 
 ---
 
-## Current Approach: Solo Founder with 6-Role Quality Hats
+## Current Approach: Solo Founder with 6-Hat Quality Procedures
 
-**FlowOS is developed by a solo founder using 6-role procedures as quality "hats".**
+**FlowOS is developed by a solo founder using six authoritative hat procedures.**
 
 **👉 Complete workflow: [Solo Founder Workflow](../start-here/solo-founder-workflow.md)**  
 **👉 Quick reference: [How to Develop FlowOS](../start-here/how-to-develop-flowos.md)**
 
 ### The 6 Quality Hats
 
-Think of the 6 roles as "hats" you wear to ensure quality work:
+Think of the 6 procedures as "hats" you wear to ensure quality work:
 
 | Hat | What It Ensures | Deliverable |
 |-----|-----------------|-------------|
@@ -25,17 +25,17 @@ Think of the 6 roles as "hats" you wear to ensure quality work:
 | **Hat 5: Release Manager** | VERIFY and SHIP it | Test results, Deployment, Release record |
 | **Hat 6: Founder** | DECIDE when uncertain | Decisions |
 
-**You wear all 6 hats yourself, in sequence, maintaining each hat's quality standards without coordination delays.**
+**You wear all 6 hats yourself, in sequence, maintaining each hat's quality standards with short self-approval checkpoints rather than coordination delays.**
 
 **Detailed hat references:** See `6-role-hats/` folder for complete responsibilities, quality checks, and deliverables for each hat.
 
 ### Organized into 3 Modes
 
-**Mode 1: Plan** — Wear Hats 1-2 (Product & Design thinking)  
-**Mode 2: Build** — Wear Hats 3-4 (Engineering & Implementation)  
-**Mode 3: Ship** — Wear Hat 5 (Release & Verification)
+**Mode 1: Plan** — Wear Hats 1-2 (Product & Design thinking), then do a quick scope/design self-approval  
+**Mode 2: Build** — Wear Hats 3-4 (Engineering & Implementation), then do a quick quality self-approval  
+**Mode 3: Ship** — Wear Hat 5 (Release & Verification), then complete Founder Hat 6 release approval
 
-**Time savings:** 3-4 hours per major feature (17-20% faster) by eliminating approval delays while maintaining quality.
+**Time savings:** The grouped workflow removes coordination overhead while retaining explicit Founder approval at the three mode checkpoints.
 
 ---
 
@@ -81,9 +81,9 @@ Each role defines specific quality responsibilities you ensure when wearing that
 **Location:** `docs/11-archive/team/`
 
 **Why simplified:**
-- 6-role approach had approval gates (self-approval theater for solo work)
-- Same quality maintained through hat procedures, not coordination
-- Faster iteration (17-20% time savings per major feature)
+- The six hats remain authoritative; the three modes reduce context switching
+- Same quality is maintained through hat procedures, checklists, and quick Founder self-approval
+- Future team coordination can add handoffs without changing the underlying quality responsibilities
 
 **Bring back team coordination when:**
 - Hiring team members
@@ -96,7 +96,7 @@ Each role defines specific quality responsibilities you ensure when wearing that
 
 When working on FlowOS:
 1. Read [How to Develop FlowOS](../start-here/how-to-develop-flowos.md)
-2. Follow the 3-mode workflow (Plan/Build/Ship)
+2. Follow the 6 hats grouped into 3 modes (Plan/Build/Ship)
 3. Run security checklist before merge
 4. Check [.ai/context.md](../../.ai/context.md) for detailed guidance
 
@@ -112,4 +112,4 @@ When working on FlowOS:
 
 ---
 
-**Simple, focused, quality work. No coordination theater.**
+**Simple, focused, quality work. No unnecessary coordination theater; Founder approval remains explicit where decisions matter.**

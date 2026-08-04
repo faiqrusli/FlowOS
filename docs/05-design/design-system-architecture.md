@@ -116,7 +116,7 @@ The workspace-architecture document owns reusable spatial composition: applicati
 
 It applies Information Structure without redefining it. It does not decide which destinations exist, what their labels mean, or which product system owns a displayed object.
 
-**Current implementation reference:** [DESIGN_SYSTEM_V3_WORKSPACE.md](../05-design/DESIGN_SYSTEM_V3_WORKSPACE.md).
+**Historical implementation evidence:** [DESIGN_SYSTEM_V3_WORKSPACE.md](../11-archive/design/DESIGN_SYSTEM_V3_WORKSPACE.md). Stable workspace rules must be promoted into active design standards before use.
 
 ### 4.3 Interaction and content standards
 
@@ -124,7 +124,7 @@ Interaction and content standards own reusable expression of state and action: c
 
 They must make state, uncertainty, authority, provenance, and recovery understandable. They must not use a repeated interaction pattern to create a hidden product workflow or change a system’s semantic rules.
 
-**Current implementation reference for interaction, type, and motion:** [DESIGN_SYSTEM_V3_INTERACTION.md](../05-design/DESIGN_SYSTEM_V3_INTERACTION.md).
+**Historical implementation evidence for interaction, type, and motion:** [DESIGN_SYSTEM_V3_INTERACTION.md](../11-archive/design/DESIGN_SYSTEM_V3_INTERACTION.md). Stable rules must be promoted into active standards before use.
 
 ### 4.4 Accessibility standards
 

@@ -6,9 +6,9 @@
 **Owner:** FlowOS Product  
 **Purpose:** Historical record of the session-scoped task/habit queue design.
 
-**Superseded by:** [Decision Log — Next Up V2](../../current-phase/logs/decision-log.md#2026-07-10--next-up-v2-persistent-task-execution-queue). V2 is task-only, persists `tasks.queue_order`, and separates execution controls from planning.
+**Superseded by:** [Decision Log — Next Up V2](../../../current-phase/logs/decision-log.md#2026-07-10--next-up-v2-persistent-task-execution-queue). V2 is task-only, persists `tasks.queue_order`, and separates execution controls from planning.
 
-**Related:** [DESIGN_SYSTEM.md](../05-design/DESIGN_SYSTEM.md) · [m2-next-up-queue.md](../../execution/runbooks/m2-next-up-queue.md) · `workplace-focus-card.tsx`
+**Related:** [DESIGN_SYSTEM.md](../../../05-design/DESIGN_SYSTEM.md) · [m2-next-up-queue.md](./m2-next-up-queue.md) · `workplace-focus-card.tsx`
 
 ---
 

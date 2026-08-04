@@ -2,13 +2,13 @@
 
 | | |
 |---|---|
-| **Document type** | Supporter for [Design System v3](./DESIGN_SYSTEM_V3.md) |
-| **Status** | Active implementation authority |
+| **Document type** | Historical supporter for [Design System v3](../../../05-design/DESIGN_SYSTEM_V3.md) |
+| **Status** | Historical evidence — not an active implementation authority |
 | **Version** | 3.0 |
 | **Date** | July 19, 2026 |
-| **Parent** | [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) |
+| **Parent** | [DESIGN_SYSTEM_V3.md](../../../05-design/DESIGN_SYSTEM_V3.md) |
 | **Sibling** | [DESIGN_SYSTEM_V3_INTERACTION.md](./DESIGN_SYSTEM_V3_INTERACTION.md) |
-| **Absorbs** | [Borderless Workspace v1.0](../11-archive/design/themes/DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md) (policy retained; elevation numbers use Surface 0–10) |
+| **Absorbs** | [Borderless Workspace v1.0](./themes/DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md) (policy retained; elevation numbers use Surface 0–10) |
 
 ---
 
@@ -22,7 +22,7 @@ This supporter defines **how FlowOS is spatially composed** so every page feels 
 4. **Per-module surface maps** (Today, Tasks, Habits, Focus, Notes, Reflection, Schedule).
 5. Consistency rules so new panels never invent a one-off layout language.
 
-**Use with:** Surface tokens from [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md). Type/spacing/hover recipes from [DESIGN_SYSTEM_V3_INTERACTION.md](./DESIGN_SYSTEM_V3_INTERACTION.md).
+**Historical use:** Surface tokens from [DESIGN_SYSTEM_V3.md](../../../05-design/DESIGN_SYSTEM_V3.md). Type/spacing/hover recipes from [DESIGN_SYSTEM_V3_INTERACTION.md](./DESIGN_SYSTEM_V3_INTERACTION.md). Stable rules must be promoted through the active [design implementation map](../../../05-design/design-implementation-map.md).
 
 **Does not define:** New hex colors, typography scales, or motion curves — those live elsewhere in the V3 family.
 
@@ -86,7 +86,7 @@ Luminance order (shell → content): **0 → 1 → 2 → 3 → 4 → 5** (Left �
 2. Right utility sits between app background and canvas — one tiny step is enough; do not brighten it toward card paint.
 3. Top status / header band aligns to shared shell height; no decorative bottom stroke required if spacing + surface already separate.
 4. Expanding utility panels **overlay or slide** without inventing a fourth background family.
-5. Critical shell controls stay **visible without hover** ([PRINCIPLES #10](./governance/PRINCIPLES.md)).
+5. Critical shell controls stay **visible without hover** ([PRINCIPLES #10](../../../00-constitution/governance/PRINCIPLES.md)).
 
 ### Geometry (implementation targets)
 
@@ -166,7 +166,7 @@ Prefer **spacing** over hairlines. When a divider is needed (unrelated section g
 
 ## Per-module surface maps
 
-All maps use [Surface 0–10](./DESIGN_SYSTEM_V3.md). Implementers must not invent parallel backgrounds.
+All maps use [Surface 0–10](../../../05-design/DESIGN_SYSTEM_V3.md). Implementers must not invent parallel backgrounds.
 
 ### Today
 
@@ -295,7 +295,7 @@ Before merge, confirm:
 
 | Prior doc | Status under V3 |
 |---|---|
-| [Borderless Workspace](../11-archive/design/themes/DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md) | Policy absorbed here; historical reference |
+| [Borderless Workspace](./themes/DESIGN_SYSTEM_BORDERLESS_WORKSPACE.md) | Policy absorbed here; historical reference |
 | Tokyo Night Warm surface names | Alias to Surface 0–10 during token migration |
 | Neutral Dark / Navy | Historical; do not mix charcoal families into V3 pages |
 

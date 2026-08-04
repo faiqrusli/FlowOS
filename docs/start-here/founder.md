@@ -2,7 +2,7 @@
 
 **Audience:** You (the founder)  
 **Purpose:** Quick reference for daily work  
-**Last Updated:** 2026-08-03  
+**Last Updated:** 2026-08-04  
 
 ---
 
@@ -10,11 +10,11 @@
 
 **👉 See: [How to Develop FlowOS](../start-here/how-to-develop-flowos.md)**
 
-**Simple:** Plan → Build → Ship
+**Simple:** Six hats grouped into Plan → Build → Ship
 
-- **Plan:** Decide what to build (5 min - 2 hours)
-- **Build:** Implement with quality (varies)
-- **Ship:** Deploy and document (30 min - 1 hour)
+- **Plan:** Wear Product Architect and Design Architect; self-approve scope and design (5 min - 2 hours)
+- **Build:** Wear Engineering Architect and Implementation Engineer; self-approve quality (varies)
+- **Ship:** Wear Release Manager, then approve as Founder (30 min - 1 hour)
 
 Quality maintained through checklists and standards, not process.
 
@@ -136,8 +136,8 @@ Quality comes from:
 - ✅ Pattern matching (copy before inventing)
 
 Not from:
-- ❌ Approval gates where you approve yourself
-- ❌ Role switching
+- ❌ Long approval queues or repeated handoff ceremonies
+- ❌ Unstructured role switching without the hat deliverables
 - ❌ Heavy documentation for small features
 - ❌ Coordination theater
 
@@ -145,13 +145,13 @@ Not from:
 
 ## Historical Context
 
-**Previously:** 6-role team structure with 5 approval gates per feature (archived Aug 2026)
+**Previously:** Multi-person role handoffs and five approval gates per feature.
 
-**Now:** Simple 3-mode workflow
+**Now:** The six hats remain authoritative and are grouped into three modes with short self-approval checkpoints.
 
-**Why:** You don't coordinate with yourself. Quality maintained through checklists and standards.
+**Why:** The Founder still approves consequential decisions, but does not need a separate coordination queue when doing the work alone.
 
-**Bring back when:** You hire team members and need actual coordination.
+**Bring back later:** Multi-person handoffs can be added when the organization grows without changing the six quality responsibilities.
 
 ---
 

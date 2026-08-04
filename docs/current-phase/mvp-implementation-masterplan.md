@@ -6,7 +6,7 @@
 **Approval Required:** Founder
 **Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Roadmap](../07-strategy-and-delivery/roadmap.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Delivery plans, feature dossiers, design specifications, engineering designs, validation plans, release plans, decisions, and reviews
-**Last Updated:** 2026-08-03
+**Last Updated:** 2026-08-04
 **Review trigger:** A change to the MVP boundary, an evidence gate, a phase dependency, a feature disposition, or the readiness decision for founder or external dogfood.
 
 ---
@@ -123,8 +123,32 @@ MVP admission is a product decision, not an engineering convenience. If evidence
 - identify dead code, placeholder routes, duplicate scheduling surfaces, dual save paths, and undocumented states;
 - run baseline quality, accessibility, security, and production checks;
 - create only the feature briefs and behavior contracts needed to describe admitted MVP behavior.
+- execute the accepted post-Phase-0 documentation improvements in parallel without turning them into blanket Gate 1 criteria;
+- use the [current sprint](./current-sprint.md) as the dated execution plan and the [Gate 1 checklist](./phase-1/gate-checklist.md) as the evidence register and decision record.
 
 **Gate 1 — Current build truth:** For every admitted MVP domain, the team can demonstrate the current behavior, data path, known gaps, and owner. Unknown status is not allowed to pass into implementation.
+
+**Phase 1 execution boundary:** Phase 1 establishes current truth; it does not implement new MVP breadth. P0/P1 changes are permitted only when required to make behavior, data integrity, security, or recovery truth safe and demonstrable. Validation-library, form-management, and date/time integration are Phase 1.5 work governed by the [Technology Integration Masterplan](../06-engineering/technology-integration-masterplan.md), not hidden Gate 1 requirements.
+
+### Phase 1.5 — Foundation Infrastructure
+
+**Purpose:** Establish core engineering infrastructure before MVP loop implementation to ensure consistent patterns for validation, forms, and date/time handling across all surfaces.
+
+**Technology authority:** [Technology Integration Masterplan](../06-engineering/technology-integration-masterplan.md). **Decision:** [D-004](../08-decisions/records/D-004-add-phase-1-5-foundation-infrastructure-to-mvp-masterplan.md).
+
+**Work:**
+
+- integrate Zod for runtime validation across forms, APIs, and data boundaries;
+- integrate React Hook Form for form management to replace current useState-based forms;
+- integrate date-fns for date/time operations to replace native Date API;
+- establish validation patterns for auth forms, habit creation, task management, and reflection capture;
+- establish date/time handling patterns for focus sessions, schedules, and historical views;
+- update relevant architecture documents (Client Architecture, Engineering Standards) to reflect new patterns;
+- document integration patterns and gotchas for the engineering team.
+
+**Rationale:** Foundation infrastructure is established after Phase 1 establishes implementation truth but before Phase 2 contracts the MVP loop. This ensures that when feature briefs and behavior contracts are written in Phase 2, they can reference established validation, form, and date/time patterns directly. Phase 3 implementation can then use these patterns from day one rather than retrofitting them later.
+
+**Gate 1.5 — Foundation Ready:** Core validation, form management, and date/time infrastructure are integrated, documented, and ready for MVP loop implementation. The team has established patterns for Zod schemas, React Hook Form usage, and date-fns operations that can be referenced in Phase 2 contracts and used in Phase 3 implementation.
 
 ### Phase 2 — Contract the coherent MVP loop
 
@@ -223,7 +247,9 @@ flowchart TD
   BC --> FDS[Feature Design Specifications]
   FDS --> DD[Delivery Designs]
   DD --> DP[Delivery Plans]
-  DP --> Build[Core-loop implementation]
+  P --> TIM[Technology Integration Masterplan]
+  TIM --> INF[Phase 1.5 Foundation Infrastructure]
+  INF --> Build[Core-loop implementation]
   Build --> VP[Validation Plans and evidence]
   VP --> RP[Release Plan]
   RP --> FD[Founder dogfood]

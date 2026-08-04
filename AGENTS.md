@@ -55,9 +55,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 **Mode 3: Ship**
 - Hat 5: Release Manager (verify, deploy, release record)
 
-**Hat 6: Founder (decide when uncertain)**
+**Hat 6: Founder (approve or reject consequential decisions and releases)**
 
-**Each hat has quality responsibilities. Execute all hats yourself, in sequence, without approval delays.**
+**Each hat has quality responsibilities. Execute all hats yourself, in sequence, with short Founder self-approval checkpoints.**
 
 **Hat references:** `docs/10-team/6-role-hats/[role-name].md` for detailed procedures
 
@@ -75,6 +75,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - ✅ Gate 0 passed and Phase 0 closed (2026-08-04)
 - ✅ Phase 1 sprint created 2026-08-04 → 2026-08-08
 - 📋 Gate 1 checklist: `docs/current-phase/phase-1/gate-checklist.md`
+- 📋 Phase 1.5: `docs/06-engineering/technology-integration-masterplan.md` (D-004)
 
 ---
 

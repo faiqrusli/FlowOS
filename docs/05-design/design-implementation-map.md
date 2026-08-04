@@ -6,7 +6,7 @@
 **Approval Required:** Founder
 **Parent:** [Design System Architecture](./design-system-architecture.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Feature Design Specifications](./feature-design-specifications.md) · [MVP Implementation Masterplan](../current-phase/mvp-implementation-masterplan.md)
 **Children:** Feature design specifications, component specifications, design reviews, and implementation migrations
-**Last Updated:** 2026-08-03
+**Last Updated:** 2026-08-04
 **Review trigger:** A design reference, code authority, token family, component boundary, feature surface, or migration disposition changes.
 
 ---
@@ -63,8 +63,8 @@ Implemented UI is the current truth of what a person can see and do, but it is n
 | Design-document boundaries | `design-system-architecture.md` | **Canonical active** | Responsibility, authority, and dependency model | Tokens, page layouts, feature behavior | Keep as parent; link all new design work to it |
 | Visual foundation | `05-design/DESIGN_SYSTEM_V3.md` | **Active implementation reference** | Surface hierarchy, visual language, token intent, type/spacing guidance | Product meaning, feature behavior, CSS truth by itself | Reconcile with live tokens and promote stable rules into a future visual-foundation document |
 | Palette | `05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md` | **Active palette reference** | Tokyo Night Warm colors and semantic usage | Feature state semantics, component APIs, page architecture | Verify every semantic token against `src/app/globals.css`; retire duplicates |
-| Workspace and shell | `05-design/DESIGN_SYSTEM_V3_WORKSPACE.md` | **Active implementation reference** | Regions, density, shell, per-module surface maps | Navigation ownership and product-system meaning | Reconcile with Information Structure and Client Architecture |
-| Interaction language | `05-design/DESIGN_SYSTEM_V3_INTERACTION.md` | **Active implementation reference** | Repeated interaction, feedback, state, focus, and content cues | Feature-specific behavior contracts | Extract reusable rules into interaction/content standards where stable |
+| Workspace and shell | `11-archive/design/DESIGN_SYSTEM_V3_WORKSPACE.md` | **Historical evidence** | Prior regions, density, shell, and per-module surface maps | Current authority or navigation ownership | Promote only stable rules into active design standards; do not use the archive as a live contract |
+| Interaction language | `11-archive/design/DESIGN_SYSTEM_V3_INTERACTION.md` | **Historical evidence** | Prior interaction, feedback, state, focus, and content cues | Feature-specific behavior contracts or current authority | Promote only stable rules into active interaction/content standards |
 | CSS and token implementation | `src/app/globals.css`, `src/lib/theme/tokens.ts`, `src/lib/theme/surface-classes.ts` | **Current rendered authority** | What the shipped client actually paints | Normative product meaning or future design decisions | Add token/source references during each migration; remove dead aliases in cleanup |
 | Feature-specific design | `docs/11-archive/review/design/`, `docs/11-archive/design/`, inline component conventions | **Historical / mixed** | Historical or local feature intent | Canonical future feature design authority | Use archived material only as evidence; admit current specs into `05-design` |
 | Accessibility | `accessibility-standards.md` plus feature checks | **Canonical standard, incomplete coverage** | Reusable obligations and verification boundaries | Feature layout or test result | Add accessibility acceptance to each MVP feature dossier |
@@ -114,7 +114,7 @@ The target tree is intentionally smaller than the current collection of referenc
 └── reviews/                             # bounded design review records
 ```
 
-The `05-design/DESIGN_SYSTEM_V3*.md` family remains in place while it is the best implementation reference. It must not be duplicated verbatim into the target tree. Promote a rule once, update this map, and mark the old source's role.
+The active `05-design/DESIGN_SYSTEM_V3.md` and `DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md` files remain the visual references. Workspace and interaction documents are archived under `11-archive/design/`; do not recreate them as parallel active authorities. Promote a rule once, update this map, and mark the old source's role.
 
 ## 7. Exit condition for design cleanup
 

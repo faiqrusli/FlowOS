@@ -45,12 +45,12 @@ apply: always
 **Production:** https://flowos-sage.vercel.app  
 
 **Current Phase:** Phase 1 — Establish Implementation Truth  
-**Current Sprint:** Week of 2026-08-04 (Phase 1 sprint creation pending)  
+**Current Sprint:** 2026-08-04 → 2026-08-08 (Phase 1 sprint active)  
 **Gate 1 Target:** Every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)  
 **Progress:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 authorized (D-003)  
 **Decision:** D-003 — Pass Gate 0 and Authorize Phase 1
 
-**Team:** 6 roles (Founder, Product Architect, Design Architect, Engineering Architect, Implementation Engineer, Release Manager) — solo founder wears all hats
+**Team:** Six authoritative hats grouped into Plan, Build, and Ship — solo founder wears all hats
 
 ---
 
@@ -58,7 +58,7 @@ apply: always
 
 1. **Role-Based Execution** — You are ONE role, stay in scope
 2. **Sprint-Driven Work** — Check current sprint for Phase 1 context
-3. **Approval Gates** — Request approval before proceeding downstream
+3. **Approval Checkpoints** — Founder self-approves scope/design, build quality, and release evidence
 4. **Security Non-Negotiable** — 6-point checklist every merge
 5. **Pattern Matching** — Copy similar files before inventing
 6. **Small Focused Changes** — One logical change per commit
@@ -136,11 +136,11 @@ Higher wins:
 
 **When assigned a role:**
 1. Read `.ai/workflows/role-assignment.md`
-2. Read `docs/10-team/6-role-hats/[your-role].md`
+2. Read the relevant `docs/10-team/6-role-hats/[role-name].md`
 3. Read `docs/current-phase/current-sprint.md`
 4. Execute according to role workflow
-5. Request approval at gates
-6. Hand off to next role
+5. Complete the applicable short Founder self-approval checkpoint
+6. Continue to the next hat in the same session
 
 ---
 

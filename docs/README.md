@@ -4,7 +4,7 @@
 
 > Direction → Commitment → Action → Evidence → Sensemaking → Adaptation
 
-**Status:** Phase 0 CLOSED — Gate 0 PASSED (2026-08-04). Phase 1 (Establish Implementation Truth) authorized; sprint creation pending.
+**Status:** Phase 0 CLOSED — Gate 0 PASSED (2026-08-04). Phase 1 (Establish Implementation Truth) active; Phase 1.5 scheduled for validation and technical integration.
 
 **Production:** https://flowos-sage.vercel.app  
 **Historical live-demo references:** [flowos-live-demo-spec.md](./11-archive/review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](./11-archive/execution/runbooks/flowos-live-demo.md)  
@@ -20,8 +20,8 @@
 | [**Current Sprint**](./current-phase/current-sprint.md) | **What to work on NOW** — Current phase, tasks, status |
 | [**Phase 1**](./current-phase/phase-1/README.md) | **Current phase work** — Establish Implementation Truth (Gate 1) |
 | [**MVP Masterplan**](./current-phase/mvp-implementation-masterplan.md) | **Implementation roadmap** — All MVP phases and gates |
-| [**Solo Founder Workflow**](./start-here/solo-founder-workflow.md) | **Complete 6-hat workflow** — Use 6-role procedures for quality without coordination overhead |
-| [**How to Develop FlowOS**](./start-here/how-to-develop-flowos.md) | **Quick reference** — Simple 3-mode approach (Plan/Build/Ship) for solo development |
+| [**Solo Founder Workflow**](./start-here/solo-founder-workflow.md) | **Complete 6-hat workflow** — Use six authoritative hats grouped into three modes |
+| [**How to Develop FlowOS**](./start-here/how-to-develop-flowos.md) | **Quick reference** — Three modes containing the six authoritative hats |
 | [Documentation Architecture](./00-constitution/documentation-architecture.md) | Where every durable document belongs, what it owns, and how it changes |
 | [Product Model](./01-product/product-model.md) | Canonical product concepts, relationships, and invariants |
 | [Product Glossary](./01-product/product-glossary.md) | Canonical vocabulary for product concepts and documentation artifacts |
@@ -47,6 +47,7 @@
 | [Feature Design Specifications](./05-design/feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design |
 | [Engineering Architecture](./06-engineering/engineering-architecture.md) | Architecture for technical domains, product-semantic preservation, and operations boundaries |
 | [Engineering Standards](./06-engineering/engineering-standards.md) | Standard for safe, accountable engineering change across code, data, infrastructure, and dependencies |
+| [Technology Integration Masterplan](./06-engineering/technology-integration-masterplan.md) | Phase 1.5 validation-policy and technical-integration roadmap |
 | [Data Architecture](./06-engineering/data-architecture.md) | Architecture for durable information, lineage, lifecycle, integrity, and access |
 | [Identity and Access Architecture](./06-engineering/identity-and-access-architecture.md) | Architecture for identity, bounded authority, delegation, revocation, and audit |
 | [Integration Architecture](./06-engineering/integration-architecture.md) | Architecture for connected systems, exchange, synchronization, and external effects |

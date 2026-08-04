@@ -1,7 +1,7 @@
 ﻿# Current Phase
 
 **Purpose:** Central location for current implementation phase work  
-**Status:** Phase 0 CLOSED (Gate 0 PASSED 2026-08-04) — Phase 1 authorized, sprint creation pending  
+**Status:** Phase 0 CLOSED (Gate 0 PASSED 2026-08-04) — Phase 1 active; Phase 1.5 scheduled  
 **Last Updated:** 2026-08-04  
 
 ---
@@ -24,6 +24,7 @@
 | [Current Sprint](./current-sprint.md) | Active work for the current sprint/phase |
 | [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) | **Highest authority** for MVP phases and gates |
 | [Phase 1 Folder](./phase-1/) | **Current phase work** — Gate 1 checklist, sprint tracking |
+| [Phase 1.5 Technology Integration](../06-engineering/technology-integration-masterplan.md) | Scheduled validation-policy and technical-integration work |
 | [Phase 0 Archive](../11-archive/phases/phase-0/) | Closed Phase 0 records — Gate 0 PASSED 2026-08-04 |
 
 ---
@@ -38,9 +39,10 @@ current-phase/
   ├── logs/                               ← Operational logs (August 2026)
   │   ├── august-log.md                   ← Narrative log
   │   └── developer-log/                  ← Daily developer journals
-  └── phase-1/                            ← Phase 1 work (current phase)
-      ├── README.md                       ← Phase 1 overview
-      └── gate-checklist.md               ← Gate 1 completion criteria (pending sprint creation)
+  ├── phase-1/                            ← Phase 1 work (current phase)
+  │   ├── README.md                       ← Phase 1 overview
+  │   └── gate-checklist.md               ← Gate 1 completion criteria
+  └── (Phase 1.5 is governed by the Technology Integration Masterplan)
 ```
 
 **Phase lifecycle:**
@@ -76,7 +78,7 @@ current-phase/
 3. **[Phase 1 Gate Checklist](./phase-1/gate-checklist.md)** — What needs to be done
 4. **[Solo Founder Workflow](../start-here/solo-founder-workflow.md)** — How to execute work using 6 hats
 
-**Then start executing with the 6-hat workflow.**
+**Then start executing with the 6-hat workflow. Phase 1.5 work is scheduled separately and does not change the Phase 1 Gate 1 definition.**
 
 ---
 

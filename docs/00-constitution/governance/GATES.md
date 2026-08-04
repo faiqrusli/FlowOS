@@ -2,26 +2,28 @@
 
 **Status:** Active  
 **Audience:** Founder, engineers  
-**Last updated:** July 4, 2026 (Pass 5 — metrics merged from SUCCESS_METRICS; quality gates consolidated Aug 3, 2026)
+**Last updated:** August 4, 2026
 
 Objective gates for each release stage and per-feature quality checks.
 
-**Production:** https://flowos-sage.vercel.app · **M1 complete** · **M2 in progress**
+**Production:** https://flowos-sage.vercel.app · **Gate 0 passed** · **Phase 1 active**
 
 **Current implementation authority:** [MVP Implementation Masterplan](../../current-phase/mvp-implementation-masterplan.md). The M0–M2 gates below are a historical implementation snapshot and do not authorize new work by themselves.
 
 ---
 
-## Current status (July 4, 2026)
+## Current status (August 4, 2026)
 
 | Stage | Status |
 |-------|--------|
-| M0 Custody | Complete |
-| M1 Deployed & Secure | **Complete** — build green, RLS verified, production live |
-| M2 Founder Daily Driver | **In progress** — Sessions 1–6 shipped |
+| Phase 0 / Gate 0 | **Complete** — passed and archived |
+| Phase 1 / Gate 1 | **Active** — current build truth |
+| Phase 1.5 | Scheduled — validation policy and technical integration |
 | M3 First Strangers (Private Alpha) | Not started |
 | Closed Beta | Not started |
 | Production GA | Not started |
+
+Current Gate 1 authority: [phase-1/gate-checklist.md](../../current-phase/phase-1/gate-checklist.md). The M0–M2 sections below are historical milestone snapshots and do not block Phase 1.
 
 ---
 
@@ -62,7 +64,7 @@ Internal Development
 
 ---
 
-## 3. M2 — Founder Daily Driver (current)
+## 3. M2 — Founder Daily Driver (historical snapshot)
 
 Historical M2 baseline from [execution-masterplan.md](../../11-archive/strategy/execution-masterplan.md) and [m2 runbook](../../11-archive/execution/runbooks/m2-founder-daily-driver.md). Current work must be admitted through the [MVP Implementation Masterplan](../../current-phase/mvp-implementation-masterplan.md):
 
@@ -78,7 +80,7 @@ Historical M2 baseline from [execution-masterplan.md](../../11-archive/strategy/
 | Friction logged in [friction-log.md](../../11-archive/execution/logs/friction-log.md) |
 | **≥ 3 recruiting candidates** for M3 |
 
-**Exit:** All M2 exit criteria pass → start M3 recruitment.
+**Historical exit:** All M2 exit criteria pass → start M3 recruitment. Current sequencing is governed by the current-phase masterplan.
 
 ---
 

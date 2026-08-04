@@ -1,7 +1,7 @@
 ﻿# Start Here
 
 **Purpose:** Onboarding guides and workflow references for getting started with FlowOS development  
-**Last Updated:** 2026-08-03  
+**Last Updated:** 2026-08-04  
 
 ---
 
@@ -34,8 +34,8 @@
 ### Solo Founder Workflow
 **[solo-founder-workflow.md](./solo-founder-workflow.md)**
 
-Complete guide for solo founder using 6-role quality procedures:
-- How to use 6 roles as quality "hats"
+Complete guide for solo founder using 6-hat quality procedures:
+- How to use 6 roles as quality "hats" grouped into 3 modes
 - Practical examples (major and small features)
 - Time comparison vs 6-person team
 - When to wear each hat
@@ -47,7 +47,7 @@ Complete guide for solo founder using 6-role quality procedures:
 **[how-to-develop-flowos.md](./how-to-develop-flowos.md)**
 
 Quick reference for daily work:
-- 3-mode workflow (Plan/Build/Ship)
+- 3-mode workflow (Plan/Build/Ship) using the 6 authoritative hats
 - Feature documentation guidance
 - Quality standards
 - Working with AI

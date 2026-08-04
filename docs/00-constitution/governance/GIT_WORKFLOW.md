@@ -2,7 +2,7 @@
 
 **Status:** Active  
 **Audience:** Founder, AI agents, engineers  
-**Last updated:** July 4, 2026
+**Last updated:** August 4, 2026
 
 **Rule:** `main` is production-truth. All product work happens on **branches** until the founder explicitly approves merge to `main`.
 
@@ -15,7 +15,7 @@
 | **Branch first** | Every runbook session and every UI/UX tweak starts on a **new branch** from latest `main`. |
 | **Commit on branch** | Commit as often as needed on the branch. Multiple commits per session is fine. |
 | **Push branch** | Push the feature branch to `origin` for backup — **not** the same as merging to `main`. |
-| **Test local** | `npm run build` && `npm run lint` on the branch before asking to merge. |
+| **Test local** | `npm run build` && `npm run lint` && `npm test` on the branch before asking to merge. |
 | **Main = founder approval** | Merge to `main` and push `main` **only** when the founder explicitly agrees. |
 | **AI must ask** | Agents never merge, never push `main`, never assume approval. |
 
@@ -25,12 +25,12 @@
 
 | Work type | Pattern | Example |
 |-----------|---------|---------|
-| Runbook session | `m2/session-N-short-name` | `m2/session-2-routing` |
-| Ad-hoc UI/UX tweak | `tweak/short-description` | `tweak/focus-button-visible` |
+| Feature or runbook session | `feature/short-description` | `feature/inline-task-capture` |
+| Bug fix or UI/UX tweak | `fix/short-description` | `fix/focus-button-visible` |
 | Docs-only (no product change) | `docs/short-description` | `docs/july-log-inbox` |
 | Milestone / bundle merge prep | stay on session branch until merge | — |
 
-Use lowercase kebab-case. Match runbook session number when applicable.
+Use lowercase kebab-case. Include the feature, fix, or documentation purpose.
 
 ---
 
@@ -41,7 +41,7 @@ Use lowercase kebab-case. Match runbook session number when applicable.
 ```powershell
 git checkout main
 git pull origin main
-git checkout -b m2/session-2-routing
+git checkout -b feature/short-description
 ```
 
 Confirm clean build on `main` before branching if the prior merge was large.
@@ -52,8 +52,9 @@ Confirm clean build on `main` before branching if the prior merge was large.
 # after changes
 npm run build
 npm run lint
+npm test
 git add -A
-git commit -m "M2 Session 2: next-action stays on Today"
+git commit -m "feature: describe the outcome"
 git push -u origin HEAD
 ```
 
@@ -75,9 +76,10 @@ When a runbook session finishes, the agent **must** tell the founder:
 ```powershell
 git checkout main
 git pull origin main
-git merge m2/session-2-routing --no-ff
+git merge feature/short-description --no-ff
 npm run build
 npm run lint
+npm test
 git push origin main
 ```
 
@@ -87,18 +89,15 @@ Then verify https://flowos-sage.vercel.app and add a block to the active [August
 
 ---
 
-## Merge bundles (M2 runbook)
+## Merge bundles (optional)
 
-A **merge bundle** groups one or more sessions where merging to `main` makes sense together. Bundles are **suggestions** — the founder decides timing.
+A **merge bundle** groups one or more sessions where merging to `main` makes sense together. Bundles are **suggestions** — the Founder decides timing.
 
-| Bundle | Sessions | Scope | AI reminds merge when |
-|--------|----------|-------|------------------------|
-| **B1 — Today home** | 1 | `/` = Today, `/workplace` redirect | Session 1 verified locally (and production if already merged earlier) |
-| **B2 — Routing truth** | 2 | Next-action stays on Today | Session 2 complete; **requires B1 on `main`** |
-| **B3 — Navigation** | 3 | Sidebar ≤ 5 items | Session 3 complete |
-| **B4 — Interaction** | 4, 5 | Focus controls + inline capture | **Both** sessions complete, or founder accepts partial merge |
-| **B5 — Reliability** | 6 | Error/loading boundaries | Session 6 complete — **engineering track done** |
-| **B6 — Founder ops** | 7, 8 | Recruiting + dogfood | No code merge; update logs only |
+| Bundle | Contents | Merge when |
+|--------|----------|------------|
+| **B1** | One coherent feature or fix | Verification is complete |
+| **B2** | Several dependent changes | All dependencies are verified |
+| **B3** | Documentation-only batch | Links and affected checks are verified |
 
 **AI reminder rules:**
 
@@ -110,7 +109,7 @@ A **merge bundle** groups one or more sessions where merging to `main` makes sen
 | Founder says yes | Merge, push `main`, verify production, update july-log |
 | Founder says not yet | Stay on branch; do not push `main` |
 
-Sessions 7–8 never require a product branch merge unless docs change — use `docs/` branches if needed.
+Documentation-only work may use `docs/` branches; it still requires Founder approval before merging to `main`.
 
 ---
 
@@ -121,6 +120,7 @@ Merge when **all** of the following are true:
 - [ ] Founder explicitly approved merge  
 - [ ] `npm run build` passes on branch  
 - [ ] `npm run lint` passes  
+- [ ] `npm test` passes  
 - [ ] Session verification steps from runbook passed **locally**  
 - [ ] Dependency rule satisfied (e.g. Session 2 requires Session 1 already on `main`)  
 - [ ] Optional: merge bundle complete if batching sessions  

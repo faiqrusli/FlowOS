@@ -101,9 +101,9 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 1. Read your role document in `docs/10-team/6-role-hats/`
 2. Check current sprint (`docs/current-phase/current-sprint.md`)
 3. Read required input documents
-4. Execute according to role workflow
+4. Execute according to the applicable hat workflow
 5. Produce expected outputs
-6. Request approval or hand off
+6. Complete the applicable Founder checkpoint and continue to the next hat
 
 **Use when:** User says "You are the [Role Name]" or "Begin work on [feature]"
 
@@ -111,7 +111,7 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 - Starting without role context
 - Working outside assigned scope
 - Skipping the current sprint
-- Missing explicit handoffs
+- Missing explicit checkpoint decisions
 
 ---
 
@@ -195,7 +195,7 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 
 **6 Checks:**
 1. **User-scoped data access** — No `using(true)`, user_id filtering
-2. **Input validation** — Zod schemas, server-side validation
+2. **Input validation** — Server-side runtime validation; Zod adoption is a Phase 1.5 decision
 3. **No hardcoded secrets** — Environment variables only
 4. **Row Level Security (RLS)** — On all user data tables
 5. **Auth middleware** — Routes protected by auth
@@ -284,7 +284,7 @@ Every session starts on new branch from main.
 
 **Why:** Clean history, easy rollback, safe experimentation.
 
-**How:** `[role]/[feature-name]`, never push to main without approval.
+**How:** `[role]/[feature-name]`; Founder authorization is still required before merge or release.
 
 ### 5. Quality > Speed
 Ship simple, working code over complex, buggy code.
@@ -391,7 +391,7 @@ Address immediately, not in "next refactor."
 2. Verifies all pre-merge checks
 3. Confirms manual testing done
 4. Asks: "Ready to merge? (requires approval)"
-5. **Waits for explicit approval**
+5. **Uses the applicable short Founder self-approval checkpoint**
 
 **Fail if:** AI merges without approval or skips verification steps.
 
@@ -413,8 +413,8 @@ Make it automatic, not optional.
 ✅ **Be explicit about what you checked**
 "Verified user-scoped queries in HabitsService.tsx" > "Security looks good"
 
-✅ **Wait for approval, always**
-"Ready to merge?" not "Merging now"
+✅ **Preserve Founder authorization, quickly**
+"Ready to merge?" and evidence first; do not create a separate handoff queue.
 
 ### For Developers
 

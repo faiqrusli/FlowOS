@@ -2,11 +2,11 @@
 
 | | |
 |---|---|
-| **Document type** | Supporter for [Design System v3](./DESIGN_SYSTEM_V3.md) |
-| **Status** | Active implementation authority |
+| **Document type** | Historical supporter for [Design System v3](../../../05-design/DESIGN_SYSTEM_V3.md) |
+| **Status** | Historical evidence — not an active implementation authority |
 | **Version** | 3.0 |
 | **Date** | July 19, 2026 |
-| **Parent** | [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md) |
+| **Parent** | [DESIGN_SYSTEM_V3.md](../../../05-design/DESIGN_SYSTEM_V3.md) |
 | **Sibling** | [DESIGN_SYSTEM_V3_WORKSPACE.md](./DESIGN_SYSTEM_V3_WORKSPACE.md) |
 
 ---
@@ -24,7 +24,7 @@ This supporter defines **how users perceive change and meaning** once surfaces a
 7. Control patterns (buttons, inputs, section labels, chrome polish).
 8. Semantic / module color (content identity, not shell lighting).
 
-**Use with:** Surfaces from [DESIGN_SYSTEM_V3.md](./DESIGN_SYSTEM_V3.md). Page placement from [DESIGN_SYSTEM_V3_WORKSPACE.md](./DESIGN_SYSTEM_V3_WORKSPACE.md).
+**Historical use:** Surfaces from [DESIGN_SYSTEM_V3.md](../../../05-design/DESIGN_SYSTEM_V3.md). Page placement from [DESIGN_SYSTEM_V3_WORKSPACE.md](./DESIGN_SYSTEM_V3_WORKSPACE.md). Stable rules must be promoted through the active [design implementation map](../../../05-design/design-implementation-map.md).
 
 **Does not define:** New background hexes or per-page layout maps.
 
@@ -204,7 +204,7 @@ Hover should never introduce:
 
 Floating parents rebind `--surface-hover` / `--surface-selected` so child `hover:bg-surface-hover` stays correct.
 
-Hover must not be required to discover critical controls ([PRINCIPLES #10](./governance/PRINCIPLES.md)).
+Hover must not be required to discover critical controls ([PRINCIPLES #10](../../../00-constitution/governance/PRINCIPLES.md)).
 
 ---
 
@@ -344,7 +344,7 @@ Muted text; hover `rgba(255,255,255,0.03)` or Surface 6 — no permanent chip.
 | Focus | Primary ring |
 | Hover | Slightly lighter control surface — not primary wash |
 
-Do not place Surface 5 directly on Surface 1 — sit fields on a canvas (Surface 3) or card (Surface 4) per [V3 core](./DESIGN_SYSTEM_V3.md#surface-usage-rules).
+Do not place Surface 5 directly on Surface 1 — sit fields on a canvas (Surface 3) or card (Surface 4) per [V3 core](../../../05-design/DESIGN_SYSTEM_V3.md#surface-usage-rules).
 
 Quick Capture / dialogs: shell Surface 9; field content Surface 5; footer quieter (Surface 3). Avoid stacking many elevations inside one dialog.
 
@@ -427,10 +427,10 @@ Before merge:
 | Module event colors | `schedule-palette.ts`, `*-appearance.ts` — extend, don’t inline hex |
 | Section labels | `.flow-section-label` |
 
-Smallest diff; match sibling patterns ([CODE_STANDARDS.md](./governance/CODE_STANDARDS.md)).
+Smallest diff; match sibling patterns ([CODE_STANDARDS.md](../../../00-constitution/governance/CODE_STANDARDS.md)).
 
 ---
 
 ## Authority
 
-For interaction, type, spacing, motion, and control recipes, **this file wins** inside the V3 family. Surfaces stay in the [core V3 doc](./DESIGN_SYSTEM_V3.md); spatial composition stays in [V3 Workspace](./DESIGN_SYSTEM_V3_WORKSPACE.md).
+For interaction, type, spacing, motion, and control recipes, this file is historical evidence only. Active authority is the [design implementation map](../../../05-design/design-implementation-map.md), with surfaces in the [core V3 doc](../../../05-design/DESIGN_SYSTEM_V3.md) and spatial composition promoted into active standards as needed.

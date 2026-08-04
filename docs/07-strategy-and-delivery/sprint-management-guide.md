@@ -11,7 +11,7 @@
 
 This guide explains how to manage sprints and phases for solo founder development using the 6-hat quality workflow.
 
-**No approval gates. No coordination theater. Just quality work with clear tracking.**
+**Short Founder self-approval checkpoints. No coordination theater. Just quality work with clear tracking.**
 
 ---
 
@@ -19,9 +19,10 @@ This guide explains how to manage sprints and phases for solo founder developmen
 
 ### What is a Sprint?
 
-**A sprint is one week of focused work within a phase.**
+**A sprint is a bounded period of focused work within a phase.**
 
-- **Duration:** 1 week (Monday to Sunday)
+- **Default duration:** 1 week (Monday to Sunday)
+- **Exception:** A phase may use a shorter dated execution window when the current sprint records the scope, daily sequence, and gate date. Phase 1 uses 2026-08-04 → 2026-08-08 (Tuesday to Saturday).
 - **Planning:** 30 minutes at start
 - **Review:** 30 minutes at end
 - **Documentation:** `current-phase/current-sprint.md`
@@ -399,7 +400,7 @@ Task: Help me write the behavior contract...
 - Log daily, review weekly
 - Archive phases when complete
 
-**No approval gates. Just quality work with clear tracking.**
+**No unnecessary handoff queues. Founder approval remains explicit at consequential checkpoints.**
 
 ---
 

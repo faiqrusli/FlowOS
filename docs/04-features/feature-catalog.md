@@ -6,9 +6,9 @@
 **Approval Required:** Founder
 **Parent:** [Information Structure](../03-experience/information-structure.md) · [Feature Standards](./README.md) · [MVP Implementation Masterplan](../current-phase/mvp-implementation-masterplan.md)
 **Children:** Individual feature dossiers with briefs, behavior contracts, design specs, delivery designs, and validation plans (matched to complexity)
-**Last Updated:** 2026-08-03 (adapted for solo founder development)
+**Last Updated:** 2026-08-04 (adapted for solo founder development)
 **Review trigger:** A route, product role, implementation status, feature disposition, or required feature-document set changes.
-**Note:** Feature standards kept (essential for major features like Today, Tasks, Focus). Changed: no role-based handoffs, no approval gates before building. You write the specs you need, then build.
+**Note:** Feature standards remain essential for major features like Today, Tasks, and Focus. The six hats are executed by the Founder in one session, with short scope/design, build-quality, and release self-approval checkpoints rather than a separate handoff queue.
 
 ---
 
@@ -95,7 +95,7 @@ The distinction is now explicit:
 - Full dossier with brief, behavior contract, design spec, delivery design, validation plan
 - These ARE FlowOS — depth is essential
 - 6-14 hours upfront thinking prevents rebuilding from scratch
-- **Changed:** You write all docs (no role handoffs, no approval gates)
+- **Current:** You write all docs through the six hats; record consequential Founder decisions at the three mode checkpoints
 
 **Medium features** (4-16 hours):
 - Brief (1 page) if helpful

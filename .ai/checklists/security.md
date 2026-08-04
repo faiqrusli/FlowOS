@@ -111,19 +111,14 @@ const handleSubmit = (e) => {
 }
 ```
 
-✅ **GOOD: Server-side validation with schema**
+✅ **GOOD: Server-side runtime validation with a schema or equivalent boundary**
 ```typescript
-import { z } from 'zod'
-
-const TaskSchema = z.object({
-  title: z.string().min(1).max(200),
-  completed: z.boolean().optional(),
-  user_id: z.string().uuid(),
-})
+// Use the project's approved runtime validation library or equivalent helper.
+// Zod adoption is a Phase 1.5 decision; this example stays library-neutral.
 
 export async function createTask(input: unknown) {
-  // Validate first
-  const validated = TaskSchema.parse(input)
+  // Validate first: type, length, format, allowed values, and ownership.
+  const validated = validateTaskInput(input)
   
   const { error } = await supabase
     .from('tasks')
@@ -136,13 +131,13 @@ export async function createTask(input: unknown) {
 ```typescript
 export async function createTask(input: unknown) {
   try {
-    const validated = TaskSchema.parse(input)
+    const validated = validateTaskInput(input)
     const { error } = await supabase
       .from('tasks')
       .insert(validated)
     return { success: true, error }
   } catch (e) {
-    if (e instanceof z.ZodError) {
+    if (isValidationError(e)) {
       return { success: false, error: 'Invalid task data' }
     }
     throw e
@@ -162,8 +157,8 @@ export async function createTask(input: unknown) {
    - File uploads
 
 2. **Check validation exists**
-   - Zod schema defined?
-   - Input parsed before use?
+   - Runtime schema or equivalent boundary defined?
+   - Input parsed or checked before use?
    - Server-side validation (not just client)?
 
 3. **Verify validation covers:**

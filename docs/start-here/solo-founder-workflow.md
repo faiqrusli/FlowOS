@@ -1,27 +1,27 @@
-﻿# Solo Founder Workflow Using 6-Role Procedures
+﻿# Solo Founder Workflow Using 6-Hat Procedures
 
 **Status:** Active workflow for solo founder development  
-**Last Updated:** 2026-08-03  
-**Philosophy:** Use 6-role procedures for quality, execute as one person without handoff overhead  
+**Last Updated:** 2026-08-04  
+**Philosophy:** Use 6-hat procedures for quality, execute as one person with short self-approval checkpoints  
 
 ---
 
 ## Core Principle
 
-**The 6 roles define WHAT quality work looks like.**  
-**You execute all 6 roles yourself, in sequence, without approval delays.**
+**The 6 hats define WHAT quality work looks like.**  
+**You execute all 6 hats yourself, in sequence, with fast Founder self-approval at the mode transitions.**
 
 **Think of roles as "hats" you wear:**
 - Each hat has specific responsibilities and deliverables
 - You wear each hat in sequence
 - You maintain the same quality standards
-- But you don't wait for yourself to approve yourself
+- You do approve consequential decisions yourself, but the checkpoint is brief and evidence-based
 
-**The procedures stay. The coordination theater goes.**
+**The procedures stay. Long handoff queues go.**
 
 ---
 
-## The 6 Roles (Your 6 Hats)
+## The 6 Hats (Grouped into 3 Modes)
 
 | Role | What It Defines | Key Deliverable |
 |------|-----------------|-----------------|
@@ -31,6 +31,18 @@
 | **Implementation Engineer** | BUILD it | Working code + tests |
 | **Release Manager** | VERIFY and SHIP it | Test results, Release |
 | **Founder** | DECIDE when uncertain | Final decisions |
+
+---
+
+## Three Modes and Approval Checkpoints
+
+The modes are only a compact way to execute the six hats:
+
+1. **Plan:** Hats 1–2; self-approve scope, behavior, and design before Build.
+2. **Build:** Hats 3–4; self-approve delivery, security, tests, and known gaps before Ship.
+3. **Ship:** Hat 5, followed by Hat 6; approve release from validation evidence and production readiness.
+
+Each checkpoint is a short decision, not a separate handoff or waiting period. Record the decision when it changes scope, architecture, or release status.
 
 ---
 
@@ -66,7 +78,7 @@ You work through all 6 hats in sequence, producing quality deliverables at each 
 
 **Reference:** `docs/10-team/6-role-hats/product-architect.md`
 
-**When done:** Move to Design Architect hat (no waiting, no approval gate)
+**When done:** Do the brief Plan checkpoint, then move to Design Architect hat
 
 ---
 
@@ -93,7 +105,7 @@ You work through all 6 hats in sequence, producing quality deliverables at each 
 
 **Review checkpoint:** As Design Architect, review your own work against the behavior contract you wrote as Product Architect. Any gaps?
 
-**When done:** Move to Engineering Architect hat
+**When done:** Complete the Plan checkpoint, then move to Engineering Architect hat
 
 ---
 
@@ -122,7 +134,7 @@ You work through all 6 hats in sequence, producing quality deliverables at each 
 
 **Reference:** `docs/10-team/6-role-hats/engineering-architect.md`
 
-**When done:** Move to Implementation Engineer hat
+**When done:** Move to Implementation Engineer hat within the same Build mode
 
 ---
 
@@ -152,7 +164,7 @@ You work through all 6 hats in sequence, producing quality deliverables at each 
 
 **Reference:** `docs/10-team/6-role-hats/implementation-engineer.md`
 
-**When done:** Move to Release Manager hat
+**When done:** Complete the Build checkpoint, then move to Release Manager hat
 
 ---
 
@@ -212,7 +224,7 @@ You work through all 6 hats in sequence, producing quality deliverables at each 
 
 ### Major Feature (e.g., Inline Task Capture)
 
-**6-Role Team Approach:**
+**Multi-person comparison (historical):**
 ```
 Product Architect: 4 hours work → Submit → Wait for approval
 Design Architect: 3 hours work → Submit → Wait for approval
@@ -238,9 +250,7 @@ Coordination overhead: 0 hours
 Total: 16.5 hours
 ```
 
-**Savings: 3-4 hours per major feature (17-20%)**
-
-**Same quality. Same deliverables. No waiting.**
+**The solo workflow keeps the same quality and deliverables while replacing coordination overhead with three short Founder checkpoints.**
 
 ---
 
@@ -257,7 +267,7 @@ Total: 16.5 hours
 
 ### Major Features Need:
 
-✅ **All 5 hats** — Full dossier for Today, Tasks, Focus, Schedule, Notes
+✅ **All 6 hats** — Full dossier for Today, Tasks, Focus, Schedule, Notes
 
 ### Small Features (< 4 hours):
 
@@ -302,7 +312,7 @@ Total: 16.5 hours
 
 ## The Key Insight
 
-**6-role structure answered the right question:**
+**The six-hat structure answers the right question:**
 
 > "What quality work needs to happen for a feature?"
 
@@ -317,7 +327,7 @@ Answer:
 
 > "How should one person execute this work?"
 
-Wrong answer: "Split into 6 people with approval gates"
+Wrong answer: "Split into 6 people with long approval queues"
 
 **Right answer:** "One person wears 6 hats in sequence"
 
@@ -427,7 +437,7 @@ Wrong answer: "Split into 6 people with approval gates"
 
 **Don't use them as:**
 - ❌ Separate people
-- ❌ Approval gates
+- ❌ Long approval queues
 - ❌ Handoff ceremonies
 - ❌ Coordination overhead
 

@@ -1,16 +1,16 @@
-﻿# Active 6-Role Configuration
+﻿# Active 6-Hat Procedures
 
-**Status:** Production — Active Development Organization  
-**Authority:** This is the current operational structure  
-**Last Updated:** 2026-08-02  
+**Status:** Production — Active solo-founder quality workflow  
+**Authority:** These six hats are the current quality procedures; the three modes only group them for speed  
+**Last Updated:** 2026-08-04  
 
 ---
 
 ## Purpose
 
-This is the **active 6-role configuration** used for FlowOS development.
+This is the **active six-hat procedure set** used for FlowOS development.
 
-These 6 roles cover the complete SDLC with balanced specialization and manageable coordination.
+The founder wears all six hats. Plan, Build, and Ship are a short execution grouping, not a replacement for the hats or their responsibilities.
 
 ---
 
@@ -51,45 +51,27 @@ Expected output: [deliverables]
 3. Read required input documents
 4. Execute according to workflow
 5. Produce expected outputs
-6. Hand off to next role
+6. Move to the next hat in the same working session; record a short self-review at the mode checkpoint
 
 ---
 
 ## Standard Workflow
 
-### New Feature (with Approval Gates)
+### New Feature (three modes with quick self-approval)
 
 ```
-Founder
-  ↓ (assigns)
-Product Architect ──── Feature brief + Behavior contract
-  ↓ (submits for approval)
-Founder ───────────── Approves
-  ↓ (hands off)
-Design Architect ───── Design specification
-  ↓ (submits for review)
-Product Architect ──── Reviews against behavior contract
-  ↓ (submits for approval)
-Founder ───────────── Approves
-  ↓ (hands off)
-Engineering Architect ─ Delivery design + Validation plan
-  ↓ (submits for approval)
-Founder ───────────── Approves
-  ↓ (hands off)
-Implementation Engineer ─ Working code + Tests
-  ↓ (submits for approval)
-Founder ───────────── Approves
-  ↓ (hands off)
-Release Manager ────── QA validation + Release plan
-  ↓ (requests authorization)
-Founder ───────────── Authorizes release
-  ↓
+PLAN: Product Architect → Design Architect
+  ↓ quick Founder self-check: scope, behavior, design
+BUILD: Engineering Architect → Implementation Engineer
+  ↓ quick Founder self-check: delivery, security, tests
+SHIP: Release Manager
+  ↓ Founder release approval: evidence, production readiness
 Production ────────── Feature shipped
 ```
 
-**Key principle:** Work is reviewed and approved by upstream roles before proceeding downstream.
+**Key principle:** Keep the six-hat quality work and the Founder approval checkpoints, but make each checkpoint brief and decisive. There are no separate-agent handoffs or waiting periods when the founder is doing the work alone.
 
-**Total flow: 6 work stages + 5 approval gates**
+**Total flow:** 3 modes, 6 hats, and 3 short approval checkpoints (mode transitions plus release).
 
 ---
 
@@ -122,21 +104,16 @@ Production ────────── Feature shipped
 ## Communication Paths
 
 **Approval Flow Principle:**
-All work must be approved by upstream roles before proceeding downstream:
-- Product Architect → Founder approves → Design Architect
-- Design Architect → Product Architect reviews → Founder approves → Engineering Architect
-- Engineering Architect → Founder approves → Implementation Engineer
-- Implementation Engineer → Founder approves → Release Manager
-- Release Manager → Founder authorizes → Production
+The Founder remains the decision authority. Self-approval is explicit but lightweight: review the mode outputs against the relevant contract and checklist, record the decision when consequential, and continue immediately when accepted.
 
 **Escalations → Always to Founder**
 
-**Sequential handoffs (after approvals):**
-1. Product Architect → Design Architect (after Founder approval)
-2. Design Architect → Engineering Architect (after Product Architect review + Founder approval)
-3. Engineering Architect → Implementation Engineer (after Founder approval)
-4. Implementation Engineer → Release Manager (after Founder approval)
-5. Release Manager → Founder (for release authorization)
+**Sequential hat progression:**
+1. Product Architect → Design Architect
+2. Design Architect → Engineering Architect
+3. Engineering Architect → Implementation Engineer
+4. Implementation Engineer → Release Manager
+5. Release Manager → Founder release decision
 
 **Clarifications:**
 - Product questions → Product Architect
@@ -167,104 +144,29 @@ When: Release issue, quality concern, deployment problem
 
 ## Example Assignments
 
-### Complete Feature Flow (with Approvals)
+### Complete Feature Flow (three modes)
 
-**1. Founder → Product Architect**
-```
-Role: Product Architect
-Assignment: Define Inline Task Capture feature
-Context: M2 Founder Daily Driver needs faster capture
-Input: Vision.md, product-model.md, MVP Masterplan
-Output: Feature brief + Behavior contract
-Hand off to: Submit to Founder for approval, then Design Architect
-```
+The Founder wears all six hats in one working session. The mode checkpoints are brief decisions, not separate handoffs.
 
-**2. Product Architect → Founder (Approval Request)**
+**Plan — Hats 1–2: Product Architect → Design Architect**
 ```
-From: Product Architect
-To: Founder
-Status: Complete
-Deliverables: Feature brief + Behavior contract
-Decision Requested: Approve to hand off to Design Architect
+Input: Founder direction, Vision, product and system docs
+Output: Feature brief, behavior contract, design specification
+Checkpoint: Founder approves scope, behavior, and design readiness
 ```
 
-**3. Founder → Design Architect (After Approval)**
+**Build — Hats 3–4: Engineering Architect → Implementation Engineer**
 ```
-Role: Design Architect
-Assignment: Design Inline Task Capture UI/UX
-Input: Feature brief (Founder approved), Behavior contract, Design system
-Output: Complete design specification (states, responsive, interactions)
-Hand off to: Submit to Product Architect for review, then Founder for approval
+Input: Accepted Plan outputs and current implementation truth
+Output: Delivery design, validation plan, code, tests, runbook
+Checkpoint: Founder approves security, test evidence, and known gaps
 ```
 
-**4. Design Architect → Product Architect → Founder (Approval Request)**
+**Ship — Hat 5, then Hat 6: Release Manager → Founder**
 ```
-From: Design Architect
-To: Product Architect (review) → Founder (approval)
-Status: Design complete
-Deliverables: Design specification
-Decision Requested: Approve to hand off to Engineering Architect
-```
-
-**5. Founder → Engineering Architect (After Approval)**
-```
-Role: Engineering Architect
-Assignment: Design implementation approach for Inline Task Capture
-Input: Behavior contract, Design spec (Founder approved), Engineering architecture
-Output: Delivery design + Validation plan
-Hand off to: Submit to Founder for approval, then Implementation Engineer
-```
-
-**6. Engineering Architect → Founder (Approval Request)**
-```
-From: Engineering Architect
-To: Founder
-Status: Delivery design complete
-Deliverables: Delivery design + Validation plan
-Decision Requested: Approve to hand off to Implementation Engineer
-```
-
-**7. Founder → Implementation Engineer (After Approval)**
-```
-Role: Implementation Engineer
-Assignment: Implement Inline Task Capture
-Input: Complete feature dossier (all Founder approved)
-Output: Working implementation + Tests + Docs
-Hand off to: Submit to Founder for approval, then Release Manager
-```
-
-**8. Implementation Engineer → Founder (Approval Request)**
-```
-From: Implementation Engineer
-To: Founder
-Status: Implementation complete
-Deliverables: Implementation PR + Test results + Docs
-Decision Requested: Approve to hand off to Release Manager
-```
-
-**9. Founder → Release Manager (After Approval)**
-```
-Role: Release Manager
-Assignment: Test and release Inline Task Capture
-Input: Implementation PR (Founder approved), Validation plan, Behavior contract
-Output: Test results + Quality report + Release plan
-Hand off to: Submit to Founder for release authorization
-```
-
-**10. Release Manager → Founder (Authorization Request)**
-```
-From: Release Manager
-To: Founder
-Status: Ready for release
-Test results: All pass
-Recommendation: Approve for production
-Decision requested: Authorize release
-```
-
-**11. Founder → Release Manager (Authorization)**
-```
-Decision: Approved
-Release Manager: Execute deployment per release plan
+Input: Implementation, validation plan, behavior contract
+Output: Test results, quality report, release plan, release record
+Decision: Founder authorizes or rejects release from evidence and production readiness
 ```
 
 ---

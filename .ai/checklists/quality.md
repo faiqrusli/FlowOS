@@ -150,7 +150,7 @@ npm test
 **Quick security check:**
 
 - [ ] **User-scoped data:** All queries filtered by user_id or protected by RLS
-- [ ] **Input validation:** All user input validated with Zod or similar
+- [ ] **Input validation:** All user input has server-side runtime validation; Zod adoption is tracked in Phase 1.5
 - [ ] **No secrets:** No hardcoded API keys, tokens, or passwords
 - [ ] **RLS enabled:** All new user data tables have Row Level Security
 - [ ] **Auth protected:** New routes in `(main)` group or `PROTECTED_PREFIXES`
@@ -358,7 +358,7 @@ git diff main..your-branch
 
 **Security issues:**
 - Non-scoped queries → Add user_id filter
-- Missing validation → Add Zod schema
+- Missing validation → Add an appropriate server-side runtime validation boundary; use Zod only after the Phase 1.5 decision
 - Hardcoded secrets → Use env vars
 
 **Manual test failures:**

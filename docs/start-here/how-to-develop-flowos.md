@@ -2,8 +2,8 @@
 
 **Status:** Active workflow guide for solo founder development  
 **Audience:** Founder, AI assistants  
-**Replaces:** 6-role team structure (archived Aug 2026)  
-**Last Updated:** 2026-08-03  
+**Defines:** The 6 authoritative hats grouped into 3 execution modes  
+**Last Updated:** 2026-08-04  
 
 ---
 
@@ -11,9 +11,9 @@
 
 **You're building a product, not managing a team.**
 
-FlowOS development uses a simple **3-mode workflow**: Plan → Build → Ship.
+FlowOS development uses a simple **3-mode workflow**: Plan → Build → Ship. The six hats remain the authoritative quality procedures inside those modes.
 
-No role switching. No approval gates where you approve yourself. No coordination theater.
+The Founder wears all six hats. Use short self-approval checkpoints at mode transitions and a final release approval; do not create long handoff queues or duplicate coordination.
 
 Just excellent software with quality maintained through checklists and standards, not process.
 
@@ -21,7 +21,7 @@ Just excellent software with quality maintained through checklists and standards
 
 ## The 3-Mode Workflow (with 6-Hat Quality Procedures)
 
-**FlowOS uses 6-role procedures for quality, executed by you without coordination overhead.**
+**FlowOS uses 6-hat procedures for quality, executed by you with minimal coordination overhead.**
 
 **Think of modes as phases, and roles as "quality hats" within each phase:**
 
@@ -41,6 +41,8 @@ Just excellent software with quality maintained through checklists and standards
 
 **Output:** Complete planning docs (brief, contract, design spec)
 
+**Quick self-approval:** Check scope, behavior, design states, and Vision alignment before entering Build. Record a decision only when the choice is consequential.
+
 ### Mode 2: Build (Engineering)
 
 **Wear 2 hats:**
@@ -57,6 +59,8 @@ Just excellent software with quality maintained through checklists and standards
 
 **Output:** Working code + tests + runbook
 
+**Quick self-approval:** Check the delivery design, security checklist, tests, and known gaps before entering Ship.
+
 ### Mode 3: Ship (Release)
 
 **Wear 1 hat:**
@@ -68,9 +72,11 @@ Just excellent software with quality maintained through checklists and standards
 
 **Output:** Production deployment + release record
 
+**Founder Hat 6:** Approve or reject release based on validation evidence and production readiness. This is a short decision checkpoint, not an additional handoff queue.
+
 **Complete workflow:** `docs/start-here/solo-founder-workflow.md`
 
-**The 6 hats define quality procedures. You execute all 6 yourself, in sequence, without approval delays.**
+**The 6 hats define quality procedures. You execute all 6 yourself, in sequence, with explicit but fast Founder self-approval checkpoints.**
 
 ---
 
@@ -120,7 +126,7 @@ Just excellent software with quality maintained through checklists and standards
 - `delivery-designs.md`
 - `validation-plans.md`
 
-**Key change from 6-role approach:** You write all the docs (no handoffs, no approval gates), but you still write them for major features.
+**Key change from the multi-person approach:** You write all the docs through the six hats, with short Founder self-approval checkpoints and no separate handoff queue.
 
 ---
 
@@ -131,7 +137,7 @@ Just excellent software with quality maintained through checklists and standards
 Before every merge, verify:
 
 1. User-scoped data access — No using(true), proper auth.uid() filtering
-2. Input validation — Zod schemas, server-side validation
+2. Input validation — Server-side runtime validation; Zod adoption is scheduled for Phase 1.5
 3. No hardcoded secrets — Environment variables only
 4. Row Level Security (RLS) — On all user data tables
 5. Auth middleware — Routes protected by auth
@@ -192,7 +198,7 @@ Use docs/current-phase/current-sprint.md for:
 - Gate criteria
 - Completion tracking
 
-Keep it simple: Task list + phase context. No role assignments, no approval gates.
+Keep it simple: Task list + phase context. Use the six hats with short Founder checkpoints rather than a handoff queue.
 
 ### Daily Logging
 
@@ -238,9 +244,9 @@ Archived (Aug 2026):
 - Approval ceremonies
 
 Why simplified:
-- You don't coordinate with yourself
-- Approval gates are self-approval theater
-- Quality maintained through checklists, not process
+- You don't need a separate coordination queue when working alone
+- Founder approval remains explicit at consequential checkpoints
+- Quality is maintained through hat procedures and checklists
 - Faster iteration while maintaining standards
 
 Bring back when:

@@ -1,7 +1,7 @@
 ﻿# {M#} — {Runbook Title}
 
 **Scope:** {M#} only — {one-line milestone name}.  
-**Authority:** The applicable [Roadmap](../../07-strategy-and-delivery/roadmap.md) outcome, delivery plan, and release plan. This runbook does **not** add, remove, defer, or weaken their scope, evidence gate, or parent contracts.
+**Authority:** The applicable [Roadmap](../../../07-strategy-and-delivery/roadmap.md) outcome, delivery plan, and release plan. This runbook does **not** add, remove, defer, or weaken their scope, evidence gate, or parent contracts.
 **Repo root:** repository root (Next.js app).  
 **Production baseline:** https://flowos-sage.vercel.app  
 **Docs path:** `docs/` (tracked in VCS)  
@@ -26,8 +26,8 @@ Use when a session is blocked (env failure, ambiguous product decision, producti
 | Step | Action |
 |------|--------|
 | 1 | **Stop** at the session stop/fail condition — do not skip to a dependent session. |
-| 2 | **Record blocker** in the delivery artifact or operational log: date, work item, symptom, what was tried, next action. Create a [Decision Record](../../08-decisions/decision-records.md) only if a consequential choice is required. |
-| 3 | **Git:** commit WIP on the **session branch** (`WIP: Session N blocked — {reason}`) or `git stash`. Do **not** merge to `main`. See [GIT_WORKFLOW.md](../00-constitution/governance/GIT_WORKFLOW.md). |
+| 2 | **Record blocker** in the delivery artifact or operational log: date, work item, symptom, what was tried, next action. Create a [Decision Record](../../../08-decisions/decision-records.md) only if a consequential choice is required. |
+| 3 | **Git:** commit WIP on the **session branch** (`WIP: Session N blocked — {reason}`) or `git stash`. Do **not** merge to `main`. See [GIT_WORKFLOW.md](../../../00-constitution/governance/GIT_WORKFLOW.md). |
 | 4 | **Resume** the same session number when unblocked. |
 | 5 | **Respect dependencies** — see session dependency table below. |
 | 6 | **Parallel exceptions:** list founder-only sessions that may run alongside engineering without unblocking blocked work. |
@@ -54,13 +54,13 @@ Fill before writing sessions. Prevents starting Session N before prerequisites a
 
 ### Git workflow (required)
 
-Full rules: [GIT_WORKFLOW.md](../00-constitution/governance/GIT_WORKFLOW.md).
+Full rules: [GIT_WORKFLOW.md](../../../00-constitution/governance/GIT_WORKFLOW.md).
 
 | Step | Rule |
 |------|------|
 | **Start session** | `git checkout main && git pull` → `git checkout -b {m#}/session-N-short-name` |
 | **During session** | Commit on branch; `git push -u origin HEAD` (not `main`) |
-| **End session** | `npm run build && npm run lint` → agent reports merge bundle → **ask founder to approve merge to `main`** |
+| **End session** | `npm run build && npm run lint && npm test` → agent reports merge bundle → **ask founder to approve merge to `main`** |
 | **After merge** | Push `main` → CI/Vercel → manual production check → [july-log.md](../logs/july-log.md) |
 
 **Merge bundles** (AI reminds when bundle complete; founder decides merge timing):
@@ -107,6 +107,7 @@ Ground truth before changing code. Prevents re-debating what exists.
 ```powershell
 npm run build
 npm run lint
+npm test
 git status -sb
 ```
 
@@ -121,7 +122,7 @@ git status -sb
 - 
 - Build or lint fails.
 
-**Rollback:** revert merge on `main` — never force-push `main`. See [GIT_WORKFLOW.md](../00-constitution/governance/GIT_WORKFLOW.md).
+**Rollback:** revert merge on `main` — never force-push `main`. See [GIT_WORKFLOW.md](../../../00-constitution/governance/GIT_WORKFLOW.md).
 
 ---
 
@@ -143,7 +144,7 @@ Run on **production** after Session {N}. Reference from session verification.
 
 ## Decision points _(optional — founder only, max 3)_
 
-Use only when truly blocked. Record a consequential choice in [Decision Records](../../08-decisions/decision-records.md).
+Use only when truly blocked. Record a consequential choice in [Decision Records](../../../08-decisions/decision-records.md).
 
 | # | Decision | Options | Runbook default |
 |---|----------|---------|-----------------|
@@ -208,8 +209,8 @@ Copy exit criteria from masterplan. Check only when evidence exists.
 
 ## After runbook complete
 
-1. Complete the appropriate [Review Record](../../09-reviews/review-records.md).
-2. Update [GATES.md](../00-constitution/governance/GATES.md) status if milestone exited.  
+1. Complete the appropriate [Review Record](../../../09-reviews/review-records.md).
+2. Update [GATES.md](../../../00-constitution/governance/GATES.md) status if milestone exited.  
 3. Final [july-log.md](../logs/july-log.md) entry with commits and production verification.  
 4. Archive or freeze this runbook — do not rewrite history; create a Decision Record if scope changed through a consequential choice.
 

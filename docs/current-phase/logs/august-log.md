@@ -7,19 +7,34 @@
 
 ---
 
+## 2026-08-04 — Phase 1 Sprint Execution Contract Finalized
+
+**Owner:** Founder (6-hat solo workflow)
+
+**Decision:** Prepare Phase 1 for implementation-truth execution from 2026-08-04 through 2026-08-08; keep post-Phase-0 audit decisions as a non-blocking parallel improvement register.
+
+- Expanded `docs/current-phase/current-sprint.md` into the dated implementation plan: scope boundary, six work packages, domain truth matrix, evidence contract, daily exits, hat checkpoints, and Gate 1 handoff.
+- Reworked `docs/current-phase/phase-1/gate-checklist.md` into a complete Gate 1 evidence register with core/supporting/deferred scope, domain templates, baseline evidence, audit-decision status, and explicit `PASS` / `HOLD` / `REWORK` decision fields.
+- Aligned `mvp-implementation-masterplan.md` and `phase-1/README.md` with the sprint execution authority and kept Phase 1.5 validation, forms, and date/time integration outside Gate 1.
+- Recorded the initial quality baseline: 231 tests passed, lint passed with 0 errors and 212 warnings, and the production build passed on Next.js 16.2.11.
+
+**Next:** Trace Today and Tasks on 2026-08-05, then complete the remaining domain evidence and cross-cutting baselines before the 2026-08-08 Founder Gate 1 review.
+
+---
+
 ## 2026-08-04 — Post-Phase-0 Audit Created; Docs-Hygiene Fixes
 
 **Owner:** Documentation Manager (6-hat)
 
-**Decision:** None — audit findings scheduled into Phase 1; Phase 1 not blocked.
+**Decision:** Audit findings scheduled into Phase 1; Phase 1 is not blocked. Founder decisions are recorded in D-005.
 
 - Created `docs/current-phase/phase-1/post-phase-0-audit.md` (first Phase 1 doc; 9-section audit).
-- Added Audit Decisions (items 1–6) to `phase-1/gate-checklist.md`; gate is solved when those decisions/problems are properly resolved (Founder confirmation + decision record where required).
+- Added the audit improvement track to `phase-1/gate-checklist.md`; accepted improvements run in parallel and are not blanket Gate 1 exit criteria.
 - Docs-hygiene: updated tool configs to Phase 1 / Gate 1 (`.cursor/flowos-core.mdc`, `.idea/ai-rules.md`, `.aiassistant/Ai.md`, `AGENTS.md`).
 - Fixed broken links: roadmap↔masterplan cross-links, governance `../` links (13), archived-log path (7), decision-log refs, current-sprint archived refs, `.ai/context.md` root-relative links.
-- Softened unverified Zod security claim in tool configs (Zod not installed — pending Founder decision 6).
+- Softened the unverified Zod security claim; validation policy and technical integration are scheduled for Phase 1.5.
 
-**Next:** Founder decisions (audit §8) to unblock Gate-1; then Phase 1 sprint creation.
+**Next:** Execute Phase 1 implementation-truth work and the accepted documentation improvements; use Phase 1.5 for validation-policy and technical integration.
 
 ---
 
@@ -36,7 +51,7 @@
 - Created Phase 1 scaffold: `docs/current-phase/phase-1/README.md` + `gate-checklist.md`.
 - Updated status: `current-sprint.md`, `current-phase/README.md`, `docs/README.md`, `.ai/context.md`, `.ai/sprint-context.md`, `.ai/README.md`, `AGENTS.md`, `docs/start-here/*` for Phase 1 / Gate 1.
 
-**Next step:** Create the Phase 1 sprint (assignments) to begin Gate 1 evidence work.
+**Next step:** Execute the active Phase 1 sprint and record Gate 1 evidence.
 
 ---
 
