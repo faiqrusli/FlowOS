@@ -334,9 +334,10 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 - Keep PRs reviewable
 
 ### 8. Git Workflow
-**Branch first, approve before merge.**
+**Work on a branch off `main`, in its own worktree; approve before merge.**
 
-- Branch naming: `[role]/[feature-name]` or `fix/[description]`
+- Work happens on **parallel branches off `main`**, each owned by an agent or the Founder, each in its **own worktree** (`flowos-agents/<branch>/`) so tasks never collide
+- Branch naming: `feature/<module>-<feature>`, `fix/<module>-<issue>`, `refactor/<module>-<goal>`, `docs/<topic>`, `test/<module>`, `chore/<task>`, `experiment/<topic>`, `shared/<scope>` (full convention in AGENTS.md)
 - Commit on branch
 - `npm run build && npm run lint` must pass
 - Request approval before merge
@@ -429,16 +430,27 @@ flowos/
 
 ## Git Workflow
 
-### Branch Strategy
+### Branch Strategy (Git Worktree model)
 
-**`main` = production. Never push to main without Founder authorization.**
+**`main` = production (primary worktree). Never push to main without Founder authorization.**
+
+Work happens on **parallel branches off `main`**, each owned by an agent or the Founder, each in its **own worktree** so tasks never collide.
+
+```
+main                                   (primary worktree)
+├── feature/<module>-<feature>   Agent A
+├── experiment/<topic>           spike
+└── shared/<scope>               shared code/config
+```
 
 **Starting work:**
 ```powershell
 git checkout main && git pull origin main
-git checkout -b [role]/[feature-name]
-# Example: implementation-engineer/inline-task-capture
+git worktree add ../flowos-agents/<branch> -b <branch>
+# Example: git worktree add ../flowos-agents/feature-focus-queue -b feature/focus-queue
 ```
+
+Branch naming follows the convention: `feature/<module>-<feature>`, `fix/<module>-<issue>`, `refactor/<module>-<goal>`, `docs/<topic>`, `test/<module>`, `chore/<task>`, `experiment/<topic>`, `shared/<scope>`.
 
 **While working:**
 - Commit on branch (multiple commits OK)
@@ -454,8 +466,13 @@ git checkout -b [role]/[feature-name]
 
 **After Founder authorizes:**
 ```powershell
+# from the branch's worktree
+git commit …  # ensure branch up to date
+# then from the primary worktree, merge + prune:
 git checkout main && git pull origin main
 git merge <branch> --no-ff
+git branch -d <branch>          # delete local branch
+git worktree prune              # prune removed worktrees
 npm run build && npm run lint
 git push origin main
 ```

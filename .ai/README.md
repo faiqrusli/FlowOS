@@ -279,12 +279,19 @@ One logical change per commit.
 
 **How:** Resist scope creep, match touched area only.
 
-### 4. Branch-First Workflow
-Every session starts on new branch from main.
+### 4. Branch-First Workflow (Git Worktree model)
+Every session works on a **parallel branch off `main`**, in its **own worktree**, so multiple agents and the Founder work at once without colliding:
+```
+main
+├── feature/<module>-<feature>   Agent A
+├── experiment/<topic>           spike
+└── shared/<scope>               shared code/config
+```
+Start work with `git worktree add ../flowos-agents/<branch> -b <branch>` from the primary worktree on `main`.
 
-**Why:** Clean history, easy rollback, safe experimentation.
+**Why:** Clean history, easy rollback, safe experimentation, parallel ownership.
 
-**How:** `[role]/[feature-name]`; Founder authorization is still required before merge or release.
+**How:** Follow the branch naming convention (see AGENTS.md); Founder authorization is still required before merge or release.
 
 ### 5. Quality > Speed
 Ship simple, working code over complex, buggy code.

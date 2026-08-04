@@ -96,14 +96,22 @@ Always check similar files before writing new code. Copy existing patterns.
 - No scope creep
 - Match touched area only
 
-### 6. Branch-First Workflow
-```powershell
-# Start work
-git checkout main && git pull origin main
-git checkout -b [role]/[feature-name]
-# Example: product-architect/update-product-docs
+### 6. Branch-First Workflow (Git Worktree model)
+Work happens on parallel branches off `main`, each owned by an agent or the Founder, each in its **own worktree**:
+```
+main
+├── feature/<module>-<feature>   Agent A
+├── experiment/<topic>           spike
+└── shared/<scope>               shared code/config
+```
+Every agent works in its own folder (`flowos-agents/<branch>/`) so parallel tasks never collide.
 
-# Never merge without Founder authorization
+```powershell
+# Start work (from primary worktree on main)
+git worktree add ../flowos-agents/<branch> -b <branch>
+# Example: git worktree add ../flowos-agents/feature-focus-queue -b feature/focus-queue
+
+# Never merge to main without Founder authorization
 ```
 
 ---
@@ -139,10 +147,16 @@ When docs conflict, higher wins:
 
 ## Git Workflow
 
-**Branch naming:**
-- Role-based: `[role]/[feature-name]` (e.g., `product-architect/update-docs`)
-- Fixes: `fix/[description]`
-- Docs: `docs/[description]`
+**Branch naming convention (required):**
+- `feature/<module>-<feature>` — e.g. `feature/focus-queue`
+- `fix/<module>-<issue>` — e.g. `fix/tasks-drag-drop`
+- `refactor/<module>-<goal>` — e.g. `refactor/auth-validation`
+- `docs/<topic>` — e.g. `docs/implementation-truth`
+- `test/<module>` — e.g. `test/focus-reflection`
+- `chore/<task>` — e.g. `chore/deps-upgrade`
+- `experiment/<topic>` — throwaway/spike ideas, e.g. `experiment/today-timeline-v2`
+- `shared/<scope>` — cross-module shared code/config, e.g. `shared/ui-components`
+- `sprint/phase?` — reserved for phase/sprint coordination, not normal feature work
 
 **Before merge:**
 - `npm run build` ✅ Must pass

@@ -114,6 +114,46 @@ For tool-specific configs, also see:
 - `.idea/ai-rules.md` (WebStorm/IntelliJ)
 <!-- END:flowos-ai-skills -->
 
+## Git Worktree Workflow (All Agents)
+
+**Parallel branches off `main`, each owned by an agent or the Founder. Never work on `main`.**
+
+```
+main
+├── feature/focus-queue           Agent A
+├── feature/focus-break-reminder  Agent B
+├── feature/today-right-sidebar   You (Founder)
+├── feature/schedule-auto-resize  Agent C
+└── experiment/<topic>            For throwaway/spike ideas (e.g. experiment/today-timeline-v2)
+```
+
+- Primary worktree: `C:\Users\faiqr\flowos` (stays on `main`, production truth)
+- Each parallel branch = its own worktree: `C:\Users\faiqr\flowos-agents\<branch-name>\`
+- Each worktree is a full checkout isolated on its branch so owners work in parallel without colliding.
+- When a branch finishes: request review → Founder merges to `main` → delete branch → open next branch.
+
+**Branch naming convention (required):**
+- `feature/<module>-<feature>` — e.g. `feature/focus-queue`
+- `fix/<module>-<issue>` — e.g. `fix/tasks-drag-drop`
+- `refactor/<module>-<goal>` — e.g. `refactor/auth-validation`
+- `docs/<topic>` — e.g. `docs/implementation-truth`
+- `test/<module>` — e.g. `test/focus-reflection`
+- `chore/<task>` — e.g. `chore/deps-upgrade`
+- `experiment/<topic>` — For throwaway/spike ideas, e.g. `experiment/today-timeline-v2`
+- `shared/<scope>` — For cross-module shared code/config, e.g. `shared/ui-components`
+- `sprint/phase?` — reserved for phase/sprint coordination, not normal feature work
+
+**Example module lines (Focus):**
+```
+feature/focus-queue
+feature/focus-pomodoro
+feature/focus-shortcuts
+feature/focus-notifications
+feature/focus-analytics
+```
+
+**Completion loop:** review → merge → delete branch → create next branch.
+
 ## Custom Agents
 
 - **acp**: `C:\Users\faiqr\AppData\Local\Kiro-Cli\kiro-cli.exe`
