@@ -218,9 +218,9 @@
   /* Typography — hierarchy via weight + opacity (not size).
      Primary #C0CAF5 @ 100%; secondary 78%; meta 62%; inactive 48%. */
   --text-primary: #c0caf5;
-  --text-secondary: color-mix(in srgb, var(--text-primary) 78%, transparent);
-  --text-muted: color-mix(in srgb, var(--text-primary) 62%, transparent);
-  --text-inactive: color-mix(in srgb, var(--text-primary) 48%, transparent);
+  --text-secondary: color-mix(in srgb, var(--text-primary) 86%, transparent);
+  --text-muted: color-mix(in srgb, var(--text-primary) 76%, transparent);
+  --text-inactive: color-mix(in srgb, var(--text-primary) 62%, transparent);
   /* Section labels (NEXT UP / CONTINUE) — quieter than content, Linear-like */
   --text-section: color-mix(in srgb, var(--text-primary) 65%, transparent);
   --text-placeholder: color-mix(in srgb, var(--text-primary) 42%, transparent);
@@ -241,7 +241,7 @@
   --primary-hover: #707ee5;
   --primary-pressed: #6270d8;
   --primary-active: #6270d8;
-  --primary-foreground: #1a1b26;
+  --primary-foreground: #0f172a;
   /* Nav selection stays quieter than primary CTA */
   --primary-soft: rgba(123, 136, 239, 0.07);
   --primary-muted: rgba(123, 136, 239, 0.14);
@@ -373,6 +373,9 @@
   /* Ghost hover — inactive chrome only (right rail / Today / left nav) */
   --surface-ghost-hover: rgba(255, 255, 255, 0.03);
   --radius: 0.5rem; /* 8px buttons; cards use larger radius utilities */
+  --radius-card: 0.875rem; /* 14px shared card radius */
+  --radius-control: 0.625rem; /* 10px control and input radius */
+  --radius-pill: 9999px; /* pill and round elements */
 
   --sidebar: var(--surface-nav);
   --sidebar-foreground: var(--text-secondary);
@@ -619,7 +622,7 @@
     border-right: var(--border-hairline-width) solid var(--border-float);
     border-bottom: var(--border-hairline-width) solid var(--border-float);
     border-left: none;
-    border-radius: 14px;
+    border-radius: var(--radius-card);
     background: var(--surface-focus-primary); /* Surface 6 */
     box-shadow: none;
     transition:
@@ -956,7 +959,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: 3px;
-  border-radius: 3px 0 0 3px;
+  border-radius: var(--radius-control) 0 0 var(--radius-control);
   background: var(--focus-edge-color, var(--chart-1));
   opacity: 0.7;
   pointer-events: none;
@@ -989,7 +992,7 @@
 /* Floating overlays — Tasks/Habits dock + Next Up Queue.
  * One elevation above standard cards; below menus / dropdowns. */
 .flow-floating-overlay {
-  border-radius: 1.25rem; /* 20px — larger than card xl */
+  border-radius: calc(var(--radius-card) + 0.25rem); /* 20px — larger than card */
   border: 1px solid var(--border-float);
   background: var(--surface-float);
   box-shadow: var(--shadow-overlay);
@@ -1117,7 +1120,7 @@
 }
 
 .workplace-next-up-reveal {
-  border-radius: 0.375rem;
+  border-radius: var(--radius-control);
   animation: workplace-next-up-reveal 1000ms ease-out forwards;
 }
 
@@ -1125,7 +1128,7 @@
 .workplace-dock-launcher {
   height: 40px;
   border: var(--border-hairline-width) solid var(--border-hairline);
-  border-radius: 14px;
+  border-radius: var(--radius-card);
   background: var(--surface-7);
   box-shadow: none;
   --surface-hover: var(--surface-8);
@@ -1144,7 +1147,7 @@
   position: absolute;
   top: 3px;
   bottom: 3px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   /* Quiet selected — soft wash + hairline ring, no bright outline flash */
   background: color-mix(in srgb, var(--primary-soft) 70%, var(--surface-8));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 16%, transparent);
