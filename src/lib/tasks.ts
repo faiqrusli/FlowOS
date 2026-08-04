@@ -20,6 +20,7 @@ import {
 } from "@/lib/task-priority";
 import { normalizePlanningState } from "@/lib/task-planning";
 import { notifyNextUpUpdated } from "@/lib/next-up-events";
+import { parseTaskInsert, parseTaskUpdate } from "@/lib/validation";
 import type { Task, TaskInsert, TaskUpdate } from "@/types/task";
 
 export class TasksError extends Error {
@@ -230,21 +231,22 @@ export async function repairMissingManualOrders(
 
 export async function createTask(input: TaskInsert): Promise<Task> {
   const userId = await requireUserId();
+  const validatedInput = parseTaskInsert(input);
   const sort_order = resolveManualOrderForCreate(
-    input.sort_order,
+    validatedInput.sort_order,
     MANUAL_ORDER_INITIAL,
   );
 
   const { data, error } = await supabase
     .from("tasks")
     .insert({
-      ...input,
-      priority: input.priority ?? "low",
+      ...validatedInput,
+      priority: validatedInput.priority ?? "low",
       user_id: userId,
       sort_order,
-      notification_enabled: input.notification_enabled ?? true,
-      scheduled_date: input.scheduled_date ?? null,
-      planning_state: input.planning_state ?? "none",
+      notification_enabled: validatedInput.notification_enabled ?? true,
+      scheduled_date: validatedInput.scheduled_date ?? null,
+      planning_state: validatedInput.planning_state ?? "none",
     })
     .select()
     .single();
@@ -258,7 +260,7 @@ export async function createTask(input: TaskInsert): Promise<Task> {
 
 export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
   const userId = await requireUserId();
-  const payload: TaskUpdate = { ...input };
+  const payload: TaskUpdate = parseTaskUpdate(input);
   if (payload.sort_order !== undefined) {
     payload.sort_order = resolveManualOrderForCreate(payload.sort_order);
   }

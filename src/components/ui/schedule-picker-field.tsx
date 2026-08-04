@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ComponentProps,
+  type ReactNode,
+} from "react";
 import { ChevronDown } from "lucide-react";
 import {
   CalendarPanel,
@@ -29,7 +36,7 @@ type ScheduleDatePickerFieldProps = {
   onChange: (dateKey: string | null) => void;
   placeholder?: string;
   className?: string;
-};
+} & Pick<ComponentProps<"button">, "aria-describedby">;
 
 type ScheduleTimePickerFieldProps = {
   id?: string;
@@ -37,7 +44,7 @@ type ScheduleTimePickerFieldProps = {
   onChange: (time: string | null) => void;
   placeholder?: string;
   className?: string;
-};
+} & Pick<ComponentProps<"button">, "aria-describedby">;
 
 function SchedulePickerPopover({
   open,
@@ -100,6 +107,7 @@ export function ScheduleDatePickerField({
   onChange,
   placeholder = "Pick date",
   className,
+  "aria-describedby": ariaDescribedBy,
 }: ScheduleDatePickerFieldProps) {
   const fallbackId = useId();
   const fieldId = id ?? fallbackId;
@@ -121,6 +129,7 @@ export function ScheduleDatePickerField({
         )}
         aria-expanded={open}
         aria-haspopup="dialog"
+        aria-describedby={ariaDescribedBy}
       >
         <span className="truncate">{label}</span>
         <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
@@ -157,6 +166,7 @@ export function ScheduleTimePickerField({
   onChange,
   placeholder = "Pick time",
   className,
+  "aria-describedby": ariaDescribedBy,
 }: ScheduleTimePickerFieldProps) {
   const fallbackId = useId();
   const fieldId = id ?? fallbackId;
@@ -193,6 +203,7 @@ export function ScheduleTimePickerField({
         )}
         aria-expanded={open}
         aria-haspopup="dialog"
+        aria-describedby={ariaDescribedBy}
       >
         <span className="truncate tabular-nums">{label}</span>
         <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />

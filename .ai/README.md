@@ -76,7 +76,7 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 
 **Contains:**
 - Product identity and philosophy
-- Current phase (Phase 1 — Establish Implementation Truth)
+- Current phase (Phase 1.5 — Foundation Infrastructure)
 - Tech stack and architecture
 - Documentation authority hierarchy
 - Solo-founder workflow with 6-hat quality procedures
@@ -317,7 +317,7 @@ Ship simple, working code over complex, buggy code.
 16. **`docs/11-archive/`** — Historical reference only (DO NOT use for current work)
 
 **Current sprint:** `docs/current-phase/current-sprint.md`
-**Phase 1 gate checklist:** `docs/current-phase/phase-1/gate-checklist.md`
+**Phase 1.5 gate checklist:** `docs/current-phase/phase-1.5/gate-checklist.md`
 
 ---
 

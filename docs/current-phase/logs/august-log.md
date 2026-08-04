@@ -7,6 +7,21 @@
 
 ---
 
+## 2026-08-05 — Phase 1.5 Implementation Restoration
+
+**Owner:** Founder (6-hat solo workflow)
+**Status:** `complete`; implementation reconstructed, Gate 1.5 passed, and Phase 2 authorized.
+
+- Rebuilt the Phase 1.5 foundation from the recorded scope: Zod/RHF validation, server task boundaries, date validity, task planning rollback signaling, durable reflection autosave, and Focus-kanban append behavior.
+- Added focused regression coverage for validation, date boundaries, task board persistence, reflection autosave, and Focus history; the full suite passes `246/246` across `24` files.
+- Production build passes with `24` routes; lint passes with `0` errors / `211` warnings; `git diff --check` passes. The middleware-to-proxy deprecation and existing lint warnings remain documented.
+- Founder evidence passed for authentication, Tasks, Focus, Schedule time persistence, forced-write rollback, and prior-sprint ownership isolation; the audit result is temporarily accepted and deferred to a compatibility sprint.
+- The Singapore midnight boundary and Schedule keyboard review are explicit MVP limitations accepted in the Gate 1.5 decision.
+
+**Next:** Begin Phase 2 product-contracting work; retain the accepted audit and Schedule follow-ups in the backlog.
+
+---
+
 ## 2026-08-04 — Future Sprint and Gate Templates; Paired Commit Logs
 
 **Owner:** Founder (6-hat solo workflow)

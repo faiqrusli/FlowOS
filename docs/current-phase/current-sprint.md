@@ -1,16 +1,35 @@
-﻿# Current Sprint — Phase 1: Establish Implementation Truth
+﻿# Current Sprint — Phase 1.5: Foundation Infrastructure
 
-**Sprint Period:** 2026-08-04 → 2026-08-08  
-**Current Phase:** Phase 1 — Establish Implementation Truth  
-**Status:** Active — implementation-ready execution plan
-**Owner:** Founder (executed via 6-hat solo workflow)  
-**Last Updated:** 2026-08-04  
+**Sprint Period:** 2026-08-04 → 2026-08-08
+**Current Phase:** Phase 2 — Product Contracting (authorized after Gate 1.5)
+**Status:** Phase 1.5 complete — Gate 1.5 PASS recorded 2026-08-05
+**Owner:** Founder (executed via 6-hat solo workflow)
+**Last Updated:** 2026-08-05
 
-**📋 Gate 1 Checklist:** [phase-1/gate-checklist.md](./phase-1/gate-checklist.md)  
-**🗺️ MVP Masterplan:** [mvp-implementation-masterplan.md](./mvp-implementation-masterplan.md)  
-**🎯 Workflow:** [Solo Founder Workflow](../start-here/solo-founder-workflow.md)  
+**📋 Gate 1.5 Checklist:** [phase-1.5/gate-checklist.md](./phase-1.5/gate-checklist.md)
+**🗺️ MVP Masterplan:** [mvp-implementation-masterplan.md](./mvp-implementation-masterplan.md)
+**🎯 Workflow:** [Solo Founder Workflow](../start-here/solo-founder-workflow.md)
 **📝 First Phase 1 doc:** [post-phase-0-audit.md](./phase-1/post-phase-0-audit.md)
 **🧩 Future template:** [current-sprint-template.md](./templates/current-sprint-template.md) — this active sprint remains the source example.
+
+---
+
+## Phase 1.5 Implementation Record — 2026-08-05
+
+### Completed
+
+- Restored `zod`, `react-hook-form`, `@hookform/resolvers`, and `date-fns` contracts in `src/lib/validation.ts` with focused invalid-input and date-boundary tests.
+- Migrated login, registration, and the retained Task dialog to shared resolver-driven form state with field associations, loading states, and server-error recovery.
+- Added server task-insert/update validation and task-board write-error propagation; Today/Later projections retain organization membership.
+- Restored reflection autosave with date-scoped local fallback, flush on page hide/unmount, and retry retention.
+- Restored Focus reflection creation as append-only cards in the `Focus` kanban with weekly-board and legacy-entry fallback.
+
+### Evidence and dispositions
+
+- Full regressions pass `246/246` across `24` files; production build passes with `24` routes.
+- Lint passes with `0` errors / `211` warnings; `git diff --check` passes.
+- Founder manual evidence passed for authentication, Tasks, Focus, Schedule time persistence, forced-write rollback, and the retained prior-sprint ownership isolation result.
+- Gate 1.5 is `PASS`; Phase 2 is authorized. The Singapore midnight boundary and Schedule keyboard review are explicitly deferred MVP limitations.
 
 ---
 

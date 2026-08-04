@@ -24,30 +24,29 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 
 ## Current Status
 
-**Phase:** Phase 1 — Establish Implementation Truth
+**Phase:** Phase 1.5 — Foundation Infrastructure
 
 **Current Sprint:** 2026-08-04 → 2026-08-08 (active)
 
-**Status:** Active — Phase 1 sprint running (2026-08-04 → 2026-08-08)
+**Status:** Active — Phase 1.5 implementation restored; Gate 1.5 evidence collection in progress
 
 **📋 Quick Reference:**
 - **[Current Sprint](../docs/current-phase/current-sprint.md)** — What phase, what tasks, what status
-- **[Phase 1](../docs/current-phase/phase-1/README.md)** — Current phase work (Gate 1)
+- **[Phase 1.5](../docs/current-phase/phase-1.5/README.md)** — Current phase work (Gate 1.5)
 - **[MVP Masterplan](../docs/current-phase/mvp-implementation-masterplan.md)** — Implementation roadmap
 
-**Gate 1 Target:** For every admitted MVP domain, demonstrate the current behavior, data path, known gaps, and owner. Unknown status is not allowed to pass into implementation.
+**Gate 1.5 Target:** Validate shared forms, runtime validation, date/time semantics, and recovery boundaries before Phase 2. Unknown status is not allowed to pass into the next phase.
 
 **Gate 0 (Phase 0):** PASSED — 2026-08-04. Phase 0 closed and archived to `docs/11-archive/phases/phase-0/`. See [D-003](../docs/08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md).
 
-**Phase 1 Focus (from MVP Masterplan):**
-- Verify routes, entry points, data ownership, persistence, permissions, and current error/recovery behavior
-- Reconcile the Feature Catalog with code and FEATURE_INVENTORY
-- Reconcile V3/Tokyo Night Warm references, CSS tokens, component usage, legacy design
-- Identify dead code, placeholder routes, duplicate scheduling surfaces, dual save paths, undocumented states
-- Run baseline quality, accessibility, security, and production checks
-- Create only the feature briefs and behavior contracts needed to describe admitted MVP behavior
+**Phase 1.5 Focus:**
+- Maintain the shared Zod/RHF/date-fns validation and date/time boundaries
+- Preserve server-side task validation and user-scoped Supabase writes
+- Verify task planning, reflection autosave, Focus-kanban append, and recovery behavior
+- Complete authenticated accessibility, isolation, forced-write, and dependency evidence
+- Record one Gate 1.5 decision before authorizing Phase 2
 
-**Phase 1 Status:** Active — sprint running 2026-08-04 → 2026-08-08.
+**Phase 1.5 Status:** Active — implementation restored; sprint evidence collection continues 2026-08-04 → 2026-08-08.
 
 ---
 
@@ -162,7 +161,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 
 **Start here every day:**
 - `docs/current-phase/current-sprint.md` — **Current sprint and phase work**
-- `docs/current-phase/phase-1/README.md` — **Current phase work (Gate 1)**
+- `docs/current-phase/phase-1.5/README.md` — **Current phase work (Gate 1.5)**
 - `docs/current-phase/mvp-implementation-masterplan.md` — **Implementation roadmap**
 
 **Essential reading:**
@@ -195,20 +194,19 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 
 **Always check:** `docs/current-phase/current-sprint.md` for current assignments.
 
-**Phase 1 gate checklist:** `docs/current-phase/phase-1/gate-checklist.md` for completion criteria (scaffold created 2026-08-04; filled with the sprint).
+**Phase 1.5 gate checklist:** `docs/current-phase/phase-1.5/gate-checklist.md` for completion criteria and current evidence.
 
 **Phase 0 History (closed):**
 - ✅ Solo-founder workflow with 6-hat quality procedures created
 - ✅ Current-phase folder structure established
 - ✅ Gate 0 PASSED 2026-08-04; Phase 0 archived to `docs/11-archive/phases/phase-0/`
 
-**Gate 1 Progress:**
-- Phase 1 sprint active (2026-08-04 → 2026-08-08)
-- MVP Masterplan remains the implementation source
-- Feature Catalog is the coverage map
-- Implementation truth backlog (archived with Phase 0) is the starting question list
+**Gate 1.5 Progress:**
+- Phase 1.5 sprint active (2026-08-04 → 2026-08-08)
+- Validation, form, date/time, task planning, reflection recovery, and Focus append implementation is restored
+- Authenticated accessibility/recovery, isolation, forced-write, and audit evidence remain open
 
-**Gate 1 Status:** In progress — sprint active (2026-08-04 → 2026-08-08).
+**Gate 1.5 Status:** Active and partial — Phase 2 is not authorized.
 
 ---
 

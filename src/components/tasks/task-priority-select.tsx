@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
+import type { ComponentProps } from "react";
 import { TaskPriorityFlagIcon } from "@/components/tasks/task-priority-flag-icon";
 import {
   DropdownMenu,
@@ -17,24 +18,29 @@ import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 import { cn } from "@/lib/utils";
 
 type TaskPrioritySelectProps = {
+  id?: string;
   value: TaskPriority;
   onChange: (priority: TaskPriority) => void;
   className?: string;
   disabled?: boolean;
-};
+} & Pick<ComponentProps<"button">, "aria-describedby">;
 
 export function TaskPrioritySelect({
+  id,
   value,
   onChange,
   className,
   disabled,
+  "aria-describedby": ariaDescribedBy,
 }: TaskPrioritySelectProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        id={id}
         disabled={disabled}
         className={cn(compactControlTriggerClass, "h-9 w-full gap-2 px-2.5 text-sm", className)}
         aria-label="Priority"
+        aria-describedby={ariaDescribedBy}
       >
         <TaskPriorityFlagIcon priority={value} className="size-3.5" />
         <span className="min-w-0 flex-1 truncate text-left">

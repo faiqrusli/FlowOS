@@ -6,7 +6,7 @@
 **Approval Required:** Founder
 **Parent:** [Engineering Architecture](./engineering-architecture.md) · [Data Architecture](./data-architecture.md) · [Identity and Access Architecture](./identity-and-access-architecture.md) · [Quality Architecture](./quality-architecture.md) · [Experience Architecture](../03-experience/experience-architecture.md) · [Information Structure](../03-experience/information-structure.md) · [Design System Architecture](../05-design/design-system-architecture.md)
 **Children:** Client state specifications, navigation and routing specifications, data-loading contracts, interaction implementation standards, accessibility implementation standards, performance budgets, client error and recovery standards, feature delivery designs, and client reviews
-**Last Updated:** 2026-08-03
+**Last Updated:** 2026-08-05
 **Review trigger:** A proposed change alters client ownership, navigation, rendering, local or remote state, authority enforcement, data freshness, optimistic behavior, error recovery, accessibility support, performance, or the relationship between implemented UI and product truth.
 
 ---
@@ -200,6 +200,12 @@ Client implementation must respect the experience and design constraints around 
 [TECHNICAL_ARCHITECTURE.md](../06-engineering/TECHNICAL_ARCHITECTURE.md) remains the current reference for the implemented application shell, client framework, directory structure, current routes, and client dependencies. [DESIGN_SYSTEM_V3.md](../05-design/DESIGN_SYSTEM_V3.md), [DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md](../05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md), the [design implementation map](../05-design/design-implementation-map.md), and implementation code remain current references for visual and interaction implementation facts. The archived V3 Workspace and Interaction files are historical evidence only.
 
 All new reusable client architecture, navigation and routing specifications, client state standards, data-loading contracts, accessibility implementation standards, performance budgets, and client recovery standards belong in `06-engineering/`. Existing references remain active for factual scope until a material revision creates an explicit successor. Do not copy route lists, component trees, framework APIs, CSS, or implementation code into this architecture; link to them and define only the durable boundary they do not own.
+
+### Phase 1.5 implementation boundary
+
+The current foundation uses `react-hook-form` and Zod at the migrated auth and retained Task dialog surfaces. Field errors are associated with controls, pending submits are explicit, and server task writes validate after identity resolution; these are implementation references, not a new client authority boundary.
+
+The reflection drawer treats local drafts as recoverable interaction state and persists them before debounced remote synchronization. A local draft may preserve a person’s input across interruption, but it must not be presented as an authoritative reflection until the owning persistence path confirms it. Failed task-board and reflection writes remain visible and recoverable rather than being represented as successful product state.
 
 ---
 

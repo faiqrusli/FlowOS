@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,19 +20,12 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TaskPrioritySelect } from "@/components/tasks/task-priority-select";
+import { normalizeTaskPriority } from "@/lib/task-priority";
 import {
-  normalizeTaskPriority,
-  type TaskPriority,
-} from "@/lib/task-priority";
+  taskFormSchema,
+  type TaskFormValues,
+} from "@/lib/validation";
 import type { Task, TaskInsert } from "@/types/task";
-
-type TaskFormValues = {
-  title: string;
-  description: string;
-  scheduledDate: string | null;
-  scheduledTime: string | null;
-  priority: TaskPriority;
-};
 
 const emptyForm: TaskFormValues = {
   title: "",
@@ -76,9 +71,19 @@ export function TaskDialog({
   onSave,
 }: TaskDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const [form, setForm] = useState<TaskFormValues>(emptyForm);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    setError,
+    clearErrors,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<TaskFormValues>({
+    resolver: zodResolver(taskFormSchema),
+    defaultValues: emptyForm,
+  });
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -87,78 +92,68 @@ export function TaskDialog({
     if (!isControlled) setInternalOpen(next);
     onOpenChange?.(next);
     if (!next) {
-      setForm(emptyForm);
-      setError(null);
+      reset(emptyForm);
+      clearErrors();
     }
   }
 
   useEffect(() => {
     if (open && mode === "edit" && task) {
-      setForm(taskToForm(task));
-      setError(null);
+      reset(taskToForm(task));
+      clearErrors();
     }
     if (open && mode === "create") {
-      setForm(emptyForm);
-      setError(null);
+      reset(emptyForm);
+      clearErrors();
     }
-  }, [open, mode, task]);
+  }, [clearErrors, mode, open, reset, task]);
 
-  function updateField<K extends keyof TaskFormValues>(
-    key: K,
-    value: TaskFormValues[K]
-  ) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    const title = form.title.trim();
-    if (!title) {
-      setError("Title is required.");
-      return;
-    }
-
-    setSubmitting(true);
-    setError(null);
-
+  async function handleSave(values: TaskFormValues) {
     try {
-      await onSave(formToInsert(form), mode === "edit" ? task?.id : undefined);
+      await onSave(formToInsert(values), mode === "edit" ? task?.id : undefined);
       setOpen(false);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : mode === "edit"
-            ? "Failed to update task."
-            : "Failed to create task."
-      );
-    } finally {
-      setSubmitting(false);
+      setError("root.server", {
+        type: "server",
+        message:
+          err instanceof Error
+            ? err.message
+            : mode === "edit"
+              ? "Failed to update task."
+              : "Failed to create task.",
+      });
     }
   }
 
+  const scheduledDate = watch("scheduledDate");
+  const scheduledTime = watch("scheduledTime");
+  const priority = watch("priority");
+
   const formFields = (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(handleSave)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor={`${mode}-title`}>Title</Label>
         <Input
           id={`${mode}-title`}
-          value={form.title}
-          onChange={(e) => updateField("title", e.target.value)}
           placeholder="What needs to be done?"
           autoFocus
-          required
+          aria-invalid={errors.title ? "true" : undefined}
+          aria-describedby={errors.title ? `${mode}-title-error` : undefined}
+          {...register("title")}
         />
+        {errors.title && (
+          <p id={`${mode}-title-error`} className="text-sm text-destructive">
+            {errors.title.message}
+          </p>
+        )}
       </div>
       <div className="space-y-2">
         <Label htmlFor={`${mode}-description`}>Description</Label>
         <Textarea
           id={`${mode}-description`}
-          value={form.description}
-          onChange={(e) => updateField("description", e.target.value)}
           placeholder="Optional details"
           rows={3}
+          {...register("description")}
         />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -166,29 +161,67 @@ export function TaskDialog({
           <Label htmlFor={`${mode}-scheduled_date`}>Date</Label>
           <ScheduleDatePickerField
             id={`${mode}-scheduled_date`}
-            value={form.scheduledDate}
-            onChange={(dateKey) => updateField("scheduledDate", dateKey)}
+            value={scheduledDate ?? null}
+            onChange={(dateKey) =>
+              setValue("scheduledDate", dateKey, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            aria-describedby={
+              errors.scheduledDate ? `${mode}-scheduled-date-error` : undefined
+            }
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor={`${mode}-scheduled_time`}>Time</Label>
           <ScheduleTimePickerField
             id={`${mode}-scheduled_time`}
-            value={form.scheduledTime}
-            onChange={(time) => updateField("scheduledTime", time)}
+            value={scheduledTime ?? null}
+            onChange={(time) =>
+              setValue("scheduledTime", time, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            aria-describedby={
+              errors.scheduledTime ? `${mode}-scheduled-time-error` : undefined
+            }
           />
         </div>
       </div>
+      {errors.scheduledDate && (
+        <p id={`${mode}-scheduled-date-error`} className="text-sm text-destructive">
+          {errors.scheduledDate.message}
+        </p>
+      )}
+      {errors.scheduledTime && (
+        <p id={`${mode}-scheduled-time-error`} className="text-sm text-destructive">
+          {errors.scheduledTime.message}
+        </p>
+      )}
       <div className="space-y-2">
         <Label htmlFor={`${mode}-priority`}>Priority</Label>
         <TaskPrioritySelect
-          value={form.priority}
-          onChange={(priority) => updateField("priority", priority)}
+          id={`${mode}-priority`}
+          value={priority}
+          onChange={(nextPriority) =>
+            setValue("priority", nextPriority, {
+              shouldDirty: true,
+              shouldValidate: true,
+            })
+          }
+          aria-describedby={errors.priority ? `${mode}-priority-error` : undefined}
         />
       </div>
-      {error && (
-        <p className="text-sm text-destructive" role="alert">
-          {error}
+      {errors.priority && (
+        <p id={`${mode}-priority-error`} className="text-sm text-destructive">
+          {errors.priority.message}
+        </p>
+      )}
+      {errors.root?.server?.message && (
+        <p className="text-sm text-destructive" role="alert" aria-live="assertive">
+          {errors.root.server.message}
         </p>
       )}
       <DialogFooter className="border-t-0 bg-transparent p-0 sm:justify-end">
@@ -196,16 +229,16 @@ export function TaskDialog({
           type="button"
           variant="outline"
           onClick={() => setOpen(false)}
-          disabled={submitting}
+          disabled={isSubmitting}
         >
           Cancel
         </Button>
         <Button
           type="submit"
-          disabled={submitting}
+          disabled={isSubmitting}
           className="rounded-full"
         >
-          {submitting
+          {isSubmitting
             ? mode === "edit"
               ? "Saving…"
               : "Creating…"

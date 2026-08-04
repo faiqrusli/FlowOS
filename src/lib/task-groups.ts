@@ -1009,7 +1009,7 @@ export async function persistTaskBoardLayout(
     });
   }
 
-  await Promise.all(
+  const results = await Promise.all(
     [...updates.values()].map((item) =>
       supabase
         .from("tasks")
@@ -1028,6 +1028,11 @@ export async function persistTaskBoardLayout(
         .eq("user_id", userId)
     )
   );
+
+  const failed = results.find((result) => result.error);
+  if (failed?.error) {
+    throw new TaskGroupsError(failed.error.message);
+  }
 }
 
 type TaskLayoutSnapshot = {
@@ -1104,7 +1109,7 @@ export async function persistTaskBoardDiff(
 
   if (changed.length === 0) return;
 
-  await Promise.all(
+  const results = await Promise.all(
     changed.map((task) => {
       const scheduledDate =
         dateByTaskId.get(task.id) ?? task.scheduled_date ?? null;
@@ -1124,6 +1129,11 @@ export async function persistTaskBoardDiff(
         .eq("user_id", userId);
     })
   );
+
+  const failed = results.find((result) => result.error);
+  if (failed?.error) {
+    throw new TaskGroupsError(failed.error.message);
+  }
 }
 
 export function getInboxGroupId(groups: TaskGroupWithTasks[]): string | null {

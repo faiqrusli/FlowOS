@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import { getTodayDateString, shiftDateKey } from "@/lib/date-utils";
-import { isFocusReflectionEntry } from "@/lib/focus-reflection";
+import {
+  FOCUS_REFLECTION_KANBAN_TITLE,
+  isFocusReflectionEntry,
+} from "@/lib/focus-reflection";
 import { getReflectionDayLabel } from "@/lib/reflection-storage";
 import { type as typography } from "@/lib/typography";
 import { cn } from "@/lib/utils";
@@ -36,12 +39,19 @@ export function FocusReflectionWeekBoard({
       const focusEntry = reflection?.custom_entries.find((entry) =>
         isFocusReflectionEntry(entry.title),
       );
+      const focusBoard = reflection?.custom_kanbans.find(
+        (board) =>
+          board.title.trim().toLowerCase() ===
+          FOCUS_REFLECTION_KANBAN_TITLE.toLowerCase(),
+      );
+      const latestCard = focusBoard?.cards[focusBoard.cards.length - 1];
+      const preview = latestCard?.content?.trim() ?? focusEntry?.content?.trim() ?? "";
 
       days.push({
         date,
         label: getReflectionDayLabel(date),
-        hasFocusReflection: Boolean(focusEntry?.content?.trim()),
-        preview: focusEntry?.content?.trim() ?? "",
+        hasFocusReflection: Boolean(preview),
+        preview,
       });
     }
 

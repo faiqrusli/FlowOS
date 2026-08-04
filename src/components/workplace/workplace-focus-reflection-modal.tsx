@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { fetchTodayReflection } from "@/lib/reflection-storage";
 import {
   FOCUS_REFLECTION_ENTRY_TITLE,
+  FOCUS_REFLECTION_KANBAN_TITLE,
   saveFocusReflectionEntry,
 } from "@/lib/focus-reflection";
 
@@ -34,10 +35,16 @@ export function WorkplaceFocusReflectionModal({
     setLoading(true);
     try {
       const reflection = await fetchTodayReflection();
-      const focusEntry = reflection?.custom_entries.find(
-        (entry) => entry.title === FOCUS_REFLECTION_ENTRY_TITLE
+      const focusBoard = reflection?.custom_kanbans.find(
+        (board) =>
+          board.title.trim().toLowerCase() ===
+          FOCUS_REFLECTION_KANBAN_TITLE.toLowerCase(),
       );
-      setContent(focusEntry?.content ?? "");
+      const latestCard = focusBoard?.cards[focusBoard.cards.length - 1];
+      const legacyEntry = reflection?.custom_entries.find(
+        (entry) => entry.title.trim().toLowerCase() === FOCUS_REFLECTION_ENTRY_TITLE.toLowerCase(),
+      );
+      setContent(latestCard?.content ?? legacyEntry?.content ?? "");
       setDirty(false);
     } finally {
       setLoading(false);

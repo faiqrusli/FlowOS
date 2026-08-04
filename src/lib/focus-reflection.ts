@@ -1,5 +1,6 @@
 /** Custom reflection entry title used for workplace focus notes. */
 export const FOCUS_REFLECTION_ENTRY_TITLE = "Focus";
+export const FOCUS_REFLECTION_KANBAN_TITLE = "Focus";
 
 /** Minimum focus seconds before showing the inline session-end prompt. */
 export const MIN_FOCUS_REFLECTION_SECONDS = 60;
@@ -18,29 +19,35 @@ export async function saveFocusReflectionEntry(content: string): Promise<void> {
   );
 
   const reflection = await fetchTodayReflection();
-  const entries = reflection?.custom_entries ?? [];
-  const exists = entries.some(
-    (entry) => entry.title === FOCUS_REFLECTION_ENTRY_TITLE
+  const nextContent = content.trim();
+  if (!nextContent) return;
+  const boards = reflection?.custom_kanbans ?? [];
+  const focusBoard = boards.find(
+    (board) => board.title.trim().toLowerCase() === FOCUS_REFLECTION_KANBAN_TITLE.toLowerCase(),
   );
-  const nextEntries = exists
-    ? entries.map((entry) =>
-        entry.title === FOCUS_REFLECTION_ENTRY_TITLE
-          ? { ...entry, content }
-          : entry
+  const nextFocusBoard = focusBoard
+    ? {
+        ...focusBoard,
+        cards: [
+          ...focusBoard.cards,
+          { id: crypto.randomUUID(), content: nextContent },
+        ],
+      }
+    : {
+        id: crypto.randomUUID(),
+        title: FOCUS_REFLECTION_KANBAN_TITLE,
+        cards: [{ id: crypto.randomUUID(), content: nextContent }],
+      };
+  const nextKanbans = focusBoard
+    ? boards.map((board) =>
+        board.id === focusBoard.id ? nextFocusBoard : board,
       )
-    : [
-        ...entries,
-        {
-          id: crypto.randomUUID(),
-          title: FOCUS_REFLECTION_ENTRY_TITLE,
-          content,
-        },
-      ];
+    : [...boards, nextFocusBoard];
 
   await saveReflection({
     went_well: reflection?.went_well ?? "",
     went_wrong: reflection?.went_wrong ?? "",
-    custom_entries: nextEntries,
-    custom_kanbans: reflection?.custom_kanbans ?? [],
+    custom_entries: reflection?.custom_entries ?? [],
+    custom_kanbans: nextKanbans,
   });
 }

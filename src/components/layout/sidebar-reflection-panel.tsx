@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CustomEntriesSection } from "@/components/reflection/custom-entries-section";
 import { ReflectionKanbanSection } from "@/components/reflection/reflection-kanban-section";
 import { ReflectionQuestionsCard } from "@/components/reflection/reflection-questions-card";
@@ -8,7 +8,20 @@ import {
   fetchTodayReflection,
   saveReflection,
 } from "@/lib/reflection-storage";
-import type { CustomEntry, ReflectionKanban } from "@/types/reflection";
+import { createReflectionAutosaveController } from "@/lib/reflection-autosave";
+import { getTodayDateString } from "@/lib/date-utils";
+import { readStorageJson, removeStorageItem, writeStorageJson } from "@/lib/safe-storage";
+import type {
+  CustomEntry,
+  ReflectionKanban,
+} from "@/types/reflection";
+
+type SidebarReflectionDraft = {
+  wentWell: string;
+  wentWrong: string;
+  customEntries: CustomEntry[];
+  customKanbans: ReflectionKanban[];
+};
 
 /**
  * Drawer reflection — local text stays interactive while autosave runs silently
@@ -22,14 +35,44 @@ export function SidebarReflectionPanel() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const dirtyRef = useRef(false);
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const savingRef = useRef(false);
-  const draftRef = useRef({
+  const draftRef = useRef<SidebarReflectionDraft>({
     wentWell: "",
     wentWrong: "",
     customEntries: [] as CustomEntry[],
     customKanbans: [] as ReflectionKanban[],
   });
+  const draftKey = `flowos:reflection-draft:${getTodayDateString()}`;
+  const persistDraft = useCallback(
+    (draft: SidebarReflectionDraft) =>
+      saveReflection({
+        went_well: draft.wentWell,
+        went_wrong: draft.wentWrong,
+        custom_entries: draft.customEntries.filter((entry) => entry.title.trim()),
+        custom_kanbans: draft.customKanbans,
+      }),
+    [],
+  );
+  const autosave = useMemo(
+    () =>
+      createReflectionAutosaveController<SidebarReflectionDraft>(persistDraft, {
+        delayMs: 400,
+        onSaved: (hasPendingDraft) => {
+          if (!hasPendingDraft) removeStorageItem(draftKey);
+        },
+        onError: () => setError("Failed to save reflection. It will retry when changed."),
+      }),
+    [draftKey, persistDraft],
+  );
+
+  const scheduleSave = useCallback(
+    (draft: SidebarReflectionDraft) => {
+      dirtyRef.current = true;
+      draftRef.current = draft;
+      writeStorageJson(draftKey, draft);
+      autosave.schedule(draft);
+    },
+    [autosave, draftKey],
+  );
 
   const loadReflection = useCallback(async () => {
     setLoading(true);
@@ -41,17 +84,28 @@ export function SidebarReflectionPanel() {
         // User typed while load was in flight — keep local draft.
         return;
       }
-      if (todayReflection) {
-        setWentWell(todayReflection.went_well);
-        setWentWrong(todayReflection.went_wrong);
-        setCustomEntries(todayReflection.custom_entries);
-        setCustomKanbans(todayReflection.custom_kanbans ?? []);
-        draftRef.current = {
+
+      const localDraft = readStorageJson<SidebarReflectionDraft | null>(draftKey, null);
+      if (localDraft) {
+        setWentWell(localDraft.wentWell);
+        setWentWrong(localDraft.wentWrong);
+        setCustomEntries(localDraft.customEntries);
+        setCustomKanbans(localDraft.customKanbans);
+        draftRef.current = localDraft;
+        dirtyRef.current = true;
+        autosave.schedule(localDraft);
+      } else if (todayReflection) {
+        const nextDraft = {
           wentWell: todayReflection.went_well,
           wentWrong: todayReflection.went_wrong,
           customEntries: todayReflection.custom_entries,
           customKanbans: todayReflection.custom_kanbans ?? [],
         };
+        setWentWell(nextDraft.wentWell);
+        setWentWrong(nextDraft.wentWrong);
+        setCustomEntries(nextDraft.customEntries);
+        setCustomKanbans(nextDraft.customKanbans);
+        draftRef.current = nextDraft;
       } else {
         setWentWell("");
         setWentWrong("");
@@ -64,74 +118,30 @@ export function SidebarReflectionPanel() {
           customKanbans: [],
         };
       }
-      dirtyRef.current = false;
+      if (!localDraft) dirtyRef.current = false;
     } catch {
       setError("Failed to load reflection.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [autosave, draftKey]);
 
   useEffect(() => {
     void loadReflection();
   }, [loadReflection]);
 
   useEffect(() => {
-    draftRef.current = {
-      wentWell,
-      wentWrong,
-      customEntries,
-      customKanbans,
-    };
-  }, [wentWell, wentWrong, customEntries, customKanbans]);
-
-  const scheduleSave = useCallback(() => {
-    dirtyRef.current = true;
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      void (async () => {
-        if (savingRef.current) {
-          scheduleSave();
-          return;
-        }
-        savingRef.current = true;
-        const draft = draftRef.current;
-        try {
-          await saveReflection({
-            went_well: draft.wentWell,
-            went_wrong: draft.wentWrong,
-            custom_entries: draft.customEntries.filter((entry) =>
-              entry.title.trim(),
-            ),
-            custom_kanbans: draft.customKanbans,
-          });
-          // Only clear dirty if draft is unchanged since this save started.
-          const latest = draftRef.current;
-          if (
-            latest.wentWell === draft.wentWell &&
-            latest.wentWrong === draft.wentWrong &&
-            latest.customEntries === draft.customEntries &&
-            latest.customKanbans === draft.customKanbans
-          ) {
-            dirtyRef.current = false;
-          } else {
-            scheduleSave();
-          }
-          setError(null);
-        } catch {
-          setError("Failed to save reflection.");
-        } finally {
-          savingRef.current = false;
-        }
-      })();
-    }, 900);
-  }, []);
+    draftRef.current = { wentWell, wentWrong, customEntries, customKanbans };
+  }, [customEntries, customKanbans, wentWell, wentWrong]);
 
   useEffect(() => {
+    const flush = () => void autosave.flush();
+    window.addEventListener("pagehide", flush);
     return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      window.removeEventListener("pagehide", flush);
+      void autosave.flush();
     };
-  }, []);
+  }, [autosave]);
 
   if (loading) {
     return (
@@ -154,11 +164,11 @@ export function SidebarReflectionPanel() {
             wentWrong={wentWrong}
             onWentWellChange={(value) => {
               setWentWell(value);
-              scheduleSave();
+              scheduleSave({ ...draftRef.current, wentWell: value });
             }}
             onWentWrongChange={(value) => {
               setWentWrong(value);
-              scheduleSave();
+              scheduleSave({ ...draftRef.current, wentWrong: value });
             }}
             hideTitle
             flat
@@ -169,7 +179,7 @@ export function SidebarReflectionPanel() {
           entries={customEntries}
           onChange={(entries) => {
             setCustomEntries(entries);
-            scheduleSave();
+            scheduleSave({ ...draftRef.current, customEntries: entries });
           }}
           flat
         />
@@ -178,7 +188,7 @@ export function SidebarReflectionPanel() {
           kanbans={customKanbans}
           onChange={(kanbans) => {
             setCustomKanbans(kanbans);
-            scheduleSave();
+            scheduleSave({ ...draftRef.current, customKanbans: kanbans });
           }}
           compact
           flat

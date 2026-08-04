@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +14,7 @@ import { isEmailNotConfirmedError } from "@/lib/auth";
 import { enterDemoSession } from "@/lib/demo/session";
 import { createClient } from "@/lib/supabase/client";
 import { trackClick } from "@/lib/click-tracking";
+import { loginSchema, type LoginFormValues } from "@/lib/validation";
 
 export function LoginForm() {
   const router = useRouter();
@@ -19,36 +22,44 @@ export function LoginForm() {
   const nextPath = getSafeRedirectPath(searchParams.get("next"));
   const callbackError = searchParams.get("error");
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [enteringDemo, setEnteringDemo] = useState(false);
-  const [error, setError] = useState<string | null>(
+  const [authError, setAuthError] = useState<string | null>(
     callbackError === "confirmation_failed"
       ? "Email confirmation failed. Try signing in again or request a new link."
       : null
   );
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    setSubmitting(true);
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  async function handleLogin(values: LoginFormValues) {
+    setAuthError(null);
 
     const supabase = createClient();
     const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
+      email: values.email,
+      password: values.password,
     });
 
     if (signInError) {
+      let message: string;
       if (isEmailNotConfirmedError(signInError.message)) {
-        setError(
-          "Please confirm your email before signing in. Check your inbox for the confirmation link."
-        );
+        message =
+          "Please confirm your email before signing in. Check your inbox for the confirmation link.";
       } else {
-        setError(signInError.message);
+        message = signInError.message;
       }
-      setSubmitting(false);
+      setError("root.server", {
+        type: "server",
+        message,
+      });
       return;
     }
 
@@ -58,14 +69,14 @@ export function LoginForm() {
 
   async function handleEnterDemo() {
     setEnteringDemo(true);
-    setError(null);
+    setAuthError(null);
     try {
       await enterDemoSession();
       void trackClick("demo_button_click");
       router.push("/");
       router.refresh();
     } catch (err) {
-      setError(
+      setAuthError(
         err instanceof Error
           ? err.message
           : "Could not start the demo. Try again.",
@@ -97,7 +108,7 @@ export function LoginForm() {
           <Button
             type="button"
             className="mt-1 w-full"
-            disabled={enteringDemo || submitting}
+            disabled={enteringDemo || isSubmitting}
             onClick={() => void handleEnterDemo()}
           >
             {enteringDemo ? "Preparing demo…" : "Enter Demo Workspace"}
@@ -113,18 +124,23 @@ export function LoginForm() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(handleLogin)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               autoComplete="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
-              required
+              aria-invalid={errors.email ? "true" : undefined}
+              aria-describedby={errors.email ? "login-email-error" : undefined}
+              {...register("email")}
             />
+            {errors.email && (
+              <p id="login-email-error" className="text-sm text-destructive">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -133,26 +149,35 @@ export function LoginForm() {
               id="password"
               type="password"
               autoComplete="current-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
               placeholder="Your password"
-              required
+              aria-invalid={errors.password ? "true" : undefined}
+              aria-describedby={errors.password ? "login-password-error" : undefined}
+              {...register("password")}
             />
+            {errors.password && (
+              <p id="login-password-error" className="text-sm text-destructive">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
-          {error && (
-            <p className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {error}
+          {(authError || errors.root?.server?.message) && (
+            <p
+              role="alert"
+              aria-live="assertive"
+              className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            >
+              {authError ?? errors.root?.server?.message}
             </p>
           )}
 
           <Button
             type="submit"
-            disabled={submitting || enteringDemo}
+            disabled={isSubmitting || enteringDemo}
             variant="outline"
             className="w-full"
           >
-            {submitting ? "Signing in…" : "Login"}
+            {isSubmitting ? "Signing in…" : "Login"}
           </Button>
         </form>
       </div>

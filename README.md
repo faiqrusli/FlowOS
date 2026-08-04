@@ -1,8 +1,8 @@
-﻿# FlowOS
+# FlowOS
 
-An operating system for self-direction that connects chosen direction, deliberate action, evidence, reflection, and adaptation.
+**Your daily workspace for getting meaningful work done.**
 
-> Direction → Commitment → Action → Evidence → Sensemaking → Adaptation
+FlowOS connects your tasks, schedule, focus sessions, habits, and reflection in one place — so you can plan your day, execute with focus, and actually learn what works for you.
 
 **Live app:** [flowos-sage.vercel.app](https://flowos-sage.vercel.app)
 
@@ -12,23 +12,44 @@ An operating system for self-direction that connects chosen direction, deliberat
 
 ---
 
-## What is FlowOS?
+## What You Can Do
 
-FlowOS is an integrated personal productivity platform designed around **execution** rather than organization alone.
+**Plan your day** — See what's on your plate, schedule tasks realistically, and know what to focus on next.
 
-Instead of treating tasks, schedules, focus sessions, habits, and reflection as separate tools, FlowOS connects them into one continuous workflow: plan meaningful work, execute with focus, review progress, and improve over time.
+**Work with focus** — Start focus sessions that track what you're actually working on, not just what you planned.
+
+**Build habits** — Track daily routines and see them right alongside your tasks.
+
+**Reflect and improve** — End each day by capturing what worked, what didn't, and what to change tomorrow.
+
+**Everything connects** — Your tasks flow into your schedule, your schedule drives your focus sessions, and your reflections help you plan better next time.
 
 ---
 
 ## Why FlowOS?
 
-Modern productivity is fragmented.
-
-People often plan work in one app, schedule it in another, focus somewhere else, and reflect in a journal. The relationship between those activities is often lost.
-
-FlowOS exists to reconnect that chain.
+Most productivity tools are disconnected. You plan in one app, work in another, and reflect in your journal. FlowOS keeps it all together so you can actually see the relationship between what you plan and what you do.
 
 Rather than helping you organize more tasks, FlowOS focuses on helping you **execute meaningful work** and continuously improve.
+
+---
+
+## How It Works
+
+1. **Start your day** — Check Today to see your tasks, habits, and schedule
+2. **Hit Focus** — Start a session and work distraction-free
+3. **Track progress** — See what you're actually completing in real-time
+4. **End with Reflection** — Capture what worked, what didn't, and adjust tomorrow
+5. **Improve over time** — Your patterns help you plan better and work smarter
+
+---
+
+## Who Is FlowOS For?
+
+- **Students** managing coursework, projects, and personal growth
+- **Freelancers** balancing multiple clients and personal work
+- **Knowledge workers** who want to do deep work with less friction
+- **Anyone** tired of productivity tools that create more work than they solve
 
 ---
 
@@ -102,13 +123,11 @@ FlowOS aims to close the gap between **intention and execution** — built to ex
 
 **Core loop:** Plan → Commit → Focus → Reflect → Improve
 
-| Doc | What it is |
-|-----|------------|
-| [Vision](./docs/00-constitution/Vision.md) | **Highest authority** — timeless philosophy, product boundaries, and long-term direction |
-| [Previous Vision & Product Strategy](./docs/11-archive/strategy/flowos-vision-and-product-strategy.md) | Historical reference |
-| [User Evolution & Market Positioning](./docs/01-product/user-evolution-and-market-positioning.md) | How FlowOS serves students through founders |
-| [Documentation hub](./docs/README.md) | Full index, authority order, start-here paths |
-| [Feature inventory](./docs/04-features/FEATURE_INVENTORY.md) | What’s shipped vs deferred |
+**Learn More:**
+- [Vision](./docs/00-constitution/Vision.md) — Why FlowOS exists and product principles
+- [Feature Inventory](./docs/04-features/FEATURE_INVENTORY.md) — What's built vs planned
+- [User Evolution & Market Positioning](./docs/01-product/user-evolution-and-market-positioning.md) — Who we serve
+- [Documentation Hub](./docs/README.md) — Full documentation
 
 ---
 
@@ -146,11 +165,19 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Contributing
 
-FlowOS is in an **implementation hold** for review — prefer small fixes and docs clarity over large new features.
+Prefer small, evidence-backed changes over large new features. All contributions should align with the [Vision](./docs/00-constitution/Vision.md).
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) and [GIT_WORKFLOW.md](./docs/00-constitution/governance/GIT_WORKFLOW.md).
+**New to FlowOS?** Start here:
+- **[Start Here docs](./docs/start-here/)** — How FlowOS works and how to develop it
+- **[Current Sprint](./docs/current-phase/current-sprint.md)** — What's being worked on right now
+- **[Contributing Guide](./CONTRIBUTING.md)** — How to contribute
+- **[Git Workflow](./docs/00-constitution/governance/GIT_WORKFLOW.md)** — Branch and commit conventions
 
-**Docs:** [docs/README.md](./docs/README.md) · **Vision:** [Vision.md](./docs/00-constitution/Vision.md) · **Shipped surface:** [FEATURE_INVENTORY.md](./docs/04-features/FEATURE_INVENTORY.md)
+**Quick Links:**
+- [Documentation Hub](./docs/README.md) — Full documentation index
+- [Vision](./docs/00-constitution/Vision.md) — Product philosophy and principles
+- [Decision Register](./docs/08-decisions/decision-register.md) — Major decisions and rationale
+- [Feature Inventory](./docs/04-features/FEATURE_INVENTORY.md) — What's shipped vs planned
 
 ---
 

@@ -6,7 +6,7 @@
 **Approval Required:** Founder
 **Parent:** [Engineering Architecture](./engineering-architecture.md) · [Technical Architecture](./TECHNICAL_ARCHITECTURE.md) · [MVP Implementation Masterplan](../current-phase/mvp-implementation-masterplan.md)
 **Children:** Technology-specific integration records, architecture reviews, dependency decision records, and [D-004](../08-decisions/records/D-004-add-phase-1-5-foundation-infrastructure-to-mvp-masterplan.md) (Phase 1.5 addition to MVP Masterplan)
-**Last Updated:** 2026-08-04
+**Last Updated:** 2026-08-05
 **Review trigger:** A proposed technology addition, removal, phase reassignment, or change to integration principles or workflow
 
 ---
@@ -928,25 +928,35 @@ When a technology is no longer needed:
 - Strong TypeScript adoption
 
 ### Areas for Improvement
-- Form management needs modernization (React Hook Form + Zod)
-- Date/time handling needs standardization (date-fns)
+- Form management is standardized for the Phase 1.5 auth and retained Task pilot; remaining forms require scoped migration.
+- Date/time validity is standardized at the Phase 1.5 boundary; remaining native Date operations require semantic review.
 - Testing infrastructure needs activation (Vitest)
 - Code quality tooling needs enhancement (ESLint, Husky, lint-staged)
+
+## Phase 1.5 Implementation Status — 2026-08-05
+
+The approved Phase 1.5 packages are now present in `package.json` and `package-lock.json`:
+
+- `zod` `^4.4.3`
+- `react-hook-form` `^7.84.0`
+- `@hookform/resolvers` `^5.7.1`
+- `date-fns` `^4.4.0`
+
+The recovered implementation establishes shared validation contracts, migrates login/registration and the retained Task dialog, validates task writes after `requireUserId`, rejects impossible date keys, and provides durable reflection/Focus recovery. Remaining native-Date migration, full live-form coverage, authenticated accessibility evidence, and audit-vulnerability disposition remain open and are not silently admitted as complete.
 
 ## Recommended Phase 1 Actions (Phase 1.5 of MVP Masterplan)
 
 ### Priority 1: React Hook Form + Zod
-- Install `react-hook-form`, `zod`, `@hookform/resolvers`
-- Migrate auth forms first (login, register)
-- Establish patterns for form validation
-- Document form patterns for future features
+- ~~Install `react-hook-form`, `zod`, `@hookform/resolvers`~~ — complete and recorded above
+- ~~Migrate auth forms first (login, register)~~ — complete; authenticated manual evidence remains
+- ~~Establish patterns for form validation~~ — complete for auth and the retained Task dialog
+- Document the pattern for future features without broadening the current phase
 
 ### Priority 2: date-fns
-- Install `date-fns`
-- Replace native Date operations in focus session logic
-- Replace native Date operations in schedule computation
-- Establish timezone handling patterns
-- Document date/time patterns
+- ~~Install `date-fns`~~ — complete and recorded above
+- Keep native Date operations in focus/session and schedule paths until semantic boundary tests authorize each migration
+- ~~Establish timezone handling patterns~~ — `Asia/Singapore`, date-only keys, wall-clock values, and persisted instants are documented
+- ~~Document date/time patterns~~ — see `docs/current-phase/phase-1.5/validation-and-date-time-pattern.md`
 
 ## Recommended Phase 2 Actions (Development Quality)
 

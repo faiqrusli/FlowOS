@@ -73,7 +73,7 @@ const BoardTaskRow = memo(function BoardTaskRow({
     <div
       data-task-board-slot={task.id}
       className={cn(
-        isDragSource && "pointer-events-none opacity-0",
+        isDragSource && "pointer-events-none opacity-60",
         isDropReveal && !isDragSource && "animate-task-drop-reveal"
       )}
     >
