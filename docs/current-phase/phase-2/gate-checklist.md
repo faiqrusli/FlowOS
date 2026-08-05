@@ -1,126 +1,133 @@
-# Phase 2 Gate Checklist — Gate 2: Contract Coherence
+# Phase 2 Gate Checklist - Gate 2: Contract Coherence
 
-**Status:** OPEN — P0 complete; P1–P4 drafted; P5/P6 open
+**Status:** CLOSED / ARCHIVED - P0-P6 complete; Gate 2 PASS recorded; Phase 3 authorized
 **Owner:** Founder, executing all six hats
-**Parent:** [Phase 2 README](./README.md) · [MVP implementation masterplan](../mvp-implementation-masterplan.md)
+**Parent:** [Phase 2 README](./README.md) - [MVP implementation masterplan](../mvp-implementation-masterplan.md)
 **Execution reference:** [Current sprint](../current-sprint.md)
 **Created:** 2026-08-05
 **Last updated:** 2026-08-05
-
----
+**Archived sprint:** [Complete Phase 2 sprint record](../../11-archive/phases/phase-2/phase-2-sprint.md)
+**Handoff branch:** `sprint/phase2`
 
 ## 1. Gate definition
 
-**Gate 2 — Contract coherence:** A designer, engineer, and reviewer can trace every admitted behavior to a parent system, a bounded journey stage, a design expression, a data/technical owner, and a validation question without inventing missing rules.
+Gate 2 passes only when a designer, engineer, and reviewer can trace every admitted behavior to its parent system, bounded journey stage, design expression, data/technical owner, and validation question without inventing missing rules. The Founder recorded the required `PASS` below. This authorizes Phase 3 to begin; Gate 3 and Gate 4 remain required before release.
 
-Gate 2 measures contract completeness and traceability. It does not require Phase 3 implementation, production hardening, or release readiness. A draft can support work, but only a complete and reviewed package can pass.
-
-## 2. Gate scope and entry evidence
-
-The gate covers:
-
-- Today, Tasks, Focus, and Reflection feature briefs and behavior contracts;
-- the bounded journey connecting orientation, commitment, action, evidence, sensemaking, and adaptation;
-- minimum Habits, Schedule, and Notes behavior;
-- source ownership, provenance, correction, and continuity rules;
-- feature design specifications with full state coverage; and
-- validation questions and repository evidence needed to assess the above.
-
-Entry evidence:
-
-- Gate 1 PASS: [Phase 1 implementation-truth evidence](../phase-1/implementation-truth-evidence.md) and [D-007](../../08-decisions/records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md).
-- Gate 1.5 PASS: [archived Phase 1.5 sprint record](../../11-archive/phases/phase-1.5/phase-1.5-sprint.md) and [foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md).
-- Current execution: [Phase 2 current sprint](../current-sprint.md).
-
-## 3. Exit criteria and evidence status
-
-All criteria must be `PASS` for a Founder `PASS`. `PARTIAL` is permitted only when the remaining gap is explicit, owned, and has a dated disposition that does not require inventing a rule during Phase 3. `UNKNOWN` cannot pass.
+## 2. Exit criteria and evidence status
 
 | ID | Exit requirement | Required evidence | Current state |
 |---|---|---|---|
-| G2-01 | Each core domain has a feature brief and behavior contract | Four linked brief/contract pairs with scope and non-goals | `DRAFT` |
-| G2-02 | Every admitted behavior is observable and authority-aware | Behavior rules, state tables, transitions, recovery, accessibility, acceptance IDs | `DRAFT` |
-| G2-03 | Journey connects the six loop stages without becoming a forced funnel | Journey narrative, entry/exit contexts, handoff table, alternatives, `JOURNEY-*` | `DRAFT` |
-| G2-04 | Supporting domains have minimum behavior and exclusions | Supporting decision with owner, provenance, empty/unavailable behavior, `SUPPORT-*` | `DRAFT` |
-| G2-05 | Record ownership, provenance, correction, and continuity are explicit | Record rules matrix, state distinctions, recovery and correction rules, `RECORD-*` | `DRAFT` |
-| G2-06 | Design specifications cover all required states | Four specs covering content, hierarchy, semantic state, interaction, responsive, accessibility, loading, empty, error, interruption, recovery, and handoff | `NOT_STARTED` |
-| G2-07 | Delivery designs do not bypass approved product/design contracts | Review confirms no premature delivery design or unapproved behavior change | `PENDING_REVIEW` |
-| G2-08 | Phase 1.5 patterns are carried into every applicable contract | Foundation links and explicit Zod/RHF/date-fns/timezone/recovery constraints | `DRAFT` |
-| G2-09 | Founder makes one explicit Gate 2 decision | Dated `PASS`, `HOLD`, or `REWORK`, rationale, conditions, and Phase 3 authorization | `PENDING` |
+| G2-01 | Each core domain has a feature brief and behavior contract | Four linked brief/contract pairs with scope and non-goals | `COMPLETE` |
+| G2-02 | Every admitted behavior is observable and authority-aware | State tables, transitions, recovery, accessibility, and acceptance IDs | `COMPLETE` |
+| G2-03 | Journey connects six stages without becoming a forced funnel | Entries/exits, alternatives, handoffs, unchanged state, `JOURNEY-*` | `COMPLETE` |
+| G2-04 | Supporting domains have minimum behavior and exclusions | Owner, provenance, optionality, empty/unavailable behavior, `SUPPORT-*` | `COMPLETE` |
+| G2-05 | Record ownership, provenance, correction, and continuity are explicit | Ownership matrix, lifecycle states, recovery, correction/deletion/withdrawal, `RECORD-*` | `COMPLETE` |
+| G2-06 | Design specifications cover all required states | Four state-complete specifications | `COMPLETE` |
+| G2-07 | Delivery designs do not bypass product/design contracts | Review confirms no premature delivery design | `COMPLETE` |
+| G2-08 | Phase 1.5 patterns are carried into applicable contracts | Zod/RHF/date-fns/timezone/recovery/identity constraints | `COMPLETE` |
+| G2-09 | Founder makes one explicit Gate 2 decision | Dated `PASS`, `HOLD`, or `REWORK` with rationale | `COMPLETE` |
 
-## 4. Contract and traceability register
+## 3. Contract and traceability register
 
-`State` describes readiness for Gate 2, not whether code exists. The design path is planned until P5 creates it. Validation IDs are the acceptance questions that later validation plans must assess.
+| Contract/surface | Parent system | Journey stage | Behavior evidence | Canonical owner | Validation IDs | State |
+|---|---|---|---|---|---|---|
+| Today | Experience Architecture; Action and Evidence | Orientation | [brief](../../04-features/briefs/today.md) - [behavior](../../04-features/behavior/today.md) | Today composes; linked owner writes | `TODAY-01`-`06` | `COMPLETE` |
+| Tasks | Direction and Commitment; Action and Evidence | Commitment | [brief](../../04-features/briefs/tasks.md) - [behavior](../../04-features/behavior/tasks.md) | Tasks | `TASK-01`-`08` | `COMPLETE` |
+| Focus | Action and Evidence; Direction and Commitment | Action/Evidence | [brief](../../04-features/briefs/focus.md) - [behavior](../../04-features/behavior/focus.md) | Focus; attribution only when verified | `FOCUS-01`-`07` | `COMPLETE` |
+| Reflection | Sensemaking and Adaptation; Action and Evidence | Sensemaking/Adaptation | [brief](../../04-features/briefs/reflection.md) - [behavior](../../04-features/behavior/reflection.md) | Reflection; receiving owner applies adaptation | `REFLECT-01`-`08` | `COMPLETE` |
+| MVP coherent loop | Experience Architecture; Information Structure | All six stages | [journey contract](../../03-experience/journeys/mvp-coherent-loop.md) | Stage owner per handoff | `JOURNEY-01`-`08` | `COMPLETE` |
+| Habits | Action and Evidence; supporting ownership | Orientation/action support | [supporting decisions](../../04-features/supporting-domain-decisions.md) | Habits | `SUPPORT-01`-`07` | `COMPLETE` |
+| Schedule | Continuity and Interoperability | Orientation/planning support | [supporting decisions](../../04-features/supporting-domain-decisions.md) | Task/Habit source record | `SUPPORT-01`-`07` | `COMPLETE` |
+| Notes/Growth Areas | Continuity; Sensemaking and Adaptation | Context/sensemaking support | [supporting decisions](../../04-features/supporting-domain-decisions.md) | Notes | `SUPPORT-01`-`07` | `COMPLETE` |
+| MVP record rules | Product Model; Action and Evidence; Continuity | All stages | [record rules](../../04-features/record-rules.md) | One owner per mutation | `RECORD-01`-`08` | `COMPLETE` |
 
-| Contract/surface | Parent system(s) | Journey stage | Behavior evidence | Design evidence | Data/technical owner | Validation IDs | State |
-|---|---|---|---|---|---|---|---|
-| **Today** | Experience Architecture; Action and Evidence | Orientation | [brief](../../04-features/briefs/today.md) · [behavior](../../04-features/behavior/today.md) | `docs/05-design/features/today-design-spec.md` | Today composes; linked domain owns writes | `TODAY-01`–`05` | `DRAFT` |
-| **Tasks** | Direction and Commitment; Action and Evidence | Commitment | [brief](../../04-features/briefs/tasks.md) · [behavior](../../04-features/behavior/tasks.md) | `docs/05-design/features/tasks-design-spec.md` | Tasks owner paths; user-scoped records | `TASK-01`–`06` | `DRAFT` |
-| **Focus** | Action and Evidence; Direction and Commitment | Action | [brief](../../04-features/briefs/focus.md) · [behavior](../../04-features/behavior/focus.md) | `docs/05-design/features/focus-design-spec.md` | Focus session persistence; attribution only when verified | `FOCUS-01`–`06` | `DRAFT` |
-| **Reflection** | Sensemaking and Adaptation; Action and Evidence | Sensemaking/adaptation | [brief](../../04-features/briefs/reflection.md) · [behavior](../../04-features/behavior/reflection.md) | `docs/05-design/features/reflection-design-spec.md` | Reflection persistence/entries; receiving owner applies adaptation | `REFLECT-01`–`06` | `DRAFT` |
-| **MVP coherent loop** | Experience Architecture; Information Structure | All six stages | [journey contract](../../03-experience/journeys/mvp-coherent-loop.md) | Four linked feature specs | Product/feature owners named per handoff | `JOURNEY-01`–`05` | `DRAFT` |
-| **Habits** | Action and Evidence; supporting ownership | Orientation/action support | [supporting decisions](../../04-features/supporting-domain-decisions.md) | Included in Today/supporting design review | Habits and completion owner | `SUPPORT-01`–`05` | `DRAFT` |
-| **Schedule** | Continuity and Interoperability; task/habit ownership | Orientation/planning support | [supporting decisions](../../04-features/supporting-domain-decisions.md) | Included in Today/supporting design review | Task/Habit source records | `SUPPORT-01`–`05` | `DRAFT` |
-| **Notes / Knowledge** | Continuity and Interoperability; Sensemaking and Adaptation | Context/sensemaking support | [supporting decisions](../../04-features/supporting-domain-decisions.md) | Included in Reflection/supporting design review | Notes source relationship | `SUPPORT-01`–`05` | `DRAFT` |
-| **MVP record rules** | Product Model; Action and Evidence; Continuity | All stages | [record rules](../../04-features/record-rules.md) | Expressed by each feature spec | Product + Engineering Architects | `RECORD-01`–`05` | `DRAFT` |
+Design evidence is present in the four linked feature specifications. The package still does not claim Phase 3 implementation, migration application, or release readiness.
 
-## 5. Gate evidence requirements by work package
+**P6 traceability evidence:** [Gate 2 evidence package](./gate-2-evidence-package.md) contains one complete chain for each of the 52 admitted acceptance IDs across Today, Tasks, Focus, Reflection, the six-stage journey, supporting domains, and record rules.
 
-| Work package | Sprint tasks | Evidence required to mark complete | Current state |
-|---|---|---|---|
-| P0 Baseline/scope | P0.1–P0.3 | Entry gates, frozen MVP boundary, foundation references | `COMPLETE` |
-| P1 Core contracts | P1.1–P1.5 | Four brief/contract pairs, normalized metadata/links, acceptance IDs | `DRAFT` |
-| P2 Journey | P2.1–P2.4 | Journey stages, entries/exits, handoffs, recovery, acceptance IDs | `DRAFT` |
-| P3 Supporting decisions | P3.1–P3.4 | Minimum behavior, exclusions, ownership, empty/unavailable handling | `DRAFT` |
-| P4 Record rules | P4.1–P4.5 | Ownership/provenance/correction/continuity matrix and resolved owners | `DRAFT` |
-| P5 Design specifications | P5.1–P5.6 | Four complete design specs and cross-surface review | `NOT_STARTED` |
-| P6 Gate package | P6.1–P6.4 | Traceability review, six-hat review, Founder decision, repository readiness | `NOT_STARTED` |
+## 4. Product Architect checkpoint
 
-## 6. Review protocol
+**Completed:** Founder/Product Architect approved scope, behavior, non-goals, journey meaning, supporting boundaries, and canonical ownership on 2026-08-05. P1-P4 are ready for Design Architect work. This is not a Gate 2 pass and does not authorize implementation or migration application.
 
-The Release Manager prepares the package; the Founder executes the review through the six hats:
+## 5. Design Architect checkpoint and cross-surface review
 
-1. **Product Architect:** confirm need, scope, journey meaning, non-goals, and no deferred-domain promotion.
-2. **Design Architect:** confirm every behavior state has an understandable, accessible, responsive design expression.
-3. **Engineering Architect:** confirm ownership, provenance, correction, continuity, security boundaries, and Phase 1.5 patterns.
-4. **Implementation Engineer:** confirm the package is implementable without inventing rules and that no Phase 3 code was started as a substitute for missing contracts.
-5. **Release Manager:** verify all Gate rows, links, acceptance IDs, open conditions, and repository checks.
-6. **Founder:** record exactly one Gate 2 decision.
+**Completed:** Design Architect completed the four state-complete specifications and checkpointed them against their approved briefs, behavior contracts, journey contract, information structure, record rules, supporting-domain decisions, reusable design standards, and acceptance questions on 2026-08-05. No new behavior, owner, route, source, state meaning, or delivery design was introduced.
 
-The reviewer must sample at least one normal, alternative, interruption/failure, correction, unavailable, and authority-sensitive path for each core contract. A positive visual review or passing link check cannot substitute for missing behavior or ownership evidence.
+| Surface | Design evidence | Review result |
+|---|---|---|
+| Today | [Today design specification](../../05-design/features/today-design-spec.md) | Read composition, source/freshness disclosure, owner handoffs, and non-writing recovery remain explicit. |
+| Tasks | [Tasks design specification](../../05-design/features/tasks-design-spec.md) | Commitment states, withdrawal/history, Next Up ownership, Task-to-Focus selection, and rollback remain explicit. |
+| Focus | [Focus design specification](../../05-design/features/focus-design-spec.md) | Session facts, elapsed-time limits, attribution-unavailable fallback, lifecycle recovery, and Reflection handoff remain explicit. |
+| Reflection | [Reflection design specification](../../05-design/features/reflection-design-spec.md) | Daily/custom/session-end identity, one save owner, interpretation provenance, correction, and adaptation handoff remain explicit. |
 
-## 7. Known limitations and explicit dispositions
+### Cross-surface invariants reviewed
 
-These are carried forward from Phase 1.5 and do not become hidden Gate 2 assumptions:
+| Handoff or shared concern | Required invariant | Review result |
+|---|---|---|
+| Today -> Tasks | Today exposes task context and routes mutation to Tasks; selection is not completion. | Consistent in Today and Tasks specifications. |
+| Tasks -> Focus | Tasks passes planned task identity; Focus does not complete or attribute the task by selection. | Consistent in Tasks and Focus specifications. |
+| Focus -> Reflection | Focus supplies confirmed session identity/facts after conclusion; Reflection owns the appended entry save. | Consistent in Focus and Reflection specifications; failed Reflection save does not undo Focus. |
+| Reflection -> receiving owner | Reflection may propose; only the receiving owner confirms applied adaptation. | Consistent in Reflection, Today, and journey references. |
+| Owner -> Today | Projections carry identity, source, freshness, and confirmed/pending/failed/unavailable state; a projection never reports owner success alone. | Consistent across all four specifications. |
+| Supporting context | Habits, Schedule, and Notes remain optional; Schedule is planning context; no supporting source becomes a competing owner. | Consistent in Today, Tasks, Reflection, and supporting-domain references. |
+| Continuity | Pending, failed, local-draft, stale, unavailable, disconnected, correction, withdrawal, and re-entry retain last confirmed truth and explicit recovery. | State and recovery coverage present on all four surfaces. |
+| Accessibility/content | State, ownership, provenance, consequence, and recovery are semantic text, keyboard reachable, responsive, and not color/hover-only. | Required in all four specifications and linked reusable standards. |
+| Foundation/security | `requireUserId`, user-scoped access/RLS, Zod/RHF, `date-fns`, `Asia/Singapore`, instant timestamps, local-draft semantics, and pending-migration truth remain handoff constraints. | Repeated in all four specifications; no implementation claim made. |
 
-- `tasks_next_up_queue.sql`, `focus_session_task_totals.sql`, and `security_hardening.sql` remain recorded as not applied in live state; contracts must specify truthful fallback and release owners.
-- Two-account RLS verification must be rerun before release hardening.
-- Singapore midnight boundary remains untested.
-- Schedule keyboard review remains deferred to accessibility hardening.
-- Reflection has dual current save paths and must receive one user-visible correction/recovery model.
-- Schedule has overlapping planning surfaces and must receive one ownership rule.
-- `npm audit` reports 11 vulnerabilities, lint has 211 existing warnings, and middleware-to-proxy deprecation remains; none is silently treated as resolved by Phase 2 documents.
+**Disposition:** Cross-surface review passed for design coherence. The remaining limitations below are intentionally preserved as unavailable or later validation work; none is silently resolved by design.
 
-These limitations may not be used to leave a Phase 2 contract `UNKNOWN`. Each has an owner in the Phase 1 evidence and a relevant P4/P5 or later hardening task.
+## 6. Known limitations and truthful dispositions
 
-## 8. Repository and merge-readiness checks
+- `tasks_next_up_queue.sql` remains pending/unverified. Tasks owns queue semantics, but persistent membership/reorder is unavailable until applied and verified.
+- `focus_session_task_totals.sql` remains pending/unverified. Focus records session facts; task attribution is unavailable and never inferred.
+- Reflection has daily, custom, and Focus session-end entry paths, but Reflection owns all durable records under one correction/recovery model.
+- Schedule remains planning context; Task/Habit source records own planning mutations.
+- Two-account RLS verification, Singapore midnight boundary testing, deferred Schedule keyboard review, existing lint warnings, audit vulnerabilities, and middleware deprecation remain later validation/hardening work. None is represented as resolved by this documentation package.
 
-Before a commit/merge request is prepared, confirm:
+## 7. Review protocol
 
-- all files in the sprint artifact register are present or explicitly `NOT_STARTED` planned outputs;
-- all touched Markdown links resolve;
-- `git diff --check` passes;
-- no Phase 3 implementation or unrelated refactor is included;
-- source verification is rerun if source files changed; documentation-only changes record that the existing code baseline is unchanged;
-- the branch diff against `main` is reviewed and the working tree contains no unexplained artifact;
-- no commit, push, or merge to `main` occurs without Founder authorization.
+1. **Product Architect:** confirm scope, behavior, journey meaning, non-goals, and no deferred-domain promotion. Complete for P1-P4 on 2026-08-05.
+2. **Design Architect:** create four design specifications that express every contract state without changing behavior or ownership. Complete on 2026-08-05; cross-surface review recorded in section 5.
+3. **Engineering Architect:** review owner boundaries, provenance, correction, continuity, RLS, identity, and Phase 1.5 constraints after design.
+4. **Implementation Engineer:** confirm the package is implementable without inventing rules; no Phase 3 code is started as a substitute.
+5. **Release Manager:** verify links, traceability, acceptance IDs, states, and guardrails.
+6. **Founder:** recorded exactly one Gate 2 `PASS` decision on 2026-08-05.
+
+## 8. Repository readiness
+
+- [x] P1-P5 are complete and linked in the artifact register and evidence package.
+- [x] No admitted behavior has an unresolved or unowned placeholder state; no traceability row is `UNKNOWN`.
+- [x] All local Markdown links in the Phase 2 package resolve.
+- [x] `git diff --check` passes.
+- [x] No Phase 3 implementation, production migration, unrelated refactor, or unlabelled technical spike is included.
+- [x] Habits, Schedule, and Notes remain optional supporting context with explicit exclusions and source ownership.
+- [x] Ownership, provenance, correction, withdrawal, interruption, re-entry, and recovery are explicit in [record rules](../../04-features/record-rules.md) and the [P6 evidence package](./gate-2-evidence-package.md).
+- [x] The six-hat readiness review is recorded in the [P6 evidence package](./gate-2-evidence-package.md).
+- [x] Known limitations remain explicit and are not represented as resolved; see [P6 limitations](./gate-2-evidence-package.md#known-limitations-carried-honestly).
+- [x] The repository diff was reviewed against `main`; no merge or push to `main` occurs without Founder authorization.
+
+### Release Manager verification record
+
+| Check | Evidence | Result |
+|---|---|---|
+| P1-P5 completion | [Artifact register](../current-sprint.md) and [P6 evidence package](./gate-2-evidence-package.md#coverage-result) | `PASS` |
+| Traceability coverage | 52 of 52 admitted acceptance IDs have all seven chain links | `PASS` |
+| Local Markdown links | 503 local links across 26 changed Markdown artifacts checked from repository paths | `PASS` |
+| Diff whitespace | `git diff --check` | `PASS` |
+| Phase boundary | No `src/` changes; four pending `supabase/` SQL definitions were security-reviewed but not applied; no Phase 3 source or production migration application | `PASS - unapplied SQL disclosed` |
+| Supporting-domain boundary | [Supporting-domain decisions](../../04-features/supporting-domain-decisions.md) and `SUPPORT-*` rows | `PASS` |
+| Ownership and recovery | [Record rules](../../04-features/record-rules.md) and `RECORD-*` rows | `PASS` |
+| Six-hat readiness | [Six-hat readiness review](./gate-2-evidence-package.md#six-hat-readiness-review) | `PASS` |
+| Known limitations | [Known limitations](./gate-2-evidence-package.md#known-limitations-carried-honestly) | `PASS - retained as limitations` |
+| Diff against `main` | Tracked `git diff main` plus untracked files from `git status --short` reviewed; changes are Phase 2 contracts/design/handoff docs, AI context, and bounded pending SQL hardening | `PASS - all explained` |
+| Quality baseline | `npm test`: 246/246; `npm run lint`: 0 errors / 211 existing warnings; `npm run build`: compiled and type-checked but `/about` prerender requires missing `NEXT_PUBLIC_SUPABASE_URL` | `PASS - build environment limitation recorded` |
 
 ## 9. Decision
 
-**Decision:** Pending — choose exactly one: `PASS`, `HOLD`, or `REWORK`.
-**Date:** TBD
+**Decision:** `PASS` — Gate 2 Contract Coherence passed; Phase 3 authorized.
+**Date:** 2026-08-05
 **Founder:** Founder
-**Rationale:** TBD
-**Unresolved conditions:** TBD
-**Next-phase authorization:** Phase 3 may be authorized only on `PASS`; otherwise state the hold/rework conditions and owner.
-**Decision record:** Create/update a decision record if the outcome changes phase authority, MVP scope, or a consequential parent rule.
+**Rationale:** P1-P5 are complete, and P6 provides a complete traceability chain for all 52 admitted acceptance IDs. G2-01 through G2-08 are complete; supporting domains are bounded; ownership, provenance, correction, continuity, recovery, accessibility, foundation constraints, link checks, diff hygiene, and repository scope review are evidenced. No contract or design requires substantive revision for Gate 2.
+**Unresolved conditions:** Pending Next Up and Focus attribution migrations, two-account RLS/security verification, Singapore midnight boundary testing, deferred Schedule keyboard review, existing lint warnings, audit vulnerabilities, and middleware deprecation remain explicitly recorded with owners in [D-008](../../08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md). They are downstream implementation/hardening conditions, not unresolved Gate 2 contract decisions.
+**Owners:** Engineering Architect owns migrations, RLS/security, date-boundary testing, lint, audit, and middleware follow-through; Tasks and Focus remain the canonical data owners; Design Architect owns Schedule keyboard review.
+**Next-phase authorization:** `AUTHORIZED` — Phase 3 implementation may begin within the admitted MVP boundary. This decision does not authorize production release; Gate 3 and Gate 4 remain required.

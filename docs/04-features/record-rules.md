@@ -1,83 +1,116 @@
 # MVP Record, Provenance, Correction, and Continuity Rules
 
-**Status:** Draft
-**Owner:** Engineering Architect + Product Architect
-**Sprint tasks:** P4.1–P4.5, P5.6
-**Parent:** [Product Model](../01-product/product-model.md) · [Action and Evidence](../02-systems/action-and-evidence.md) · [Continuity and Interoperability](../02-systems/continuity-and-interoperability.md) · [MVP Masterplan](../current-phase/mvp-implementation-masterplan.md)
-**Consumers:** [MVP coherent loop](../03-experience/journeys/mvp-coherent-loop.md) · Today, Tasks, Focus, and Reflection behavior contracts
-**Evidence:** [Phase 1 implementation truth](../current-phase/phase-1/implementation-truth-evidence.md) · [Phase 1.5 foundation pattern](../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Review trigger:** A new source owner, record relationship, correction path, persistence path, or continuity state is proposed for the MVP loop.
+**Status:** Product Architect complete; ownership decisions resolved on 2026-08-05
+**Owner:** Product Architect (Founder) with Engineering Architect as implementation-consistency reviewer
+**Sprint tasks:** P4.1-P4.5, P5.6
+**Parent systems:** [Product Model](../01-product/product-model.md) - [Action and Evidence](../02-systems/action-and-evidence.md) - [Continuity and Interoperability](../02-systems/continuity-and-interoperability.md)
+**Consumers:** Today, Tasks, Focus, Reflection, the bounded journey, and supporting decisions
+**Foundation:** [Phase 1.5 foundation pattern](../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
 
-## Purpose and authority
+## Purpose and authority rule
 
-These rules define which domain owns a record, how its origin is expressed, how corrections remain intelligible, and how context survives interruption or change. They do not replace system semantics, database schemas, or delivery designs. They are draft Gate 2 inputs and do not authorize Phase 3 implementation.
+These rules define source ownership, provenance, lifecycle, correction, deletion/withdrawal, and continuity for the Phase 2 MVP contract. They do not authorize implementation, migrations, or a delivery design. Every consequential mutation has exactly one canonical owner. A projection, handoff, client state, derived summary, or convenience route cannot become a second owner.
 
-## Ownership matrix
+## Canonical ownership matrix
 
-| Record/context | Canonical owner | May project to | Must not become |
+| Record or mutation | Canonical owner | Allowed projections/consumers | Explicit boundary |
 |---|---|---|---|
-| Task/commitment | Tasks (`tasks`, `task_groups`, task owner paths) | Today, Focus selection, Schedule | Action evidence or outcome by existence/completion alone |
-| Focus session | Focus session persistence / Action and Evidence | Today, Focus history, Reflection context | Task completion or outcome |
-| Focus attribution | Focus owner when identity/basis is confirmed | Focus history/derived totals | Confirmed attribution while migration/state is unavailable |
-| Daily reflection | Reflection persistence (`reflections`) | Today/sidebar, Reflection history | Factual action/evidence |
-| Contextual reflection entry | Reflection entry owner (`reflection_entries`) | Focus/history/context views | A second interpretation source with conflicting save semantics |
-| Focus session-end reflection | Reflection entry linked to a session; Focus may project it | Focus history and Reflection context | An unrelated duplicate or automatic adaptation |
-| Habit definition/completion | Habits (`habits`, `habit_completions`) | Today, Schedule | A second commitment/action loop |
-| Planning date/time | Task or Habit source record | Schedule, Today | Evidence that an action occurred |
-| Note/context | Notes (`notes` and embedded growth-area records) | Today, Tasks, Reflection, kanban context | A standalone Knowledge authority |
-| Derived status/summary | The derived view, with source references | Today/Focus context | A factual record without derivation |
+| Task commitment and task history | Tasks | Today, Focus selection, Schedule, groups | Not action evidence or outcome by existence/completion |
+| Task Next Up membership/order | Tasks | Today and Focus queue views | Focus consumes selection; pending queue migration is unavailable |
+| Focus session lifecycle/timing | Focus / Action and Evidence | Today, Focus history, Reflection context | Not task completion, attribution, or adaptation |
+| Focus task attribution | Focus, only through verified attribution owner/path | Focus history and derived totals | Unavailable while `focus_session_task_totals.sql` is pending/unverified; no guessing |
+| Daily reflection | Reflection | Today and Reflection history | Not factual evidence or commitment mutation |
+| Custom reflection entry | Reflection | Reflection/history/context | Separate record; not a second interpretation owner |
+| Focus session-end reflection entry | Reflection, linked to a Focus session | Focus history and Reflection | Focus supplies handoff context; entry is appended, not a replacement or automatic adaptation |
+| Habit definition/completion | Habits | Today and Schedule | Visibility/completion only; not task or Focus owner |
+| Planning date/time for task/habit | Task or Habit source record | Schedule and Today | Schedule is context; planning is not evidence |
+| Note/context and embedded Growth Area | Notes | Today, Tasks, Focus, Reflection | Not standalone Knowledge, Goals, or automatic meaning |
+| Derived status/summary | The derived read model with source references | Today, Focus, history | Not a writable factual record or new owner |
+| Adaptation applied state | Receiving source owner (usually Tasks or planning source) | Reflection and Today | Reflection can propose; it cannot apply implicitly |
+
+## P4.5 resolved decisions
+
+### Task removal and history
+
+Routine Remove is **withdrawal**, not hard deletion and not completion. Tasks retains the record/history, excludes it from active projections and Next Up, and can expose an explicit restore path. Completion is a separate commitment closure. Defer is a current commitment moved out of context. Correction changes a representation while preserving prior history. Hard deletion is reserved for an explicit privacy/retention operation with separately approved authority, audit, recovery, and security semantics; it is not a routine core-loop behavior.
+
+### Next Up ownership
+
+Tasks owns task Next Up membership and order. Focus owns the active session and selected item for that session. Today and Focus may project the queue. Habits remain daily visibility/completion support and do not become queue-owner by implication. If `tasks_next_up_queue.sql` is pending/unverified, persistent membership/reorder is unavailable; a fallback may show confirmed task context without claiming saved queue order.
+
+### Focus attribution fallback
+
+Focus may retain a selected task as planned/user-provided context where an existing owner path confirms that selection. Factual task attribution and totals require the verified attribution path. While `focus_session_task_totals.sql` is pending/unverified, attribution is `unavailable`, session lifecycle/duration remains factual, and no task completion or inferred attribution is written. Reflection can hold explicit user-provided context, not a hidden backfill.
+
+### Reflection relationship
+
+Reflection owns one canonical date-scoped daily record per user/date key, separate custom entries, and appended Focus session-end entries linked to their session. A session-end entry is not a replacement for the daily record, not a duplicate daily save, and not an automatic adaptation. All entry surfaces use Reflection ownership and the same durable-save/recovery truth.
+
+### Supporting-domain writes
+
+Habits owns habit definitions/completions. Tasks/Habits own planning values. Schedule owns no competing source record. Notes owns notes and embedded Growth Areas. Today owns no domain write. Focus owns sessions. Reflection owns reflections/entries. Derived views do not write facts. Cross-surface controls route to the relevant owner.
 
 ## Provenance classes
 
-Every material record or projection must be understandable as one of:
+Every material record or projection is classified as one or more of the following, with origin and freshness retained where material:
 
-1. **Direct record:** captured by FlowOS during a represented occurrence; preserve source, timestamp/instant, and relevant identity.
-2. **User-provided:** entered, asserted, or corrected by the person; do not present it as direct observation.
-3. **Source-provided:** received or referenced from another source; retain source identity, scope, freshness, and connection state.
-4. **Derived:** calculated from factual records; retain inputs, rule, and derivation time.
-5. **Unverified/unavailable:** present but not reliable or currently accessible; do not overstate it.
+| Class | Meaning | Product treatment |
+|---|---|---|
+| Direct | FlowOS recorded an owner-confirmed represented occurrence or mutation | State only what the record proves |
+| User-provided | Person entered, asserted, corrected, withdrew, or proposed it | Do not present as independent observation |
+| Source-provided | Another owned source supplied/referenced it | Retain source identity, scope, freshness, and connection |
+| Derived | Calculated from identified source records/rules | Retain inputs/rule/derivation time; not a new fact |
+| Planned | Intended, scheduled, selected, queued, or proposed future context | Never action evidence by storage alone |
+| Unavailable | Source, owner, migration, relationship, or verification is inaccessible | Do not replace with empty, success, or inference |
 
-Planned, scheduled, selected, or proposed information is not factual evidence merely because it is stored.
+Interpretive reflection is user-provided. An adaptation is proposed until a receiving owner confirms it applied. `Unavailable` is a provenance/truth limitation, not a record deletion.
 
-## Correction rules
+## Lifecycle and continuity states
 
-- The owner of a record owns its correction path.
-- A correction must identify the record/context changed, the new representation, and that a correction occurred.
-- Correcting a reflection or derived summary must not rewrite its supporting factual evidence.
-- Correcting factual evidence must not silently change a task commitment, interpretation, or adaptation; the receiving owner must apply any consequential change explicitly.
-- A failed correction remains unconfirmed and recoverable; the old confirmed state remains visible until the owner confirms the new state.
-- Removal/withdrawal must be distinguishable from completion and correction. Retention details for destructive deletion require the delivery design and release/security review.
+| State | Meaning | Re-entry behavior |
+|---|---|---|
+| Current | Confirmed and relevant now | Show as current with owner |
+| Historical | Retained prior context | Show as historical, not current |
+| Superseded | Replaced by a later explicit representation | Link prior and current meaning |
+| Pending | Requested mutation not confirmed | Show pending; keep prior confirmed state authoritative |
+| Failed | Mutation rejected or unconfirmed | Show reason/safe recovery; do not show requested result |
+| Local-draft | Client-held recoverable values | Never call durable or saved |
+| Unavailable | Cannot access/verify current source/capability | Preserve known history; offer retry/owner route |
+| Disconnected | Source relationship ended | Preserve prior source context and disclose break |
 
-## Continuity rules
+Interruption, re-entry, and recovery must always reveal which of these states applies. A local draft can be discarded or retried only with person choice. A pending migration is unavailable behavior until live apply and verification evidence exists.
 
-Use these observable context states:
+## Correction, deletion, and withdrawal
 
-| State | Meaning |
-|---|---|
-| Current | Available and relevant to the present context |
-| Historical | Earlier context retained for understanding |
-| Superseded | Replaced in current role by a later explicit choice |
-| Unavailable | Cannot currently be accessed, verified, or refreshed |
-| Disconnected | Active source relationship ended; prior context is not silently erased |
+- **Correction:** canonical owner records a new explicit representation, identifies what changed, and preserves history/lineage. Correction does not erase supporting facts or mutate another owner's record.
+- **Withdrawal:** person retracts a commitment, reflection, proposal, or relationship from active/current use. The owner records withdrawal and its history; withdrawal is not completion, correction, or proof that the underlying event never happened.
+- **Deletion:** data is removed under explicit privacy/retention authority and documented irreversibility/security treatment. It is not the default meaning of a Remove control in the core loop.
+- **Failed operation:** old confirmed state remains visible as current/historical as applicable until the owner confirms the change.
 
-Re-entry after interruption restores the last confirmed owner state and identifies pending or uncertain work. Local drafts can support continuity but are not durable records until the owner confirms persistence.
+## Persistence, time, identity, and security constraints
 
-## Phase 1.5 foundation requirements
+- Every owner boundary calls `requireUserId()` and applies user-scoped filters. RLS is required and independently tested; UI visibility and client-supplied IDs are not permission.
+- Shared Zod schemas validate runtime inputs. React Hook Form with the shared resolver owns form-level field/root error presentation; server validation remains authoritative.
+- `date-fns` is used for calendar validity and date calculations without changing approved timezone semantics. Product date keys are `YYYY-MM-DD` in `Asia/Singapore`.
+- Persisted timestamps (`created_at`, `updated_at`, session start/end, correction time) are instants. Date-only planning/reflection keys are not browser-local timestamps.
+- Local drafts/autosave attempts are continuity support, never durable saves until owner confirmation.
+- Pending migrations (`tasks_next_up_queue.sql`, `focus_session_task_totals.sql`, and any other unapplied migration) cannot be represented as available behavior. Repository SQL is not live-state evidence.
 
-- Use shared Zod schemas and resolver-driven React Hook Form for admitted form boundaries; invalid fields and root write errors remain observable.
-- Use date-fns for calendar validity checks without changing existing timezone semantics.
-- Treat date keys as `YYYY-MM-DD` in approved `Asia/Singapore` product timezone; persisted timestamps remain instants; scheduled wall-clock values use approved `HH:mm`/`HH:mm:ss` forms.
-- Keep reflection autosave and Focus recovery semantics explicit: local draft/retry is continuity support, not proof of durable save.
-- Keep user identity/RLS boundaries on every domain owner. Pending migrations or unverified live state cannot silently become a contract guarantee.
+## Recovery and cross-surface rule
 
-## Validation questions
+A projection may display a source, but only the source owner can report consequential success. Handoffs carry identity, provenance, and confirmed state; they do not copy ownership. On return, show last confirmed state plus pending/failed/local-draft/unavailable limitations. Retry, correction, resume, decline, withdrawal, or departure must remain explicit person choices.
 
-- **RECORD-01:** Can each displayed core-loop item identify its owner and provenance?
-- **RECORD-02:** Does correction preserve the changed record’s history and leave supporting facts intact?
-- **RECORD-03:** Can interruption distinguish confirmed, pending, failed, local-draft, unavailable, and historical state?
-- **RECORD-04:** Do planning values and elapsed sessions remain distinct from outcomes?
-- **RECORD-05:** Are two-account/RLS and pending-migration limitations preserved for release validation?
+## Acceptance questions
 
-## Open decisions and change control
+- **RECORD-01:** Can every material displayed record identify one canonical owner and provenance class?
+- **RECORD-02:** Are task removal/withdrawal, completion, defer, correction, and hard deletion distinguishable with retained history rules?
+- **RECORD-03:** Is Next Up task-owned while Focus remains session-owned, including truthful pending-migration fallback?
+- **RECORD-04:** Is unavailable Focus attribution never inferred from selection, duration, or proximity?
+- **RECORD-05:** Are daily reflection, custom entries, and session-end entries separate Reflection-owned records with clear links and no replacement/duplication semantics?
+- **RECORD-06:** Can correction, withdrawal, deletion, current, historical, superseded, pending, failed, local-draft, unavailable, and disconnected states be distinguished after interruption?
+- **RECORD-07:** Are planned, direct, user-provided, source-provided, derived, proposed, factual, and applied meanings kept distinct?
+- **RECORD-08:** Do RLS, `requireUserId`, Zod/RHF, date-fns, `Asia/Singapore`, instant timestamps, local-draft, and pending-migration constraints remain testable?
 
-P4.5 owns the exact durable retention semantics for destructive deletion, the final representation/fallback for Focus attribution, and the implementation reconciliation of current reflection projections. Delivery designs and validation evidence may be required after Gate 2; these decisions must not be resolved by a UI-only shortcut. Any ownership change updates all consumer contracts and the Gate 2 register.
+## Product Architect checkpoint
+
+**Approved by Founder/Product Architect on 2026-08-05.** Canonical ownership, provenance, correction/deletion/withdrawal, continuity, time, identity, and migration-truth rules are resolved for Gate 2. No ownership question remains unknown or unowned.

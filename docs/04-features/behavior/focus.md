@@ -1,101 +1,101 @@
-# Focus — Behavior Contract
+# Focus - Behavior Contract
 
-**Status:** Draft
-**Owner:** Product Architect + Engineering Architect
+**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Owner:** Product Architect (Founder); technical persistence owner is Focus
 **Sprint tasks:** P1.3, P1.5, P4.5, P5.4
+**Authorized brief:** [Focus feature brief](../briefs/focus.md)
+**Parent systems:** [Action and Evidence](../../02-systems/action-and-evidence.md) - [Direction and Commitment](../../02-systems/direction-and-commitment.md)
+**Journey stage:** Action and Evidence
+**Canonical owner:** Focus owns session lifecycle, timing, session correction, and session-level evidence. Tasks owns task state; Reflection owns reflection records.
+**Consumers:** Focus surface, Today, Tasks selection, Focus history, and Reflection session-end entry
+**Record rules:** [MVP record rules](../record-rules.md)
 **Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Authorized feature brief:** [Focus feature brief](../briefs/focus.md)
-**Participating systems:** [Action and Evidence](../../02-systems/action-and-evidence.md) · [Direction and Commitment](../../02-systems/direction-and-commitment.md) · [Sensemaking and Adaptation](../../02-systems/sensemaking-and-adaptation.md)
-**Affected destinations:** `/focus`, active Focus in Today/Workplace, Tasks-to-Focus handoff
-**Journey:** [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md)
-**Validation plan:** [Validation plan standard](../validation-plans.md) — feature plan required before delivery
-**Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
-**Behavioral authority:** Focus owns the factual lifecycle of an intentional attention session and never presents duration as an outcome.
 
-## Authorized feature boundary
+## Scope and non-goals
 
-Focus is a bounded action mode. It records session occurrence and elapsed time, optionally relates a selected task, and provides a contextual handoff to Reflection. It does not own task completion, outcomes, reflection meaning, or universal progress.
+Focus records a bounded attention session. It does not record task completion, real-world outcome, quality, or automatic adaptation. A task passed into Focus is planned/user-selected context until factual attribution is separately confirmed.
 
-## Participants and authority
+## State model
 
-| Participant | May do | Owning authority |
+| State | Meaning | Required truth language |
 |---|---|---|
-| Person | Start, pause, resume, conclude, leave/cancel where offered, and recover a session | Person authorizes session lifecycle |
-| Tasks | Supply optional selected-task identity and current commitment context | Tasks owns commitment state |
-| Focus | Persist session state, timing evidence, and attribution status | Focus session persistence paths |
-| Reflection | Receive an explicit session-end sensemaking handoff | Reflection owns interpretation/save |
+| Ready | No active session is confirmed | No action evidence yet |
+| Starting/pending | Start was requested but not confirmed | Session is not durable yet |
+| Active | Session is running from a confirmed start | Elapsed session time, not outcome |
+| Paused | Confirmed session is paused | Work may or may not have continued outside the session |
+| Resuming/pending | Resume was requested but not confirmed | Keep last confirmed paused state |
+| Concluding/pending | Conclude was requested but not confirmed | Do not show a final record yet |
+| Concluded | Session lifecycle is durably recorded | Factual session record only |
+| Interrupted/local recovery | Client has recoverable context without confirmed durable change | Local context is not a save |
+| Failed | A requested persistence operation failed | Prior confirmed state remains |
+| Attribution unavailable | Session exists but task attribution cannot be verified | Do not claim task totals or completion |
+| Unavailable/disconnected | Focus persistence or source is inaccessible | Do not fabricate session state |
+| Historical | A concluded session is no longer current | Preserve its original instants and provenance |
 
-## Objects and observable states
+## Entry, re-entry, pause, exit, and correction
 
-| State | Meaning | Must not imply |
+- **Direct entry:** the person opens Focus and starts a session without a task, or chooses a task first.
+- **Deep entry:** Tasks, Today, or a valid Focus link passes a task identity as planned context; selection never completes the task.
+- **Re-entry:** return to the Focus owner with the last confirmed session state and any local recovery status.
+- **Pause:** an explicit pause changes a confirmed active session to paused when persistence confirms it. A browser close or interruption is not silently treated as pause.
+- **Exit:** conclude records the session; leave/departure preserves the last confirmed session and may leave local recovery. Leaving does not imply completion or success.
+- **Correction:** Focus corrects session lifecycle/timing metadata under its owner. A correction must not rewrite the task, a reflection, or an adaptation.
+
+## Lifecycle transitions
+
+| Person action | Focus result | Unchanged state |
 |---|---|---|
-| Ready | No active session is being represented | No action is possible or required |
-| Active | Focus has a reliable basis to represent attention as occurring | Completion, quality, or outcome |
-| Paused | The person/system deliberately interrupted an active session | Failure or completed result |
-| Concluded | The session is no longer represented as occurring | Task fulfillment or desired outcome |
-| Unreliable/unavailable | Timing or persistence cannot be treated as dependable | Bad faith or total loss of related action |
-| Pending/failed | A lifecycle change is requested but not confirmed durable | The requested state is final |
+| Start | Confirmed active session after owner persistence | Task remains open/current |
+| Pause | Confirmed paused session | No task completion or outcome |
+| Resume | Confirmed active session | Prior pause remains historical session context |
+| Conclude | Confirmed concluded session and optional Reflection handoff | No adaptation is applied |
+| Leave | No additional confirmed state, or explicit concluded state if chosen | No hidden success claim |
+| Retry | Same pending start/pause/resume/conclude request is retried | Last confirmed state remains authoritative |
+| Re-enter | Restore confirmed state and uncertainty | No invented elapsed time or attribution |
 
-## Entry conditions and access
+## Attribution rule and fallback
 
-- Valid entry is active Focus from Today/Workplace or a selected task handoff; `/focus` provides history and analytics context.
-- A session may exist without a task; a task selection is optional and must be explicit.
-- Re-entry after reload or interruption must show the last confirmed session state and its freshness/availability.
-- Focus is voluntary; a person may leave without starting or concluding a session.
+Focus owns attribution only when a verified owner path records the basis and the write succeeds. The selected task may be stored/displayed as planned or user-provided context. While `focus_session_task_totals.sql` is pending or unverified, task-level attribution is `unavailable`; Focus records session-level facts only and does not infer totals from selection, time, or proximity. No automatic backfill is admitted. The person may explicitly provide context in Reflection, which remains user-provided interpretation/context rather than Focus attribution.
 
-## Behavior rules
+## Persistence, permissions, and validation
 
-1. Given Focus is Ready and the person starts a session, FlowOS must record a pending request then show Active only after the owner confirms the session basis.
-2. Given Focus is Active, when the person pauses, FlowOS must preserve confirmed elapsed evidence and show Paused without claiming a result.
-3. Given Focus is Paused, when the person resumes, FlowOS must continue from the confirmed session identity without creating an accidental second session.
-4. Given Focus is Active or Paused, when the person concludes, FlowOS must show Concluded with factual timing and optional task identity; it must not complete the task automatically.
-5. Given a session has a selected task, Focus may attribute the session only when the identity and persistence basis are available; otherwise it must show attribution as unavailable/unverified.
-6. Given a session ends, Focus may offer Reflection context. Accepting the offer does not save reflection or apply adaptation without the Reflection owner and person authority.
-7. Given elapsed time is displayed, FlowOS must label it as session evidence and not as outcome, quality, success, or progress score.
-8. Given persistence fails or the browser/session is interrupted, FlowOS must preserve only confirmed state, identify uncertain timing, and provide safe retry/recovery.
+- Session operations resolve `requireUserId()` and use user-scoped queries plus RLS for every read/write. A client-held active timer is not authority.
+- Session forms/settings use shared Zod schemas and React Hook Form with the shared resolver where a form boundary exists. Invalid duration/mode values and root persistence errors remain visible.
+- Persisted timestamps are instants. Calendar date keys and day grouping use `Asia/Singapore` and `date-fns`; the browser timezone must not change the product date key.
+- Pending migrations and unverified attribution state are unavailable behavior, not silent fallback guarantees. A migration cannot be represented as available merely because SQL exists in the repository.
+- A local timer or recovery payload is `local-draft`/interrupted until the owner confirms persistence. It never becomes a durable session by display alone.
 
-## Decision and transition table
+## Loading, empty, partial, unavailable, and error behavior
 
-| Choice | From | Result | What must not happen |
-|---|---|---|---|
-| Start | Ready | Active after confirmation | No task completion or outcome claim |
-| Pause | Active | Paused with elapsed evidence | No failure judgment |
-| Resume | Paused | Active same session identity | No duplicate session unless explicitly chosen |
-| Conclude | Active/Paused | Concluded factual record | No automatic commitment fulfillment |
-| Leave/cancel | Ready/Active/Paused | Valid exit; state follows confirmed owner rule | No fabricated conclusion |
-| End reflection handoff | Concluded | Reflection context offered | No automatic reflection/adaptation |
+- **Loading:** session state is being requested; timer and controls must not imply a confirmed state.
+- **Empty/ready:** no active session is confirmed; offer optional start.
+- **Partial/stale:** show the last confirmed session state and identify missing attribution/history or freshness.
+- **Unavailable/disconnected:** preserve known historical sessions and disclose that current session state/attribution cannot be verified.
+- **Error/failed:** state the operation and last confirmed state, preserve recoverable context, and offer retry or safe departure.
+- **Unreliable timing:** if instants or elapsed calculation cannot be verified, show the session as unreliable rather than inventing duration.
 
-## Truth, provenance, and uncertainty
+## Interruption and recovery
 
-Focus session records are direct FlowOS evidence of the session lifecycle. Task identity is related context, not proof of task outcome. Derived totals must retain their source sessions and calculation time. An unapplied `focus_session_task_totals` migration cannot be treated as available attribution evidence.
+On tab close, navigation, network loss, or process interruption, the owner must distinguish confirmed session state from local recovery context. Re-entry offers resume/reconcile/retry/leave choices as appropriate. A recovered timer is not proof that the server session continued. If conclusion fails, the session remains active/paused as last confirmed, or unavailable if it cannot be verified; it is not shown as concluded.
 
-## Assistance and automation
+## Reflection handoff
 
-No autonomous timer conclusion, task completion, prioritization, or adaptation is admitted. Timekeeping may continue as the explicitly authorized session behavior; any automatic pause or recovery must expose its basis and uncertainty and cannot claim an outcome.
+At session end, Focus may offer a Reflection entry linked to the concluded session. The handoff carries session identity and factual context only. Reflection owns the entry write; a failed handoff does not undo a confirmed Focus session, and Focus does not apply any proposed adaptation.
 
-## Error, interruption, and recovery
+## Accessibility
 
-- Pending start/pause/resume/conclude states are distinguishable from confirmed states.
-- A failed write must not turn an intended lifecycle change into a historical fact.
-- Reload/re-entry must recover the last confirmed session identity and show any uncertain interval.
-- Clock/date boundary handling follows the Phase 1.5 date/time pattern: date-only keys use `Asia/Singapore`, persisted timestamps remain instants, and impossible values are rejected.
-- Permission or source loss preserves existing confirmed history while preventing an unverified mutation.
+Session state, elapsed-time meaning, attribution availability, pending work, and recovery action are available to assistive technology and text, not color alone. Controls have stable names and keyboard access. Timer updates must not steal focus or create an unbounded announcement stream; important state changes use a concise live status. Pause, resume, conclude, retry, and leave have an accessible path and consequence.
 
-## Accessibility and inclusive behavior
+## Acceptance questions
 
-Current session state, elapsed status, lifecycle controls, pending feedback, and recovery must be announced semantically and cannot rely on motion, color, or sound. Timed behavior must have keyboard and assistive-technology equivalents. A person must be able to pause, conclude, or leave without a precision-timing interaction.
+- **FOCUS-01:** Can a person start, pause, resume, conclude, leave, and re-enter while preserving the last confirmed session state?
+- **FOCUS-02:** Does Focus record factual lifecycle/timing state without presenting duration as outcome or task completion?
+- **FOCUS-03:** Does selecting a task remain planned context and never complete or mutate the task?
+- **FOCUS-04:** Does attribution become unavailable, rather than guessed, while `focus_session_task_totals.sql` is pending/unverified?
+- **FOCUS-05:** Are loading, empty/ready, partial/stale, unavailable, disconnected, unreliable, failed, and local-recovery states observable and accessible?
+- **FOCUS-06:** Does a session-end handoff let Reflection own interpretation without Focus applying adaptation or hiding a failed save?
+- **FOCUS-07:** Are `requireUserId`, RLS, Zod/RHF, date-fns, `Asia/Singapore`, instant timestamps, local-draft semantics, and pending-migration limits testable?
 
-## Acceptance behavior and open questions
+## Product Architect checkpoint
 
-- **FOCUS-01:** Session lifecycle states are explicit, recoverable, and do not overclaim outcome.
-- **FOCUS-02:** Pause/resume does not create accidental duplicate sessions.
-- **FOCUS-03:** Task identity remains optional and attribution limitations are visible.
-- **FOCUS-04:** Session-end Reflection is an explicit handoff, not an automatic save or adaptation.
-- **FOCUS-05:** Interrupted and failed persistence paths preserve only confirmed truth.
-- **FOCUS-06:** Date/time handling follows the Phase 1.5 foundation pattern.
-
-P4.5 owns the remaining record-rule decision: exact task-attribution representation and fallback while the recorded totals migration is unapplied. Engineering Architect must resolve it before Gate 2 approval.
-
-## Change control
-
-Revise this contract if Focus gains authority over task/reflection state, becomes a score destination, or changes the meaning of elapsed time. Parent-system and decision-record review is required.
+**Approved by Founder/Product Architect on 2026-08-05.** The contract is ready for design specification. Design may express timing and uncertainty but may not change attribution, ownership, or outcome meaning.

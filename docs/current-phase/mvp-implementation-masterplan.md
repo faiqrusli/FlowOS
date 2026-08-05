@@ -154,8 +154,9 @@ MVP admission is a product decision, not an engineering convenience. If evidence
 ### Phase 2 — Contract the coherent MVP loop
 
 **Purpose:** Turn the changed product model into a small set of cross-surface contracts.
+**Status:** COMPLETE — Gate 2 PASSED 2026-08-05; Phase 3 authorized by [D-008](../08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md)
 
-**Execution reference:** [Current Sprint](./current-sprint.md) is the single dated implementation reference for Phase 2 tasks, requirements, acceptance criteria, dependencies, and Gate 2 preparation. The [Gate 2 checklist](./phase-2/gate-checklist.md) is the evidence register and decision record.
+**Closed-phase record:** [Archived Phase 2 sprint](../11-archive/phases/phase-2/phase-2-sprint.md) contains the complete Phase 2 execution detail. The [Gate 2 checklist](./phase-2/gate-checklist.md) remains the evidence register and decision record. The [Current Sprint](./current-sprint.md) now governs Phase 3 implementation.
 
 **Work:**
 

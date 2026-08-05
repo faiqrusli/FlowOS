@@ -6,7 +6,7 @@
 
 Objective gates for each release stage and per-feature quality checks.
 
-**Production:** https://flowos-sage.vercel.app · **Gate 0 passed** · **Gate 1.5 passed** · **Phase 2 active**
+**Production:** https://flowos-sage.vercel.app · **Gate 0 passed** · **Gate 1.5 passed** · **Gate 2 passed** · **Phase 3 authorized**
 
 **Current implementation authority:** [MVP Implementation Masterplan](../../current-phase/mvp-implementation-masterplan.md). The M0–M2 gates below are a historical implementation snapshot and do not authorize new work by themselves.
 
@@ -19,12 +19,12 @@ Objective gates for each release stage and per-feature quality checks.
 | Phase 0 / Gate 0 | **Complete** — passed and archived |
 | Phase 1 / Gate 1 | **Complete** — passed and folded into the Phase 1.5 handoff |
 | Phase 1.5 / Gate 1.5 | **Complete** — passed and archived (foundation infrastructure) |
-| Phase 2 / Gate 2 | **Active** — contract the coherent MVP loop |
+| Phase 2 / Gate 2 | **Complete** — passed 2026-08-05; Phase 3 authorized |
 | M3 First Strangers (Private Alpha) | Not started |
 | Closed Beta | Not started |
 | Production GA | Not started |
 
-Current Gate 2 authority: [phase-2/gate-checklist.md](../../current-phase/phase-2/gate-checklist.md). The M0–M2 sections below are historical milestone snapshots and do not block Phase 2.
+Current Gate 3 authority: [phase-3/gate-checklist.md](../../current-phase/phase-3/gate-checklist.md). Gate 2 remains the closed contract-coherence record at [phase-2/gate-checklist.md](../../current-phase/phase-2/gate-checklist.md). The M0–M2 sections below are historical milestone snapshots and do not block Phase 3.
 
 ---
 
@@ -276,4 +276,3 @@ Solo founder: self-review checklist, still mandatory.
 
 - [ ] [FEATURE_INVENTORY.md](../../04-features/FEATURE_INVENTORY.md) updated if user-visible
 - [ ] [Decision Records](../../08-decisions/decision-records.md) for consequential Build/Kill decisions
-

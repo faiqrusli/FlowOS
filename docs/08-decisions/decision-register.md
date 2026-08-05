@@ -27,6 +27,7 @@ The register lists only decisions governed by [Decision Records](./decision-reco
 | D-005 | Post-Phase-0 Documentation Audit Decisions | Accepted | Founder | 2026-08-04 | Documentation governance and Phase 1 workflow | [D-005](./records/D-005-post-phase-0-audit-decisions.md) |
 | D-006 | Gate 1.5 PASS and Phase 2 Authorization | Accepted — Gate 1.5 PASSED, Phase 2 authorized | Founder | 2026-08-05 | Phase governance | [D-006](./records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md) |
 | D-007 | Gate 1 Current Build Truth and Phase 2 Authorization | Accepted — Gate 1 PASSED, Phase 2 authorized | Founder | 2026-08-05 | Phase governance | [D-007](./records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md) |
+| D-008 | Pass Gate 2 and Authorize Phase 3 | Accepted — Gate 2 PASSED, Phase 3 authorized | Founder | 2026-08-05 | Phase governance | [D-008](./records/D-008-pass-gate-2-and-authorize-phase-3.md) |
 
 ## Register Rules
 

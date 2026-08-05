@@ -1,70 +1,57 @@
-# Today — Feature Brief
+# Today - Feature Brief
 
-**Status:** Draft
-**Owner:** Product Architect
+**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Owner:** Product Architect (Founder)
 **Sprint tasks:** P1.1, P1.5
+**Parent systems:** [Experience Architecture](../../03-experience/experience-architecture.md) - [Information Structure](../../03-experience/information-structure.md) - [Action and Evidence](../../02-systems/action-and-evidence.md) - [Sensemaking and Adaptation](../../02-systems/sensemaking-and-adaptation.md)
+**Journey stage:** Orientation and reorientation
+**Canonical owner:** Today owns composition and read-state disclosure; linked domains own all consequential writes.
 **Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Parent:** [Product Model](../../01-product/product-model.md) · [Experience Architecture](../../03-experience/experience-architecture.md) · [Information Structure](../../03-experience/information-structure.md)
-**Standard:** [Feature Briefs](../feature-briefs.md)
 **Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
 **Next contract:** [Today behavior contract](../behavior/today.md)
-**Review trigger:** A change to Today’s entry role, context composition, write ownership, or relationship to the bounded MVP journey.
 
-## Feature decision
+## Product decision
 
-**Proceed to behavior contract.** Today is admitted as the primary entry and reorientation surface. This brief does not authorize new Today behavior or Phase 3 implementation.
+Today is the primary entry and reorientation surface for the admitted MVP loop. It helps a person understand available context and choose a next step. It is a truthful read composition, not a new domain, planner, score, or daily ritual.
 
-## Person need and context
+## Person need and outcome
 
-“When I return, I need to understand what is relevant now and choose a next step without rebuilding my context from several pages.”
-
-The current build already composes task, habit, focus, reflection, and schedule context at `/`. Phase 1 identified density and the relationship between status/KPI context and action evidence as unresolved contract questions.
-
-## Desired outcome
-
-The person can orient to current context, distinguish planned information from what actually occurred, and reach the owning surface for a deliberate next choice. This supports the Product Model’s orientation from direction through action, evidence, sensemaking, and adaptation without making a ritual mandatory.
-
-## Evidence and assumptions
-
-- **Observed:** `/` is the primary entry; `fetchDashboardData()` composes Today context; writes are delegated to domain owners.
-- **Observed:** Loading, route-error, and empty states exist in the main boundary and domain cards.
-- **Assumption:** A concise current projection is more useful than exposing every historical relationship by default.
-- **Uncertainty:** The final context priority and density require design validation after the behavior contract.
-
-## Feature hypothesis
-
-If Today presents only decision-relevant current context and clear paths to owning surfaces, a returning person can reorient and act with less reconstruction while retaining authority over what happens next.
+When a person returns, they need enough current context to choose deliberately without reconstructing it across several pages. The desired outcome is orientation: the person can identify what is current, planned, factual, interpreted, unavailable, or stale and can enter the owner of a consequential action.
 
 ## Scope
 
-- Current task and commitment context, supporting habit visibility, focus status/history context, reflection context, and schedule planning context.
-- Direct entry and re-entry from `/`, including recovery after loading or route failure.
-- Read projections and links/actions that hand consequential changes to the owning domain.
-- The Today position in the bounded [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md).
+- Compose current task/commitment context, daily habit visibility, Focus session context, reflection context, and schedule planning context.
+- Support direct entry at `/`, re-entry after interruption, and deep/contextual entry from an owning surface.
+- Show source, freshness, and limitation where a projection could affect a choice.
+- Hand create, edit, complete, defer, withdraw, Focus, reflection, habit, and planning actions to their canonical owners.
+- Preserve the bounded [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md) without requiring every stage.
 
 ## Non-goals and exclusions
 
-- Today is not a second persistence owner for tasks, focus, reflection, habits, or schedule records.
-- No forced daily ritual, universal dashboard, productivity score, or standalone Progress destination.
-- No promotion of Goals, AI Coach, Weekly Review, or other deferred routes.
-- No new source, data model, automation, or cross-domain write path in this phase.
+- Today does not persist tasks, Focus sessions, reflections, habit completions, notes, or planning changes.
+- No forced daily ritual, universal dashboard, productivity score, autonomous prioritization, or standalone Progress destination.
+- No new route, migration, source, automation, or deferred-domain admission.
+- A projection, timer, selection, schedule, or absence of data is never presented as outcome evidence.
 
-## Authority, trust, and risk
+## Authority and handoff decisions
 
-Today must distinguish current, planned, historical, derived, unavailable, and user-provided context. A summary or KPI must not appear to prove an outcome. A displayed item must link to the surface that owns correction or consequential change. Missing context must not be presented as evidence of non-action.
+| Context | Today may do | Consequential owner |
+|---|---|---|
+| Task | Show current task and offer entry | Tasks |
+| Focus | Show active/paused/concluded session context and offer entry | Focus |
+| Reflection | Show saved/draft/unavailable reflection context and offer entry | Reflection |
+| Habit | Show today's recurring action and completion state | Habits |
+| Schedule | Show planning context and source status | Task or Habit source record |
+| Notes | Show user-owned context when relevant | Notes |
 
-## Alternatives and tradeoffs
+## Success and validation intent
 
-- **Existing domain pages only:** preserves ownership but makes reorientation expensive.
-- **A broad dashboard:** improves visibility at the cost of density and misleading aggregation.
-- **Bounded Today projection:** chosen for MVP; it requires explicit priority and provenance rules.
+Today succeeds when a person can orient without being misled, choose or decline a next step, and recover from partial context. The behavior contract defines `TODAY-*` questions; the later design specification must express all states without adding behavior.
 
-## Next contract and open questions
+## Product Architect checkpoint
 
-The behavior contract must define context priority, read-state truth, entry/re-entry, handoffs, empty/partial/error states, and validation questions. Design must later decide the responsive hierarchy and density without changing those semantics.
-
-Open questions: Which current context is immediate versus supporting? Which derived status is safe to show without implying outcome? How should stale or partial domain reads be presented together?
+**Approved by Founder/Product Architect on 2026-08-05.** Scope, behavior meaning, non-goals, owner boundaries, and Orientation-stage role are approved for design specification. This approval does not authorize implementation, migration application, or a delivery design.
 
 ## Change control
 
-Revisit this brief if Today gains a write owner, becomes a distinct planning system, introduces a new primary destination, or changes the MVP boundary. Such a change requires parent and decision-record review.
+Changing Today into a write owner, a new primary destination, an autonomous recommendation surface, or a required ritual reopens product architecture review, all affected contracts, and Gate 2 traceability.

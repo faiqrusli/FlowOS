@@ -1,102 +1,101 @@
-# Tasks — Behavior Contract
+# Tasks - Behavior Contract
 
-**Status:** Draft
-**Owner:** Product Architect + Engineering Architect
+**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Owner:** Product Architect (Founder); technical persistence owner is the Tasks domain
 **Sprint tasks:** P1.2, P1.5, P4.5, P5.3
+**Authorized brief:** [Tasks feature brief](../briefs/tasks.md)
+**Parent systems:** [Direction and Commitment](../../02-systems/direction-and-commitment.md) - [Action and Evidence](../../02-systems/action-and-evidence.md) - [Continuity and Interoperability](../../02-systems/continuity-and-interoperability.md)
+**Journey stage:** Commitment and action choice
+**Canonical owner:** Tasks owns task state, task history, task-owned Next Up membership/order, and task correction. Focus only consumes a selected task for session context.
+**Consumers:** `/tasks`, Today, Workplace, task dialog, groups, Schedule, and Focus entry
+**Record rules:** [MVP record rules](../record-rules.md)
 **Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Authorized feature brief:** [Tasks feature brief](../briefs/tasks.md)
-**Participating systems:** [Direction and Commitment](../../02-systems/direction-and-commitment.md) · [Action and Evidence](../../02-systems/action-and-evidence.md) · [Continuity and Interoperability](../../02-systems/continuity-and-interoperability.md)
-**Affected destinations:** `/tasks`, Today task projections, Workplace task board, task dialog, groups, and Focus entry
-**Journey:** [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md)
-**Validation plan:** [Validation plan standard](../validation-plans.md) — feature plan required before delivery
-**Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
-**Behavioral authority:** Tasks owns explicit person-authorized commitment changes and exposes their state without claiming action outcome.
 
-## Authorized feature boundary
+## Scope and non-goals
 
-Tasks is the MVP owner for practical commitments. It may expose contextual planning and a Focus handoff. It does not own focus-session evidence, reflection interpretation, schedule projections, or autonomous prioritization.
+Tasks owns explicit commitment changes. A task can be selected for action, but selection is planned context, not completion or evidence. Tasks does not own Focus sessions, action outcomes, reflection meaning, habit completion, notes, or autonomous priority.
 
-## Participants and authority
+## Authority and state model
 
-| Participant | May do | Owning authority |
+| State | Meaning | What it must not imply |
 |---|---|---|
-| Person | Create, revise, select, complete, restore, defer, withdraw/delete, duplicate, schedule, and reorder within available controls | Tasks authorizes task-state changes |
-| Today/Focus/Schedule | Show or request a task-context handoff | No task-state write without Tasks owner |
-| Tasks | Validate, persist, report, and recover task changes | `tasks`/`task_groups` domain paths and user-scoped access |
+| Local draft | Unsubmitted form values held locally | Durable save |
+| Pending | A requested Tasks write has not been confirmed | Saved state or completed operation |
+| Open/current | An active commitment available for choice | Action occurred |
+| Deferred | The person moved the commitment out of current context | Failure, abandonment, or deletion |
+| Completed | The person explicitly closed the commitment | Successful outcome or quality |
+| Withdrawn | The person explicitly removed the commitment from active work | Erasure or completion |
+| Historical | Retained prior/withdrawn/completed context | Current availability |
+| Superseded | Replaced by a later explicit task revision/state | Loss of history |
+| Failed | Requested mutation was rejected or could not be confirmed | The requested state happened |
+| Unavailable/disconnected | Task source or queue capability cannot be read or verified | Empty data or permission to guess |
 
-## Objects and observable states
+## Entry, re-entry, pause, exit, and correction
 
-| State | Meaning | Must not imply |
+- **Direct entry:** authenticated person opens Tasks and creates, revises, or inspects a task.
+- **Deep entry:** Today, Focus, Schedule, group, or a note context opens the task owner with identity and current status.
+- **Re-entry:** after interruption, show the last confirmed task state and any local draft/pending/failed status; do not convert the draft into a saved task.
+- **Pause:** leaving an editor or deferring a decision preserves a local draft only when the UI says it is local; it does not change the task.
+- **Exit:** save, complete, defer, withdraw, restore, duplicate, select for Focus, retry, or leave. Leaving without confirmation changes nothing.
+- **Correction:** Tasks corrects task fields and task state. Correcting a task does not rewrite Focus evidence, reflection interpretation, or historical records.
+
+## Transitions and handoffs
+
+| Person action | Owner/result | Unchanged state |
 |---|---|---|
-| Draft/pending | The person has entered or requested a change not yet confirmed durable | That the change is saved |
-| Open | A current task/commitment remains available for choice or action | That action occurred |
-| Completed | The person has explicitly marked the commitment sufficiently met/closed | A successful real-world outcome or universal progress |
-| Deferred | The person chose to move the commitment out of the current context | Failure or abandonment |
-| Withdrawn/removed | The person chose not to continue or requested removal | Silent erasure of relevant history |
-| Failed/rollback | A requested persistence change did not become durable | That the requested state is current |
+| Create/edit and confirm | Tasks validates and persists a current task | No Focus or evidence record |
+| Select for Focus | Passes a planned task identity to Focus | Task remains open/current |
+| Mark complete | Tasks records explicit commitment closure | No claim about outcome or Focus |
+| Restore | Tasks returns an eligible withdrawn/completed state to current context | Historical event remains visible to owner |
+| Defer | Tasks changes planning/commitment context | No action evidence is created |
+| Remove | Tasks records withdrawal and excludes active projections | History is not silently erased |
+| Add/reorder Next Up | Tasks owns task queue order/membership if capability is available | Focus session state unchanged |
+| Retry failed write | Tasks retries the same requested mutation | Old confirmed state remains until success |
+| Decline/leave | No task mutation | All confirmed task data remains |
 
-Task identity, group membership, planning values, and any Next Up/Focus attribution remain distinct records or projections according to the record-rules document.
+## Removal, deletion, and history
 
-## Entry conditions and access
+Routine Remove is withdrawal: retain the task record and meaningful state history, exclude it from active Tasks/Today/Next Up, and do not report completion. Restore is explicit and Tasks-owned. Hard deletion is not admitted as a routine core-loop behavior; if privacy/retention requires it, the deletion authority, audit treatment, user confirmation, and recovery limits must be specified outside this contract before delivery. Existing technical delete paths cannot be represented as a product guarantee that history is erased.
 
-- Valid entry is `/tasks`, Today, Workplace, quick capture, group context, planning controls, or Focus selection.
-- A deep entry must expose task identity and current status before a consequential action.
-- Authenticated access and user-scoped reads/writes are required.
-- A person may leave, defer, or cancel without completing a task.
+## Next Up ownership and fallback
 
-## Behavior rules
+Tasks owns task Next Up membership and order. Focus owns only the currently active session and selected task context. If the pending `tasks_next_up_queue.sql` migration is not applied and verified, the product must label persistent membership/reorder as unavailable. It may show a deterministic projection from confirmed task fields, but it must not claim that a reorder was saved. A selected item remains planned context until Focus records session facts; it never completes the task.
 
-1. Given a valid authenticated person submits a task form, when shared validation accepts the input, FlowOS must persist the task through the Tasks owner and show pending then confirmed state.
-2. Given validation rejects input, FlowOS must identify the invalid field or root issue, preserve safe input where possible, and not issue a write.
-3. Given an open task, when the person completes, defers, restores, or withdraws it, FlowOS must show the explicit resulting commitment state and preserve the distinction from action occurrence.
-4. Given a task is selected for Focus, FlowOS must pass identity and current status to Focus; selection must not complete, reprioritize, or alter the task by itself.
-5. Given a task is scheduled or placed in Today/Later/group context, FlowOS must label that as planning context and use the approved date-only/wall-clock validation rules.
-6. Given a board or ordering write fails, FlowOS must roll back or mark the projection unconfirmed, explain what is durable, and provide retry/reload recovery.
-7. Given a person requests a destructive removal, FlowOS must make scope and consequence clear before confirmation and must not call removal completion.
-8. Given a task is displayed on Today or Focus, those projections must reflect the owner’s latest confirmed state or disclose stale/unavailable state.
+## Persistence, permissions, and validation
 
-## Decision and transition table
+- Every Tasks read/write resolves `requireUserId()` and scopes by `user_id` at the server boundary; RLS remains an independent protection. Client identity or route visibility is not authority.
+- Task forms use shared Zod schemas and React Hook Form with the shared resolver. Empty/invalid titles, invalid group or date values, and root persistence errors remain visible and recoverable.
+- Date-only planning values use `date-fns` for calendar validity and the product timezone `Asia/Singapore` for `YYYY-MM-DD` keys. Persisted timestamps are instants; browser timezone must not alter a stored date key.
+- Pending migrations are unavailable behavior until applied and verified. A failed/pending queue write cannot be shown as saved.
+- Failed writes preserve the prior confirmed state and provide retry or correction; optimistic display must be marked pending and rolled back if unconfirmed.
 
-| Choice | From | Result | What must not happen |
-|---|---|---|---|
-| Create/revise | Draft/Open | Tasks record becomes Open after confirmed save | No implied action evidence |
-| Complete | Open | Commitment becomes Completed | No automatic outcome or Focus conclusion |
-| Defer | Open | Commitment becomes Deferred with context retained | No moralized failure state |
-| Restore/reopen | Completed/Deferred | Commitment returns to an explicit active/open state | History is not silently erased |
-| Select for Focus | Open | Focus receives task identity | Task status remains unchanged |
-| Save failure | Any pending write | Failed/rollback with retry | UI must not claim durable success |
+## Loading, empty, partial, unavailable, and error behavior
 
-## Truth, provenance, and uncertainty
+- **Loading:** task list or owner record is requested; controls that would conflict with unknown state are disabled or guarded.
+- **Empty:** the source confirms no tasks; offer optional creation without implying deficiency.
+- **Partial/stale:** available task records remain usable, while missing groups, schedule values, or queue data are labeled by source and freshness.
+- **Unavailable/disconnected:** preserve last confirmed task history and identify the unavailable source/capability; do not treat it as no tasks.
+- **Error:** identify the failed operation, preserve input and confirmed state, and offer retry, correction, or safe exit.
 
-Task input is user-provided commitment context. A scheduled date/time is planned context. Completion is an explicit commitment-state claim. Focus records and other evidence may relate to the task but do not become task completion automatically. User identity and source ownership must remain visible across projections.
+## Interruption and recovery
 
-## Assistance and automation
+An interrupted create/edit is a local draft unless the owner confirmed durable save. An interrupted completion, withdrawal, defer, restore, or reorder remains pending/failed until Tasks confirms it. Re-entry shows confirmed state plus the unresolved operation. Retrying must be idempotent from the person's perspective and must not duplicate a task or apply a hidden second transition.
 
-No autonomous task creation, completion, prioritization, or deferral is admitted. Any future suggestion must be labeled as a recommendation and require person action under Intelligence and Trust rules.
+## Accessibility
 
-## Error, interruption, and recovery
+Every destructive or consequential action names its state consequence and has a keyboard-accessible confirmation or cancellation path. Validation and root errors are associated with fields and announced in a live status. Pending, failed, withdrawn, historical, unavailable, and queue limitations are textually available, not color-only. Focus moves to the created/updated task or error without trapping the person, and responsive layouts preserve order, owner, and recovery.
 
-- Invalid form values remain editable and are not written.
-- Pending writes are visible and controls are scoped to the active save.
-- Failed persistence must preserve safe local input or recover via retry/reload without fabricating a state.
-- Duplicate submission must not create an unintended duplicate; the implementation validation plan must verify idempotent user experience.
-- Permission loss must stop the write and disclose that the requested change was not applied.
+## Acceptance questions
 
-## Accessibility and inclusive behavior
+- **TASK-01:** Can a person create and revise a task with Zod/RHF validation and truthful pending/failed recovery?
+- **TASK-02:** Does selecting a task for Focus leave task completion and task history unchanged?
+- **TASK-03:** Do complete, restore, defer, withdraw, and correction remain distinguishable and owner-confirmed?
+- **TASK-04:** Does routine Remove retain history as withdrawal, while hard deletion remains outside normal core-loop behavior?
+- **TASK-05:** Does Tasks own task Next Up membership/order, and does the pending migration fallback disclose unavailable persistence?
+- **TASK-06:** Are task planning values, Focus facts, and outcomes kept distinct across Tasks, Today, Schedule, and Focus?
+- **TASK-07:** Do direct/deep entry, pause, leave, retry, re-entry, permission failure, empty, partial, stale, unavailable, disconnected, and error paths preserve confirmed truth?
+- **TASK-08:** Are `requireUserId`, RLS, date-fns, `Asia/Singapore`, instant timestamps, local-draft semantics, and pending-migration limits testable?
 
-Every task state and validation error must be available in semantic text with associated controls. Dialog focus, error association, keyboard ordering, drag/reorder alternatives, and pending/failed announcements must remain understandable without pointer, color, or timing alone. Destructive actions require accessible consequence and recovery language.
+## Product Architect checkpoint
 
-## Acceptance behavior and open questions
-
-- **TASK-01:** Person-authorized create/revise/complete/defer/restore actions show confirmed state or truthful failure.
-- **TASK-02:** Completion and scheduling remain distinct from action occurrence and outcome.
-- **TASK-03:** Focus selection does not mutate commitment state.
-- **TASK-04:** Invalid input is rejected at the form and persistence boundary using Phase 1.5 validation patterns.
-- **TASK-05:** Board/order failures recover without losing confirmed task identity or claiming an unconfirmed write.
-- **TASK-06:** Tasks are consistent across `/tasks`, Today, Workplace, and Focus handoff.
-
-P4.5 owns the remaining record-rule decisions: retention/history treatment for removal, canonical ownership of Next Up, and task-attribution behavior while the recorded migration is unapplied.
-
-## Change control
-
-Revise this contract if task semantics become project management, autonomous planning is admitted, or task completion is redefined as evidence/outcome. Such changes require parent-system and decision-record review.
+**Approved by Founder/Product Architect on 2026-08-05.** The contract is ready for design specification. Design may express consequences and states but may not alter ownership, removal semantics, queue ownership, or the Task-to-Focus rule.

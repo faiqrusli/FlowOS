@@ -24,32 +24,32 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 
 ## Current Status
 
-**Phase:** Phase 2 — Contract the Coherent MVP Loop
+**Phase:** Phase 3 — Implement and Harden the Core Loop
 
-**Current Sprint:** 2026-08-05 → 2026-08-08 (active)
+**Current Sprint:** 2026-08-05 onward (active; implementation not started)
 
-**Status:** Active — Phase 1 and Phase 1.5 closed; Phase 2 contract package in progress
+**Status:** Phase 3 authorized by Gate 2 `PASS` on 2026-08-05; implementation not started
 
 **📋 Quick Reference:**
-- **[Current Sprint](../docs/current-phase/current-sprint.md)** — Single implementation reference for Phase 2 tasks, requirements, acceptance, and status
-- **[Phase 2](../docs/current-phase/phase-2/README.md)** — Current phase work (Gate 2)
+- **[Current Sprint](../docs/current-phase/current-sprint.md)** — Single implementation reference for Phase 3 work, objectives, risks, and status
+- **[Phase 3](../docs/current-phase/phase-3/README.md)** — Current phase work (Gate 3)
 - **[MVP Masterplan](../docs/current-phase/mvp-implementation-masterplan.md)** — Implementation roadmap
 
-**Gate 2 Target:** Contract coherence — every admitted behavior traces to parent system, journey, design, technical owner, and validation question without inventing missing rules.
+**Gate 3 Target:** Core-loop readiness — a Founder can perform the full journey with seeded and real data, recover from interruptions and errors, understand factual versus interpretive meaning, and reach the owning surface for every consequential change.
 
 **Gate 1.5 (Phase 1.5):** PASSED — 2026-08-05. Phase 1.5 closed and archived to `docs/11-archive/phases/phase-1.5/`. See [D-006](../docs/08-decisions/records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md).
 
 **Gate 0 (Phase 0):** PASSED — 2026-08-04. Phase 0 closed and archived to `docs/11-archive/phases/phase-0/`. See [D-003](../docs/08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md).
 
-**Phase 2 Focus:**
+**Phase 2 handoff (closed):**
 - Write Today, Tasks, Focus, and Reflection feature briefs and behavior contracts
 - Write the bounded journey contract (orientation, commitment, action, evidence, sensemaking, adaptation)
 - Decide minimum Habits, Schedule, and Notes behavior that supports the journey
 - Define source ownership, provenance, correction, and continuity rules
 - Create feature design specifications with full state coverage
-- Reference the Phase 1.5 validation, form, and date/time patterns in every contract
+- Reference: [archived Phase 2 sprint](../docs/11-archive/phases/phase-2/phase-2-sprint.md) and [D-008](../docs/08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md)
 
-**Phase 2 Status:** Active — P0 baseline is complete; P1–P4 contract drafts exist; P5 design specifications and P6 Gate 2 review remain open. Gate 2 review is scheduled for 2026-08-08.
+**Phase 3 Status:** Active — authorized within the admitted MVP boundary; implementation has not started; Gate 3 and Gate 4 remain required before release.
 
 ---
 
@@ -197,19 +197,16 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 
 **Always check:** `docs/current-phase/current-sprint.md` for current assignments.
 
-**Phase 2 gate checklist:** `docs/current-phase/phase-2/gate-checklist.md` for completion criteria and current evidence.
+**Phase 3 gate checklist:** `docs/current-phase/phase-3/gate-checklist.md` for completion criteria and current evidence.
 
 **Phase 1.5 History (closed):**
 - ✅ Shared Zod/RHF/date-fns validation and date/time foundation restored and tested
 - ✅ Auth + retained Task pilot migrations, reflection autosave, and Focus-kanban append verified
 - ✅ Gate 1.5 PASSED 2026-08-05; Phase 1.5 archived to `docs/11-archive/phases/phase-1.5/`; Phase 2 authorized
 
-**Gate 2 Progress:**
-- Phase 2 sprint active (2026-08-05 → 2026-08-08); [current sprint](../docs/current-phase/current-sprint.md) is the single execution reference
-- P1–P4 drafts are linked in the sprint artifact register; P5 design specifications and P6 traceability/Founder decision remain open
-- Gate 2 review on 2026-08-08
+**Gate 2 History:** PASSED — P1-P6 evidence is complete and archived; see [D-008](../docs/08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md).
 
-**Gate 2 Status:** Open — draft contracts exist; design coverage, final ownership decisions, evidence review, and Founder decision are pending.
+**Gate 3 Status:** NOT STARTED — Phase 3 implementation and validation evidence are pending.
 
 ---
 

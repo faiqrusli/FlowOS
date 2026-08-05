@@ -1,69 +1,51 @@
-# Tasks — Feature Brief
+# Tasks - Feature Brief
 
-**Status:** Draft
-**Owner:** Product Architect
+**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Owner:** Product Architect (Founder)
 **Sprint tasks:** P1.2, P1.5, P4.5
+**Parent systems:** [Product Model](../../01-product/product-model.md) - [Direction and Commitment](../../02-systems/direction-and-commitment.md) - [Action and Evidence](../../02-systems/action-and-evidence.md)
+**Journey stage:** Commitment and action choice
+**Canonical owner:** Tasks owns explicit person-authorized task commitment mutations, including task-owned Next Up membership/order.
 **Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Parent:** [Product Model](../../01-product/product-model.md) · [Direction and Commitment System](../../02-systems/direction-and-commitment.md) · [Action and Evidence System](../../02-systems/action-and-evidence.md)
-**Standard:** [Feature Briefs](../feature-briefs.md)
 **Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
 **Next contract:** [Tasks behavior contract](../behavior/tasks.md)
-**Review trigger:** A change to task ownership, commitment/action meaning, planning states, or the allowed task-to-Focus handoff.
 
-## Feature decision
+## Product decision
 
-**Proceed to behavior contract.** Tasks are admitted as the coherent MVP commitment and action surface. This brief preserves current capability while narrowing its meaning to the core loop.
+Tasks is the practical commitment surface for the MVP. A task records what the person chose to do and its commitment state. It does not prove action, quality, outcome, or adaptation.
 
-## Person need and context
+## Person need and outcome
 
-“I need to turn something I have chosen to do into a clear, revisable commitment, then see what happened without confusing a plan with an outcome.”
-
-The current build supports creation, revision, completion, restoration, deletion, duplication, deferral, grouping, ordering, scheduling, and Focus selection across several surfaces. Phase 1 identified overlapping scheduling writes and pending Next Up/focus-attribution migrations as technical ownership concerns.
-
-## Desired outcome
-
-The person can make, revise, select, complete, defer, withdraw, and recover a present commitment while retaining a truthful distinction between commitment state, action occurrence, and outcome.
-
-## Evidence and assumptions
-
-- **Observed:** `/tasks`, Today, Workplace, quick capture, groups, schedule controls, and Focus Next Up expose task behavior.
-- **Observed:** Task writes are user-scoped and validated through shared Zod/server parsing; failed board persistence has rollback/retry behavior.
-- **Assumption:** A task is the MVP’s practical commitment representation, not a universal project-management object.
-- **Uncertainty:** The final relationship among task completion, action evidence, Next Up, and Focus attribution requires record rules.
-
-## Feature hypothesis
-
-If task actions preserve commitment history and hand action/evidence to the correct owner, the person can make a bounded present choice and adapt it without FlowOS overstating what occurred.
+The person needs to turn a chosen intention into a clear, revisable commitment, select an action without accidentally completing it, and understand what was planned versus what later occurred. The desired outcome is an explicit task state with recoverable history and an honest Focus handoff.
 
 ## Scope
 
 - Create and revise a task commitment.
-- Assign or remove Today/group/planning context, reorder where supported, and select a task for Focus.
-- Complete, restore, defer, withdraw/delete, duplicate, and recover from failed persistence according to explicit state rules.
-- Show task state consistently across Tasks, Today, and Focus entry points.
-- Use the Phase 1.5 Zod/RHF/date-fns patterns for admitted forms and date-only/planning values.
+- Assign/remove bounded context such as Today, group, and task-owned planning values.
+- Select a task for Focus without completing it or claiming attribution.
+- Explicitly complete, restore, defer, withdraw/remove, duplicate, reorder, and recover task persistence where the owner supports the operation.
+- Expose consistent task state in Tasks, Today, Focus entry, and Schedule projections.
+- Use shared validation and approved date/time patterns for admitted task forms.
+
+## Resolved P4.5 decisions
+
+- **Removal/history:** routine Remove is a person-authorized withdrawal. The task remains as historical/superseded record context, leaves active lists and Next Up, and is not evidence of completion. Restore is a separate explicit Tasks action where available. A hard deletion is not a normal core-loop action; it is a privacy/retention operation that requires explicit security and delivery rules.
+- **Next Up:** task membership and order are owned by Tasks because Next Up is a task-commitment projection. Focus owns the active session and consumes a selected task; it does not own queue membership or order. While `tasks_next_up_queue.sql` is pending/unverified, the queue may be read as a truthful fallback projection, but reorder/persistent queue guarantees are unavailable.
 
 ## Non-goals and exclusions
 
-- Task completion is not an automatic claim of successful outcome or universal productivity.
-- Tasks do not own focus-session evidence, reflection interpretation, or schedule projection semantics.
-- No Goals, project-management expansion, automatic prioritization, or silent commitment changes.
-- No new route or migration is implied by this brief; pending migrations remain explicit delivery/release work.
+- Completion does not claim successful real-world outcome or universal progress.
+- Tasks do not own Focus session lifecycle, Focus attribution totals, reflection interpretation, habit completion, note context, or Schedule as a competing source of truth.
+- No autonomous prioritization, project-management expansion, Goals admission, new route, or production migration is implied.
 
-## Authority, trust, and risk
+## Success and validation intent
 
-The person authorizes consequential task changes. Task source ownership remains visible across projections. Completion, deferral, withdrawal, and correction preserve meaningful history. A scheduled or selected task is planned context, not evidence that action occurred. RLS and `requireUserId()` boundaries remain non-negotiable.
+Tasks succeeds when a person can make, revise, choose, complete, defer, withdraw, restore, and recover a commitment while the product preserves history and the planned/factual distinction. The behavior contract defines `TASK-*` questions for later design and validation.
 
-## Alternatives and tradeoffs
+## Product Architect checkpoint
 
-- **Keep every current task surface independent:** fast locally, but risks conflicting state and ownership.
-- **Centralize all work in Today:** simpler entry, but weakens task ownership and recovery.
-- **One task contract with contextual projections:** chosen for MVP; requires clear handoffs and shared state language.
-
-## Next contract and open questions
-
-The behavior contract must define task states, transitions, confirmation/correction, planning context, Focus handoff, persistence failure, and the boundary between task completion and evidence. Record rules must resolve Next Up and focus-attribution ownership before Phase 3 delivery design.
+**Approved by Founder/Product Architect on 2026-08-05.** Scope, removal/history semantics, Next Up ownership, commitment meaning, and the Commitment-stage role are approved for design specification. This approval does not authorize implementation or migration application.
 
 ## Change control
 
-Revisit this brief if tasks become a new planning system, gain autonomous prioritization, or change the meaning of commitment/action. A new product boundary requires parent review and a decision record.
+Changing task completion meaning, routine removal retention, Next Up ownership, or the Task-to-Focus handoff reopens the brief, behavior contract, record rules, and Gate 2 traceability.

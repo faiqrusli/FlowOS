@@ -1,70 +1,67 @@
 # Phase 2: Contract the Coherent MVP Loop
 
-**Purpose:** Turn the changed product model into a small set of cross-surface contracts that Phase 3 can implement without inventing missing rules.
-**Status:** ACTIVE — Phase 2 authorized by Founder on 2026-08-05; P0 complete, P1–P4 drafted, P5/P6 open
-**Owner:** Founder (executed via the 6-hat solo workflow)
-**Gate:** Gate 2 — Contract Coherence
+**Purpose:** Turn the changed product model into cross-surface contracts that Phase 3 can implement without inventing product meaning.
+**Status:** CLOSED - Gate 2 PASSED 2026-08-05; Phase 3 authorized
+**Owner:** Founder, executing the six-hat workflow
+**Gate:** Gate 2 - Contract Coherence
 **Created:** 2026-08-05
-**Last Updated:** 2026-08-05
+**Last updated:** 2026-08-05
 
-**Execution plan:** [Current Sprint — single implementation reference](../current-sprint.md)
+**Archived sprint:** [Complete Phase 2 sprint record](../../11-archive/phases/phase-2/phase-2-sprint.md)
+**Archived checklist:** [Archived Gate 2 checklist](../../11-archive/phases/phase-2/gate-checklist.md)
+**Next phase:** [Phase 3 README](../phase-3/README.md) · [Current Sprint](../current-sprint.md)
 **Gate record:** [Gate 2 checklist](./gate-checklist.md)
-**Masterplan authority:** [MVP Implementation Masterplan](../mvp-implementation-masterplan.md)
-**Archived prior phase:** [Phase 1.5 — Foundation Infrastructure](../../11-archive/phases/phase-1.5/README.md)
-**Prior-phase evidence:** [Phase 1 implementation-truth evidence](../phase-1/implementation-truth-evidence.md) · [D-007 Gate 1 decision](../../08-decisions/records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md)
+**Masterplan:** [MVP implementation masterplan](../mvp-implementation-masterplan.md)
 
-The [Current Sprint](../current-sprint.md) is the single execution reference for this phase. This README defines the phase boundary; the [Gate 2 checklist](./gate-checklist.md) records evidence and the Founder decision; feature, journey, design, and engineering documents define their own narrower contracts.
+The archived Phase 2 sprint is the historical execution reference. This README defines the closed phase boundary; the Gate 2 checklist and evidence package record the decision and traceability; feature, journey, and design documents define narrower contracts. The current sprint now carries the Phase 3 implementation structure.
 
----
+## Phase boundary
 
-## Phase Boundary
+Phase 2 writes feature briefs, behavior contracts, design specifications, and the bounded journey contract for the admitted MVP loop. It does not implement or harden Phase 3 behavior.
 
-Phase 2 is the product-contracting phase between foundation infrastructure and implementation. It writes feature briefs, behavior contracts, design specifications, and the bounded journey contract for the admitted MVP loop. It must not implement Phase 3 code or expand MVP breadth.
+## Founder guardrails
 
-### In scope
+- Phase 2 closeout remains on the `sprint/phase2` worktree until Founder approval. `main` is read-only and must not be modified, merged to, or pushed to from this handoff.
+- Do not implement new core-loop behavior, create or apply production migrations, or refactor unrelated technical debt.
+- Do not turn an existing route into a new MVP admission or promote Goals, AI Coach, Progress, Weekly Review, standalone Knowledge, or standalone Growth Areas.
+- Do not create a delivery design to bypass an unresolved product or design decision.
+- Any technical spike must be labeled `EXPLORATORY`, remain non-shipping, and not become contract evidence for an admitted behavior.
+- Phase 2 artifacts alone do not authorize implementation, migration application, or release; the recorded Gate 2 `PASS` authorizes Phase 3 to begin within the admitted boundary. Phase 3 implementation must start on a dedicated Phase 3 branch after this handoff is approved and merged.
 
-- Write the Today, Tasks, Focus, and Reflection feature briefs and behavior contracts.
-- Write the bounded journey contract connecting orientation, commitment, action, evidence, sensemaking, and adaptation.
-- Decide the minimum Habits, Schedule, and Notes behavior that supports that journey.
-- Define source ownership, provenance, correction, and continuity rules for the MVP records.
-- Create feature design specifications with content, accessibility, responsive, loading, empty, error, interruption, and recovery states.
-- Create delivery designs only after behavior and design contracts are approved.
-- Reference the Phase 1.5 validation, form, and date/time patterns in every contract.
+## In scope
 
-### Out of scope
+- Today, Tasks, Focus, and Reflection feature briefs and behavior contracts.
+- The six-stage journey: Orientation, Commitment, Action, Evidence, Sensemaking, Adaptation.
+- Minimum optional Habits, Schedule, and Notes behavior.
+- Source ownership, provenance, correction, deletion/withdrawal, and continuity rules.
+- Feature design specifications after product behavior approval.
+
+## Out of scope
 
 - Phase 3 implementation or hardening of the core loop.
-- New MVP breadth, new routes, or re-admission of deferred domains (Goals, AI Coach, Progress as a destination).
-- Trust, quality, and release readiness work (Phase 4).
-- Broad refactoring or unrelated technical debt, unless a contract requires a scoped reference to an established foundation pattern.
+- New routes, new MVP breadth, deferred-domain admission, or production migrations.
+- Broad refactoring, unrelated technical debt, release hardening, and delivery designs before product/design approval.
 
-## Entry Conditions
+## Work status
 
-- Gate 1 is `PASS` and Gate 1.5 is `PASS`; Phase 2 authorized by the Founder on 2026-08-05.
-- Phase 1.5 records are archived to `docs/11-archive/phases/phase-1.5/`.
-- The current sprint and Gate 2 checklist are the active execution and evidence records.
+- **P0 - Baseline and scope freeze:** `COMPLETE`.
+- **P1 - Core feature briefs and behavior contracts:** `COMPLETE` - Product Architect checkpoint approved 2026-08-05.
+- **P2 - Bounded journey contract:** `COMPLETE` - Product Architect checkpoint approved 2026-08-05.
+- **P3 - Supporting-domain decisions:** `COMPLETE` - Product Architect checkpoint approved 2026-08-05.
+- **P4 - Record/provenance/correction/continuity rules:** `COMPLETE` - ownership decisions resolved 2026-08-05.
+- **P5 - Feature design specifications:** `COMPLETE` - four state-complete design specifications, Design Architect checkpoint, and cross-surface review completed 2026-08-05.
+- **P6 - Gate evidence and Founder decision:** `COMPLETE` - Gate 2 `PASS` recorded 2026-08-05; Phase 3 authorized.
 
-## Current work status
+## Exit condition
 
-- **P0 — Baseline and scope freeze:** `COMPLETE`.
-- **P1 — Core feature briefs and behavior contracts:** `DRAFT`.
-- **P2 — Bounded journey contract:** `DRAFT`.
-- **P3 — Supporting-domain decisions:** `DRAFT`.
-- **P4 — Record/provenance/correction/continuity rules:** `DRAFT`.
-- **P5 — Feature design specifications:** `NOT_STARTED`.
-- **P6 — Gate evidence and Founder decision:** `NOT_STARTED`.
+Gate 2 passed on 2026-08-05 because each admitted behavior traces to a parent system, journey stage, behavior contract, design expression, data/technical owner, and validation question without inventing missing rules. The recorded `PASS` authorizes Phase 3; Gate 3 and Gate 4 remain required before release.
 
-Task IDs, exact outputs, dependencies, acceptance criteria, and commit-readiness checks live only in the [Current Sprint](../current-sprint.md).
+## Related records
 
-## Exit Condition
-
-Gate 2 may pass only when a designer, engineer, and reviewer can trace each admitted behavior to a parent system, a journey, a design expression, a data/technical owner, and a validation question without inventing missing rules. The Founder must record exactly one `PASS`, `HOLD`, or `REWORK` decision in the Gate 2 checklist.
-
-## Related Records
-
-- [Archived Phase 1.5 README](../../11-archive/phases/phase-1.5/README.md)
-- [Archived Gate 1.5 checklist](../../11-archive/phases/phase-1.5/gate-checklist.md)
-- [MVP Implementation Masterplan — Phase 2](../mvp-implementation-masterplan.md)
-- [Technology Integration Masterplan](../../06-engineering/technology-integration-masterplan.md)
-- [D-006 — Gate 1.5 PASS and Phase 2 Authorization](../../08-decisions/records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md)
-- [D-007 — Gate 1 Current Build Truth and Phase 2 Authorization](../../08-decisions/records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md)
+- [Gate 2 checklist](./gate-checklist.md)
+- [P6 traceability evidence package](./gate-2-evidence-package.md)
+- [Current Sprint](../current-sprint.md)
+- [MVP implementation masterplan](../mvp-implementation-masterplan.md)
+- [Phase 1 implementation-truth evidence](../phase-1/implementation-truth-evidence.md)
+- [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
+- [Archived Phase 2 sprint record](../../11-archive/phases/phase-2/phase-2-sprint.md)

@@ -165,4 +165,4 @@ See [D-007](../../08-decisions/records/D-007-gate-1-current-build-truth-and-phas
 - Starting question list: [implementation truth backlog](../../11-archive/phases/phase-0/implementation-truth-backlog.md)
 - Masterplan Phase 1: [mvp-implementation-masterplan.md](../mvp-implementation-masterplan.md)
 - Phase 1.5 technical integration: [Technology Integration Masterplan](../../06-engineering/technology-integration-masterplan.md)
-- Sprint: [current-sprint.md](../current-sprint.md) (Phase 2 sprint active; Phase 1 closed)
+- Sprint handoff: [archived Phase 2 sprint](../../11-archive/phases/phase-2/phase-2-sprint.md) (Phase 1 closed)

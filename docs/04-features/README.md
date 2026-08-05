@@ -20,7 +20,7 @@
 
 ## Current Phase 2 Contract Artifacts
 
-The Phase 2 execution reference is [Current Sprint](../current-phase/current-sprint.md). The current draft artifacts are:
+The Phase 2 completion reference is the [archived Phase 2 sprint](../11-archive/phases/phase-2/phase-2-sprint.md). The Product Architect contract package and Design Architect artifacts are complete; Gate 2 passed on 2026-08-05:
 
 | Artifact | Purpose |
 |---|---|
@@ -29,7 +29,7 @@ The Phase 2 execution reference is [Current Sprint](../current-phase/current-spr
 | [Record rules](./record-rules.md) | Ownership, provenance, correction, and continuity baseline |
 | [Supporting-domain decisions](./supporting-domain-decisions.md) | Minimum Habits, Schedule, and Notes behavior |
 
-These drafts are Gate 2 inputs. They do not authorize Phase 3 implementation until the Gate 2 checklist records `PASS`.
+These approved contracts are the Phase 3 implementation handoff. The recorded Gate 2 `PASS` authorizes Phase 3 to begin within the admitted boundary; Gate 3 and Gate 4 remain required before release.
 
 ---
 

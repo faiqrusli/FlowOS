@@ -1,99 +1,96 @@
-# Today — Behavior Contract
+# Today - Behavior Contract
 
-**Status:** Draft
-**Owner:** Product Architect
+**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Owner:** Product Architect (Founder)
 **Sprint tasks:** P1.1, P1.5, P5.2
+**Authorized brief:** [Today feature brief](../briefs/today.md)
+**Parent systems:** [Experience Architecture](../../03-experience/experience-architecture.md) - [Action and Evidence](../../02-systems/action-and-evidence.md) - [Sensemaking and Adaptation](../../02-systems/sensemaking-and-adaptation.md)
+**Journey stage:** Orientation and reorientation
+**Canonical owner:** Today owns composition, freshness, and handoff disclosure. The linked domain owns every durable mutation.
+**Consumers:** `/`, Tasks, Focus, Reflection, Habits, Schedule, and Notes entry points
+**Record rules:** [MVP record rules](../record-rules.md)
 **Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Authorized feature brief:** [Today feature brief](../briefs/today.md)
-**Participating systems:** [Direction and Commitment](../../02-systems/direction-and-commitment.md) · [Action and Evidence](../../02-systems/action-and-evidence.md) · [Sensemaking and Adaptation](../../02-systems/sensemaking-and-adaptation.md)
-**Affected destinations:** `/` Today; contextual links to Tasks, Focus, Reflection, Habits, and Schedule
-**Journey:** [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md)
-**Validation plan:** [Validation plan standard](../validation-plans.md) — feature plan required before delivery
-**Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
-**Behavioral authority:** Today provides truthful current orientation and hands every consequential change to its owning surface.
 
-## Authorized feature boundary
+## Scope and non-goals
 
-Today is a read/composition surface. It may show current projections and provide contextual entry to an owning feature. It does not create a second write path or redefine task, action, evidence, reflection, or schedule semantics.
+Today reads and composes available context for deliberate orientation. It must not become a persistence owner, a second task planner, an outcome dashboard, an autonomous recommender, or a required funnel through the six stages.
 
-## Participants and authority
+## Authority and truth model
 
-| Participant | May do | Owning authority |
+| Participant | Allowed action | Canonical owner |
 |---|---|---|
-| Person | Inspect context, choose a next path, and invoke an owning action | Person authorizes the target feature change |
-| Today | Compose current projections and expose truthful status | No durable domain write ownership |
-| Domain owner | Create, change, correct, or recover its records | Tasks, Focus, Reflection, Habits, or task-owned planning |
+| Person | Inspect context, choose an entry, or leave | Person authority at the target surface |
+| Today | Request reads, compose projections, expose state and freshness | No domain mutation |
+| Tasks | Create, revise, complete, defer, withdraw, restore, and order task commitments | Tasks |
+| Focus | Start, pause, resume, conclude, and correct sessions | Focus |
+| Reflection | Draft, save, correct, withdraw, or skip interpretation | Reflection |
+| Habits | Complete a recurring action explicitly | Habits |
+| Schedule/Notes | Provide optional context through source owners | Task/Habit or Notes |
 
-## Objects and observable states
+Today must label the difference between planned, factual, interpretive, proposed, applied, derived, and unavailable information. Missing or unavailable context is not evidence that the person did nothing.
 
-| State | Meaning | Must not imply |
+## Observable states
+
+| State | Meaning | Required behavior |
 |---|---|---|
-| Loading | Current projections are being requested | That absent data is empty or negative evidence |
-| Ready | Current context is available | That the projection is exhaustive or proves an outcome |
-| Ready with no relevant context | No relevant record is available for this view | That the person did nothing or is behind |
-| Partial/unavailable | One or more inputs are missing, stale, or failed | That the remaining context is complete |
-| Route error | The surface cannot provide its current projection | That domain records were changed or lost |
+| Loading | A read is in progress | Do not label absent data empty or negative |
+| Empty | The source confirmed no relevant record for the view | Explain the bounded absence and offer optional entry |
+| Ready | All required projections for this view are available | Show owner and truth meaning where material |
+| Partial | Some projections are available while another is stale, empty, or failed | Identify the limitation per source; keep available context usable |
+| Stale | A previously confirmed projection cannot be refreshed within the stated freshness boundary | Show last-known context as historical/stale, never current without disclosure |
+| Unavailable | A source cannot be accessed or verified | Preserve the source name and recovery/owning route |
+| Disconnected | A source relationship ended | Preserve prior historical context; do not silently erase it |
+| Error | The composition or route failed | State that current context is unverified; allow retry or safe departure |
 
-The state of a task, focus session, reflection, habit, or schedule item remains owned by its domain system. Today may summarize it but cannot locally change its meaning.
+## Entry, re-entry, pause, exit, and correction
 
-## Entry conditions and access
+- **Direct entry:** an authenticated person may open `/` and request current orientation.
+- **Deep entry:** a task, session, reflection, habit, schedule item, or note may link to Today with identity and source state intact.
+- **Re-entry:** after returning from any owner, Today refreshes or states its freshness; it does not assume the projection changed successfully.
+- **Pause:** pausing orientation means leaving, switching surface, or dismissing a choice. No Today record is created and no domain state changes.
+- **Exit:** choosing a target hands off; choosing no target, closing, or navigating away is valid departure.
+- **Correction:** Today never edits a source record. Correction controls open the source owner and its confirmed, pending, or failed result.
 
-- Primary entry is `/` for an authenticated person.
-- Re-entry is valid after interruption, a failed request, or return from any owning surface.
-- A contextual deep link must preserve enough identity and current status for the target owner to orient the person.
-- Today does not require a person to visit every supporting surface or complete a daily ritual.
+## Handoffs and transitions
 
-## Behavior rules
+| Person choice | State change | State that remains unchanged |
+|---|---|---|
+| Open task | Enter Tasks with current task identity | Task remains unchanged |
+| Select task for Focus | Pass a planned selection to Focus | Task is not completed or attributed |
+| Start/resume Focus | Focus may begin or resume its own session | Today remains a projection |
+| Open reflection | Enter Reflection with date/session context | Evidence and commitments remain unchanged |
+| Open planning context | Enter source-owned planning control | Planning is not action evidence |
+| Open habit/note | Enter source owner | Core commitment and evidence are unchanged |
+| Retry | Request a new read | No domain record changes |
+| Leave | No transition | All confirmed records remain intact |
 
-1. Given an authenticated person opens Today, when current projections are requested, FlowOS must show loading state and then identify which context is available, partial, empty, or unavailable.
-2. Given a current item is shown, when the person needs to change it, FlowOS must offer a path to the owning surface and must not silently write through Today.
-3. Given a task or commitment is shown, FlowOS must distinguish planned/current commitment state from action occurrence and outcome.
-4. Given focus duration or derived status is shown, FlowOS must not present it as proof of completion, quality, or outcome.
-5. Given reflection context is shown, FlowOS must distinguish user-provided interpretation from factual action/evidence context and keep reflection voluntary.
-6. Given no context exists, FlowOS must explain the absence and offer only an appropriate optional next choice; it must not manufacture urgency or deficiency.
-7. Given a person chooses no next action, FlowOS must preserve the available context and treat leaving as valid.
-8. Given a projection is stale or partial, FlowOS must expose the limitation and provide retry or owning-surface recovery where available.
+## Persistence, permissions, and validation
 
-## Decision and transition table
+- Today read paths must resolve the authenticated user through `requireUserId()` and use user-scoped queries/RLS. An unauthenticated or expired session is an access/unavailable state, not an empty Today.
+- Today has no durable write form. Any invoked owner form uses the shared Zod schema at the server boundary and React Hook Form with the shared resolver; Today must display owner validation or write errors rather than translating them into success.
+- Calendar labels and date validity use `date-fns`; product date keys use `Asia/Singapore` (`YYYY-MM-DD`), while persisted timestamps are instants. Today must not infer a date key from the browser timezone.
+- Pending production migrations are unavailable until applied and verified. Today may show an unavailable capability and cannot represent a pending migration as ready behavior.
 
-| Person choice | Required context | Owner/result | What remains unchanged |
-|---|---|---|---|
-| Open a task | Task identity and current status | Tasks owns revision/completion/defer | Today does not mutate the task |
-| Start/resume Focus | Selected action identity and focus availability | Focus owns session state | Task is not completed automatically |
-| Capture reflection | Reflection context and voluntary entry | Reflection owns draft/save/correction | Evidence remains factual and unchanged |
-| Review planning context | Date/time and item source | Task or Habit owner owns planning change | Planning is not action evidence |
-| Do nothing/leave | Current view | No state change | All existing records remain intact |
+## Interruption and recovery
 
-## Truth, provenance, and uncertainty
+- If a read is interrupted, retain the last confirmed projection only as stale/historical and expose retry.
+- If a handoff write fails, the owner reports failure; Today does not announce success.
+- If authentication expires, preserve safe navigation context but require reauthentication before a read or write is treated as authorized.
+- Re-entry after interruption restores the owner surface's last confirmed state, not an invented completion, reflection, attribution, or adaptation.
 
-Today’s cards are projections. Native records, user-provided records, source-provided records, and derived summaries must remain distinguishable when that distinction affects judgment. Missing or unavailable input is not negative evidence. Any derived value must retain a path to its owner and inputs.
+## Accessibility
 
-## Assistance and automation
+Source, freshness, provenance, state, and consequence are available as semantic text and programmatic status, not color or hover alone. Keyboard order places orientation before consequential controls. Empty, partial, stale, unavailable, disconnected, error, and retry actions are reachable and announced. Responsive reduction may hide secondary detail but never the owner, limitation, or recovery path.
 
-No autonomous assistance is admitted. A future recommendation shown on Today would require an Intelligence and Trust contract and must remain proposed, optional, explainable, and unable to apply a consequential change without person authority.
+## Acceptance questions
 
-## Error, interruption, and recovery
+- **TODAY-01:** Can an authenticated person distinguish current, planned, factual, interpretive, derived, stale, empty, and unavailable context?
+- **TODAY-02:** Does every consequential action hand off to the canonical owner without a Today write?
+- **TODAY-03:** Does Today avoid treating selection, schedule, elapsed duration, projection, or absence as an outcome?
+- **TODAY-04:** Can a person enter directly, re-enter after interruption, pause, decline, retry, correct at the owner, or leave without a forced ritual?
+- **TODAY-05:** Are loading, empty, partial, stale, unavailable, disconnected, error, and recovery states observable and accessible?
+- **TODAY-06:** Do `requireUserId`, RLS, Zod/RHF, date-fns, `Asia/Singapore`, instant timestamps, and pending-migration limits remain explicit at the handoff boundary?
 
-- Loading is distinct from empty and failure.
-- A failed read must state that current context could not be verified and provide retry or a safe owning route.
-- Returning after an interruption must not imply that a displayed projection is current unless it was refreshed or its freshness is clear.
-- A write failure belongs to the owning feature; Today must not report success until that owner confirms it.
-- Route recovery must preserve the person’s authenticated context and not discard durable domain records.
+## Product Architect checkpoint
 
-## Accessibility and inclusive behavior
-
-State, source, freshness, and available action must be available in semantic text, not color or hover alone. Reading and focus order must place current orientation before consequential controls. Partial, empty, error, and retry states must be reachable by keyboard and understandable with assistive technology. Responsive reduction may hide supporting detail but not ownership, consequence, or recovery.
-
-## Acceptance behavior and open questions
-
-- **TODAY-01:** A person can identify current, planned, historical, empty, and unavailable context without treating absence as failure.
-- **TODAY-02:** Every consequential control hands off to the owning feature and exposes the result or failure there.
-- **TODAY-03:** Today never represents a projection or elapsed duration as outcome evidence.
-- **TODAY-04:** A person can return after interruption and recover orientation without forced ritual.
-- **TODAY-05:** Loading, partial, empty, route-error, and retry states are observable and accessible.
-
-P5.2 owns the remaining design questions: final information priority, density, and the minimum freshness disclosure for mixed domain reads. These do not change ownership or truth rules.
-
-## Change control
-
-Revise this contract if Today gains durable write ownership, a new primary destination, autonomous recommendation, or a changed role in the journey. Revisions return to the feature brief and Gate 2 traceability register.
+**Approved by Founder/Product Architect on 2026-08-05.** The contract is ready for design specification. Design may express the states and hierarchy but may not add a write owner, new admission, or unapproved meaning.

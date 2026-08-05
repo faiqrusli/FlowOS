@@ -1,102 +1,110 @@
-# MVP Coherent Loop — Journey Contract
+# MVP Coherent Loop - Journey Contract
 
-**Status:** Draft
-**Owner:** Product Architect
-**Sprint tasks:** P2.1–P2.4, P5.6
-**Foundation constraints:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Parent:** [Experience Architecture](../experience-architecture.md) · [Information Structure](../information-structure.md) · [Product Model](../../01-product/product-model.md)
-**Children:** [Today behavior](../../04-features/behavior/today.md) · [Tasks behavior](../../04-features/behavior/tasks.md) · [Focus behavior](../../04-features/behavior/focus.md) · [Reflection behavior](../../04-features/behavior/reflection.md)
-**Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
-**Journey intent:** “Help me orient, choose, act, understand what occurred, and decide what—if anything—I want to change.”
-**Entry contexts:** Today `/`; Tasks; active Focus; Reflection; valid contextual/deep links
-**Exit contexts:** Next choice, active/paused/concluded action, saved/paused/skipped reflection, explicit adaptation choice, or valid departure
-**Review trigger:** A change to the core loop, a participating owner, an entry/exit context, or a material cross-surface handoff.
+**Status:** Product Architect complete; approved by Founder on 2026-08-05
+**Owner:** Product Architect (Founder)
+**Sprint tasks:** P2.1-P2.4, P5.6
+**Parent systems:** [Experience Architecture](../experience-architecture.md) - [Information Structure](../information-structure.md) - [Product Model](../../01-product/product-model.md)
+**Participating contracts:** [Today](../../04-features/behavior/today.md) - [Tasks](../../04-features/behavior/tasks.md) - [Focus](../../04-features/behavior/focus.md) - [Reflection](../../04-features/behavior/reflection.md)
+**Supporting decisions:** [Habits, Schedule, Notes](../../04-features/supporting-domain-decisions.md)
+**Record rules:** [MVP record rules](../../04-features/record-rules.md)
+**Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
 
-## Person intent and outcome
+## Journey intent and boundary
 
-The person can begin with current context, a practical commitment, an action already in progress, or a wish to make sense of experience. They can reach a grounded next choice without completing every stage. When they do move through the loop, FlowOS preserves the difference between intention, occurrence, evidence, interpretation, and adaptation.
+FlowOS helps a person orient, choose, act, understand what occurred, and decide what - if anything - to change. The bounded journey is:
 
-## Scope and non-goals
+**Orientation -> Commitment -> Action -> Evidence -> Sensemaking -> Adaptation**
 
-This contract owns the bounded relationship among Today orientation, Tasks commitment, Focus action mode, factual evidence, Reflection sensemaking, and an optional adaptation choice.
+This is a set of valid relationships, not a forced funnel. A person may enter at any stage, pause, defer, decline, correct, retry, or leave. Habits, Schedule, and Notes are optional context and cannot block the six stages.
 
-It does not require a linear funnel, a daily ritual, a direction link for every task, a Focus session for every action, a reflection for every day, or an adaptation after every insight. Habits, Schedule, and Notes support context only under [supporting decisions](../../04-features/supporting-domain-decisions.md). Goals, AI Coach, standalone Progress, and standalone Weekly Review are out of scope.
+## Stage and authority contract
 
-## Entry contexts
-
-- **Today:** current projection and reorientation; Today owns no durable domain write.
-- **Tasks:** direct commitment creation or revision; Tasks owns task state.
-- **Focus:** direct return to an active/paused session; Focus owns session state.
-- **Reflection:** direct sensemaking entry; Reflection owns reflection state.
-- **Deep/contextual entry:** a person may arrive from a task, session, schedule item, or reflection context and must receive enough identity/status to continue or leave safely.
-
-## Participating authority
-
-| Journey moment | Contract | Owner of consequential state |
-|---|---|---|
-| Orientation | Today | Today composes; linked domain owns change |
-| Commitment | Tasks | Tasks / Direction and Commitment |
-| Action | Focus or direct action context | Action and Evidence / Focus session owner |
-| Evidence | Focus and factual records | Action and Evidence |
-| Sensemaking | Reflection | Sensemaking and Adaptation / Reflection owner |
-| Adaptation | Reflection proposal and receiving owner | Person chooses; Direction and Commitment applies resulting change |
-
-## Journey narrative
-
-On return, the person may use Today to see the current context that is available and relevant. They can choose a task, revise or defer a commitment, start or resume Focus, open Reflection, inspect planning context, or leave. A task selected for action remains a commitment until action actually occurs.
-
-During action, Focus can represent a bounded attention session. The person may pause, resume, conclude, or leave. The resulting session record says what the Focus session recorded; it does not say the task succeeded or what the person’s effort meant.
-
-After action, factual evidence remains separate from interpretation. The person may open Reflection, capture what helped or constrained them, note uncertainty, connect relevant context, or skip. A possible adaptation is a proposal until the person explicitly chooses whether to accept, defer, decline, modify, or apply it through the owning system.
-
-At every point, the person may enter directly, return after interruption, correct a record, defer a choice, or leave with authority intact.
-
-## Decision and transition table
-
-| Transition | Person choice/context | Owning contract | Truth and consequence | Valid alternative/recovery |
+| Stage | Participating contract/system | Person choice | State that may change | State that remains unchanged |
 |---|---|---|---|---|
-| Orient → commit | Current context and optional meaning | Tasks | A task becomes an explicit commitment after confirmed save | Leave, defer, or act without formalizing more context |
-| Commit → action | Open task or emergent choice | Tasks → Focus/action | Selection is not completion; action begins only when recorded by its owner | Act without Focus, revise, defer, or withdraw |
-| Action → evidence | Confirmed session/action state | Focus → Action and Evidence | Duration/state is factual session evidence, not outcome | Pause, conclude, leave, or mark unavailable |
-| Evidence → sensemaking | Relevant factual record and context | Reflection | Reflection is user interpretation, not fact | Skip, save later, or interpret without a linked record |
-| Sensemaking → adaptation | Reflection, evidence, uncertainty | Reflection → affected owner | Proposal is not applied state; person must authorize | Defer, decline, revisit, or make no change |
-| Any → re-entry | Interrupted or returning context | Owning contract | Show last confirmed state and uncertainty | Retry, inspect owner, or leave |
+| Orientation | Today / Experience Architecture | Inspect, choose an entry, or leave | No durable domain state; a handoff context may be created | All source records and meanings |
+| Commitment | Tasks / Direction and Commitment | Create, revise, complete, defer, withdraw, restore, or select | Task commitment state only | Focus facts, reflection meaning, outcome |
+| Action | Focus / Action and Evidence | Start, pause, resume, conclude, or leave | Focus session lifecycle only | Task completion and adaptation |
+| Evidence | Focus and source records / Action and Evidence | Inspect factual session/source records and limits | A factual record may be confirmed/corrected by its owner | Commitment, interpretation, proposal |
+| Sensemaking | Reflection / Sensemaking and Adaptation | Draft, save, correct, withdraw, skip, or revisit | Reflection record/interpretation only | Source facts and commitments |
+| Adaptation | Reflection proposal -> receiving owner | Accept, modify, defer, decline, or explicitly apply | Receiving owner applies a consequential change after authority | Reflection history and source evidence |
 
-## State, uncertainty, and provenance
+## Truth and provenance distinctions
 
-The journey must keep these distinctions visible:
+Every handoff preserves these meanings:
 
-- planned commitment versus actual action;
-- direct/user-provided/source-provided/derived evidence;
-- factual evidence versus reflection/insight/recommendation;
-- proposed versus accepted/applied adaptation;
-- current versus historical/superseded/unavailable context; and
-- confirmed versus pending/failed/partial state.
+- **Planned:** a task, schedule, selection, or proposed next step; not proof of action.
+- **Factual:** an owner-confirmed session, completion, or source event; scoped to what it records, not a universal outcome.
+- **Interpretive:** a user-provided reflection or meaning; not direct evidence.
+- **Proposed:** an insight or adaptation awaiting explicit authority; not applied state.
+- **Applied:** a receiving owner confirmed a consequential mutation; not merely a reflection save or suggestion.
+- **Unavailable:** a source, migration, or relationship cannot be verified; never fill the gap by inference.
 
-No source update, projection, elapsed timer, or recommendation may silently change a person’s commitment, interpretation, or adaptation.
+Provenance remains `direct`, `user-provided`, `source-provided`, `derived`, `planned`, or `unavailable` as defined in the record rules.
 
-## Recovery and interruption
+## Valid entry and deep-entry contexts
 
-- A person can re-enter any owning surface without returning to Today first.
-- A pending or failed write identifies what is confirmed, what is not, and how to retry or correct.
-- A pause, deferral, decline, or exit is a valid journey outcome.
-- Missing evidence is not evidence of non-action; missing context remains unavailable or partial.
-- Correction changes the relevant record while preserving the history needed to understand what changed.
+| Entry | Starting meaning | Required reorientation |
+|---|---|---|
+| Today `/` | Current composition and choice | Source, freshness, and owner for each material context |
+| Tasks | Commitment creation/revision or task inspection | Task current state and available consequence |
+| Focus | Active/paused session or direct action start | Last confirmed session state and uncertainty |
+| Reflection | Direct sensemaking for a date or custom entry | Record identity, save state, and voluntary options |
+| Task deep link | A specific commitment from Today/Schedule/Focus | Task state; selection is not completion |
+| Session-end deep link | Concluded Focus facts offered to Reflection | Session identity; reflection write remains Reflection-owned |
+| Supporting deep link | Habit, planning, or note context | Source owner and optional relationship |
 
-## Exit contexts
+No entry requires visiting Today first. A direct entry must not fabricate missing earlier stages.
 
-Valid exits include: oriented but no action chosen; commitment created, revised, deferred, withdrawn, or completed; action active, paused, concluded, or unavailable; evidence inspected; reflection saved, paused, skipped, corrected, or revisited; adaptation proposed, accepted, applied, deferred, declined, or revisited; and simple departure.
+## Normal cross-surface flow
 
-## Acceptance evidence
+1. **Orientation:** Today composes available context. The person may choose, request a handoff, or leave.
+2. **Commitment:** Tasks confirms a task change. Selecting it for Focus changes neither completion nor evidence.
+3. **Action:** Focus confirms session lifecycle and records instants. It may run with no task.
+4. **Evidence:** Focus and source owners expose what was actually recorded, including attribution availability. Elapsed time is not an outcome.
+5. **Sensemaking:** Reflection receives facts as context and stores user interpretation separately. It may be daily, custom, or a linked session-end entry.
+6. **Adaptation:** A reflection may propose a change. The person must explicitly choose, and the receiving owner must confirm application. Reflection cannot mutate commitments implicitly.
 
-- **JOURNEY-01:** A person can enter from Today, Tasks, Focus, or Reflection and regain orientation without a prescribed sequence.
-- **JOURNEY-02:** Each material handoff names its owning contract and distinguishes planned, actual, factual, interpretive, proposed, and applied states.
-- **JOURNEY-03:** The person can pause, defer, decline, correct, retry, or leave at appropriate points without a negative product state.
-- **JOURNEY-04:** A complete seeded journey can move from orientation through commitment, action, evidence, sensemaking, and an explicit adaptation choice.
-- **JOURNEY-05:** An interrupted or failed step does not fabricate completion, outcome, save, or adaptation.
+## Alternative, interruption, and recovery paths
 
-Validation will be specified in the Phase 2 feature/journey validation package after design states are complete.
+| Path | Allowed behavior | State protection |
+|---|---|---|
+| Pause | Pause a Focus session, leave an editor, defer a task/Reflection choice, or stop orientation | Last confirmed owner state remains authoritative |
+| Defer | Move a task/choice/reflection proposal out of current context | Deferred is not failed, deleted, or applied |
+| Decline | Decline an entry, proposal, supporting context, or adaptation | No consequential mutation |
+| Correction | Use the canonical owner's correction path | Correction preserves history and does not rewrite another owner |
+| Retry | Retry the same pending/failed owner operation | Pending is not success; prior confirmed state remains |
+| Departure | Navigate away, close, or leave without completing a stage | No stage is inferred complete |
+| Interruption | Re-enter directly at the last owning surface | Restore confirmed state; disclose local/pending/unavailable context |
+| Unavailable source | Continue with core stages without support | Unavailable is not empty or negative evidence |
 
-## Open questions and change control
+## Handoff rules
 
-The remaining Gate 2 work is tracked as P4.5 (record-rule resolution) and P5.1–P5.6 (design state coverage and review). Revise this contract if a participating system, primary destination, or core-loop meaning changes; update all child contracts and the Gate 2 register together.
+- Today -> Tasks: opens the task owner; Today does not write.
+- Tasks -> Focus: passes a planned task selection; selecting never completes or attributes the task.
+- Focus -> Reflection: passes confirmed session facts and identity; Reflection owns the entry save.
+- Reflection -> receiving owner: passes a proposed adaptation; only the receiving owner can apply it after explicit authority.
+- Schedule/Habits/Notes -> any core surface: provide optional context; source owners retain writes and provenance.
+- Any owner -> Today: return with refreshed or explicitly stale projection; no owner reports success through a projection alone.
+
+## Re-entry contract
+
+At re-entry, the owner must distinguish current, historical, superseded, pending, failed, local-draft, unavailable, and disconnected states. A local draft is recoverable continuity, not a durable save. A pending migration is unavailable behavior, not a partially available feature. Re-entry restores the last confirmed record and offers retry, correction, resume, decline, or leave without forcing the person through the loop again.
+
+## Security and foundation constraints
+
+Every owner boundary resolves `requireUserId()`, uses user-scoped access, and relies on RLS. Forms use shared Zod schemas and React Hook Form with the shared resolver. Calendar checks use `date-fns`; product date keys use `Asia/Singapore`; persisted timestamps are instants. These constraints apply to handoffs and do not turn client state into authority.
+
+## Acceptance questions
+
+- **JOURNEY-01:** Can a person enter directly or deeply at Today, Tasks, Focus, Reflection, or a supporting context without a prescribed funnel?
+- **JOURNEY-02:** Does every stage name its contract, canonical owner, person choice, changed state, and unchanged state?
+- **JOURNEY-03:** Does the journey preserve planned, factual, interpretive, proposed, applied, and unavailable distinctions?
+- **JOURNEY-04:** Does selecting a Task leave it uncompleted, Focus record only session facts, and Reflection avoid implicit commitment mutation?
+- **JOURNEY-05:** Can a person pause, defer, decline, correct, retry, or depart at each applicable stage without a negative or fabricated state?
+- **JOURNEY-06:** Does re-entry after interruption restore confirmed owner state while disclosing pending, failed, local-draft, stale, unavailable, or disconnected context?
+- **JOURNEY-07:** Can the core journey continue when Habits, Schedule, Notes, attribution, or another supporting source is empty or unavailable?
+- **JOURNEY-08:** Can a complete seeded path reach an explicit adaptation applied by the receiving owner, while a partial path remains valid without it?
+
+## Product Architect checkpoint
+
+**Approved by Founder/Product Architect on 2026-08-05.** The six-stage meaning, valid alternatives, handoffs, authority boundaries, and non-funnel behavior are approved for design specification. Design may not add a stage, force a stage, or change an owner.

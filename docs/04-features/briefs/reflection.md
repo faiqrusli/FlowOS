@@ -1,69 +1,54 @@
-# Reflection — Feature Brief
+# Reflection - Feature Brief
 
-**Status:** Draft
-**Owner:** Product Architect
+**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Owner:** Product Architect (Founder); Reflection domain owns reflection persistence
 **Sprint tasks:** P1.4, P1.5, P4.5
+**Parent systems:** [Sensemaking and Adaptation](../../02-systems/sensemaking-and-adaptation.md) - [Action and Evidence](../../02-systems/action-and-evidence.md) - [Continuity and Interoperability](../../02-systems/continuity-and-interoperability.md)
+**Journey stage:** Sensemaking and optional Adaptation
+**Canonical owner:** Reflection owns daily reflection records, custom entries, session-end reflection entries, correction, withdrawal, and skip state. Receiving domains own applied changes.
 **Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Parent:** [Product Model](../../01-product/product-model.md) · [Sensemaking and Adaptation System](../../02-systems/sensemaking-and-adaptation.md) · [Action and Evidence System](../../02-systems/action-and-evidence.md)
-**Standard:** [Feature Briefs](../feature-briefs.md)
 **Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
 **Next contract:** [Reflection behavior contract](../behavior/reflection.md)
-**Review trigger:** A change to reflection ownership, save/correction semantics, voluntary participation, or the handoff to adaptation.
 
-## Feature decision
+## Product decision
 
-**Proceed to behavior contract.** Reflection is admitted as the MVP sensemaking and adaptation path. Full-page, sidebar, and session-end contexts must be made understandable as one bounded record model before Phase 3 implementation.
+Reflection is voluntary sensemaking. It lets a person describe experience, uncertainty, and a possible adaptation while preserving the difference between factual evidence, user interpretation, a proposal, and an applied change.
 
-## Person need and context
+## Person need and outcome
 
-“I need a place to record what I noticed, what constrained or helped me, and what I may want to change, without being forced to explain my whole day or pretend an interpretation is a fact.”
-
-The current build supports full-page reflection, sidebar autosave, custom entries, and session-end capture. Phase 1 identified dual save paths, weekly partial behavior, and inconsistent recovery semantics as contract gaps.
-
-## Desired outcome
-
-The person can voluntarily capture, pause, correct, and revisit sensemaking connected to relevant action or context, and can choose whether any adaptation is proposed or applied.
-
-## Evidence and assumptions
-
-- **Observed:** Reflection persistence is user-scoped; autosave keeps a date-scoped local draft and retries failed saves.
-- **Observed:** Focus session-end capture appends to Focus context and weekly review remains secondary/partial.
-- **Assumption:** Daily reflection is the core record; contextual entries may reference the same sensemaking model without forcing a single ritual.
-- **Uncertainty:** The final relationship between daily records, custom entries, and Focus append records requires the record-rules contract.
-
-## Feature hypothesis
-
-If reflection keeps facts, interpretation, uncertainty, and adaptation choice distinct while making save/recovery predictable, it can help the person learn from experience without turning disclosure or positivity into a product obligation.
+After action or at any direct entry, the person may make sense of what happened and decide whether anything should change. The desired outcome is a durable, user-owned reflection record or an explicit skip/leave, with an adaptation remaining a proposal until the person authorizes the receiving owner.
 
 ## Scope
 
-- Voluntary daily and contextual reflection capture from Reflection, Today/sidebar, and Focus session-end paths.
-- Draft, save, retry, correction, pause, skip, and re-entry behavior.
-- Links to relevant evidence, commitments, or sessions when the person chooses the context.
-- Explicit proposal/acceptance/defer/decline handoff for adaptation; no automatic change.
-- Historical visibility that distinguishes current, superseded, corrected, and unavailable context.
+- Daily reflection keyed to the person's `Asia/Singapore` date.
+- Custom user-owned reflection entries that may carry context and links.
+- Focus session-end records appended as linked reflection entries, without replacing the daily record.
+- Direct full-page, sidebar, and session-end entry paths using one ownership and recovery model.
+- Draft, save, retry, correct, withdraw, skip, and re-entry behavior.
+- Optional adaptation proposal and explicit handoff to the receiving owner.
+
+## Resolved P4.5 decision: record relationship
+
+The daily reflection is the canonical date-scoped container/record for the person's daily sensemaking. Custom entries are separate user-owned records that preserve their own identity and history. A Focus session-end record is an appended custom reflection entry linked to the concluded Focus session; it is not an automatic replacement of the daily reflection, not a duplicate daily save, and not an automatic adaptation. Reflection owns all three persistence paths and presents their relationship clearly.
 
 ## Non-goals and exclusions
 
-- No required daily ritual, sentiment score, disclosure score, positivity score, or completeness claim.
-- No automatic causal explanation, diagnosis, insight certainty, or direction/commitment change.
-- No standalone Weekly Review product admission; the partial route remains secondary.
-- No second persistence owner hidden behind a contextual surface.
+- Reflection is not factual telemetry, a required daily ritual, a productivity score, or a universal outcome evaluator.
+- Reflection does not complete/defer/withdraw tasks, change Focus sessions, complete habits, or apply adaptation without explicit authority at the receiving owner.
+- No autonomous interpretation, coaching, new weekly-review admission, Goals/Progress promotion, or new migration is implied.
 
-## Authority, trust, and risk
+## Supporting-domain write ownership
 
-The person owns reflection content and controls whether to save, correct, skip, or apply an adaptation. Reflection owns interpretation and adaptation proposal history; the affected direction/commitment owner applies an explicit change. A corrected reflection must preserve the fact and context of correction without rewriting factual evidence.
+Reflection may reference Notes, Habits, Schedule, Tasks, or Focus context, but it cannot mutate those records through a reflection save. The source owner must receive an explicit person-authorized action for any consequential change.
 
-## Alternatives and tradeoffs
+## Success and validation intent
 
-- **Separate daily, sidebar, and session-end products:** preserves local affordances but creates conflicting records.
-- **One forced reflection workflow:** simplifies implementation but violates voluntary sensemaking.
-- **One contract with contextual entry and explicit ownership:** chosen for MVP; requires careful record and recovery rules.
+Reflection succeeds when a person can voluntarily capture and correct meaning, understand what is factual versus interpretive, recover a failed/local draft, and choose whether to leave a proposal unapplied. The behavior contract defines `REFLECT-*` questions for design and later validation.
 
-## Next contract and open questions
+## Product Architect checkpoint
 
-The behavior contract must define draft versus saved state, autosave truth, correction, entry/exit, Focus handoff, evidence links, and adaptation choices. Record rules must resolve whether session-end entries are linked records or projections of the daily reflection.
+**Approved by Founder/Product Architect on 2026-08-05.** Scope, record relationship, voluntary meaning, adaptation authority, and Sensemaking/Adaptation-stage role are approved for design specification. This approval does not authorize implementation or migration application.
 
 ## Change control
 
-Revisit this brief if Reflection becomes mandatory, gains autonomous interpretation, or changes the meaning/ownership of evidence or adaptation. Such a change requires parent review and a decision record.
+Making Reflection mandatory, allowing it to mutate commitments implicitly, or creating separate save ownership for sidebar/session-end entries reopens this brief, the behavior contract, journey, and record rules.

@@ -1,105 +1,109 @@
-# Reflection — Behavior Contract
+# Reflection - Behavior Contract
 
-**Status:** Draft
-**Owner:** Product Architect + Engineering Architect
+**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Owner:** Product Architect (Founder); technical persistence owner is Reflection
 **Sprint tasks:** P1.4, P1.5, P4.5, P5.5
+**Authorized brief:** [Reflection feature brief](../briefs/reflection.md)
+**Parent systems:** [Sensemaking and Adaptation](../../02-systems/sensemaking-and-adaptation.md) - [Action and Evidence](../../02-systems/action-and-evidence.md) - [Continuity and Interoperability](../../02-systems/continuity-and-interoperability.md)
+**Journey stage:** Sensemaking and optional Adaptation
+**Canonical owner:** Reflection owns daily records, custom entries, session-end entries, correction, withdrawal, and skip state. Receiving domains own applied adaptation.
+**Consumers:** `/reflection`, sidebar reflection, Focus session-end entry, Today, and reflection history
+**Record rules:** [MVP record rules](../record-rules.md)
 **Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Authorized feature brief:** [Reflection feature brief](../briefs/reflection.md)
-**Participating systems:** [Sensemaking and Adaptation](../../02-systems/sensemaking-and-adaptation.md) · [Action and Evidence](../../02-systems/action-and-evidence.md) · [Continuity and Interoperability](../../02-systems/continuity-and-interoperability.md)
-**Affected destinations:** `/reflection`, Today/sidebar reflection path, Focus session-end context
-**Journey:** [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md)
-**Validation plan:** [Validation plan standard](../validation-plans.md) — feature plan required before delivery
-**Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
-**Behavioral authority:** Reflection owns voluntary interpretation, correction, and adaptation-choice history while preserving factual evidence and person authority.
 
-## Authorized feature boundary
+## Scope and non-goals
 
-Reflection is the MVP sensemaking and adaptation path. Contextual entry points must converge on understandable ownership and recovery. Reflection does not own factual action records, task state, or automatic direction/commitment changes.
+Reflection is voluntary, user-provided sensemaking. It may refer to factual records but must not rewrite them. It may propose adaptation but must not apply commitments or other consequential changes without an explicit receiving-owner action.
 
-## Participants and authority
+## Record model and authority
 
-| Participant | May do | Owning authority |
+| Record | Meaning | Owner |
 |---|---|---|
-| Person | Write, pause, save, skip, retry, correct, revisit, and choose adaptation disposition | Person owns reflection meaning and consequential choices |
-| Reflection | Maintain draft/save/correction state and interpretation history | `reflections`/entry owner and local draft recovery |
-| Focus/Today | Provide optional context | No reflection write without Reflection owner |
-| Direction/Commitment | Apply an explicit accepted adaptation to its own state | Receiving system owns resulting state |
+| Daily reflection | Canonical date-scoped sensemaking record for one user/date key | Reflection |
+| Custom entry | Separate user-owned reflection record with its own identity/history | Reflection |
+| Session-end entry | Custom entry linked to a concluded Focus session and appended to reflection history | Reflection; Focus only supplies handoff context |
+| Local draft | Recoverable client values not confirmed durable | Client continuity only |
+| Adaptation proposal | User-provided proposed change with explicit status | Reflection until receiving owner applies/declines |
 
-## Objects and observable states
+A session-end entry never silently replaces the daily reflection, and a daily save never silently overwrites custom/session-end history. The person may relate records, but relationship is not an automatic commitment mutation.
 
-| State | Meaning | Must not imply |
+## State model
+
+| State | Meaning | Required truth language |
 |---|---|---|
-| Empty | No reflection has been recorded for the context | A deficient day or absent experience |
-| Draft | Input exists locally or in an unsaved form | Durable reflection |
-| Saving/pending | A durable save is being attempted | Confirmed persistence |
-| Saved | Reflection is confirmed durable | Factual truth of every interpretation |
-| Save failed/retryable | Draft remains available but durable save is unconfirmed | Lost content or successful save |
-| Corrected/superseded | The person changed the interpretation while history remains intelligible | Erased evidence or invalid experience |
-| Skipped/left | The person chose not to reflect now | Failure or negative product state |
+| Empty | No confirmed reflection record for the selected date/context | Voluntary absence, not failure |
+| Local draft | Values held locally for recovery | Not a durable save |
+| Saving/pending | Owner write is in flight | Not confirmed |
+| Saved/current | Durable owner-confirmed record | User-provided interpretation, not fact |
+| Historical | Prior saved entry retained for context | Not current unless selected |
+| Corrected/superseded | A later explicit revision replaced the current representation | Prior meaning/history remains traceable |
+| Skipped/withdrawn | Person explicitly declined or retracted a reflection/proposal | Not evidence that nothing happened |
+| Failed | Save/correction/withdrawal was not confirmed | Prior confirmed state remains |
+| Unavailable | Owner/source cannot be read or written | Do not show an empty record |
+| Disconnected | Linked Focus/Notes/source relationship ended | Preserve prior entry and disclose link limitation |
 
-Reflection content is sensemaking. Related evidence, task state, and Focus records remain separate objects with their own owners.
+## Entry, re-entry, pause, exit, and correction
 
-## Entry conditions and access
+- **Direct entry:** the person opens Reflection for a date or starts a custom entry without a Focus session.
+- **Deep entry:** Today, Focus session end, or another owner provides context and record identity; Reflection remains the write owner.
+- **Re-entry:** restore the last confirmed record plus local draft/pending/failed status. Do not label a local draft saved.
+- **Pause:** leave the editor, close the sidebar, or defer sensemaking. Retain a local draft only with explicit local-draft disclosure; no durable record or adaptation occurs.
+- **Exit:** save, retry, correct, withdraw, skip, propose adaptation, decline proposal, or leave. Every exit is valid and voluntary.
+- **Correction:** Reflection creates an explicit corrected/superseding representation while preserving factual source records and enough history to understand the change. Correcting interpretation does not correct Focus/task facts.
 
-- Valid entry is `/reflection`, Today/sidebar, or an explicit Focus session-end handoff.
-- Entry may include date/context/session identity, but it must not imply a conclusion about the person’s experience.
-- Returning use must restore the latest confirmed reflection and any recoverable draft with clear status.
-- Reflection is voluntary; a person may skip, pause, or leave without penalty.
+## Transitions and adaptation handoff
 
-## Behavior rules
+| Person action | Reflection result | Unchanged state |
+|---|---|---|
+| Type/close | Local draft or no record | No durable save unless confirmed |
+| Save daily reflection | Reflection-owned saved/current daily record | Tasks, Focus, habits, and evidence unchanged |
+| Add session-end entry | Separate saved custom entry linked to Focus session | Daily reflection not replaced |
+| Correct/withdraw entry | Reflection history records the correction/withdrawal | Supporting facts remain intact |
+| Propose adaptation | Proposed, user-provided adaptation | No commitment or schedule mutation |
+| Accept/apply adaptation | Explicit handoff to receiving owner; that owner confirms application | Reflection proposal remains historical/provenance context |
+| Decline/defer | Proposal remains declined/deferred/unapplied | No receiving-domain change |
+| Skip/leave | No new durable record or explicit skipped state as applicable | No negative inference |
+| Retry failed write | Owner retries same record operation | Last confirmed state remains authoritative |
 
-1. Given a person enters Reflection, FlowOS must identify the context and distinguish empty, draft, saved, unavailable, and historical information.
-2. Given a person edits reflection input, FlowOS must keep it as draft/pending until the Reflection owner confirms durable save.
-3. Given sidebar autosave or full-page save is used, both paths must express the same user-visible durable state, error, correction, and retry semantics.
-4. Given a save fails, FlowOS must retain the recoverable local draft, state that durable save is unconfirmed, and provide retry without duplicating a confirmed record.
-5. Given a person corrects a reflection, FlowOS must preserve the fact of correction and must not rewrite the factual evidence that informed it.
-6. Given Focus provides session context, Reflection may relate it to the person’s entry, but must not treat duration as a conclusion or save without the person’s action.
-7. Given a person identifies a possible adaptation, FlowOS must present it as a proposal; only an explicit person choice may accept, defer, decline, or apply it through the affected owner.
-8. Given no reflection is recorded, FlowOS must offer optional entry or exit without claiming that no action, learning, or outcome occurred.
+## Persistence, permissions, and validation
 
-## Decision and transition table
+- All Reflection reads/writes resolve `requireUserId()` and use user-scoped filters plus RLS for `reflections` and `reflection_entries`. A client date, route, or Focus link cannot authorize another user's record.
+- Reflection forms use shared Zod schemas and React Hook Form with the shared resolver. Required/length/format errors and root save errors remain associated and recoverable.
+- Daily date keys use `Asia/Singapore` and `date-fns` calendar checks; persisted `created_at`, `updated_at`, and linked session timestamps remain instants. A browser timezone cannot move an entry to a different product date.
+- Autosave or flush may attempt an owner write, but only an owner-confirmed response is durable. Local drafts never count as saved records.
+- Pending migrations or unverified sources are unavailable behavior and must not be represented as available relationships or history.
 
-| Choice | From | Result | What must not happen |
-|---|---|---|---|
-| Write | Empty/Saved | Draft | No automatic interpretation or adaptation |
-| Save | Draft | Saved after owner confirmation | No success claim before confirmation |
-| Retry | Save failed | Saving then Saved or failed | No duplicate confirmed record |
-| Skip/leave | Any unsaved context | Valid exit; draft follows recovery rule | No negative state |
-| Correct | Saved | Corrected/superseded history | No factual evidence erasure |
-| Propose adaptation | Saved | Proposed adaptation context | No applied direction/commitment change |
-| Accept/defer/decline | Proposed | Explicit choice history | No hidden application |
+## Loading, empty, partial, unavailable, and error behavior
 
-## Truth, provenance, and uncertainty
+- **Loading:** daily/custom entries are being requested; do not show blank fields as an empty saved record.
+- **Empty:** owner confirmed no record for the selected date/context; offer voluntary capture or leave.
+- **Partial/stale:** show available daily/custom/session entries with record identity and freshness; missing source context is not missing reflection.
+- **Unavailable/disconnected:** preserve known local/historical context and disclose what source or owner cannot be reached; allow local draft/retry without claiming save.
+- **Error/failed:** identify the save/correction/withdrawal failure, preserve the input and prior confirmed record, and offer retry or leave.
 
-Reflection is user-provided sensemaking, not direct evidence. Links to tasks, sessions, sources, or outcomes must remain links/context, not causal proof. Incomplete context remains incomplete. Draft and saved status, correction history, and source/context origin must be inspectable when material.
+## Interruption and recovery
 
-## Assistance and automation
+Page hide, navigation, network loss, or closing a sidebar can leave a local draft or pending write. Re-entry shows which values are local, pending, saved, failed, or unavailable and offers retry/reconcile/discard/leave according to explicit person choice. A failed session-end entry does not undo a concluded Focus session. A successful reflection save does not apply an adaptation.
 
-No automatic insight, diagnosis, causal claim, or adaptation is admitted. A future recommendation must be labeled, traceable to its basis, optional, correctable, and unable to apply a consequential change without person authority.
+## Evidence, provenance, and authority
 
-## Error, interruption, and recovery
+Factual Focus/task/habit records remain direct or source-provided evidence; a reflection is user-provided interpretation; a derived summary remains derived; an adaptation is proposed until the receiving owner confirms applied state. Reflection may quote or link evidence but must not recast an interpretation as a direct fact.
 
-- Local drafts are date-scoped using the Phase 1.5 pattern and must not be mistaken for durable records.
-- Page hide/unmount or interruption flushes pending work where possible and preserves failure for retry.
-- Full-page and sidebar paths must converge on one meaning for saved, failed, corrected, and current states.
-- Permission loss or unavailable storage preserves confirmed history and identifies unconfirmed changes.
-- A disconnected or stale source remains historical/unavailable rather than being silently rewritten.
+## Accessibility
 
-## Accessibility and inclusive behavior
+The editor exposes date, record type, source/link status, save state, local-draft disclosure, errors, and next available action as semantic text. Validation and save failures are announced and associated with fields. Autosave status does not steal focus. Keyboard and assistive-technology users can save, retry, correct, withdraw, skip, decline, and leave; responsive sidebar/full-page changes preserve record identity and recovery.
 
-Draft, saving, saved, failed, corrected, and unavailable states must be announced in semantic text. Autosave cannot be the only way to understand whether work is durable; an explicit save/retry path remains available. Focus moves logically to validation and recovery messages. Timed prompts, sidebar panels, and session-end handoffs must be dismissible and keyboard/assistive-technology accessible.
+## Acceptance questions
 
-## Acceptance behavior and open questions
+- **REFLECT-01:** Can a person enter directly, from Today, or at Focus session end and understand which record is being edited or appended?
+- **REFLECT-02:** Are empty, local-draft, saving, saved, failed, corrected, historical, skipped/withdrawn, unavailable, and disconnected states distinguishable?
+- **REFLECT-03:** Does a local draft or autosave attempt remain non-durable until Reflection confirms persistence?
+- **REFLECT-04:** Does Reflection remain distinct from factual evidence, derived summaries, recommendations, and applied adaptation?
+- **REFLECT-05:** Do correction and withdrawal preserve interpretation history and leave source facts unchanged?
+- **REFLECT-06:** Is the daily reflection distinct from custom entries and appended Focus session-end entries without duplicate or replacement semantics?
+- **REFLECT-07:** Can a person propose, accept, defer, decline, or leave an adaptation without Reflection mutating commitments implicitly?
+- **REFLECT-08:** Are `requireUserId`, RLS, Zod/RHF, date-fns, `Asia/Singapore`, instant timestamps, local-draft semantics, and unavailable migration/source behavior testable?
 
-- **REFLECT-01:** Reflection is optional and never treats absence or brevity as failure.
-- **REFLECT-02:** Full-page, sidebar, and session-end paths expose one coherent save/recovery meaning.
-- **REFLECT-03:** Draft versus durable save is always truthful and recoverable after failure/interruption.
-- **REFLECT-04:** Reflection remains distinct from evidence, insight, recommendation, and applied adaptation.
-- **REFLECT-05:** Correction preserves interpretation history and factual evidence.
-- **REFLECT-06:** Adaptation requires explicit person choice and owning-system application.
+## Product Architect checkpoint
 
-P4.5 owns the remaining record-rule decision: canonical relationship among daily reflection, custom entries, and Focus session-end append records. Product and Engineering Architects must resolve it before Gate 2 approval.
-
-## Change control
-
-Revise this contract if reflection becomes mandatory, automated interpretation is admitted, or a contextual path gains separate persistence ownership. Parent-system and decision-record review is required.
+**Approved by Founder/Product Architect on 2026-08-05.** The contract is ready for design specification. Design may express voluntary sensemaking and recovery but may not create a second save owner or implicit adaptation path.

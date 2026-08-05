@@ -76,7 +76,7 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 
 **Contains:**
 - Product identity and philosophy
-- Current phase (Phase 2 — Contract the Coherent MVP Loop)
+- Current phase (Phase 3 — Implement and Harden the Core Loop)
 - Tech stack and architecture
 - Documentation authority hierarchy
 - Solo-founder workflow with 6-hat quality procedures
@@ -324,7 +324,7 @@ Ship simple, working code over complex, buggy code.
 16. **`docs/11-archive/`** — Historical reference only (DO NOT use for current work)
 
 **Current sprint:** `docs/current-phase/current-sprint.md`
-**Phase 2 gate checklist:** `docs/current-phase/phase-2/gate-checklist.md`
+**Phase 3 gate checklist:** `docs/current-phase/phase-3/gate-checklist.md`
 
 ---
 

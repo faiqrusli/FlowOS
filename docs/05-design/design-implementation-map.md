@@ -78,12 +78,12 @@ The design system is not complete when the palette is documented. Every MVP surf
 
 | Surface | Current implementation | Design documentation state | Required next action |
 |---|---|---|---|
-| Today | `src/components/today/`, Workplace composition | Architecture and V3 references exist; feature contract is missing | Create Today design specification after behavior contract |
-| Tasks | `src/components/tasks/` | Local patterns are implemented; no canonical feature spec | Capture board/list, scheduling, drag, empty, error, and recovery states |
+| Today | `src/components/today/`, Workplace composition | [Canonical feature specification](./features/today-design-spec.md) complete; checkpointed 2026-08-05 | Keep implementation aligned with source ownership, state, handoff, and recovery contract |
+| Tasks | `src/components/tasks/` | [Canonical feature specification](./features/tasks-design-spec.md) complete; checkpointed 2026-08-05 | Keep board/list, scheduling, drag, empty, error, and recovery implementation aligned with the contract |
 | Habits | `src/components/habits/` | Local patterns are implemented; no canonical feature spec | Decide whether retained in MVP; then document recurring-action states |
 | Schedule | `src/components/schedule/` and task scheduling controls | Multiple surfaces and legacy references | Reconcile one scheduling role before writing detailed design |
-| Focus | `src/components/focus/` and embedded Today mode | `design/focus/next-up.md` is transitional living reference | Promote stable Focus mode and history rules into a feature spec |
-| Reflection | `src/components/reflection/` and sidebar | Existing design references are split; save behavior is known to be dual | Specify one save/recovery model and weekly-review boundary |
+| Focus | `src/components/focus/` and embedded Today mode | [Canonical feature specification](./features/focus-design-spec.md) complete; checkpointed 2026-08-05 | Keep Focus mode/history aligned with session truth, attribution limits, and recovery contract |
+| Reflection | `src/components/reflection/` and sidebar | [Canonical feature specification](./features/reflection-design-spec.md) complete; checkpointed 2026-08-05 | Keep sidebar/full-page entry on one Reflection save/recovery owner; weekly-review boundary remains outside Phase 2 |
 | Notes / Knowledge | `src/components/notes/` | No canonical feature spec; growth areas are embedded | Define Notes ownership of personal context and source relationships |
 | Placeholder modules | Goals, AI Coach, Weekly Review | No MVP design deliverable should be created | Keep placeholder treatment explicit; do not polish deferred capability into implied commitment |
 
