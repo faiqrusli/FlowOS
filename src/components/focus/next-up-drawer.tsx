@@ -159,9 +159,12 @@ export function NextUpDrawer({
     x: number;
     y: number;
   } | null>(null);
-  const [nowDropHover, setNowDropHover] = useState(false);
+  const [nowDropHoverRaw, setNowDropHover] = useState(false);
   /** True only while pointer is over the Next Up list/footer — not NOW / outside. */
-  const [queueDropHover, setQueueDropHover] = useState(false);
+  const [queueDropHoverRaw, setQueueDropHover] = useState(false);
+  // Only meaningful while drag is active; clamp to false when drag ends.
+  const nowDropHover = dropZoneActive && nowDropHoverRaw;
+  const queueDropHover = dropZoneActive && queueDropHoverRaw;
   /** Same dock float root as Tasks/Habits — guarantees one shared bottom edge. */
   const [dockFloatRoot, setDockFloatRoot] = useState<HTMLElement | null>(null);
   /** Stretch from Focus canvas top down to the shared dock gap. */
@@ -171,9 +174,12 @@ export function NextUpDrawer({
 
   useLayoutEffect(() => {
     if (!open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDockFloatRoot(null);
       return;
     }
+    // Querying DOM to sync with external portal root — legitimate external sync.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDockFloatRoot(
       document.querySelector<HTMLElement>("[data-workplace-dock-float-root]"),
     );
@@ -206,12 +212,7 @@ export function NextUpDrawer({
     };
   }, [open, dockFloatRoot]);
 
-  useEffect(() => {
-    if (!dropZoneActive) {
-      setNowDropHover(false);
-      setQueueDropHover(false);
-    }
-  }, [dropZoneActive]);
+
 
   // Queue is always a mid overlay over Focus (no rail / inline column).
   const floats = open;

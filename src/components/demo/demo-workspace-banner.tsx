@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { MessageSquarePlus, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDemoSession } from "@/contexts/demo-session-context";
@@ -10,10 +10,11 @@ export function DemoWorkspaceBanner({ className }: { className?: string }) {
   const { isDemo, remainingLabel, openFeedback, restartDemo, busy } =
     useDemoSession();
   const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    setVisible(true);
-  }, [isDemo]);
+  const prevIsDemoRef = useRef(isDemo);
+  if (prevIsDemoRef.current !== isDemo) {
+    prevIsDemoRef.current = isDemo;
+    if (isDemo) setVisible(true);
+  }
 
   if (!isDemo || !visible) return null;
 

@@ -33,7 +33,6 @@ import {
 import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
 import {
   kanbanCardClass,
-  kanbanCardEditingClass,
   kanbanColumnBodyClass,
   kanbanColumnHeaderClass,
 } from "@/lib/theme/surface-classes";
@@ -231,15 +230,7 @@ export function KanbanBoardView({
     onFocusColumnHandled?.();
   }, [focusColumnId, board.columns, onFocusColumnHandled]);
 
-  useEffect(() => {
-    return () => {
-      stopBoardAutoScroll();
-      removeDocumentDragOverListener();
-      detachCardPointerListeners();
-      destroyTaskDragPreview();
-    };
-  }, []);
-
+  // Cleanup functions declared before useEffect to satisfy react-hooks/immutability
   function removeDocumentDragOverListener() {
     if (!documentDragOverRef.current) return;
     document.removeEventListener("dragover", documentDragOverRef.current);
@@ -252,6 +243,20 @@ export function KanbanBoardView({
       autoScrollRafRef.current = null;
     }
   }
+
+  function detachCardPointerListeners() {
+    cardPointerCleanupRef.current?.();
+    cardPointerCleanupRef.current = null;
+  }
+
+  useEffect(() => {
+    return () => {
+      stopBoardAutoScroll();
+      removeDocumentDragOverListener();
+      detachCardPointerListeners();
+      destroyTaskDragPreview();
+    };
+  }, []);
 
   function tickBoardAutoScroll() {
     const boardEl = boardRef.current;
@@ -351,11 +356,6 @@ export function KanbanBoardView({
     dragIdRef.current = id;
     setDragKind(kind);
     setDragId(id);
-  }
-
-  function detachCardPointerListeners() {
-    cardPointerCleanupRef.current?.();
-    cardPointerCleanupRef.current = null;
   }
 
   function applyOptimisticCardMove(target: CardDragTarget) {

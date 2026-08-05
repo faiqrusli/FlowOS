@@ -17,7 +17,6 @@ import {
   getNowLineTopPx,
   HOUR_HEIGHT_PX,
   minutesToTopPx,
-  SNAP_MINUTES,
   TIMELINE_HEIGHT_PX,
   topPxToMinutes,
 } from "@/lib/schedule-layout";
@@ -30,7 +29,6 @@ import {
   findCurrentItemIndex,
   mergeFocusIntoScheduleItems,
 } from "@/lib/schedule-utils";
-import { cn } from "@/lib/utils";
 import type { ScheduleItem } from "@/types/schedule";
 
 type ScheduleTimeGridProps = {

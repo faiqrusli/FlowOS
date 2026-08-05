@@ -125,8 +125,13 @@ export function TaskDialog({
     }
   }
 
+  // React Hook Form's watch() returns functions that cannot be safely memoized.
+  // This is a known limitation of the library and safe to suppress.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const scheduledDate = watch("scheduledDate");
+  // eslint-disable-next-line react-hooks/incompatible-library
   const scheduledTime = watch("scheduledTime");
+  // eslint-disable-next-line react-hooks/incompatible-library
   const priority = watch("priority");
 
   const formFields = (

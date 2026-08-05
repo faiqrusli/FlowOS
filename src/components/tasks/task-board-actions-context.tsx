@@ -3,6 +3,7 @@
 import {
   createContext,
   useContext,
+  useLayoutEffect,
   useMemo,
   useRef,
   type ReactNode,
@@ -51,7 +52,11 @@ export function TaskBoardActionsProvider({
   actions,
 }: TaskBoardActionsProviderProps) {
   const actionsRef = useRef(actions);
-  actionsRef.current = actions;
+  
+  // Update ref in layout effect, not during render
+  useLayoutEffect(() => {
+    actionsRef.current = actions;
+  });
 
   const stable = useMemo<TaskBoardActions>(
     () => ({

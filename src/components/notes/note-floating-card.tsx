@@ -57,6 +57,17 @@ export function NoteFloatingCard({
   }, [mounted]);
 
   useEffect(() => {
+    function updateCardPosition() {
+      const card = cardRef.current;
+      if (!card) return;
+      card.style.left = `${positionRef.current.x}px`;
+      card.style.top = `${positionRef.current.y}px`;
+    }
+
+    updateCardPosition();
+  });
+
+  useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
     }
@@ -130,10 +141,6 @@ export function NoteFloatingCard({
     <div
       ref={cardRef}
       className="fixed z-[100] flex w-[min(92vw,360px)] flex-col overflow-hidden rounded-xl border border-border-strong bg-surface-raised shadow-lg will-change-[left,top]"
-      style={{
-        left: positionRef.current.x,
-        top: positionRef.current.y,
-      }}
     >
       <div
         className="flex h-11 items-center gap-1 border-b border-border/30 px-2"

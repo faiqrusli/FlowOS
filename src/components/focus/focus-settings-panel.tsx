@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import {
-  DEFAULT_FOCUS_SETTINGS,
   readFocusSettings,
   writeFocusSettings,
   type FocusSettings,
@@ -17,14 +16,8 @@ import { cn } from "@/lib/utils";
 
 export function FocusSettingsPanel() {
   const { pomodoro } = useFocusSessionContext();
-  const [settings, setSettings] = useState<FocusSettings>(
-    DEFAULT_FOCUS_SETTINGS,
-  );
+  const [settings, setSettings] = useState<FocusSettings>(readFocusSettings);
   const [newActivity, setNewActivity] = useState("");
-
-  useEffect(() => {
-    setSettings(readFocusSettings());
-  }, []);
 
   function updateSettings(patch: Partial<FocusSettings>) {
     setSettings((current) => {

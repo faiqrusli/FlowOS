@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { setQuickScheduleOpen } from "@/lib/timeline-drag";
 import { TimelinePlanner } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";

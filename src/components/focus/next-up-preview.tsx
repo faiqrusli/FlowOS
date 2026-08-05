@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  useEffect,
   useState,
   type DragEvent,
   type MouseEvent as ReactMouseEvent,
@@ -295,15 +294,13 @@ export function NextUpPreview({
   onExternalDragOver,
   onExternalDrop,
 }: NextUpPreviewProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [expandedRaw, setExpanded] = useState(false);
   const openQueue = onViewAll ?? onHeaderClick;
   const toggleQueue = onHeaderClick ?? onViewAll;
   const isEmpty = tasks.length === 0;
   const canTogglePreview = tasks.length > NEXT_UP_PREVIEW_CAP;
-
-  useEffect(() => {
-    if (tasks.length <= NEXT_UP_PREVIEW_CAP) setExpanded(false);
-  }, [tasks.length]);
+  // Automatically collapse when tasks drop below the cap (derived from tasks.length).
+  const expanded = expandedRaw && tasks.length > NEXT_UP_PREVIEW_CAP;
 
   const visibleCap = expanded
     ? NEXT_UP_PREVIEW_EXPANDED_CAP
