@@ -2,7 +2,7 @@
 
 **Purpose:** Determine what the current build actually does before changing it.
 
-**Status:** Authorized — Gate 0 PASSED (2026-08-04)  
+**Status:** CLOSED — folded into the Phase 1.5 handoff (D-006, 2026-08-05); Phase 2 authorized  
 **Owner:** Founder (executed via 6-hat solo workflow)  
 **Gate:** Gate 1 — Current build truth  
 **Created:** 2026-08-04  
@@ -28,7 +28,7 @@ The [current sprint](../current-sprint.md) is the operational reference for the 
 ## Phase 1 Documents
 
 - **[post-phase-0-audit.md](./post-phase-0-audit.md)** — First Phase 1 document. Post-Phase-0 documentation & workflow audit (findings scheduled into Phase 1; does not gate Phase 1).
-- **[gate-checklist.md](./gate-checklist.md)** — Gate 1 completion criteria and progress tracking (Phase 1 sprint active 2026-08-04 → 2026-08-08)
+- **[gate-checklist.md](./gate-checklist.md)** — Gate 1 completion criteria and progress tracking (Phase 1 closed through the Phase 1.5 handoff, D-006)
 
 ## Phase 0 Archive
 
@@ -44,4 +44,4 @@ Phase 0 closed on 2026-08-04 with Gate 0 PASSED. Its records (gate checklist, re
 
 ---
 
-**Phase 1 sprint is active (2026-08-04 → 2026-08-08). Gate 1 target.**
+**Phase 1 sprint completed through the Phase 1.5 handoff. Gate 1 resolved via D-006 (2026-08-05); Phase 2 authorized. Full Phase 1.5 record archived at `docs/11-archive/phases/phase-1.5/`.**

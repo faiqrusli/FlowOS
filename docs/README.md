@@ -4,7 +4,7 @@
 
 > Direction → Commitment → Action → Evidence → Sensemaking → Adaptation
 
-**Status:** Phase 0 CLOSED — Gate 0 PASSED (2026-08-04). Phase 1 (Establish Implementation Truth) active; Phase 1.5 scheduled for validation and technical integration.
+**Status:** Phase 1.5 CLOSED — Gate 1.5 PASSED (2026-08-05). Phase 2 (Contract the Coherent MVP Loop) active; Phase 3 scheduled for implementation.
 
 **Production:** https://flowos-sage.vercel.app  
 **Historical live-demo references:** [flowos-live-demo-spec.md](./11-archive/review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](./11-archive/execution/runbooks/flowos-live-demo.md)  

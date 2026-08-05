@@ -132,6 +132,7 @@ MVP admission is a product decision, not an engineering convenience. If evidence
 
 ### Phase 1.5 — Foundation Infrastructure
 
+**Status:** COMPLETE — Gate 1.5 PASSED 2026-08-05; archived to `docs/11-archive/phases/phase-1.5/`; Phase 2 authorized
 **Purpose:** Establish core engineering infrastructure before MVP loop implementation to ensure consistent patterns for validation, forms, and date/time handling across all surfaces.
 
 **Technology authority:** [Technology Integration Masterplan](../06-engineering/technology-integration-masterplan.md). **Decision:** [D-004](../08-decisions/records/D-004-add-phase-1-5-foundation-infrastructure-to-mvp-masterplan.md).

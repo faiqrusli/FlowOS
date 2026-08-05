@@ -84,7 +84,7 @@ Always check similar files before writing new code. Copy existing patterns.
 ### 4. Security Non-Negotiable
 - User-scoped queries only
 - No hardcoded secrets
-- Input validation always (runtime server-side validation; Zod decision is scheduled for Phase 1.5)
+- Input validation always (runtime server-side validation; shared Zod schemas in `src/lib/validation.ts`)
 - RLS on user tables
 - Auth middleware on routes
 

@@ -956,7 +956,7 @@ The recovered implementation establishes shared validation contracts, migrates l
 - ~~Install `date-fns`~~ — complete and recorded above
 - Keep native Date operations in focus/session and schedule paths until semantic boundary tests authorize each migration
 - ~~Establish timezone handling patterns~~ — `Asia/Singapore`, date-only keys, wall-clock values, and persisted instants are documented
-- ~~Document date/time patterns~~ — see `docs/current-phase/phase-1.5/validation-and-date-time-pattern.md`
+- ~~Document date/time patterns~~ — see `docs/11-archive/phases/phase-1.5/validation-and-date-time-pattern.md`
 
 ## Recommended Phase 2 Actions (Development Quality)
 

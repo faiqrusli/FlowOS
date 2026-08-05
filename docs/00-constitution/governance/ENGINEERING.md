@@ -47,7 +47,7 @@ Security and RLS are never deferred for features.
 | `tasks-board-view.tsx` split | Large refactor |
 | Select/SegmentedControl primitives | Functional patterns exist |
 | Hardcoded palette cleanup | Visual debt |
-| New validation-library integration | Phase 1.5 technical integration |
+| New validation-library integration | Complete — Zod/RHF adopted in Phase 1.5; scoped form migrations remain |
 | Command palette | M4 unless users ask |
 
 ### Reject (near-term)

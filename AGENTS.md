@@ -63,19 +63,19 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ---
 
-## 🔄 Current Status (Phase 1)
+## 🔄 Current Status (Phase 2)
 
-**Phase:** Phase 1 — Establish Implementation Truth  
-**Sprint:** 2026-08-04 → 2026-08-08 (active)  
-**Gate 1:** Every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)  
-**Progress:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 sprint active  
-**Prior phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority (closed 2026-08-04, archived to `docs/11-archive/phases/phase-0/`, full record in `phase-0-sprint.md`)
+**Phase:** Phase 2 — Contract the Coherent MVP Loop  
+**Sprint:** 2026-08-05 → 2026-08-08 (active)  
+**Gate 2:** Contract coherence — every admitted behavior traces to parent system, journey, design, owner, and validation question  
+**Progress:** Phase 1.5 CLOSED — Gate 1.5 PASSED 2026-08-05; Phase 2 sprint active  
+**Prior phase:** Phase 1.5 — Foundation Infrastructure (closed 2026-08-05, archived to `docs/11-archive/phases/phase-1.5/`, full record in `phase-1.5-sprint.md`)
 
-**Phase 1 Status:**
-- ✅ Gate 0 passed and Phase 0 closed (2026-08-04)
-- ✅ Phase 1 sprint created 2026-08-04 → 2026-08-08
-- 📋 Gate 1 checklist: `docs/current-phase/phase-1/gate-checklist.md`
-- 📋 Phase 1.5: `docs/06-engineering/technology-integration-masterplan.md` (D-004)
+**Phase 2 Status:**
+- ✅ Gate 1.5 passed and Phase 1.5 closed (2026-08-05)
+- ✅ Phase 2 sprint created 2026-08-05 → 2026-08-08
+- 📋 Gate 2 checklist: `docs/current-phase/phase-2/gate-checklist.md`
+- 📋 Phase 1.5 foundation patterns: `docs/06-engineering/technology-integration-masterplan.md` (D-004)
 
 ---
 
@@ -84,7 +84,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 **Before starting work:** 
 1. Read `.ai/context.md` (universal context)
 2. Check `docs/current-phase/current-sprint.md` (current sprint)
-3. Check `docs/current-phase/phase-1/gate-checklist.md` (what needs doing)
+3. Check `docs/current-phase/phase-2/gate-checklist.md` (what needs doing)
 
 **During work:** Wear appropriate quality hats, maintain each hat's standards  
 **Before merge:** Security checklist, build/lint/test pass  

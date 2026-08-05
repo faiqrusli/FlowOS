@@ -114,7 +114,7 @@ const handleSubmit = (e) => {
 ✅ **GOOD: Server-side runtime validation with a schema or equivalent boundary**
 ```typescript
 // Use the project's approved runtime validation library or equivalent helper.
-// Zod adoption is a Phase 1.5 decision; this example stays library-neutral.
+// Use the shared Zod schemas in src/lib/validation.ts.
 
 export async function createTask(input: unknown) {
   // Validate first: type, length, format, allowed values, and ownership.

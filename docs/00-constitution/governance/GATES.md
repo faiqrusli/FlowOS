@@ -2,28 +2,29 @@
 
 **Status:** Active  
 **Audience:** Founder, engineers  
-**Last updated:** August 4, 2026
+**Last updated:** August 5, 2026
 
 Objective gates for each release stage and per-feature quality checks.
 
-**Production:** https://flowos-sage.vercel.app · **Gate 0 passed** · **Phase 1 active**
+**Production:** https://flowos-sage.vercel.app · **Gate 0 passed** · **Gate 1.5 passed** · **Phase 2 active**
 
 **Current implementation authority:** [MVP Implementation Masterplan](../../current-phase/mvp-implementation-masterplan.md). The M0–M2 gates below are a historical implementation snapshot and do not authorize new work by themselves.
 
 ---
 
-## Current status (August 4, 2026)
+## Current status (August 5, 2026)
 
 | Stage | Status |
 |-------|--------|
 | Phase 0 / Gate 0 | **Complete** — passed and archived |
-| Phase 1 / Gate 1 | **Active** — current build truth |
-| Phase 1.5 | Scheduled — validation policy and technical integration |
+| Phase 1 / Gate 1 | **Complete** — passed and folded into the Phase 1.5 handoff |
+| Phase 1.5 / Gate 1.5 | **Complete** — passed and archived (foundation infrastructure) |
+| Phase 2 / Gate 2 | **Active** — contract the coherent MVP loop |
 | M3 First Strangers (Private Alpha) | Not started |
 | Closed Beta | Not started |
 | Production GA | Not started |
 
-Current Gate 1 authority: [phase-1/gate-checklist.md](../../current-phase/phase-1/gate-checklist.md). The M0–M2 sections below are historical milestone snapshots and do not block Phase 1.
+Current Gate 2 authority: [phase-2/gate-checklist.md](../../current-phase/phase-2/gate-checklist.md). The M0–M2 sections below are historical milestone snapshots and do not block Phase 2.
 
 ---
 

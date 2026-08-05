@@ -1,8 +1,8 @@
 # Phase 1.5 Gate Checklist — Gate 1.5: Foundation Ready
 
-**Status:** PASS — Gate 1.5 accepted by Founder on 2026-08-05; Phase 2 authorized
+**Status:** PASS — Gate 1.5 accepted by Founder on 2026-08-05; Phase 2 authorized; ARCHIVED to `docs/11-archive/phases/phase-1.5/`
 **Owner:** Founder (executed via 6-hat solo workflow)
-**Parent:** [Phase 1.5 README](./README.md) · [Technology Integration Masterplan](../../06-engineering/technology-integration-masterplan.md)
+**Parent:** [Phase 1.5 README](./README.md) · [Technology Integration Masterplan](../../../06-engineering/technology-integration-masterplan.md)
 **Created:** 2026-08-04
 **Last Updated:** 2026-08-05
 

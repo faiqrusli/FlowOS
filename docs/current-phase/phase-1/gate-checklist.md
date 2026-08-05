@@ -1,11 +1,11 @@
 # Phase 1 Gate Checklist — Gate 1: Current Build Truth
 
-**Status:** OPEN — implementation-ready; Phase 1 sprint active (2026-08-04 → 2026-08-08)
+**Status:** CLOSED — passed through the Phase 1.5 handoff (D-006, 2026-08-05); Phase 2 authorized
 **Owner:** Founder (executed via 6-hat solo workflow)  
 **Parent:** [Phase 1 README](./README.md) · [MVP Implementation Masterplan](../mvp-implementation-masterplan.md)  
 **Future template:** [gate-checklist-template.md](../templates/gate-checklist-template.md) — this active checklist remains the source example.
 **Created:** 2026-08-04  
-**Last Updated:** 2026-08-04
+**Last Updated:** 2026-08-05
 
 ---
 
@@ -149,13 +149,13 @@ Attach or link evidence for each line item as the Phase 1 sprint completes. Pref
 
 ## Decision
 
-_Recorded here once the Founder completes the 2026-08-08 review._
+_Recorded through the Phase 1.5 handoff; see [D-006](../08-decisions/records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md) and the [archived Gate 1.5 record](../../11-archive/phases/phase-1.5/gate-checklist.md)._
 
-**Decision:** `PASS` / `HOLD` / `REWORK`
-**Date:**
-**Founder:**
-**Rationale and unresolved conditions:**
-**Next-phase authorization:**
+**Decision:** `PASS` — via the Phase 1.5 handoff (2026-08-05); Phase 2 authorized
+**Date:** 2026-08-05
+**Founder:** Founder
+**Rationale and unresolved conditions:** Implementation-truth work folded into the Phase 1.5 handoff; foundation restored and verified (246/246 tests, build passed, lint 0 errors / 211 warnings). Accepted MVP limitations: untested Singapore midnight boundary, deferred Schedule keyboard review, temporarily accepted `npm audit` result.
+**Next-phase authorization:** Phase 2 authorized — Contract the Coherent MVP Loop.
 
 ---
 

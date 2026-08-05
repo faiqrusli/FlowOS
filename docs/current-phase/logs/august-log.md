@@ -7,6 +7,21 @@
 
 ---
 
+## 2026-08-05 — Phase 1.5 → Phase 2 Transition Normalization
+
+**Owner:** Founder (6-hat solo workflow)
+**Status:** `committed` on `sprint/phase1.5`; pending Founder review and merge.
+
+- Normalized the docs at the Phase 1.5 close per the mandatory Phase-End Normalization workflow.
+- Archived the full Phase 1.5 sprint record and Gate 1.5 evidence to `docs/11-archive/phases/phase-1.5/`.
+- Rewrote `current-sprint.md` to be short and Phase 2-oriented; created the Phase 2 `README.md` and `gate-checklist.md` skeleton.
+- Updated phase/status across `AGENTS.md`, `.ai/context.md`, `.ai/sprint-context.md`, `.ai/README.md`, `docs/README.md`, `docs/current-phase/README.md`, `GATES.md`, `ENGINEERING.md`, and IDE tool configs to reflect Phase 2 as active.
+- Noted that the decision register references D-006, but no D-006 record file exists; flagged for Founder creation.
+
+**Next:** Founder review; create the D-006 decision record; then begin Phase 2 contract work.
+
+---
+
 ## 2026-08-05 — Phase 1.5 Implementation Restoration
 
 **Owner:** Founder (6-hat solo workflow)
