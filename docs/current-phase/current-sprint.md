@@ -2,96 +2,265 @@
 
 **Sprint period:** 2026-08-05 onward
 **Phase:** Phase 3 — Implement and Harden the Core Loop
-**Status:** ACTIVE — authorized by Gate 2; P1 Today implementation in progress
-**Handoff branch:** `sprint/phase3` — Phase 2 closeout merged into `main` at `5b47360`; the P0 handoff baseline is complete and P1 Today implementation is in progress.
+**Status:** `ACTIVE` — authorized by Gate 2; Today P1 implementation is in progress; remaining packages are implementation-planned
+**Branch:** `sprint/phase3`
 **Owner:** Founder, executing all six hats
 **Last updated:** 2026-08-05
 
-**Previous phase:** [Archived Phase 2 sprint record](../11-archive/phases/phase-2/phase-2-sprint.md)
-**Previous gate decision:** [D-008 — Pass Gate 2 and Authorize Phase 3](../08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md)
+**Single implementation reference:** This document governs Phase 3 sequence, package status, implementation tasks, acceptance traceability, evidence ownership, and Gate 3 readiness. It does not replace the approved behavior contracts or design specifications. Package delivery designs define the technical approach; package validation plans define executable evidence; this sprint links and sequences them.
+
 **Phase boundary:** [Phase 3 README](./phase-3/README.md)
 **Gate record:** [Gate 3 checklist](./phase-3/gate-checklist.md)
 **Roadmap authority:** [MVP implementation masterplan](./mvp-implementation-masterplan.md)
+**Previous phase:** [Archived Phase 2 sprint record](../11-archive/phases/phase-2/phase-2-sprint.md)
+**Previous gate decision:** [D-008 — Pass Gate 2 and Authorize Phase 3](../08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md)
 **Workflow:** [Solo Founder Workflow](../start-here/solo-founder-workflow.md)
 
-## 1. Phase transition
+## 1. Authority and phase outcome
 
-Phase 2 closed with Gate 2 `PASS` on 2026-08-05. Its complete execution record and checklist are archived under [the Phase 2 archive](../11-archive/phases/phase-2/). The approved briefs, behavior contracts, journey, supporting-domain decisions, record rules, and design specifications are the implementation contract for this phase.
+Phase 2 passed Gate 2 on 2026-08-05. Its approved briefs, behavior contracts, coherent-loop journey, supporting-domain decisions, record/provenance/correction/continuity rules, and four design specifications are the product and design authority for this sprint.
 
-Phase 3 is authorized within the admitted MVP boundary. Gate 3 must still demonstrate a coherent seeded and real-data core loop, and Gate 4 remains required for trust, quality, security, accessibility, reliability, and release readiness.
+Phase 3 earns Gate 3 only when the Founder can perform the admitted journey with seeded and real data, recover from interruption and error, distinguish factual from planned/interpretive/proposed/applied meaning, and reach the canonical owner for every consequential change. Gate 4 remains required before release.
 
-## 1.1. P0 handoff baseline
+The implementation order is fixed unless the Founder records a consequential change:
 
-**State:** `COMPLETE` on `sprint/phase3`.
+```text
+P1 Today orientation → P2 Tasks → P3 Focus → P4 factual evidence
+→ P5 Reflection/adaptation → P6 supporting surfaces → P7 Gate 3 evidence
+```
 
-The Founder reviewed the archived Phase 2 sprint record and Gate 2 checklist, the Today, Tasks, Focus, and Reflection behavior contracts, the bounded MVP coherent-loop journey, the supporting-domain decisions for Habits/Schedule/Notes, the record/provenance/correction/continuity rules, and all four feature design specifications. These artifacts remain the implementation authority for Phase 3. No Phase 3 implementation had started when P0 was reviewed; P1 implementation is now in progress.
+## 2. Entry baseline and carried conditions
 
-P0 was complete before P1 implementation began. The following conditions are carried into delivery designs, validation plans, and Gate 3/Gate 4 evidence:
+**P0 handoff:** `COMPLETE` on `sprint/phase3`, before P1 implementation began.
 
-- `tasks_next_up_queue.sql` and `focus_session_task_totals.sql` are pending/unverified; keep the related behavior unavailable until each migration is applied and verified.
-- Two-account RLS/security verification remains outstanding.
-- Singapore midnight boundary testing remains outstanding.
-- Schedule keyboard accessibility review remains deferred.
-- Existing lint warnings, audit vulnerabilities, and middleware deprecation remain technical-debt conditions.
-- The local production build requires `NEXT_PUBLIC_SUPABASE_URL` and the required environment before its result can be relied on.
+The Founder reviewed the archived Phase 2 package and confirmed that Phase 3 may implement only within the admitted MVP boundary. The following are active constraints, not resolved facts:
 
-## 2. Objective
+- `tasks_next_up_queue.sql` and `focus_session_task_totals.sql` are pending/unverified. Their SQL definitions do not prove live capability; related behavior remains unavailable until applied and verified.
+- Two-account RLS/security isolation evidence is outstanding.
+- Singapore midnight boundary evidence is outstanding.
+- Schedule keyboard accessibility review is carried as an explicit condition.
+- Existing lint warnings, audit vulnerabilities, and middleware deprecation remain technical debt and require disposition; they are not silently converted to passes.
+- A configured production build is required before relying on build evidence; this worktree has no local environment file.
 
-Make the admitted MVP useful in one continuous experience rather than as a collection of disconnected polished pages, while preserving the Phase 2 ownership, provenance, correction, continuity, and recovery rules.
+No implementation may widen a source set, add a route/table/migration, infer attribution or outcomes, create a cross-owner mutation, or convert unavailable/failed/pending/local-draft state into success.
 
-## 3. In scope
+## 3. Scope
 
-- Today orientation, current context, next-action visibility, and route recovery.
-- Task commitment and action: create, clarify, select, start, complete, revise, defer, and recover.
-- Focus mode: deliberate attention, interruption handling, persistence, and truthful history.
-- Evidence: factual records of completed actions, Focus sessions, and relevant outcomes without universal scoring.
-- Reflection and adaptation: interpretation, provenance, and explicit next choice with receiving-owner authority.
-- Only the smallest Habits, Schedule, and Notes paths justified by the Phase 2 journey contract.
+### In scope
 
-## 4. Out of scope and guardrails
+- Today composition, orientation, source-aware state, canonical owner handoffs, and route recovery.
+- Tasks commitment/action lifecycle: create, clarify, select, start, complete, revise, defer, restore, withdraw, correct, and recover.
+- Focus session lifecycle: start, pause, resume, conclude, leave, re-enter, persist, recover, and disclose attribution limits.
+- Factual evidence from owner-confirmed task/session/source records without universal scoring or inferred outcomes.
+- Voluntary Reflection records, local drafts, correction/withdrawal, Focus handoff, and explicit receiving-owner adaptation.
+- Minimum bounded Habits, Schedule, and Notes paths that keep the journey usable when optional sources are empty or unavailable.
+- Automated, manual, accessibility, security, identity, date/time, recovery, and repository evidence required by Gate 3.
 
-- No Goals, AI Coach, standalone Knowledge, standalone Growth Areas, standalone Weekly Review, new MVP breadth, or autonomous prioritization.
-- No implicit attribution, implicit adaptation, or cross-owner mutation.
-- Pending migrations remain unavailable until applied and verified; the SQL definitions in the handoff branch do not represent live applied state.
-- Phase 3 implementation must remain on the dedicated `sprint/phase3` branch. `main` remains read-only.
+### Out of scope and guardrails
 
-## 5. Work packages
+- Goals, AI Coach, standalone Knowledge, standalone Growth Areas, standalone Weekly Review, new MVP breadth, autonomous prioritization, universal progress scoring, or implicit adaptation.
+- Applying migrations, changing schema, or claiming live migration behavior without a separately recorded Founder-authorized migration step and verification evidence.
+- Treating Today, Schedule, a projection, task selection, Focus duration, Reflection text, or source absence as a universal outcome.
+- Merging to `main`, deploying, or claiming release readiness from Phase 3 implementation work alone.
 
-| Package | Outcome | Owner | State |
+## 4. Artifact register and checkpoint status
+
+| Package | Behavior/design authority | Delivery design | Validation plan | Current state | Implementation checkpoint |
+|---|---|---|---|---|---|
+| P1 Today | [Today behavior](../04-features/behavior/today.md) · [Today design](../05-design/features/today-design-spec.md) | [Today delivery](../04-features/delivery/today-orientation.md) | [Today validation](../04-features/validation/today-orientation.md) | `IMPLEMENTATION_IN_PROGRESS` — automated evidence recorded; manual evidence pending | `APPROVED` by D-009 |
+| P2 Tasks | [Tasks behavior](../04-features/behavior/tasks.md) · [Tasks design](../05-design/features/tasks-design-spec.md) | [Tasks delivery](../04-features/delivery/tasks-core-loop.md) | [Tasks validation](../04-features/validation/tasks-core-loop.md) | `READY_FOR_FOUNDER_CHECKPOINT` | Required before P2 implementation |
+| P3 Focus | [Focus behavior](../04-features/behavior/focus.md) · [Focus design](../05-design/features/focus-design-spec.md) | [Focus delivery](../04-features/delivery/focus-core-loop.md) | [Focus validation](../04-features/validation/focus-core-loop.md) | `READY_FOR_FOUNDER_CHECKPOINT` | Required before P3 implementation |
+| P4 Evidence | [Record rules](../04-features/record-rules.md) · [Journey](../03-experience/journeys/mvp-coherent-loop.md) | [Evidence delivery](../04-features/delivery/factual-evidence.md) | [Evidence validation](../04-features/validation/factual-evidence.md) | `READY_FOR_FOUNDER_CHECKPOINT` | Required before P4 implementation |
+| P5 Reflection/adaptation | [Reflection behavior](../04-features/behavior/reflection.md) · [Reflection design](../05-design/features/reflection-design-spec.md) | [Reflection delivery](../04-features/delivery/reflection-core-loop.md) | [Reflection validation](../04-features/validation/reflection-core-loop.md) | `READY_FOR_FOUNDER_CHECKPOINT` | Required before P5 implementation |
+| P6 Supporting surfaces | [Supporting decisions](../04-features/supporting-domain-decisions.md) · [Record rules](../04-features/record-rules.md) | [Supporting delivery](../04-features/delivery/supporting-surfaces.md) | [Supporting validation](../04-features/validation/supporting-surfaces.md) | `READY_FOR_FOUNDER_CHECKPOINT` | Required before P6 implementation |
+| P7 Gate 3 evidence | [Gate 3 checklist](./phase-3/gate-checklist.md) | This sprint's evidence protocol | Package evidence records and review | `NOT_STARTED` | Founder build/release checkpoint after P1–P6 |
+
+The new package artifacts are complete enough for Founder review, but remain `DRAFT` until their scope/design checkpoints are explicitly approved. No silence-as-approval rule applies.
+
+## 5. Phase requirements
+
+| ID | Requirement | Completion condition | Primary evidence |
 |---|---|---|---|
-| P0 — Handoff baseline | Read the archived Phase 2 package, preserve admitted boundaries, and carry every unresolved condition into implementation plans | Founder / Engineering Architect | `COMPLETE` |
-| P1 — Today orientation | Implement against the approved [delivery design](../04-features/delivery/today-orientation.md) and [validation plan](../04-features/validation/today-orientation.md) | Product + Design + Engineering | `IMPLEMENTATION_IN_PROGRESS` — read-only composition baseline implemented; validation evidence pending |
-| P2 — Task commitment/action | Implement task lifecycle, selection, correction, defer/withdraw, and recovery | Product + Design + Engineering | `NOT_STARTED` |
-| P3 — Focus action mode | Implement session lifecycle, interruption, persistence, and truthful history | Product + Design + Engineering | `NOT_STARTED` |
-| P4 — Evidence | Implement factual action/session evidence without inferred outcomes | Engineering Architect | `NOT_STARTED` |
-| P5 — Reflection/adaptation | Implement voluntary sensemaking, provenance, correction, and receiving-owner handoff | Product + Design + Engineering | `NOT_STARTED` |
-| P6 — Supporting surfaces | Implement only the bounded Habits, Schedule, and Notes paths needed by the journey | Product + Design + Engineering | `NOT_STARTED` |
-| P7 — Gate 3 evidence | Verify seeded/real-data loop completion, interruption recovery, truth distinctions, and owner routing | Release Manager + Founder | `NOT_STARTED` |
+| `R3-01` | Implement only the admitted MVP loop | No new route/domain/owner/meaning; all divergence escalated | Package delivery designs; scope review |
+| `R3-02` | Every stage has an implemented owner path | Today composes; Tasks owns commitments; Focus owns sessions; Reflection owns interpretation; receiving owner applies adaptation | Journey walkthrough; owner matrix |
+| `R3-03` | Preserve factual/planned/interpretive/proposed/applied/unavailable distinctions | UI, state model, and tests never strengthen meaning through projection or absence | Evidence validation; semantic review |
+| `R3-04` | Normal, alternative, interrupted, unavailable, failed, correction, and recovery paths work | Last confirmed state remains authoritative; retry/leave/correct are explicit | Package validation plans; manual evidence |
+| `R3-05` | Apply foundation constraints at every owner boundary | `requireUserId`, RLS, shared Zod/RHF, `date-fns`, Singapore date keys, instant timestamps, local drafts, pending-migration truth are testable | Security/date/service evidence |
+| `R3-06` | Supporting surfaces remain optional and non-blocking | Empty/unavailable/stale/disconnected Habits/Schedule/Notes do not block the core loop | Supporting validation |
+| `R3-07` | Material states are accessible and responsive | Keyboard, screen reader, visible focus, responsive, touch, reduced-motion, and non-color state meaning are reviewed | Accessibility evidence; carried-condition disposition |
+| `R3-08` | Evidence is reproducible and safe | Fixtures, account, date key, environment, method, result, limitation, and owner are recorded; sensitive content is redacted | Evidence records and review |
+| `R3-09` | Repository quality is verified before merge request | Configured build, lint, tests, diff check, security checklist, manual smoke, and known limitations are recorded | Merge-prep report |
+| `R3-10` | Founder decides Gate 3 explicitly | Exactly one `PASS`, `HOLD`, or `REWORK` with rationale and next authorization | Gate 3 checklist and decision record |
 
-## 6. Six-hat responsibilities
+## 6. Implementation task register
 
-| Hat | Phase 3 responsibility | Checkpoint |
+Tasks below are the execution checklist. Each task must link its code/tests/evidence to the package acceptance IDs; implementation may refine file-level details without changing the behavior boundary.
+
+### P1 — Today orientation (`TODAY-01`…`TODAY-06`)
+
+| Task | Implementation requirement | Done when |
 |---|---|---|
-| Product Architect | Preserve the admitted journey and resolve only contract-level questions | Scope checkpoint before each delivery design |
-| Design Architect | Express approved behavior states accessibly and responsively | State-coverage review per surface |
-| Engineering Architect | Create delivery designs, technical ownership, migration plan, and validation plan | Delivery/design approval before implementation |
-| Implementation Engineer | Implement the approved contracts with tests, recovery, and security boundaries | Build checkpoint before release evidence |
-| Release Manager | Run validation, review diff, record limitations, and prepare Gate 3 evidence | Gate 3 readiness package |
-| Founder | Approve consequential scope, architecture, and release decisions | Explicit decision records when authority changes |
+| `P1.1` | Preserve read-only composition and remove mutation ownership from Today | No Today durable write; all consequential controls route to canonical owner |
+| `P1.2` | Implement independent source settlement and semantic source envelopes | Ready/empty/partial/stale/unavailable/disconnected/error/loading are distinguishable |
+| `P1.3` | Implement Singapore date-key forwarding, source-scoped retry, request identity, and re-entry | Late/failed refresh cannot erase newer confirmed context |
+| `P1.4` | Remove score-like orientation meaning and label factual/planned/interpretive context | No universal score, inferred attribution, or outcome claim appears |
+| `P1.5` | Complete seeded/real-data, accessibility, owner-handoff, interruption, and configured-build evidence | Today validation plan is executed; P1 evidence is linked to G3-02 |
 
-## 7. Risks and handoffs
+### P2 — Tasks commitment/action (`TASK-01`…`TASK-08`)
 
-| Risk | Control / next disposition | State |
+| Task | Implementation requirement | Done when |
 |---|---|---|
-| Pending Next Up and Focus attribution migrations appear available | Keep truthful unavailable fallback; apply and verify before attribution or release claims | `OPEN` |
-| Implementation invents meaning not present in Phase 2 contracts | Link each delivery design and test to the approved contract and acceptance question | `OPEN` |
-| Owner boundaries collapse across Today, Tasks, Focus, and Reflection | Require canonical-owner and unchanged-state review at each handoff | `OPEN` |
-| Security, timezone, accessibility, lint, audit, and middleware limitations persist | Carry D-008 owners into Gate 3/Gate 4 validation and hardening | `OPEN` |
+| `P2.1` | Normalize user-scoped task reads/writes and Zod/RHF form validation | Create/revise/pending/failed/local-draft states are truthful |
+| `P2.2` | Implement complete, restore, defer, withdraw, correction, and retained history | Each lifecycle state is explicit and owner-confirmed; Remove is not deletion/completion |
+| `P2.3` | Implement Task-to-Focus planned selection with unchanged-state protection | Selection changes neither completion nor task history |
+| `P2.4` | Gate Next Up membership/order on applied-and-verified migration | Pending capability is unavailable; no local or SQL-based persistence claim |
+| `P2.5` | Execute lifecycle, recovery, accessibility, two-account, timezone, and seeded/real-data evidence | All `TASK-*` questions have evidence or Founder disposition |
 
-## 8. Definition of done for this sprint
+### P3 — Focus action mode (`FOCUS-01`…`FOCUS-07`)
 
-- [ ] Delivery designs and validation plans exist for the admitted core-loop sequence.
-- [ ] Implemented behavior is tested for normal, alternative, interrupted, unavailable, correction, and recovery paths.
-- [ ] User-scoped access, RLS, validation, Singapore date keys, instant timestamps, local-draft semantics, and pending-migration truth are verified.
-- [ ] Gate 3 evidence shows the full journey with seeded and real data and preserves factual versus interpretive meaning.
-- [ ] Founder records the Gate 3 decision before any release-readiness claim.
+| Task | Implementation requirement | Done when |
+|---|---|---|
+| `P3.1` | Implement confirmed start/pause/resume/conclude/leave state machine | Pending/confirmed/failed states preserve last confirmed session |
+| `P3.2` | Preserve persisted instants and truthful elapsed-time meaning | Timer is not authority; duration is not outcome |
+| `P3.3` | Implement interruption/local recovery and safe re-entry | Re-entry offers explicit resume/reconcile/retry/leave without invented state |
+| `P3.4` | Implement attribution-unavailable fallback and Reflection handoff | No inferred totals; failed Reflection save does not undo Focus |
+| `P3.5` | Execute lifecycle, recovery, accessibility, two-account, timezone, and seeded/real-data evidence | All `FOCUS-*` questions have evidence or Founder disposition |
+
+### P4 — Factual evidence (`RECORD-01`…`RECORD-08`, `JOURNEY-03`, `JOURNEY-04`, `JOURNEY-08`)
+
+| Task | Implementation requirement | Done when |
+|---|---|---|
+| `P4.1` | Define source-labelled factual evidence envelopes/adapters | Source, record identity, provenance, scope, freshness, and derivation are retained |
+| `P4.2` | Integrate task/session/source facts into approved consuming surfaces | Projections do not become a write owner or erase limitations |
+| `P4.3` | Route correction/withdrawal/deletion to canonical owners | History and neighboring source records remain intact |
+| `P4.4` | Enforce planned/derived/user-provided/proposed/applied/unavailable semantics | No selection, duration, reflection, or absence becomes outcome evidence |
+| `P4.5` | Execute seeded full-loop and partial-loop evidence | Factual and interpretive meaning is explainable; explicit adaptation reaches receiving owner |
+
+### P5 — Reflection and adaptation (`REFLECT-01`…`REFLECT-08`)
+
+| Task | Implementation requirement | Done when |
+|---|---|---|
+| `P5.1` | Unify daily, custom, and Focus session-end record identity/ownership | No duplicate or replacement semantics are introduced |
+| `P5.2` | Implement validation, local draft, pending/save failure, retry, correction, withdrawal, skip, and re-entry | Draft is never called saved; prior confirmed state remains authoritative |
+| `P5.3` | Preserve factual source context as linked context and interpretation as user-provided | Reflection does not rewrite Task/Focus facts |
+| `P5.4` | Implement explicit proposal and receiving-owner apply/decline/defer handoff | Reflection cannot mutate commitments implicitly |
+| `P5.5` | Execute record, recovery, accessibility, two-account, timezone, and seeded/real-data evidence | All `REFLECT-*` questions have evidence or Founder disposition |
+
+### P6 — Supporting surfaces (`SUPPORT-01`…`SUPPORT-07`)
+
+| Task | Implementation requirement | Done when |
+|---|---|---|
+| `P6.1` | Implement bounded Habits daily visibility/explicit completion | No score, streak, moral language, or second loop |
+| `P6.2` | Implement Schedule planning context from Task/Habit owners | Schedule never becomes evidence or competing source |
+| `P6.3` | Implement Notes/embedded Growth Areas optional context only through existing owner path | No standalone Knowledge/Goals/automatic meaning |
+| `P6.4` | Add independent optional-source state, retry, owner handoff, and re-entry | Empty/unavailable/stale/disconnected/error is truthful and non-blocking |
+| `P6.5` | Execute optional-source, accessibility, two-account, timezone, and seeded/real-data evidence | All `SUPPORT-*` questions have evidence or Founder disposition |
+
+### P7 — Gate 3 readiness evidence
+
+| Task | Requirement | Done when |
+|---|---|---|
+| `P7.1` | Assemble package evidence and traceability | Every G3 row links to executed evidence, result, limitation, and owner |
+| `P7.2` | Run release-quality checks and security review | Build/lint/test/diff/security/manual checks are recorded; known warnings are dispositioned |
+| `P7.3` | Run seeded and real-data complete journey plus interruption/failure/correction paths | Founder can repeat the journey and reach each canonical owner |
+| `P7.4` | Prepare Gate 3 decision package | Gate checklist is complete; Founder records exactly `PASS`, `HOLD`, or `REWORK` |
+
+## 7. Acceptance traceability
+
+| Acceptance family | IDs | Implementation package | Validation authority | Gate contribution |
+|---|---|---|---|---|
+| Today | `TODAY-01`…`TODAY-06` | P1 | Today validation plan | G3-01, G3-02, G3-07, G3-08 |
+| Tasks | `TASK-01`…`TASK-08` | P2 | Tasks validation plan | G3-03, G3-07, G3-08 |
+| Focus | `FOCUS-01`…`FOCUS-07` | P3 | Focus validation plan | G3-04, G3-07, G3-08 |
+| Factual records | `RECORD-01`…`RECORD-08` | P4 | Factual evidence validation plan | G3-04, G3-07, G3-08 |
+| Journey | `JOURNEY-01`…`JOURNEY-08` | P1–P7 | Full-loop evidence and review | G3-02, G3-03, G3-04, G3-05, G3-08 |
+| Reflection | `REFLECT-01`…`REFLECT-08` | P5 | Reflection validation plan | G3-05, G3-07, G3-08 |
+| Supporting | `SUPPORT-01`…`SUPPORT-07` | P6 | Supporting surfaces validation plan | G3-06, G3-07, G3-08 |
+
+Every acceptance ID remains owned by its parent contract. This table is the execution join, not a redefinition of those questions.
+
+### Journey acceptance coverage
+
+| ID | Implementation coverage | Required evidence |
+|---|---|---|
+| `JOURNEY-01` | P1/P2/P3/P5/P6 direct and deep entry paths | Each owner can be entered directly/deeply without a Today-first funnel |
+| `JOURNEY-02` | P1–P6 owner/state/changed-state/unchanged-state review | Cross-surface ownership matrix and unchanged-state assertions |
+| `JOURNEY-03` | P4 factual evidence plus P1/P2/P3/P5 semantics | Seeded walkthrough names planned, factual, interpretive, proposed, applied, and unavailable meaning |
+| `JOURNEY-04` | P2 Task selection, P3 Focus, P5 Reflection | Before/after assertions prove selection, session, and interpretation do not cross owners |
+| `JOURNEY-05` | P2/P3/P5/P6 pause, defer, decline, correct, retry, depart | Alternative-path walkthrough preserves confirmed truth and valid non-action exits |
+| `JOURNEY-06` | P1–P6 re-entry and interruption recovery | Owner re-entry restores confirmed state and discloses pending/failed/local/stale/unavailable context |
+| `JOURNEY-07` | P1/P4/P6 optional-source and attribution fallback | Core journey continues when support, attribution, or another source is unavailable |
+| `JOURNEY-08` | P4/P5/P7 complete and partial journey | Seeded path reaches explicit receiving-owner application; partial path remains valid |
+
+## 8. Cross-cutting implementation rules
+
+### Owner and truth rules
+
+- Today composes; Tasks owns commitments/Next Up; Focus owns session facts; Reflection owns interpretation; Habits owns habits; Tasks/Habits own planning values; Notes owns notes/context; receiving owners apply adaptation.
+- A projection may display a source but cannot report consequential success on its behalf.
+- `planned`, `factual`, `user-provided`, `source-provided`, `derived`, `proposed`, `applied`, and `unavailable` are product meanings, not styling variants.
+- `pending`, `failed`, `local-draft`, `historical`, `superseded`, and `disconnected` must remain visible when relevant.
+
+### Security, foundation, and data rules
+
+- User-scoped data access and RLS are mandatory. No `using (true)` on user data, service-role browser access, or client-only authorization.
+- Runtime validation uses the shared Zod/RHF patterns; server validation remains authoritative.
+- Product date keys use `Asia/Singapore` and `date-fns`; persisted timestamps are instants; browser timezone cannot change a product date.
+- Local drafts are recoverable continuity, not durable saves. Repository SQL is not applied-state evidence.
+- Error messages are safe and actionable without raw database, auth, or sensitive content.
+
+### Quality and accessibility rules
+
+- Use existing semantic tokens and accessible primitives; material state/owner/recovery information cannot depend on color, hover, or tooltip.
+- Cover normal, alternative, empty, unavailable, partial/stale, failed, interrupted, correction/withdrawal, permission, and safe-departure paths.
+- Before each implementation checkpoint and before Gate 3: run `npm test`, `npm run lint`, configured `npm run build`, and `git diff --check` as applicable; run the six-point security checklist.
+
+## 9. Gate 3 evidence protocol
+
+Gate 3 is a decision gate, not a progress label. The checklist remains `NOT_STARTED` until implementation evidence exists, even when package plans are ready.
+
+| Gate ID | Requirement | Minimum evidence to close | Current state |
+|---|---|---|---|
+| `G3-01` | Approved delivery designs and validation plans exist | Founder-approved delivery/validation pair for P1–P6, each linked to contract/design and this sprint | `IN_PROGRESS` �� P1 approved; P2–P6 ready for checkpoint |
+| `G3-02` | Today orientation and route recovery work | Seeded/real `/` walkthrough, direct/re-entry/handoff/retry/recovery, accessibility, no-write evidence | `IN_PROGRESS` — automated evidence; manual evidence pending |
+| `G3-03` | Tasks support commitment/action | All `TASK-*` evidence plus create/select/lifecycle/correction/defer/withdraw/recovery and owner routing | `NOT_STARTED` |
+| `G3-04` | Focus and factual evidence are truthful | All `FOCUS-*`/`RECORD-*` evidence plus interruption/persistence/history/attribution fallback | `NOT_STARTED` |
+| `G3-05` | Reflection preserves interpretation/adaptation authority | All `REFLECT-*` evidence plus save/retry/correct/re-entry and receiving-owner handoff | `NOT_STARTED` |
+| `G3-06` | Supporting surfaces are bounded/non-blocking | All `SUPPORT-*` evidence for empty/unavailable/stale/error/owner states and accessibility disposition | `NOT_STARTED` |
+| `G3-07` | Security, identity, validation, date/time, recovery boundaries hold | User scope/RLS, shared validation, Singapore boundary, instant timestamps, local drafts, migration truth, and technical-debt disposition | `NOT_STARTED` |
+| `G3-08` | Founder can complete coherent loop | Repeatable seeded and real-data journey with interruption, failure, correction, truthful meaning, and owner-routing evidence | `NOT_STARTED` |
+
+Gate 3 cannot pass while any material unauthorized write, cross-account exposure, inferred attribution/outcome, hidden pending state, lost confirmed history, unsafe error, or inaccessible recovery path remains. Carried conditions require evidence or explicit Founder disposition; they are not waived by a passing happy path.
+
+## 10. Founder checkpoints and decisions
+
+| Checkpoint | Timing | Required decision/evidence |
+|---|---|---|
+| P0 handoff | Complete | D-008 scope and limitations accepted; no Phase 3 breadth added |
+| P1 Today scope/design | Complete | D-009 approved; implementation may continue within boundary |
+| P2–P6 package checkpoints | Before each package implementation | Founder approves each delivery design and validation plan, or requests rework |
+| Build checkpoint | After implementation packages and automated/manual checks | Founder reviews known gaps, security checklist, test/build evidence, and authorizes Gate 3 evidence collection |
+| Gate 3 decision | After P7 evidence | Founder records exactly `PASS`, `HOLD`, or `REWORK`; no release claim follows automatically |
+| Gate 4/release | Downstream | Separate trust, quality, security, accessibility, reliability, and deployment decision |
+
+## 11. Risks, stop conditions, and handoffs
+
+| Risk/condition | Control | Stop/escalate when |
+|---|---|---|
+| Pending migrations appear available | Keep capability unavailable; verify live state before any claim | Code or copy implies queue/attribution capability |
+| Implementation invents meaning | Link code/tests to acceptance IDs and parent contracts | New state, owner, route, source, score, or inference is needed |
+| Owner boundaries collapse | Test unchanged state and owner routing at every handoff | A projection or downstream surface writes another owner's record |
+| Recovery hides uncertainty | Preserve last confirmed state and label pending/failed/local/unavailable | Requested result is shown as confirmed or recovery is inaccessible |
+| Security/date/accessibility gaps persist | Carry to G3/G4 evidence with owner and disposition | Cross-account access, browser date drift, unsafe error, or material inaccessible state appears |
+| Environment prevents verification | Load required environment securely and record limitation | Build result is relied on without configured environment |
+
+## 12. Definition of done
+
+Phase 3 is ready for the Founder Gate 3 decision only when:
+
+- P1–P6 implementation tasks are complete against approved package designs.
+- Every acceptance family in the traceability table has evidence or an explicit Founder disposition.
+- Normal, alternative, empty, partial/stale, unavailable, failed, interrupted, correction/withdrawal, permission, and safe-departure paths are tested where applicable.
+- User scope/RLS, validation, Singapore date keys, instant timestamps, local drafts, pending migration truth, accessibility, lint/build/test, and known technical debt are evidenced.
+- The Founder can perform the full seeded and real-data loop and identify the canonical owner for every consequential change.
+- Gate 3 is decided in the checklist before any release-readiness or merge-to-main claim.

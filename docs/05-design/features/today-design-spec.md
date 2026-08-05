@@ -1,6 +1,6 @@
 # Today - Design Specification
 
-**Status:** Design Architect complete; checkpoint and cross-surface review completed 2026-08-05; Gate 2 PASSED; Phase 3 authorized
+**Status:** Design Architect complete; D-009 scope/design checkpoint approved 2026-08-05; Gate 2 PASSED; Phase 3 authorized
 **Owner:** Design Architect
 **Authorized behavior contract:** [Today behavior contract](../../04-features/behavior/today.md)
 **Authorized brief:** [Today feature brief](../../04-features/briefs/today.md)
@@ -8,12 +8,12 @@
 **Affected destinations:** [Information Structure](../../03-experience/information-structure.md) - Today `/`, with links to Tasks, Focus, Reflection, Habits, Schedule, and Notes owners
 **Reusable standards:** [Design System Architecture](../design-system-architecture.md), [Design System v3](../DESIGN_SYSTEM_V3.md), [Tokyo Night Warm](../DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md), [Content Standards](../content-standards.md), [Accessibility Standards](../accessibility-standards.md), [Design Implementation Map](../design-implementation-map.md)
 **Design exceptions:** None
-**Validation plan:** [Today orientation validation plan](../../04-features/validation/today-orientation.md) · [Validation plan standard](../../04-features/validation-plans.md) and the `TODAY-*` acceptance questions below; Founder scope/design checkpoint pending.
+**Validation plan:** [Today orientation validation plan](../../04-features/validation/today-orientation.md) · [Validation plan standard](../../04-features/validation-plans.md) and the `TODAY-*` acceptance questions below; Founder scope/design checkpoint approved through [D-009](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md).
 **Review trigger:** Any change to Today’s composition owner, source set, handoff, information hierarchy, material state, or recovery path.
 
 ## Identity and status
 
-This document is the feature-specific design authority for the approved Today behavior during Phase 2. Its status, owner, parents, affected destinations, reusable standards, exceptions, and validation reference are recorded in the metadata above.
+This document is the feature-specific design authority for the approved Today behavior carried from Phase 2 into Phase 3. Its status, owner, parents, affected destinations, reusable standards, exceptions, and validation reference are recorded in the metadata above.
 
 ## Authorized behavior and scope
 
