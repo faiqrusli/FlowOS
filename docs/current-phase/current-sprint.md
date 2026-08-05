@@ -24,9 +24,9 @@ Phase 3 is authorized within the admitted MVP boundary. Gate 3 must still demons
 
 **State:** `COMPLETE` on `sprint/phase3`.
 
-The Founder reviewed the archived Phase 2 sprint record and Gate 2 checklist, the Today, Tasks, Focus, and Reflection behavior contracts, the bounded MVP coherent-loop journey, the supporting-domain decisions for Habits/Schedule/Notes, the record/provenance/correction/continuity rules, and all four feature design specifications. These artifacts remain the implementation authority for Phase 3. No Phase 3 implementation has started.
+The Founder reviewed the archived Phase 2 sprint record and Gate 2 checklist, the Today, Tasks, Focus, and Reflection behavior contracts, the bounded MVP coherent-loop journey, the supporting-domain decisions for Habits/Schedule/Notes, the record/provenance/correction/continuity rules, and all four feature design specifications. These artifacts remain the implementation authority for Phase 3. No Phase 3 implementation had started when P0 was reviewed; P1 implementation is now in progress.
 
-The following conditions are carried into delivery designs, validation plans, and Gate 3/Gate 4 evidence:
+P0 was complete before P1 implementation began. The following conditions are carried into delivery designs, validation plans, and Gate 3/Gate 4 evidence:
 
 - `tasks_next_up_queue.sql` and `focus_session_task_totals.sql` are pending/unverified; keep the related behavior unavailable until each migration is applied and verified.
 - Two-account RLS/security verification remains outstanding.

@@ -39,7 +39,7 @@ The archived Phase 2 sprint record and Gate 2 checklist, four core behavior cont
 
 - `tasks_next_up_queue.sql` and `focus_session_task_totals.sql` remain unavailable until applied and verified.
 - Two-account RLS/security verification, Singapore midnight boundary testing, deferred Schedule keyboard review, existing lint warnings, audit vulnerabilities, and middleware deprecation remain owned downstream conditions.
-- The local production build currently cannot prerender `/about` because `NEXT_PUBLIC_SUPABASE_URL` is not configured in this worktree; repeat the build with the required environment before Gate 3 evidence is accepted.
+- A configured production build passed all 24 routes on 2026-08-05 with the required environment loaded transiently from the primary workspace; this worktree still has no local environment file, so future build runs require secure environment configuration before their result can be relied on.
 - No Gate 3 pass or production-release claim may be recorded until these conditions are evidenced or explicitly dispositioned by the Founder.
 
 ## Decision

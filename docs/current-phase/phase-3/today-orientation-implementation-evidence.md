@@ -1,7 +1,7 @@
 # Today Orientation — Implementation Evidence (In Progress)
 
 **State:** `IN_PROGRESS` — implementation baseline is on `sprint/phase3`; this record does not pass Gate 3
-**Date:** 2026-08-05
+**Date:** 2026-08-05 (updated after configured build verification)
 **Owner:** Founder / Implementation Engineer
 **Authority:** [Today orientation validation plan](../../04-features/validation/today-orientation.md) · [D-009](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md)
 **Gate link:** [Gate 3 checklist](./gate-checklist.md#exit-criteria)
@@ -24,14 +24,14 @@
 | `npm run lint` | `PASS` — 0 errors, 211 existing warnings | Existing React hooks, audit, and middleware technical-debt warnings remain. |
 | `git diff --check` | `PASS` | Worktree diff was whitespace-clean at evidence capture. |
 | TypeScript | `PARTIAL` | New Today files introduce no TypeScript errors; repository-wide `tsc` still reports four pre-existing test/type issues outside this change. |
-| `npm run build` | `PARTIAL` | Production compilation and TypeScript completed; prerendering `/about` remains blocked by the known missing `NEXT_PUBLIC_SUPABASE_URL` environment. |
+| `npm run build` | `PASS` — 24 routes | Production compilation, TypeScript, page-data collection, static generation, and optimization passed with the required environment loaded transiently from the primary workspace; no environment values were copied or printed. The phase3 worktree remains unconfigured for standalone reruns. |
 
 ## Pending validation
 
 - Seeded and real-data walkthrough at `/`, including direct entry, owner handoff, interruption, retry, and return.
 - Keyboard, screen-reader, responsive, visible-focus, and reduced-motion review.
 - Two-account RLS isolation evidence and Singapore midnight boundary evidence.
-- Production build with `NEXT_PUBLIC_SUPABASE_URL` and required environment configured.
+- Repeatable configured build execution remains an environment prerequisite for later Gate 3/Gate 4 evidence; no environment file is stored in this worktree.
 - Manual confirmation that Today navigation, retry, and departure issue no durable owner mutation.
 - Browser smoke validation could not run because no browser backend is available in this execution environment; an unauthenticated local HTTP request returned `500` under the same incomplete runtime configuration. This is not a manual pass.
 

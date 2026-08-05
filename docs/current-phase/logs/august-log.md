@@ -7,6 +7,22 @@
 
 ---
 
+## 2026-08-05 — Configured Production Build Evidence
+
+**Owner:** Founder / Release Manager
+**Branch:** `sprint/phase3`
+**State:** `committed` after documentation update; Gate 3 remains `NOT_STARTED`.
+
+- Re-ran `npm run build` with the required environment loaded transiently from the primary workspace; all 24 routes compiled, type-checked, generated, and optimized successfully. No environment values were copied or printed.
+- Updated [Today implementation evidence](../phase-3/today-orientation-implementation-evidence.md) with the configured build `PASS`, while preserving the requirement for secure environment configuration on future runs.
+- Corrected the active sprint and Gate 3 wording to distinguish the completed P0 handoff from the active P1 implementation.
+
+**Impact:** The automated build evidence is now complete for this checkpoint. Seeded/real-data, accessibility, RLS, timezone, and manual recovery evidence remain open; this branch is not merged or released.
+
+**Next:** Complete the validation-plan walkthrough and request Founder build-checkpoint approval before any merge or release claim.
+
+---
+
 ## 2026-08-05 — Today Orientation Read-Only Composition Baseline
 
 **Owner:** Founder / Implementation Engineer
