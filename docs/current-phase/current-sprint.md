@@ -1,253 +1,247 @@
-﻿# Current Sprint — Phase 1.5: Foundation Infrastructure
+# Current Sprint — Phase 2: Contract the Coherent MVP Loop
 
-**Sprint Period:** 2026-08-04 → 2026-08-08
-**Current Phase:** Phase 2 — Product Contracting (authorized after Gate 1.5)
-**Status:** Phase 1.5 complete — Gate 1.5 PASS recorded 2026-08-05
-**Owner:** Founder (executed via 6-hat solo workflow)
-**Last Updated:** 2026-08-05
+**Sprint period:** 2026-08-05 → 2026-08-08
+**Phase:** Phase 2 — Contract the Coherent MVP Loop
+**Status:** ACTIVE — P0 complete; P1–P4 drafted; P5 and P6 open
+**Owner:** Founder, executing all six hats
+**Authority:** Single implementation reference for Phase 2 execution
+**Last updated:** 2026-08-05
 
-**📋 Gate 1.5 Checklist:** [phase-1.5/gate-checklist.md](./phase-1.5/gate-checklist.md)
-**🗺️ MVP Masterplan:** [mvp-implementation-masterplan.md](./mvp-implementation-masterplan.md)
-**🎯 Workflow:** [Solo Founder Workflow](../start-here/solo-founder-workflow.md)
-**📝 First Phase 1 doc:** [post-phase-0-audit.md](./phase-1/post-phase-0-audit.md)
-**🧩 Future template:** [current-sprint-template.md](./templates/current-sprint-template.md) — this active sprint remains the source example.
-
----
-
-## Phase 1.5 Implementation Record — 2026-08-05
-
-### Completed
-
-- Restored `zod`, `react-hook-form`, `@hookform/resolvers`, and `date-fns` contracts in `src/lib/validation.ts` with focused invalid-input and date-boundary tests.
-- Migrated login, registration, and the retained Task dialog to shared resolver-driven form state with field associations, loading states, and server-error recovery.
-- Added server task-insert/update validation and task-board write-error propagation; Today/Later projections retain organization membership.
-- Restored reflection autosave with date-scoped local fallback, flush on page hide/unmount, and retry retention.
-- Restored Focus reflection creation as append-only cards in the `Focus` kanban with weekly-board and legacy-entry fallback.
-
-### Evidence and dispositions
-
-- Full regressions pass `246/246` across `24` files; production build passes with `24` routes.
-- Lint passes with `0` errors / `211` warnings; `git diff --check` passes.
-- Founder manual evidence passed for authentication, Tasks, Focus, Schedule time persistence, forced-write rollback, and the retained prior-sprint ownership isolation result.
-- Gate 1.5 is `PASS`; Phase 2 is authorized. The Singapore midnight boundary and Schedule keyboard review are explicitly deferred MVP limitations.
+**Gate record:** [Gate 2 checklist](./phase-2/gate-checklist.md)
+**Phase boundary:** [Phase 2 README](./phase-2/README.md)
+**Roadmap authority:** [MVP implementation masterplan](./mvp-implementation-masterplan.md)
+**Workflow:** [Solo Founder Workflow](../start-here/solo-founder-workflow.md)
 
 ---
 
-## Sprint Overview
+## 1. How to use this sprint
 
-### Phase Transition
+This document is the only execution reference for Phase 2. It defines the work, sequence, requirements, acceptance criteria, owners, dependencies, evidence paths, and completion conditions.
 
-**Gate 0 PASSED — 2026-08-04.** Phase 0 closed and archived to [11-archive/phases/phase-0/](../11-archive/phases/phase-0/). Phase 1 authorized.
+Use the related documents for their narrower authority:
 
-**Decision record:** [D-003 — Pass Gate 0 and Authorize Phase 1](../08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md)
+| Authority | Owns | Does not own |
+|---|---|---|
+| [MVP masterplan](./mvp-implementation-masterplan.md) | Phase purpose, MVP boundary, phase dependency, and Gate 2 definition | Day-to-day task status |
+| **This sprint** | Current Phase 2 tasks, outputs, acceptance, sequence, and status | Final Gate 2 decision |
+| [Gate 2 checklist](./phase-2/gate-checklist.md) | Evidence register, pass criteria, review record, and Founder decision | Replacing the sprint task plan |
+| Feature/design/engineering standards | Required contents and quality bar for each artifact | Phase scope or Founder authorization |
+| Draft contracts | Proposed product behavior and traceability inputs | Authorization to implement Phase 3 |
 
-**Phase 1 Purpose (from MVP Masterplan):** Determine what the current build actually does before changing it.
+If two current documents conflict, stop the affected task, preserve the smallest admitted scope, and record the conflict in the Gate checklist before proceeding. No draft artifact can authorize Phase 3 code.
 
-**Phase 1 Work (with parallel Phase 1.5 preparation):**
-- Verify routes, entry points, data ownership, persistence, permissions, and current error/recovery behavior
-- Reconcile the Feature Catalog with code and FEATURE_INVENTORY
-- Reconcile V3/Tokyo Night Warm references, CSS tokens, component usage, legacy design material
-- Identify dead code, placeholder routes, duplicate scheduling surfaces, dual save paths, undocumented states
-- Run baseline quality, accessibility, security, and production checks
-- Create only the feature briefs and behavior contracts needed to describe admitted MVP behavior
-- Execute accepted post-Phase-0 documentation improvements alongside implementation-truth work; these do not block Phase 1 unless they change MVP scope or implementation truth
-- Defer validation-policy and technical-integration work to [Phase 1.5](../06-engineering/technology-integration-masterplan.md), added to the MVP sequence by [D-004](../08-decisions/records/D-004-add-phase-1-5-foundation-infrastructure-to-mvp-masterplan.md)
+## 2. Phase transition and entry conditions
 
-**Gate 1 — Current build truth:** For every admitted MVP domain, the team can demonstrate the current behavior, data path, known gaps, and owner. Unknown status is not allowed to pass into implementation.
+- Phase 1 — Establish Implementation Truth: **CLOSED, Gate 1 PASS, 2026-08-05**. Evidence: [implementation-truth evidence](./phase-1/implementation-truth-evidence.md) and [D-007](../08-decisions/records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md).
+- Phase 1.5 — Foundation Infrastructure: **CLOSED, Gate 1.5 PASS, 2026-08-05**. Record: [archived Phase 1.5 sprint](../11-archive/phases/phase-1.5/phase-1.5-sprint.md).
+- Phase 2 authorization exists; Gate 2 is open.
+- Phase 1.5 foundation patterns are available: shared Zod validation, React Hook Form boundaries, and date-fns/calendar validity rules. Reference: [foundation pattern](../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md).
 
-**Execution authority:** This document is the operational plan for the 2026-08-04 → 2026-08-08 sprint. The [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) remains the authority for phase order and scope; the [Gate 1 checklist](./phase-1/gate-checklist.md) remains the authority for evidence and the final gate decision.
+The current build remains the baseline. Phase 2 may clarify the intended MVP contract, but it may not silently convert an existing route or partial behavior into a new admission.
 
----
-
-## Prior Phase Summary (Phase 0 — CLOSED)
-
-**Status:** ✅ CLOSED — Gate 0 PASSED 2026-08-04
-
-**What Phase 0 did:**
-- Built the solo-founder 6-hat quality workflow (v2.0) and `current-phase` folder structure
-- Updated core product/design/engineering docs with 6-role ownership
-- Marked legacy docs historical and archived superseded material to `11-archive/`
-- Created the implementation truth backlog (50 questions)
-- Defined, assessed, and PASSED Gate 0 (7 criteria, Criterion 5 re-verified)
-
-*Full implementation record:* archived as [phase-0-sprint.md](../11-archive/phases/phase-0/phase-0-sprint.md).
-
----
-
-## Sprint Contract
+## 3. Sprint objective and outcome
 
 ### Objective
 
-Establish an implementation-truth record for every admitted MVP domain before any Phase 2 contract or Phase 3 feature implementation begins. The sprint observes and documents the current build; it does not expand MVP scope.
+Turn the admitted MVP boundary into a coherent, reviewable contract package so Phase 3 can implement the core loop without inventing product meaning, state transitions, ownership, provenance, design states, or recovery rules.
 
-### In scope
+### Required outcome
 
-- **Core MVP:** Today, Tasks, Focus, and Reflection.
-- **Supporting MVP candidates:** Habits, Schedule, and Notes / Knowledge, only to the extent that they support the core journey.
-- Route and entry-point verification, behavior and state mapping, data-path tracing, permission and persistence checks, error/recovery inspection, design reconciliation, and quality/security/operations baselines.
-- P0/P1 fixes only when leaving the issue unresolved would make implementation truth unsafe or misleading; record the change and evidence.
-- The accepted post-Phase-0 documentation improvements listed below, running in parallel with truth work.
+At Gate 2 review, a designer, engineer, and reviewer can trace every admitted behavior through this chain:
 
-### Out of scope
+```text
+MVP boundary → parent system → journey stage → behavior contract
+→ design expression → data/technical owner → validation question
+```
 
-- New feature breadth, speculative refactors, or Phase 2 behavior contracts that are not required to describe current truth.
-- Goals and AI Coach implementation; Progress as a destination; promotion of Growth Areas out of Notes.
-- Phase 1.5 adoption work. Validation-library, form-management, and date/time integration are prepared and handed off to [Phase 1.5](../06-engineering/technology-integration-masterplan.md).
+The Founder then records exactly one `PASS`, `HOLD`, or `REWORK`. Phase 3 is authorized only by `PASS`.
 
-### Evidence contract for every domain
+## 4. Frozen scope
 
-Record one evidence entry in the [Gate 1 checklist](./phase-1/gate-checklist.md) for each domain. The entry is complete only when it identifies:
+### Admitted core domains
 
-1. Route(s), entry points, and the components or server boundaries involved.
-2. User-visible behavior, actions, states, and meaningful state transitions.
-3. Read paths, write paths, persistence owner, and record relationships.
-4. Identity, ownership, permission, and row-level-access assumptions.
-5. Loading, empty, error, unauthorized, interruption, correction, and recovery behavior.
-6. Known gaps with severity, accountable owner, disposition, and a link to supporting evidence.
+- **Today:** primary entry and reorientation.
+- **Tasks:** commitment and action choice.
+- **Focus:** deliberate-attention action mode.
+- **Reflection:** sensemaking and adaptation choice.
 
-Do not create an empty feature dossier to satisfy the checklist. Create a brief, behavior contract, or design artifact only when the observed behavior or an admitted follow-up requires it.
+### Conditional supporting domains
 
-### Definition of done for the sprint
+- **Habits:** daily recurring-action visibility and explicit completion only.
+- **Schedule:** planning context only; task and habit records remain sources of truth.
+- **Notes / Knowledge:** user-owned context supporting choice or reflection; Growth Areas remain embedded.
 
-- Every core domain has a complete evidence entry.
-- Every supporting domain is either evidenced as retained supporting behavior or explicitly dispositioned as not required for the MVP journey.
-- The Feature Catalog, `FEATURE_INVENTORY.md`, Design Implementation Map, and technical architecture agree with the evidence or link to an explicit gap.
-- Quality, accessibility, security, and production/operational baselines are recorded with command, date, result, and unresolved findings.
-- No row contains an unexplained `Unknown` status; unresolved work has an owner and a gate disposition.
-- The Founder records `PASS`, `HOLD`, or `REWORK` in the Gate 1 checklist on 2026-08-08. A gate decision is not implied by documentation completion alone.
+### Explicitly deferred
 
----
+Goals, AI Coach, Progress as a destination, standalone Knowledge, standalone Growth Areas, standalone Weekly Review, new routes, new MVP breadth, and autonomous prioritization or adaptation.
 
-## Completed Before Implementation Work
+### Phase 2 work boundary
 
-The following accepted post-Phase-0 improvements are completed or formally scheduled. They remain visible for traceability, but they are not additional Gate 1 exit criteria. Source: [D-005](../08-decisions/records/D-005-post-phase-0-audit-decisions.md).
+Phase 2 produces contracts and design specifications. It does not implement or harden the core loop, apply pending production migrations, remove unrelated technical debt, or create delivery designs before behavior/design approval. Any technical spike must be clearly labeled exploratory and cannot become shipped behavior.
 
-- [x] Six hats remain authoritative and are grouped into Plan, Build, and Ship with short Founder self-approval checkpoints.
-- [x] Phase 1 starts alongside the audit-improvement track; cleanup is not a blanket Gate 1 blocker.
-- [x] `authority-matrix.md` and `streamlined-organization.md` remain deferred for future use; they were not moved or removed.
-- [x] Legacy light-theme tokens were retired; a future light theme will be designed from scratch.
-- [x] Duplicate archive runbooks were consolidated under `docs/11-archive/execution/runbooks/`.
-- [x] Generated report, crash-log, replay, and temporary-review patterns were added to `.gitignore` so local artifacts do not become repository changes.
-- [x] `npm test` was added to `.github/workflows/ci.yml`.
-- [x] Active guidance no longer claims that Zod is installed; validation policy and technical integration are explicitly handed to Phase 1.5.
-- [x] Code status and MVP admission are separate in `FEATURE_INVENTORY.md` and `feature-catalog.md`.
-- [x] Archived workspace and interaction design references are marked historical; `design-implementation-map.md` is the reconciliation authority.
+## 5. Artifact register
 
-The remaining Phase 1 work below is implementation truth, not a reopening of these accepted decisions.
+| Artifact | Required path | Owner | Status | Gate use |
+|---|---|---|---|---|
+| Today brief | [brief](../04-features/briefs/today.md) | Product Architect | `DRAFT` | Core scope |
+| Today behavior | [contract](../04-features/behavior/today.md) | Product Architect | `DRAFT` | Behavior and acceptance |
+| Tasks brief | [brief](../04-features/briefs/tasks.md) | Product Architect | `DRAFT` | Core scope |
+| Tasks behavior | [contract](../04-features/behavior/tasks.md) | Product + Engineering Architects | `DRAFT` | Behavior and acceptance |
+| Focus brief | [brief](../04-features/briefs/focus.md) | Product Architect | `DRAFT` | Core scope |
+| Focus behavior | [contract](../04-features/behavior/focus.md) | Product + Engineering Architects | `DRAFT` | Behavior and acceptance |
+| Reflection brief | [brief](../04-features/briefs/reflection.md) | Product Architect | `DRAFT` | Core scope |
+| Reflection behavior | [contract](../04-features/behavior/reflection.md) | Product + Engineering Architects | `DRAFT` | Behavior and acceptance |
+| Bounded journey | [MVP coherent loop](../03-experience/journeys/mvp-coherent-loop.md) | Product Architect | `DRAFT` | Cross-surface traceability |
+| Supporting decisions | [Habits, Schedule, Notes](../04-features/supporting-domain-decisions.md) | Product Architect | `DRAFT` | Supporting scope |
+| Record rules | [ownership/provenance rules](../04-features/record-rules.md) | Product + Engineering Architects | `DRAFT` | Technical truth |
+| Today design specification | `docs/05-design/features/today-design-spec.md` | Design Architect | `NOT_STARTED` | Required full state coverage |
+| Tasks design specification | `docs/05-design/features/tasks-design-spec.md` | Design Architect | `NOT_STARTED` | Required full state coverage |
+| Focus design specification | `docs/05-design/features/focus-design-spec.md` | Design Architect | `NOT_STARTED` | Required full state coverage |
+| Reflection design specification | `docs/05-design/features/reflection-design-spec.md` | Design Architect | `NOT_STARTED` | Required full state coverage |
+| Gate package | [Gate 2 checklist](./phase-2/gate-checklist.md) | Release Manager + Founder | `OPEN` | Evidence and decision |
 
----
+## 6. Implementation task register
 
-## Implementation Work Packages
+Status vocabulary: `COMPLETE` means accepted against this sprint; `DRAFT` means an artifact exists but is not Gate-ready; `IN_REVIEW` means self-review is underway; `NOT_STARTED` means no artifact; `BLOCKED` requires an explicit blocker and owner. `Unknown` is never an acceptable status at Gate 2.
 
-| Package | Masterplan requirement | Concrete work | Output / exit condition |
+### P0 — Baseline and scope freeze — COMPLETE
+
+| ID | Task | Inputs | Acceptance | Evidence |
+|---|---|---|---|---|
+| P0.1 | Confirm Phase 1 and 1.5 entry conditions | Gate decisions, implementation truth, foundation record | Both gates are closed with explicit limitations and Phase 2 authorization | [D-007](../08-decisions/records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md), archived Phase 1.5 record |
+| P0.2 | Freeze admitted/deferred scope | MVP masterplan, Feature Catalog | Core/supporting/deferred domains are named; no new breadth enters this sprint | Sections 4 and 5 of this sprint |
+| P0.3 | Establish contract baseline | Phase 1.5 foundation pattern and feature standards | Every contract task names validation, form, date/time, ownership, and recovery requirements | P1–P4 tasks below |
+
+### P1 — Core feature briefs and behavior contracts — DRAFT
+
+| ID | Task | Requirement | Acceptance criteria | Dependencies / output |
+|---|---|---|---|---|
+| P1.1 | Refine Today brief and behavior contract | Today is a read/composition entry; owning domains retain writes | Covers entry/re-entry, context priority, truthful projections, empty/partial/error states, owner handoffs, accessibility, and `TODAY-*` acceptance questions | P0; [Today artifacts](../04-features/briefs/today.md) · [behavior](../04-features/behavior/today.md) |
+| P1.2 | Refine Tasks brief and behavior contract | Tasks owns explicit commitment changes; planning is not evidence | Covers create/revise/complete/restore/defer/withdraw, selection for Focus, validation, persistence failure, permissions, correction, and `TASK-*` acceptance questions | P0; [Tasks artifacts](../04-features/briefs/tasks.md) · [behavior](../04-features/behavior/tasks.md) |
+| P1.3 | Refine Focus brief and behavior contract | Focus owns factual session lifecycle; duration is not outcome | Covers start/pause/resume/conclude/leave, interruption, attribution availability, date/time, persistence failure, Reflection handoff, and `FOCUS-*` acceptance questions | P0; [Focus artifacts](../04-features/briefs/focus.md) · [behavior](../04-features/behavior/focus.md) |
+| P1.4 | Refine Reflection brief and behavior contract | Reflection owns voluntary sensemaking and adaptation choice history | Covers draft/save/retry/correct/skip/re-entry, full-page/sidebar/session-end convergence, evidence distinction, adaptation handoff, accessibility, and `REFLECT-*` acceptance questions | P0; [Reflection artifacts](../04-features/briefs/reflection.md) · [behavior](../04-features/behavior/reflection.md) |
+| P1.5 | Normalize all core contracts | Every contract must be independently traceable | Each brief links parent systems, current-build evidence, journey, next behavior contract, and foundation pattern; each behavior contract links feature brief, journey, owner, validation standard, and record rules | P1.1–P1.4; cross-contract review |
+
+### P2 — Bounded journey contract — DRAFT
+
+| ID | Task | Requirement | Acceptance criteria | Dependencies / output |
+|---|---|---|---|---|
+| P2.1 | Map the six journey stages | Orientation → commitment → action → evidence → sensemaking → adaptation | Each stage names the participating contract, owning system, person choice, resulting state, and preserved state | P1; [journey contract](../03-experience/journeys/mvp-coherent-loop.md) |
+| P2.2 | Define valid entries and exits | The loop is bounded but not a forced funnel | Today, Tasks, Focus, Reflection, deep entry, direct entry, pause, deferral, decline, correction, and departure are represented | P1; journey entry/exit sections |
+| P2.3 | Define cross-surface handoffs | No hidden state change across surfaces | Task selection does not complete; Focus does not apply adaptation; Reflection does not mutate commitments without explicit authority | P1, P4; transition table |
+| P2.4 | Define journey acceptance evidence | End-to-end behavior must be testable later | Journey has `JOURNEY-*` criteria covering normal, alternative, interrupted, unavailable, correction, and explicit adaptation paths | P2.1–P2.3 |
+
+### P3 — Supporting-domain decisions — DRAFT
+
+| ID | Task | Requirement | Acceptance criteria | Dependencies / output |
+|---|---|---|---|---|
+| P3.1 | Decide minimum Habits behavior | Habits supports recurring action without becoming a second loop | Daily visibility and explicit completion are retained; analytics, coaching, and expanded scheduling are excluded; `SUPPORT-*` criteria exist | P1/P2; supporting decisions |
+| P3.2 | Decide minimum Schedule behavior | Schedule is planning context, not evidence | Task/Habit source ownership, overlapping surfaces, date/time limitations, and no new planning model are explicit | P1/P2/P4; supporting decisions |
+| P3.3 | Decide minimum Notes behavior | Notes provides relevant user-owned context | Notes/Growth Areas ownership, contextual links, and no standalone Knowledge product are explicit | P1/P2; supporting decisions |
+| P3.4 | Verify supporting domains cannot block the loop | Core journey works with empty/unavailable support | Each supporting domain has empty/unavailable behavior and no mandatory dependency in the journey | P2/P3.1–P3.3 |
+
+### P4 — Record, provenance, correction, and continuity rules — DRAFT
+
+| ID | Task | Requirement | Acceptance criteria | Dependencies / output |
+|---|---|---|---|---|
+| P4.1 | Assign canonical record ownership | Every consequential mutation has one owner | Ownership matrix covers tasks, focus sessions, attribution, reflection, habits, schedule planning, notes, and derived summaries | P1/P2; [record rules](../04-features/record-rules.md) |
+| P4.2 | Define provenance classes | Facts, user input, source input, and derivation remain distinct | Direct, user-provided, source-provided, derived, planned, and unavailable records have required treatment | P4.1; provenance section |
+| P4.3 | Define correction and continuity | Correction is not erasure; interruptions preserve confirmed truth | Corrected/superseded/current/historical/unavailable/disconnected/pending states and owner recovery paths are explicit | P4.1–P4.2; continuity section |
+| P4.4 | Carry Phase 1.5 constraints forward | Foundation patterns must constrain Phase 3 design | Zod/RHF/date-fns, `Asia/Singapore` date keys, persisted instants, local-draft semantics, `requireUserId`, RLS, and pending migrations are named | P0; foundation references |
+| P4.5 | Resolve known ownership questions | No open rule may remain unowned at Gate 2 | Explicit dispositions for task removal history, Next Up ownership, Focus attribution fallback, Reflection record relationship, and supporting writes | P1–P4; Founder/Engineering review |
+
+### P5 — Feature design specifications — NOT STARTED
+
+| ID | Task | Requirement | Acceptance criteria | Planned output |
+|---|---|---|---|---|
+| P5.1 | Establish design-spec coverage matrix | Apply the design-spec standard to every core domain | Matrix names content, hierarchy, state expression, interaction, responsive, accessibility, reusable standards, artifacts, handoff, and validation for each domain | `docs/05-design/features/` coverage section |
+| P5.2 | Design Today | Express orientation and owner handoffs | Covers default, loading, empty, partial/stale, error/retry, deep entry, responsive hierarchy, keyboard/focus, and source/status meaning | `today-design-spec.md` |
+| P5.3 | Design Tasks | Express commitment choices and recovery | Covers create/edit, confirmation, completion/defer/withdraw, validation, pending/failure/rollback, reorder alternative, responsive/dialog focus, and destructive consequence | `tasks-design-spec.md` |
+| P5.4 | Design Focus | Express truthful active-session state | Covers ready/active/paused/concluded/unreliable, timing, attribution unavailable, interruption/re-entry, session handoff, keyboard/timing, and non-outcome language | `focus-design-spec.md` |
+| P5.5 | Design Reflection | Express voluntary sensemaking and durable-save truth | Covers empty/draft/saving/saved/failed/corrected/skipped, autosave disclosure, recovery, session-end entry, adaptation proposal, accessibility, and source/evidence distinction | `reflection-design-spec.md` |
+| P5.6 | Cross-surface design review | Design must not alter behavior or ownership | All four specs use active design standards, identify exceptions, preserve contract states, and link validation questions; no spec introduces new MVP scope | P5.1–P5.5; Design Architect checkpoint |
+
+### P6 — Gate 2 evidence and Founder decision — NOT STARTED
+
+| ID | Task | Requirement | Acceptance criteria | Output |
+|---|---|---|---|---|
+| P6.1 | Assemble traceability matrix | Every admitted behavior has a complete chain | Gate checklist has evidence for parent system, journey, behavior, design, owner, and validation question; no `Unknown` | Gate checklist evidence register |
+| P6.2 | Run six-hat readiness review | Product, Design, Engineering, Implementation, and Release checks are explicit | Each hat records its review result, open condition, and artifact link; delivery designs are not treated as approved early | Gate checklist review record |
+| P6.3 | Founder Gate 2 decision | Gate outcome must be explicit | Founder records exactly one `PASS`, `HOLD`, or `REWORK`, date, rationale, conditions, and whether Phase 3 is authorized | Gate checklist Decision section and decision record if consequential |
+| P6.4 | Prepare commit/merge handoff | Branch must be reviewable | No unexpected files, links resolve, diff is clean, required verification is recorded, and no merge to `main` occurs without Founder authorization | Git review package |
+
+## 7. Requirements and acceptance matrix
+
+| Requirement ID | Requirement | Covered by | Phase 2 acceptance evidence |
 |---|---|---|---|
-| **P1. Control plane** | Establish a clean list of unresolved implementation truth | Freeze the MVP boundary, confirm core/supporting/deferred status, create the evidence entries, and carry forward only the Phase 0 question list that applies | Gate checklist has one owned row per domain and no scope ambiguity |
-| **P2. Route and architecture map** | Verify routes, entry points, ownership, persistence, permissions, and recovery | Trace app routes, layouts, server actions/API boundaries, Supabase tables/queries, auth middleware, loading/error boundaries, and navigation entry points | Each domain row links to its source paths and identifies read/write and auth ownership |
-| **P3. Core journey truth** | Describe current behavior before changing it | Trace Today → Tasks → Focus → Reflection behavior, including create/select/start/complete/defer, focus interruption, reflection save/correction, and return/recovery paths | Today, Tasks, Focus, and Reflection rows meet the evidence contract |
-| **P4. Supporting-surface truth** | Decide minimum supporting behavior | Inspect Habits, Schedule, and Notes / Knowledge for the behavior that supports the core journey; identify duplicate scheduling and embedded Growth Areas | Each supporting row is retained with boundaries or explicitly dispositioned |
-| **P5. Reconciliation and risk** | Reconcile catalogs, design, dead code, and undocumented states | Compare code with the Feature Catalog and `FEATURE_INVENTORY.md`; reconcile CSS/tokens/components with the Design Implementation Map; identify placeholders, dead code, dual save paths, and misleading surfaces | Discrepancies are fixed, linked to a decision, or assigned a severity and owner |
-| **P6. Baselines and gate package** | Run quality, accessibility, security, and production checks | Run the repository checks, inspect access boundaries and recovery paths, perform focused accessibility and production smoke checks, and record findings | Gate checklist contains reproducible evidence and a Founder-ready Gate 1 assessment |
+| R2-01 | Core feature boundaries are explicit and remain within MVP admission | P1.1–P1.5 | Four briefs, four behavior contracts, scope/non-goals, Feature Catalog links |
+| R2-02 | Every core behavior is observable, stateful, recoverable, and authority-aware | P1.1–P1.5 | Behavior rules, state tables, transitions, recovery, accessibility, acceptance IDs |
+| R2-03 | The core loop is cross-surface and non-coercive | P2.1–P2.4 | Journey narrative, transition table, valid alternatives/exits, `JOURNEY-*` |
+| R2-04 | Supporting domains have bounded retention/disposition | P3.1–P3.4 | Supporting-domain decision and `SUPPORT-*` |
+| R2-05 | Record ownership, provenance, correction, and continuity are explicit | P4.1–P4.5 | Record-rules matrix, provenance classes, correction/continuity states, `RECORD-*` |
+| R2-06 | Phase 1.5 validation, forms, and time patterns are carried into contracts | P1.5, P4.4 | Foundation links and explicit constraints in each contract |
+| R2-07 | Design expresses every material state without inventing behavior | P5.1–P5.6 | Four design specs and cross-surface design review |
+| R2-08 | Validation questions can be executed after design/engineering work | P1.5, P2.4, P5.6, P6.1 | Contract acceptance IDs mapped to validation questions and Gate evidence |
+| R2-09 | Gate 2 decision is evidence-based and Phase 3 authorization is explicit | P6.1–P6.4 | Completed Gate checklist and one Founder decision |
 
----
+## 8. Gate 2 pass conditions
 
-## Domain Truth Matrix
+The Gate 2 checklist is the decision record, but the sprint defines the required evidence. Gate 2 cannot pass when any of these is true:
 
-Use the listed paths as starting points, not as proof of behavior. Trace the actual rendered path, data path, and recovery behavior before marking a cell complete.
+- a core domain lacks a brief, behavior contract, or acceptance criteria;
+- a behavior has no parent system, journey stage, design expression, technical owner, or validation question;
+- a supporting domain has no minimum behavior or exclusion;
+- a record owner or correction/recovery rule is unknown or unowned;
+- a design spec omits a required state or changes behavior without contract revision;
+- a delivery design was used to bypass missing product/design decisions;
+- a deferred domain was silently promoted; or
+- the Founder decision, rationale, date, and Phase 3 authorization condition are missing.
 
-| Domain | Current implementation starting points | Required implementation-truth questions | Gate evidence |
-|---|---|---|---|
-| **Today** | `src/app/(main)/page.tsx`, `src/components/today/`, dashboard composition, `src/lib/dashboard.ts` | What context is shown, how Next Action is chosen, which task/habit/note data is read, and how empty/loading/error/recovery states behave? | Today row + linked route/data notes |
-| **Tasks** | `src/app/(main)/tasks/`, `src/components/tasks/`, `src/lib/tasks.ts`, `src/lib/kanban.ts`, quick-capture and schedule controls | Trace create, revise, select, complete, defer, drag/sort, scheduling, ownership, persistence, optimistic failure, and recovery; identify the single source of task state. | Tasks row + linked route/data notes |
-| **Focus** | `src/app/(main)/focus/`, `src/components/focus/`, `src/lib/focus*.ts`, `src/lib/focus-reflection.ts` | Trace action identity, start/pause/stop/interruption, persistence, reflection handoff, and truthful history; distinguish elapsed time from outcome evidence. | Focus row + linked route/data notes |
-| **Reflection** | `src/app/(main)/reflection/`, `src/components/reflection/`, `src/lib/reflection*.ts` | Trace daily/session capture, save paths, correction, provenance, recovery, and weekly-review boundaries; resolve any dual-save behavior. | Reflection row + linked route/data notes |
-| **Habits** | `src/app/(main)/habits/`, `src/components/habits/`, `src/lib/habits.ts`, habit completion stores | Identify which recurring-action behavior supports Today, how completion persistence and ownership work, and whether any behavior creates a second product model. | Supporting row + retention/disposition |
-| **Schedule** | `src/app/(main)/schedule/`, `src/components/schedule/`, `src/lib/schedule*.ts`, task schedule controls, timeline | Map every scheduling surface, source of truth, date handling, reminders, permissions, and recovery; identify which surface is retained for MVP context. | Supporting row + overlap decision |
-| **Notes / Knowledge** | `src/app/(main)/notes/`, `src/components/notes/`, `src/lib/notes.ts`, daily notes, note conversions, growth areas | Define user-owned context and source relationships, save/correction/recovery behavior, and the boundary between Notes and embedded Growth Areas. | Supporting row + ownership/boundary |
+## 9. Execution sequence and checkpoints
 
----
-
-## Five-Day Execution Sequence
-
-### 2026-08-04 — Plan checkpoint and baseline
-
-- **Product Architect:** Confirm the masterplan boundary and classify domains as core, supporting, embedded, derived, placeholder, or deferred.
-- **Engineering Architect:** Establish the route, data, auth, and evidence-entry template; verify the current architecture documents against package and source truth.
-- **Design Architect:** Confirm `design-implementation-map.md`, `DESIGN_SYSTEM_V3.md`, Tokyo Night Warm, and `globals.css` as the active/historical source set.
-- **Implementation / Release:** Capture the initial quality baseline: `npm test` passed (231 tests, 20 files), `npm run lint` passed (0 errors, 212 warnings), and `npm run build` passed on Next.js 16.2.11. Record warnings and the deprecated middleware convention as known findings rather than silently treating them as fixed.
-- **Founder checkpoint:** Approve the frozen scope and evidence contract; no new feature admission is proposed.
-
-**Exit:** P1 and P2 are started, the Gate 1 rows have owners, and the baseline results are recorded.
-
-### 2026-08-05 — Core truth: Today and Tasks
-
-- Trace Today and Tasks from navigation and route entry through rendered components and data boundaries.
-- Record behavior, state transitions, persistence, identity/ownership, errors, and recovery using the Domain Truth Matrix.
-- Reconcile task creation, quick capture, board/list interaction, schedule controls, and optimistic updates; do not fix behavior unless required for safe truth.
-- Identify any missing contract that Phase 2 must write; do not invent the contract in this sprint.
-
-**Exit:** Today and Tasks have no unexplained behavior or data-path `Unknown`; every gap has an owner and disposition.
-
-### 2026-08-06 — Core truth: Focus and Reflection; supporting paths
-
-- Trace Focus and Reflection end to end, including interruption, persistence, reflection handoff, correction, and recovery.
-- Inspect Habits, Schedule, and Notes / Knowledge only for the supporting behavior needed by the core journey.
-- Identify duplicate scheduling surfaces, dual reflection save paths, and embedded Growth Areas boundaries.
-- Record whether a supporting behavior is retained, bounded, deferred, or requires a Founder product decision.
-
-**Exit:** Core rows are complete; supporting rows have explicit retention/disposition and no unknown data owner.
-
-### 2026-08-07 — Reconciliation and cross-cutting baselines
-
-- Reconcile `feature-catalog.md` with `FEATURE_INVENTORY.md` and observed code status; separate implementation status from MVP admission.
-- Reconcile design references, token ownership, component usage, accessibility obligations, loading/empty/error states, and historical references.
-- Identify dead code, placeholder routes, unsupported claims, security boundary gaps, and P2+ cleanup; assign each finding a severity, owner, and next phase.
-- Complete focused accessibility, security, and production/operational checks; record exact commands, paths, environments, results, and limitations.
-- Prepare the Gate 1 evidence summary and list any issue that could change scope or implementation truth.
-
-**Exit:** All discrepancies are resolved, linked to a decision, or explicitly owned; no unknown status remains.
-
-### 2026-08-08 — Gate 1 review and handoff
-
-- **Release Manager:** Re-run or verify the required evidence, confirm reproducibility, and prepare the readiness assessment.
-- **Founder:** Review every Gate 1 row, known gap, supporting-domain disposition, and baseline finding.
-- Record one decision: `PASS` (Phase 2 may be planned), `HOLD` (specific evidence missing), or `REWORK` (truth or scope must be corrected).
-- If Gate 1 passes, hand Phase 1.5 preparation to the Technology Integration Masterplan and carry unresolved P2+ work into the next approved backlog; do not silently promote it into Phase 2 scope.
-
-**Exit:** Gate 1 checklist is signed with evidence, decision, date, owner, and explicit next-phase authorization or hold conditions.
-
----
-
-## Hat and checkpoint responsibilities
-
-| Hat / mode | Phase 1 responsibility | Required checkpoint |
+| Date | Work | Exit check |
 |---|---|---|
-| **Product Architect / Plan** | Freeze MVP scope, map current behavior, and identify product-contract gaps | Approve scope and behavior evidence before design/build interpretation |
-| **Design Architect / Plan** | Reconcile active design references with rendered implementation and state coverage | Approve source ownership and unresolved design meaning gaps |
-| **Engineering Architect / Build** | Trace routes, data paths, auth, persistence, schema boundaries, and recovery | Approve technical truth and risk findings before gate packaging |
-| **Implementation Engineer / Build** | Run baselines, inspect code paths, and fix only truth-blocking P0/P1 issues | Approve test/build evidence and known-gap dispositions |
-| **Release Manager / Ship** | Verify reproducibility, production/operational baseline, and gate evidence | Recommend `PASS`, `HOLD`, or `REWORK` from evidence |
-| **Founder / Ship** | Approve consequential scope, architecture, gate, and next-phase decisions | Record the final Gate 1 decision on 2026-08-08 |
+| 2026-08-05 | P0 baseline; P1–P4 draft refinement; freeze scope and traceability IDs | Draft artifacts exist, tasks are owned, open questions are converted into P4/P5/P6 tasks |
+| 2026-08-06 | Complete P1 normalization and P2 journey; Product Architect checkpoint | Core behavior and journey agree; no silent scope expansion |
+| 2026-08-07 | Complete P3/P4; execute P5 design specifications; Design/Engineering checkpoints | Supporting and record rules are resolved or explicitly conditioned; all required design states covered |
+| 2026-08-08 | P6 traceability review and Founder decision | Gate checklist records `PASS`, `HOLD`, or `REWORK`; Phase 3 authorization is explicit only on `PASS` |
 
----
+Checkpoint rule: the Founder may approve scope/behavior before design, design before delivery, and the Gate 2 package before Phase 3. A checkpoint does not authorize work outside its boundary.
 
-## Risks & Mitigation (Phase 1)
+## 10. Quality and repository readiness
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| Accepted audit improvements compete with truth work | Evidence work slips or becomes superficial | They are marked complete where resolved; remaining work is explicitly assigned to P1/P5 or Phase 1.5 and does not become a blanket gate condition |
-| Current code has multiple paths for the same behavior | Phase 2 contracts encode accidental behavior | Trace rendered and persistence paths before writing contracts; record the authoritative owner and all competing paths |
-| Supporting domains expand the MVP boundary | Sprint loses focus and creates a second product model | Verify only journey-supporting behavior; require a decision record for admission changes |
-| Quality warnings are mistaken for a clean baseline | Known risk is hidden from Gate 1 | Record counts, warnings, deprecated conventions, and severity; passing commands do not erase findings |
-| A domain remains partially understood on 2026-08-08 | Unknown behavior reaches implementation | Mark Gate 1 `HOLD` or `REWORK`; do not convert an unknown into a speculative contract |
+Before this sprint is presented for commit/merge review:
 
----
+- all required Phase 2 artifacts are listed in Section 5 and have the stated status;
+- all local links in touched Markdown resolve;
+- `git diff --check` passes;
+- no Phase 3 source implementation or unrelated refactor is included;
+- if source code changed, run `npm test`, `npm run lint`, `npm run build`, and the security checklist; for documentation-only changes, record that the prior code baseline is unchanged and run the documentation checks;
+- the branch diff is reviewed against `main`, unexpected files are removed or explained, and the work remains on `sprint/phase1.5` until Founder approval;
+- commit and merge are separate decisions. This sprint does not authorize pushing or merging to `main`.
 
-## Related Documents
+## 11. Risks and controls
 
-- [Phase 1 README](./phase-1/README.md) — Overview
-- [Phase 1 Gate Checklist](./phase-1/gate-checklist.md) — Gate 1 criteria/evidence
-- [Post-Phase-0 Audit](./phase-1/post-phase-0-audit.md) — First Phase 1 doc; scheduled improvements
-- [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) — Phase authority
-- [Feature Catalog](../04-features/feature-catalog.md) — Coverage map
-- [Implementation Truth Backlog](../11-archive/phases/phase-0/implementation-truth-backlog.md) — starting question list
-- [Phase 0 Sprint Record](../11-archive/phases/phase-0/phase-0-sprint.md) — archived
+| Risk | Control |
+|---|---|
+| Contracts encode accidental current behavior | Use Phase 1 evidence as baseline and require explicit product decision for future behavior |
+| Design invents behavior | Design specs inherit behavior contracts; P5.6 checks divergence |
+| Supporting domains become a second product | P3 minimum behavior and exclusion decisions are Gate evidence |
+| Technical convenience collapses record meaning | P4 ownership/provenance/correction rules precede delivery design |
+| Pending migrations appear applied | Preserve `APPLIED_STATE.md` limitations; P4.5 requires truthful fallback |
+| Sprint and Gate checklist drift | This sprint owns tasks; the Gate checklist links task IDs and records evidence/status |
+| Phase 3 starts early | P6.3 requires explicit Founder `PASS`; all draft artifacts state they do not authorize implementation |
+
+## 12. Change control
+
+The Founder may change Phase 2 scope, sequence, or acceptance only through an update to this sprint and the Gate checklist. A change that alters MVP admission, phase dependency, parent-system meaning, or the Gate definition also requires a decision record and impact assessment. Historical evidence and prior decisions are not silently rewritten.
+
+## 13. Related documents
+
+- [Phase 2 README](./phase-2/README.md)
+- [Gate 2 checklist](./phase-2/gate-checklist.md)
+- [MVP implementation masterplan](./mvp-implementation-masterplan.md)
+- [Feature Catalog](../04-features/feature-catalog.md)
+- [Phase 1 implementation-truth evidence](./phase-1/implementation-truth-evidence.md)
+- [Phase 1.5 foundation pattern](../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
+- [Technology Integration Masterplan](../06-engineering/technology-integration-masterplan.md)

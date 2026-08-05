@@ -6,7 +6,7 @@
 **Approval Required:** Founder
 **Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Roadmap](../07-strategy-and-delivery/roadmap.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Delivery plans, feature dossiers, design specifications, engineering designs, validation plans, release plans, decisions, and reviews
-**Last Updated:** 2026-08-04
+**Last Updated:** 2026-08-05
 **Review trigger:** A change to the MVP boundary, an evidence gate, a phase dependency, a feature disposition, or the readiness decision for founder or external dogfood.
 
 ---
@@ -126,12 +126,13 @@ MVP admission is a product decision, not an engineering convenience. If evidence
 - execute the accepted post-Phase-0 documentation improvements in parallel without turning them into blanket Gate 1 criteria;
 - use the [current sprint](./current-sprint.md) as the dated execution plan and the [Gate 1 checklist](./phase-1/gate-checklist.md) as the evidence register and decision record.
 
-**Gate 1 — Current build truth:** For every admitted MVP domain, the team can demonstrate the current behavior, data path, known gaps, and owner. Unknown status is not allowed to pass into implementation.
+**Gate 1 — Current build truth:** For every admitted MVP domain, the team can demonstrate the current behavior, data path, known gaps, and owner. Unknown status is not allowed to pass into implementation. Evidence: [Phase 1 implementation-truth evidence](./phase-1/implementation-truth-evidence.md) · [D-007 Gate 1 decision](../08-decisions/records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md).
 
 **Phase 1 execution boundary:** Phase 1 establishes current truth; it does not implement new MVP breadth. P0/P1 changes are permitted only when required to make behavior, data integrity, security, or recovery truth safe and demonstrable. Validation-library, form-management, and date/time integration are Phase 1.5 work governed by the [Technology Integration Masterplan](../06-engineering/technology-integration-masterplan.md), not hidden Gate 1 requirements.
 
 ### Phase 1.5 — Foundation Infrastructure
 
+**Status:** COMPLETE — Gate 1.5 PASSED 2026-08-05; archived to `docs/11-archive/phases/phase-1.5/`; Phase 2 authorized
 **Purpose:** Establish core engineering infrastructure before MVP loop implementation to ensure consistent patterns for validation, forms, and date/time handling across all surfaces.
 
 **Technology authority:** [Technology Integration Masterplan](../06-engineering/technology-integration-masterplan.md). **Decision:** [D-004](../08-decisions/records/D-004-add-phase-1-5-foundation-infrastructure-to-mvp-masterplan.md).
@@ -153,6 +154,8 @@ MVP admission is a product decision, not an engineering convenience. If evidence
 ### Phase 2 — Contract the coherent MVP loop
 
 **Purpose:** Turn the changed product model into a small set of cross-surface contracts.
+
+**Execution reference:** [Current Sprint](./current-sprint.md) is the single dated implementation reference for Phase 2 tasks, requirements, acceptance criteria, dependencies, and Gate 2 preparation. The [Gate 2 checklist](./phase-2/gate-checklist.md) is the evidence register and decision record.
 
 **Work:**
 

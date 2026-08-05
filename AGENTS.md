@@ -15,13 +15,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 1. **`.ai/context.md`** ← START HERE (Universal AI context)
    - Product identity, tech stack, 6-hat workflow
-   - Current Phase 1 status and objectives
+   - Current Phase 2 status and objectives
    - Documentation authority hierarchy
    - Core development principles
 
 2. **`docs/current-phase/current-sprint.md`** ← Current sprint
-   - Phase 1 work and status
-   - Gate 1 criteria
+   - Phase 2 tasks, requirements, dependencies, acceptance, and status
+   - Gate 2 handoff and merge-readiness requirements
    - What's in/out of scope
 
 3. **`docs/start-here/solo-founder-workflow.md`** ← Complete 6-hat workflow
@@ -31,7 +31,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 **Then use as needed:**
 - `docs/start-here/how-to-develop-flowos.md` — Quick workflow reference
-- `docs/current-phase/phase-1/README.md` — Gate 1 completion criteria
+- `docs/current-phase/phase-2/README.md` — Gate 2 phase boundary and status
+- `docs/current-phase/phase-2/gate-checklist.md` — Gate 2 evidence and Founder decision
 - `docs/10-team/6-role-hats/[role-name].md` — Detailed hat procedures
 - `.ai/checklists/security.md` — 6-point security checklist (before every merge)
 - `.ai/checklists/quality.md` — Build, lint, test verification
@@ -63,19 +64,20 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ---
 
-## 🔄 Current Status (Phase 1)
+## 🔄 Current Status (Phase 2)
 
-**Phase:** Phase 1 — Establish Implementation Truth  
-**Sprint:** 2026-08-04 → 2026-08-08 (active)  
-**Gate 1:** Every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)  
-**Progress:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 sprint active  
-**Prior phase:** Phase 0 — Freeze Ambiguity and Establish Document Authority (closed 2026-08-04, archived to `docs/11-archive/phases/phase-0/`, full record in `phase-0-sprint.md`)
+**Phase:** Phase 2 — Contract the Coherent MVP Loop  
+**Sprint:** 2026-08-05 → 2026-08-08 (active)  
+**Gate 2:** Contract coherence — every admitted behavior traces to parent system, journey, design, owner, and validation question  
+**Progress:** Phase 1 CLOSED — Gate 1 PASSED; Phase 1.5 CLOSED — Gate 1.5 PASSED; Phase 2 sprint active
+**Prior phases:** Phase 1 — Implementation Truth (closed 2026-08-05, evidence at `docs/current-phase/phase-1/implementation-truth-evidence.md`); Phase 1.5 — Foundation Infrastructure (closed 2026-08-05, archived to `docs/11-archive/phases/phase-1.5/`, full record in `phase-1.5-sprint.md`)
 
-**Phase 1 Status:**
-- ✅ Gate 0 passed and Phase 0 closed (2026-08-04)
-- ✅ Phase 1 sprint created 2026-08-04 → 2026-08-08
-- 📋 Gate 1 checklist: `docs/current-phase/phase-1/gate-checklist.md`
-- 📋 Phase 1.5: `docs/06-engineering/technology-integration-masterplan.md` (D-004)
+**Phase 2 Status:**
+- ✅ Gate 1.5 passed and Phase 1.5 closed (2026-08-05)
+- ✅ Gate 1 passed and Phase 1 closed through D-007 (2026-08-05)
+- ✅ Phase 2 sprint created 2026-08-05 → 2026-08-08
+- 📋 Gate 2 checklist: `docs/current-phase/phase-2/gate-checklist.md`
+- 📋 Phase 1.5 foundation patterns: `docs/06-engineering/technology-integration-masterplan.md` (D-004)
 
 ---
 
@@ -84,7 +86,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 **Before starting work:** 
 1. Read `.ai/context.md` (universal context)
 2. Check `docs/current-phase/current-sprint.md` (current sprint)
-3. Check `docs/current-phase/phase-1/gate-checklist.md` (what needs doing)
+3. Check `docs/current-phase/phase-2/gate-checklist.md` (what needs doing)
 
 **During work:** Wear appropriate quality hats, maintain each hat's standards  
 **Before merge:** Security checklist, build/lint/test pass  

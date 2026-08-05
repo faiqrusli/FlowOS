@@ -4,7 +4,7 @@
 
 > Direction → Commitment → Action → Evidence → Sensemaking → Adaptation
 
-**Status:** Phase 0 CLOSED — Gate 0 PASSED (2026-08-04). Phase 1 (Establish Implementation Truth) active; Phase 1.5 scheduled for validation and technical integration.
+**Status:** Phase 1.5 CLOSED — Gate 1.5 PASSED (2026-08-05). Phase 2 (Contract the Coherent MVP Loop) active; Phase 3 scheduled for implementation.
 
 **Production:** https://flowos-sage.vercel.app  
 **Historical live-demo references:** [flowos-live-demo-spec.md](./11-archive/review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](./11-archive/execution/runbooks/flowos-live-demo.md)  
@@ -17,8 +17,8 @@
 | Document | Why |
 |----------|-----|
 | [**Vision**](./00-constitution/Vision.md) | **Highest authority** — timeless purpose, philosophy, boundaries, and north star |
-| [**Current Sprint**](./current-phase/current-sprint.md) | **What to work on NOW** — Current phase, tasks, status |
-| [**Phase 1**](./current-phase/phase-1/README.md) | **Current phase work** — Establish Implementation Truth (Gate 1) |
+| [**Current Sprint**](./current-phase/current-sprint.md) | **Single implementation reference** — Current Phase 2 tasks, requirements, acceptance, status, and merge readiness |
+| [**Phase 2**](./current-phase/phase-2/README.md) | **Current phase work** — Contract the Coherent MVP Loop (Gate 2) |
 | [**MVP Masterplan**](./current-phase/mvp-implementation-masterplan.md) | **Implementation roadmap** — All MVP phases and gates |
 | [**Solo Founder Workflow**](./start-here/solo-founder-workflow.md) | **Complete 6-hat workflow** — Use six authoritative hats grouped into three modes |
 | [**How to Develop FlowOS**](./start-here/how-to-develop-flowos.md) | **Quick reference** — Three modes containing the six authoritative hats |
@@ -199,9 +199,9 @@ When documents conflict, use the subject-authority and conflict-resolution rules
 
 | Document | Purpose |
 |----------|---------|
-| [current-phase/current-sprint.md](./current-phase/current-sprint.md) | **What to work on NOW** |
+| [current-phase/current-sprint.md](./current-phase/current-sprint.md) | **What to work on NOW** — Single Phase 2 implementation reference |
 | [current-phase/mvp-implementation-masterplan.md](./current-phase/mvp-implementation-masterplan.md) | **MVP roadmap** |
-| [current-phase/phase-1/README.md](./current-phase/phase-1/README.md) | **Current phase work** (Gate 1 checklists in phase-1/) |
+| [current-phase/phase-2/README.md](./current-phase/phase-2/README.md) | **Current phase work** (Gate 2 checklist in phase-2/) |
 | [FEATURE_INVENTORY.md](./04-features/FEATURE_INVENTORY.md) | Shipped vs deferred features + navigation / IA |
 | [TECHNICAL_ARCHITECTURE.md](./06-engineering/TECHNICAL_ARCHITECTURE.md) | Stack, data model, debt |
 | [DESIGN_SYSTEM_V3.md](./05-design/DESIGN_SYSTEM_V3.md) | Visual philosophy + Surface 0–10 |

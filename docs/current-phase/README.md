@@ -1,8 +1,8 @@
 ﻿# Current Phase
 
 **Purpose:** Central location for current implementation phase work  
-**Status:** Phase 0 CLOSED (Gate 0 PASSED 2026-08-04) — Phase 1 active; Phase 1.5 scheduled  
-**Last Updated:** 2026-08-04  
+**Status:** Phase 1 CLOSED (Gate 1 PASSED) · Phase 1.5 CLOSED (Gate 1.5 PASSED) — Phase 2 active; Phase 3 scheduled
+**Last Updated:** 2026-08-05  
 
 ---
 
@@ -10,7 +10,7 @@
 
 **This is the highest-authority location for understanding current implementation:**
 
-1. **Current Sprint** — What phase are we in? What's being worked on?
+1. **Current Sprint** — The single implementation reference: what phase, tasks, requirements, acceptance, status, and sequence?
 2. **Phase Gate Checklist** — What needs to be done to complete the current phase?
 3. **MVP Masterplan Reference** — The canonical implementation roadmap
 4. **Phase Work** — Documents and artifacts specific to each phase
@@ -21,11 +21,12 @@
 
 | Document | Purpose |
 |----------|---------|
-| [Current Sprint](./current-sprint.md) | Active work for the current sprint/phase |
+| [Current Sprint](./current-sprint.md) | **Single implementation reference** for active work, requirements, acceptance, dependencies, and merge readiness |
 | [Current-Phase Templates](./templates/) | Flexible future-use templates; active sprint and gate records are the source examples |
 | [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) | **Highest authority** for MVP phases and gates |
-| [Phase 1 Folder](./phase-1/) | **Current phase work** — Gate 1 checklist, sprint tracking |
-| [Phase 1.5 Technology Integration](../06-engineering/technology-integration-masterplan.md) | Scheduled validation-policy and technical-integration work |
+| [Phase 2 Folder](./phase-2/) | **Current phase work** — Gate 2 checklist, sprint tracking |
+| [Phase 1 Folder](./phase-1/) | Closed prior phase — Gate 1 evidence and decision (implementation truth) |
+| [Phase 1.5 Archive](../11-archive/phases/phase-1.5/) | Closed Phase 1.5 records — Gate 1.5 PASSED 2026-08-05 |
 | [Phase 0 Archive](../11-archive/phases/phase-0/) | Closed Phase 0 records — Gate 0 PASSED 2026-08-04 |
 
 ---
@@ -41,16 +42,20 @@ current-phase/
   ├── logs/                               ← Operational logs (August 2026)
   │   ├── august-log.md                   ← Narrative log
   │   └── developer-log/                  ← Daily developer journals
-  ├── phase-1/                            ← Phase 1 work (current phase)
+  ├── phase-1/                            ← Phase 1 work (prior phase)
   │   ├── README.md                       ← Phase 1 overview
   │   └── gate-checklist.md               ← Gate 1 completion criteria
-  └── (Phase 1.5 is governed by the Technology Integration Masterplan)
+  ├── phase-1.5/                          ← Phase 1.5 work (closed; archived)
+  └── phase-2/                            ← Phase 2 work (current phase)
+      ├── README.md                       ← Phase 2 overview
+      └── gate-checklist.md               ← Gate 2 completion criteria
 ```
 
 **Phase lifecycle:**
 - On phase completion, archive the `phase-N/` folder to `docs/11-archive/phases/phase-N/`
 - Create the next `phase-(N+1)/` folder
 - Phase 0 records are archived at `docs/11-archive/phases/phase-0/`
+- Phase 1.5 records are archived at `docs/11-archive/phases/phase-1.5/`
 
 ---
 
@@ -75,14 +80,14 @@ current-phase/
 
 **Starting work? Read in this order:**
 
-1. **[Current Sprint](./current-sprint.md)** — What phase, what tasks, what status
+1. **[Current Sprint](./current-sprint.md)** — What phase, tasks, requirements, acceptance, dependencies, and status
 2. **[MVP Masterplan](./mvp-implementation-masterplan.md)** — What's the roadmap
-3. **[Phase 1 Gate Checklist](./phase-1/gate-checklist.md)** — What needs to be done
+3. **[Phase 2 Gate Checklist](./phase-2/gate-checklist.md)** — What needs to be done
 4. **[Solo Founder Workflow](../start-here/solo-founder-workflow.md)** — How to execute work using 6 hats
 
 Future phase setup can start from the [template index](./templates/), but the active sprint and gate records remain authoritative for current work.
 
-**Then start executing with the 6-hat workflow. Phase 1.5 work is scheduled separately and does not change the Phase 1 Gate 1 definition.**
+**Then start executing with the 6-hat workflow. Phase 2 contracts reference the Phase 1.5 foundation patterns and must not expand MVP breadth.**
 
 ---
 
@@ -94,6 +99,10 @@ Future phase setup can start from the [template index](./templates/), but the ac
 **Phase 0 history (archived):**
 - `docs/11-archive/phases/phase-0/documentation-audit-2026-08-03.md` — Phase 0 audit
 - `docs/11-archive/phases/phase-0/sprint-format-simplification-note.md` — Sprint format evolution
+
+**Phase 1.5 history (archived):**
+- `docs/11-archive/phases/phase-1.5/phase-1.5-sprint.md` — Full Phase 1.5 sprint record
+- `docs/11-archive/phases/phase-1.5/gate-checklist.md` — Gate 1.5 PASS evidence
 
 **Implementation workflow:**
 - `docs/start-here/solo-founder-workflow.md` — Complete 6-hat workflow

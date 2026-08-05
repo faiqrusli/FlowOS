@@ -5,7 +5,7 @@
 **Owner:** Product and documentation leadership
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Decision Records](./decision-records.md)
 **Children:** Individual decision records in `08-decisions/records/`
-**Last reviewed:** 2026-08-04
+**Last reviewed:** 2026-08-05
 **Review trigger:** A decision record is created, corrected, superseded, closed, or moved to archival history.
 
 ---
@@ -25,6 +25,8 @@ The register lists only decisions governed by [Decision Records](./decision-reco
 | D-003 | Pass Gate 0 and authorize Phase 1 | Accepted — Gate 0 PASSED, Phase 1 authorized | Founder | 2026-08-04 | Phase governance | [D-003](./records/D-003-pass-gate-0-and-authorize-phase-1.md) |
 | D-004 | Add Phase 1.5 Foundation Infrastructure to MVP Masterplan | Accepted | Engineering Architect | 2026-08-04 | Engineering infrastructure | [D-004](./records/D-004-add-phase-1-5-foundation-infrastructure-to-mvp-masterplan.md) |
 | D-005 | Post-Phase-0 Documentation Audit Decisions | Accepted | Founder | 2026-08-04 | Documentation governance and Phase 1 workflow | [D-005](./records/D-005-post-phase-0-audit-decisions.md) |
+| D-006 | Gate 1.5 PASS and Phase 2 Authorization | Accepted — Gate 1.5 PASSED, Phase 2 authorized | Founder | 2026-08-05 | Phase governance | [D-006](./records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md) |
+| D-007 | Gate 1 Current Build Truth and Phase 2 Authorization | Accepted — Gate 1 PASSED, Phase 2 authorized | Founder | 2026-08-05 | Phase governance | [D-007](./records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md) |
 
 ## Register Rules
 

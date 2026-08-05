@@ -24,29 +24,32 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 
 ## Current Status
 
-**Phase:** Phase 1.5 — Foundation Infrastructure
+**Phase:** Phase 2 — Contract the Coherent MVP Loop
 
-**Current Sprint:** 2026-08-04 → 2026-08-08 (active)
+**Current Sprint:** 2026-08-05 → 2026-08-08 (active)
 
-**Status:** Active — Phase 1.5 implementation restored; Gate 1.5 evidence collection in progress
+**Status:** Active — Phase 1 and Phase 1.5 closed; Phase 2 contract package in progress
 
 **📋 Quick Reference:**
-- **[Current Sprint](../docs/current-phase/current-sprint.md)** — What phase, what tasks, what status
-- **[Phase 1.5](../docs/current-phase/phase-1.5/README.md)** — Current phase work (Gate 1.5)
+- **[Current Sprint](../docs/current-phase/current-sprint.md)** — Single implementation reference for Phase 2 tasks, requirements, acceptance, and status
+- **[Phase 2](../docs/current-phase/phase-2/README.md)** — Current phase work (Gate 2)
 - **[MVP Masterplan](../docs/current-phase/mvp-implementation-masterplan.md)** — Implementation roadmap
 
-**Gate 1.5 Target:** Validate shared forms, runtime validation, date/time semantics, and recovery boundaries before Phase 2. Unknown status is not allowed to pass into the next phase.
+**Gate 2 Target:** Contract coherence — every admitted behavior traces to parent system, journey, design, technical owner, and validation question without inventing missing rules.
+
+**Gate 1.5 (Phase 1.5):** PASSED — 2026-08-05. Phase 1.5 closed and archived to `docs/11-archive/phases/phase-1.5/`. See [D-006](../docs/08-decisions/records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md).
 
 **Gate 0 (Phase 0):** PASSED — 2026-08-04. Phase 0 closed and archived to `docs/11-archive/phases/phase-0/`. See [D-003](../docs/08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md).
 
-**Phase 1.5 Focus:**
-- Maintain the shared Zod/RHF/date-fns validation and date/time boundaries
-- Preserve server-side task validation and user-scoped Supabase writes
-- Verify task planning, reflection autosave, Focus-kanban append, and recovery behavior
-- Complete authenticated accessibility, isolation, forced-write, and dependency evidence
-- Record one Gate 1.5 decision before authorizing Phase 2
+**Phase 2 Focus:**
+- Write Today, Tasks, Focus, and Reflection feature briefs and behavior contracts
+- Write the bounded journey contract (orientation, commitment, action, evidence, sensemaking, adaptation)
+- Decide minimum Habits, Schedule, and Notes behavior that supports the journey
+- Define source ownership, provenance, correction, and continuity rules
+- Create feature design specifications with full state coverage
+- Reference the Phase 1.5 validation, form, and date/time patterns in every contract
 
-**Phase 1.5 Status:** Active — implementation restored; sprint evidence collection continues 2026-08-04 → 2026-08-08.
+**Phase 2 Status:** Active — P0 baseline is complete; P1–P4 contract drafts exist; P5 design specifications and P6 Gate 2 review remain open. Gate 2 review is scheduled for 2026-08-08.
 
 ---
 
@@ -161,7 +164,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 
 **Start here every day:**
 - `docs/current-phase/current-sprint.md` — **Current sprint and phase work**
-- `docs/current-phase/phase-1.5/README.md` — **Current phase work (Gate 1.5)**
+- `docs/current-phase/phase-2/README.md` — **Current phase work (Gate 2)**
 - `docs/current-phase/mvp-implementation-masterplan.md` — **Implementation roadmap**
 
 **Essential reading:**
@@ -194,19 +197,19 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 
 **Always check:** `docs/current-phase/current-sprint.md` for current assignments.
 
-**Phase 1.5 gate checklist:** `docs/current-phase/phase-1.5/gate-checklist.md` for completion criteria and current evidence.
+**Phase 2 gate checklist:** `docs/current-phase/phase-2/gate-checklist.md` for completion criteria and current evidence.
 
-**Phase 0 History (closed):**
-- ✅ Solo-founder workflow with 6-hat quality procedures created
-- ✅ Current-phase folder structure established
-- ✅ Gate 0 PASSED 2026-08-04; Phase 0 archived to `docs/11-archive/phases/phase-0/`
+**Phase 1.5 History (closed):**
+- ✅ Shared Zod/RHF/date-fns validation and date/time foundation restored and tested
+- ✅ Auth + retained Task pilot migrations, reflection autosave, and Focus-kanban append verified
+- ✅ Gate 1.5 PASSED 2026-08-05; Phase 1.5 archived to `docs/11-archive/phases/phase-1.5/`; Phase 2 authorized
 
-**Gate 1.5 Progress:**
-- Phase 1.5 sprint active (2026-08-04 → 2026-08-08)
-- Validation, form, date/time, task planning, reflection recovery, and Focus append implementation is restored
-- Authenticated accessibility/recovery, isolation, forced-write, and audit evidence remain open
+**Gate 2 Progress:**
+- Phase 2 sprint active (2026-08-05 → 2026-08-08); [current sprint](../docs/current-phase/current-sprint.md) is the single execution reference
+- P1–P4 drafts are linked in the sprint artifact register; P5 design specifications and P6 traceability/Founder decision remain open
+- Gate 2 review on 2026-08-08
 
-**Gate 1.5 Status:** Active and partial — Phase 2 is not authorized.
+**Gate 2 Status:** Open — draft contracts exist; design coverage, final ownership decisions, evidence review, and Founder decision are pending.
 
 ---
 
@@ -262,7 +265,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 - Check `docs/current-phase/current-sprint.md`
 - Understand current phase
 - Know sprint objectives
-- Check gate checklist: `docs/current-phase/phase-1/gate-checklist.md`
+- Check gate checklist: `docs/current-phase/phase-2/gate-checklist.md`
 - Align work with phase gate criteria
 - Document progress
 
@@ -311,7 +314,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 - User-scoped database queries only
 - No `using (true)` on user data
 - RLS (Row Level Security) on all user tables
-- Input validation always (runtime validation; Zod adoption is scheduled for Phase 1.5)
+- Input validation always (runtime validation; Zod is adopted and shared patterns live in `src/lib/validation.ts`)
 - No hardcoded secrets
 - Auth middleware on routes
 - Error messages don't leak sensitive info
@@ -420,7 +423,7 @@ flowos/
 ### Security Checklist (Run Before Every Merge)
 
 - [ ] User-scoped data access only (no `using (true)` on user data)
-- [ ] Input validation present (runtime validation; Zod adoption is tracked in Phase 1.5)
+- [ ] Input validation present (runtime validation; shared Zod schemas in `src/lib/validation.ts`)
 - [ ] No hardcoded secrets or API keys
 - [ ] RLS on new database tables
 - [ ] Auth middleware on new API routes (new routes added to `PROTECTED_PREFIXES` in `middleware.ts`)

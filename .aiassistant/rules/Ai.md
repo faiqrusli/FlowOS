@@ -14,13 +14,13 @@ apply: always
 
 1. **`.ai/context.md`** ← START HERE
    - Product identity, tech stack, 6-hat workflow
-   - Current Phase 1 status and objectives
+   - Current Phase 2 status and objectives
    - Documentation authority hierarchy
    - Core development principles
 
 2. **`docs/current-phase/current-sprint.md`** ← Current sprint
-   - Phase 1 assignments per role
-   - Gate 1 criteria
+   - Phase 2 assignments per role
+   - Gate 2 criteria
    - What's in/out of scope
 
 3. **`docs/10-team/6-role-hats/[your-role].md`** ← Your role (if assigned)
@@ -44,11 +44,11 @@ apply: always
 **Stack:** Next.js App Router, React 19, TypeScript, Tailwind CSS, Supabase, Vercel  
 **Production:** https://flowos-sage.vercel.app  
 
-**Current Phase:** Phase 1 — Establish Implementation Truth  
-**Current Sprint:** 2026-08-04 → 2026-08-08 (Phase 1 sprint active)  
-**Gate 1 Target:** Every admitted MVP domain demonstrable (current behavior, data path, known gaps, owner)  
-**Progress:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04; Phase 1 authorized (D-003)  
-**Decision:** D-003 — Pass Gate 0 and Authorize Phase 1
+**Current Phase:** Phase 2 — Contract the Coherent MVP Loop  
+**Current Sprint:** 2026-08-05 → 2026-08-08 (Phase 2 sprint active)  
+**Gate 2 Target:** Contract coherence — every admitted behavior traces to parent system, journey, design, owner, and validation question  
+**Progress:** Phase 1.5 CLOSED — Gate 1.5 PASSED 2026-08-05; Phase 2 authorized (D-006)  
+**Decision:** D-006 — Gate 1.5 PASS and Phase 2 Authorization
 
 **Team:** Six authoritative hats grouped into Plan, Build, and Ship — solo founder wears all hats
 
@@ -148,7 +148,7 @@ Higher wins:
 2. `docs/00-constitution/documentation-architecture.md`
 3. `docs/01-product/` through `docs/10-team/`
 4. `docs/current-phase/mvp-implementation-masterplan.md`
-5. `docs/current-phase/current-sprint.md` (current Phase 1 work)
+5. `docs/current-phase/current-sprint.md` (current Phase 2 implementation reference)
 6. `docs/00-constitution/governance/`
 7. `.ai/context.md`
 

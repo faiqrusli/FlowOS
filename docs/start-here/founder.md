@@ -111,7 +111,7 @@ Quality maintained through checklists and standards, not process.
 | Need | Doc |
 |------|-----|
 | **Current phase work** | **[Current Sprint](../current-phase/current-sprint.md)** |
-| **Gate 1 checklist** | **[Gate 1 Checklist](../current-phase/phase-1/gate-checklist.md)** |
+| **Gate 2 checklist** | **[Gate 2 Checklist](../current-phase/phase-2/gate-checklist.md)** |
 | **MVP roadmap** | **[MVP Masterplan](../current-phase/mvp-implementation-masterplan.md)** |
 | Product direction | [Vision](../00-constitution/Vision.md) |
 | Product rules | [PRINCIPLES](../00-constitution/governance/PRINCIPLES.md) |

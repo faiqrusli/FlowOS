@@ -7,6 +7,62 @@
 
 ---
 
+## 2026-08-05 — Phase 2 Contract Baseline
+
+**Owner:** Founder (6-hat solo workflow)
+**Status:** `draft`; Gate 2 remains open.
+
+- Drafted the four core feature briefs and behavior contracts for Today, Tasks, Focus, and Reflection.
+- Drafted the bounded MVP coherent-loop journey, supporting decisions for Habits/Schedule/Notes, and MVP record/provenance/correction/continuity rules.
+- Updated the Gate 2 register and sprint states to show P1–P4 as draft outputs; design specifications, validation package, and Founder decision remain open.
+- No Phase 3 implementation or new MVP breadth was admitted.
+
+**Next:** Complete feature design specifications, resolve record-rule open decisions through delivery/validation design, then prepare Gate 2 review.
+
+---
+
+## 2026-08-05 — Phase 2 Sprint and Gate Refinement
+
+**Owner:** Founder (6-hat solo workflow)
+**Status:** `in progress`; Gate 2 remains open.
+
+- Reworked the current sprint into the single Phase 2 implementation reference with task IDs P0–P6, requirements, acceptance criteria, dependencies, artifact paths, checkpoints, risks, and repository readiness checks.
+- Rebuilt the Gate 2 checklist with criteria G2-01–G2-09, traceability evidence, work-package status, review protocol, carried-forward limitations, and Founder decision fields.
+- Updated affected indexes, AI context, phase README, MVP masterplan, Feature Catalog, and drafted contract metadata so status and authority do not drift.
+
+**Next:** Complete P4.5 record-rule decisions and P5 design specifications, then execute P6 Gate 2 review.
+
+---
+
+## 2026-08-05 — Phase 1.5 → Phase 2 Transition Normalization
+
+**Owner:** Founder (6-hat solo workflow)
+**Status:** `committed` on `sprint/phase1.5`; pending Founder review and merge.
+
+- Normalized the docs at the Phase 1.5 close per the mandatory Phase-End Normalization workflow.
+- Archived the full Phase 1.5 sprint record and Gate 1.5 evidence to `docs/11-archive/phases/phase-1.5/`.
+- Rewrote `current-sprint.md` to be short and Phase 2-oriented; created the Phase 2 `README.md` and `gate-checklist.md` skeleton.
+- Updated phase/status across `AGENTS.md`, `.ai/context.md`, `.ai/sprint-context.md`, `.ai/README.md`, `docs/README.md`, `docs/current-phase/README.md`, `GATES.md`, `ENGINEERING.md`, and IDE tool configs to reflect Phase 2 as active.
+- Noted that the decision register references D-006, but no D-006 record file exists; flagged for Founder creation.
+
+**Next:** Founder review; create the D-006 decision record; then begin Phase 2 contract work.
+
+---
+
+## 2026-08-05 — Gate 1 implementation-truth reconciliation
+
+**Owner:** Founder (6-hat solo workflow)
+**Status:** `complete`; Gate 1 passed and Phase 2 authorization confirmed through D-007.
+
+- Consolidated the existing implementation-truth sources and current code paths into `docs/current-phase/phase-1/implementation-truth-evidence.md`.
+- Resolved the Phase 0 backlog by linking every question group to observed behavior, data ownership, route/auth boundaries, or an explicit owned limitation.
+- Updated the Gate 1 checklist, Phase 1 README, masterplan, current sprint, decision register, and Phase 2 handoff to remove the prior status contradiction.
+- Preserved the accepted limitations: pending live migrations and two-account rerun, missing local environment variables, Schedule keyboard review, Singapore midnight boundary, npm audit vulnerabilities, lint warnings, and middleware deprecation.
+
+**Next:** Execute Phase 2 contract work; do not begin Phase 3 implementation before Gate 2 passes.
+
+---
+
 ## 2026-08-05 — Phase 1.5 Implementation Restoration
 
 **Owner:** Founder (6-hat solo workflow)

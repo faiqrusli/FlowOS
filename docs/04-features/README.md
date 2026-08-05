@@ -18,6 +18,19 @@
 - **FEATURE_INVENTORY** = Production state (what users can do)
 - **feature-catalog** = Documentation coverage (what's documented)
 
+## Current Phase 2 Contract Artifacts
+
+The Phase 2 execution reference is [Current Sprint](../current-phase/current-sprint.md). The current draft artifacts are:
+
+| Artifact | Purpose |
+|---|---|
+| [Core briefs](./briefs/) | Today, Tasks, Focus, and Reflection product boundaries |
+| [Core behavior contracts](./behavior/) | Observable states, authority, transitions, recovery, and acceptance questions |
+| [Record rules](./record-rules.md) | Ownership, provenance, correction, and continuity baseline |
+| [Supporting-domain decisions](./supporting-domain-decisions.md) | Minimum Habits, Schedule, and Notes behavior |
+
+These drafts are Gate 2 inputs. They do not authorize Phase 3 implementation until the Gate 2 checklist records `PASS`.
+
 ---
 
 ## Core Principle

@@ -76,7 +76,7 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 
 **Contains:**
 - Product identity and philosophy
-- Current phase (Phase 1.5 — Foundation Infrastructure)
+- Current phase (Phase 2 — Contract the Coherent MVP Loop)
 - Tech stack and architecture
 - Documentation authority hierarchy
 - Solo-founder workflow with 6-hat quality procedures
@@ -195,7 +195,7 @@ Just point your AI to `.ai/context.md` or the relevant workflow.
 
 **6 Checks:**
 1. **User-scoped data access** — No `using(true)`, user_id filtering
-2. **Input validation** — Server-side runtime validation; Zod adoption is a Phase 1.5 decision
+2. **Input validation** — Server-side runtime validation; shared Zod schemas in `src/lib/validation.ts`
 3. **No hardcoded secrets** — Environment variables only
 4. **Row Level Security (RLS)** — On all user data tables
 5. **Auth middleware** — Routes protected by auth
@@ -324,7 +324,7 @@ Ship simple, working code over complex, buggy code.
 16. **`docs/11-archive/`** — Historical reference only (DO NOT use for current work)
 
 **Current sprint:** `docs/current-phase/current-sprint.md`
-**Phase 1.5 gate checklist:** `docs/current-phase/phase-1.5/gate-checklist.md`
+**Phase 2 gate checklist:** `docs/current-phase/phase-2/gate-checklist.md`
 
 ---
 

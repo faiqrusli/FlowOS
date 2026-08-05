@@ -1,53 +1,59 @@
 # FlowOS Current Sprint Context (Quick Reference)
 
-**Sprint Period:** 2026-08-04 → 2026-08-08 (active)  
-**Phase:** Phase 1.5 — Foundation Infrastructure
-**Gate Target:** Gate 1.5 — validate shared forms, runtime validation, date/time semantics, and recovery boundaries
+**Sprint Period:** 2026-08-05 → 2026-08-08 (active)  
+**Phase:** Phase 2 — Contract the Coherent MVP Loop
+**Gate Target:** Gate 2 — Contract Coherence (every admitted behavior traces to parent system, journey, design, owner, and validation question)
 **Last Updated:** 2026-08-05
+
+**Execution authority:** [Current sprint](../docs/current-phase/current-sprint.md) is the single implementation reference for Phase 2. This file is a quick reference only.
 
 ---
 
 ## Quick Overview
 
-**What we're doing:** Restoring and verifying the shared foundation before Phase 2 contracts begin.
+**What we're doing:** Completing the task-identified contract and design package for the admitted MVP loop. P0 is complete; P1–P4 are drafted; P5 design specifications and P6 Gate evidence remain.
 
-**Why:** The MVP Masterplan is the source of truth. Phase 1.5 hardens the shared foundation so later contracts and implementation work are evidence-based.
+**Why:** The MVP Masterplan is the source of truth. Phase 2 turns the changed product model into a small set of cross-surface contracts so Phase 3 can implement without inventing missing rules.
 
 **Who:** Executed via the solo-founder 6-hat workflow.
 
 ---
 
-## Phase 1.5 Objectives
+## Phase 2 Objectives
 
-1. Maintain shared Zod/RHF/date-fns contracts and server-side validation boundaries
-2. Verify auth and retained Task pilot invalid-input, loading, persistence, and recovery behavior
-3. Preserve explicit Asia/Singapore date/time semantics and boundary coverage
-4. Verify task planning projections, reflection autosave, Focus-kanban append, and interruption recovery
-5. Run baseline quality, accessibility, security, and production checks
-6. Record remaining manual evidence and the single Gate 1.5 decision
-
----
-
-## Gate 1.5 Exit Criteria
-
-**For Gate 1.5 to pass:**
-- [ ] Foundation dependencies and contracts are recorded
-- [ ] Auth and retained Task pilot use the shared validation/form pattern
-- [ ] Date/time and recovery semantics are tested and documented
-- [ ] Manual accessibility, isolation, and rollback evidence is recorded
-- [ ] Founder records one final decision; Phase 2 authorization is explicit
-
-**Phase 0 history:** Phase 0 CLOSED — Gate 0 PASSED 2026-08-04. Archived to `docs/11-archive/phases/phase-0/`. See [D-003](../docs/08-decisions/records/D-003-pass-gate-0-and-authorize-phase-1.md).
+1. Write Today, Tasks, Focus, and Reflection feature briefs and behavior contracts
+2. Write the bounded journey contract (orientation, commitment, action, evidence, sensemaking, adaptation)
+3. Decide minimum Habits, Schedule, and Notes behavior that supports the journey
+4. Define source ownership, provenance, correction, and continuity rules for MVP records
+5. Create feature design specifications with full state coverage (content, accessibility, responsive, loading, empty, error, interruption, recovery)
+6. Reference the Phase 1.5 validation, form, and date/time patterns in every contract
 
 ---
 
-## Current Sprint Assignments (Phase 1.5)
+## Gate 2 Exit Criteria
 
-Sprint active 2026-08-04 → 2026-08-08. See [current-sprint.md](../docs/current-phase/current-sprint.md) for full role assignments:
-- Maintain validation, form, and date/time integration boundaries (Engineering Architect)
-- Verify auth and retained Tasks pilot behavior, recovery, and ownership (Implementation Engineer)
-- Verify reflection autosave, Focus-kanban append, and interruption recovery (Implementation Engineer)
-- Complete quality, accessibility, security, and dependency evidence (Release Manager + Founder)
+**For Gate 2 to pass:**
+- [ ] Every core domain has a feature brief and behavior contract
+- [ ] Every admitted behavior traces to a parent system, a journey, a design expression, a data/technical owner, and a validation question
+- [ ] The bounded journey contract connects the full loop
+- [ ] Supporting domains have an explicit minimum-behavior decision
+- [ ] Source ownership, provenance, correction, and continuity rules are defined
+- [ ] Design specs cover all required states
+- [ ] Delivery designs are created only after behavior and design contracts are approved
+- [ ] Founder records one final decision; Phase 3 authorization is explicit
+
+**Prior phase history:** Phase 1 and Phase 1.5 CLOSED — Gate 1 PASSED and Gate 1.5 PASSED 2026-08-05. See [Phase 1 evidence](../docs/current-phase/phase-1/implementation-truth-evidence.md), [D-007](../docs/08-decisions/records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md), and the archived [D-006 Phase 1.5 record](../docs/08-decisions/records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md).
+
+---
+
+## Current Sprint Assignments (Phase 2)
+
+Sprint active 2026-08-05 → 2026-08-08. See [current-sprint.md](../docs/current-phase/current-sprint.md) for the authoritative task register, requirements, dependencies, acceptance criteria, and role assignments:
+- Write core briefs, behavior contracts, journey contract, and supporting decisions (Product Architect)
+- Define technical ownership, provenance, correction, and continuity rules (Engineering Architect)
+- Create feature design specifications with full state coverage (Design Architect)
+- Prepare contract references to Phase 1.5 patterns and delivery designs after approval (Implementation Engineer)
+- Verify contract traceability and package the gate (Release Manager + Founder)
 
 ---
 
@@ -74,63 +80,67 @@ Sprint active 2026-08-04 → 2026-08-08. See [current-sprint.md](../docs/current
 ## Key Documents for This Sprint
 
 **Read these:**
-1. `docs/current-phase/mvp-implementation-masterplan.md` — Phase 1.5 authority and roadmap
+1. `docs/current-phase/mvp-implementation-masterplan.md` — Phase 2 authority and roadmap
 2. `docs/current-phase/current-sprint.md` — Sprint plan
-3. `docs/00-constitution/Vision.md` — Why we're doing this
-4. `docs/01-product/product-model.md` — What FlowOS is
-5. `docs/11-archive/phases/phase-0/implementation-truth-backlog.md` — Starting question list
+3. `docs/current-phase/phase-2/gate-checklist.md` — Gate 2 criteria
+4. `docs/00-constitution/Vision.md` — Why we're doing this
+5. `docs/01-product/product-model.md` — What FlowOS is
+6. `docs/06-engineering/technology-integration-masterplan.md` — Phase 1.5 foundation patterns
 
 **Reference:**
+- `docs/current-phase/phase-2/README.md` — Phase 2 overview
 - `docs/04-features/FEATURE_INVENTORY.md` — Current shipped features
 - `docs/04-features/feature-catalog.md` — Feature domain status
 - `docs/05-design/DESIGN_SYSTEM_V3.md` — Design system
 - `docs/05-design/DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md` — Active palette
+- `docs/11-archive/phases/phase-1.5/phase-1.5-sprint.md` — prior phase record
 
 ---
 
-## What's In Scope This Sprint (Phase 1.5)
+## What's In Scope This Sprint (Phase 2)
 
-✅ Shared Zod/RHF/date-fns validation and date/time boundaries
-✅ Auth and retained Tasks pilot invalid-input, loading, persistence, and recovery behavior
-✅ Task planning projections, reflection autosave, Focus-kanban append, and interruption recovery
-✅ Baseline quality, accessibility, security, and dependency evidence
+→ Today, Tasks, Focus, Reflection feature briefs and behavior contracts — P1 drafted; normalize in P1.5
+→ Bounded journey contract connecting the full loop — P2 drafted; review required
+→ Minimum Habits, Schedule, Notes behavior decisions — P3 drafted; review required
+→ Source ownership, provenance, correction, and continuity rules — P4 drafted; P4.5 decisions remain
+→ Feature design specifications with full state coverage — P5 not started
+→ Contract traceability and Gate 2 evidence — P6 not started
 
 ---
 
 ## What's Out of Scope This Sprint
 
-❌ Writing the coherent MVP loop contracts (Phase 2)  
-❌ Implementing or hardening the core loop (Phase 3)  
-❌ Trust/quality/release readiness (Phase 4)  
-❌ Phase 2 contracts, new MVP breadth, or broad unrelated refactors
+❌ Implementing or hardening the core loop (Phase 3)
+❌ Trust/quality/release readiness (Phase 4)
+❌ New MVP breadth, new routes, or deferred-domain re-admission
+❌ Delivery designs before behavior and design contracts are approved
+❌ Broad refactors or unrelated technical debt
 
 ---
 
 ## Next Phase Preview
 
-**Phase 2:** Contract the Coherent MVP Loop
-- Write Today, Tasks, Focus, Reflection feature briefs and behavior contracts
-- Write the bounded journey contract
-- Create feature design specifications
+**Phase 3:** Implement and Harden the Core Loop
+- Today orientation, task commitment/action, focus mode, evidence, reflection/adaptation, supporting surfaces
 
-**Not starting Phase 2 until Gate 1.5 passes and the Founder explicitly authorizes it.**
+**Not starting Phase 3 until Gate 2 passes and the Founder explicitly authorizes it.**
 
 ---
 
 ## Quick Reference
 
 **When someone asks "What should I work on?"**
-→ Check the [Phase 1.5 sprint assignments](../docs/current-phase/current-sprint.md)
+→ Check the [Phase 2 sprint assignments](../docs/current-phase/current-sprint.md)
 
-**When someone asks "Should I write contracts?"**
-→ Not yet. Phase 1.5 is about foundation readiness. Phase 2 contracts require Gate 1.5 authorization.
+**When someone asks "Should I write delivery designs?"**
+→ Not yet. Delivery designs require approved behavior and design contracts.
 
 **When someone asks "What's the goal?"**
-→ Gate 1.5: Shared foundations and recovery must be evidenced before Phase 2.
+→ Gate 2: Contracts must be traceable — parent system, journey, design, owner, validation question.
 
-**When someone asks "When do we assess implementation?"**
-→ Phase 1.5 — foundation evidence and recovery verification now.
+**When someone asks "When do we implement?"**
+→ Phase 3 — after Gate 2 passes and the Founder authorizes implementation.
 
 ---
 
-**This is Phase 1. We're determining what the code actually does before we branch contracts.
+**This is Phase 2. The current sprint is the implementation reference; we're completing the coherent MVP loop contracts before Phase 3 implementation.**

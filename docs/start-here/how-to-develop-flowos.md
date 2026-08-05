@@ -137,7 +137,7 @@ Just excellent software with quality maintained through checklists and standards
 Before every merge, verify:
 
 1. User-scoped data access — No using(true), proper auth.uid() filtering
-2. Input validation — Server-side runtime validation; Zod adoption is scheduled for Phase 1.5
+2. Input validation — Server-side runtime validation; shared Zod schemas in `src/lib/validation.ts`
 3. No hardcoded secrets — Environment variables only
 4. Row Level Security (RLS) — On all user data tables
 5. Auth middleware — Routes protected by auth
