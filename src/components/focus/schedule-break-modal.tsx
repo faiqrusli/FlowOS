@@ -41,6 +41,8 @@ export function ScheduleBreakModal({ open, onOpenChange }: ScheduleBreakModalPro
     const min = getMinBreakAtMinutes(currentFocusMinutes);
     const seeded =
       quick.breakAtMinutes ?? getDefaultBreakAtMinutes(currentFocusMinutes);
+    // Seed the break draft from the active focus session when opening.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialize modal state from external focus state
     setBreakAtMinutes(Math.max(seeded, min));
     setBreakLengthMinutes(quick.breakLengthMinutes ?? DEFAULT_BREAK_LENGTH_MINUTES);
     // Only re-seed draft when the modal opens.

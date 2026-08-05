@@ -29,6 +29,8 @@ export function KanbanBoardDialog({
 
   useEffect(() => {
     if (!open) {
+      // Closing the dialog clears its transient draft.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset dialog state from the external open flag
       setTitle("");
       setError(null);
     }

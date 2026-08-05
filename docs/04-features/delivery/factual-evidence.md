@@ -1,10 +1,11 @@
 # Factual Evidence Delivery Design
 
-**Status:** `DRAFT` — ready for Founder scope/design checkpoint
+**Status:** `APPROVED` — Founder checkpoint passed through D-010; automated implementation evidence recorded, manual/live evidence pending
 **Owner:** Engineering Architect (Founder)
 **Product scope owner:** Product Architect (Founder)
 **Created:** 2026-08-05
 **Last updated:** 2026-08-05
+**Implementation evidence:** [Factual evidence implementation evidence](../../current-phase/phase-3/factual-evidence-implementation-evidence.md)
 **Authorized behavior contracts:** [Tasks](../behavior/tasks.md) · [Focus](../behavior/focus.md) · [MVP record rules](../record-rules.md)
 **Authorized brief/context:** [Tasks brief](../briefs/tasks.md) · [Focus brief](../briefs/focus.md) · [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md)
 **Design specifications:** [Tasks](../../05-design/features/tasks-design-spec.md) · [Focus](../../05-design/features/focus-design-spec.md)

@@ -177,6 +177,8 @@ export function ScheduleTimePickerField({
 
   useEffect(() => {
     if (!open) {
+      // Reset the draft when the picker closes.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize transient picker state with the external open flag
       setParts(parseTimePickerParts(value));
     }
   }, [open, value]);

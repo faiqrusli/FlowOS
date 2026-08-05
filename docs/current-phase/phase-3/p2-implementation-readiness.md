@@ -1,9 +1,11 @@
 # P2–P6 Implementation Readiness Summary
 
 **Date:** 2026-08-05  
-**Status:** ✅ READY FOR P2 IMPLEMENTATION  
+**Status:** ✅ READY FOR P2 IMPLEMENTATION; P1 orientation later deferred by D-014
 **Owner:** Founder  
 **Next Action:** Begin P2 Tasks implementation per [approved delivery design](../../04-features/delivery/tasks-core-loop.md)
+
+> This is a dated readiness summary from 2026-08-05. [D-014](../../08-decisions/records/D-014-defer-today-orientation-and-make-workspace-canonical.md), accepted on 2026-08-06, makes the interactive workspace at `/` the MVP Today entry and defers the separate P1 read-only orientation composition.
 
 ## Checkpoint Decisions Complete
 
@@ -18,7 +20,7 @@ All required Founder checkpoint decisions have been recorded:
 
 - ✅ Status updated to `IN_PROGRESS`
 - ✅ G3-01 marked as `APPROVED`
-- ✅ Package approval checkpoint section shows all six packages approved
+- ✅ Package approval checkpoint section records the active P2–P6 packages; P1 orientation is now historical/deferred by D-014
 - ✅ Carried conditions table updated with disposition schedule
 - ✅ P2–P6 checkpoint section added with decision links
 
@@ -52,7 +54,7 @@ All required Founder checkpoint decisions have been recorded:
 
 | Package | Status | Delivery Design | Validation Plan |
 |---|---|---|---|
-| P1 Today | Implementation in progress | [Approved D-009](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md) | [Validation plan](../../04-features/validation/today-orientation.md) |
+| P1 Today orientation | Deferred for MVP by D-014; D-009 approval is historical | [D-009](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md) | [Validation plan](../../04-features/validation/today-orientation.md) |
 | P2 Tasks | ✅ AUTHORIZED | [Delivery design](../../04-features/delivery/tasks-core-loop.md) | [Validation plan](../../04-features/validation/tasks-core-loop.md) |
 | P3 Focus | ✅ AUTHORIZED | [Delivery design](../../04-features/delivery/focus-core-loop.md) | [Validation plan](../../04-features/validation/focus-core-loop.md) |
 | P4 Evidence | ✅ AUTHORIZED | [Delivery design](../../04-features/delivery/factual-evidence.md) | [Validation plan](../../04-features/validation/factual-evidence.md) |

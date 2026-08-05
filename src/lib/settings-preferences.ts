@@ -94,6 +94,6 @@ export function saveThemePreference(theme: ThemePreference): void {
   setStorageItem(THEME_KEY, theme);
 }
 
-export function resolveTheme(_theme?: ThemePreference): "dark" {
+export function resolveTheme(): "dark" {
   return "dark";
 }

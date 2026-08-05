@@ -7,6 +7,7 @@ import {
   CircleHelp,
   Clock3,
   FileText,
+  Play,
   RefreshCw,
   Repeat2,
   Timer,
@@ -110,11 +111,15 @@ export function TodayPageContent() {
   }, []);
 
   useEffect(() => {
+    // Load Today composition after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local composition state
     void loadComposition();
   }, [loadComposition]);
 
   useEffect(() => {
     if (!lastSavedSession?.id) return;
+    // Refresh Today after a focus session is saved.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local composition with an external session event
     void loadComposition("focus");
   }, [lastSavedSession?.id, loadComposition]);
 
@@ -159,6 +164,13 @@ export function TodayPageContent() {
             <p className="mt-1 text-sm text-muted-foreground">{todayHeading}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/workplace"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <Play className="size-3.5" aria-hidden />
+              Start working
+            </Link>
             <Link
               href="/tasks"
               className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border-subtle bg-control-default px-2.5 text-xs font-medium text-foreground/85 transition-colors hover:bg-control-hover hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"

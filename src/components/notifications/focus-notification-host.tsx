@@ -19,6 +19,8 @@ export function FocusNotificationHost() {
   useEffect(() => {
     if (!notification) return;
     const id = crypto.randomUUID();
+    // Append notifications emitted by the focus context.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize the local toast queue with an external event
     setToasts((prev) => [...prev, { id, message: notification }]);
     clearNotification();
     const timer = window.setTimeout(() => {

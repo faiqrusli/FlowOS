@@ -46,6 +46,8 @@ export function GlobalAccessPanel({
 
   useEffect(() => {
     if (expanded) {
+      // Keep the body mounted during the panel's open transition.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize transition state with the external open flag
       setShowBody(true);
       return;
     }

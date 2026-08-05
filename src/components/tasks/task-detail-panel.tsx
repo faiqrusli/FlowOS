@@ -47,8 +47,10 @@ import {
 import {
   appendTaskToNextUp,
   isEligibleForNextUp,
+  isNextUpPersistenceAvailable,
   removeTaskFromNextUp,
 } from "@/lib/task-next-up";
+import { NEXT_UP_UNAVAILABLE_MESSAGE } from "@/lib/phase3-capabilities";
 import { cn } from "@/lib/utils";
 import {
   drawerTitleFieldClass,
@@ -173,10 +175,13 @@ export function TaskDetailFields({
   const addedToNextUp = queuedOverride ?? task.queue_order !== null;
   const canAddToNextUp = isEligibleForNextUp(task) && !addedToNextUp;
   const showQueueControl = canAddToNextUp || addedToNextUp;
+  const nextUpAvailable = isNextUpPersistenceAvailable();
   const titleField = useWritingField(task.id, task.title);
   const descriptionField = useWritingField(task.id, task.description ?? "");
 
   useEffect(() => {
+    // Clear the queue override when the selected task changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset transient detail state for the external task selection
     setQueuedOverride(null);
   }, [task.id, task.queue_order]);
 
@@ -265,7 +270,7 @@ export function TaskDetailFields({
             drawerTitleFieldClass,
           )}
         />
-        {showQueueControl ? (
+        {showQueueControl && nextUpAvailable ? (
           <button
             type="button"
             onClick={() =>
@@ -294,6 +299,12 @@ export function TaskDetailFields({
           </button>
         ) : null}
       </div>
+
+      {!nextUpAvailable && isEligibleForNextUp(task) ? (
+        <p className="text-xs leading-relaxed text-muted-foreground" role="status">
+          {NEXT_UP_UNAVAILABLE_MESSAGE}
+        </p>
+      ) : null}
 
       <div className="space-y-1.5">
         <Label

@@ -1,10 +1,12 @@
-# Today Orientation — Implementation Evidence (In Progress)
+# Today Orientation — Implementation Evidence (Deferred)
 
-**State:** `IN_PROGRESS` — implementation baseline is on `sprint/phase3`; this record does not pass Gate 3
-**Date:** 2026-08-05 (updated after configured build verification)
+**State:** `DEFERRED_FOR_MVP` — superseded by [D-014](../../08-decisions/records/D-014-defer-today-orientation-and-make-workspace-canonical.md); retained as historical evidence only
+**Date:** 2026-08-06
 **Owner:** Founder / Implementation Engineer
 **Authority:** [Today orientation validation plan](../../04-features/validation/today-orientation.md) · [D-009](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md)
 **Gate link:** [Gate 3 checklist](./gate-checklist.md#exit-criteria)
+
+> The read-only orientation implementation described below is not mounted at the MVP root and is not active Gate 3 evidence. The canonical MVP Today entry is the interactive workspace at `/`.
 
 ## Scope implemented
 

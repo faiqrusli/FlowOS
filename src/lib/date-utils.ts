@@ -51,23 +51,6 @@ const dateKeyFormatter = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
 });
 
-const weekdayFormatter = new Intl.DateTimeFormat("en-US", {
-  timeZone: APP_TIMEZONE,
-  weekday: "short",
-});
-
-const weekdayLongFormatter = new Intl.DateTimeFormat(APP_LOCALE, {
-  timeZone: APP_TIMEZONE,
-  weekday: "long",
-});
-
-const todayHeadingFormatter = new Intl.DateTimeFormat(APP_LOCALE, {
-  timeZone: APP_TIMEZONE,
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-});
-
 const WEEKDAY_TO_ABBREV: Record<string, string> = {
   Sun: "Sun",
   Mon: "Mon",
@@ -175,12 +158,20 @@ export function formatRelativeDateLabel(
 }
 
 export function getTodayDayAbbrev(timeZone: string = APP_TIMEZONE): string {
-  const weekday = weekdayFormatter.format(getAppNow());
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "short",
+  }).format(getAppNow());
   return WEEKDAY_TO_ABBREV[weekday] ?? weekday;
 }
 
 export function formatTodayHeading(timeZone: string = APP_TIMEZONE): string {
-  return todayHeadingFormatter.format(getAppNow());
+  return new Intl.DateTimeFormat(APP_LOCALE, {
+    timeZone,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(getAppNow());
 }
 
 export function formatWeekdayLabel(
@@ -188,7 +179,10 @@ export function formatWeekdayLabel(
   timeZone: string = APP_TIMEZONE
 ): string {
   const date = dateKeyToUtcDate(dateKey);
-  return weekdayLongFormatter.format(date);
+  return new Intl.DateTimeFormat(APP_LOCALE, {
+    timeZone,
+    weekday: "long",
+  }).format(date);
 }
 
 /** Sidebar / daily note header date, e.g. "Thursday, 2 July". */

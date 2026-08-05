@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -73,12 +73,12 @@ export function TaskDialog({
   const [internalOpen, setInternalOpen] = useState(false);
   const {
     register,
+    control,
     handleSubmit,
     reset,
     setValue,
     setError,
     clearErrors,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
@@ -125,14 +125,9 @@ export function TaskDialog({
     }
   }
 
-  // React Hook Form's watch() returns functions that cannot be safely memoized.
-  // This is a known limitation of the library and safe to suppress.
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const scheduledDate = watch("scheduledDate");
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const scheduledTime = watch("scheduledTime");
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const priority = watch("priority");
+  const scheduledDate = useWatch({ control, name: "scheduledDate" });
+  const scheduledTime = useWatch({ control, name: "scheduledTime" });
+  const priority = useWatch({ control, name: "priority" });
 
   const formFields = (
     <form onSubmit={handleSubmit(handleSave)} className="space-y-4">

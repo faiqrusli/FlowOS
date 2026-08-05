@@ -92,6 +92,8 @@ export function SchedulePageContent() {
   }, []);
 
   useEffect(() => {
+    // Load the schedule board after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local schedule state
     void loadBoard();
     trackFeatureUsage("schedule", "view");
   }, [loadBoard]);
@@ -102,12 +104,15 @@ export function SchedulePageContent() {
   }, []);
 
   useEffect(() => {
+    // Rebuild the today column when the viewed date changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize derived board state with the external view date
     setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
   }, [todayViewDate]);
 
   useEffect(() => {
+    const timers = updateTimers.current;
     return () => {
-      for (const timer of updateTimers.current.values()) {
+      for (const timer of timers.values()) {
         clearTimeout(timer);
       }
     };

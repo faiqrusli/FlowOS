@@ -1,10 +1,11 @@
 # Supporting Surfaces Delivery Design
 
-**Status:** `DRAFT` — ready for Founder scope/design checkpoint
+**Status:** `APPROVED` — Founder checkpoint passed through D-010; automated implementation evidence recorded, manual/live evidence pending
 **Owner:** Engineering Architect (Founder)
 **Product scope owner:** Product Architect (Founder)
 **Created:** 2026-08-05
 **Last updated:** 2026-08-05
+**Implementation evidence:** [Supporting surfaces implementation evidence](../../current-phase/phase-3/supporting-surfaces-implementation-evidence.md)
 **Authorized boundary:** [Supporting-domain decisions](../supporting-domain-decisions.md)
 **Journey context:** [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md) · [MVP record rules](../record-rules.md)
 **Design context:** [Today](../../05-design/features/today-design-spec.md) · [Tasks](../../05-design/features/tasks-design-spec.md) · [Focus](../../05-design/features/focus-design-spec.md) · [Reflection](../../05-design/features/reflection-design-spec.md)

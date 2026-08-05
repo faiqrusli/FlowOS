@@ -12,7 +12,7 @@ import {
   MANUAL_ORDER_STEP,
   type ManualOrderUpdate,
 } from "@/lib/manual-order";
-import { partitionGroupTasks, type TaskDragTarget } from "@/lib/task-drag-utils";
+import type { TaskDragTarget } from "@/lib/task-drag-utils";
 import {
   filterTasksForGroup,
   isTodayGroup,

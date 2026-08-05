@@ -53,6 +53,8 @@ export function WorkplaceFocusReflectionModal({
 
   useEffect(() => {
     if (!open) return;
+    // Load the reflection entry when the modal opens.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local modal state
     void loadReflection();
   }, [open, loadReflection]);
 

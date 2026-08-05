@@ -86,7 +86,33 @@ export function NotesPanel({
   const pendingPatchById = useRef(new Map<string, NoteTextPatch>());
   const savingIds = useRef(new Set<string>());
   const notesRef = useRef(notes);
-  notesRef.current = notes;
+  useEffect(() => {
+    notesRef.current = notes;
+  }, [notes]);
+  const persistNoteRef = useRef<
+    ((
+      id: string,
+      patch: { title?: string; content?: string; is_pinned?: boolean },
+    ) => Promise<void>) | null
+  >(null);
+  const scheduleSaveRef = useRef<(id: string) => void>(() => undefined);
+
+  const scheduleSave = useCallback((id: string) => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      const pending = pendingPatchById.current.get(id);
+      if (!pending) return;
+      if (savingIds.current.has(id)) {
+        scheduleSaveRef.current(id);
+        return;
+      }
+      void persistNoteRef.current?.(id, { ...pending });
+    }, 800);
+  }, []);
+
+  useEffect(() => {
+    scheduleSaveRef.current = scheduleSave;
+  }, [scheduleSave]);
 
   const sortedNotes = useMemo(() => sortNotesForList(notes), [notes]);
   const selected = notes.find((note) => note.id === selectedId) ?? null;
@@ -102,6 +128,8 @@ export function NotesPanel({
   }, [sortedNotes, search]);
 
   useEffect(() => {
+    // Keep the selected note valid as the external note list changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize transient selection with external list data
     if (!selectedId && sortedNotes[0]) setSelectedId(sortedNotes[0].id);
     if (
       selectedId &&
@@ -161,21 +189,12 @@ export function NotesPanel({
         savingIds.current.delete(id);
       }
     },
-    [onNotesChange],
+    [onNotesChange, scheduleSave],
   );
 
-  function scheduleSave(id: string) {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      const pending = pendingPatchById.current.get(id);
-      if (!pending) return;
-      if (savingIds.current.has(id)) {
-        scheduleSave(id);
-        return;
-      }
-      void persistNote(id, { ...pending });
-    }, 800);
-  }
+  useEffect(() => {
+    persistNoteRef.current = persistNote;
+  }, [persistNote]);
 
   function updateLocal(id: string, patch: Partial<Note>) {
     setSaveError(false);

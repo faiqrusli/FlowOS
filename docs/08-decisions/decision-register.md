@@ -5,7 +5,7 @@
 **Owner:** Product and documentation leadership
 **Parent:** [Documentation Architecture](../00-constitution/documentation-architecture.md) · [Decision Records](./decision-records.md)
 **Children:** Individual decision records in `08-decisions/records/`
-**Last reviewed:** 2026-08-05
+**Last reviewed:** 2026-08-06
 **Review trigger:** A decision record is created, corrected, superseded, closed, or moved to archival history.
 
 ---
@@ -29,6 +29,7 @@ The register lists only decisions governed by [Decision Records](./decision-reco
 | D-007 | Gate 1 Current Build Truth and Phase 2 Authorization | Accepted — Gate 1 PASSED, Phase 2 authorized | Founder | 2026-08-05 | Phase governance | [D-007](./records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md) |
 | D-008 | Pass Gate 2 and Authorize Phase 3 | Accepted — Gate 2 PASSED, Phase 3 authorized | Founder | 2026-08-05 | Phase governance | [D-008](./records/D-008-pass-gate-2-and-authorize-phase-3.md) |
 | D-009 | Approve Today Orientation Delivery Design and Validation Plan | Accepted — Founder scope/design checkpoint passed; P1 implementation authorized | Founder | 2026-08-05 | Phase 3 P1 delivery | [D-009](./records/D-009-approve-today-orientation-delivery-design.md) |
+| D-014 | Defer Today Orientation and Make the Workspace Canonical | Accepted — MVP route decision | Founder | 2026-08-06 | Phase 3 MVP route | [D-014](./records/D-014-defer-today-orientation-and-make-workspace-canonical.md) |
 
 ## Register Rules
 

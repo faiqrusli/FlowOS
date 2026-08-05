@@ -68,10 +68,8 @@ export function TaskBoardActionsProvider({
       onDeleteTask: (taskId) => actionsRef.current.onDeleteTask(taskId),
       onUpdateTask: (taskId, updates) =>
         actionsRef.current.onUpdateTask(taskId, updates),
-      onSetPlanningState: actionsRef.current.onSetPlanningState
-        ? (taskId, planningState) =>
-            actionsRef.current.onSetPlanningState?.(taskId, planningState)
-        : undefined,
+      onSetPlanningState: (taskId, planningState) =>
+        actionsRef.current.onSetPlanningState?.(taskId, planningState),
       onRequestCreateGroup: (taskId) =>
         actionsRef.current.onRequestCreateGroup(taskId),
       onTaskPointerDragStart: (taskId, groupId, coords) =>

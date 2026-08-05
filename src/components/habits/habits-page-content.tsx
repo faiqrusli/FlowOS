@@ -45,6 +45,8 @@ export function HabitsPageContent() {
   }, []);
 
   useEffect(() => {
+    // Load habits when the memoized page loader changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local data state
     loadHabits();
     trackFeatureUsage("habits", "view");
   }, [loadHabits]);

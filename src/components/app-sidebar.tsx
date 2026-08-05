@@ -413,6 +413,8 @@ export function AppSidebar({
     const stage = resolveShellNavStage(width);
     const preference = getSidebarCollapsedPreference();
     prevViewportWidthRef.current = width;
+    // Responsive shell state is synchronized from the measured viewport.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- update layout state from the DOM measurement
     setNavStage(stage);
 
     // At/below 70%: default to icon rail when no preference yet.

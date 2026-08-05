@@ -34,7 +34,10 @@ import {
   selectContinueTasks,
   type TodayFocusedTaskRow,
 } from "@/lib/focus-continue";
-import { fetchTodayFocusedTaskHistory } from "@/lib/focus-task-totals";
+import {
+  fetchTodayFocusedTaskHistory,
+  FocusTaskAttributionUnavailableError,
+} from "@/lib/focus-task-totals";
 import {
   formatDurationCompact,
   getSessionFocusSeconds,
@@ -218,7 +221,6 @@ export function WorkplaceFocusCard({
   onToggleHabitComplete,
   onOpenDetail,
   onOpenHabit,
-  onContinueLater,
   onContinueTomorrow,
   onPlanLater,
   onDeleteTask,
@@ -267,6 +269,8 @@ export function WorkplaceFocusCard({
   const [todayFocusHistory, setTodayFocusHistory] = useState<
     TodayFocusedTaskRow[]
   >([]);
+  const [focusAttributionUnavailable, setFocusAttributionUnavailable] =
+    useState(false);
   const [habitQueueRefs, setHabitQueueRefs] = useState<QueueItem[]>([]);
   const [unifiedQueueOrder, setUnifiedQueueOrder] = useState<UnifiedQueueKey[]>(
     [],
@@ -347,8 +351,11 @@ export function WorkplaceFocusCard({
   );
 
   const continueFocusHistory = useMemo(
-    () => mergeActiveSessionIntoTodayFocus(todayFocusHistory, activeSession),
-    [activeSession, todayFocusHistory],
+    () =>
+      focusAttributionUnavailable
+        ? []
+        : mergeActiveSessionIntoTodayFocus(todayFocusHistory, activeSession),
+    [activeSession, focusAttributionUnavailable, todayFocusHistory],
   );
 
   const continueTasks = useMemo(() => {
@@ -377,6 +384,8 @@ export function WorkplaceFocusCard({
   useEffect(() => {
     const taskIds = displayedNextUpTasks.map((task) => task.id);
     const habitIds = habitQueueRefs.map((ref) => ref.sourceId);
+    // Reconcile the persisted mixed task/habit queue with live data.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local queue state with external task and habit data
     setUnifiedQueueOrder((prev) => {
       const base = prev.length > 0 ? prev : fetchUnifiedQueueOrder();
       const merged = mergeUnifiedQueueOrder(base, taskIds, habitIds);
@@ -414,27 +423,41 @@ export function WorkplaceFocusCard({
   const refreshTodayFocusHistory = useCallback(async () => {
     try {
       setTodayFocusHistory(await fetchTodayFocusedTaskHistory());
+      setFocusAttributionUnavailable(false);
     } catch (error) {
+      if (error instanceof FocusTaskAttributionUnavailableError) {
+        setTodayFocusHistory([]);
+        setFocusAttributionUnavailable(true);
+        return;
+      }
       // Keep last known continue history.
       console.error("[focus] today focus history refresh failed", error);
     }
   }, []);
 
   useEffect(() => {
+    // Refresh focus statistics when the session state changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local statistics state
     void loadStats();
   }, [loadStats, quick.isIdle, pomodoro.isIdle]);
 
   useEffect(() => {
+    // Refresh today's attribution after a saved focus session.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local history state
     void refreshTodayFocusHistory();
   }, [lastSavedSession, quick.isIdle, refreshTodayFocusHistory]);
 
   useEffect(() => {
+    // Refresh the Next Up queue when board groups change.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local queue state
     void refreshNextUpTasks();
   }, [groups, refreshNextUpTasks]);
 
   useEffect(() => {
     const liveTasks = groups.flatMap((group) => group.tasks);
     const liveById = new Map(liveTasks.map((task) => [task.id, task]));
+    // Remove stale queue entries and merge live task records.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local queue state with external board data
     setNextUpTasks((current) => {
       const { kept, removedIds } = pruneNextUpTasks(current, liveTasks);
       if (removedIds.length === 0) {
@@ -457,6 +480,8 @@ export function WorkplaceFocusCard({
   }, [groups, refreshNextUpTasks]);
 
   useEffect(() => {
+    // Prune habit queue entries when the external habit list changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local queue state with external habit data
     setHabitQueueRefs(pruneHabitQueueRefs(habits));
   }, [habits]);
 
@@ -502,6 +527,8 @@ export function WorkplaceFocusCard({
 
   useEffect(() => {
     if (tab !== "focus" || quick.isIdle) {
+      // The timer is fully visible whenever no active focus session is present.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize visibility state with DOM/session measurement inputs
       setTimerHeroInView(true);
       return;
     }
@@ -566,6 +593,8 @@ export function WorkplaceFocusCard({
     if (!lastSavedSession || !pendingInlineReflectionRef.current) return;
     pendingInlineReflectionRef.current = false;
     if (shouldPromptFocusReflection(getSessionFocusSeconds(lastSavedSession))) {
+      // Open the inline reflection after a qualifying session completes.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local modal state with an external session event
       setInlineReflectionSession(lastSavedSession);
     }
   }, [lastSavedSession]);
@@ -1677,13 +1706,16 @@ export function WorkplaceFocusCard({
                     focusSoftened={quick.isPaused || quick.isOnBreak}
                     hasQueueNext={Boolean(resolveQueueHead())}
                     focusedSeconds={
-                      currentFocusTask && activeSession
+                      !focusAttributionUnavailable &&
+                      currentFocusTask &&
+                      activeSession
                         ? getTaskFocusedSeconds(
                             activeSession,
                             currentFocusTask.id,
                           )
                         : 0
                     }
+                    attributionAvailable={!focusAttributionUnavailable}
                     onOpenTask={(task) => onOpenDetail(task.id)}
                     onCompleteTask={handleCompleteCurrentTask}
                     onFocusNext={handleFocusNextItem}

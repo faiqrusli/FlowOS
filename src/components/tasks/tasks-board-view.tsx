@@ -71,7 +71,6 @@ import {
   setQuickScheduleOpen,
 } from "@/lib/timeline-drag";
 import {
-  formatTodayColumnTitle,
   getGroupDisplayTitle,
   canReorderTasksInGroup,
   isInboxGroup,
@@ -155,6 +154,7 @@ import {
 } from "@/lib/group-drop-layout-animation";
 import { applyManualActiveReorder } from "@/lib/manual-reorder";
 import type { ManualOrderUpdate } from "@/lib/manual-order";
+import { applyLiveBoardReorderIfChanged } from "@/lib/dnd/live-board-reorder";
 import {
   animateTaskDragPreviewCancel,
   createTaskDragPreview,
@@ -183,7 +183,6 @@ import {
   isSameGroupActiveReorderAttempt,
   moveGroupInBoard,
   moveTaskInBoard,
-  partitionGroupTasks,
   taskDragTargetsEqual,
   type TaskDragTarget,
   type TaskDragZone,
@@ -426,12 +425,14 @@ function TasksBoardViewContent({
   const inboxGroupIdRef = useRef<string | null>(null);
   const plannerActiveRef = useRef(plannerActive);
 
-  const [externalTaskDragId, setExternalTaskDragId] = useState<string | null>(
+  const [, setExternalTaskDragId] = useState<string | null>(
     null,
   );
   const selectedTaskIdRef = useRef(selectedTaskId);
   const taskDropTargetRef = useRef<TaskDragTarget | null>(null);
   const commitDropTargetRef = useRef<TaskDragTarget | null>(null);
+  const liveBoardTargetRef = useRef<TaskDragTarget | null>(null);
+  const taskDragInitialBoardRef = useRef<TaskGroupWithTasks[] | null>(null);
   const columnStickyDropRef = useRef<{
     columnId: string;
     target: TaskDragTarget;
@@ -564,6 +565,9 @@ function TasksBoardViewContent({
       stopBoardAutoScroll();
       setTaskDropIfChanged(null);
     }
+    // The drop target helper is intentionally render-scoped; its state writes
+    // are guarded by refs and the effect only follows planner activation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plannerActive]);
 
   useEffect(() => {
@@ -585,6 +589,9 @@ function TasksBoardViewContent({
 
     document.addEventListener("mousedown", handlePointerDown);
     return () => document.removeEventListener("mousedown", handlePointerDown);
+    // The compose handler is render-scoped but this listener follows the active
+    // compose session only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [composingGroupId]);
 
   useEffect(() => {
@@ -660,6 +667,8 @@ function TasksBoardViewContent({
     dragEndedRef.current = false;
     beginDrag("task", taskId);
     setActiveTaskDragId(taskId);
+    taskDragInitialBoardRef.current = groupsRef.current;
+    liveBoardTargetRef.current = null;
     dragSourceGroupIdRef.current = groupId;
     dragOriginalSourceGroupIdRef.current = groupId;
     invalidateBoardDragMeasurements();
@@ -986,7 +995,40 @@ function TasksBoardViewContent({
     setTaskDropIfChanged(target);
   }
 
+  function applyLiveBoardPreview(target: TaskDragTarget) {
+    const taskId = getActiveTaskDragIdForDrop();
+    const sourceGroupId = dragOriginalSourceGroupIdRef.current;
+    const currentGroupId = groupsRef.current.find((group) =>
+      group.tasks.some((task) => task.id === taskId),
+    )?.id;
+    if (!taskId || !sourceGroupId || !currentGroupId) return;
+    if (currentGroupId === target.groupId) return;
+
+    const result = applyLiveBoardReorderIfChanged(
+      groupsRef.current,
+      target,
+      taskId,
+      sourceGroupId,
+      liveBoardTargetRef.current,
+      {
+        todayGroupId: todayGroupIdRef.current,
+        laterGroupId: laterGroupIdRef.current,
+        inboxGroupId: inboxGroupIdRef.current,
+        todayViewDate: todayViewDateRef.current,
+      },
+    );
+    if (!result) return;
+
+    groupsRef.current = result.board;
+    liveBoardTargetRef.current = target;
+    invalidateActiveBodyRowMidpoints(sourceGroupId);
+    invalidateActiveBodyRowMidpoints(target.groupId);
+    invalidateBoardDragMeasurements();
+    onGroupsChangeRef.current(result.board);
+  }
+
   function applyStickyColumnTarget(columnId: string, target: TaskDragTarget) {
+    applyLiveBoardPreview(target);
     columnStickyDropRef.current = { columnId, target };
     taskDropTargetRef.current = target;
     setTaskDragStickyTarget(columnId, target);
@@ -998,19 +1040,6 @@ function TasksBoardViewContent({
       pointerSyncRafRef.current = null;
     }
     pendingPointerRef.current = null;
-  }
-
-  function scheduleBoardTaskDropTargetSync(clientX: number, clientY: number) {
-    pointerXRef.current = clientX;
-    pointerYRef.current = clientY;
-    pendingPointerRef.current = { x: clientX, y: clientY };
-    if (pointerSyncRafRef.current !== null) return;
-    pointerSyncRafRef.current = requestAnimationFrame(() => {
-      pointerSyncRafRef.current = null;
-      const pending = pendingPointerRef.current;
-      if (!pending) return;
-      syncBoardTaskDropTargetFromPointer(pending.x, pending.y);
-    });
   }
 
   function ensureCompletedVisible(groupId: string) {
@@ -1294,6 +1323,9 @@ function TasksBoardViewContent({
 
     document.addEventListener("dragover", onDocumentDragOver);
     return () => document.removeEventListener("dragover", onDocumentDragOver);
+    // The document drag listener intentionally reads the latest drag behavior
+    // from refs; re-binding it to render-scoped handlers adds listener churn.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -1431,6 +1463,8 @@ function TasksBoardViewContent({
     destroyTaskDragPreview();
     detachGroupDragKeyListener();
     groupDragInitialBeforeIdRef.current = null;
+    liveBoardTargetRef.current = null;
+    taskDragInitialBoardRef.current = null;
   }
 
   function canCommitBoardTaskDrop(
@@ -1459,6 +1493,28 @@ function TasksBoardViewContent({
       !canAcceptActiveDropTarget(groupsRef.current, sourceGroupId, target)
     ) {
       return false;
+    }
+
+    if (liveBoardTargetRef.current) {
+      const initialBoard = taskDragInitialBoardRef.current ?? groupsRef.current;
+      const next = moveTaskInBoard(initialBoard, activeDragId, target, {
+        todayGroupId: todayGroupIdRef.current,
+        laterGroupId: laterGroupIdRef.current,
+        inboxGroupId: inboxGroupIdRef.current,
+        todayViewDate: todayViewDateRef.current,
+        sourceGroupId,
+      });
+
+      groupsRef.current = next;
+      onGroupsChangeRef.current(next);
+      void onPersistLayout(next, {
+        todayViewDate: todayViewDateRef.current,
+        previousBoard: initialBoard,
+      }).catch(() => {
+        groupsRef.current = initialBoard;
+        onGroupsChangeRef.current(initialBoard);
+      });
+      return true;
     }
 
     const sourceGroup = sourceGroupId
@@ -1490,6 +1546,12 @@ function TasksBoardViewContent({
     applyTaskDropTarget(null);
     clearTaskDropReveal();
     clearTaskDropLayoutAnimation();
+
+    const initialBoard = taskDragInitialBoardRef.current;
+    if (initialBoard) {
+      groupsRef.current = initialBoard;
+      onGroupsChangeRef.current(initialBoard);
+    }
 
     if (!taskId) {
       destroyTaskDragPreview();
@@ -2512,6 +2574,8 @@ function TasksBoardViewContent({
         handleTaskPointerDragStart(taskId, groupId, coords),
       onTaskPointerDragEnd: handleTaskPointerDragEnd,
     }),
+    // Pointer handlers intentionally use refs for the live drag snapshot.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       onToggleComplete,
       onSelectTask,

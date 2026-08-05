@@ -50,6 +50,8 @@ export function DashboardPageContent() {
   }, []);
 
   useEffect(() => {
+    // Load the dashboard's external data when its memoized loader changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local status and data state
     loadDashboard();
   }, [loadDashboard]);
 

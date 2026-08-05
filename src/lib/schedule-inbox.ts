@@ -1,5 +1,3 @@
-import { getTodayDateString } from "@/lib/date-utils";
-import type { TaskBuckets } from "@/lib/tasks";
 import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
 
@@ -11,9 +9,7 @@ export type ScheduleInbox = {
 
 export function buildScheduleInbox(
   tasks: Task[],
-  habits: Habit[],
-  buckets: TaskBuckets,
-  todayKey = getTodayDateString()
+  habits: Habit[]
 ): ScheduleInbox {
   const unscheduledTasks = tasks.filter(
     (task) =>

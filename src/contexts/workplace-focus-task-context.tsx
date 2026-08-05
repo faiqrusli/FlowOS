@@ -21,6 +21,7 @@ import { fetchNextUpTasks } from "@/lib/task-next-up";
 import type { FocusTargetType } from "@/types/focus";
 import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
+import { isTaskActive } from "@/lib/task-core-loop";
 
 type ActiveTargetSource = "auto" | "manual";
 
@@ -88,7 +89,7 @@ export function WorkplaceFocusTaskProvider({
     (target: FocusTarget | null, source: ActiveTargetSource = "manual") => {
       if (target?.type === "task") {
         const task = taskById.get(target.id);
-        if (!task || task.completed) return;
+        if (!task || task.completed || !isTaskActive(task)) return;
       }
 
       if (target?.type === "habit") {
@@ -191,7 +192,9 @@ export function WorkplaceFocusTaskProvider({
       : null;
 
   const resolvedActiveTask =
-    activeTask && !activeTask.completed ? activeTask : null;
+    activeTask && !activeTask.completed && isTaskActive(activeTask)
+      ? activeTask
+      : null;
 
   const activeHabit =
     activeTarget?.type === "habit"

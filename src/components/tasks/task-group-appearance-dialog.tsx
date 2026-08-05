@@ -50,6 +50,8 @@ export function TaskGroupAppearanceDialog({
   useEffect(() => {
     if (!open || !group) return;
     const appearance = getTaskGroupAppearance(group);
+    // Rehydrate the appearance form from the selected group.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialize form state from the external record
     setIcon(group.icon?.trim() || null);
     setColor(appearance.colorKey);
     setError(null);

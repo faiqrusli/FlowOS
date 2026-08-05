@@ -1,6 +1,6 @@
 # Factual Evidence Validation Plan
 
-**Status:** `DRAFT` — ready for Founder scope/design checkpoint
+**Status:** `APPROVED` — Founder checkpoint passed through D-010; automated evidence recorded, manual/live validation pending
 **Owner:** Engineering Architect (Founder), with Product and Design review
 **Created:** 2026-08-05
 **Last updated:** 2026-08-05
@@ -8,8 +8,9 @@
 **Authorized behavior contracts:** [MVP record rules](../record-rules.md) · [Tasks](../behavior/tasks.md) · [Focus](../behavior/focus.md)
 **Delivery design:** [Factual evidence delivery design](../delivery/factual-evidence.md)
 **Journey context:** [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md)
-**Evidence record location:** `docs/current-phase/phase-3/evidence/factual-evidence/` (planned)
+**Evidence record location:** [Factual evidence implementation evidence](../../current-phase/phase-3/factual-evidence-implementation-evidence.md) (automated record; manual/live record pending)
 **Gate link:** [Gate 3 checklist](../../current-phase/phase-3/gate-checklist.md)
+**Implementation evidence:** [Factual evidence implementation evidence](../../current-phase/phase-3/factual-evidence-implementation-evidence.md)
 **Review trigger:** Any change to provenance classes, evidence source, derivation, attribution, correction, or acceptance threshold.
 
 > This plan defines evidence to collect. It contains no implementation result, release approval, or Gate 3 decision.

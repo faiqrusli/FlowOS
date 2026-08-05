@@ -72,6 +72,8 @@ export function GrowthAreaSidebar({
   const wasNarrowLayoutRef = useRef(isNarrowLayout);
 
   useEffect(() => {
+    // Restore the persisted sidebar preference after client mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local UI state with browser storage
     setUserExpanded(getGrowthAreaSidebarExpanded());
     const frame = requestAnimationFrame(() => setAnimateWidth(true));
     return () => cancelAnimationFrame(frame);

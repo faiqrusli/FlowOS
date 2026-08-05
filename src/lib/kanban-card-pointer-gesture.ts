@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  type PointerEvent,
+} from "react";
 
 export const KANBAN_CARD_DRAG_THRESHOLD_PX = 8;
 const DOUBLE_CLICK_MS = 450;
@@ -49,10 +55,12 @@ export function useKanbanCardPointerGesture({
   const onPointerDragStartRef = useRef(onPointerDragStart);
   const onPointerDragEndRef = useRef(onPointerDragEnd);
 
-  onSingleClickEditRef.current = onSingleClickEdit;
-  onDoubleClickAtPointRef.current = onDoubleClickAtPoint;
-  onPointerDragStartRef.current = onPointerDragStart;
-  onPointerDragEndRef.current = onPointerDragEnd;
+  useLayoutEffect(() => {
+    onSingleClickEditRef.current = onSingleClickEdit;
+    onDoubleClickAtPointRef.current = onDoubleClickAtPoint;
+    onPointerDragStartRef.current = onPointerDragStart;
+    onPointerDragEndRef.current = onPointerDragEnd;
+  }, [onDoubleClickAtPoint, onPointerDragEnd, onPointerDragStart, onSingleClickEdit]);
 
   const clearSingleClickTimer = useCallback(() => {
     if (singleClickTimerRef.current !== null) {
@@ -96,7 +104,7 @@ export function useKanbanCardPointerGesture({
       });
       return true;
     },
-    []
+    [clearSingleClickTimer]
   );
 
   const finishGesture = useCallback(
@@ -148,7 +156,7 @@ export function useKanbanCardPointerGesture({
 
       clearGesture();
     },
-    [clearGesture]
+    [clearGesture, clearSingleClickTimer]
   );
 
   const onPointerDown = useCallback(
@@ -213,7 +221,7 @@ export function useKanbanCardPointerGesture({
 
       clearGesture();
     },
-    [clearGesture]
+    [clearGesture, clearSingleClickTimer]
   );
 
   useEffect(

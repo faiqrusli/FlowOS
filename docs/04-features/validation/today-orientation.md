@@ -1,9 +1,9 @@
 # Today Orientation — Validation Plan
 
-**Status:** `APPROVED` — Founder scope/design checkpoint passed 2026-08-05
+**Status:** `DEFERRED_FOR_MVP` — superseded for the MVP entry route by D-014 on 2026-08-06
 **Owner:** Engineering Architect (Founder), with Product Architect review
 **Created:** 2026-08-05
-**Last updated:** 2026-08-05
+**Last updated:** 2026-08-06
 **Decision this plan informs:** Today orientation implementation readiness and later Gate 3 evidence within the approved P1 boundary
 **Authorized behavior contract:** [Today behavior contract](../behavior/today.md)
 **Authorized brief:** [Today feature brief](../briefs/today.md)
@@ -16,11 +16,11 @@
 **Evidence record locations:** `docs/current-phase/phase-3/evidence/today-orientation/` (planned execution evidence); `docs/09-reviews/records/today-orientation-validation-review.md` (planned review)
 **Review trigger:** Any change to the Today contract, source set, acceptance questions, evidence threshold, owner handoff, or recovery semantics.
 
-> Founder approved this plan on 2026-08-05. It defines evidence to collect; it contains no executed results, release approval, Gate 3 decision, or claim that implementation exists.
+> Founder approved this plan on 2026-08-05. D-014 defers the read-only orientation composition for MVP; this plan is retained for future re-admission and is not required evidence for the current MVP route or Gate 3 walkthrough.
 
 ## Founder scope/design checkpoint
 
-**Disposition:** `APPROVED` by Founder on 2026-08-05.
+**Disposition:** `DEFERRED_FOR_MVP` by Founder on 2026-08-06 through [D-014](../../08-decisions/records/D-014-defer-today-orientation-and-make-workspace-canonical.md). The 2026-08-05 approval remains historical and may be revisited only if the orientation composition is re-admitted.
 
 The Founder approved the read-only Today boundary, separation from Workplace mutation ownership, independent source settlement with source-scoped retry, and all carried downstream limitations. This plan is ready to govern P1 implementation and later evidence collection; it does not itself report validation results or pass Gate 3.
 

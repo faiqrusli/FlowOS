@@ -10,7 +10,6 @@ import {
   useState,
   useSyncExternalStore,
   type MouseEvent,
-  type PointerEvent,
   type ReactNode,
   type RefObject,
 } from "react";
@@ -21,7 +20,6 @@ import {
   Bell,
   CalendarDays,
   CheckCircle2,
-  ChevronDown,
   Circle,
   Copy,
   Trash2,
@@ -230,6 +228,8 @@ function TaskPriorityMenuPopover({
   }, [anchorRef, popoverRef]);
 
   useEffect(() => {
+    // Portals must wait until the browser document is available.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize hydration state with the client DOM
     setMounted(true);
   }, []);
 
@@ -251,9 +251,8 @@ function TaskPriorityMenuPopover({
 
   if (!mounted) return null;
 
-  const anchorRect = anchorRef.current?.getBoundingClientRect();
-  const top = position?.top ?? anchorRect?.top ?? 0;
-  const left = position?.left ?? (anchorRect ? anchorRect.right + 4 : 0);
+  const top = position?.top ?? 0;
+  const left = position?.left ?? 0;
 
   return createPortal(
     <div
@@ -431,30 +430,43 @@ function TaskDetailMenuPopover({
     },
   });
 
-  menuActionsRef.current = {
-    onDuplicate,
-    onDelete,
-    onMoveToGroup,
+  useLayoutEffect(() => {
+    menuActionsRef.current = {
+      onDuplicate,
+      onDelete,
+      onMoveToGroup,
+      onAddToToday,
+      onSetPlanningState,
+      onSetAlertBefore,
+      onRequestCreateGroup,
+      onOpenPlanningSubmenu: () => {
+        onMoveSubmenuOpenChange(false);
+        onAlertSubmenuOpenChange(false);
+        onPlanningSubmenuOpenChange(true);
+      },
+      onOpenMoveSubmenu: () => {
+        onPlanningSubmenuOpenChange(false);
+        onAlertSubmenuOpenChange(false);
+        onMoveSubmenuOpenChange(true);
+      },
+      onOpenAlertSubmenu: () => {
+        onPlanningSubmenuOpenChange(false);
+        onMoveSubmenuOpenChange(false);
+        onAlertSubmenuOpenChange(true);
+      },
+    };
+  }, [
     onAddToToday,
-    onSetPlanningState,
-    onSetAlertBefore,
+    onAlertSubmenuOpenChange,
+    onDelete,
+    onMoveSubmenuOpenChange,
+    onMoveToGroup,
+    onDuplicate,
+    onPlanningSubmenuOpenChange,
     onRequestCreateGroup,
-    onOpenPlanningSubmenu: () => {
-      onMoveSubmenuOpenChange(false);
-      onAlertSubmenuOpenChange(false);
-      onPlanningSubmenuOpenChange(true);
-    },
-    onOpenMoveSubmenu: () => {
-      onPlanningSubmenuOpenChange(false);
-      onAlertSubmenuOpenChange(false);
-      onMoveSubmenuOpenChange(true);
-    },
-    onOpenAlertSubmenu: () => {
-      onPlanningSubmenuOpenChange(false);
-      onMoveSubmenuOpenChange(false);
-      onAlertSubmenuOpenChange(true);
-    },
-  };
+    onSetAlertBefore,
+    onSetPlanningState,
+  ]);
 
   const menuCleanupRef = useRef<(() => void) | null>(null);
 
@@ -528,6 +540,8 @@ function TaskDetailMenuPopover({
   }, [anchorRef, pointerPosition, popoverRef]);
 
   useEffect(() => {
+    // Portals must wait until the browser document is available.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize hydration state with the client DOM
     setMounted(true);
   }, []);
 
@@ -555,12 +569,11 @@ function TaskDetailMenuPopover({
 
   if (!mounted) return null;
 
-  const anchorRect = anchorRef.current?.getBoundingClientRect();
-  const top = position?.top ?? pointerPosition?.y ?? anchorRect?.top ?? 0;
+  const top = position?.top ?? pointerPosition?.y ?? 0;
   const left =
     position?.left ??
     pointerPosition?.x ??
-    (anchorRect ? anchorRect.right + 6 : 0);
+    0;
 
   return createPortal(
     <div
@@ -723,7 +736,7 @@ function TaskDetailMenuPopover({
         data-task-menu-action="delete"
         className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-surface-hover"
       >
-        <Trash2 className="size-3.5" /> Delete
+        <Trash2 className="size-3.5" /> Remove
       </button>
     </div>,
     document.body,
@@ -750,7 +763,10 @@ export const TaskRow = memo(function TaskRow({
   onRequestCreateGroup: onRequestCreateGroupProp,
 }: TaskRowProps) {
   const groupsFromBoard = useOptionalTaskBoardGroups();
-  const groups = groupsProp ?? groupsFromBoard ?? [];
+  const groups = useMemo(
+    () => groupsProp ?? groupsFromBoard ?? [],
+    [groupsFromBoard, groupsProp],
+  );
   const boardActions = useOptionalTaskBoardActions();
   const actionToast = useOptionalActionToast();
 
@@ -845,7 +861,10 @@ export const TaskRow = memo(function TaskRow({
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const detailPopoverRef = useRef<HTMLDivElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
-  const contextMenuPointRef = useRef<{ x: number; y: number } | null>(null);
+  const [contextMenuPoint, setContextMenuPoint] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const flagAnchorRef = useRef<HTMLDivElement>(null);
   const flagPopoverRef = useRef<HTMLDivElement>(null);
   const scheduleAnchorRef = useRef<HTMLDivElement>(null);
@@ -876,6 +895,8 @@ export const TaskRow = memo(function TaskRow({
 
   useEffect(() => {
     if (!isRenaming) {
+      // Keep the draft aligned with the task title outside rename mode.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize transient editor state with the external task
       setTitleDraft(task.title);
     }
   }, [isRenaming, task.title]);
@@ -983,7 +1004,9 @@ export const TaskRow = memo(function TaskRow({
 
   useEffect(() => {
     if (detailMenuOpen) return;
-    contextMenuPointRef.current = null;
+    // Clear menu state when the external detail menu closes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize transient menu state with the external open flag
+    setContextMenuPoint(null);
     setMoveSubmenuOpen(false);
     setPlanningSubmenuOpen(false);
     setAlertSubmenuOpen(false);
@@ -993,10 +1016,10 @@ export const TaskRow = memo(function TaskRow({
     event.preventDefault();
     setFlagMenuOpen(false);
     setScheduleOpen(false);
-    contextMenuPointRef.current = {
+    setContextMenuPoint({
       x: event.clientX,
       y: event.clientY,
-    };
+    });
     setActiveTaskDetailMenuAnchor(menuAnchor);
   }
 
@@ -1199,7 +1222,7 @@ export const TaskRow = memo(function TaskRow({
           moveTargets={moveTargets}
           anchorRef={rowRef}
           popoverRef={detailPopoverRef}
-          pointerPosition={contextMenuPointRef.current}
+          pointerPosition={contextMenuPoint}
           moveSubmenuOpen={moveSubmenuOpen}
           onMoveSubmenuOpenChange={setMoveSubmenuOpen}
           planningSubmenuOpen={planningSubmenuOpen}

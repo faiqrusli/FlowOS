@@ -4,7 +4,6 @@ import {
   parseTimeToMinutes,
 } from "@/lib/date-utils";
 import {
-  DEFAULT_TASK_DURATION,
   getTaskDurationMinutes,
 } from "@/lib/timeline-layout";
 import type { Task } from "@/types/task";

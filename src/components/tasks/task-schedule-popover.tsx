@@ -57,6 +57,8 @@ export function TaskSchedulePopover({
   );
 
   useEffect(() => {
+    // Rehydrate the schedule draft from the selected task.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialize popover state from the external task record
     setTimeParts(parseTimePickerParts(task.scheduled_time));
   }, [task.scheduled_time]);
 
@@ -96,6 +98,8 @@ export function TaskSchedulePopover({
   }, [anchorRef, popoverRef]);
 
   useEffect(() => {
+    // Portals must wait until the browser document is available.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize hydration state with the client DOM
     setMounted(true);
   }, []);
 
@@ -117,11 +121,10 @@ export function TaskSchedulePopover({
 
   if (!mounted) return null;
 
-  const anchorRect = anchorRef.current?.getBoundingClientRect();
-  const top = position?.top ?? anchorRect?.bottom ?? 0;
+  const top = position?.top ?? 0;
   const left =
     position?.left ??
-    (anchorRect ? anchorRect.right - SCHEDULE_POPOVER_ESTIMATED_WIDTH_PX : 0);
+    0;
 
   return createPortal(
     <div

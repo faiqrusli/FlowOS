@@ -187,7 +187,10 @@ export function WorkplacePageContent({
   const allTasks = useMemo(() => collectAllBoardTasks(groups), [groups]);
   const habitScheduleRevision = useHabitDailyScheduleStore();
   const todayDisplayHabits = useMemo(
-    () => withHabitScheduleForDate(habits, todayViewDate),
+    () => {
+      void habitScheduleRevision;
+      return withHabitScheduleForDate(habits, todayViewDate);
+    },
     [habits, todayViewDate, habitScheduleRevision],
   );
 
@@ -217,6 +220,8 @@ export function WorkplacePageContent({
   }, []);
 
   useEffect(() => {
+    // Load workplace data after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local workplace state
     void loadWorkplace();
   }, [loadWorkplace]);
 
@@ -525,6 +530,8 @@ export function WorkplacePageContent({
 
   useLayoutEffect(() => {
     if (!overlay) {
+      // Clear the dock indicator when no overlay is active.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize measured DOM state with the external overlay
       setDockActivePill(null);
       return;
     }
@@ -548,18 +555,21 @@ export function WorkplacePageContent({
   }, [overlay]);
 
   useEffect(() => {
+    // Rebuild the today column when the viewed date changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize derived board state with the external view date
     setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
   }, [todayViewDate]);
 
   useEffect(() => {
+    const timers = updateTimers.current;
     return () => {
-      for (const timer of updateTimers.current.values()) {
+      for (const timer of timers.values()) {
         clearTimeout(timer);
       }
     };
   }, []);
 
-  function scheduleTaskPersist(taskId: string, updates: Partial<Task>) {
+  const scheduleTaskPersist = useCallback((taskId: string, updates: Partial<Task>) => {
     const merged = {
       ...(pendingTaskUpdates.current.get(taskId) ?? {}),
       ...updates,
@@ -625,7 +635,7 @@ export function WorkplacePageContent({
         }
       }, 350),
     );
-  }
+  }, [loadWorkplace, todayViewDate]);
 
   const handleScheduleTask = useCallback(
     async (
@@ -688,7 +698,7 @@ export function WorkplacePageContent({
         void loadWorkplace();
       }
     },
-    [loadWorkplace, todayViewDate],
+    [loadWorkplace, scheduleTaskPersist, todayViewDate],
   );
 
   const handleMoveTask = useCallback(
@@ -835,54 +845,53 @@ export function WorkplacePageContent({
     [handleSetPlanningState],
   );
 
-  const handleToggleComplete = useCallback(
-    async (
-      task: Task,
-      markComplete?: boolean,
-      options?: { silent?: boolean },
-    ) => {
-      const nextCompleted = markComplete ?? !task.completed;
-      if (task.completed === nextCompleted) return;
+  async function toggleCompleteImpl(
+    task: Task,
+    markComplete?: boolean,
+    options?: { silent?: boolean },
+  ) {
+    const nextCompleted = markComplete ?? !task.completed;
+    if (task.completed === nextCompleted) return;
 
-      setError(null);
-      setGroups((prev) =>
-        replaceTaskOnBoard(
-          prev,
-          task.id,
-          (item) => ({ ...item, completed: nextCompleted }),
-          todayViewDate,
-        ),
-      );
-      try {
-        const updated = await updateTask(task.id, {
-          completed: nextCompleted,
-          completed_at: nextCompleted ? new Date().toISOString() : null,
+    setError(null);
+    setGroups((prev) =>
+      replaceTaskOnBoard(
+        prev,
+        task.id,
+        (item) => ({ ...item, completed: nextCompleted }),
+        todayViewDate,
+      ),
+    );
+    try {
+      const updated = await updateTask(task.id, {
+        completed: nextCompleted,
+        completed_at: nextCompleted ? new Date().toISOString() : null,
+      });
+      setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      if (!options?.silent) {
+        showActionToast({
+          message: nextCompleted
+            ? "Task marked as done"
+            : "Task marked incomplete",
+          tone: nextCompleted ? "success" : "neutral",
+          icon: "check",
+          actionLabel: "Undo",
+          onAction: () => {
+            void toggleCompleteImpl(updated, !nextCompleted, {
+              silent: true,
+            });
+          },
         });
-        setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
-        if (!options?.silent) {
-          showActionToast({
-            message: nextCompleted
-              ? "Task marked as done"
-              : "Task marked incomplete",
-            tone: nextCompleted ? "success" : "neutral",
-            icon: "check",
-            actionLabel: "Undo",
-            onAction: () => {
-              void handleToggleComplete(updated, !nextCompleted, {
-                silent: true,
-              });
-            },
-          });
-        }
-      } catch (err) {
-        setError(
-          err instanceof TasksError ? err.message : "Failed to update task.",
-        );
-        void loadWorkplace();
       }
-    },
-    [loadWorkplace, showActionToast, todayViewDate],
-  );
+    } catch (err) {
+      setError(
+        err instanceof TasksError ? err.message : "Failed to update task.",
+      );
+      void loadWorkplace();
+    }
+  }
+
+  const handleToggleComplete = toggleCompleteImpl;
 
   const handleDuplicateTask = useCallback(
     async (task: Task) => {
@@ -967,41 +976,43 @@ export function WorkplacePageContent({
     ],
   );
 
-  const handleToggleHabitComplete = useCallback(
-    async (habit: Habit, options?: { silent?: boolean }) => {
-      setError(null);
+  async function toggleHabitCompleteImpl(
+    habit: Habit,
+    options?: { silent?: boolean },
+  ) {
+    setError(null);
+    setHabits((prev) =>
+      prev.map((item) =>
+        item.id === habit.id ? { ...item, completed: !item.completed } : item,
+      ),
+    );
+    try {
+      const updated = await toggleHabitComplete(habit);
       setHabits((prev) =>
-        prev.map((item) =>
-          item.id === habit.id ? { ...item, completed: !item.completed } : item,
-        ),
+        prev.map((item) => (item.id === updated.id ? updated : item)),
       );
-      try {
-        const updated = await toggleHabitComplete(habit);
-        setHabits((prev) =>
-          prev.map((item) => (item.id === updated.id ? updated : item)),
-        );
-        if (!options?.silent) {
-          showActionToast({
-            message: updated.completed
-              ? "Habit marked complete"
-              : "Habit unmarked",
-            tone: updated.completed ? "success" : "neutral",
-            icon: "habit",
-            actionLabel: "Undo",
-            onAction: () => {
-              void handleToggleHabitComplete(updated, { silent: true });
-            },
-          });
-        }
-      } catch (err) {
-        setError(
-          err instanceof HabitsError ? err.message : "Failed to update habit.",
-        );
-        void loadWorkplace();
+      if (!options?.silent) {
+        showActionToast({
+          message: updated.completed
+            ? "Habit marked complete"
+            : "Habit unmarked",
+          tone: updated.completed ? "success" : "neutral",
+          icon: "habit",
+          actionLabel: "Undo",
+          onAction: () => {
+            void toggleHabitCompleteImpl(updated, { silent: true });
+          },
+        });
       }
-    },
-    [loadWorkplace, showActionToast],
-  );
+    } catch (err) {
+      setError(
+        err instanceof HabitsError ? err.message : "Failed to update habit.",
+      );
+      void loadWorkplace();
+    }
+  }
+
+  const handleToggleHabitComplete = toggleHabitCompleteImpl;
 
   const handleScheduleHabit = useCallback(
     async (

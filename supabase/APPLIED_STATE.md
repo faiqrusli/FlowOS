@@ -61,6 +61,7 @@ All core rows have non-null `user_id` (verified before RLS lockdown).
 |------|--------------------------|---------|
 | `tasks_next_up_queue.sql` | Yes | Persistent task-only Next Up order and reorder RPC |
 | `focus_session_task_totals.sql` | Yes | RLS-protected per-task focus attribution during a quick-focus session |
+| `tasks_lifecycle.sql` | Yes | Retained task withdrawal/restore state for the Tasks owner |
 | `security_hardening.sql` | Yes | Removes the cross-user write path in `batch_update_task_manual_orders`, re-drops legacy public policies, locks down `demo_feedback` reads |
 
 `security_hardening.sql` must be applied together with the app deploy that ships
@@ -69,6 +70,10 @@ the new one-argument `batch_update_task_manual_orders(jsonb)` signature: the old
 sides are updated.
 
 These migrations are committed as SQL but have **not** been applied from this workspace: the Supabase CLI is not linked or authenticated here. Apply them in the project SQL editor or a linked Supabase CLI session, then update this record and repeat the two-account RLS test for `focus_session_task_totals`.
+
+`tasks_lifecycle.sql` is also pending. Until it is applied and verified, the
+Tasks surface preserves the existing confirmed state and discloses that durable
+withdrawal/restore is unavailable.
 
 **Local pre-apply review (2026-08-05):** `tasks_next_up_queue.sql` was reviewed for an authenticated RPC boundary, user-scoped updates, positive queue-order enforcement, and the partial user queue index. The migration now rejects unauthenticated calls and revokes default `PUBLIC`/`anon` function execution. The related Next Up logic tests pass (21/21). This is local evidence only; it does not change the live applied state.
 

@@ -1,11 +1,11 @@
 # Phase 3: Implement and Harden the Core Loop
 
 **Purpose:** Make the admitted MVP useful in one continuous experience, not as a collection of disconnected polished pages.
-**Status:** `ACTIVE` — authorized by Gate 2 `PASS` on 2026-08-05; P1 Today implementation in progress; P2–P6 implementation packages ready for Founder checkpoints
+**Status:** `ACTIVE` — authorized by Gate 2 `PASS` on 2026-08-05; active P2–P6 implementation complete with automated evidence; P1 orientation is deferred; Gate 3 evidence and Founder decision remain
 **Owner:** Founder, executing the six-hat workflow
 **Gate:** Gate 3 — Core-loop readiness
 **Created:** 2026-08-05
-**Last updated:** 2026-08-05
+**Last updated:** 2026-08-06
 
 **Single implementation reference:** The [Current Sprint](../current-sprint.md) is the authoritative Phase 3 execution register. It links each package to its approved Phase 2 contract/design authority, delivery design, validation plan, implementation tasks, acceptance IDs, and Gate 3 evidence requirement.
 
@@ -24,9 +24,13 @@ Gate 2 passed because every admitted behavior has a parent system, journey stage
 
 The archived Phase 2 sprint record and Gate 2 checklist, four core behavior contracts, bounded coherent-loop journey, supporting-domain decisions, record/provenance/correction/continuity rules, and four feature design specifications were reviewed as the implementation authority. The Phase 2 limitations remain active: pending/unverified Next Up and Focus attribution migrations, outstanding two-account RLS verification, Singapore midnight testing, Schedule keyboard review, existing lint/audit/middleware technical debt, and the incomplete local production-build environment.
 
+## MVP route decision
+
+[D-014](../../08-decisions/records/D-014-defer-today-orientation-and-make-workspace-canonical.md) makes the existing interactive workspace the canonical Today experience at `/`. The separate read-only orientation composition is deferred for MVP; `/workplace` remains only as a compatibility redirect. Phase 3 evidence must exercise the workspace from `/` rather than treating the deferred orientation composition as an active entry surface.
+
 ## Implementation order
 
-1. Today orientation and route recovery.
+1. Today workspace entry and route recovery; separate orientation deferred for MVP.
 2. Task commitment and action.
 3. Focus action mode and interruption recovery.
 4. Factual evidence.
@@ -38,19 +42,19 @@ The archived Phase 2 sprint record and Gate 2 checklist, four core behavior cont
 
 | Package | Delivery/validation package | State |
 |---|---|---|
-| P1 Today orientation | [Delivery design](../../04-features/delivery/today-orientation.md) · [Validation plan](../../04-features/validation/today-orientation.md) | `APPROVED` / implementation in progress |
-| P2 Tasks commitment/action | [Delivery design](../../04-features/delivery/tasks-core-loop.md) · [Validation plan](../../04-features/validation/tasks-core-loop.md) | `READY_FOR_FOUNDER_CHECKPOINT` |
-| P3 Focus action mode | [Delivery design](../../04-features/delivery/focus-core-loop.md) · [Validation plan](../../04-features/validation/focus-core-loop.md) | `READY_FOR_FOUNDER_CHECKPOINT` |
-| P4 Factual evidence | [Delivery design](../../04-features/delivery/factual-evidence.md) · [Validation plan](../../04-features/validation/factual-evidence.md) | `READY_FOR_FOUNDER_CHECKPOINT` |
-| P5 Reflection/adaptation | [Delivery design](../../04-features/delivery/reflection-core-loop.md) · [Validation plan](../../04-features/validation/reflection-core-loop.md) | `READY_FOR_FOUNDER_CHECKPOINT` |
-| P6 Supporting surfaces | [Delivery design](../../04-features/delivery/supporting-surfaces.md) · [Validation plan](../../04-features/validation/supporting-surfaces.md) | `READY_FOR_FOUNDER_CHECKPOINT` |
-| P7 Gate 3 evidence | [Gate 3 checklist](./gate-checklist.md) | `NOT_STARTED` until implementation evidence exists |
+| P1 Today orientation | [Delivery design](../../04-features/delivery/today-orientation.md) · [Validation plan](../../04-features/validation/today-orientation.md) | `DEFERRED_FOR_MVP` / `/` uses the interactive workspace |
+| P2 Tasks commitment/action | [Delivery design](../../04-features/delivery/tasks-core-loop.md) · [Validation plan](../../04-features/validation/tasks-core-loop.md) | `IMPLEMENTED_AUTOMATED` / manual evidence pending |
+| P3 Focus action mode | [Delivery design](../../04-features/delivery/focus-core-loop.md) · [Validation plan](../../04-features/validation/focus-core-loop.md) | `IMPLEMENTED_AUTOMATED` / manual evidence pending |
+| P4 Factual evidence | [Delivery design](../../04-features/delivery/factual-evidence.md) · [Validation plan](../../04-features/validation/factual-evidence.md) | `IMPLEMENTED_AUTOMATED` / manual evidence pending |
+| P5 Reflection/adaptation | [Delivery design](../../04-features/delivery/reflection-core-loop.md) · [Validation plan](../../04-features/validation/reflection-core-loop.md) | `IMPLEMENTED_AUTOMATED` / manual evidence pending |
+| P6 Supporting surfaces | [Delivery design](../../04-features/delivery/supporting-surfaces.md) · [Validation plan](../../04-features/validation/supporting-surfaces.md) | `IMPLEMENTED_AUTOMATED` / manual evidence pending |
+| P7 Gate 3 evidence | [Gate 3 checklist](./gate-checklist.md) | `IN_PROGRESS` / Founder decision pending |
 
-The package artifacts are complete for Founder review but remain drafts until explicitly approved. Gate 3 remains open and is not implied by planning readiness.
+The active P2–P6 package artifacts are complete for Founder review but remain drafts until explicitly approved. The P1 orientation artifacts are deferred by D-014. Gate 3 remains open and is not implied by planning readiness.
 
 ## Guardrails
 
-- Today composes; Tasks owns task commitments and Next Up; Focus owns session facts; Reflection owns interpretation; receiving owners apply adaptations.
+- Today/workspace provides the primary execution entry; Tasks owns task commitments and Next Up; Focus owns session facts; Reflection owns interpretation; receiving owners apply adaptations.
 - Keep pending or unverified migrations unavailable until applied and verified.
 - Use user-scoped access/RLS, shared validation, `Asia/Singapore` date keys, instant timestamps, and local-draft semantics.
 - No new route, deferred-domain admission, autonomous prioritization, inferred attribution, implicit adaptation, or production release is authorized by Phase 3 entry alone.
@@ -58,10 +62,16 @@ The package artifacts are complete for Founder review but remain drafts until ex
 
 ## Work status
 
+**Implementation update (2026-08-05):** P2 Tasks owner boundary, lifecycle state model, retained withdrawal/restore path, Focus selection protection, and migration-gated Next Up behavior are implemented with automated evidence. Manual/live checks are held for the final P7 pass.
+
+**Implementation update (2026-08-05):** P3 Focus operation/recovery state, pending conclusion continuity, factual Reflection handoff, and migration-gated attribution are implemented with automated evidence. Manual/live checks are held for the final P7 pass.
+
+**Implementation update (2026-08-05):** P4 factual evidence envelopes/adapters, P5 Reflection identity/draft/recovery/adaptation state, and P6 bounded supporting-source state are implemented with automated evidence. Manual/live checks are intentionally held for the post-implementation Gate 3 evidence pass.
+
 - **P0 — Handoff baseline:** `COMPLETE` on `sprint/phase3`; completed before P1 implementation began.
-- **P1 — Today orientation:** Delivery design and validation plan `APPROVED` by Founder on 2026-08-05; read-only composition baseline implemented, automated evidence passing, manual validation pending.
-- **P2–P6 — Core-loop implementation:** Delivery/validation packages ready for Founder checkpoints; implementation not authorized until each checkpoint is explicit.
-- **P7 — Gate 3 evidence:** `NOT_STARTED`.
+- **P1 — Today orientation:** `DEFERRED_FOR_MVP` by Founder on 2026-08-06 through D-014; retained implementation and automated evidence are historical/future work, while `/` uses the interactive workspace.
+- **P2–P6 — Core-loop implementation:** `IMPLEMENTED_AUTOMATED`; package evidence is recorded, while manual/live/security/accessibility evidence remains open.
+- **P7 — Gate 3 evidence:** `IN_PROGRESS`; final automated, manual/live, and Founder decision evidence remains.
 
 ## Exit condition
 

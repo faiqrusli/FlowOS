@@ -20,7 +20,13 @@ import {
 } from "@/lib/task-priority";
 import { normalizePlanningState } from "@/lib/task-planning";
 import { notifyNextUpUpdated } from "@/lib/next-up-events";
-import { parseTaskInsert, parseTaskUpdate } from "@/lib/validation";
+import { parseTaskId, parseTaskInsert, parseTaskUpdate } from "@/lib/validation";
+import {
+  buildCompleteTaskUpdate,
+  buildDeferTaskUpdate,
+  buildRestoreTaskUpdate,
+  buildWithdrawTaskUpdate,
+} from "@/lib/task-core-loop";
 import type { Task, TaskInsert, TaskUpdate } from "@/types/task";
 
 export class TasksError extends Error {
@@ -126,6 +132,7 @@ export function partitionTasks(
   const completedPast: Task[] = [];
 
   for (const task of tasks) {
+    if (task.withdrawn_at) continue;
     if (isTaskToday(task, todayKey)) {
       today.push(task);
       continue;
@@ -183,7 +190,9 @@ export async function fetchTodayTasks(
     throw new TasksError(error.message);
   }
 
-  return (data ?? []).map((task) => normalizeTaskFromDb(task));
+  return (data ?? [])
+    .map((task) => normalizeTaskFromDb(task))
+    .filter((task) => !task.withdrawn_at);
 }
 
 export async function fetchTasks(): Promise<Task[]> {
@@ -209,6 +218,7 @@ function normalizeTaskFromDb(task: Task): Task {
     queue_order: task.queue_order ?? null,
     updated_at: task.updated_at ?? task.created_at,
     completed_at: task.completed_at ?? null,
+    withdrawn_at: task.withdrawn_at ?? null,
   });
 }
 
@@ -232,21 +242,25 @@ export async function repairMissingManualOrders(
 export async function createTask(input: TaskInsert): Promise<Task> {
   const userId = await requireUserId();
   const validatedInput = parseTaskInsert(input);
+  const ownerInput = { ...validatedInput };
+  delete ownerInput.user_id;
+  delete ownerInput.queue_order;
+  delete ownerInput.withdrawn_at;
   const sort_order = resolveManualOrderForCreate(
-    validatedInput.sort_order,
+    ownerInput.sort_order,
     MANUAL_ORDER_INITIAL,
   );
 
   const { data, error } = await supabase
     .from("tasks")
     .insert({
-      ...validatedInput,
-      priority: validatedInput.priority ?? "low",
+      ...ownerInput,
+      priority: ownerInput.priority ?? "low",
       user_id: userId,
       sort_order,
-      notification_enabled: validatedInput.notification_enabled ?? true,
-      scheduled_date: validatedInput.scheduled_date ?? null,
-      planning_state: validatedInput.planning_state ?? "none",
+      notification_enabled: ownerInput.notification_enabled ?? true,
+      scheduled_date: ownerInput.scheduled_date ?? null,
+      planning_state: ownerInput.planning_state ?? "none",
     })
     .select()
     .single();
@@ -260,7 +274,11 @@ export async function createTask(input: TaskInsert): Promise<Task> {
 
 export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
   const userId = await requireUserId();
-  const payload: TaskUpdate = parseTaskUpdate(input);
+  const parsedId = parseTaskId(id);
+  const validatedInput = parseTaskUpdate(input);
+  const payload = { ...validatedInput };
+  delete payload.user_id;
+  delete payload.withdrawn_at;
   if (payload.sort_order !== undefined) {
     payload.sort_order = resolveManualOrderForCreate(payload.sort_order);
   }
@@ -277,7 +295,7 @@ export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
   const { data, error } = await supabase
     .from("tasks")
     .update(payload)
-    .eq("id", id)
+    .eq("id", parsedId)
     .eq("user_id", userId)
     .select()
     .single();
@@ -289,6 +307,83 @@ export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
   const updated = normalizeTaskFromDb(data);
   if (leavesNextUp) notifyNextUpUpdated({ kind: "changed" });
   return updated;
+}
+
+async function updateTaskLifecycle(
+  id: string,
+  input: TaskUpdate,
+  operation: string,
+): Promise<Task> {
+  try {
+    return await updateTask(id, input);
+  } catch (error) {
+    if (error instanceof TasksError) {
+      throw error;
+    }
+    throw new TasksError(
+      `${operation} was not confirmed. Your last confirmed task is unchanged.`,
+    );
+  }
+}
+
+export async function completeTask(
+  id: string,
+  completedAt = new Date().toISOString(),
+): Promise<Task> {
+  return updateTaskLifecycle(
+    id,
+    buildCompleteTaskUpdate(completedAt),
+    "Completing the task",
+  );
+}
+
+export async function restoreTask(id: string): Promise<Task> {
+  const parsedId = parseTaskId(id);
+  const userId = await requireUserId();
+  const { data, error } = await supabase
+    .from("tasks")
+    .update(buildRestoreTaskUpdate())
+    .eq("id", parsedId)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) {
+    throw new TasksError(
+      "Task restore was not confirmed. Your last confirmed task is unchanged.",
+    );
+  }
+
+  return normalizeTaskFromDb(data);
+}
+
+export async function deferTask(id: string): Promise<Task> {
+  return updateTaskLifecycle(id, buildDeferTaskUpdate(), "Deferring the task");
+}
+
+/** Withdraw a task while retaining its owner row and history. */
+export async function withdrawTask(
+  id: string,
+  withdrawnAt = new Date().toISOString(),
+): Promise<Task> {
+  const parsedId = parseTaskId(id);
+  const userId = await requireUserId();
+  const { data, error } = await supabase
+    .from("tasks")
+    .update(buildWithdrawTaskUpdate(withdrawnAt))
+    .eq("id", parsedId)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) {
+    throw new TasksError(
+      "Task withdrawal is unavailable until the Tasks lifecycle source is applied and verified.",
+    );
+  }
+
+  notifyNextUpUpdated({ kind: "changed" });
+  return normalizeTaskFromDb(data);
 }
 
 /** Single RPC round-trip to persist manual order changes after drop. */
@@ -309,6 +404,7 @@ export async function batchUpdateManualOrders(
 
 export async function toggleTaskComplete(task: Task): Promise<Task> {
   const userId = await requireUserId();
+  const taskId = parseTaskId(task.id);
   const nextCompleted = !task.completed;
   const { data, error } = await supabase
     .from("tasks")
@@ -317,7 +413,7 @@ export async function toggleTaskComplete(task: Task): Promise<Task> {
       completed_at: nextCompleted ? new Date().toISOString() : null,
       ...(nextCompleted ? { queue_order: null } : {}),
     })
-    .eq("id", task.id)
+    .eq("id", taskId)
     .eq("user_id", userId)
     .select()
     .single();
@@ -331,12 +427,18 @@ export async function toggleTaskComplete(task: Task): Promise<Task> {
   return updated;
 }
 
+/**
+ * Hard deletion is retained only for explicit data-retention tooling. The
+ * core Tasks surface uses withdrawTask so the owner record and its history are
+ * retained.
+ */
 export async function deleteTask(id: string): Promise<void> {
   const userId = await requireUserId();
+  const taskId = parseTaskId(id);
   const { error } = await supabase
     .from("tasks")
     .delete()
-    .eq("id", id)
+    .eq("id", taskId)
     .eq("user_id", userId);
 
   if (error) {

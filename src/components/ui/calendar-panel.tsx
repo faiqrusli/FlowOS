@@ -42,13 +42,15 @@ export function CalendarPanel({
 
   useEffect(() => {
     const nextView = resolveCalendarViewMonth(value, today);
+    // Keep the calendar month aligned with the externally selected date.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local calendar state with external value props
     setViewYear(nextView.year);
     setViewMonth(nextView.month);
   }, [value, today]);
 
   const monthCells = useMemo(
-    () => getCalendarMonthGrid(viewYear, viewMonth, today),
-    [viewMonth, viewYear, today],
+    () => getCalendarMonthGrid(viewYear, viewMonth),
+    [viewMonth, viewYear],
   );
 
   function goToMonth(delta: number) {

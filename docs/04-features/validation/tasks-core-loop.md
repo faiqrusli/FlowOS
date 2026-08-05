@@ -1,6 +1,6 @@
 # Tasks Core-Loop Validation Plan
 
-**Status:** `DRAFT` — ready for Founder scope/design checkpoint
+**Status:** `APPROVED` — Founder checkpoint passed through D-010; automated evidence recorded, manual/live validation pending
 **Owner:** Engineering Architect (Founder), with Product and Design review
 **Created:** 2026-08-05
 **Last updated:** 2026-08-05

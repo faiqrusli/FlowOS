@@ -1,4 +1,5 @@
 import {
+  moveTaskInBoard,
   taskDragTargetsEqual,
   type MoveTaskInBoardOptions,
   type TaskDragTarget,
@@ -10,28 +11,59 @@ export type LiveBoardReorderResult = {
   sourceGroupId: string;
 };
 
-/**
- * Board list order is committed on drop only — same as Quick Schedule.
- * During drag, preview is DragOverlay + dnd-kit sortable transforms (same column).
- * Live onGroupsChange during drag fights transforms and causes flicker/jumps.
- */
 export function shouldApplyLiveBoardReorder(
-  _board: TaskGroupWithTasks[],
-  _target: TaskDragTarget,
-  _taskId: string
+  board: TaskGroupWithTasks[],
+  target: TaskDragTarget,
+  taskId: string
 ): boolean {
-  return false;
+  const hasTask = board.some((group) =>
+    group.tasks.some((task) => task.id === taskId)
+  );
+  const destination = board.find((group) => group.id === target.groupId);
+
+  if (!hasTask || !destination) return false;
+
+  if (target.beforeTaskId === null) return true;
+
+  return destination.tasks.some((task) => task.id === target.beforeTaskId);
 }
 
 export function applyLiveBoardReorderIfChanged(
-  _board: TaskGroupWithTasks[],
+  board: TaskGroupWithTasks[],
   target: TaskDragTarget,
-  _taskId: string,
-  _sourceGroupId: string | null,
+  taskId: string,
+  sourceGroupId: string | null,
   lastAppliedTarget: TaskDragTarget | null,
-  _options: MoveTaskInBoardOptions
+  options: MoveTaskInBoardOptions
 ): LiveBoardReorderResult | null {
   if (taskDragTargetsEqual(target, lastAppliedTarget)) return null;
-  if (!shouldApplyLiveBoardReorder(_board, target, _taskId)) return null;
-  return null;
+  if (!shouldApplyLiveBoardReorder(board, target, taskId)) return null;
+
+  const resolvedSourceGroupId =
+    sourceGroupId ??
+    board.find((group) => group.tasks.some((task) => task.id === taskId))?.id;
+  if (!resolvedSourceGroupId) return null;
+
+  const nextBoard = moveTaskInBoard(board, taskId, target, {
+    ...options,
+    sourceGroupId: resolvedSourceGroupId,
+  });
+
+  const changed = board.some((group, groupIndex) => {
+    const nextGroup = nextBoard[groupIndex];
+    return (
+      group.id !== nextGroup?.id ||
+      group.tasks.length !== nextGroup.tasks.length ||
+      group.tasks.some(
+        (task, taskIndex) =>
+          task.id !== nextGroup.tasks[taskIndex]?.id ||
+          task.completed !== nextGroup.tasks[taskIndex]?.completed ||
+          task.group_id !== nextGroup.tasks[taskIndex]?.group_id
+      )
+    );
+  });
+
+  return changed
+    ? { board: nextBoard, sourceGroupId: resolvedSourceGroupId }
+    : null;
 }

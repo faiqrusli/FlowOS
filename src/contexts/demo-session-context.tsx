@@ -59,6 +59,8 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // Refresh the authenticated user after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async auth loader updates local user state
     void refreshUser();
     const supabase = createClient();
     const {

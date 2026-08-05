@@ -58,8 +58,9 @@ export function focusTextareaAtEnd(textarea: HTMLTextAreaElement) {
 export function getInputCaretIndexFromPoint(
   input: HTMLInputElement,
   clientX: number,
-  _clientY: number,
+  clientY: number,
 ): number {
+  void clientY;
   const text = input.value;
   if (!text.length) return 0;
 

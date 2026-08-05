@@ -23,6 +23,8 @@ export function WorkplaceQuickAddCard({
     useState<WorkplaceModuleVisibility>("always");
 
   useEffect(() => {
+    // Restore the quick-add module's persisted visibility preference.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local UI state with browser storage
     setVisibility(readModuleVisibility("quick-add", "always"));
   }, []);
 

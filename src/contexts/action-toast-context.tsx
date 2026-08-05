@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -48,7 +49,9 @@ type ToastState = {
 export function ActionToastProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<ToastState | null>(null);
   const toastRef = useRef(toast);
-  toastRef.current = toast;
+  useLayoutEffect(() => {
+    toastRef.current = toast;
+  }, [toast]);
 
   const dismissActionToast = useCallback(() => {
     const current = toastRef.current;

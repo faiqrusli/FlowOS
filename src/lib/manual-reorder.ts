@@ -1,7 +1,7 @@
 import type { DropBeforeId } from "@/lib/list-drag-utils";
 import { applyManualActiveInsertToBoard } from "@/lib/task-drop-target";
 import type { ManualOrderUpdate } from "@/lib/manual-order";
-import type { Task, TaskGroupWithTasks } from "@/types/task";
+import type { TaskGroupWithTasks } from "@/types/task";
 
 export type ManualReorderResult = {
   board: TaskGroupWithTasks[];

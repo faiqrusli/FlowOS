@@ -105,6 +105,8 @@ export function WeeklyReflectionPageContent() {
   }, [weekDays, weekStart]);
 
   useEffect(() => {
+    // Load the weekly reflection board after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local board state
     void loadWeek();
   }, [loadWeek]);
 
@@ -118,18 +120,19 @@ export function WeeklyReflectionPageContent() {
     [allCards],
   );
 
-  function resolvePlacement(
-    card: WeeklyReflectionBoardCard,
-  ): WeeklyReflectionCardPlacement {
-    const existing = layout.placements.find((item) => item.cardId === card.id);
-    if (existing) return existing;
-    return {
-      cardId: card.id,
-      dayDateKey: card.dayDateKey,
-      columnKey: card.defaultColumnKey,
-      sortOrder: 0,
-    };
-  }
+  const resolvePlacement = useCallback(
+    (card: WeeklyReflectionBoardCard): WeeklyReflectionCardPlacement => {
+      const existing = layout.placements.find((item) => item.cardId === card.id);
+      if (existing) return existing;
+      return {
+        cardId: card.id,
+        dayDateKey: card.dayDateKey,
+        columnKey: card.defaultColumnKey,
+        sortOrder: 0,
+      };
+    },
+    [layout.placements],
+  );
 
   const cardsByColumn = useMemo(() => {
     const map = new Map<string, WeeklyReflectionBoardCard[]>();
@@ -161,7 +164,7 @@ export function WeeklyReflectionPageContent() {
     }
 
     return map;
-  }, [allCards, bundles, layout.placements]);
+  }, [allCards, bundles, layout.placements, resolvePlacement]);
 
   function scheduleSaveLayout(next: WeeklyReflectionLayout) {
     setLayout(next);

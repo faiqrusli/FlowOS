@@ -46,6 +46,8 @@ export function WorkplaceModuleCard({
 
   useEffect(() => {
     if (overlay) return;
+    // Restore the module's persisted visibility preference.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local UI state with browser storage
     setVisibility(readModuleVisibility(moduleId));
   }, [moduleId, overlay]);
 

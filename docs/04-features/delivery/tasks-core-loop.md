@@ -1,6 +1,6 @@
 # Tasks Core-Loop Delivery Design
 
-**Status:** `DRAFT` — ready for Founder scope/design checkpoint
+**Status:** `APPROVED` — Founder checkpoint passed through D-010; automated implementation evidence recorded, manual/live evidence pending
 **Owner:** Engineering Architect (Founder)
 **Product scope owner:** Product Architect (Founder)
 **Created:** 2026-08-05

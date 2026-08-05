@@ -85,7 +85,9 @@ export function SidebarNotesPanel() {
   const pendingPatchById = useRef(new Map<string, NoteTextPatch>());
   const savingIds = useRef(new Set<string>());
   const notesRef = useRef(notes);
-  notesRef.current = notes;
+  useEffect(() => {
+    notesRef.current = notes;
+  }, [notes]);
   const todayKey = getTodayDateString();
 
   const loadNotes = useCallback(
@@ -124,6 +126,8 @@ export function SidebarNotesPanel() {
 
   useEffect(() => {
     const snapshot = getSidebarNotesCache();
+    // Refresh the panel from the cache and remote notes source.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader synchronizes external note data into local state
     void loadNotes(Boolean(snapshot));
   }, [loadNotes, notesRefreshKey]);
 
@@ -177,6 +181,28 @@ export function SidebarNotesPanel() {
     }
   }, [notes, floatingNoteIds, updateFloatingNote]);
 
+  const persistNoteRef = useRef<
+    ((id: string, patch: { title?: string; content?: string }) => Promise<void>) | null
+  >(null);
+  const scheduleSaveRef = useRef<(id: string) => void>(() => undefined);
+
+  const scheduleSave = useCallback((id: string) => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      const pending = pendingPatchById.current.get(id);
+      if (!pending) return;
+      if (savingIds.current.has(id)) {
+        scheduleSaveRef.current(id);
+        return;
+      }
+      void persistNoteRef.current?.(id, { ...pending });
+    }, 800);
+  }, []);
+
+  useEffect(() => {
+    scheduleSaveRef.current = scheduleSave;
+  }, [scheduleSave]);
+
   const persistNote = useCallback(
     async (id: string, patch: { title?: string; content?: string }) => {
       setSaveError(false);
@@ -212,21 +238,12 @@ export function SidebarNotesPanel() {
         savingIds.current.delete(id);
       }
     },
-    [areas, updateFloatingNote],
+    [areas, scheduleSave, updateFloatingNote],
   );
 
-  function scheduleSave(id: string) {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      const pending = pendingPatchById.current.get(id);
-      if (!pending) return;
-      if (savingIds.current.has(id)) {
-        scheduleSave(id);
-        return;
-      }
-      void persistNote(id, { ...pending });
-    }, 800);
-  }
+  useEffect(() => {
+    persistNoteRef.current = persistNote;
+  }, [persistNote]);
 
   function updateLocal(id: string, patch: Partial<Note>) {
     setSaveError(false);

@@ -1,6 +1,6 @@
 # Today - Design Specification
 
-**Status:** Design Architect complete; D-009 scope/design checkpoint approved 2026-08-05; Gate 2 PASSED; Phase 3 authorized
+**Status:** `DEFERRED_FOR_MVP` — D-009 design retained for future re-admission; D-014 makes the interactive workspace canonical at `/`
 **Owner:** Design Architect
 **Authorized behavior contract:** [Today behavior contract](../../04-features/behavior/today.md)
 **Authorized brief:** [Today feature brief](../../04-features/briefs/today.md)
@@ -10,6 +10,8 @@
 **Design exceptions:** None
 **Validation plan:** [Today orientation validation plan](../../04-features/validation/today-orientation.md) · [Validation plan standard](../../04-features/validation-plans.md) and the `TODAY-*` acceptance questions below; Founder scope/design checkpoint approved through [D-009](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md).
 **Review trigger:** Any change to Today’s composition owner, source set, handoff, information hierarchy, material state, or recovery path.
+
+> The read-only orientation design is not the active MVP root experience. MVP `/` renders the interactive workspace; `/workplace` is a compatibility redirect. Re-admit this design before using it as current route or Gate 3 behavior authority.
 
 ## Identity and status
 

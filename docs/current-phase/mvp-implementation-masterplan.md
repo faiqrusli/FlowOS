@@ -6,7 +6,7 @@
 **Approval Required:** Founder
 **Parent:** [Vision.md](../00-constitution/Vision.md) · [Product Model](../01-product/product-model.md) · [Roadmap](../07-strategy-and-delivery/roadmap.md) · [Documentation Architecture](../00-constitution/documentation-architecture.md)
 **Children:** Delivery plans, feature dossiers, design specifications, engineering designs, validation plans, release plans, decisions, and reviews
-**Last Updated:** 2026-08-05
+**Last Updated:** 2026-08-06
 **Review trigger:** A change to the MVP boundary, an evidence gate, a phase dependency, a feature disposition, or the readiness decision for founder or external dogfood.
 
 ---
@@ -173,16 +173,16 @@ MVP admission is a product decision, not an engineering convenience. If evidence
 
 **Purpose:** Make the admitted MVP useful in one continuous experience, not as a collection of polished pages.
 
-**Implementation order:**
+**Implementation order (updated by D-014 on 2026-08-06):**
 
-1. **Today orientation:** current context, entry, next-action visibility, and route recovery.
+1. **Today workspace:** the interactive execution entry at `/`, with route recovery; the separate read-only orientation composition is deferred for MVP.
 2. **Task commitment/action:** create, clarify, select, start, complete, revise, defer, and recover.
 3. **Focus mode:** deliberate attention on a selected action, interruption handling, persistence, and truthful history.
 4. **Evidence:** factual records of completed actions, focus sessions, and relevant outcomes without universal scoring.
 5. **Reflection/adaptation:** capture interpretation, preserve provenance, and make the next choice explicit and reversible where possible.
 6. **Supporting surfaces:** only the smallest Habits, Schedule, and Notes paths justified by the journey contract.
 
-**Gate 3 — Core-loop readiness:** A founder can perform the full journey with seeded and real data, recover from interruptions and errors, understand what is factual versus interpretive, and reach the owning surface for every consequential change.
+**Gate 3 — Core-loop readiness:** A founder can perform the full journey from the canonical `/` workspace with seeded and real data, recover from interruptions and errors, understand what is factual versus interpretive, and reach the owning surface for every consequential change.
 
 ### Phase 4 — Trust, quality, and release readiness
 

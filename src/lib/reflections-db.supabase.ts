@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { requireUserId } from "@/lib/auth";
 import type { CustomEntry, Reflection, ReflectionDraft, ReflectionKanban } from "@/types/reflection";
 import { ReflectionsError } from "@/lib/reflections-errors";
+import { parseReflectionDateKey, parseReflectionDraft } from "@/lib/validation";
 
 type ReflectionRow = {
   id: string;
@@ -79,39 +80,53 @@ async function saveReflectionEntries(
   userId: string,
   entries: CustomEntry[]
 ): Promise<CustomEntry[]> {
-  const { error: deleteError } = await supabase
+  const filtered = entries.filter((entry) => entry.title.trim());
+  const nextRows = filtered.map((entry) => ({
+    id: entry.id,
+    reflection_id: reflectionId,
+    user_id: userId,
+    title: entry.title.trim(),
+    content: entry.content,
+  }));
+
+  // Upsert before removing stale rows. A failed insert therefore leaves the
+  // previously confirmed entries intact instead of turning a save failure into
+  // an accidental empty reflection.
+  if (nextRows.length > 0) {
+    const { error } = await supabase
+      .from("reflection_entries")
+      .upsert(nextRows, { onConflict: "id" });
+
+    if (error) {
+      throw new ReflectionsError(error.message);
+    }
+  }
+
+  const { data: existingRows, error: existingError } = await supabase
     .from("reflection_entries")
-    .delete()
+    .select("id")
     .eq("reflection_id", reflectionId)
     .eq("user_id", userId);
 
-  if (deleteError) {
-    throw new ReflectionsError(deleteError.message);
+  if (existingError) throw new ReflectionsError(existingError.message);
+
+  const nextIds = new Set(nextRows.map((entry) => entry.id));
+  const staleIds = (existingRows ?? [])
+    .map((row) => row.id)
+    .filter((id) => !nextIds.has(id));
+
+  if (staleIds.length > 0) {
+    const { error } = await supabase
+      .from("reflection_entries")
+      .delete()
+      .eq("reflection_id", reflectionId)
+      .eq("user_id", userId)
+      .in("id", staleIds);
+
+    if (error) throw new ReflectionsError(error.message);
   }
 
-  const filtered = entries.filter((entry) => entry.title.trim());
-  if (filtered.length === 0) {
-    return [];
-  }
-
-  const { data, error } = await supabase
-    .from("reflection_entries")
-    .insert(
-      filtered.map((entry) => ({
-        id: entry.id,
-        reflection_id: reflectionId,
-        user_id: userId,
-        title: entry.title.trim(),
-        content: entry.content,
-      }))
-    )
-    .select();
-
-  if (error) {
-    throw new ReflectionsError(error.message);
-  }
-
-  return (data as ReflectionEntryRow[]).map(entryRowToCustomEntry);
+  return filtered;
 }
 
 export async function fetchReflectionsFromSupabase(): Promise<Reflection[]> {
@@ -133,11 +148,12 @@ export async function fetchTodayReflectionFromSupabase(
   dateKey: string
 ): Promise<Reflection | null> {
   const userId = await requireUserId();
+  const parsedDateKey = parseReflectionDateKey(dateKey);
   const { data, error } = await supabase
     .from("reflections")
     .select(REFLECTION_SELECT)
     .eq("user_id", userId)
-    .eq("reflection_date", dateKey)
+    .eq("reflection_date", parsedDateKey)
     .maybeSingle();
 
   if (error) {
@@ -154,11 +170,13 @@ export async function saveReflectionToSupabase(
   draft: ReflectionDraft
 ): Promise<Reflection> {
   const userId = await requireUserId();
+  const parsedDateKey = parseReflectionDateKey(dateKey);
+  const parsedDraft = parseReflectionDraft(draft);
   const payload = {
-    reflection_date: dateKey,
-    went_well: draft.went_well,
-    went_wrong: draft.went_wrong,
-    custom_kanbans: draft.custom_kanbans ?? [],
+    reflection_date: parsedDateKey,
+    went_well: parsedDraft.went_well,
+    went_wrong: parsedDraft.went_wrong,
+    custom_kanbans: parsedDraft.custom_kanbans ?? [],
     user_id: userId,
   };
 
@@ -200,7 +218,7 @@ export async function saveReflectionToSupabase(
   const custom_entries = await saveReflectionEntries(
     reflectionRow.id,
     userId,
-    draft.custom_entries
+    parsedDraft.custom_entries
   );
 
   return {

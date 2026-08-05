@@ -42,6 +42,8 @@ export function ScheduleTimeline({
   const [nowMinutes, setNowMinutes] = useState(getNowMinutesInAppTimezone);
 
   useEffect(() => {
+    // Keep the current-time marker aligned with the app timezone.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize clock state with the external wall clock
     setNowMinutes(getNowMinutesInAppTimezone());
     const interval = window.setInterval(() => {
       setNowMinutes(getNowMinutesInAppTimezone());

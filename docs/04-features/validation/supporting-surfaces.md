@@ -1,6 +1,6 @@
 # Supporting Surfaces Validation Plan
 
-**Status:** `DRAFT` — ready for Founder scope/design checkpoint
+**Status:** `APPROVED` — Founder checkpoint passed through D-010; automated evidence recorded, manual/live validation pending
 **Owner:** Engineering Architect (Founder), with Product and Design review
 **Created:** 2026-08-05
 **Last updated:** 2026-08-05
@@ -8,8 +8,9 @@
 **Authorized boundary:** [Supporting-domain decisions](../supporting-domain-decisions.md)
 **Delivery design:** [Supporting surfaces delivery design](../delivery/supporting-surfaces.md)
 **Journey context:** [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md)
-**Evidence record location:** `docs/current-phase/phase-3/evidence/supporting-surfaces/` (planned)
+**Evidence record location:** [Supporting surfaces implementation evidence](../../current-phase/phase-3/supporting-surfaces-implementation-evidence.md) (automated record; manual/live record pending)
 **Gate link:** [Gate 3 checklist](../../current-phase/phase-3/gate-checklist.md)
+**Implementation evidence:** [Supporting surfaces implementation evidence](../../current-phase/phase-3/supporting-surfaces-implementation-evidence.md)
 **Review trigger:** Any change to a `SUPPORT-*` question, minimum behavior, source owner, accessibility threshold, or optionality rule.
 
 > This plan defines evidence to collect. It contains no implementation result, release approval, or Gate 3 decision.

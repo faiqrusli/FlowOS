@@ -1,10 +1,11 @@
 # Reflection Core-Loop Delivery Design
 
-**Status:** `DRAFT` — ready for Founder scope/design checkpoint
+**Status:** `APPROVED` — Founder checkpoint passed through D-010; automated implementation evidence recorded, manual/live evidence pending
 **Owner:** Engineering Architect (Founder)
 **Product scope owner:** Product Architect (Founder)
 **Created:** 2026-08-05
 **Last updated:** 2026-08-05
+**Implementation evidence:** [Reflection implementation evidence](../../current-phase/phase-3/reflection-implementation-evidence.md)
 **Authorized behavior contract:** [Reflection behavior contract](../behavior/reflection.md)
 **Authorized brief:** [Reflection feature brief](../briefs/reflection.md)
 **Design specification:** [Reflection design specification](../../05-design/features/reflection-design-spec.md)

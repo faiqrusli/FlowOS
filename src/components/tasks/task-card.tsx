@@ -62,7 +62,7 @@ export function TaskCard({
           disabled={disabled}
           className="shrink-0 text-muted-foreground opacity-60 transition-opacity hover:text-destructive group-hover/task-card:opacity-100"
           onClick={() => onDelete(task.id)}
-          aria-label={`Delete "${task.title}"`}
+          aria-label={`Remove "${task.title}" from active tasks`}
         >
           <Trash2 className="size-4" />
         </Button>

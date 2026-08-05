@@ -28,8 +28,15 @@ function resolveSessionStateLabel(
 }
 
 export function FocusCurrentSessionCard() {
-  const { activeSession, dashboardActive, quick, pomodoro } =
-    useFocusSessionContext();
+  const {
+    activeSession,
+    dashboardActive,
+    pendingConclusion,
+    retryPendingConclusion,
+    leavePendingConclusion,
+    quick,
+    pomodoro,
+  } = useFocusSessionContext();
   const [scheduleBreakOpen, setScheduleBreakOpen] = useState(false);
 
   const isActive = dashboardActive.isActive;
@@ -63,6 +70,37 @@ export function FocusCurrentSessionCard() {
       <section className="rounded-xl bg-surface-base px-4 py-5 sm:px-5">
         <h2 className={typography.sectionTitle}>Current focus</h2>
         <div className="mt-4 space-y-4">
+          {pendingConclusion ? (
+            <div
+              className="rounded-lg border border-warning/40 bg-warning/10 px-3 py-2.5"
+              role="status"
+              aria-live="polite"
+            >
+              <p className="text-sm font-medium text-foreground">
+                Focus conclusion pending confirmation
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                The last local session is preserved. Retry the save or leave it
+                without claiming it was recorded.
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                  onClick={retryPendingConclusion}
+                >
+                  Retry save
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                  onClick={leavePendingConclusion}
+                >
+                  Leave without saving
+                </button>
+              </div>
+            </div>
+          ) : null}
           {isActive ? (
             <>
               <div className="space-y-1">

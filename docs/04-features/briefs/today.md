@@ -1,6 +1,6 @@
 # Today - Feature Brief
 
-**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Status:** `DEFERRED_READ_ONLY_COMPOSITION` — MVP route clarified by D-014 on 2026-08-06
 **Owner:** Product Architect (Founder)
 **Sprint tasks:** P1.1, P1.5
 **Parent systems:** [Experience Architecture](../../03-experience/experience-architecture.md) - [Information Structure](../../03-experience/information-structure.md) - [Action and Evidence](../../02-systems/action-and-evidence.md) - [Sensemaking and Adaptation](../../02-systems/sensemaking-and-adaptation.md)
@@ -10,9 +10,11 @@
 **Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
 **Next contract:** [Today behavior contract](../behavior/today.md)
 
+> For MVP, Today is the interactive workspace rendered at `/`; domain owner controls inside that workspace perform consequential writes. The separate read-only orientation composition described by this brief is deferred by [D-014](../../08-decisions/records/D-014-defer-today-orientation-and-make-workspace-canonical.md) and is not the active root render tree.
+
 ## Product decision
 
-Today is the primary entry and reorientation surface for the admitted MVP loop. It helps a person understand available context and choose a next step. It is a truthful read composition, not a new domain, planner, score, or daily ritual.
+Today is the primary execution entry and reorientation surface for the admitted MVP loop. The interactive workspace lets a person understand context and act through canonical owner controls; it is not a new domain, planner, score, or daily ritual.
 
 ## Person need and outcome
 

@@ -3,6 +3,10 @@ import { getTodayDateString } from "@/lib/date-utils";
 import { notifyNextUpUpdated } from "@/lib/next-up-events";
 import { supabase } from "@/lib/supabase";
 import { TasksError } from "@/lib/tasks";
+import {
+  getPhase3Capability,
+  NEXT_UP_UNAVAILABLE_MESSAGE,
+} from "@/lib/phase3-capabilities";
 import type { Task } from "@/types/task";
 export {
   getDisplayNextUpTasks,
@@ -22,6 +26,23 @@ export type TaskQueueOrderUpdate = {
   queue_order: number | null;
 };
 
+export class NextUpUnavailableError extends TasksError {
+  constructor() {
+    super(NEXT_UP_UNAVAILABLE_MESSAGE);
+    this.name = "NextUpUnavailableError";
+  }
+}
+
+export function isNextUpPersistenceAvailable(): boolean {
+  return getPhase3Capability("nextUpPersistence") === "available";
+}
+
+function requireNextUpPersistence(): void {
+  if (!isNextUpPersistenceAvailable()) {
+    throw new NextUpUnavailableError();
+  }
+}
+
 function normalizeQueuedTask(task: Task): Task {
   return {
     ...task,
@@ -36,6 +57,7 @@ function normalizeQueuedTask(task: Task): Task {
 export async function fetchNextUpTasks(
   todayKey = getTodayDateString()
 ): Promise<Task[]> {
+  requireNextUpPersistence();
   const userId = await requireUserId();
   const { data, error } = await supabase
     .from("tasks")
@@ -55,6 +77,7 @@ export async function insertTaskToNextUp(
   taskId: string,
   beforeTaskId: string | null = null
 ): Promise<Task | null> {
+  requireNextUpPersistence();
   const items = await fetchNextUpTasks();
   if (items.some((item) => item.id === taskId)) return null;
 
@@ -91,6 +114,7 @@ export async function appendTaskToNextUp(taskId: string): Promise<Task | null> {
 }
 
 export async function removeTaskFromNextUp(taskId: string): Promise<void> {
+  requireNextUpPersistence();
   const userId = await requireUserId();
   const { error } = await supabase
     .from("tasks")
@@ -103,6 +127,7 @@ export async function removeTaskFromNextUp(taskId: string): Promise<void> {
 }
 
 export async function persistNextUpOrder(tasks: Task[]): Promise<void> {
+  requireNextUpPersistence();
   const updates: TaskQueueOrderUpdate[] = tasks.map((task, index) => ({
     id: task.id,
     queue_order: index + 1,

@@ -79,6 +79,8 @@ export function HabitDialog({
 
   useEffect(() => {
     if (open && mode === "edit" && habit) {
+      // Rehydrate the form whenever the edited habit changes.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- initialize form state from the selected record
       setForm(habitToForm(habit));
       setError(null);
     }

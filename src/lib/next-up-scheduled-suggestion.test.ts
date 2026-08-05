@@ -7,7 +7,6 @@ import {
   snoozeNextUpSuggestion,
 } from "@/lib/next-up-scheduled-suggestion";
 import type { StoredActiveFocusSession } from "@/lib/focus-active-session";
-import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
 
 const VIEW_DATE = getTodayDateString();
@@ -28,20 +27,6 @@ function makeTask(overrides: Partial<Task> = {}): Task {
     created_at: "2026-07-08T08:00:00.000Z",
     ...overrides,
   } as Task;
-}
-
-function makeHabit(overrides: Partial<Habit> = {}): Habit {
-  return {
-    id: "habit-1",
-    name: "Morning Stretch",
-    scheduled_time: "16:00",
-    days_of_week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    completed: false,
-    track_with_focus: true,
-    user_id: null,
-    created_at: "2026-07-08T08:00:00.000Z",
-    ...overrides,
-  };
 }
 
 describe("next-up-scheduled-suggestion", () => {

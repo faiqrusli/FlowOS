@@ -60,12 +60,16 @@ export function FocusPageContent() {
   }, []);
 
   useEffect(() => {
+    // Fetch the focus hub after mount and when its loader changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local focus state
     void loadFocusHub();
     trackFeatureUsage("focus", "view");
   }, [loadFocusHub]);
 
   useEffect(() => {
     if (!lastSavedSession) return;
+    // Merge the completed session emitted by the focus context.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local history with an external session event
     setSessions((prev) => mergeFocusSessions(prev, [lastSavedSession]));
   }, [lastSavedSession]);
 

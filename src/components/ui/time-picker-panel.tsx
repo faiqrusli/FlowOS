@@ -139,6 +139,8 @@ function TimePickerEditableHeader({
   const [periodMenuOpen, setPeriodMenuOpen] = useState(false);
 
   useEffect(() => {
+    // Rehydrate the time draft when the externally selected value changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local picker state with external value props
     setHourDraft(String(value.hour12));
     setMinuteDraft(String(value.minute).padStart(2, "0"));
   }, [value.hour12, value.minute]);

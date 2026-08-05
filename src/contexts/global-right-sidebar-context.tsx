@@ -118,6 +118,8 @@ export function GlobalRightSidebarProvider({
     useState<TaskDetailSource | null>(null);
 
   useEffect(() => {
+    // Restore the persisted sidebar width after client mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local layout state with browser storage
     setWidthState(readPersistedSidebarWidth());
   }, []);
 
@@ -127,6 +129,8 @@ export function GlobalRightSidebarProvider({
       const raw = window.sessionStorage.getItem(FLOATING_NOTES_STORAGE_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as Note[];
+      // Restore floating notes persisted for this browser session.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local notes state with session storage
       if (Array.isArray(parsed)) setFloatingNotes(parsed);
     } catch {
       // Ignore corrupt session data.

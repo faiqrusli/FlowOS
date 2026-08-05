@@ -1,6 +1,6 @@
 # Today - Behavior Contract
 
-**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Status:** `DEFERRED_FOR_MVP` — read-only orientation contract superseded for the MVP route by D-014 on 2026-08-06
 **Owner:** Product Architect (Founder)
 **Sprint tasks:** P1.1, P1.5, P5.2
 **Authorized brief:** [Today feature brief](../briefs/today.md)
@@ -10,6 +10,8 @@
 **Consumers:** `/`, Tasks, Focus, Reflection, Habits, Schedule, and Notes entry points
 **Record rules:** [MVP record rules](../record-rules.md)
 **Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
+
+> This contract remains the authority for a possible future read-only Today orientation. For MVP, `/` is the interactive Today workspace and `/workplace` redirects to `/`; this deferred contract does not describe the active root render tree.
 
 ## Scope and non-goals
 

@@ -39,6 +39,19 @@ import {
 } from "@/lib/focus-active-session";
 import { persistFocusSessionEnd } from "@/lib/focus-session-persist";
 import { persistFocusTaskTotals } from "@/lib/focus-task-totals";
+import {
+  beginFocusOperation,
+  confirmFocusOperation,
+  createIdleFocusOperationState,
+  failFocusOperation,
+  type FocusOperationState,
+} from "@/lib/focus-core-loop";
+import {
+  clearPendingFocusConclusion,
+  readPendingFocusConclusion,
+  writePendingFocusConclusion,
+  type PendingFocusConclusion,
+} from "@/lib/focus-recovery";
 import { trackFeatureUsage } from "@/lib/feature-usage";
 import {
   playAlertSound,
@@ -71,10 +84,14 @@ type FocusSessionContextValue = {
   tick: number;
   activeSession: StoredActiveFocusSession | null;
   lastSavedSession: FocusSession | null;
+  pendingConclusion: PendingFocusConclusion | null;
+  operationState: FocusOperationState;
   notification: string | null;
   clearNotification: () => void;
   /** Drop in-memory + stored active focus (demo restart / exit). */
   hardResetActiveSession: () => void;
+  retryPendingConclusion: () => void;
+  leavePendingConclusion: () => void;
   dashboardActive: DashboardActiveFocus;
   prepareFocusTarget: (
     target: { type: FocusTargetType; id: string; label?: string } | null
@@ -145,6 +162,14 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     null
   );
   const [notification, setNotification] = useState<string | null>(null);
+  const [pendingConclusion, setPendingConclusion] =
+    useState<PendingFocusConclusion | null>(null);
+  const [operationState, setOperationState] = useState<FocusOperationState>(
+    createIdleFocusOperationState,
+  );
+  const operationStateRef = useRef<FocusOperationState>(
+    createIdleFocusOperationState(),
+  );
 
   const sessionRef = useRef<StoredActiveFocusSession | null>(null);
   const completionHandledRef = useRef(false);
@@ -155,12 +180,44 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
   } | null>(null);
   const focusMinutesRef = useRef(focusMinutes);
   const breakMinutesRef = useRef(breakMinutes);
+  const pendingConclusionRef = useRef<PendingFocusConclusion | null>(null);
+
+  const updateOperationState = useCallback(
+    (next: FocusOperationState) => {
+      operationStateRef.current = next;
+      setOperationState(next);
+    },
+    [],
+  );
 
   useEffect(() => {
     sessionRef.current = session;
     focusMinutesRef.current = focusMinutes;
     breakMinutesRef.current = breakMinutes;
   }, [session, focusMinutes, breakMinutes]);
+
+  const setPendingConclusionState = useCallback(
+    (next: PendingFocusConclusion | null) => {
+      pendingConclusionRef.current = next;
+      setPendingConclusion(next);
+      if (next) writePendingFocusConclusion(next);
+      else clearPendingFocusConclusion();
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const storedPending = readPendingFocusConclusion();
+    pendingConclusionRef.current = storedPending;
+    // Restore a pending conclusion persisted before an interruption.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local recovery state with browser persistence
+    setPendingConclusion(storedPending);
+
+    if (storedPending && !sessionRef.current) {
+      sessionRef.current = storedPending.session;
+      setSession(storedPending.session);
+    }
+  }, []);
 
   const updateSession = useCallback(
     (next: StoredActiveFocusSession | null) => {
@@ -195,20 +252,41 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     sessionRef.current = null;
     setSession(null);
     setNotification(null);
+    updateOperationState(createIdleFocusOperationState());
+    setPendingConclusionState(null);
     clearActiveSession();
-  }, []);
+  }, [setPendingConclusionState, updateOperationState]);
 
   const endSession = useCallback(
     async (
       payload: Parameters<typeof persistFocusSessionEnd>[0]
     ): Promise<void> => {
-      const timerType = sessionRef.current?.timer_type ?? null;
+      const current = sessionRef.current;
+      const timerType = current?.timer_type ?? null;
+      if (!current) return;
       completionHandledRef.current = true;
-      updateSession(null);
+      updateOperationState(
+        beginFocusOperation(
+          operationStateRef.current,
+          "conclude",
+          current,
+          null,
+        ),
+      );
+      setPendingConclusionState({
+        payload,
+        session: current,
+        requested_at: new Date().toISOString(),
+      });
 
       try {
         const saved = await persistFocusSessionEnd(payload);
         if (saved) {
+          updateOperationState(
+            confirmFocusOperation(operationStateRef.current, null),
+          );
+          setPendingConclusionState(null);
+          updateSession(null);
           setLastSavedSession(saved);
           trackFeatureUsage("focus", "stop", {
             timer_type: timerType,
@@ -216,14 +294,37 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
           });
         }
       } catch (error) {
+        updateOperationState(
+          failFocusOperation(
+            operationStateRef.current,
+            "Focus conclusion was not confirmed.",
+          ),
+        );
         console.error("[focus] endSession failed to save", error);
         setNotification(
           "Focus session could not be saved. Check your connection — this session is missing from your history."
         );
+        setNotification(
+          "Focus session is pending confirmation. Retry or leave; the last local session is preserved.",
+        );
       }
     },
-    [updateSession]
+    [setPendingConclusionState, updateOperationState, updateSession]
   );
+
+  const retryPendingConclusion = useCallback(() => {
+    const pending = pendingConclusionRef.current;
+    if (!pending) return;
+    void endSession(pending.payload);
+  }, [endSession]);
+
+  const leavePendingConclusion = useCallback(() => {
+    completionHandledRef.current = false;
+    updateOperationState(createIdleFocusOperationState());
+    setPendingConclusionState(null);
+    updateSession(null);
+    setNotification("Focus session left without a confirmed save.");
+  }, [setPendingConclusionState, updateOperationState, updateSession]);
 
   const handlePomodoroPhaseExpiry = useCallback(async () => {
     const current = sessionRef.current;
@@ -252,6 +353,8 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     const stored = readActiveSession();
     if (stored) {
       sessionRef.current = stored;
+      // Restore an active focus session persisted before an interruption.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local recovery state with browser persistence
       setSession(stored);
 
       if (stored.timer_type === "pomodoro") {
@@ -467,17 +570,25 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
   const quickElapsed = quickSession
     ? getQuickClockSeconds(quickSession)
     : 0;
-  const quickTotals = quickSession
-    ? computeQuickFocusSeconds(quickSession)
-    : { focus: 0, break: 0 };
+  const quickTotals = useMemo(
+    () => {
+      void tick;
+      return quickSession
+        ? computeQuickFocusSeconds(quickSession)
+        : { focus: 0, break: 0 };
+    },
+    [quickSession, tick],
+  );
 
   const quickBreakPrompt: BreakPrompt = useMemo(() => {
+    void tick;
     if (!quickSession) return null;
     // INVARIANT: mode gates which threshold applies — never derive both "ready" and
     // "finished" simultaneously ("ready" requires active focus; "finished" requires break).
     if (quickPhase === "focus" && isBreakReady(quickSession)) return "ready";
     if (quickPhase === "break" && isBreakFinished(quickSession)) return "finished";
     return null;
+  // `tick` intentionally invalidates this wall-clock-derived prompt.
   }, [quickSession, quickPhase, tick]);
 
   const pomodoroPhase: PomodoroPhase = pomodoroSession
@@ -500,6 +611,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       : 0;
 
   const dashboardActive = useMemo((): DashboardActiveFocus => {
+    void tick;
     if (!session) {
       return {
         isActive: false,
@@ -528,9 +640,13 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       tick,
       activeSession: session,
       lastSavedSession,
+      pendingConclusion,
+      operationState,
       notification,
       clearNotification: () => setNotification(null),
       hardResetActiveSession,
+      retryPendingConclusion,
+      leavePendingConclusion,
       dashboardActive,
       prepareFocusTarget,
       quick: {
@@ -600,8 +716,12 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     tick,
     session,
     lastSavedSession,
+    pendingConclusion,
+    operationState,
     notification,
     hardResetActiveSession,
+    retryPendingConclusion,
+    leavePendingConclusion,
     dashboardActive,
     prepareFocusTarget,
     quickPhase,

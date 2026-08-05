@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,7 +25,7 @@ export function WorkplaceFocusInlineReflection({
 
   const focusSeconds = getSessionFocusSeconds(session);
 
-  const handleSubmit = useCallback(async () => {
+  async function handleSubmit() {
     const trimmed = content.trim();
     if (!trimmed) {
       onDismiss();
@@ -36,14 +36,14 @@ export function WorkplaceFocusInlineReflection({
     setError(null);
 
     try {
-      await saveFocusReflectionEntry(trimmed);
+      await saveFocusReflectionEntry(trimmed, { session });
       onDismiss();
     } catch {
       setError("Could not save — try again.");
     } finally {
       setSaving(false);
     }
-  }, [content, onDismiss]);
+  }
 
   if (!shouldPromptFocusReflection(focusSeconds)) {
     return null;
@@ -62,7 +62,7 @@ export function WorkplaceFocusInlineReflection({
           htmlFor="focus-inline-reflection"
           className="shrink-0 text-[13px] text-muted-foreground"
         >
-          What did this session produce?
+          What did you notice or interpret from this session?
         </label>
         <Input
           id="focus-inline-reflection"

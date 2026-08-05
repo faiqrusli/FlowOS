@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { format, isValid, parse } from "date-fns";
 import { TASK_PRIORITIES } from "@/lib/task-priority";
+import type { ReflectionDraft } from "@/types/reflection";
 import type { TaskInsert, TaskUpdate } from "@/types/task";
 
 const dateKeyPattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -61,6 +62,7 @@ const taskFields = {
   notification_enabled: z.boolean().optional(),
   notification_lead_minutes: z.number().int().nonnegative().nullable().optional(),
   planning_state: z.enum(["none", "later"]).optional(),
+  withdrawn_at: z.string().datetime().nullable().optional(),
 } satisfies Record<keyof TaskInsert, z.ZodTypeAny>;
 
 export const taskInsertSchema = z.object(taskFields);
@@ -71,6 +73,8 @@ export const taskUpdateSchema = taskInsertSchema
     completed_at: z.string().nullable().optional(),
   });
 
+export const taskIdSchema = z.string().uuid("Task identity is invalid.");
+
 export const taskFormSchema = z.object({
   title: z.string().trim().min(1, "Title is required."),
   description: z.string(),
@@ -79,9 +83,56 @@ export const taskFormSchema = z.object({
   priority: z.enum(TASK_PRIORITIES),
 });
 
+const reflectionTextSchema = z.string().max(20_000, "Reflection text is too long.");
+const reflectionEntrySchema = z.object({
+  id: z.string().trim().min(1, "Reflection entry identity is required."),
+  title: z.string().trim().max(200, "Entry title is too long."),
+  content: reflectionTextSchema,
+});
+const reflectionKanbanCardSchema = z.object({
+  id: z.string().trim().min(1, "Reflection card identity is required."),
+  content: reflectionTextSchema,
+});
+const reflectionKanbanSchema = z.object({
+  id: z.string().trim().min(1, "Reflection board identity is required."),
+  title: z.string().trim().max(200, "Board title is too long."),
+  cards: z.array(reflectionKanbanCardSchema),
+  collapsed: z.boolean().optional(),
+});
+
+/** Shared runtime boundary for full-page, sidebar, and Focus handoff saves. */
+export const reflectionDraftSchema = z.object({
+  went_well: reflectionTextSchema,
+  went_wrong: reflectionTextSchema,
+  custom_entries: z.array(reflectionEntrySchema),
+  custom_kanbans: z.array(reflectionKanbanSchema),
+});
+
+export const reflectionDateKeySchema = z
+  .string()
+  .regex(dateKeyPattern, "Use a valid reflection date.")
+  .refine(isValidDateKey, "Use a valid reflection date.");
+
+export const adaptationProposalSchema = z.object({
+  id: z.string().trim().min(1, "Adaptation identity is required."),
+  reflectionRecordId: z.string().trim().min(1, "Reflection identity is required."),
+  receivingOwner: z.enum(["tasks", "habits", "schedule", "notes"]),
+  title: z.string().trim().min(1, "Adaptation title is required.").max(200),
+  detail: reflectionTextSchema,
+  proposedAt: z.string().datetime().optional(),
+});
+
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;
 export type TaskFormValues = z.infer<typeof taskFormSchema>;
+
+export function parseReflectionDraft(input: ReflectionDraft): ReflectionDraft {
+  return reflectionDraftSchema.parse(input) as ReflectionDraft;
+}
+
+export function parseReflectionDateKey(dateKey: string): string {
+  return reflectionDateKeySchema.parse(dateKey);
+}
 
 export function parseTaskInsert(input: TaskInsert): TaskInsert {
   return taskInsertSchema.parse(input) as TaskInsert;
@@ -89,6 +140,10 @@ export function parseTaskInsert(input: TaskInsert): TaskInsert {
 
 export function parseTaskUpdate(input: TaskUpdate): TaskUpdate {
   return taskUpdateSchema.parse(input) as TaskUpdate;
+}
+
+export function parseTaskId(id: string): string {
+  return taskIdSchema.parse(id);
 }
 
 export function getFieldErrors(error: z.ZodError): Record<string, string> {

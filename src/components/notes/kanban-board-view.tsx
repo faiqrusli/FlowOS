@@ -225,6 +225,8 @@ export function KanbanBoardView({
     const column = board.columns.find((item) => item.id === focusColumnId);
     if (!column) return;
 
+    // Focus requests arrive from the parent board state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize the local editing target with the external request
     setEditingColumnId(focusColumnId);
     setColumnTitleDraft(column.title);
     onFocusColumnHandled?.();

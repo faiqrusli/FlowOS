@@ -112,6 +112,8 @@ export function GlobalRightSidebar() {
   // Keep panel body mounted through the slide so close feels like left-nav fade.
   useEffect(() => {
     if (expanded) {
+      // Keep content mounted during the sidebar's open transition.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize transition state with the external open flag
       setShowContent(true);
       return;
     }

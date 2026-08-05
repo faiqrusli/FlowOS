@@ -78,6 +78,7 @@ import {
   shiftDateKey,
 } from "@/lib/date-utils";
 import { setDragImageFromElement } from "@/lib/list-drag-utils";
+import { createLatestFrameCoalescer } from "@/lib/dnd/frame-coalescer";
 import {
   panelToggleHoverIconClass,
   panelTogglePrimaryIconClass,
@@ -135,7 +136,6 @@ import {
   type TimelineEntryKind,
   type TimelineZoom,
 } from "@/lib/timeline-layout";
-import { formatDurationLabel } from "@/lib/schedule-layout";
 import { SCHEDULE_BLOCK_CURRENT_CLASS } from "@/lib/schedule-palette";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { timelineHabitBlockClassNames } from "@/lib/timeline-habit-appearance";
@@ -335,7 +335,6 @@ export function TimelinePlanner({
   const [timelineVisibility, setTimelineVisibility] =
     useState<WorkplaceModuleVisibility>("always");
   const [timelineHovered, setTimelineHovered] = useState(false);
-  const useCompactChrome = isDrawer || isWorkplace;
   const useDrawerTimeline = isDrawer || isWorkplace;
   const showTaskPool = isFullscreen;
   const showHabitTimeline = habits.length > 0 && Boolean(onScheduleHabit);
@@ -348,6 +347,10 @@ export function TimelinePlanner({
   const dragGrabOffsetPxRef = useRef(0);
   const pointerYRef = useRef(0);
   const timelineAutoScrollRafRef = useRef<number | null>(null);
+  const timelinePreviewSchedulerRef = useRef<{
+    schedule(value: { clientY: number; dragItem: DragItem | null }): void;
+    cancel(): void;
+  } | null>(null);
   const scheduledSlotsRef = useRef<ReturnType<typeof buildScheduledSlots>>([]);
   const zoomRef = useRef<TimelineZoom>(DEFAULT_TIMELINE_ZOOM);
   const taskByIdRef = useRef<Map<string, Task>>(new Map());
@@ -431,6 +434,8 @@ export function TimelinePlanner({
   const compactTaskListTabs = taskListWidth < 240;
 
   useEffect(() => {
+    // Restore the persisted task-list width after client mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local layout state with browser storage
     setTaskListWidth(getQuickScheduleTaskListWidth());
   }, []);
 
@@ -460,6 +465,7 @@ export function TimelinePlanner({
         ? "border-border-strong/45"
         : "border-divider";
   const nowHour = useMemo(() => {
+    void nowTick;
     if (!isViewingToday) return null;
     return Math.floor(getNowMinutesInAppTimezone() / 60);
   }, [isViewingToday, nowTick]);
@@ -470,6 +476,7 @@ export function TimelinePlanner({
   );
 
   const dayHabits = useMemo(() => {
+    void habitScheduleRevision;
     if (!showHabitTimeline) return [];
     return filterHabitsForViewDate(habits, viewDate).map((habit) => ({
       ...habit,
@@ -483,6 +490,8 @@ export function TimelinePlanner({
 
   useEffect(() => {
     if (!isWorkplace) return;
+    // Restore the persisted timeline visibility preference.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local UI state with browser storage
     setTimelineVisibility(readModuleVisibility("timeline"));
   }, [isWorkplace]);
 
@@ -845,14 +854,47 @@ export function TimelinePlanner({
     );
   }
 
-  function updateTimelineDropPreview(clientY: number, event?: DragEvent) {
-    if (!isTimelineDragActive(event)) return;
+  function updateTimelineDropPreview(
+    clientY: number,
+    event?: DragEvent,
+    dragItemOverride?: DragItem,
+  ) {
+    if (!dragItemOverride && !isTimelineDragActive(event)) return;
 
-    const dragItem = readActiveDragItem(event);
+    const dragItem = dragItemOverride ?? readActiveDragItem(event);
     const minutes = resolveDropMinutesAt(clientY, dragItem);
     if (dropPreviewMinutesRef.current === minutes) return;
     dropPreviewMinutesRef.current = minutes;
     setDropPreviewMinutes(minutes);
+  }
+
+  function scheduleTimelineDropPreview(clientY: number, event?: DragEvent) {
+    if (timelinePreviewSchedulerRef.current === null) {
+      timelinePreviewSchedulerRef.current = createLatestFrameCoalescer(
+        (callback) => requestAnimationFrame(callback),
+        cancelAnimationFrame,
+        (pending: { clientY: number; dragItem: DragItem | null }) => {
+          pointerYRef.current = pending.clientY;
+          updateTimelineDropPreview(
+            pending.clientY,
+            undefined,
+            pending.dragItem ?? undefined,
+          );
+        },
+      );
+    }
+
+    timelinePreviewSchedulerRef.current.schedule({
+      clientY,
+      dragItem: readActiveDragItem(event),
+    });
+  }
+
+  function clearTimelineDropPreview() {
+    timelinePreviewSchedulerRef.current?.cancel();
+    if (dropPreviewMinutesRef.current === null) return;
+    dropPreviewMinutesRef.current = null;
+    setDropPreviewMinutes(null);
   }
 
   function tickTimelineAutoScroll() {
@@ -937,14 +979,13 @@ export function TimelinePlanner({
           if (event.dataTransfer) {
             event.dataTransfer.dropEffect = "move";
           }
-          updateTimelineDropPreview(event.clientY, reactDragEvent);
+          scheduleTimelineDropPreview(event.clientY, reactDragEvent);
         }
         return;
       }
 
       stopTimelineAutoScroll();
-      setDropPreviewMinutes(null);
-      dropPreviewMinutesRef.current = null;
+      clearTimelineDropPreview();
 
       const fallback =
         inboxTabRef.current === "later" ? "later" : "unscheduled";
@@ -973,6 +1014,9 @@ export function TimelinePlanner({
       document.removeEventListener("dragover", onDocumentDragOver);
       stopTimelineAutoScroll();
     };
+    // The document drag listener intentionally reads the latest timeline state
+    // through refs while the gesture is active; avoid re-binding on each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function isDraggingItem(kind: TimelineEntryKind, id: string) {
@@ -1025,6 +1069,7 @@ export function TimelinePlanner({
   }
 
   function endDrag() {
+    clearTimelineDropPreview();
     draggingItemRef.current = null;
     dragGrabOffsetPxRef.current = 0;
     setDraggingItem(null);
@@ -1244,14 +1289,13 @@ export function TimelinePlanner({
 
       if (isPointerOverQuickScheduleTimelineBody(clientX, clientY)) {
         clearInboxDropHighlight();
-        updateTimelineDropPreview(clientY);
+        scheduleTimelineDropPreview(clientY);
         startTimelineAutoScroll();
         return;
       }
 
       stopTimelineAutoScroll();
-      setDropPreviewMinutes(null);
-      dropPreviewMinutesRef.current = null;
+      clearTimelineDropPreview();
 
       const fallback =
         inboxTabRef.current === "later" ? "later" : "unscheduled";
@@ -1319,6 +1363,9 @@ export function TimelinePlanner({
       document.removeEventListener("pointerup", onPointerEnd, true);
       document.removeEventListener("pointercancel", onPointerEnd, true);
     };
+  // Pointer listeners use refs for the active drag snapshot and remain mounted
+  // for the lifetime of the planner.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clearInboxDropHighlight]);
 
   function handleTimelineDragOver(event: DragEvent) {
@@ -1329,7 +1376,7 @@ export function TimelinePlanner({
     pointerYRef.current = event.clientY;
     clearInboxDropHighlight();
     startTimelineAutoScroll();
-    updateTimelineDropPreview(event.clientY, event);
+    scheduleTimelineDropPreview(event.clientY, event);
   }
 
   function handleTimelineDragLeave(event: DragEvent) {
@@ -3003,6 +3050,8 @@ function useClampedFixedMenuPosition(
   }, [menuRef, x, y]);
 
   useEffect(() => {
+    // Portals must wait until the browser document is available.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize hydration state with the client DOM
     setMounted(true);
   }, []);
 

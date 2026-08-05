@@ -2,10 +2,12 @@ import { getTodayDateString } from "@/lib/date-utils";
 import type { Task } from "@/types/task";
 
 export function isEligibleForNextUp(
-  task: Pick<Task, "completed" | "planning_state" | "scheduled_date">,
+  task: Pick<Task, "completed" | "planning_state" | "scheduled_date"> &
+    Partial<Pick<Task, "withdrawn_at">>,
   todayKey = getTodayDateString()
 ): boolean {
   return (
+    !task.withdrawn_at &&
     !task.completed &&
     task.planning_state !== "later" &&
     (task.scheduled_date === null || task.scheduled_date === todayKey)

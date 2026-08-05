@@ -99,6 +99,8 @@ export function ScheduleTimeGrid({
   const [dropPreview, setDropPreview] = useState<DropPreview | null>(null);
 
   useEffect(() => {
+    // Keep the current-time marker aligned with the app timezone.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize clock state with the external wall clock
     setNowMinutes(getNowMinutesInAppTimezone());
     const interval = window.setInterval(() => {
       setNowMinutes(getNowMinutesInAppTimezone());
@@ -112,11 +114,15 @@ export function ScheduleTimeGrid({
   );
 
   const blockLayouts = useMemo(
-    () => buildScheduleBlockLayouts(mergedItems),
+    () => {
+      void durationRevision;
+      return buildScheduleBlockLayouts(mergedItems);
+    },
     [mergedItems, durationRevision]
   );
 
   const projectionLayouts = useMemo(() => {
+    void durationRevision;
     if (!showProjections) return [];
     return buildProjectionLayouts(mergedItems, unscheduledItems);
   }, [mergedItems, unscheduledItems, showProjections, durationRevision]);

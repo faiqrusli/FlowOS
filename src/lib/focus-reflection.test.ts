@@ -39,4 +39,35 @@ describe("focus reflection kanban", () => {
       content: "Second reflection",
     });
   });
+
+  it("appends a session-end entry with a separate Focus identity", async () => {
+    mockFetchTodayReflection.mockResolvedValueOnce({
+      id: "daily-1",
+      reflection_date: "2026-08-05",
+      went_well: "",
+      went_wrong: "",
+      custom_entries: [],
+      custom_kanbans: [],
+      user_id: "user-1",
+      created_at: "2026-08-05T02:00:00.000Z",
+    });
+    mockSaveReflection.mockResolvedValue(undefined);
+
+    const identity = await saveFocusReflectionEntry("Session insight", {
+      session: {
+        id: "session-1",
+        started_at: "2026-08-05T01:00:00.000Z",
+      },
+    });
+
+    expect(identity).toMatchObject({
+      kind: "focus-session-end",
+      source: "focus",
+      focusSessionId: "session-1",
+      parentDailyRecordId: "daily-1",
+    });
+    expect(mockSaveReflection.mock.calls.at(-1)?.[0].custom_entries).toEqual([
+      expect.objectContaining({ title: "Focus", content: "Session insight" }),
+    ]);
+  });
 });

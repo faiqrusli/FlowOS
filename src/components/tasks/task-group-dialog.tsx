@@ -66,6 +66,8 @@ export function TaskGroupDialog({
 
   useEffect(() => {
     if (!open) return;
+    // Opening the dialog starts with a fresh group draft.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset dialog state from the external open flag
     setName("");
     setIcon(null);
     setColor(pickRandomGroupColor());

@@ -1,10 +1,10 @@
 # Today Orientation — Delivery Design
 
-**Status:** `APPROVED` — Founder scope/design checkpoint passed 2026-08-05
+**Status:** `DEFERRED_FOR_MVP` — superseded for the MVP entry route by D-014 on 2026-08-06
 **Owner:** Engineering Architect (Founder)
 **Product scope owner:** Product Architect (Founder)
 **Created:** 2026-08-05
-**Last updated:** 2026-08-05
+**Last updated:** 2026-08-06
 **Authorized behavior contract:** [Today behavior contract](../behavior/today.md)
 **Authorized brief:** [Today feature brief](../briefs/today.md)
 **Design specification:** [Today design specification](../../05-design/features/today-design-spec.md)
@@ -21,7 +21,7 @@
 **Evidence links:** [Phase 3 current sprint](../../current-phase/current-sprint.md) · [Gate 3 checklist](../../current-phase/phase-3/gate-checklist.md)
 **Review trigger:** Any change to Today’s source set, ownership, durable writes, state semantics, route handoff, or recovery behavior.
 
-> Founder approved this technical delivery path on 2026-08-05. It authorizes Today P1 implementation only; it does not authorize migration application, production release, or a Gate 3 decision.
+> Founder approved this technical delivery path on 2026-08-05. D-014 supersedes it for the MVP entry route: `/` now uses the interactive workspace, while this read-only orientation composition is retained as deferred future work. It does not define active MVP behavior or Gate 3 evidence.
 
 ## Authorized behavior
 

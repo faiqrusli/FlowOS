@@ -127,6 +127,8 @@ export function SidebarReflectionPanel() {
   }, [autosave, draftKey]);
 
   useEffect(() => {
+    // Load the reflection preview when the panel is mounted.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local reflection state
     void loadReflection();
   }, [loadReflection]);
 

@@ -102,11 +102,15 @@ export function NotesPageContent() {
   }, []);
 
   useEffect(() => {
+    // Load growth areas after the page mounts.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local area state
     void loadAreas();
     trackFeatureUsage("notes", "view");
   }, [loadAreas]);
 
   useEffect(() => {
+    // Load notes for the selected growth area.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local note state
     if (selectedAreaId) void loadAreaContent(selectedAreaId);
   }, [selectedAreaId, loadAreaContent]);
 

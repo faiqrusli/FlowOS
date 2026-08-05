@@ -39,6 +39,8 @@ export function GrowthAreaIconChooser({
 
   useEffect(() => {
     if (!open) return;
+    // Start the chooser at its first slide each time it opens.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset transient dialog state from the external open flag
     setActiveSlide(0);
     setHoveredLabel(null);
     scrollRef.current?.scrollTo({ left: 0 });

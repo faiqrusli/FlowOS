@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,10 +21,12 @@ export function FocusHistoryList({ history, loading }: FocusHistoryListProps) {
   );
   // Auto-expand today when it first appears in history (e.g. after async load).
   const autoExpandedTodayRef = useRef(expanded.has(todayKey));
-  if (!autoExpandedTodayRef.current && history.some((day) => day.date === todayKey)) {
-    autoExpandedTodayRef.current = true;
-    setExpanded((prev) => (prev.has(todayKey) ? prev : new Set([todayKey, ...prev])));
-  }
+  useEffect(() => {
+    if (!autoExpandedTodayRef.current && history.some((day) => day.date === todayKey)) {
+      autoExpandedTodayRef.current = true;
+      setExpanded((prev) => (prev.has(todayKey) ? prev : new Set([todayKey, ...prev])));
+    }
+  }, [history, todayKey]);
 
   function toggle(date: string) {
     setExpanded((prev) => {

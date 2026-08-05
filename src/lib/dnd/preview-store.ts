@@ -119,6 +119,7 @@ export function shouldPublishDropTargetPreview(
   next: TaskDragTarget | null,
   sourceGroupId: string | null
 ): boolean {
+  void sourceGroupId;
   if (!next) return prev !== null;
   if (!prev) return true;
   if (prev.groupId !== next.groupId || prev.zone !== next.zone) return true;

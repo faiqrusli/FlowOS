@@ -1,6 +1,12 @@
 import { AuthError } from "@/lib/auth";
 import { getTodayDateString, isSameDay } from "@/lib/date-utils";
 import {
+  adaptFocusAttributionEvidence,
+  adaptFocusEvidence,
+  adaptTaskEvidence,
+  type FactualEvidenceEnvelope,
+} from "@/lib/factual-evidence";
+import {
   getSessionBreakSeconds,
   getSessionFocusSeconds,
 } from "@/lib/focus-utils";
@@ -37,8 +43,26 @@ export type TodayRecoveryAction =
   | "reauthenticate"
   | "leave";
 
+export type TodaySourceOwner =
+  | "tasks"
+  | "focus"
+  | "reflection"
+  | "habits"
+  | "schedule"
+  | "notes";
+
+export type TodaySourceProvenance =
+  | "direct"
+  | "user-provided"
+  | "source-provided"
+  | "derived"
+  | "planned"
+  | "unavailable";
+
 export type TodaySourceEnvelope<T> = {
   source: TodaySourceKey;
+  owner: TodaySourceOwner;
+  provenance: TodaySourceProvenance;
   state: TodaySourceState;
   data: T | null;
   freshness: "current" | "last-confirmed" | null;
@@ -48,6 +72,7 @@ export type TodaySourceEnvelope<T> = {
 
 export type TodayTasksProjection = {
   tasks: Task[];
+  evidence: FactualEvidenceEnvelope<Task>[];
   nextUp: {
     state: "unavailable";
     limitation: string;
@@ -56,6 +81,7 @@ export type TodayTasksProjection = {
 
 export type TodayFocusProjection = {
   sessions: FocusSession[];
+  evidence: FactualEvidenceEnvelope<FocusSession>[];
   stats: {
     totalFocusSeconds: number;
     totalBreakSeconds: number;
@@ -64,6 +90,7 @@ export type TodayFocusProjection = {
   attribution: {
     state: "unavailable";
     limitation: string;
+    evidence: FactualEvidenceEnvelope<unknown>[];
   };
 };
 
@@ -160,8 +187,22 @@ function envelope<T>(
   options: Pick<TodaySourceEnvelope<T>, "limitation" | "recovery"> &
     Partial<Pick<TodaySourceEnvelope<T>, "freshness">>,
 ): TodaySourceEnvelope<T> {
+  const owner: TodaySourceOwner = source;
+  const provenance: TodaySourceProvenance =
+    source === "schedule"
+      ? "planned"
+      : source === "reflection"
+        ? "user-provided"
+        : state === "unavailable" || state === "error"
+          ? "unavailable"
+          : source === "tasks" || source === "focus"
+            ? "direct"
+            : "source-provided";
+
   return {
     source,
+    owner,
+    provenance,
     state,
     data,
     freshness: options.freshness ??
@@ -178,6 +219,7 @@ function buildTasksEnvelope(
 ): TodaySourceEnvelope<TodayTasksProjection> {
   const data: TodayTasksProjection = {
     tasks,
+    evidence: tasks.map((task) => adaptTaskEvidence(task)),
     nextUp: { state: "unavailable", limitation: NEXT_UP_UNAVAILABLE },
   };
 
@@ -193,10 +235,23 @@ function buildFocusEnvelope(
 ): TodaySourceEnvelope<TodayFocusProjection> {
   const data: TodayFocusProjection = {
     sessions,
+    evidence: sessions.map((session) =>
+      adaptFocusEvidence(session, {
+        dateKey,
+        attributionAvailable: false,
+        attributionLimitation: FOCUS_ATTRIBUTION_UNAVAILABLE,
+      }),
+    ),
     stats: computeFocusStatsForDate(sessions, dateKey),
     attribution: {
       state: "unavailable",
       limitation: FOCUS_ATTRIBUTION_UNAVAILABLE,
+      evidence: sessions.map((session) =>
+        adaptFocusAttributionEvidence(session, [], {
+          available: false,
+          limitation: FOCUS_ATTRIBUTION_UNAVAILABLE,
+        }),
+      ),
     },
   };
 

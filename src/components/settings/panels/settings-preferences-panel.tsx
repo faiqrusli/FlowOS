@@ -61,6 +61,8 @@ export function SettingsPreferencesPanel() {
   const [settings, setSettings] = useState<FocusSettings>(DEFAULT_FOCUS_SETTINGS);
 
   useEffect(() => {
+    // Restore focus settings from browser persistence after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize local settings with persisted external state
     setSettings(readFocusSettings());
   }, []);
 

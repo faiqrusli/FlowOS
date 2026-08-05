@@ -101,6 +101,8 @@ function useWorkplaceAnchoredMenuPosition(
   }, [anchorRect, menuRef]);
 
   useEffect(() => {
+    // Portals must wait until the browser document is available.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize hydration state with the client DOM
     setMounted(true);
   }, []);
 

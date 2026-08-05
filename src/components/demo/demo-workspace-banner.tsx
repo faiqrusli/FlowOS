@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { MessageSquarePlus, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDemoSession } from "@/contexts/demo-session-context";
@@ -10,11 +10,11 @@ export function DemoWorkspaceBanner({ className }: { className?: string }) {
   const { isDemo, remainingLabel, openFeedback, restartDemo, busy } =
     useDemoSession();
   const [visible, setVisible] = useState(true);
-  const prevIsDemoRef = useRef(isDemo);
-  if (prevIsDemoRef.current !== isDemo) {
-    prevIsDemoRef.current = isDemo;
+  useEffect(() => {
+    // Re-entering demo mode restores the dismissible banner.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset local UI state when the external mode changes
     if (isDemo) setVisible(true);
-  }
+  }, [isDemo]);
 
   if (!isDemo || !visible) return null;
 

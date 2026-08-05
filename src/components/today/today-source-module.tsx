@@ -118,6 +118,12 @@ export function TodaySourceModule<T>({
         {stateDescription(envelope.state, envelope.recovery)}
       </p>
 
+      <p className="mt-2 text-xs text-muted-foreground">
+        Owner: <span className="font-medium text-foreground/80">{envelope.owner}</span>
+        {" · "}
+        Meaning: <span className="font-medium text-foreground/80">{envelope.provenance}</span>
+      </p>
+
       <div className="mt-4 flex-1 text-sm text-foreground/90">{children}</div>
 
       {envelope.limitation ? (

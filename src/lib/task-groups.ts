@@ -7,7 +7,6 @@ import type {
   PlanningState,
   Task,
   TaskGroup,
-  TaskGroupInsert,
   TaskGroupWithTasks,
 } from "@/types/task";
 import {
@@ -16,6 +15,7 @@ import {
   normalizePlanningState,
 } from "@/lib/task-planning";
 import { normalizeTaskManualOrder } from "@/lib/manual-order";
+import { isTaskActive } from "@/lib/task-core-loop";
 import { repairMissingManualOrders } from "@/lib/tasks";
 import {
   applyLaterColumnSortMode,
@@ -210,7 +210,7 @@ export function filterTasksForGroup(
     );
   }
   return tasks.filter((task) =>
-    taskBelongsInOrgGroupView(task, group.id, todayViewDate)
+    taskBelongsInOrgGroupView(task, group.id)
   );
 }
 
@@ -224,8 +224,7 @@ export function taskBelongsInTodayView(
 /** Org columns show tasks assigned to the group, including those also on Today/Later. */
 export function taskBelongsInOrgGroupView(
   task: Pick<Task, "group_id">,
-  groupId: string,
-  _todayViewDate?: string
+  groupId: string
 ): boolean {
   return task.group_id === groupId;
 }
@@ -269,7 +268,7 @@ export function buildBoardFromTasks(
       );
     } else {
       filteredTasks = tasks.filter((task) =>
-        taskBelongsInOrgGroupView(task, group.id, todayViewDate)
+    taskBelongsInOrgGroupView(task, group.id)
       );
     }
 
@@ -682,7 +681,7 @@ export async function fetchTaskBoard(
       updated_at: task.updated_at ?? task.created_at,
       completed_at: task.completed_at ?? null,
     })
-  );
+  ).filter(isTaskActive);
 
   const legacyTodayTasks = normalizedTasks.filter(
     (task) => todayGroup && task.group_id === todayGroup.id
@@ -953,7 +952,7 @@ export async function persistTaskBoardLayout(
 
     const manualSort = isManualTaskSortMode(getTaskGroupSortMode(group));
 
-    group.tasks.forEach((task, index) => {
+    group.tasks.forEach((task) => {
       if (task.group_id !== group.id) return;
 
       const scheduledDate =

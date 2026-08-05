@@ -35,6 +35,8 @@ export function CustomEntryDialog({
 
   useEffect(() => {
     if (open) {
+      // Rehydrate the entry form whenever the selected entry changes.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- initialize form state from the external record
       setTitle(entry?.title ?? "");
       setContent(entry?.content ?? "");
       setError(null);

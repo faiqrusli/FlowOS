@@ -78,6 +78,8 @@ Phase 3 must define when, who, how, and what verification is required before cla
 
 ## Next Actions
 
+**Implementation addition (2026-08-05):** P2 introduced `supabase/tasks_lifecycle.sql` for the already-approved retained withdrawal/restore behavior. It remains unapplied during P2–P6 and follows the same P7 apply/verify/rollback protocol as the two migration-backed capabilities below. The UI keeps withdrawal/restore capability unavailable until live verification.
+
 1. Implementation Engineer completes P2–P6 implementation with unavailable/fallback behavior for Next Up persistence and Focus attribution.
 2. During P7, Implementation Engineer applies migrations per this protocol.
 3. Implementation Engineer records verification evidence in [Gate 3 checklist](../../current-phase/phase-3/gate-checklist.md) G3-07.

@@ -174,12 +174,12 @@ export function NextUpDrawer({
 
   useLayoutEffect(() => {
     if (!open) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      // Clear the portal root when the drawer closes.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize portal state with the DOM anchor
       setDockFloatRoot(null);
       return;
     }
     // Querying DOM to sync with external portal root — legitimate external sync.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDockFloatRoot(
       document.querySelector<HTMLElement>("[data-workplace-dock-float-root]"),
     );

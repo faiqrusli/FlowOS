@@ -33,7 +33,7 @@ const ActiveDropLine = memo(function ActiveDropLine({
   beforeTaskId: string | null;
 }) {
   const visible = useTaskDragSessionSelector(
-    (snapshot) => shouldShowActiveDropLine(groupId, beforeTaskId),
+    () => shouldShowActiveDropLine(groupId, beforeTaskId),
     (previous, next) => previous === next
   );
   if (!visible) return null;
@@ -183,7 +183,7 @@ const SortedColumnDropHighlight = memo(function SortedColumnDropHighlight({
   groupId: string;
 }) {
   const visible = useTaskDragSessionSelector(
-    (snapshot) => isSortedColumnDropHighlight(groupId, "active"),
+    () => isSortedColumnDropHighlight(groupId, "active"),
     (previous, next) => previous === next
   );
   if (!visible) return null;
@@ -269,7 +269,7 @@ export const ActiveEmptyDropPlaceholder = memo(function ActiveEmptyDropPlacehold
     (previous, next) => previous === next
   );
   const highlighted = useTaskDragSessionSelector(
-    (snapshot) => isSortedColumnDropHighlight(groupId, "active"),
+    () => isSortedColumnDropHighlight(groupId, "active"),
     (previous, next) => previous === next
   );
 

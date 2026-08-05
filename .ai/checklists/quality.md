@@ -14,8 +14,8 @@ npm run build
 # Must pass with zero errors
 
 # 2. Lint  
-npm run lint
-# Must pass with zero errors (or justified exceptions)
+npm run lint -- --max-warnings=0
+# Must pass with zero errors and zero warnings
 
 # 3. Test
 npm test
@@ -75,7 +75,7 @@ npm run build
 
 **Command:**
 ```bash
-npm run lint
+npm run lint -- --max-warnings=0
 ```
 
 **What it checks:**
@@ -312,7 +312,7 @@ git diff main..your-branch
 
 **Automated checks:**
 - [ ] `npm run build` — ✅ Pass
-- [ ] `npm run lint` — ✅ Pass  
+- [ ] `npm run lint -- --max-warnings=0` — ✅ Pass
 - [ ] `npm test` — ✅ Pass
 
 **Security:**
@@ -438,7 +438,7 @@ git diff main..your-branch
 
 ### Automated Checks
 - [ ] Build: `npm run build` — ✅ Pass
-- [ ] Lint: `npm run lint` — ✅ Pass
+- [ ] Lint: `npm run lint -- --max-warnings=0` — ✅ Pass
 - [ ] Tests: `npm test` — ✅ Pass
 
 ### Security

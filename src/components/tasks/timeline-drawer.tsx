@@ -100,11 +100,16 @@ export function TimelineDrawer({ open, onClose, ...props }: TimelineDrawerProps)
 
   useEffect(() => {
     if (open) {
+      // Keep the drawer body mounted during its opening transition.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize transition state with the external open flag
       setShowContent(true);
       return;
     }
 
-    const timer = window.setTimeout(() => setShowContent(false), PANEL_LAYOUT_MS);
+    const timer = window.setTimeout(() => {
+      // Remove the body after the closing transition completes.
+      setShowContent(false);
+    }, PANEL_LAYOUT_MS);
     return () => window.clearTimeout(timer);
   }, [open]);
 
@@ -207,14 +212,19 @@ export function TimelineDrawerToggle({
 
   useEffect(() => {
     if (open) {
+      // Hide the overlay before its close transition starts.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize transition state with the external open flag
       setVisible(false);
       const timer = window.setTimeout(() => setMounted(false), PANEL_LAYOUT_MS);
       return () => window.clearTimeout(timer);
     }
 
+    // Mount the overlay before its open transition starts.
     setMounted(true);
+    // Reset visibility before requesting the animation frame.
     setVisible(false);
     const frame = window.requestAnimationFrame(() => {
+      // Reveal the overlay on the next paint.
       setVisible(true);
     });
     return () => window.cancelAnimationFrame(frame);

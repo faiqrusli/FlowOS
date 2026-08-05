@@ -43,6 +43,8 @@ export function GrowthAreaDialog({
 
   useEffect(() => {
     if (!open) return;
+    // Rehydrate the growth-area form whenever the selected area changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialize form state from the external record
     setName(area?.name ?? "");
     setEmoji(area?.emoji ?? "📝");
     setDescription(area?.description ?? "");

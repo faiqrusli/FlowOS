@@ -9,7 +9,18 @@ import {
 } from "@/lib/focus-continue";
 import { FocusSessionsError } from "@/lib/focus-sessions";
 import { getTodayDateString } from "@/lib/date-utils";
+import {
+  FOCUS_ATTRIBUTION_UNAVAILABLE_MESSAGE,
+  getPhase3Capability,
+} from "@/lib/phase3-capabilities";
 import { supabase } from "@/lib/supabase";
+
+export class FocusTaskAttributionUnavailableError extends FocusSessionsError {
+  constructor() {
+    super(FOCUS_ATTRIBUTION_UNAVAILABLE_MESSAGE);
+    this.name = "FocusTaskAttributionUnavailableError";
+  }
+}
 
 /**
  * Writes task-focused time only at session transition boundaries. The active
@@ -19,6 +30,10 @@ import { supabase } from "@/lib/supabase";
 export async function persistFocusTaskTotals(
   session: StoredActiveFocusSession
 ): Promise<void> {
+  if (getPhase3Capability("focusTaskAttribution") === "unavailable") {
+    return;
+  }
+
   if (
     session.timer_type !== "quick" ||
     !session.task_focus_session_id
@@ -52,6 +67,10 @@ export async function persistFocusTaskTotals(
 export async function fetchTodayFocusedTaskHistory(
   todayKey = getTodayDateString()
 ): Promise<TodayFocusedTaskRow[]> {
+  if (getPhase3Capability("focusTaskAttribution") === "unavailable") {
+    throw new FocusTaskAttributionUnavailableError();
+  }
+
   const userId = await requireUserId();
   // Loose lower bound (~2 days) then filter to today's date key in APP_TIMEZONE.
   const since = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();

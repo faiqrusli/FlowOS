@@ -165,7 +165,7 @@ export function CurrentTaskMenu({
           onClick={() => run(onDelete)}
         >
           <Trash2 className="size-3.5 shrink-0" />
-          Delete
+          Remove from active tasks
         </button>
       </div>
     </>,
@@ -181,6 +181,8 @@ type FocusCurrentTaskCardProps = {
   activeFocus?: boolean;
   /** Pause or break — quieter cue, no motion. */
   focusSoftened?: boolean;
+  /** False while the live Focus attribution migration is unavailable. */
+  attributionAvailable?: boolean;
   hasQueueNext?: boolean;
   onOpenTask: (task: Task) => void;
   onCompleteTask: (task: Task) => void;
@@ -207,6 +209,7 @@ export function FocusCurrentTaskCard({
   focusedSeconds,
   activeFocus = false,
   focusSoftened = false,
+  attributionAvailable = true,
   hasQueueNext = false,
   onOpenTask,
   onCompleteTask,
@@ -277,6 +280,8 @@ export function FocusCurrentTaskCard({
 
   useEffect(() => {
     if (!task) {
+      // Editing must close when the selected task disappears.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize the editor with the external task selection
       if (editing) cancelEdit();
       return;
     }
@@ -296,12 +301,16 @@ export function FocusCurrentTaskCard({
   }, [cancelEdit, dirty, draft, editing, onUpdateDescription, task]);
 
   useEffect(() => {
+    // A new task starts with its description collapsed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset transient UI state for the new task
     setDescExpanded(false);
   }, [task?.id]);
 
   useEffect(() => {
     const hasDesc = savedDescription.length > 0;
     if (!hasDesc || editing || descExpanded) {
+      // No measurement is needed when the description cannot be expanded.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clear the DOM-measurement result
       setDescNeedsExpand(false);
       return;
     }
@@ -470,10 +479,9 @@ export function FocusCurrentTaskCard({
 
             <div className="flow-focus-current-meta text-[11px] leading-none">
               <span>
-                Focused{" "}
-                <span className="tabular-nums">
-                  {formatDurationCompact(focusedSeconds)}
-                </span>
+                {attributionAvailable
+                  ? `Focused ${formatDurationCompact(focusedSeconds)}`
+                  : "Task attribution unavailable"}
               </span>
               <span className="mx-1 text-current/45" aria-hidden>
                 ·

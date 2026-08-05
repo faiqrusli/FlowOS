@@ -57,11 +57,13 @@ import {
 import {
   batchUpdateManualOrders,
   createTask,
-  deleteTask,
   duplicateTask,
+  fetchTasks,
+  restoreTask,
   TasksError,
   toggleTaskComplete,
   updateTask,
+  withdrawTask,
 } from "@/lib/tasks";
 import { moveTaskInBoard } from "@/lib/task-drag-utils";
 import {
@@ -102,6 +104,7 @@ export function TasksPageContent() {
   const { showActionToast } = useActionToast();
   const sidebarOffsetPx = useGlobalRightSidebarOffsetPx();
   const [groups, setGroups] = useState<TaskGroupWithTasks[]>([]);
+  const [withdrawnTasks, setWithdrawnTasks] = useState<Task[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
   const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -132,12 +135,14 @@ export function TasksPageContent() {
     setError(null);
 
     try {
-      const [board, nextHabits] = await Promise.all([
+      const [board, nextHabits, allTasks] = await Promise.all([
         fetchTaskBoard(),
         fetchHabitsWithCompletions(),
+        fetchTasks(),
       ]);
       setGroups(board);
       setHabits(nextHabits);
+      setWithdrawnTasks(allTasks.filter((task) => Boolean(task.withdrawn_at)));
     } catch (err) {
       setError(
         err instanceof TaskGroupsError ||
@@ -148,12 +153,15 @@ export function TasksPageContent() {
       );
       setGroups([]);
       setHabits([]);
+      setWithdrawnTasks([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
+    // Load the task board after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async loader updates local task state
     void loadBoard();
     trackFeatureUsage("tasks", "view");
   }, [loadBoard]);
@@ -180,6 +188,8 @@ export function TasksPageContent() {
   ]);
 
   useEffect(() => {
+    // Rebuild the today column when the viewed date changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize derived board state with the external view date
     setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
   }, [todayViewDate]);
 
@@ -195,8 +205,9 @@ export function TasksPageContent() {
   }, [timelineOpen]);
 
   useEffect(() => {
+    const timers = updateTimers.current;
     return () => {
-      for (const timer of updateTimers.current.values()) {
+      for (const timer of timers.values()) {
         clearTimeout(timer);
       }
     };
@@ -565,20 +576,28 @@ export function TasksPageContent() {
     }
 
     let committed = false;
-    const commitDelete = () => {
+    const commitDelete = async () => {
       if (committed) return;
       committed = true;
       trackFeatureUsage("tasks", "delete", { task_id: taskId });
-      void deleteTask(taskId).catch((err) => {
+      try {
+        const withdrawn = await withdrawTask(taskId);
+        setWithdrawnTasks((current) => [
+          withdrawn,
+          ...current.filter((item) => item.id !== withdrawn.id),
+        ]);
+      } catch (err) {
         setError(
-          err instanceof TasksError ? err.message : "Failed to delete task.",
+          err instanceof TasksError
+            ? err.message
+            : "Task withdrawal was not confirmed.",
         );
         void loadBoard();
-      });
+      }
     };
 
     showActionToast({
-      message: "Task moved to Trash",
+      message: "Task withdrawn; history retained",
       icon: "trash",
       actionLabel: "Undo",
       onAction: () => {
@@ -587,6 +606,28 @@ export function TasksPageContent() {
       },
       onExpire: commitDelete,
     });
+  }
+
+  async function handleRestoreTask(task: Task) {
+    setError(null);
+    try {
+      const restored = await restoreTask(task.id);
+      setWithdrawnTasks((current) =>
+        current.filter((item) => item.id !== task.id),
+      );
+      setGroups((current) => addTaskToBoard(current, restored, todayViewDate));
+      showActionToast({
+        message: "Task restored to active work",
+        tone: "success",
+        icon: "check",
+      });
+    } catch (err) {
+      setError(
+        err instanceof TasksError
+          ? err.message
+          : "Task restore was not confirmed.",
+      );
+    }
   }
 
   async function handleCreateGroup(input: {
@@ -999,6 +1040,53 @@ export function TasksPageContent() {
             <ErrorBanner message={error} />
           </div>
         )}
+
+        {withdrawnTasks.length > 0 ? (
+          <section
+            aria-labelledby="withdrawn-task-history"
+            className="mb-3 shrink-0 rounded-xl border border-border-subtle bg-surface-inset px-4 py-3"
+          >
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <div>
+                <h2
+                  id="withdrawn-task-history"
+                  className="text-sm font-semibold text-foreground"
+                >
+                  Withdrawn history
+                </h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  These task records remain available for correction or restore.
+                </p>
+              </div>
+              <span className="text-xs text-muted-foreground" role="status">
+                {withdrawnTasks.length} retained
+              </span>
+            </div>
+            <ul className="mt-3 space-y-2">
+              {withdrawnTasks.map((task) => (
+                <li
+                  key={task.id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border-subtle/70 px-3 py-2"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm text-foreground">{task.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Withdrawn; history retained
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-md px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={() => void handleRestoreTask(task)}
+                    aria-label={`Restore ${task.title}`}
+                  >
+                    Restore
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         <TasksBoardView
           groups={groups}

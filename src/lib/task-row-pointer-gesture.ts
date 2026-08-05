@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  type PointerEvent,
+} from "react";
 
 export const TASK_ROW_DRAG_THRESHOLD_PX = 8;
 
@@ -66,11 +72,19 @@ export function useTaskRowPointerGesture({
   const onPointerDragEndRef = useRef(onPointerDragEnd);
   const isDoubleClickTargetRef = useRef(isDoubleClickTarget);
 
-  onOpenDetailRef.current = onOpenDetail;
-  onDoubleClickRef.current = onDoubleClick;
-  onPointerDragStartRef.current = onPointerDragStart;
-  onPointerDragEndRef.current = onPointerDragEnd;
-  isDoubleClickTargetRef.current = isDoubleClickTarget;
+  useLayoutEffect(() => {
+    onOpenDetailRef.current = onOpenDetail;
+    onDoubleClickRef.current = onDoubleClick;
+    onPointerDragStartRef.current = onPointerDragStart;
+    onPointerDragEndRef.current = onPointerDragEnd;
+    isDoubleClickTargetRef.current = isDoubleClickTarget;
+  }, [
+    isDoubleClickTarget,
+    onDoubleClick,
+    onOpenDetail,
+    onPointerDragEnd,
+    onPointerDragStart,
+  ]);
 
   const cancelPendingOpenDetail = useCallback(() => {
     if (pendingOpenDetailRef.current !== null) {
