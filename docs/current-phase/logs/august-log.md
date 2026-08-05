@@ -7,6 +7,23 @@
 
 ---
 
+## 2026-08-05 — Today Orientation Read-Only Composition Baseline
+
+**Owner:** Founder / Implementation Engineer
+**Branch:** `sprint/phase3`
+**State:** `committed`; Gate 3 remains `NOT_STARTED`.
+
+- Replaced the Today route’s embedded Workplace mutation surface with read-only source modules and canonical owner handoffs.
+- Added independently settled source reads, scoped retry, stale confirmed-context preservation, explicit unavailable pending-migration states, and Singapore date-key propagation.
+- Added focused composition tests and recorded implementation evidence in [today-orientation-implementation-evidence.md](../phase-3/today-orientation-implementation-evidence.md).
+- Automated checks: 253 tests passed; lint passed with 0 errors; production compilation/type-check completed but prerendering remains blocked by the missing `NEXT_PUBLIC_SUPABASE_URL`; existing warnings, seeded/real-data walkthrough, accessibility review, RLS isolation, and timezone evidence remain open.
+
+**Impact:** Today now exposes factual source state and limitations without presenting a score or attaching task/habit mutations to the composition surface. This is unmerged branch work and is not a production release.
+
+**Next:** Complete the validation-plan walkthrough and Founder build checkpoint before requesting approval or merge.
+
+---
+
 ## 2026-08-05 — Founder Approves Today Orientation Design
 
 **Owner:** Founder

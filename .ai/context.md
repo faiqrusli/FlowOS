@@ -26,9 +26,9 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 
 **Phase:** Phase 3 — Implement and Harden the Core Loop
 
-**Current Sprint:** 2026-08-05 onward (active; implementation not started)
+**Current Sprint:** 2026-08-05 onward (active; Today P1 implementation in progress)
 
-**Status:** Phase 3 authorized by Gate 2 `PASS` on 2026-08-05; implementation not started
+**Status:** Phase 3 authorized by Gate 2 `PASS` on 2026-08-05; Today P1 implementation is in progress; Gate 3 remains open
 
 **📋 Quick Reference:**
 - **[Current Sprint](../docs/current-phase/current-sprint.md)** — Single implementation reference for Phase 3 work, objectives, risks, and status
@@ -49,7 +49,7 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 - Create feature design specifications with full state coverage
 - Reference: [archived Phase 2 sprint](../docs/11-archive/phases/phase-2/phase-2-sprint.md) and [D-008](../docs/08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md)
 
-**Phase 3 Status:** Active — authorized within the admitted MVP boundary; implementation has not started; Gate 3 and Gate 4 remain required before release.
+**Phase 3 Status:** Active — authorized within the admitted MVP boundary; Today P1 implementation is in progress; Gate 3 and Gate 4 remain required before release.
 
 ---
 
@@ -206,7 +206,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 
 **Gate 2 History:** PASSED — P1-P6 evidence is complete and archived; see [D-008](../docs/08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md).
 
-**Gate 3 Status:** NOT STARTED — Phase 3 implementation and validation evidence are pending.
+**Gate 3 Status:** NOT STARTED — Today P1 implementation baseline exists; seeded/real-data and broader validation evidence are pending.
 
 ---
 

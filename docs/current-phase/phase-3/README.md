@@ -1,7 +1,7 @@
 # Phase 3: Implement and Harden the Core Loop
 
 **Purpose:** Make the admitted MVP useful in one continuous experience, not as a collection of disconnected polished pages.
-**Status:** ACTIVE — authorized by Gate 2 `PASS` on 2026-08-05; implementation not started
+**Status:** ACTIVE — authorized by Gate 2 `PASS` on 2026-08-05; P1 Today implementation in progress
 **Owner:** Founder, executing the six-hat workflow
 **Gate:** Gate 3 — Core-loop readiness
 **Created:** 2026-08-05
@@ -18,7 +18,7 @@ Gate 2 passed because every admitted behavior has a parent system, journey stage
 
 ## P0 handoff baseline
 
-**State:** `COMPLETE` on `sprint/phase3`; implementation has not started.
+**State:** `COMPLETE` on `sprint/phase3`; completed before P1 implementation began.
 
 The archived Phase 2 sprint record and Gate 2 checklist, four core behavior contracts, bounded coherent-loop journey, supporting-domain decisions, record/provenance/correction/continuity rules, and four feature design specifications were reviewed as the implementation authority. The Phase 2 limitations remain active: pending/unverified Next Up and Focus attribution migrations, outstanding two-account RLS verification, Singapore midnight testing, Schedule keyboard review, existing lint/audit/middleware technical debt, and the incomplete local production-build environment.
 
@@ -40,8 +40,8 @@ The archived Phase 2 sprint record and Gate 2 checklist, four core behavior cont
 
 ## Work status
 
-- **P0 — Handoff baseline:** `COMPLETE` on `sprint/phase3`; implementation has not started.
-- **P1 — Today orientation:** Delivery design and validation plan `APPROVED` by Founder on 2026-08-05; implementation not started and ready to begin within the approved boundary.
+- **P0 — Handoff baseline:** `COMPLETE` on `sprint/phase3`; completed before P1 implementation began.
+- **P1 — Today orientation:** Delivery design and validation plan `APPROVED` by Founder on 2026-08-05; read-only composition baseline implemented, automated evidence passing, manual validation pending.
 - **P2–P6 — Core loop implementation:** `NOT_STARTED`.
 - **P7 — Gate 3 evidence:** `NOT_STARTED`.
 

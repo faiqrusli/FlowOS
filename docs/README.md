@@ -4,7 +4,7 @@
 
 > Direction → Commitment → Action → Evidence → Sensemaking → Adaptation
 
-**Status:** Phase 3 ACTIVE — authorized by Gate 2 `PASS` (2026-08-05). Implementation has not started.
+**Status:** Phase 3 ACTIVE — authorized by Gate 2 `PASS` (2026-08-05). Today P1 implementation is in progress; Gate 3 remains open.
 
 **Production:** https://flowos-sage.vercel.app  
 **Historical live-demo references:** [flowos-live-demo-spec.md](./11-archive/review/design/flowos-live-demo-spec.md) · [flowos-live-demo.md](./11-archive/execution/runbooks/flowos-live-demo.md)  

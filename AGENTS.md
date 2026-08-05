@@ -68,7 +68,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## 🔄 Current Status (Phase 3)
 
 **Phase:** Phase 3 — Implement and Harden the Core Loop
-**Sprint:** 2026-08-05 onward (active; implementation not started)
+**Sprint:** 2026-08-05 onward (active; Today P1 implementation in progress)
 **Gate 3:** Core-loop readiness — a Founder can perform the full journey with seeded and real data and recover from interruptions and errors
 **Progress:** Phase 1 CLOSED — Gate 1 PASSED; Phase 1.5 CLOSED — Gate 1.5 PASSED; Phase 2 CLOSED — Gate 2 PASSED; Phase 3 authorized
 **Prior phases:** Phase 1 — Implementation Truth (closed 2026-08-05, evidence at `docs/current-phase/phase-1/implementation-truth-evidence.md`); Phase 1.5 — Foundation Infrastructure (closed 2026-08-05, archived to `docs/11-archive/phases/phase-1.5/`, full record in `phase-1.5-sprint.md`)

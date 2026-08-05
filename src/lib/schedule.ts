@@ -1,84 +1,17 @@
-import {
-  formatTimeShort,
-  getTodayDateString,
-  parseTimeToMinutes,
-} from "@/lib/date-utils";
-import {
-  getHabitDurationMinutes,
-  getTaskDurationMinutes,
-} from "@/lib/schedule-durations";
+import { getTodayDateString } from "@/lib/date-utils";
 import { fetchTodayHabits } from "@/lib/habits";
 import { fetchTasks, fetchTodayTasks, partitionTasks } from "@/lib/tasks";
-import {
-  todayHabitAnchorId,
-  todayTaskAnchorId,
-} from "@/lib/today-in-place";
-import type { Habit } from "@/types/habit";
-import type { ScheduleData, ScheduleItem } from "@/types/schedule";
-import type { Task } from "@/types/task";
-import type { TaskBuckets } from "@/lib/tasks";
+import type { ScheduleData } from "@/types/schedule";
+import { buildScheduleItems } from "@/lib/schedule-items";
+
+export { buildScheduleItems } from "@/lib/schedule-items";
+export type { ScheduleLinkMode } from "@/lib/schedule-items";
 
 export class ScheduleError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "ScheduleError";
   }
-}
-
-export type ScheduleLinkMode = "module" | "today";
-
-export function buildScheduleItems(
-  tasks: Task[],
-  habits: Habit[],
-  linkMode: ScheduleLinkMode = "module"
-): ScheduleItem[] {
-  const items: ScheduleItem[] = [
-    ...tasks.map((task) => {
-      const timeSort = parseTimeToMinutes(task.scheduled_time);
-      const durationMinutes = getTaskDurationMinutes(task.id, task.priority);
-      return {
-        id: `task-${task.id}`,
-        entityId: task.id,
-        title: task.title,
-        type: "task" as const,
-        time: formatTimeShort(task.scheduled_time),
-        timeSort,
-        timeEndSort:
-          timeSort < Number.MAX_SAFE_INTEGER
-            ? timeSort + durationMinutes
-            : undefined,
-        durationMinutes,
-        priority: task.priority,
-        completed: task.completed,
-        href: linkMode === "today" ? "#" : "/tasks",
-        scrollTargetId:
-          linkMode === "today" ? todayTaskAnchorId(task.id) : undefined,
-      };
-    }),
-    ...habits.map((habit) => {
-      const timeSort = parseTimeToMinutes(habit.scheduled_time);
-      const durationMinutes = getHabitDurationMinutes(habit.id);
-      return {
-        id: `habit-${habit.id}`,
-        entityId: habit.id,
-        title: habit.name,
-        type: "habit" as const,
-        time: formatTimeShort(habit.scheduled_time),
-        timeSort,
-        timeEndSort:
-          timeSort < Number.MAX_SAFE_INTEGER
-            ? timeSort + durationMinutes
-            : undefined,
-        durationMinutes,
-        completed: habit.completed,
-        href: linkMode === "today" ? "#" : "/habits",
-        scrollTargetId:
-          linkMode === "today" ? todayHabitAnchorId(habit.id) : undefined,
-      };
-    }),
-  ];
-
-  return items.sort((a, b) => a.timeSort - b.timeSort);
 }
 
 export async function fetchScheduleData(): Promise<ScheduleData> {

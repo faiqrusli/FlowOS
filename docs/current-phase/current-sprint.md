@@ -2,8 +2,8 @@
 
 **Sprint period:** 2026-08-05 onward
 **Phase:** Phase 3 — Implement and Harden the Core Loop
-**Status:** ACTIVE — authorized by Gate 2; implementation not started
-**Handoff branch:** `sprint/phase3` — Phase 2 closeout merged into `main` at `5b47360`; the P0 handoff baseline is complete and implementation has not started.
+**Status:** ACTIVE — authorized by Gate 2; P1 Today implementation in progress
+**Handoff branch:** `sprint/phase3` — Phase 2 closeout merged into `main` at `5b47360`; the P0 handoff baseline is complete and P1 Today implementation is in progress.
 **Owner:** Founder, executing all six hats
 **Last updated:** 2026-08-05
 
@@ -60,7 +60,7 @@ Make the admitted MVP useful in one continuous experience rather than as a colle
 | Package | Outcome | Owner | State |
 |---|---|---|---|
 | P0 — Handoff baseline | Read the archived Phase 2 package, preserve admitted boundaries, and carry every unresolved condition into implementation plans | Founder / Engineering Architect | `COMPLETE` |
-| P1 — Today orientation | Implement against the approved [delivery design](../04-features/delivery/today-orientation.md) and [validation plan](../04-features/validation/today-orientation.md) | Product + Design + Engineering | `DESIGN_APPROVED` — Founder checkpoint passed 2026-08-05; implementation not started |
+| P1 — Today orientation | Implement against the approved [delivery design](../04-features/delivery/today-orientation.md) and [validation plan](../04-features/validation/today-orientation.md) | Product + Design + Engineering | `IMPLEMENTATION_IN_PROGRESS` — read-only composition baseline implemented; validation evidence pending |
 | P2 — Task commitment/action | Implement task lifecycle, selection, correction, defer/withdraw, and recovery | Product + Design + Engineering | `NOT_STARTED` |
 | P3 — Focus action mode | Implement session lifecycle, interruption, persistence, and truthful history | Product + Design + Engineering | `NOT_STARTED` |
 | P4 — Evidence | Implement factual action/session evidence without inferred outcomes | Engineering Architect | `NOT_STARTED` |

@@ -1,6 +1,6 @@
 # Phase 3 Gate Checklist — Gate 3: Core-loop Readiness
 
-**Status:** NOT_STARTED — Phase 3 authorized; implementation not started
+**Status:** NOT_STARTED — Phase 3 authorized; P1 implementation in progress and Gate 3 evidence incomplete
 **Owner:** Founder, executing all six hats
 **Parent:** [Phase 3 README](./README.md) · [MVP implementation masterplan](../mvp-implementation-masterplan.md)
 **Execution reference:** [Current sprint](../current-sprint.md)
@@ -27,7 +27,7 @@ The archived Phase 2 sprint record and Gate 2 checklist, four core behavior cont
 | ID | Requirement | Evidence | State |
 |---|---|---|---|
 | G3-01 | Approved delivery designs and validation plans exist | [Today orientation delivery design](../../04-features/delivery/today-orientation.md) and [Today orientation validation plan](../../04-features/validation/today-orientation.md) approved and linked to the contract/design; other Phase 3 surface packages remain pending | `IN_PROGRESS` |
-| G3-02 | Today orientation and route recovery work | Seeded and real-data entry, re-entry, owner handoff, and recovery evidence | `NOT_STARTED` |
+| G3-02 | Today orientation and route recovery work | [Today implementation evidence](./today-orientation-implementation-evidence.md); seeded and real-data entry, re-entry, owner handoff, and recovery evidence remain pending | `IN_PROGRESS` |
 | G3-03 | Tasks support commitment and action | Create, clarify, select, start, complete, revise, defer, withdrawal, correction, and recovery evidence | `NOT_STARTED` |
 | G3-04 | Focus records truthful action/session evidence | Start, pause, resume, conclude, interruption, persistence, history, and unavailable attribution evidence | `NOT_STARTED` |
 | G3-05 | Reflection preserves interpretation and adaptation authority | Draft/save/retry/correct/re-entry and receiving-owner handoff evidence | `NOT_STARTED` |

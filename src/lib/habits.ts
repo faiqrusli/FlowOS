@@ -105,6 +105,32 @@ export async function fetchTodayHabits(): Promise<Habit[]> {
     });
 }
 
+/**
+ * Read the habits visible for Today without repairing a stale database flag.
+ *
+ * The owner surface may reconcile legacy flags as part of its normal workflow.
+ * Today is a read/composition surface, so it must not turn a read into a
+ * durable habit update. Completion dates are still read from the existing
+ * completion source and applied to the returned projection.
+ */
+export async function fetchTodayHabitsReadOnly(): Promise<Habit[]> {
+  const habits = await fetchHabits();
+  await loadHabitCompletions();
+  const today = getTodayDateString();
+
+  return habits
+    .filter((habit) => isHabitScheduledToday(habit))
+    .map((habit) => ({
+      ...habit,
+      completed: isHabitCompletedOnDate(habit, today),
+    }))
+    .sort((a, b) => {
+      const aMin = a.scheduled_time ?? "99:99";
+      const bMin = b.scheduled_time ?? "99:99";
+      return aMin.localeCompare(bMin);
+    });
+}
+
 export async function createHabit(input: HabitInsert): Promise<Habit> {
   const userId = await requireUserId();
   const { data, error } = await supabase
