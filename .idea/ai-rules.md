@@ -7,8 +7,8 @@
 ## 🚨 CRITICAL: Read These First
 
 **Before starting ANY work:**
-1. **`.ai/context.md`** — Full product context, 6-hat workflow, Phase 2 status
-2. **`docs/current-phase/current-sprint.md`** — Current Phase 2 sprint implementation reference
+1. **`.ai/context.md`** — Full product context, 6-hat workflow, Phase 3 status
+2. **`docs/current-phase/current-sprint.md`** — Current Phase 3 sprint implementation reference
 3. **Your role document** (if assigned): `docs/10-team/6-role-hats/[role-name].md`
 
 **Then use:**
@@ -26,10 +26,10 @@
 **Stack:** Next.js App Router, React, TypeScript, Tailwind, Supabase  
 **Production:** https://flowos-sage.vercel.app  
 
-**Current Phase:** Phase 2 — Contract the Coherent MVP Loop
-**Current Sprint:** 2026-08-05 → 2026-08-08 (Phase 2 sprint active)
-**Gate 2 Target:** Every admitted behavior traces to parent system, journey, design, owner, and validation question
-**Progress:** Phase 1 and Phase 1.5 CLOSED — Gates 1 and 1.5 PASSED 2026-08-05; Phase 2 authorized
+**Current Phase:** Phase 3 — Implement and Harden the Core Loop
+**Current Sprint:** 2026-08-05 onward (Phase 3 sprint active; implementation not started)
+**Gate 3 Target:** Core-loop readiness with seeded/real data, recovery, truth distinctions, and canonical owner routing
+**Progress:** Phase 1, Phase 1.5, and Phase 2 CLOSED — Gates 1, 1.5, and 2 PASSED 2026-08-05; Phase 3 authorized
 
 **Team:** Six authoritative hats grouped into Plan, Build, and Ship — solo founder wears all hats
 
@@ -67,9 +67,9 @@
 
 ### 2. Sprint-Driven Work
 **Work comes from current sprint.**
-- Current Phase: **Phase 2** (Contract the Coherent MVP Loop)
+ - Current Phase: **Phase 3** (Implement and Harden the Core Loop)
 - Check `docs/current-phase/current-sprint.md` for the single implementation reference
-- Gate 2 target: every admitted behavior traces to parent system, journey, design, owner, and validation question
+ - Gate 3 target: Founder can perform the full journey with seeded and real data, recover from interruption/error, and reach each owning surface
 
 ### 3. Pattern Matching First
 Always check similar files before writing new code. Copy existing patterns.

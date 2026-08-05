@@ -12,4 +12,4 @@ This is a non-normative directory index. Experience documents apply product and 
 
 | Document | Responsibility | Status | Owner |
 |---|---|---|---|
-| [MVP Coherent Loop](./journeys/mvp-coherent-loop.md) | Bounded orientation → commitment → action → evidence → sensemaking → adaptation journey | Draft — Gate 2 input | Product Architect |
+| [MVP Coherent Loop](./journeys/mvp-coherent-loop.md) | Bounded orientation → commitment → action → evidence → sensemaking → adaptation journey | Complete - Product and Design Architect evidence reviewed; Gate 2 passed | Product Architect |

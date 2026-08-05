@@ -1,7 +1,7 @@
 ﻿# Current Phase
 
 **Purpose:** Central location for current implementation phase work  
-**Status:** Phase 1 CLOSED (Gate 1 PASSED) · Phase 1.5 CLOSED (Gate 1.5 PASSED) — Phase 2 active; Phase 3 scheduled
+**Status:** Phase 3 ACTIVE (authorized by Gate 2 `PASS` 2026-08-05) · implementation not started
 **Last Updated:** 2026-08-05  
 
 ---
@@ -21,10 +21,11 @@
 
 | Document | Purpose |
 |----------|---------|
-| [Current Sprint](./current-sprint.md) | **Single implementation reference** for active work, requirements, acceptance, dependencies, and merge readiness |
+| [Current Sprint](./current-sprint.md) | **Phase 3 active sprint** for implementation order, objectives, risks, and Gate 3 handoff |
 | [Current-Phase Templates](./templates/) | Flexible future-use templates; active sprint and gate records are the source examples |
 | [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) | **Highest authority** for MVP phases and gates |
-| [Phase 2 Folder](./phase-2/) | **Current phase work** — Gate 2 checklist, sprint tracking |
+| [Phase 2 Folder](./phase-2/) | **Closed phase work** — Gate 2 checklist, decision, and evidence |
+| [Phase 3 Folder](./phase-3/) | **Active phase work** — implementation boundary and Gate 3 checklist |
 | [Phase 1 Folder](./phase-1/) | Closed prior phase — Gate 1 evidence and decision (implementation truth) |
 | [Phase 1.5 Archive](../11-archive/phases/phase-1.5/) | Closed Phase 1.5 records — Gate 1.5 PASSED 2026-08-05 |
 | [Phase 0 Archive](../11-archive/phases/phase-0/) | Closed Phase 0 records — Gate 0 PASSED 2026-08-04 |
@@ -36,7 +37,7 @@
 ```
 current-phase/
   ├── README.md                           ← You are here
-  ├── current-sprint.md                   ← Current active work
+  ├── current-sprint.md                   ← Phase 3 active sprint
   ├── mvp-implementation-masterplan.md    ← Canonical implementation roadmap
   ├── templates/                           ← Future sprint and gate starting points
   ├── logs/                               ← Operational logs (August 2026)
@@ -46,14 +47,17 @@ current-phase/
   │   ├── README.md                       ← Phase 1 overview
   │   └── gate-checklist.md               ← Gate 1 completion criteria
   ├── phase-1.5/                          ← Phase 1.5 work (closed; archived)
-  └── phase-2/                            ← Phase 2 work (current phase)
+  ├── phase-2/                            ← Phase 2 work (closed; Gate 2 passed)
       ├── README.md                       ← Phase 2 overview
       └── gate-checklist.md               ← Gate 2 completion criteria
+  └── phase-3/                            ← Phase 3 work (active; Gate 3 not started)
+      ├── README.md                       ← Phase 3 overview
+      └── gate-checklist.md               ← Gate 3 completion criteria
 ```
 
 **Phase lifecycle:**
-- On phase completion, archive the `phase-N/` folder to `docs/11-archive/phases/phase-N/`
-- Create the next `phase-(N+1)/` folder
+- On phase completion, archive the full sprint record and checklist to `docs/11-archive/phases/phase-N/` and keep direct phase evidence linked from the closed phase dossier.
+- Create the next `phase-(N+1)/` folder and normalize `current-sprint.md` to its active structure.
 - Phase 0 records are archived at `docs/11-archive/phases/phase-0/`
 - Phase 1.5 records are archived at `docs/11-archive/phases/phase-1.5/`
 
@@ -82,12 +86,12 @@ current-phase/
 
 1. **[Current Sprint](./current-sprint.md)** — What phase, tasks, requirements, acceptance, dependencies, and status
 2. **[MVP Masterplan](./mvp-implementation-masterplan.md)** — What's the roadmap
-3. **[Phase 2 Gate Checklist](./phase-2/gate-checklist.md)** — What needs to be done
+3. **[Phase 3 Gate Checklist](./phase-3/gate-checklist.md)** — Gate 3 evidence and decision
 4. **[Solo Founder Workflow](../start-here/solo-founder-workflow.md)** — How to execute work using 6 hats
 
-Future phase setup can start from the [template index](./templates/), but the active sprint and gate records remain authoritative for current work.
+Future phase setup can start from the [template index](./templates/); the [Phase 2 archive](../11-archive/phases/phase-2/) remains the authoritative completion record for the closed phase.
 
-**Then start executing with the 6-hat workflow. Phase 2 contracts reference the Phase 1.5 foundation patterns and must not expand MVP breadth.**
+**Phase 3 implementation uses the Phase 2 contracts, references the Phase 1.5 foundation patterns, and must not expand MVP breadth.**
 
 ---
 

@@ -11,11 +11,11 @@ This is a non-normative directory index. Design documents express approved produ
 | [Feature Design Specifications](./feature-design-specifications.md) | Standard for feature-specific visual, interaction, content, and accessibility design | Active | Design Architect | Design system and behavior contracts |
 | `components/component-specification-template.md` | Planned starter form for a reusable component contract | Planned artifact — not present in this worktree | N/A | Design System Architecture |
 
-## Phase 2 Planned Design Specifications
+## Phase 2 Design Specifications
 
-The Phase 2 design outputs are tracked in the [Current Sprint](../current-phase/current-sprint.md) and become Gate 2 evidence only after they exist and pass the required state-coverage review:
+The Phase 2 design outputs are preserved in the [archived Phase 2 sprint](../11-archive/phases/phase-2/phase-2-sprint.md). All four artifacts exist and passed the Design Architect state-coverage and cross-surface review on 2026-08-05; they are accepted Gate 2 evidence for the Phase 3 implementation handoff:
 
-- `features/today-design-spec.md`
-- `features/tasks-design-spec.md`
-- `features/focus-design-spec.md`
-- `features/reflection-design-spec.md`
+- [Today design specification](./features/today-design-spec.md) - Complete
+- [Tasks design specification](./features/tasks-design-spec.md) - Complete
+- [Focus design specification](./features/focus-design-spec.md) - Complete
+- [Reflection design specification](./features/reflection-design-spec.md) - Complete

@@ -14,13 +14,13 @@ apply: always
 
 1. **`.ai/context.md`** ← START HERE
    - Product identity, tech stack, 6-hat workflow
-   - Current Phase 2 status and objectives
+   - Current Phase 3 status and objectives
    - Documentation authority hierarchy
    - Core development principles
 
 2. **`docs/current-phase/current-sprint.md`** ← Current sprint
-   - Phase 2 assignments per role
-   - Gate 2 criteria
+   - Phase 3 assignments per role
+   - Gate 3 criteria
    - What's in/out of scope
 
 3. **`docs/10-team/6-role-hats/[your-role].md`** ← Your role (if assigned)
@@ -44,11 +44,11 @@ apply: always
 **Stack:** Next.js App Router, React 19, TypeScript, Tailwind CSS, Supabase, Vercel  
 **Production:** https://flowos-sage.vercel.app  
 
-**Current Phase:** Phase 2 — Contract the Coherent MVP Loop  
-**Current Sprint:** 2026-08-05 → 2026-08-08 (Phase 2 sprint active)  
-**Gate 2 Target:** Contract coherence — every admitted behavior traces to parent system, journey, design, owner, and validation question  
-**Progress:** Phase 1.5 CLOSED — Gate 1.5 PASSED 2026-08-05; Phase 2 authorized (D-006)  
-**Decision:** D-006 — Gate 1.5 PASS and Phase 2 Authorization
+**Current Phase:** Phase 3 — Implement and Harden the Core Loop
+**Current Sprint:** 2026-08-05 onward (Phase 3 active; implementation not started)
+**Gate 3 Target:** Core-loop readiness with seeded/real data, recovery, truth distinctions, and canonical owner routing
+**Progress:** Phase 2 CLOSED — Gate 2 PASSED 2026-08-05; Phase 3 authorized (D-008)
+**Decision:** D-008 — Gate 2 PASS and Phase 3 Authorization
 
 **Team:** Six authoritative hats grouped into Plan, Build, and Ship — solo founder wears all hats
 
@@ -148,7 +148,7 @@ Higher wins:
 2. `docs/00-constitution/documentation-architecture.md`
 3. `docs/01-product/` through `docs/10-team/`
 4. `docs/current-phase/mvp-implementation-masterplan.md`
-5. `docs/current-phase/current-sprint.md` (current Phase 2 implementation reference)
+5. `docs/current-phase/current-sprint.md` (current Phase 3 implementation reference)
 6. `docs/00-constitution/governance/`
 7. `.ai/context.md`
 

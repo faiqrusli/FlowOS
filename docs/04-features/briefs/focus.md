@@ -1,69 +1,49 @@
-# Focus — Feature Brief
+# Focus - Feature Brief
 
-**Status:** Draft
-**Owner:** Product Architect
+**Status:** Product Architect complete; approved for Design Architect handoff on 2026-08-05
+**Owner:** Product Architect (Founder); Focus domain owns session persistence
 **Sprint tasks:** P1.3, P1.5, P4.5
+**Parent systems:** [Action and Evidence](../../02-systems/action-and-evidence.md) - [Direction and Commitment](../../02-systems/direction-and-commitment.md)
+**Journey stage:** Action and Evidence
+**Canonical owner:** Focus owns the factual session lifecycle, session timing, session correction, and session-level evidence. It does not own task completion or adaptation.
 **Foundation:** [Phase 1.5 foundation pattern](../../11-archive/phases/phase-1.5/validation-and-date-time-pattern.md)
-**Parent:** [Product Model](../../01-product/product-model.md) · [Action and Evidence System](../../02-systems/action-and-evidence.md) · [Experience Architecture](../../03-experience/experience-architecture.md)
-**Standard:** [Feature Briefs](../feature-briefs.md)
 **Evidence:** [Phase 1 implementation truth](../../current-phase/phase-1/implementation-truth-evidence.md)
 **Next contract:** [Focus behavior contract](../behavior/focus.md)
-**Review trigger:** A change to active-session semantics, task attribution, elapsed-time meaning, interruption recovery, or Focus’s role in the MVP loop.
 
-## Feature decision
+## Product decision
 
-**Proceed to behavior contract.** Focus is admitted as the deliberate-attention action mode. `/focus` remains primarily history/analytics context; active execution may be entered from Today, Workplace, or Tasks.
+Focus is the deliberate-attention action mode. It records what the Focus session actually recorded: lifecycle state, persisted instants, and verified attribution when available. Duration and session existence are evidence of a session, not proof of task completion, quality, causality, or outcome.
 
-## Person need and context
+## Person need and outcome
 
-“When I choose an action, I need a bounded way to begin, pause, resume, and conclude attention on it, then understand what the session actually records.”
-
-The current build persists focus sessions and exposes active focus in contextual surfaces. Phase 1 identified unresolved active-session semantics, task-attribution migration state, and the need to distinguish elapsed time from outcome.
-
-## Desired outcome
-
-The person can deliberately enter and leave an action mode, recover after interruption, and inspect factual session history without FlowOS treating duration as proof of completion, quality, or outcome.
-
-## Evidence and assumptions
-
-- **Observed:** Focus history/analytics exist at `/focus`; active focus is embedded in Today/Workplace.
-- **Observed:** `focus-session-persist.ts` and `focus-sessions.ts` own session persistence; session-end reflection is a separate handoff.
-- **Observed:** `focus_session_task_totals.sql` remains listed as not applied in live-state records.
-- **Assumption:** A session may relate to a selected task but must remain truthful if attribution is unavailable.
-
-## Feature hypothesis
-
-If Focus represents attention as an explicit, recoverable action record and keeps elapsed time separate from outcome, it can support deliberate action without creating false performance evidence.
+The person needs a bounded way to begin, pause, resume, and conclude an action session while retaining honest recovery after interruption. The desired outcome is a factual session record and an optional Reflection handoff, with uncertainty visible when attribution or persistence is unavailable.
 
 ## Scope
 
-- Start, pause, resume, conclude, cancel/leave, and recover an active focus session where the current build supports the path.
-- Preserve optional selected-task identity and truthful attribution status.
-- Persist factual session state and elapsed-time evidence through the Focus owner.
-- Provide a bounded handoff to session-end Reflection without automatically applying adaptation.
-- Expose history/analytics as derived context, not a universal score or Progress destination.
+- Start, pause, resume, conclude, leave, and re-enter a Focus session.
+- Preserve session timing as persisted instants and display date context using `Asia/Singapore` date keys.
+- Accept a selected task as planned context; confirm task attribution only when the owning attribution path is available and succeeds.
+- Hand session-end context to Reflection without automatically writing adaptation or changing commitments.
+- Expose loading, active, paused, concluded, unreliable, unavailable, pending, and failed states.
+
+## Resolved P4.5 decision: attribution fallback
+
+`focus_session_task_totals.sql` is pending/unverified. Until it is applied and verified, Focus may retain a selected task as planned/user-provided session context when the existing owner path confirms that context, but it must not claim factual task attribution or write task totals. The fallback record is a session-level factual record with attribution unavailable. The person may add task relationship or interpretation explicitly in Reflection; no inferred backfill is allowed.
 
 ## Non-goals and exclusions
 
-- No claim that elapsed time proves completion, quality, causality, or outcome.
-- No autonomous task completion, reprioritization, or reflection/adaptation.
-- No requirement that every action use a timer or Focus.
-- No silent dependency on an unapplied attribution migration; unavailable attribution remains visible.
+- Focus does not complete, defer, withdraw, or otherwise mutate tasks.
+- Focus does not apply Reflection adaptation, score productivity, infer quality, or claim causality from elapsed time.
+- No autonomous task selection, new migration, new route, or broader analytics admission is implied.
 
-## Authority, trust, and risk
+## Success and validation intent
 
-The person controls session start, pause, resume, conclusion, and available cancellation/exit paths. Focus owns session occurrence and persistence; Tasks owns commitment state. A session record is direct FlowOS evidence of the session lifecycle, not proof of the task’s real-world result. Recovery must never fabricate elapsed time or a concluded state.
+Focus succeeds when a person can record and recover a truthful session without confusing planned selection, elapsed duration, task attribution, or outcome. The behavior contract defines `FOCUS-*` questions for later design and validation.
 
-## Alternatives and tradeoffs
+## Product Architect checkpoint
 
-- **Timer as productivity score:** easy to summarize, but violates evidence meaning.
-- **Focus only as a history page:** preserves truth but does not support action mode.
-- **Bounded action mode plus factual history:** chosen for MVP, with attribution limitations explicit.
-
-## Next contract and open questions
-
-The behavior contract must define active/paused/concluded/unreliable states, re-entry after interruption, persistence failure, attribution availability, and the session-end reflection handoff. Engineering record rules must state how task identity and focus totals are represented when the live migration is unavailable.
+**Approved by Founder/Product Architect on 2026-08-05.** Session meaning, attribution fallback, Reflection handoff, and Action/Evidence-stage role are approved for design specification. This approval does not authorize implementation or migration application.
 
 ## Change control
 
-Revisit this brief if Focus becomes an autonomous planner, a score destination, or an authority over task or reflection state. Such a change requires parent and decision-record review.
+Changing session ownership, attribution truth, outcome language, or the Reflection handoff reopens this brief, the Focus behavior contract, the journey contract, and record rules.

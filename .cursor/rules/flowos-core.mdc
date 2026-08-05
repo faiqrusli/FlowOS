@@ -7,7 +7,7 @@ alwaysApply: true
 
 **🎯 CRITICAL: Before ANY work, read these in order:**
 
-1. **`.ai/context.md`** — Universal AI context (product, tech stack, 6-hat workflow, Phase 2)
+1. **`.ai/context.md`** — Universal AI context (product, tech stack, 6-hat workflow, Phase 3)
 2. **`docs/current-phase/current-sprint.md`** — Current sprint assignments
 3. **Your role document** (if assigned): `docs/10-team/6-role-hats/[role-name].md`
 
@@ -25,11 +25,11 @@ alwaysApply: true
 **Production:** https://flowos-sage.vercel.app  
 **Stack:** Next.js App Router, React, TypeScript, Tailwind, Supabase
 
-**Current Phase:** Phase 2 — Contract the Coherent MVP Loop  
-**Current Sprint:** 2026-08-05 → 2026-08-08 (Phase 2 sprint active)  
-**Gate 2 Target:** Contract coherence — every admitted behavior traces to parent system, journey, design, owner, and validation question  
-**Status:** Phase 1.5 CLOSED — Gate 1.5 PASSED 2026-08-05; Phase 2 authorized. See [D-006](../../docs/08-decisions/records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md)
-**Founder decision:** Gate 1.5 passed; Phase 1.5 closed and archived; Phase 2 authorized (2026-08-05)
+**Current Phase:** Phase 3 — Implement and Harden the Core Loop
+**Current Sprint:** 2026-08-05 onward (Phase 3 active; implementation not started)
+**Gate 3 Target:** Core-loop readiness with seeded/real data, recovery, truth distinctions, and canonical owner routing
+**Status:** Phase 2 CLOSED — Gate 2 PASSED 2026-08-05; Phase 3 authorized. See [D-008](../../docs/08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md)
+**Founder decision:** Gate 2 passed; Phase 2 closed and archived; Phase 3 authorized (2026-08-05)
 
 **Team:** Six authoritative hats grouped into Plan, Build, and Ship — solo founder wears all hats
 
@@ -39,7 +39,7 @@ alwaysApply: true
 2. `docs/00-constitution/documentation-architecture.md` — documentation governance
 3. `docs/01-product/` through `docs/10-team/` — canonical numbered structure
 4. `docs/current-phase/mvp-implementation-masterplan.md` — current implementation source
-5. `docs/current-phase/current-sprint.md` — **current Phase 2 sprint assignments**
+5. `docs/current-phase/current-sprint.md` — **current Phase 3 sprint assignments**
 6. `docs/00-constitution/governance/` (PRINCIPLES, GATES, CODE_STANDARDS, GIT_WORKFLOW)
 7. `.ai/context.md` — universal AI reference
 
@@ -51,8 +51,8 @@ alwaysApply: true
 ## Working norms (Phase 1)
 
 - **Hat-based:** Follow the relevant hat procedure; the Founder may wear all hats in one session
-- **Sprint-driven:** Check `docs/current-phase/current-sprint.md` for Phase 2 assignments, requirements, acceptance, and status
-- **Phase 2 focus:** Contract the coherent MVP loop — complete behavior, journey, record, design, and Gate 2 evidence (see `docs/current-phase/phase-2/`)
+- **Sprint-driven:** Check `docs/current-phase/current-sprint.md` for Phase 3 assignments, implementation order, risks, and status
+- **Phase 3 focus:** Implement and harden the admitted coherent MVP loop using the archived Phase 2 contracts (see `docs/current-phase/phase-3/`)
 - **Approval checkpoints:** Founder self-approves scope/design, build quality, and release; checkpoints are brief and evidence-based
 - **Never:** Merge to main without Founder authorization
 
