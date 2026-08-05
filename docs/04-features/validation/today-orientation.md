@@ -1,13 +1,14 @@
 # Today Orientation — Validation Plan
 
-**Status:** `DRAFT` — Founder scope/design checkpoint pending
+**Status:** `APPROVED` — Founder scope/design checkpoint passed 2026-08-05
 **Owner:** Engineering Architect (Founder), with Product Architect review
 **Created:** 2026-08-05
 **Last updated:** 2026-08-05
-**Decision this plan informs:** Whether the proposed Today orientation delivery design is ready for implementation on `sprint/phase3`
+**Decision this plan informs:** Today orientation implementation readiness and later Gate 3 evidence within the approved P1 boundary
 **Authorized behavior contract:** [Today behavior contract](../behavior/today.md)
 **Authorized brief:** [Today feature brief](../briefs/today.md)
 **Delivery design:** [Today orientation delivery design](../delivery/today-orientation.md)
+**Decision record:** [D-009 — Approve Today Orientation Delivery Design and Validation Plan](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md)
 **Design specification:** [Today design specification](../../05-design/features/today-design-spec.md)
 **Journey context:** [MVP coherent loop](../../03-experience/journeys/mvp-coherent-loop.md) — Orientation and reorientation
 **Success model:** [FlowOS Success Model](../../01-product/success-model.md)
@@ -15,7 +16,13 @@
 **Evidence record locations:** `docs/current-phase/phase-3/evidence/today-orientation/` (planned execution evidence); `docs/09-reviews/records/today-orientation-validation-review.md` (planned review)
 **Review trigger:** Any change to the Today contract, source set, acceptance questions, evidence threshold, owner handoff, or recovery semantics.
 
-> This plan defines evidence to collect. It contains no executed results, release approval, Gate 3 decision, or claim that implementation exists.
+> Founder approved this plan on 2026-08-05. It defines evidence to collect; it contains no executed results, release approval, Gate 3 decision, or claim that implementation exists.
+
+## Founder scope/design checkpoint
+
+**Disposition:** `APPROVED` by Founder on 2026-08-05.
+
+The Founder approved the read-only Today boundary, separation from Workplace mutation ownership, independent source settlement with source-scoped retry, and all carried downstream limitations. This plan is ready to govern P1 implementation and later evidence collection; it does not itself report validation results or pass Gate 3.
 
 ## Decision and scope
 

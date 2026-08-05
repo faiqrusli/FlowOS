@@ -7,6 +7,20 @@
 
 ---
 
+## 2026-08-05 — Founder Approves Today Orientation Design
+
+**Owner:** Founder
+**Branch:** `sprint/phase3`
+**State:** `committed`; Today implementation authorized, Gate 3 not started.
+
+- Approved the Today orientation delivery design and validation plan after the Product Architect and Engineering Architect checkpoint.
+- Approved the read-only Today boundary, separation from Workplace mutation ownership, independent source settlement with scoped retry, and continued disclosure of pending migrations and other downstream limitations.
+- Recorded the consequential checkpoint in [D-009](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md), promoted the artifacts to `APPROVED`, and moved G3-01 to `IN_PROGRESS`.
+
+**Next:** Begin Today P1 implementation on `sprint/phase3`; preserve the approved boundary and do not apply migrations or claim Gate 3/release readiness.
+
+---
+
 ## 2026-08-05 — Phase 3 P1 Today Orientation Planning
 
 **Owner:** Founder (Product Architect and Engineering Architect hats)

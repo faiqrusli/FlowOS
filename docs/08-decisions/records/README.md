@@ -11,8 +11,8 @@ Non-normative directory index. Individual records are listed in the [Decision Re
 | [D-005: Post-Phase-0 Audit Decisions](./D-005-post-phase-0-audit-decisions.md) | Accepted | Founder |
 | [D-006: Gate 1.5 PASS and Phase 2 Authorization](./D-006-phase-1-gate-pass-and-phase-1-5-handoff.md) | Accepted — Gate 1.5 PASSED | Founder |
 | [D-007: Gate 1 Current Build Truth and Phase 2 Authorization](./D-007-gate-1-current-build-truth-and-phase-2-authorization.md) | Accepted — Gate 1 PASSED | Founder |
-
 | [D-008: Pass Gate 2 and Authorize Phase 3](./D-008-pass-gate-2-and-authorize-phase-3.md) | Accepted - Gate 2 PASSED | Founder |
+| [D-009: Approve Today Orientation Delivery Design and Validation Plan](./D-009-approve-today-orientation-delivery-design.md) | Accepted - Founder scope/design checkpoint passed; P1 authorized | Founder |
 
 | Starter artifact | Governing standard |
 |---|---|

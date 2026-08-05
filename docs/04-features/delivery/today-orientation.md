@@ -1,6 +1,6 @@
 # Today Orientation — Delivery Design
 
-**Status:** `DRAFT` — Founder scope/design checkpoint pending
+**Status:** `APPROVED` — Founder scope/design checkpoint passed 2026-08-05
 **Owner:** Engineering Architect (Founder)
 **Product scope owner:** Product Architect (Founder)
 **Created:** 2026-08-05
@@ -14,14 +14,14 @@
 **Affected engineering domains:** Client/read composition | data access | security | privacy | accessibility | operations
 **Risk level:** `Moderate`
 **Migration required:** `No` for the P1 orientation slice; pending migrations remain unavailable
-**Rollout class:** `Direct` and reversible at the existing `/` route; no release is authorized by this draft
+**Rollout class:** `Direct` and reversible at the existing `/` route; no production release is authorized by this approval
 **Rollback owner:** Founder / Implementation Engineer; revert the route change and preserve source records
 **Validation plan:** [Today orientation validation plan](../validation/today-orientation.md)
-**Linked authorization:** [D-008 — Pass Gate 2 and Authorize Phase 3](../../08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md)
+**Linked authorization:** [D-008 — Pass Gate 2 and Authorize Phase 3](../../08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md) · [D-009 — Approve Today Orientation Delivery Design and Validation Plan](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md)
 **Evidence links:** [Phase 3 current sprint](../../current-phase/current-sprint.md) · [Gate 3 checklist](../../current-phase/phase-3/gate-checklist.md)
 **Review trigger:** Any change to Today’s source set, ownership, durable writes, state semantics, route handoff, or recovery behavior.
 
-> This is a proposed technical delivery path. It does not authorize implementation, migration application, release, or a Gate 3 decision. Founder approval is the next checkpoint.
+> Founder approved this technical delivery path on 2026-08-05. It authorizes Today P1 implementation only; it does not authorize migration application, production release, or a Gate 3 decision.
 
 ## Authorized behavior
 
@@ -102,7 +102,7 @@ Pending and owner-operation states remain distinct from source-read states. Toda
 
 The Today shell should render source-labeled modules in the approved hierarchy: date/orientation context, composition status, current/action context, factual/session and reflection context, optional supporting context, then source-scoped actions. Each material module exposes its owner, truth meaning, freshness/limitation, and recovery action.
 
-Reuse existing visual primitives and owner entry patterns where they preserve read-only semantics. The current `WorkplacePageContent` mutation surface must either be split into read-only composition pieces plus owner-only controls, or be passed an explicit read-only mode whose absence of mutation handlers is testable. The implementation choice is a Founder checkpoint item; both paths must keep durable writes out of Today.
+Reuse existing visual primitives and owner entry patterns where they preserve read-only semantics. The current `WorkplacePageContent` mutation surface must either be split into read-only composition pieces plus owner-only controls, or be passed an explicit read-only mode whose absence of mutation handlers is testable. The separation is Founder-approved; the Implementation Engineer may choose either implementation path within this boundary, and both paths must keep durable writes out of Today.
 
 Owner handoffs use existing route and context conventions, preserve object/session/date identity, and retain the valid `BackToTodayLink`/re-entry path. No new query contract or destination is invented silently. A missing owner identity is a blocked technical issue, not a reason to infer one.
 
@@ -195,18 +195,18 @@ If production telemetry is later required to distinguish source degradation, tha
 
 Release approval, production deployment, and Gate 3 passage are outside this design.
 
-## Validation and open decisions
+## Validation and checkpoint disposition
 
 The linked [Today orientation validation plan](../validation/today-orientation.md) defines the evidence needed for implementation readiness and later Gate 3 contribution. It covers all `TODAY-*` questions plus security, accessibility, reliability, recovery, and truthful pending-migration behavior.
 
-Founder checkpoint decisions requested:
+Founder scope/design checkpoint disposition:
 
-1. Approve the P1 boundary: read-only Today orientation, source-aware state, owner handoff, and route recovery; no new source, route, mutation, migration, or score.
-2. Approve the proposed separation of Today read-only composition from the current Workplace task/habit mutation surface.
-3. Approve independent source settlement and source-scoped retry as the recovery approach.
-4. Confirm that pending migrations, two-account RLS verification, Singapore midnight testing, Schedule keyboard review, technical debt, and build environment remain downstream conditions rather than hidden P1 completion claims.
+1. **Approved:** P1 is read-only Today orientation, source-aware state, owner handoff, and route recovery; no new source, route, mutation, migration, or score.
+2. **Approved:** Today read-only composition is separated from the current Workplace task/habit mutation surface.
+3. **Approved:** Source reads settle independently and use source-scoped retry.
+4. **Approved:** Pending migrations, two-account RLS verification, Singapore midnight testing, Schedule keyboard review, technical debt, and build environment remain downstream conditions.
 
-No implementation may begin until the Founder records the scope/design checkpoint and resolves any requested changes.
+Implementation may begin on `sprint/phase3` within this approved boundary. Any discovery that changes the boundary reopens this checkpoint and [D-009](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md).
 
 ## Change control
 

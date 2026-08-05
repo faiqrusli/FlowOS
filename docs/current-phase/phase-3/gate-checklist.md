@@ -20,11 +20,13 @@ This checklist is a starting record for Phase 3. `NOT_STARTED` is intentional un
 
 The archived Phase 2 sprint record and Gate 2 checklist, four core behavior contracts, bounded coherent-loop journey, supporting-domain decisions, record/provenance/correction/continuity rules, and four feature design specifications were reviewed. Their admitted boundaries remain authoritative. Pending/unverified migrations, two-account RLS verification, Singapore midnight testing, Schedule keyboard review, existing lint/audit/middleware technical debt, and the incomplete local production-build environment are carried forward as downstream conditions. This entry baseline does not change the Gate 3 status above.
 
+**Today P1 checkpoint:** `APPROVED` by Founder on 2026-08-05 through [D-009](../../08-decisions/records/D-009-approve-today-orientation-delivery-design.md). This authorizes Today implementation only; it does not change the Gate 3 status.
+
 ## Exit criteria
 
 | ID | Requirement | Evidence | State |
 |---|---|---|---|
-| G3-01 | Approved delivery designs and validation plans exist | [Today orientation delivery design](../../04-features/delivery/today-orientation.md) and [Today orientation validation plan](../../04-features/validation/today-orientation.md) drafted and linked to the approved contract/design; Founder checkpoint pending | `DRAFT` |
+| G3-01 | Approved delivery designs and validation plans exist | [Today orientation delivery design](../../04-features/delivery/today-orientation.md) and [Today orientation validation plan](../../04-features/validation/today-orientation.md) approved and linked to the contract/design; other Phase 3 surface packages remain pending | `IN_PROGRESS` |
 | G3-02 | Today orientation and route recovery work | Seeded and real-data entry, re-entry, owner handoff, and recovery evidence | `NOT_STARTED` |
 | G3-03 | Tasks support commitment and action | Create, clarify, select, start, complete, revise, defer, withdrawal, correction, and recovery evidence | `NOT_STARTED` |
 | G3-04 | Focus records truthful action/session evidence | Start, pause, resume, conclude, interruption, persistence, history, and unavailable attribution evidence | `NOT_STARTED` |
