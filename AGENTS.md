@@ -116,10 +116,10 @@ For tool-specific configs, also see:
 
 ## Git Worktree Workflow (All Agents)
 
-**Parallel branches off `main`, each owned by an agent or the Founder. Never work on `main`.**
+**ALL branches work inside worktrees only. Never work directly on `main`.**
 
 ```
-main
+main (read-only in primary worktree)
 ├── feature/focus-queue           Agent A
 ├── feature/focus-break-reminder  Agent B
 ├── feature/today-right-sidebar   You (Founder)
@@ -127,10 +127,11 @@ main
 └── experiment/<topic>            For throwaway/spike ideas (e.g. experiment/today-timeline-v2)
 ```
 
-- Primary worktree: `C:\Users\faiqr\flowos` (stays on `main`, production truth)
-- Each parallel branch = its own worktree: `C:\Users\faiqr\flowos-agents\<branch-name>\`
-- Each worktree is a full checkout isolated on its branch so owners work in parallel without colliding.
-- When a branch finishes: request review → Founder merges to `main` → delete branch → open next branch.
+- **Primary worktree:** `C:\Users\faiqr\flowos` (stays on `main`, production truth, read-only)
+- **Agent worktrees:** `C:\Users\faiqr\flowos-worktrees\<branch-name>\`
+- Each worktree is a full checkout isolated on its branch so owners work in parallel without colliding
+- **All development happens in worktrees** — including Founder work
+- When a branch finishes: request review → Founder merges to `main` → delete branch worktree → create next branch worktree
 
 **Branch naming convention (required):**
 - `feature/<module>-<feature>` — e.g. `feature/focus-queue`
