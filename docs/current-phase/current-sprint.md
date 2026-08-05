@@ -60,7 +60,7 @@ Make the admitted MVP useful in one continuous experience rather than as a colle
 | Package | Outcome | Owner | State |
 |---|---|---|---|
 | P0 — Handoff baseline | Read the archived Phase 2 package, preserve admitted boundaries, and carry every unresolved condition into implementation plans | Founder / Engineering Architect | `COMPLETE` |
-| P1 — Today orientation | Implement orientation, context, owner handoffs, and route recovery | Product + Design + Engineering | `NOT_STARTED` |
+| P1 — Today orientation | Draft [delivery design](../04-features/delivery/today-orientation.md) and [validation plan](../04-features/validation/today-orientation.md); implement only after the Founder scope/design checkpoint | Product + Design + Engineering | `DESIGN_DRAFT` — Founder checkpoint pending |
 | P2 — Task commitment/action | Implement task lifecycle, selection, correction, defer/withdraw, and recovery | Product + Design + Engineering | `NOT_STARTED` |
 | P3 — Focus action mode | Implement session lifecycle, interruption, persistence, and truthful history | Product + Design + Engineering | `NOT_STARTED` |
 | P4 — Evidence | Implement factual action/session evidence without inferred outcomes | Engineering Architect | `NOT_STARTED` |

@@ -41,7 +41,8 @@ The archived Phase 2 sprint record and Gate 2 checklist, four core behavior cont
 ## Work status
 
 - **P0 — Handoff baseline:** `COMPLETE` on `sprint/phase3`; implementation has not started.
-- **P1–P6 — Core loop implementation:** `NOT_STARTED`.
+- **P1 — Today orientation:** Delivery design and validation plan `DRAFT`; Founder scope/design checkpoint pending; implementation not started.
+- **P2–P6 — Core loop implementation:** `NOT_STARTED`.
 - **P7 — Gate 3 evidence:** `NOT_STARTED`.
 
 ## Exit condition

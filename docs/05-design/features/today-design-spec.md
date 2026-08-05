@@ -8,7 +8,7 @@
 **Affected destinations:** [Information Structure](../../03-experience/information-structure.md) - Today `/`, with links to Tasks, Focus, Reflection, Habits, Schedule, and Notes owners
 **Reusable standards:** [Design System Architecture](../design-system-architecture.md), [Design System v3](../DESIGN_SYSTEM_V3.md), [Tokyo Night Warm](../DESIGN_SYSTEM_TOKYO_NIGHT_WARM.md), [Content Standards](../content-standards.md), [Accessibility Standards](../accessibility-standards.md), [Design Implementation Map](../design-implementation-map.md)
 **Design exceptions:** None
-**Validation plan:** [Validation plan standard](../../04-features/validation-plans.md) and the `TODAY-*` acceptance questions below; a feature-specific delivery validation plan is a downstream Engineering Architect artifact.
+**Validation plan:** [Today orientation validation plan](../../04-features/validation/today-orientation.md) · [Validation plan standard](../../04-features/validation-plans.md) and the `TODAY-*` acceptance questions below; Founder scope/design checkpoint pending.
 **Review trigger:** Any change to Today’s composition owner, source set, handoff, information hierarchy, material state, or recovery path.
 
 ## Identity and status

@@ -24,7 +24,7 @@ The archived Phase 2 sprint record and Gate 2 checklist, four core behavior cont
 
 | ID | Requirement | Evidence | State |
 |---|---|---|---|
-| G3-01 | Approved delivery designs and validation plans exist | Per-surface delivery and validation artifacts linked to Phase 2 contracts | `NOT_STARTED` |
+| G3-01 | Approved delivery designs and validation plans exist | [Today orientation delivery design](../../04-features/delivery/today-orientation.md) and [Today orientation validation plan](../../04-features/validation/today-orientation.md) drafted and linked to the approved contract/design; Founder checkpoint pending | `DRAFT` |
 | G3-02 | Today orientation and route recovery work | Seeded and real-data entry, re-entry, owner handoff, and recovery evidence | `NOT_STARTED` |
 | G3-03 | Tasks support commitment and action | Create, clarify, select, start, complete, revise, defer, withdrawal, correction, and recovery evidence | `NOT_STARTED` |
 | G3-04 | Focus records truthful action/session evidence | Start, pause, resume, conclude, interruption, persistence, history, and unavailable attribution evidence | `NOT_STARTED` |

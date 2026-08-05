@@ -7,6 +7,21 @@
 
 ---
 
+## 2026-08-05 — Phase 3 P1 Today Orientation Planning
+
+**Owner:** Founder (Product Architect and Engineering Architect hats)
+**Branch:** `sprint/phase3`
+**State:** `committed`; implementation not started.
+
+- Drafted the [Today orientation delivery design](../../04-features/delivery/today-orientation.md) and [Today orientation validation plan](../../04-features/validation/today-orientation.md) from the approved Phase 2 contracts and design specification.
+- Preserved Today as a read/composition owner and carried the source-aware state, owner-handoff, route-recovery, security, accessibility, reliability, and pending-migration constraints into the implementation package.
+- Made the current all-or-nothing dashboard read, score-like “on track” interpretation, and embedded Today mutation surface explicit risks for the Founder checkpoint.
+- Linked the artifacts to the active sprint, Gate 3 checklist, and Today design metadata. Gate 3 remains `NOT_STARTED`.
+
+**Next:** Founder scope/design checkpoint; implementation begins only after explicit approval.
+
+---
+
 ## 2026-08-05 — Phase 2 Gate 2 Closeout and Phase 3 Handoff
 
 **Owner:** Founder (6-hat solo workflow)
