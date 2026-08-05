@@ -3,7 +3,7 @@
 **Sprint period:** 2026-08-05 onward
 **Phase:** Phase 3 — Implement and Harden the Core Loop
 **Status:** ACTIVE — authorized by Gate 2; implementation not started
-**Handoff branch:** `sprint/phase2` — Phase 2 closeout and handoff remain pending Founder approval; create a dedicated Phase 3 branch before implementation.
+**Handoff branch:** `sprint/phase3` — Phase 2 closeout merged into `main` at `5b47360`; the P0 handoff baseline is complete and implementation has not started.
 **Owner:** Founder, executing all six hats
 **Last updated:** 2026-08-05
 
@@ -19,6 +19,21 @@
 Phase 2 closed with Gate 2 `PASS` on 2026-08-05. Its complete execution record and checklist are archived under [the Phase 2 archive](../11-archive/phases/phase-2/). The approved briefs, behavior contracts, journey, supporting-domain decisions, record rules, and design specifications are the implementation contract for this phase.
 
 Phase 3 is authorized within the admitted MVP boundary. Gate 3 must still demonstrate a coherent seeded and real-data core loop, and Gate 4 remains required for trust, quality, security, accessibility, reliability, and release readiness.
+
+## 1.1. P0 handoff baseline
+
+**State:** `COMPLETE` on `sprint/phase3`.
+
+The Founder reviewed the archived Phase 2 sprint record and Gate 2 checklist, the Today, Tasks, Focus, and Reflection behavior contracts, the bounded MVP coherent-loop journey, the supporting-domain decisions for Habits/Schedule/Notes, the record/provenance/correction/continuity rules, and all four feature design specifications. These artifacts remain the implementation authority for Phase 3. No Phase 3 implementation has started.
+
+The following conditions are carried into delivery designs, validation plans, and Gate 3/Gate 4 evidence:
+
+- `tasks_next_up_queue.sql` and `focus_session_task_totals.sql` are pending/unverified; keep the related behavior unavailable until each migration is applied and verified.
+- Two-account RLS/security verification remains outstanding.
+- Singapore midnight boundary testing remains outstanding.
+- Schedule keyboard accessibility review remains deferred.
+- Existing lint warnings, audit vulnerabilities, and middleware deprecation remain technical-debt conditions.
+- The local production build requires `NEXT_PUBLIC_SUPABASE_URL` and the required environment before its result can be relied on.
 
 ## 2. Objective
 
@@ -38,13 +53,13 @@ Make the admitted MVP useful in one continuous experience rather than as a colle
 - No Goals, AI Coach, standalone Knowledge, standalone Growth Areas, standalone Weekly Review, new MVP breadth, or autonomous prioritization.
 - No implicit attribution, implicit adaptation, or cross-owner mutation.
 - Pending migrations remain unavailable until applied and verified; the SQL definitions in the handoff branch do not represent live applied state.
-- Phase 3 implementation must begin on a dedicated Phase 3 branch after the `sprint/phase2` closeout is approved and merged. `main` remains read-only.
+- Phase 3 implementation must remain on the dedicated `sprint/phase3` branch. `main` remains read-only.
 
 ## 5. Work packages
 
 | Package | Outcome | Owner | State |
 |---|---|---|---|
-| P0 — Handoff baseline | Read the archived Phase 2 package, preserve admitted boundaries, and carry every unresolved condition into implementation plans | Founder / Engineering Architect | `ACTIVE` |
+| P0 — Handoff baseline | Read the archived Phase 2 package, preserve admitted boundaries, and carry every unresolved condition into implementation plans | Founder / Engineering Architect | `COMPLETE` |
 | P1 — Today orientation | Implement orientation, context, owner handoffs, and route recovery | Product + Design + Engineering | `NOT_STARTED` |
 | P2 — Task commitment/action | Implement task lifecycle, selection, correction, defer/withdraw, and recovery | Product + Design + Engineering | `NOT_STARTED` |
 | P3 — Focus action mode | Implement session lifecycle, interruption, persistence, and truthful history | Product + Design + Engineering | `NOT_STARTED` |

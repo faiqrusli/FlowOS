@@ -21,7 +21,7 @@ Phase 2 writes feature briefs, behavior contracts, design specifications, and th
 
 ## Founder guardrails
 
-- Phase 2 closeout remains on the `sprint/phase2` worktree until Founder approval. `main` is read-only and must not be modified, merged to, or pushed to from this handoff.
+- Phase 2 closeout was completed on `sprint/phase2` and merged into `main` via `5b47360` after explicit Founder authorization. Phase 3 work is now on `sprint/phase3`; `main` remains read-only for Phase 3 changes.
 - Do not implement new core-loop behavior, create or apply production migrations, or refactor unrelated technical debt.
 - Do not turn an existing route into a new MVP admission or promote Goals, AI Coach, Progress, Weekly Review, standalone Knowledge, or standalone Growth Areas.
 - Do not create a delivery design to bypass an unresolved product or design decision.

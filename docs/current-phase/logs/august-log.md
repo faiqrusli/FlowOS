@@ -10,17 +10,31 @@
 ## 2026-08-05 — Phase 2 Gate 2 Closeout and Phase 3 Handoff
 
 **Owner:** Founder (6-hat solo workflow)
-**Branch:** `sprint/phase2`
-**State:** `committed`; pending explicit Founder approval before merge.
+**Branch:** `sprint/phase2` → `main`
+**State:** `merged` via merge commit `5b47360`; closeout commit `c3a117b`.
 
 - Closed Phase 2 after the recorded Gate 2 `PASS` and retained D-008 as the consequential authorization record.
 - Archived the complete Phase 2 sprint record and Gate 2 checklist under `docs/11-archive/phases/phase-2/`.
 - Normalized `current-sprint.md` to the active Phase 3 implementation structure and created the Phase 3 README and Gate 3 checklist.
-- Corrected the branch handoff inconsistency: the current closeout worktree is `sprint/phase2`, not `sprint/phase1.5`.
+- Corrected the branch handoff inconsistency: the current closeout worktree was `sprint/phase2`, not `sprint/phase1.5`; Phase 3 now uses `sprint/phase3`.
 - Reviewed the full diff. Four pending Supabase SQL definitions are security-hardened but unapplied; no `src/` Phase 3 implementation or production migration application is claimed.
 - Verification: 715 local Markdown links and `git diff --check` passed; the changed-file secret scan passed; `npm test` passed with 246/246; lint passed with 0 errors and 211 existing warnings; the build compiled/type-checked but was blocked at `/about` prerender because `NEXT_PUBLIC_SUPABASE_URL` is not configured locally.
 
-**Next:** Request Founder approval to merge `sprint/phase2`; do not merge until explicit authorization is given. Start Phase 3 implementation on a dedicated branch after merge.
+**Next:** Complete the Phase 3 P0 handoff baseline on `sprint/phase3`, then create the Engineering Architect delivery design and validation plan for Today orientation before implementation.
+
+---
+
+## 2026-08-05 — Phase 3 P0 Handoff Baseline
+
+**Owner:** Founder (6-hat solo workflow)
+**Branch:** `sprint/phase3`
+**State:** `committed`; implementation not started.
+
+- Reviewed the archived Phase 2 sprint record and Gate 2 checklist, four core behavior contracts, the bounded coherent-loop journey, supporting-domain decisions, record/provenance/correction/continuity rules, and four feature design specifications.
+- Preserved the admitted Phase 2 boundary and carried forward all unresolved conditions: pending/unverified Next Up and Focus attribution migrations, two-account RLS verification, Singapore midnight testing, Schedule keyboard review, existing lint/audit/middleware technical debt, and the incomplete local production-build environment.
+- Recorded P0 as complete in the active sprint, Phase 3 README, and Gate 3 entry baseline. Gate 3 remains `NOT_STARTED`.
+
+**Next:** Engineering Architect delivery design and validation plan for Today orientation before implementation code.
 
 ---
 

@@ -16,6 +16,12 @@
 
 Gate 2 passed because every admitted behavior has a parent system, journey stage, behavior contract, design expression, technical/data owner, and validation question. Phase 3 may create delivery designs and implementation within that boundary. It may not silently widen the MVP or replace an unresolved contract with code.
 
+## P0 handoff baseline
+
+**State:** `COMPLETE` on `sprint/phase3`; implementation has not started.
+
+The archived Phase 2 sprint record and Gate 2 checklist, four core behavior contracts, bounded coherent-loop journey, supporting-domain decisions, record/provenance/correction/continuity rules, and four feature design specifications were reviewed as the implementation authority. The Phase 2 limitations remain active: pending/unverified Next Up and Focus attribution migrations, outstanding two-account RLS verification, Singapore midnight testing, Schedule keyboard review, existing lint/audit/middleware technical debt, and the incomplete local production-build environment.
+
 ## Implementation order
 
 1. Today orientation and route recovery.
@@ -34,7 +40,7 @@ Gate 2 passed because every admitted behavior has a parent system, journey stage
 
 ## Work status
 
-- **P0 — Handoff baseline:** `ACTIVE` on the Phase 2 closeout branch; implementation waits for Founder approval and merge.
+- **P0 — Handoff baseline:** `COMPLETE` on `sprint/phase3`; implementation has not started.
 - **P1–P6 — Core loop implementation:** `NOT_STARTED`.
 - **P7 — Gate 3 evidence:** `NOT_STARTED`.
 

@@ -14,6 +14,12 @@ Gate 3 passes only when a Founder can perform the complete admitted journey with
 
 This checklist is a starting record for Phase 3. `NOT_STARTED` is intentional until implementation and validation evidence exist. Gate 2 authorization does not imply Gate 3 readiness.
 
+## Phase 3 entry baseline
+
+**P0 — Handoff baseline:** `COMPLETE` on `sprint/phase3`.
+
+The archived Phase 2 sprint record and Gate 2 checklist, four core behavior contracts, bounded coherent-loop journey, supporting-domain decisions, record/provenance/correction/continuity rules, and four feature design specifications were reviewed. Their admitted boundaries remain authoritative. Pending/unverified migrations, two-account RLS verification, Singapore midnight testing, Schedule keyboard review, existing lint/audit/middleware technical debt, and the incomplete local production-build environment are carried forward as downstream conditions. This entry baseline does not change the Gate 3 status above.
+
 ## Exit criteria
 
 | ID | Requirement | Evidence | State |
