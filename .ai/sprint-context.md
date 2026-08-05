@@ -5,11 +5,13 @@
 **Gate Target:** Gate 2 — Contract Coherence (every admitted behavior traces to parent system, journey, design, owner, and validation question)
 **Last Updated:** 2026-08-05
 
+**Execution authority:** [Current sprint](../docs/current-phase/current-sprint.md) is the single implementation reference for Phase 2. This file is a quick reference only.
+
 ---
 
 ## Quick Overview
 
-**What we're doing:** Writing the feature briefs, behavior contracts, journey contract, supporting decisions, record rules, and design specifications for the admitted MVP loop.
+**What we're doing:** Completing the task-identified contract and design package for the admitted MVP loop. P0 is complete; P1–P4 are drafted; P5 design specifications and P6 Gate evidence remain.
 
 **Why:** The MVP Masterplan is the source of truth. Phase 2 turns the changed product model into a small set of cross-surface contracts so Phase 3 can implement without inventing missing rules.
 
@@ -40,13 +42,13 @@
 - [ ] Delivery designs are created only after behavior and design contracts are approved
 - [ ] Founder records one final decision; Phase 3 authorization is explicit
 
-**Phase 1.5 history:** Phase 1.5 CLOSED — Gate 1.5 PASSED 2026-08-05. Archived to `docs/11-archive/phases/phase-1.5/`. See [D-006](../docs/08-decisions/records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md).
+**Prior phase history:** Phase 1 and Phase 1.5 CLOSED — Gate 1 PASSED and Gate 1.5 PASSED 2026-08-05. See [Phase 1 evidence](../docs/current-phase/phase-1/implementation-truth-evidence.md), [D-007](../docs/08-decisions/records/D-007-gate-1-current-build-truth-and-phase-2-authorization.md), and the archived [D-006 Phase 1.5 record](../docs/08-decisions/records/D-006-phase-1-gate-pass-and-phase-1-5-handoff.md).
 
 ---
 
 ## Current Sprint Assignments (Phase 2)
 
-Sprint active 2026-08-05 → 2026-08-08. See [current-sprint.md](../docs/current-phase/current-sprint.md) for full role assignments:
+Sprint active 2026-08-05 → 2026-08-08. See [current-sprint.md](../docs/current-phase/current-sprint.md) for the authoritative task register, requirements, dependencies, acceptance criteria, and role assignments:
 - Write core briefs, behavior contracts, journey contract, and supporting decisions (Product Architect)
 - Define technical ownership, provenance, correction, and continuity rules (Engineering Architect)
 - Create feature design specifications with full state coverage (Design Architect)
@@ -97,12 +99,12 @@ Sprint active 2026-08-05 → 2026-08-08. See [current-sprint.md](../docs/current
 
 ## What's In Scope This Sprint (Phase 2)
 
-✅ Today, Tasks, Focus, Reflection feature briefs and behavior contracts
-✅ Bounded journey contract connecting the full loop
-✅ Minimum Habits, Schedule, Notes behavior decisions
-✅ Source ownership, provenance, correction, and continuity rules
-✅ Feature design specifications with full state coverage
-✅ Contract traceability and Gate 2 evidence
+→ Today, Tasks, Focus, Reflection feature briefs and behavior contracts — P1 drafted; normalize in P1.5
+→ Bounded journey contract connecting the full loop — P2 drafted; review required
+→ Minimum Habits, Schedule, Notes behavior decisions — P3 drafted; review required
+→ Source ownership, provenance, correction, and continuity rules — P4 drafted; P4.5 decisions remain
+→ Feature design specifications with full state coverage — P5 not started
+→ Contract traceability and Gate 2 evidence — P6 not started
 
 ---
 
@@ -141,4 +143,4 @@ Sprint active 2026-08-05 → 2026-08-08. See [current-sprint.md](../docs/current
 
 ---
 
-**This is Phase 2. We're writing the coherent MVP loop contracts before Phase 3 implementation.**
+**This is Phase 2. The current sprint is the implementation reference; we're completing the coherent MVP loop contracts before Phase 3 implementation.**

@@ -7,7 +7,7 @@ alwaysApply: true
 
 **🎯 CRITICAL: Before ANY work, read these in order:**
 
-1. **`.ai/context.md`** — Universal AI context (product, tech stack, 6-hat workflow, Phase 1)
+1. **`.ai/context.md`** — Universal AI context (product, tech stack, 6-hat workflow, Phase 2)
 2. **`docs/current-phase/current-sprint.md`** — Current sprint assignments
 3. **Your role document** (if assigned): `docs/10-team/6-role-hats/[role-name].md`
 
@@ -51,8 +51,8 @@ alwaysApply: true
 ## Working norms (Phase 1)
 
 - **Hat-based:** Follow the relevant hat procedure; the Founder may wear all hats in one session
-- **Sprint-driven:** Check `docs/current-phase/current-sprint.md` for Phase 1 assignments
-- **Phase 1 focus:** Establish implementation truth — document current behavior, data paths, known gaps, owners for admitted MVP domains (see `docs/current-phase/phase-1/`)
+- **Sprint-driven:** Check `docs/current-phase/current-sprint.md` for Phase 2 assignments, requirements, acceptance, and status
+- **Phase 2 focus:** Contract the coherent MVP loop — complete behavior, journey, record, design, and Gate 2 evidence (see `docs/current-phase/phase-2/`)
 - **Approval checkpoints:** Founder self-approves scope/design, build quality, and release; checkpoints are brief and evidence-based
 - **Never:** Merge to main without Founder authorization
 

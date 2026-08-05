@@ -10,5 +10,5 @@ This record captures the visual polish and route-level performance improvements 
 
 ## Evidence
 
-- Shared tokens: [src/app/globals.css](../../src/app/globals.css)
-- Route-level lazy loading: app route pages under [src/app/(main)](../../src/app/(main))
+- Shared tokens: [src/app/globals.css](../../../../src/app/globals.css)
+- Route-level lazy loading: app route pages under [src/app/(main)](<../../../../src/app/(main)>)

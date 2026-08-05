@@ -148,7 +148,7 @@ Higher wins:
 2. `docs/00-constitution/documentation-architecture.md`
 3. `docs/01-product/` through `docs/10-team/`
 4. `docs/current-phase/mvp-implementation-masterplan.md`
-5. `docs/current-phase/current-sprint.md` (current Phase 1 work)
+5. `docs/current-phase/current-sprint.md` (current Phase 2 implementation reference)
 6. `docs/00-constitution/governance/`
 7. `.ai/context.md`
 

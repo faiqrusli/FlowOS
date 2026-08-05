@@ -1,7 +1,7 @@
 ﻿# Current Phase
 
 **Purpose:** Central location for current implementation phase work  
-**Status:** Phase 1.5 CLOSED (Gate 1.5 PASSED 2026-08-05) — Phase 2 active; Phase 3 scheduled  
+**Status:** Phase 1 CLOSED (Gate 1 PASSED) · Phase 1.5 CLOSED (Gate 1.5 PASSED) — Phase 2 active; Phase 3 scheduled
 **Last Updated:** 2026-08-05  
 
 ---
@@ -10,7 +10,7 @@
 
 **This is the highest-authority location for understanding current implementation:**
 
-1. **Current Sprint** — What phase are we in? What's being worked on?
+1. **Current Sprint** — The single implementation reference: what phase, tasks, requirements, acceptance, status, and sequence?
 2. **Phase Gate Checklist** — What needs to be done to complete the current phase?
 3. **MVP Masterplan Reference** — The canonical implementation roadmap
 4. **Phase Work** — Documents and artifacts specific to each phase
@@ -21,11 +21,11 @@
 
 | Document | Purpose |
 |----------|---------|
-| [Current Sprint](./current-sprint.md) | Active work for the current sprint/phase |
+| [Current Sprint](./current-sprint.md) | **Single implementation reference** for active work, requirements, acceptance, dependencies, and merge readiness |
 | [Current-Phase Templates](./templates/) | Flexible future-use templates; active sprint and gate records are the source examples |
 | [MVP Implementation Masterplan](./mvp-implementation-masterplan.md) | **Highest authority** for MVP phases and gates |
 | [Phase 2 Folder](./phase-2/) | **Current phase work** — Gate 2 checklist, sprint tracking |
-| [Phase 1 Folder](./phase-1/) | Prior phase work — Gate 1 checklist (implementation truth) |
+| [Phase 1 Folder](./phase-1/) | Closed prior phase — Gate 1 evidence and decision (implementation truth) |
 | [Phase 1.5 Archive](../11-archive/phases/phase-1.5/) | Closed Phase 1.5 records — Gate 1.5 PASSED 2026-08-05 |
 | [Phase 0 Archive](../11-archive/phases/phase-0/) | Closed Phase 0 records — Gate 0 PASSED 2026-08-04 |
 
@@ -80,7 +80,7 @@ current-phase/
 
 **Starting work? Read in this order:**
 
-1. **[Current Sprint](./current-sprint.md)** — What phase, what tasks, what status
+1. **[Current Sprint](./current-sprint.md)** — What phase, tasks, requirements, acceptance, dependencies, and status
 2. **[MVP Masterplan](./mvp-implementation-masterplan.md)** — What's the roadmap
 3. **[Phase 2 Gate Checklist](./phase-2/gate-checklist.md)** — What needs to be done
 4. **[Solo Founder Workflow](../start-here/solo-founder-workflow.md)** — How to execute work using 6 hats

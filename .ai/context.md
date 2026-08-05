@@ -28,10 +28,10 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 
 **Current Sprint:** 2026-08-05 → 2026-08-08 (active)
 
-**Status:** Active — Phase 2 authorized; contract set frozen; core contract work in progress
+**Status:** Active — Phase 1 and Phase 1.5 closed; Phase 2 contract package in progress
 
 **📋 Quick Reference:**
-- **[Current Sprint](../docs/current-phase/current-sprint.md)** — What phase, what tasks, what status
+- **[Current Sprint](../docs/current-phase/current-sprint.md)** — Single implementation reference for Phase 2 tasks, requirements, acceptance, and status
 - **[Phase 2](../docs/current-phase/phase-2/README.md)** — Current phase work (Gate 2)
 - **[MVP Masterplan](../docs/current-phase/mvp-implementation-masterplan.md)** — Implementation roadmap
 
@@ -49,7 +49,7 @@ This file provides core context for any AI (CLI, Cursor, Codex, WebStorm, etc.) 
 - Create feature design specifications with full state coverage
 - Reference the Phase 1.5 validation, form, and date/time patterns in every contract
 
-**Phase 2 Status:** Active — contract set frozen 2026-08-05; contracts drafted through 2026-08-07; Gate 2 review on 2026-08-08.
+**Phase 2 Status:** Active — P0 baseline is complete; P1–P4 contract drafts exist; P5 design specifications and P6 Gate 2 review remain open. Gate 2 review is scheduled for 2026-08-08.
 
 ---
 
@@ -205,11 +205,11 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 - ✅ Gate 1.5 PASSED 2026-08-05; Phase 1.5 archived to `docs/11-archive/phases/phase-1.5/`; Phase 2 authorized
 
 **Gate 2 Progress:**
-- Phase 2 sprint active (2026-08-05 → 2026-08-08)
-- Contract set frozen; Today, Tasks, Focus, Reflection briefs + behavior contracts, journey contract, supporting decisions, record rules, and design specs in progress
+- Phase 2 sprint active (2026-08-05 → 2026-08-08); [current sprint](../docs/current-phase/current-sprint.md) is the single execution reference
+- P1–P4 drafts are linked in the sprint artifact register; P5 design specifications and P6 traceability/Founder decision remain open
 - Gate 2 review on 2026-08-08
 
-**Gate 2 Status:** Active — Phase 2 authorized; contracts being drafted.
+**Gate 2 Status:** Open — draft contracts exist; design coverage, final ownership decisions, evidence review, and Founder decision are pending.
 
 ---
 
@@ -265,7 +265,7 @@ Hat 5 (Release Manager): Verify + Deploy + Document
 - Check `docs/current-phase/current-sprint.md`
 - Understand current phase
 - Know sprint objectives
-- Check gate checklist: `docs/current-phase/phase-1/gate-checklist.md`
+- Check gate checklist: `docs/current-phase/phase-2/gate-checklist.md`
 - Align work with phase gate criteria
 - Document progress
 

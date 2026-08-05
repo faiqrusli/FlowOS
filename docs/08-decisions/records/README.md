@@ -10,6 +10,7 @@ Non-normative directory index. Individual records are listed in the [Decision Re
 | [D-004: Add Phase 1.5 to the MVP Masterplan](./D-004-add-phase-1-5-foundation-infrastructure-to-mvp-masterplan.md) | Accepted | Engineering Architect |
 | [D-005: Post-Phase-0 Audit Decisions](./D-005-post-phase-0-audit-decisions.md) | Accepted | Founder |
 | [D-006: Gate 1.5 PASS and Phase 2 Authorization](./D-006-phase-1-gate-pass-and-phase-1-5-handoff.md) | Accepted — Gate 1.5 PASSED | Founder |
+| [D-007: Gate 1 Current Build Truth and Phase 2 Authorization](./D-007-gate-1-current-build-truth-and-phase-2-authorization.md) | Accepted — Gate 1 PASSED | Founder |
 
 | Starter artifact | Governing standard |
 |---|---|
