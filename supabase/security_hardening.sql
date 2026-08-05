@@ -59,9 +59,6 @@ drop policy if exists "Allow public access to habit_completions" on habit_comple
 -- ---------------------------------------------------------------------------
 -- 3. Demo feedback
 -- ---------------------------------------------------------------------------
-revoke all on table public.demo_feedback from public, anon, authenticated;
-grant insert on table public.demo_feedback to anon, authenticated;
-
 alter table public.demo_feedback
   drop constraint if exists demo_feedback_body_length,
   drop constraint if exists demo_feedback_display_name_length,

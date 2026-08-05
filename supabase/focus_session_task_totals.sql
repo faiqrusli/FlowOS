@@ -4,7 +4,6 @@
 create table if not exists focus_session_task_totals (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
-  -- Client-generated quick-focus grouping key; not focus_sessions.id.
   focus_session_id uuid not null,
   task_id uuid not null references tasks(id) on delete cascade,
   focused_seconds integer not null default 0 check (focused_seconds >= 0),
@@ -18,71 +17,15 @@ create index if not exists focus_session_task_totals_user_task_idx
 
 alter table focus_session_task_totals enable row level security;
 
-drop policy if exists "Users read own focus_session_task_totals"
-  on focus_session_task_totals;
-
 create policy "Users read own focus_session_task_totals"
   on focus_session_task_totals for select
-  using (
-    auth.uid() = user_id
-    and exists (
-      select 1
-      from tasks
-      where tasks.id = focus_session_task_totals.task_id
-        and tasks.user_id = auth.uid()
-    )
-  );
-
-drop policy if exists "Users insert own focus_session_task_totals"
-  on focus_session_task_totals;
+  using (auth.uid() = user_id);
 
 create policy "Users insert own focus_session_task_totals"
   on focus_session_task_totals for insert
-  with check (
-    auth.uid() = user_id
-    and exists (
-      select 1
-      from tasks
-      where tasks.id = focus_session_task_totals.task_id
-        and tasks.user_id = auth.uid()
-    )
-  );
-
-drop policy if exists "Users update own focus_session_task_totals"
-  on focus_session_task_totals;
+  with check (auth.uid() = user_id);
 
 create policy "Users update own focus_session_task_totals"
   on focus_session_task_totals for update
-  using (
-    auth.uid() = user_id
-    and exists (
-      select 1
-      from tasks
-      where tasks.id = focus_session_task_totals.task_id
-        and tasks.user_id = auth.uid()
-    )
-  )
-  with check (
-    auth.uid() = user_id
-    and exists (
-      select 1
-      from tasks
-      where tasks.id = focus_session_task_totals.task_id
-        and tasks.user_id = auth.uid()
-    )
-  );
-
-drop policy if exists "Users delete own focus_session_task_totals"
-  on focus_session_task_totals;
-
-create policy "Users delete own focus_session_task_totals"
-  on focus_session_task_totals for delete
-  using (
-    auth.uid() = user_id
-    and exists (
-      select 1
-      from tasks
-      where tasks.id = focus_session_task_totals.task_id
-        and tasks.user_id = auth.uid()
-    )
-  );
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);

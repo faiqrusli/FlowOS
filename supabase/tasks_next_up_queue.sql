@@ -26,10 +26,6 @@ as $$
 declare
   item jsonb;
 begin
-  if auth.uid() is null then
-    raise exception 'Not authenticated';
-  end if;
-
   if p_updates is null or jsonb_array_length(p_updates) = 0 then
     return;
   end if;
@@ -44,5 +40,4 @@ begin
 end;
 $$;
 
-revoke all on function batch_update_task_queue_orders(jsonb) from public, anon;
 grant execute on function batch_update_task_queue_orders(jsonb) to authenticated;
