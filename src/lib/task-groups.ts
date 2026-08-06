@@ -689,7 +689,7 @@ export async function fetchTaskBoard(
   );
 
   if (legacyTodayTasks.length > 0 && inboxGroup) {
-    await Promise.all(
+    const migrationResults = await Promise.all(
       legacyTodayTasks.map((task) =>
         supabase
           .from("tasks")
@@ -698,6 +698,10 @@ export async function fetchTaskBoard(
           .eq("user_id", userId)
       )
     );
+    const migrationError = migrationResults.find((result) => result.error)?.error;
+    if (migrationError) {
+      throw new TaskGroupsError(migrationError.message);
+    }
     normalizedTasks = migrateTasksFromTodayGroup(
       normalizedTasks,
       todayGroup?.id,
