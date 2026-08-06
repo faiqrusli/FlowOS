@@ -7,17 +7,25 @@ import type { Task } from "@/types/task";
 
 function makeTask(partial: Partial<Task> & Pick<Task, "id" | "title">): Task {
   return {
-    group_id: "g1",
-    completed: false,
-    description: null,
-    priority: "low",
-    scheduled_date: "2026-07-17",
-    scheduled_time: null,
-    duration_minutes: null,
-    sort_order: 0,
-    created_at: "2026-07-17T00:00:00.000Z",
-    updated_at: "2026-07-17T00:00:00.000Z",
-    ...partial,
+    id: partial.id,
+    title: partial.title,
+    group_id: partial.group_id ?? "g1",
+    completed: partial.completed ?? false,
+    description: partial.description ?? null,
+    priority: partial.priority ?? "low",
+    scheduled_date: partial.scheduled_date ?? "2026-07-17",
+    scheduled_time: partial.scheduled_time ?? null,
+    duration_minutes: partial.duration_minutes ?? null,
+    sort_order: partial.sort_order ?? 0,
+    user_id: partial.user_id ?? null,
+    queue_order: partial.queue_order ?? null,
+    notification_enabled: partial.notification_enabled ?? false,
+    notification_lead_minutes: partial.notification_lead_minutes ?? null,
+    planning_state: partial.planning_state ?? "none",
+    created_at: partial.created_at ?? "2026-07-17T00:00:00.000Z",
+    updated_at: partial.updated_at ?? "2026-07-17T00:00:00.000Z",
+    withdrawn_at: partial.withdrawn_at ?? null,
+    completed_at: partial.completed_at ?? null,
   };
 }
 

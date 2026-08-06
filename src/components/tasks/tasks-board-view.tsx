@@ -154,7 +154,10 @@ import {
 } from "@/lib/group-drop-layout-animation";
 import { applyManualActiveReorder } from "@/lib/manual-reorder";
 import type { ManualOrderUpdate } from "@/lib/manual-order";
-import { applyLiveBoardReorderIfChanged } from "@/lib/dnd/live-board-reorder";
+import {
+  applyLiveBoardReorderIfChanged,
+  shouldPreviewLiveBoardReorder,
+} from "@/lib/dnd/live-board-reorder";
 import {
   animateTaskDragPreviewCancel,
   createTaskDragPreview,
@@ -598,6 +601,7 @@ function TasksBoardViewContent({
     return () => {
       stopBoardAutoScroll();
       detachPointerDragListeners();
+      cancelPointerTargetSync();
       unblockDragTextSelection();
     };
   }, []);
@@ -625,6 +629,7 @@ function TasksBoardViewContent({
         isBoardOriginatedTaskDrag() &&
         isPointerOverTimeline(event.clientX, event.clientY)
       ) {
+        cancelPointerTargetSync();
         applyTaskDropTarget(null);
         setPlanningQueueDragTooltip(null);
         stopBoardAutoScroll();
@@ -761,7 +766,16 @@ function TasksBoardViewContent({
   }
 
   function trackTaskDragPointer(clientX: number, clientY: number) {
-    syncBoardTaskDropTargetFromPointer(clientX, clientY);
+    pendingPointerRef.current = { x: clientX, y: clientY };
+    if (pointerSyncRafRef.current !== null) return;
+
+    pointerSyncRafRef.current = requestAnimationFrame(() => {
+      pointerSyncRafRef.current = null;
+      const pending = pendingPointerRef.current;
+      pendingPointerRef.current = null;
+      if (!pending || dragKindRef.current !== "task") return;
+      syncBoardTaskDropTargetFromPointer(pending.x, pending.y);
+    });
   }
 
   function stopBoardAutoScroll() {
@@ -998,11 +1012,17 @@ function TasksBoardViewContent({
   function applyLiveBoardPreview(target: TaskDragTarget) {
     const taskId = getActiveTaskDragIdForDrop();
     const sourceGroupId = dragOriginalSourceGroupIdRef.current;
-    const currentGroupId = groupsRef.current.find((group) =>
-      group.tasks.some((task) => task.id === taskId),
-    )?.id;
-    if (!taskId || !sourceGroupId || !currentGroupId) return;
-    if (currentGroupId === target.groupId) return;
+    if (
+      !taskId ||
+      !shouldPreviewLiveBoardReorder(
+        groupsRef.current,
+        target,
+        taskId,
+        sourceGroupId,
+      )
+    ) {
+      return;
+    }
 
     const result = applyLiveBoardReorderIfChanged(
       groupsRef.current,
@@ -1021,7 +1041,7 @@ function TasksBoardViewContent({
 
     groupsRef.current = result.board;
     liveBoardTargetRef.current = target;
-    invalidateActiveBodyRowMidpoints(sourceGroupId);
+    invalidateActiveBodyRowMidpoints(result.sourceGroupId);
     invalidateActiveBodyRowMidpoints(target.groupId);
     invalidateBoardDragMeasurements();
     onGroupsChangeRef.current(result.board);
@@ -1496,24 +1516,6 @@ function TasksBoardViewContent({
     }
 
     if (liveBoardTargetRef.current) {
-      const initialBoard = taskDragInitialBoardRef.current ?? groupsRef.current;
-      const next = moveTaskInBoard(initialBoard, activeDragId, target, {
-        todayGroupId: todayGroupIdRef.current,
-        laterGroupId: laterGroupIdRef.current,
-        inboxGroupId: inboxGroupIdRef.current,
-        todayViewDate: todayViewDateRef.current,
-        sourceGroupId,
-      });
-
-      groupsRef.current = next;
-      onGroupsChangeRef.current(next);
-      void onPersistLayout(next, {
-        todayViewDate: todayViewDateRef.current,
-        previousBoard: initialBoard,
-      }).catch(() => {
-        groupsRef.current = initialBoard;
-        onGroupsChangeRef.current(initialBoard);
-      });
       return true;
     }
 
@@ -1542,6 +1544,7 @@ function TasksBoardViewContent({
 
   function cancelBoardTaskDrag(taskId: string | null) {
     detachPointerDragListeners();
+    cancelPointerTargetSync();
     stopBoardAutoScroll();
     applyTaskDropTarget(null);
     clearTaskDropReveal();
@@ -1593,6 +1596,57 @@ function TasksBoardViewContent({
     }
 
     const sourceGroupId = dragOriginalSourceGroupIdRef.current;
+
+    if (liveBoardTargetRef.current) {
+      const initialBoard = taskDragInitialBoardRef.current ?? groupsRef.current;
+      const isSameGroupManualActiveReorder =
+        sourceGroupId === target.groupId &&
+        shouldPreviewLiveBoardReorder(
+          initialBoard,
+          target,
+          activeDragId,
+          sourceGroupId,
+        );
+
+      if (isSameGroupManualActiveReorder) {
+        const { board, updates } = applyManualActiveReorder(
+          initialBoard,
+          target.groupId,
+          activeDragId,
+          target.beforeTaskId,
+          todayViewDateRef.current,
+        );
+
+        if (updates.length === 0) return false;
+
+        groupsRef.current = board;
+        onGroupsChange(board);
+        void onPersistManualOrder(updates).catch(() => {
+          groupsRef.current = initialBoard;
+          onGroupsChange(initialBoard);
+        });
+        return true;
+      }
+
+      const next = moveTaskInBoard(initialBoard, activeDragId, target, {
+        todayGroupId: todayGroupIdRef.current,
+        laterGroupId: laterGroupIdRef.current,
+        inboxGroupId: inboxGroupIdRef.current,
+        todayViewDate: todayViewDateRef.current,
+        sourceGroupId,
+      });
+
+      groupsRef.current = next;
+      onGroupsChange(next);
+      void onPersistLayout(next, {
+        todayViewDate: todayViewDateRef.current,
+        previousBoard: initialBoard,
+      }).catch(() => {
+        groupsRef.current = initialBoard;
+        onGroupsChange(initialBoard);
+      });
+      return true;
+    }
 
     if (
       target.zone === "active" &&

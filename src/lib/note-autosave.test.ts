@@ -7,6 +7,7 @@ import {
 import type { Note } from "@/types/notes";
 
 function note(partial: Partial<Note> & Pick<Note, "id" | "title" | "content">): Note {
+  const { note_date = null, ...rest } = partial;
   return {
     user_id: "user",
     growth_area_id: "area",
@@ -14,7 +15,8 @@ function note(partial: Partial<Note> & Pick<Note, "id" | "title" | "content">): 
     updated_at: "2026-07-26T00:00:00.000Z",
     is_pinned: false,
     is_menu_pinned: false,
-    ...partial,
+    note_date,
+    ...rest,
   };
 }
 

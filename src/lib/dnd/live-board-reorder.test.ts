@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applyLiveBoardReorderIfChanged,
-  shouldApplyLiveBoardReorder,
+  shouldPreviewLiveBoardReorder,
 } from "@/lib/dnd/live-board-reorder";
 import type { TaskGroupWithTasks } from "@/types/task";
 
@@ -53,6 +53,30 @@ function makeBoard(): TaskGroupWithTasks[] {
   ];
 }
 
+function makeSameGroupBoard(
+  overrides: Partial<
+    Pick<TaskGroupWithTasks, "slug" | "title" | "sort_mode">
+  > = {},
+): TaskGroupWithTasks[] {
+  return [
+    {
+      id: "source",
+      user_id: "user-1",
+      title: "Source",
+      slug: "source",
+      sort_order: 0,
+      sort_mode: "manual",
+      created_at: "2026-01-01T00:00:00.000Z",
+      tasks: [makeTask("existing", "source", 0), makeTask("moving", "source", 1)],
+      ...overrides,
+    },
+  ];
+}
+
+function makeManualSameGroupBoard(): TaskGroupWithTasks[] {
+  return makeSameGroupBoard();
+}
+
 const destinationTarget = {
   groupId: "destination",
   beforeTaskId: "existing",
@@ -61,10 +85,88 @@ const destinationTarget = {
 };
 
 describe("live board reorder", () => {
+  it("enables a valid same-group manual preview", () => {
+    expect(
+      shouldPreviewLiveBoardReorder(
+        makeManualSameGroupBoard(),
+        {
+          groupId: "source",
+          beforeTaskId: "existing",
+          zone: "active",
+          showInsertionLine: true,
+        },
+        "moving",
+        "source",
+      ),
+    ).toBe(true);
+  });
+
   it("enables a valid cross-group active preview", () => {
     expect(
-      shouldApplyLiveBoardReorder(makeBoard(), destinationTarget, "moving"),
+      shouldPreviewLiveBoardReorder(
+        makeBoard(),
+        destinationTarget,
+        "moving",
+        "source",
+      ),
     ).toBe(true);
+  });
+
+  it.each([
+    ["sorted", { sort_mode: "priority" as const }],
+    ["Today", { slug: "today", title: "Today" }],
+    ["Later/planning", { slug: "later", title: "Later" }],
+  ])("does not enable same-group live preview for %s destinations", (_, overrides) => {
+    expect(
+      shouldPreviewLiveBoardReorder(
+        makeSameGroupBoard(overrides),
+        {
+          groupId: "source",
+          beforeTaskId: "existing",
+          zone: "active",
+          showInsertionLine: true,
+        },
+        "moving",
+        "source",
+      ),
+    ).toBe(false);
+  });
+
+  it("does not enable live preview for a completed destination", () => {
+    expect(
+      shouldPreviewLiveBoardReorder(
+        makeManualSameGroupBoard(),
+        {
+          groupId: "source",
+          beforeTaskId: null,
+          zone: "completed",
+          showInsertionLine: false,
+        },
+        "moving",
+        "source",
+      ),
+    ).toBe(false);
+  });
+
+  it("moves a same-group manual task in the live preview", () => {
+    const result = applyLiveBoardReorderIfChanged(
+      makeManualSameGroupBoard(),
+      {
+        groupId: "source",
+        beforeTaskId: "existing",
+        zone: "active",
+        showInsertionLine: true,
+      },
+      "moving",
+      "source",
+      null,
+      {},
+    );
+
+    expect(result?.board[0].tasks.map((task) => task.id)).toEqual([
+      "moving",
+      "existing",
+    ]);
   });
 
   it("moves the task into the preview destination without persisting it", () => {
@@ -83,5 +185,25 @@ describe("live board reorder", () => {
       "moving",
       "existing",
     ]);
+  });
+
+  it("does not apply the same target more than once", () => {
+    const target = {
+      groupId: "source",
+      beforeTaskId: "existing",
+      zone: "active" as const,
+      showInsertionLine: true,
+    };
+
+    expect(
+      applyLiveBoardReorderIfChanged(
+        makeManualSameGroupBoard(),
+        target,
+        "moving",
+        "source",
+        target,
+        {},
+      ),
+    ).toBeNull();
   });
 });

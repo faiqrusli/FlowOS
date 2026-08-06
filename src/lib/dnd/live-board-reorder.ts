@@ -4,12 +4,36 @@ import {
   type MoveTaskInBoardOptions,
   type TaskDragTarget,
 } from "@/lib/task-drag-utils";
+import { isLaterGroup } from "@/lib/task-groups";
+import { isManualActiveDropGroup } from "@/lib/task-drop-target";
 import type { TaskGroupWithTasks } from "@/types/task";
 
 export type LiveBoardReorderResult = {
   board: TaskGroupWithTasks[];
   sourceGroupId: string;
 };
+
+export function shouldPreviewLiveBoardReorder(
+  board: TaskGroupWithTasks[],
+  target: TaskDragTarget,
+  taskId: string,
+  sourceGroupId: string | null,
+): boolean {
+  if (!shouldApplyLiveBoardReorder(board, target, taskId)) return false;
+
+  const sourceGroup = sourceGroupId
+    ? board.find((group) => group.id === sourceGroupId)
+    : board.find((group) => group.tasks.some((task) => task.id === taskId));
+  if (!sourceGroup) return false;
+
+  if (sourceGroup.id !== target.groupId) return true;
+
+  return (
+    target.zone === "active" &&
+    !isLaterGroup(sourceGroup) &&
+    isManualActiveDropGroup(sourceGroup)
+  );
+}
 
 export function shouldApplyLiveBoardReorder(
   board: TaskGroupWithTasks[],

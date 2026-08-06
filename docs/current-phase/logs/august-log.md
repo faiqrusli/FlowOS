@@ -7,6 +7,21 @@
 
 ---
 
+## 2026-08-06 — Phase 3 P7 Automated Evidence and Task Reorder Hardening
+
+**Owner:** Founder / Implementation Engineer
+**Branch:** `sprint/phase3`
+**State:** `committed`; merge to `main` pending; Gate 3 remains `IN_PROGRESS`.
+
+- Restored native-feeling live movement for same-group manual active task reordering without changing the task-board collision pipeline or task ownership semantics.
+- Added frame-coalesced pointer synchronization, single-preview source-row hiding, correct same-group manual-order persistence, cross-group regression coverage, and cancellation/failed-write rollback coverage.
+- Recorded P7 automated evidence: 297 tests across 35 files, strict TypeScript, warning-free lint, a passing 24-route production build, `git diff --check`, and focused static security review.
+- Runtime smoke covered unauthenticated route protection and login availability; authenticated seeded/real-data, migration, RLS, timezone, accessibility, and full coherent-loop evidence remain open.
+
+**Impact:** The task board is safer and more responsive during drag operations, but this is not a Gate 3 pass or production release until the remaining live evidence and Founder decision are complete.
+
+**Next:** Merge the verified branch for production testing, then collect the remaining Gate 3 evidence one step at a time.
+
 ## 2026-08-05 — Phase 3 Implementation Reference Prepared
 
 **Owner:** Founder (six-hat workflow)

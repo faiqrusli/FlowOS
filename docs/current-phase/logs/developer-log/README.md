@@ -36,5 +36,6 @@ HH:MM — …
 
 | Day | Focus |
 |-----|--------|
+| [2026-08-06](./2026-08-06.md) | Phase 3 P7 automated evidence and live task reorder hardening |
 | [2026-08-03](./2026-08-03.md) | Phase 0 Documentation cleanup, archiving, and AI developer log rules setup |
 | [2026-08-04](./2026-08-04.md) | Phase 0 close-out (Gate 0 PASS), Phase 1 authorization, post-Phase-0 audit, docs-hygiene fixes |

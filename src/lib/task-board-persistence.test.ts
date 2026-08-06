@@ -14,11 +14,8 @@ vi.mock("@/lib/auth", () => ({
 }));
 
 import { moveTaskInBoard, type TaskDragTarget } from "@/lib/task-drag-utils";
-import {
-  persistTaskBoardDiff,
-  type TaskGroupWithTasks,
-} from "@/lib/task-groups";
-import type { Task } from "@/types/task";
+import { persistTaskBoardDiff } from "@/lib/task-groups";
+import type { Task, TaskGroupWithTasks } from "@/types/task";
 
 const userId = "user-1";
 

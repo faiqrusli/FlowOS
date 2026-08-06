@@ -6,7 +6,7 @@ import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
 import {
   isExternalTaskDragActive,
   isSortedColumnDropHighlight,
-  isTaskDragSource,
+  isTaskDragging,
   shouldShowActiveDropLine,
   subscribeTaskDragSession,
 } from "@/lib/task-drag-session";
@@ -60,7 +60,7 @@ const BoardTaskRow = memo(function BoardTaskRow({
   const isSelected = useIsTaskSelected(task.id);
   const isDragSource = useSyncExternalStore(
     subscribeTaskDragSession,
-    () => isTaskDragSource(task.id, groupId),
+    () => isTaskDragging(task.id),
     () => false
   );
   const isDropReveal = useSyncExternalStore(
@@ -73,7 +73,7 @@ const BoardTaskRow = memo(function BoardTaskRow({
     <div
       data-task-board-slot={task.id}
       className={cn(
-        isDragSource && "pointer-events-none opacity-60",
+        isDragSource && "pointer-events-none opacity-0",
         isDropReveal && !isDragSource && "animate-task-drop-reveal"
       )}
     >
