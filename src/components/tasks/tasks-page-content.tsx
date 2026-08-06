@@ -578,6 +578,7 @@ export function TasksPageContent() {
           ? err.message
           : "Failed to create group.",
       );
+      void loadBoard();
       throw err;
     }
   }
