@@ -868,6 +868,25 @@ export async function deleteTaskGroup(groupId: string): Promise<void> {
     throw new TaskGroupsError("Default groups cannot be deleted.");
   }
 
+  const { data: inbox } = await supabase
+    .from("task_groups")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("slug", INBOX_GROUP_SLUG)
+    .maybeSingle();
+
+  if (!inbox) {
+    throw new TaskGroupsError("Inbox group is unavailable.");
+  }
+
+  const { error: taskError } = await supabase
+    .from("tasks")
+    .update({ group_id: inbox.id })
+    .eq("group_id", groupId)
+    .eq("user_id", userId);
+
+  if (taskError) throw new TaskGroupsError(taskError.message);
+
   const { error } = await supabase
     .from("task_groups")
     .delete()
