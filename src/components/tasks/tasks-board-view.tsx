@@ -77,7 +77,6 @@ import {
   isLaterGroup,
   isPinnedTaskGroup,
   isTodayGroup,
-  taskBelongsInLaterView,
 } from "@/lib/task-groups";
 import {
   getTaskGroupSortMode,
@@ -204,8 +203,6 @@ const BOARD_EDGE_SCROLL_ZONE_OVER_COLUMN = 20;
 const BOARD_EDGE_SCROLL_SPEED = 8;
 const GROUP_COLUMN_WIDTH_CLASS = "w-[300px]";
 const GROUP_CHANGE_BLOCKED_HINT = "Task group can't be changed from here";
-const LATER_GROUP_CHANGE_BLOCKED_HINT =
-  "Task group can't be changed from Later";
 const TODAY_GROUP_CHANGE_BLOCKED_HINT =
   "Task group can't be changed from Today";
 const SYSTEM_VIEW_REORDER_BLOCKED_HINT = "System views can't be reordered";
@@ -797,15 +794,6 @@ function TasksBoardViewContent({
     return null;
   }
 
-  function isDragFromLaterColumn(): boolean {
-    const sourceId = dragOriginalSourceGroupIdRef.current;
-    if (!sourceId) return false;
-    const sourceGroup = groupsRef.current.find(
-      (group) => group.id === sourceId,
-    );
-    return sourceGroup ? isLaterGroup(sourceGroup) : false;
-  }
-
   function isDragFromTodayColumn(): boolean {
     const sourceId = dragOriginalSourceGroupIdRef.current;
     if (!sourceId) return false;
@@ -813,14 +801,6 @@ function TasksBoardViewContent({
       (group) => group.id === sourceId,
     );
     return sourceGroup ? isTodayGroup(sourceGroup) : false;
-  }
-
-  function isLaterOriginatedTaskDrag(): boolean {
-    if (isDragFromLaterColumn()) return true;
-    const taskId = getActiveTaskDragIdForDrop();
-    if (!taskId) return false;
-    const task = findTaskInBoard(taskId);
-    return task ? taskBelongsInLaterView(task) : false;
   }
 
   function isTodayOriginatedTaskDrag(): boolean {
@@ -840,7 +820,7 @@ function TasksBoardViewContent({
     clientY: number,
     groupId?: string,
   ): boolean {
-    if (!isLaterOriginatedTaskDrag() && !isTodayOriginatedTaskDrag()) {
+    if (!isTodayOriginatedTaskDrag()) {
       return false;
     }
     if (isPointerOverTimeline(clientX, clientY)) return false;
@@ -853,9 +833,6 @@ function TasksBoardViewContent({
   }
 
   function planningQueueDragBlockedMessage(): string {
-    if (isLaterOriginatedTaskDrag()) {
-      return LATER_GROUP_CHANGE_BLOCKED_HINT;
-    }
     return TODAY_GROUP_CHANGE_BLOCKED_HINT;
   }
 
@@ -894,7 +871,7 @@ function TasksBoardViewContent({
   }
 
   function isPlanningQueueDropBlockedForGroup(groupId: string): boolean {
-    if (!isLaterOriginatedTaskDrag() && !isTodayOriginatedTaskDrag()) {
+    if (!isTodayOriginatedTaskDrag()) {
       return false;
     }
     return !isAllowedPlanningQueueTarget(groupId);

@@ -22,6 +22,48 @@
 
 **Next:** Test the merged change in production, then collect the remaining Gate 3 evidence one step at a time.
 
+## 2026-08-06 — Production Entry Probe
+
+**Owner:** Founder / Implementation Engineer
+**Branch:** `sprint/phase3`
+**State:** `INCONCLUSIVE` for authenticated evidence; Gate 3 remains `IN_PROGRESS`.
+
+- Production `/` and `/workplace` returned `307` redirects to their login targets, and `/login` returned `200 OK` without following redirects.
+- Added redacted [route evidence](../phase-3/evidence/today-orientation/production-entry-route-recovery.md) and [task-drag evidence](../phase-3/evidence/tasks-core-loop/production-task-drag.md).
+- Authenticated entry, manual drag, owner handoff, migration, RLS, timezone, accessibility, and coherent-loop evidence remain open because no approved seeded account or authenticated browser session was available.
+
+**Impact:** The public route wiring is verified, but anonymous checks do not establish authenticated product behavior or close `G3-02`/`G3-03`.
+
+**Next:** Continue the seeded authenticated walkthrough once the approved account/session is available; do not claim Gate 3 or release readiness from the route probe.
+
+## 2026-08-06 — Authenticated Later-Group Drag Defect
+
+**Owner:** Founder / Implementation Engineer
+**Branch:** `sprint/phase3`
+**State:** `BLOCK` for the reported Later cross-group drag behavior; Gate 3 remains `IN_PROGRESS`.
+
+- The authenticated report says dragging a task from Later to Today does not work, although it should set the product date to Today and clear the Later planning state.
+- The report also says Later tasks cannot be dragged to another organization group; the current behavior presents a “can't change group from Later” restriction.
+- Recorded the redacted result and screenshot limitation in [production task-drag evidence](../phase-3/evidence/tasks-core-loop/production-task-drag.md). No data-loss or owner-boundary breach was reported.
+
+**Impact:** `G3-03` remains open with a focused product defect; the evidence-only validation plan does not permit silently changing the implementation.
+
+**Next:** The Founder-authorized focused drag-behavior fix is recorded below; production retest remains required before further Gate 3 evidence collection.
+
+## 2026-08-06 — Later Drag Fix Verification
+
+**Owner:** Founder / Implementation Engineer
+**Branch:** `sprint/phase3`
+**State:** `LOCAL_FIX_VERIFIED`; production retest pending; Gate 3 remains `IN_PROGRESS`.
+
+- Added regression coverage for Later → organization-group movement and Later → Today date assignment.
+- The pre-fix reproducer failed; after the focused guard/projection change, 4 focused tests and the full 299-test suite pass, strict TypeScript and zero-warning lint pass, the 24-route production build passes, and `git diff --check` passes.
+- Today-originated planning restrictions and rollback/persistence paths remain unchanged by the fix.
+
+**Impact:** The reported Later cross-group defect has a verified repository fix, but the production `BLOCK` remains until the merged deployment is retested with the approved fixture.
+
+**Next:** Re-run Later → Today and Later → organization-group in the merged production deployment, then continue the remaining Gate 3 evidence milestones.
+
 ## 2026-08-05 — Phase 3 Implementation Reference Prepared
 
 **Owner:** Founder (six-hat workflow)

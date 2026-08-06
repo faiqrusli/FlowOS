@@ -89,6 +89,77 @@ describe("task planning drag projections", () => {
       planning_state: "none",
     });
   });
+
+  it("moves a Later task into an organization group", () => {
+    const task = makeTask({
+      group_id: "inbox-1",
+      planning_state: "later",
+      scheduled_date: null,
+      scheduled_time: null,
+    });
+    const board = [
+      makeGroup("today-1", "Today", "today"),
+      makeGroup("later-1", "Later", "later", [task]),
+      makeGroup("inbox-1", "Inbox", "inbox"),
+      makeGroup("project-1", "Project", "project"),
+    ];
+    const target: TaskDragTarget = {
+      groupId: "project-1",
+      beforeTaskId: null,
+      zone: "active",
+    };
+
+    const next = moveTaskInBoard(board, task.id, target, {
+      todayGroupId: "today-1",
+      laterGroupId: "later-1",
+      todayViewDate: "2026-08-04",
+      sourceGroupId: "later-1",
+    });
+
+    expect(next.find((group) => group.id === "later-1")?.tasks).toHaveLength(0);
+    expect(next.find((group) => group.id === "project-1")?.tasks[0]).toMatchObject({
+      id: task.id,
+      group_id: "project-1",
+      planning_state: "none",
+      scheduled_date: null,
+      scheduled_time: null,
+    });
+  });
+
+  it("moves a Later task into Today and assigns the product date", () => {
+    const task = makeTask({
+      group_id: "inbox-1",
+      planning_state: "later",
+      scheduled_date: null,
+      scheduled_time: null,
+    });
+    const board = [
+      makeGroup("today-1", "Today", "today"),
+      makeGroup("later-1", "Later", "later", [task]),
+      makeGroup("inbox-1", "Inbox", "inbox"),
+    ];
+    const target: TaskDragTarget = {
+      groupId: "today-1",
+      beforeTaskId: null,
+      zone: "active",
+    };
+
+    const next = moveTaskInBoard(board, task.id, target, {
+      todayGroupId: "today-1",
+      laterGroupId: "later-1",
+      todayViewDate: "2026-08-04",
+      sourceGroupId: "later-1",
+    });
+
+    expect(next.find((group) => group.id === "later-1")?.tasks).toHaveLength(0);
+    expect(next.find((group) => group.id === "today-1")?.tasks[0]).toMatchObject({
+      id: task.id,
+      group_id: "inbox-1",
+      planning_state: "none",
+      scheduled_date: "2026-08-04",
+      scheduled_time: null,
+    });
+  });
 });
 
 describe("task board persistence", () => {

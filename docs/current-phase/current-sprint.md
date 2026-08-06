@@ -16,6 +16,8 @@
 **Previous gate decision:** [D-008 — Pass Gate 2 and Authorize Phase 3](../08-decisions/records/D-008-pass-gate-2-and-authorize-phase-3.md)
 **Workflow:** [Solo Founder Workflow](../start-here/solo-founder-workflow.md)
 
+**P7 live validation update (2026-08-06):** The production anonymous route probe passed for `/`, `/workplace`, and `/login`; an authenticated report recorded a `BLOCK` for Later cross-group task movement, and the Founder-authorized local fix now passes regression, repository, type, lint, build, and diff checks. The merged production retest and several unreported drag scenarios remain open. See the [P7 quality record](./phase-3/p7-quality-evidence.md) and the linked redacted evidence records; no Gate 3 criterion is closed by this probe.
+
 ## 1. Authority and phase outcome
 
 Phase 2 passed Gate 2 on 2026-08-05. Its approved briefs, behavior contracts, coherent-loop journey, supporting-domain decisions, record/provenance/correction/continuity rules, and four design specifications are the product and design authority for this sprint.

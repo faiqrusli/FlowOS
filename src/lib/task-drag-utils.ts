@@ -214,17 +214,6 @@ export function isOrganizationGroupTarget(
   return !isTodayGroup(group) && !isLaterGroup(group);
 }
 
-function isPlanningColumnSource(
-  board: TaskGroupWithTasks[],
-  sourceGroupId: string | null | undefined
-): boolean {
-  if (!sourceGroupId) return false;
-  const sourceGroup = board.find((group) => group.id === sourceGroupId);
-  return Boolean(
-    sourceGroup && (isTodayGroup(sourceGroup) || isLaterGroup(sourceGroup))
-  );
-}
-
 function upsertTaskInOrgGroup(
   board: TaskGroupWithTasks[],
   task: Task
@@ -326,11 +315,11 @@ export function moveTaskInBoard(
     laterGroupId && target.groupId === laterGroupId
   );
 
-  if (
-    isPlanningColumnSource(board, options?.sourceGroupId) &&
-    !isTodayTarget &&
-    !isLaterTarget
-  ) {
+  const sourceGroup = options?.sourceGroupId
+    ? board.find((group) => group.id === options.sourceGroupId)
+    : undefined;
+
+  if (sourceGroup && isTodayGroup(sourceGroup) && !isTodayTarget && !isLaterTarget) {
     return board;
   }
 
