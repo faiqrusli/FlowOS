@@ -12,7 +12,13 @@ const boardSource = readFileSync(
 
 describe("Tasks group appearance draft state", () => {
   it("resets appearance draft on open rather than object refresh", () => {
-    const effectStart = dialogSource.indexOf("useEffect(() => {");
+    const resetBodyStart = dialogSource.indexOf(
+      "const currentGroup = groupRef.current",
+    );
+    const effectStart = dialogSource.lastIndexOf(
+      "useEffect(() => {",
+      resetBodyStart,
+    );
     const effectEnd = dialogSource.indexOf("  }, [", effectStart);
     const effect = dialogSource.slice(effectStart, effectEnd);
     const dependencies = dialogSource.slice(

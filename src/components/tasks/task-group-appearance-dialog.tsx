@@ -47,7 +47,12 @@ export function TaskGroupAppearanceDialog({
   const [error, setError] = useState<string | null>(null);
   const [iconChooserOpen, setIconChooserOpen] = useState(false);
   const groupRef = useRef(group);
-  groupRef.current = group;
+
+  useEffect(() => {
+    if (group?.id !== groupRef.current?.id) {
+      groupRef.current = group;
+    }
+  }, [group]);
 
   useEffect(() => {
     const currentGroup = groupRef.current;
