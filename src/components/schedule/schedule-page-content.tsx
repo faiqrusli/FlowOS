@@ -183,11 +183,14 @@ export function SchedulePageContent() {
     scheduleDate: string,
   ) {
     setError(null);
-    setHabitDailyScheduleOverride(
+    const saved = setHabitDailyScheduleOverride(
       habitId,
       scheduleDate,
       updates.scheduled_time,
     );
+    if (!saved) {
+      setError("Failed to save habit schedule.");
+    }
   }
 
   async function handleUpdateTask(taskId: string, updates: Partial<Task>) {
