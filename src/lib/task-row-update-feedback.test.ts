@@ -46,6 +46,15 @@ describe("Task row update feedback", () => {
     );
   });
 
+  it("guards the rename submit against Enter and blur racing", () => {
+    const renameStart = taskRowSource.indexOf("const commitRename");
+    const renameEnd = taskRowSource.indexOf("const cancelRename", renameStart);
+    const rename = taskRowSource.slice(renameStart, renameEnd);
+
+    expect(rename).toContain("renameCommitInFlightRef.current");
+    expect(rename).toMatch(/if \(renameCommitInFlightRef\.current\) return/);
+  });
+
   it("keeps the priority menu open after a failed priority update", () => {
     const priorityStart = taskRowSource.indexOf("<TaskPriorityMenuPopover");
     const priorityEnd = taskRowSource.indexOf("          />", priorityStart);

@@ -848,6 +848,7 @@ export const TaskRow = memo(function TaskRow({
   const scheduleAnchorRef = useRef<HTMLDivElement>(null);
   const schedulePopoverRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const renameCommitInFlightRef = useRef(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [titleDraft, setTitleDraft] = useState(task.title);
   const priority = normalizeTaskPriority(task.priority);
@@ -917,10 +918,16 @@ export const TaskRow = memo(function TaskRow({
   const { cancelPendingOpenDetail, ...rowPointerHandlers } = rowPointerGesture;
 
   const commitRename = useCallback(async () => {
+    if (renameCommitInFlightRef.current) return;
     const nextTitle = titleDraft.trim() || "Untitled";
     if (nextTitle !== task.title) {
-      const updated = await onUpdate({ title: nextTitle });
-      if (updated === false) return;
+      renameCommitInFlightRef.current = true;
+      try {
+        const updated = await onUpdate({ title: nextTitle });
+        if (updated === false) return;
+      } finally {
+        renameCommitInFlightRef.current = false;
+      }
     }
     setIsRenaming(false);
     setTitleDraft(nextTitle);
