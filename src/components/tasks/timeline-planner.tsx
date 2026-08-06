@@ -167,6 +167,8 @@ import {
   resolveQuickScheduleInboxDropZoneFromTarget,
   type QuickScheduleInboxDropZone,
 } from "@/lib/timeline-drag";
+import { routeBoardPointerEnd } from "@/lib/timeline-drag-pointer";
+import { activateTimelineEntryFromKeyboard } from "@/lib/timeline-entry-keyboard";
 import {
   closeTaskDetailMenus,
   isEventTargetInside,
@@ -1309,18 +1311,36 @@ export function TimelinePlanner({
       syncBoardPointerDrag(event.clientX, event.clientY);
     };
 
-    const onPointerEnd = (event: globalThis.PointerEvent) => {
-      void commitBoardPointerDrop(event.clientX, event.clientY);
+    const onPointerUp = (event: globalThis.PointerEvent) => {
+      routeBoardPointerEnd(
+        {
+          type: "pointerup",
+          clientX: event.clientX,
+          clientY: event.clientY,
+        },
+        {
+          onCommit: (clientX, clientY) => {
+            void commitBoardPointerDrop(clientX, clientY);
+          },
+          onCancel: () => {},
+        },
+      );
+    };
+    const onPointerCancel = () => {
+      stopTimelineAutoScroll();
+      setDropPreviewMinutes(null);
+      dropPreviewMinutesRef.current = null;
+      clearInboxDropHighlight();
     };
 
     document.addEventListener("pointermove", onPointerMove);
-    document.addEventListener("pointerup", onPointerEnd, true);
-    document.addEventListener("pointercancel", onPointerEnd, true);
+    document.addEventListener("pointerup", onPointerUp, true);
+    document.addEventListener("pointercancel", onPointerCancel, true);
 
     return () => {
       document.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("pointerup", onPointerEnd, true);
-      document.removeEventListener("pointercancel", onPointerEnd, true);
+      document.removeEventListener("pointerup", onPointerUp, true);
+      document.removeEventListener("pointercancel", onPointerCancel, true);
     };
   }, [clearInboxDropHighlight]);
 
@@ -2630,11 +2650,17 @@ function TimelinePoolChip({
     <div
       data-timeline-entry={task.id}
       data-timeline-kind="task"
+      role="button"
+      tabIndex={0}
+      aria-label={task.title}
       draggable
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onContextMenu={onContextMenu}
       onClick={onSelect}
+      onKeyDown={(event) =>
+        activateTimelineEntryFromKeyboard(event, onSelect)
+      }
       onDoubleClick={(event) => {
         event.preventDefault();
         onOpenDetail();
@@ -2745,6 +2771,9 @@ function TimelineScheduledBlock({
     <div
       data-timeline-entry={block.id}
       data-timeline-kind={block.kind}
+      role="button"
+      tabIndex={0}
+      aria-label={isHabit ? "Scheduled habit" : "Scheduled task"}
       data-timeline-in-focus={inFocus ? "true" : undefined}
       data-focus-softened={focusSoftened ? "true" : undefined}
       draggable={!completed}
@@ -2752,6 +2781,9 @@ function TimelineScheduledBlock({
       onDragEnd={onDragEnd}
       onContextMenu={onContextMenu}
       onClick={onSelect}
+      onKeyDown={(event) =>
+        activateTimelineEntryFromKeyboard(event, onSelect)
+      }
       onDoubleClick={(event) => {
         if (!isHabit) {
           event.preventDefault();
@@ -2916,11 +2948,17 @@ function TimelineHabitChip({
     <div
       data-timeline-entry={habit.id}
       data-timeline-kind="habit"
+      role="button"
+      tabIndex={0}
+      aria-label="Scheduled habit"
       draggable={!completed}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onContextMenu={onContextMenu}
       onClick={onSelect}
+      onKeyDown={(event) =>
+        activateTimelineEntryFromKeyboard(event, onSelect)
+      }
       className={cn(
         "group flex w-full items-center gap-1.5 border-0 transition-[box-shadow] duration-150",
         completed ? "cursor-default" : "cursor-grab active:cursor-grabbing",
