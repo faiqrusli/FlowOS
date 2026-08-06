@@ -11,7 +11,7 @@
 
 **Owner:** Founder / Implementation Engineer
 **Branch:** `sprint/phase3`
-**State:** `committed`; merge to `main` pending; Gate 3 remains `IN_PROGRESS`.
+**State:** `merged` to `origin/main` at `2af6122`; Gate 3 remains `IN_PROGRESS`.
 
 - Restored native-feeling live movement for same-group manual active task reordering without changing the task-board collision pipeline or task ownership semantics.
 - Added frame-coalesced pointer synchronization, single-preview source-row hiding, correct same-group manual-order persistence, cross-group regression coverage, and cancellation/failed-write rollback coverage.
@@ -20,7 +20,7 @@
 
 **Impact:** The task board is safer and more responsive during drag operations, but this is not a Gate 3 pass or production release until the remaining live evidence and Founder decision are complete.
 
-**Next:** Merge the verified branch for production testing, then collect the remaining Gate 3 evidence one step at a time.
+**Next:** Test the merged change in production, then collect the remaining Gate 3 evidence one step at a time.
 
 ## 2026-08-05 — Phase 3 Implementation Reference Prepared
 
