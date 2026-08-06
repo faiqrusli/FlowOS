@@ -795,7 +795,8 @@ export function TasksPageContent() {
     const snapshot = task;
 
     if (planningState === "later") {
-      await handleMoveToLater(taskId);
+      const movedToLater = await handleMoveToLater(taskId);
+      if (!movedToLater) return;
       if (!options?.silent) {
         showActionToast({
           message: "Moved to Later",
@@ -814,7 +815,8 @@ export function TasksPageContent() {
       return;
     }
 
-    await handleClearPlanningState(taskId);
+    const clearedPlanningState = await handleClearPlanningState(taskId);
+    if (!clearedPlanningState) return;
     if (!options?.silent) {
       showActionToast({
         message: "Set to Normal",
@@ -828,7 +830,7 @@ export function TasksPageContent() {
     }
   }
 
-  async function handleMoveToLater(taskId: string) {
+  async function handleMoveToLater(taskId: string): Promise<boolean> {
     setError(null);
 
     const laterUpdates = getLaterPlanningTaskUpdates();
@@ -850,6 +852,7 @@ export function TasksPageContent() {
     try {
       const updated = await updateTask(taskId, laterUpdates);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      return true;
     } catch (err) {
       setError(
         err instanceof TasksError
@@ -857,10 +860,11 @@ export function TasksPageContent() {
           : "Failed to move task to Later.",
       );
       void loadBoard();
+      return false;
     }
   }
 
-  async function handleClearPlanningState(taskId: string) {
+  async function handleClearPlanningState(taskId: string): Promise<boolean> {
     setError(null);
     setGroups((prev) =>
       replaceTaskOnBoard(
@@ -874,11 +878,13 @@ export function TasksPageContent() {
     try {
       const updated = await updateTask(taskId, { planning_state: "none" });
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      return true;
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
+      return false;
     }
   }
 
