@@ -593,7 +593,6 @@ function TaskDetailMenuPopover({
           notificationEnabled={task.notification_enabled}
           leadMinutes={task.notification_lead_minutes}
           onCommit={(minutes) => onSetAlertBefore(applyPresetAlert(minutes))}
-          onCommitDone={onCloseMenu}
         />
         <button
           type="button"

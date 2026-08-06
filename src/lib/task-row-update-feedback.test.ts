@@ -25,4 +25,14 @@ describe("Task row update feedback", () => {
       /const updated = await onUpdate\([\s\S]*?if \(updated === false\) return;[\s\S]*?showActionToast/,
     );
   });
+
+  it("does not close the custom alert editor before its update succeeds", () => {
+    const customAlertStart = taskRowSource.indexOf(
+      "<AlertBeforeCustomInput",
+    );
+    const customAlertEnd = taskRowSource.indexOf("        />", customAlertStart);
+    const customAlert = taskRowSource.slice(customAlertStart, customAlertEnd);
+
+    expect(customAlert).not.toContain("onCommitDone={onCloseMenu}");
+  });
 });
