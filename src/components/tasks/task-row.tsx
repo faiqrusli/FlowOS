@@ -916,13 +916,14 @@ export const TaskRow = memo(function TaskRow({
 
   const { cancelPendingOpenDetail, ...rowPointerHandlers } = rowPointerGesture;
 
-  const commitRename = useCallback(() => {
-    setIsRenaming(false);
+  const commitRename = useCallback(async () => {
     const nextTitle = titleDraft.trim() || "Untitled";
-    setTitleDraft(nextTitle);
     if (nextTitle !== task.title) {
-      onUpdate({ title: nextTitle });
+      const updated = await onUpdate({ title: nextTitle });
+      if (updated === false) return;
     }
+    setIsRenaming(false);
+    setTitleDraft(nextTitle);
   }, [onUpdate, task.title, titleDraft]);
 
   const cancelRename = useCallback(() => {
@@ -1181,8 +1182,9 @@ export const TaskRow = memo(function TaskRow({
             priority={priority}
             anchorRef={flagAnchorRef}
             popoverRef={flagPopoverRef}
-            onUpdate={(updates) => {
-              onUpdate(updates);
+            onUpdate={async (updates) => {
+              const updated = await onUpdate(updates);
+              if (updated === false) return;
               setFlagMenuOpen(false);
             }}
           />

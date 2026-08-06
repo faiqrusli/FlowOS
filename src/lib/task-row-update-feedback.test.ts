@@ -35,4 +35,24 @@ describe("Task row update feedback", () => {
 
     expect(customAlert).not.toContain("onCommitDone={onCloseMenu}");
   });
+
+  it("keeps the rename editor open after a failed title update", () => {
+    const renameStart = taskRowSource.indexOf("const commitRename");
+    const renameEnd = taskRowSource.indexOf("const cancelRename", renameStart);
+    const rename = taskRowSource.slice(renameStart, renameEnd);
+
+    expect(rename).toMatch(
+      /const updated = await onUpdate\([\s\S]*?if \(updated === false\) return;[\s\S]*?setIsRenaming\(false\)/,
+    );
+  });
+
+  it("keeps the priority menu open after a failed priority update", () => {
+    const priorityStart = taskRowSource.indexOf("<TaskPriorityMenuPopover");
+    const priorityEnd = taskRowSource.indexOf("          />", priorityStart);
+    const priority = taskRowSource.slice(priorityStart, priorityEnd);
+
+    expect(priority).toMatch(
+      /onUpdate=\{async \(updates\) => \{[\s\S]*?const updated = await onUpdate\(updates\)[\s\S]*?if \(updated === false\) return;[\s\S]*?setFlagMenuOpen\(false\)/,
+    );
+  });
 });
