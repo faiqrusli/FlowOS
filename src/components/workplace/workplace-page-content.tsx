@@ -121,6 +121,16 @@ type WorkplacePageContentProps = {
   statusRail?: ReactNode;
 };
 
+type ToggleCompleteHandler = (
+  task: Task,
+  markComplete?: boolean,
+  options?: { silent?: boolean },
+) => Promise<void>;
+type ToggleHabitCompleteHandler = (
+  habit: Habit,
+  options?: { silent?: boolean },
+) => Promise<void>;
+
 export function WorkplacePageContent({
   tasksTabRef,
   habitsTabRef,
@@ -147,7 +157,6 @@ export function WorkplacePageContent({
   const [tasksLauncherPulse, setTasksLauncherPulse] = useState(false);
   const pendingViewTaskIdRef = useRef<string | null>(null);
   const overlayRef = useRef(overlay);
-  overlayRef.current = overlay;
   /** While dragging a task/habit, let events pass through the dismiss layer to Next Up. */
   const [scheduleDragActive, setScheduleDragActive] = useState(false);
   const [taskContextMenu, setTaskContextMenu] = useState<{
@@ -161,9 +170,19 @@ export function WorkplacePageContent({
     new Map(),
   );
   const pendingTaskUpdates = useRef<Map<string, Partial<Task>>>(new Map());
+  const toggleCompleteRef = useRef<ToggleCompleteHandler>(() =>
+    Promise.resolve(),
+  );
+  const toggleHabitCompleteRef = useRef<ToggleHabitCompleteHandler>(() =>
+    Promise.resolve(),
+  );
   const pendingTaskUpdateWaiters = useRef<
     Map<string, Array<(success: boolean) => void>>
   >(new Map());
+
+  useEffect(() => {
+    overlayRef.current = overlay;
+  }, [overlay]);
 
   /** Open or switch dock panel. Scale animation only when opening from closed. */
   const showDockPanel = useCallback((panel: "tasks" | "habits") => {
@@ -196,7 +215,10 @@ export function WorkplacePageContent({
   const allTasks = useMemo(() => collectAllBoardTasks(groups), [groups]);
   const habitScheduleRevision = useHabitDailyScheduleStore();
   const todayDisplayHabits = useMemo(
-    () => withHabitScheduleForDate(habits, todayViewDate),
+    () => {
+      void habitScheduleRevision;
+      return withHabitScheduleForDate(habits, todayViewDate);
+    },
     [habits, todayViewDate, habitScheduleRevision],
   );
 
@@ -226,7 +248,13 @@ export function WorkplacePageContent({
   }, []);
 
   useEffect(() => {
-    void loadWorkplace();
+    let active = true;
+    queueMicrotask(() => {
+      if (active) void loadWorkplace();
+    });
+    return () => {
+      active = false;
+    };
   }, [loadWorkplace]);
 
   useEffect(() => {
@@ -533,10 +561,7 @@ export function WorkplacePageContent({
   } | null>(null);
 
   useLayoutEffect(() => {
-    if (!overlay) {
-      setDockActivePill(null);
-      return;
-    }
+    if (!overlay) return;
     const shell = launcherShellRef.current;
     const activeBtn =
       overlay === "tasks" ? taskLauncherRef.current : habitLauncherRef.current;
@@ -557,18 +582,30 @@ export function WorkplacePageContent({
   }, [overlay]);
 
   useEffect(() => {
-    setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
+    let active = true;
+    queueMicrotask(() => {
+      if (active) {
+        setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, [todayViewDate]);
 
   useEffect(() => {
+    const timers = updateTimers.current;
+    const waitersByTask = pendingTaskUpdateWaiters.current;
+    const pendingUpdates = pendingTaskUpdates.current;
     return () => {
-      for (const timer of updateTimers.current.values()) {
+      for (const timer of timers.values()) {
         clearTimeout(timer);
       }
-      for (const waiters of pendingTaskUpdateWaiters.current.values()) {
+      for (const waiters of waitersByTask.values()) {
         for (const resolve of waiters) resolve(false);
       }
-      pendingTaskUpdateWaiters.current.clear();
+      waitersByTask.clear();
+      pendingUpdates.clear();
     };
   }, []);
 
@@ -579,10 +616,8 @@ export function WorkplacePageContent({
     for (const resolve of waiters) resolve(success);
   }
 
-  function scheduleTaskPersist(
-    taskId: string,
-    updates: Partial<Task>,
-  ): Promise<boolean> {
+  const scheduleTaskPersist = useCallback(
+    (taskId: string, updates: Partial<Task>): Promise<boolean> => {
     return new Promise((resolve) => {
       const waiters = pendingTaskUpdateWaiters.current.get(taskId) ?? [];
       waiters.push(resolve);
@@ -660,8 +695,7 @@ export function WorkplacePageContent({
         }, 350),
       );
     });
-  }
-
+  }, [loadWorkplace, todayViewDate]);
   const handleScheduleTask = useCallback(
     async (
       taskId: string,
@@ -724,7 +758,7 @@ export function WorkplacePageContent({
         return false;
       }
     },
-    [loadWorkplace, todayViewDate],
+    [loadWorkplace, scheduleTaskPersist, todayViewDate],
   );
 
   const handleMoveTask = useCallback(
@@ -904,7 +938,7 @@ export function WorkplacePageContent({
             icon: "check",
             actionLabel: "Undo",
             onAction: () => {
-              void handleToggleComplete(updated, !nextCompleted, {
+              void toggleCompleteRef.current(updated, !nextCompleted, {
                 silent: true,
               });
             },
@@ -1033,7 +1067,7 @@ export function WorkplacePageContent({
             icon: "habit",
             actionLabel: "Undo",
             onAction: () => {
-              void handleToggleHabitComplete(updated, { silent: true });
+              void toggleHabitCompleteRef.current(updated, { silent: true });
             },
           });
         }
@@ -1062,6 +1096,11 @@ export function WorkplacePageContent({
     },
     [],
   );
+
+  useEffect(() => {
+    toggleCompleteRef.current = handleToggleComplete;
+    toggleHabitCompleteRef.current = handleToggleHabitComplete;
+  }, [handleToggleComplete, handleToggleHabitComplete]);
 
   const boardActions = useMemo<TaskBoardActions>(
     () => ({

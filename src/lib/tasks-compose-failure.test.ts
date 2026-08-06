@@ -11,7 +11,10 @@ const boardSource = readFileSync(
 );
 
 function getFunctionSource(source: string, name: string): string {
-  const start = source.indexOf(`function ${name}`);
+  const start = Math.max(
+    source.indexOf(`function ${name}`),
+    source.indexOf(`const ${name} =`),
+  );
   expect(start).toBeGreaterThan(-1);
 
   const end = source.indexOf("\n  async function ", start + 1);

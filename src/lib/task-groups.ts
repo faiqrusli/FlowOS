@@ -209,7 +209,7 @@ export function filterTasksForGroup(
     );
   }
   return tasks.filter((task) =>
-    taskBelongsInOrgGroupView(task, group.id, todayViewDate)
+    taskBelongsInOrgGroupView(task, group.id)
   );
 }
 
@@ -223,8 +223,7 @@ export function taskBelongsInTodayView(
 /** Org columns show tasks assigned to the group, including those also on Today/Later. */
 export function taskBelongsInOrgGroupView(
   task: Pick<Task, "group_id">,
-  groupId: string,
-  _todayViewDate?: string
+  groupId: string
 ): boolean {
   return task.group_id === groupId;
 }
@@ -268,7 +267,7 @@ export function buildBoardFromTasks(
       );
     } else {
       filteredTasks = tasks.filter((task) =>
-        taskBelongsInOrgGroupView(task, group.id, todayViewDate)
+        taskBelongsInOrgGroupView(task, group.id)
       );
     }
 
