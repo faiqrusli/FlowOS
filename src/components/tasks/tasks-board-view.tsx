@@ -285,7 +285,7 @@ type TasksBoardViewProps = {
       scheduledDate?: string | null;
       planningState?: "none" | "later";
     },
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onToggleComplete: (task: Task) => Promise<void>;
   onDuplicateTask: (task: Task) => Promise<void>;
@@ -1962,7 +1962,8 @@ function TasksBoardViewContent({
         return;
       }
 
-      void finishCompose(currentGroupId, composeTextRef.current).then(() => {
+      void finishCompose(currentGroupId, composeTextRef.current).then((created) => {
+        if (!created) return;
         setComposingGroupId(groupId);
         setComposePlacement(placement);
         setComposeText("");
@@ -1975,7 +1976,10 @@ function TasksBoardViewContent({
     setComposeText("");
   }
 
-  async function finishCompose(groupId: string, text: string) {
+  async function finishCompose(
+    groupId: string,
+    text: string,
+  ): Promise<boolean> {
     const title = text.trim();
     if (title) {
       const creatingInToday = todayGroup && groupId === todayGroup.id;
@@ -1989,15 +1993,18 @@ function TasksBoardViewContent({
         : creatingInToday
           ? { scheduledDate: todayViewDate }
           : undefined;
-      await onCreateTask(orgGroupId, title, options);
+      const created = await onCreateTask(orgGroupId, title, options);
+      if (!created) return false;
     }
     setComposeText("");
     setComposingGroupId(null);
+    return true;
   }
 
   async function submitCompose(groupId: string) {
     const placement = composePlacementRef.current;
-    await finishCompose(groupId, composeText);
+    const created = await finishCompose(groupId, composeText);
+    if (!created) return;
     setComposingGroupId(groupId);
     setComposePlacement(placement);
   }

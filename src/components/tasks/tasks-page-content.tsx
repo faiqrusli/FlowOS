@@ -277,7 +277,7 @@ export function TasksPageContent() {
       scheduledDate?: string | null;
       planningState?: "none" | "later";
     },
-  ) {
+  ): Promise<boolean> {
     setError(null);
     const orgGroup = groups.find(
       (item) =>
@@ -324,10 +324,12 @@ export function TasksPageContent() {
           selectTask(created.id);
         },
       });
+      return true;
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to create task.",
       );
+      return false;
     }
   }
 
