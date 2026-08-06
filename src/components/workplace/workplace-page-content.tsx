@@ -1087,7 +1087,7 @@ export function WorkplacePageContent({
     onScheduleTask: handleScheduleTask,
     onScheduleHabit: handleScheduleHabit,
     onToggleComplete: handleToggleComplete,
-    onToggleHabitComplete: handleToggleHabitComplete,
+    onToggleHabitComplete: (habit: Habit) => handleToggleHabitComplete(habit),
     onUpdateTask: handleUpdateTask,
     onDeleteTask: handleDeleteTask,
     onDuplicateTask: handleDuplicateTask,

@@ -234,7 +234,10 @@ export type TimelinePlannerProps = {
     updates: { scheduled_time: string | null },
     scheduleDate: string,
   ) => Promise<void>;
-  onToggleHabitComplete?: (habit: Habit) => Promise<void>;
+  onToggleHabitComplete?: (
+    habit: Habit,
+    dateKey: string,
+  ) => Promise<void>;
 };
 
 type DragSource = "pool" | "unscheduled" | "timeline";
@@ -1677,7 +1680,7 @@ export function TimelinePlanner({
                   if (block.kind === "task" && block.task) {
                     void onToggleComplete(block.task);
                   } else if (block.kind === "habit" && block.habit) {
-                    void onToggleHabitComplete?.(block.habit);
+                    void onToggleHabitComplete?.(block.habit, viewDate);
                   }
                 }}
                 onUpdateDuration={(minutes) => {
@@ -2050,7 +2053,7 @@ export function TimelinePlanner({
                               onSelectTask(null);
                             }}
                             onToggleComplete={() =>
-                              void onToggleHabitComplete?.(habit)
+                              void onToggleHabitComplete?.(habit, viewDate)
                             }
                             onContextMenu={(event) => {
                               event.preventDefault();
@@ -2150,7 +2153,7 @@ export function TimelinePlanner({
                                     onSelectTask(null);
                                   }}
                                   onToggleComplete={() =>
-                                    void onToggleHabitComplete?.(habit)
+                                    void onToggleHabitComplete?.(habit, viewDate)
                                   }
                                   onContextMenu={(event) => {
                                     event.preventDefault();

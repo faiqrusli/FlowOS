@@ -13,11 +13,16 @@ function makeTask(partial: Partial<Task> & Pick<Task, "id" | "title">): Task {
     priority: "low",
     scheduled_date: "2026-07-17",
     scheduled_time: null,
+    queue_order: null,
     duration_minutes: null,
+    notification_enabled: true,
+    notification_lead_minutes: null,
+    planning_state: "none",
     sort_order: 0,
     created_at: "2026-07-17T00:00:00.000Z",
     updated_at: "2026-07-17T00:00:00.000Z",
     ...partial,
+    user_id: partial.user_id ?? null,
   };
 }
 

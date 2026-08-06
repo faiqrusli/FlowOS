@@ -12,6 +12,7 @@ import { trackFeatureUsage } from "@/lib/feature-usage";
 import {
   fetchHabitsWithCompletions,
   HabitsError,
+  isHabitCompletedOnDate,
   toggleHabitComplete,
 } from "@/lib/habits";
 import { setHabitDailyScheduleOverride } from "@/lib/habit-daily-schedule-store";
@@ -398,30 +399,35 @@ export function SchedulePageContent() {
 
   async function handleToggleHabitComplete(
     habit: Habit,
+    dateKey: string,
     options?: { silent?: boolean },
   ) {
     setError(null);
+    const completedBeforeToggle = isHabitCompletedOnDate(habit, dateKey);
+    const updatesToday = dateKey === getTodayDateString();
     setHabits((prev) =>
       prev.map((item) =>
-        item.id === habit.id ? { ...item, completed: !item.completed } : item,
+        item.id === habit.id && updatesToday
+          ? { ...item, completed: !completedBeforeToggle }
+          : item,
       ),
     );
 
     try {
-      const updated = await toggleHabitComplete(habit);
+      const updated = await toggleHabitComplete(habit, dateKey);
       setHabits((prev) =>
         prev.map((item) => (item.id === updated.id ? updated : item)),
       );
       if (!options?.silent) {
         showActionToast({
-          message: updated.completed
+          message: !completedBeforeToggle
             ? "Habit marked complete"
             : "Habit unmarked",
-          tone: updated.completed ? "success" : "neutral",
+          tone: !completedBeforeToggle ? "success" : "neutral",
           icon: "habit",
           actionLabel: "Undo",
           onAction: () => {
-            void handleToggleHabitComplete(updated, { silent: true });
+            void handleToggleHabitComplete(updated, dateKey, { silent: true });
           },
         });
       }
