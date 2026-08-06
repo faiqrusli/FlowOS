@@ -15,5 +15,8 @@ describe("Tasks create-group move recovery", () => {
     const handler = tasksPageSource.slice(start, end);
 
     expect(handler).toMatch(/catch \(err\)[\s\S]*?setError\([\s\S]*?void loadBoard\(\)/);
+    expect(handler).toContain("let createdGroupId: string | null = null");
+    expect(handler).toContain("await persistTaskBoardLayout(groups");
+    expect(handler).toContain("await deleteTaskGroup(createdGroupId)");
   });
 });

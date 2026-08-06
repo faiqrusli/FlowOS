@@ -544,11 +544,13 @@ export function TasksPageContent() {
     taskId: string,
   ) {
     setError(null);
+    let createdGroupId: string | null = null;
     try {
       const created = await createTaskGroup(input.title, {
         icon: input.icon,
         color: input.color,
       });
+      createdGroupId = created.id;
 
       const withNewGroup = orderPinnedTaskGroups([
         ...groups,
@@ -579,6 +581,18 @@ export function TasksPageContent() {
           ? err.message
           : "Failed to create group.",
       );
+      if (createdGroupId) {
+        try {
+          await persistTaskBoardLayout(groups, { todayViewDate });
+        } catch {
+          // The reload below remains authoritative if compensation also fails.
+        }
+        try {
+          await deleteTaskGroup(createdGroupId);
+        } catch {
+          // Keep the original error visible; the reload reports any remaining state.
+        }
+      }
       void loadBoard();
       throw err;
     }
