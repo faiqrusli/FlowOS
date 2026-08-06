@@ -61,11 +61,11 @@ begin
    where id = p_group_id
      and user_id = auth.uid();
 
-  if group_slug is null then
+  if not found then
     raise exception 'Task group not found';
   end if;
 
-  if group_slug in ('inbox', 'today', 'later') then
+  if group_slug is not null and group_slug in ('inbox', 'today', 'later') then
     raise exception 'Default groups cannot be deleted';
   end if;
 

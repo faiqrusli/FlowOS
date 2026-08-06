@@ -50,5 +50,9 @@ describe("Tasks withdrawal lifecycle", () => {
     );
     expect(migrationSource).toContain("update tasks");
     expect(migrationSource).toContain("delete from task_groups");
+    expect(migrationSource).toContain("if not found then");
+    expect(migrationSource).toContain(
+      "if group_slug is not null and group_slug in ('inbox', 'today', 'later')",
+    );
   });
 });
