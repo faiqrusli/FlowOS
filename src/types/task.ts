@@ -42,6 +42,7 @@ export type Task = {
   notification_lead_minutes: number | null;
   completed: boolean;
   planning_state: PlanningState;
+  withdrawn_at?: string | null;
   created_at: string;
   updated_at?: string | null;
   completed_at?: string | null;
@@ -65,6 +66,7 @@ export type TaskInsert = {
   notification_enabled?: boolean;
   notification_lead_minutes?: number | null;
   planning_state?: PlanningState;
+  withdrawn_at?: string | null;
 };
 
 export type TaskUpdate = Partial<TaskInsert> & {

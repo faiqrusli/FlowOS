@@ -665,7 +665,8 @@ export async function fetchTaskBoard(
   const { data: tasks, error: tasksError } = await supabase
     .from("tasks")
     .select("*")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .is("withdrawn_at", null);
 
   if (tasksError) throw new TaskGroupsError(tasksError.message);
 
@@ -903,7 +904,7 @@ export async function deleteTaskGroup(groupId: string): Promise<void> {
 export async function reorderTaskGroups(orderedIds: string[]): Promise<void> {
   const userId = await requireUserId();
 
-  await Promise.all(
+  const results = await Promise.all(
     orderedIds.map((id, index) =>
       supabase
         .from("task_groups")
@@ -912,6 +913,10 @@ export async function reorderTaskGroups(orderedIds: string[]): Promise<void> {
         .eq("user_id", userId)
     )
   );
+  const groupOrderError = results.find((result) => result.error)?.error;
+  if (groupOrderError) {
+    throw new TaskGroupsError(groupOrderError.message);
+  }
 }
 
 function persistableGroupOrderIds(groups: TaskGroupWithTasks[]): string[] {

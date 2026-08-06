@@ -57,11 +57,12 @@ import {
 import {
   batchUpdateManualOrders,
   createTask,
-  deleteTask,
   duplicateTask,
+  restoreTask,
   TasksError,
   toggleTaskComplete,
   updateTask,
+  withdrawTask,
 } from "@/lib/tasks";
 import { moveTaskInBoard } from "@/lib/task-drag-utils";
 import {
@@ -595,29 +596,37 @@ export function TasksPageContent() {
       selectTask(null);
     }
 
-    let committed = false;
-    const commitDelete = () => {
-      if (committed) return;
-      committed = true;
+    try {
       trackFeatureUsage("tasks", "delete", { task_id: taskId });
-      void deleteTask(taskId).catch((err) => {
-        setError(
-          err instanceof TasksError ? err.message : "Failed to delete task.",
-        );
-        void loadBoard();
+      await withdrawTask(taskId);
+      showActionToast({
+        message: "Task withdrawn",
+        icon: "trash",
+        actionLabel: "Restore",
+        onAction: () => {
+          void restoreTask(taskId)
+            .then((restored) => {
+              setGroups((prev) =>
+                addTaskToBoard(prev, restored, todayViewDate),
+              );
+            })
+            .catch((err) => {
+              setError(
+                err instanceof TasksError
+                  ? err.message
+                  : "Failed to restore task.",
+              );
+              void loadBoard();
+            });
+        },
       });
-    };
-
-    showActionToast({
-      message: "Task moved to Trash",
-      icon: "trash",
-      actionLabel: "Undo",
-      onAction: () => {
-        committed = true;
-        setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
-      },
-      onExpire: commitDelete,
-    });
+    } catch (err) {
+      setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
+      setError(
+        err instanceof TasksError ? err.message : "Failed to withdraw task.",
+      );
+      void loadBoard();
+    }
   }
 
   async function handleCreateGroup(input: {

@@ -721,7 +721,7 @@ function TaskDetailMenuPopover({
         data-task-menu-action="delete"
         className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-surface-hover"
       >
-        <Trash2 className="size-3.5" /> Delete
+        <Trash2 className="size-3.5" /> Remove
       </button>
     </div>,
     document.body,
