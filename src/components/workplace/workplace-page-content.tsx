@@ -72,7 +72,13 @@ import { normalizePlanningState } from "@/lib/task-planning";
 import { appendTaskToNextUp, removeTaskFromNextUp } from "@/lib/task-next-up";
 import { setQuickScheduleOpen } from "@/lib/timeline-drag";
 import { collectAllBoardTasks } from "@/lib/timeline-layout";
-import { deleteTask, duplicateTask, TasksError, updateTask } from "@/lib/tasks";
+import {
+  duplicateTask,
+  restoreTask,
+  TasksError,
+  updateTask,
+  withdrawTask,
+} from "@/lib/tasks";
 import { toggleHabitComplete, HabitsError } from "@/lib/habits";
 import {
   setHabitDailyScheduleOverride,
@@ -964,28 +970,36 @@ export function WorkplacePageContent({
         selectTask(null);
       }
 
-      let committed = false;
-      const commitDelete = () => {
-        if (committed) return;
-        committed = true;
-        void deleteTask(taskId).catch((err) => {
-          setError(
-            err instanceof TasksError ? err.message : "Failed to delete task.",
-          );
-          void loadWorkplace();
+      try {
+        await withdrawTask(taskId);
+        showActionToast({
+          message: "Task withdrawn",
+          icon: "trash",
+          actionLabel: "Restore",
+          onAction: () => {
+            void restoreTask(taskId)
+              .then((restored) => {
+                setGroups((prev) =>
+                  addTaskToBoard(prev, restored, todayViewDate),
+                );
+              })
+              .catch((err) => {
+                setError(
+                  err instanceof TasksError
+                    ? err.message
+                    : "Failed to restore task.",
+                );
+                void loadWorkplace();
+              });
+          },
         });
-      };
-
-      showActionToast({
-        message: "Task moved to Trash",
-        icon: "trash",
-        actionLabel: "Undo",
-        onAction: () => {
-          committed = true;
-          setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
-        },
-        onExpire: commitDelete,
-      });
+      } catch (err) {
+        setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
+        setError(
+          err instanceof TasksError ? err.message : "Failed to withdraw task.",
+        );
+        void loadWorkplace();
+      }
     },
     [
       allTasks,

@@ -14,6 +14,10 @@ const pageSource = readFileSync(
   new URL("../components/tasks/tasks-page-content.tsx", import.meta.url),
   "utf8",
 );
+const workplaceSource = readFileSync(
+  new URL("../components/workplace/workplace-page-content.tsx", import.meta.url),
+  "utf8",
+);
 const migrationSource = readFileSync(
   new URL("../../supabase/tasks_withdrawal.sql", import.meta.url),
   "utf8",
@@ -36,6 +40,9 @@ describe("Tasks withdrawal lifecycle", () => {
     expect(pageSource).toContain("await withdrawTask(taskId)");
     expect(pageSource).toContain("void restoreTask(taskId)");
     expect(pageSource).toContain('message: "Task withdrawn"');
+    expect(workplaceSource).toContain("await withdrawTask(taskId)");
+    expect(workplaceSource).toContain("void restoreTask(taskId)");
+    expect(workplaceSource).toContain('message: "Task withdrawn"');
   });
 
   it("defines the retained database state", () => {
