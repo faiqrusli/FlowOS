@@ -9,6 +9,10 @@ const totalsSource = readFileSync(
   new URL("./focus-task-totals.ts", import.meta.url),
   "utf8",
 );
+const migrationSource = readFileSync(
+  new URL("../../supabase/focus_session_task_totals.sql", import.meta.url),
+  "utf8",
+);
 
 describe("Focus task-total persistence boundary", () => {
   it("does not upsert task totals from the active-session state writer", () => {
@@ -38,5 +42,16 @@ describe("Focus task-total persistence boundary", () => {
     expect(contextSource).toMatch(
       /persistFocusTaskTotals\(\s*pending\.session\s*,\s*pending\.persisted_session_id/,
     );
+  });
+
+  it("requires durable session ownership before attribution writes", () => {
+    expect(migrationSource).toContain(
+      "focus_session_task_totals_focus_session_id_fkey",
+    );
+    expect(migrationSource).toContain(
+      "delete from focus_session_task_totals as totals",
+    );
+    expect(migrationSource).toContain("Users delete own focus_session_task_totals");
+    expect(migrationSource).toContain("focus_sessions.user_id = auth.uid()");
   });
 });
