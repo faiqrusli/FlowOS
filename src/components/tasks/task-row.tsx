@@ -39,7 +39,6 @@ import {
 } from "@/lib/task-alert-before-options";
 import { requestBrowserNotificationPermissionIfNeeded } from "@/lib/browser-notifications";
 import { useOptionalActionToast } from "@/contexts/action-toast-context";
-import { getTodayDateString } from "@/lib/date-utils";
 import {
   normalizePlanningState,
   PLANNING_STATE_CONFIG,
@@ -1227,10 +1226,10 @@ export const TaskRow = memo(function TaskRow({
             closeDetailMenu();
           }}
           onAddToToday={
-            task.scheduled_date !== getTodayDateString()
+            task.scheduled_date !== todayViewDate
               ? () => {
                   void onUpdate({
-                    scheduled_date: getTodayDateString(),
+                    scheduled_date: todayViewDate,
                     planning_state: "none",
                   });
                   actionToast?.showActionToast({
