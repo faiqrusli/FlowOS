@@ -105,7 +105,7 @@ type TaskRowProps = {
   onDuplicate?: () => void;
   onMoveToGroup?: (groupId: string) => void;
   onDelete?: () => void;
-  onUpdate?: (updates: Partial<Task>) => void;
+  onUpdate?: (updates: Partial<Task>) => void | Promise<boolean>;
   onSetPlanningState?: (planningState: PlanningState) => void;
   onRequestCreateGroup?: () => void;
 };
@@ -797,12 +797,11 @@ export const TaskRow = memo(function TaskRow({
   }, [boardActions, onDeleteProp, task.id]);
 
   const onUpdate = useCallback(
-    (updates: Partial<Task>) => {
+    (updates: Partial<Task>): void | Promise<boolean> => {
       if (onUpdateProp) {
-        onUpdateProp(updates);
-        return;
+        return onUpdateProp(updates);
       }
-      boardActions?.onUpdateTask(task.id, updates);
+      return boardActions?.onUpdateTask(task.id, updates);
     },
     [boardActions, onUpdateProp, task.id],
   );
@@ -1205,8 +1204,9 @@ export const TaskRow = memo(function TaskRow({
           onPlanningSubmenuOpenChange={setPlanningSubmenuOpen}
           alertSubmenuOpen={alertSubmenuOpen}
           onAlertSubmenuOpenChange={setAlertSubmenuOpen}
-          onSetAlertBefore={(updates) => {
-            onUpdate(updates);
+          onSetAlertBefore={async (updates) => {
+            const updated = await onUpdate(updates);
+            if (updated === false) return;
             if (updates.notification_enabled) {
               void requestBrowserNotificationPermissionIfNeeded();
             }
@@ -1227,11 +1227,12 @@ export const TaskRow = memo(function TaskRow({
           }}
           onAddToToday={
             task.scheduled_date !== todayViewDate
-              ? () => {
-                  void onUpdate({
+              ? async () => {
+                  const updated = await onUpdate({
                     scheduled_date: todayViewDate,
                     planning_state: "none",
                   });
+                  if (updated === false) return;
                   actionToast?.showActionToast({
                     message: "Added to Today",
                     tone: "success",

@@ -659,14 +659,14 @@ export function WorkplacePageContent({
   );
 
   const handleUpdateTask = useCallback(
-    async (taskId: string, updates: Partial<Task>) => {
+    async (taskId: string, updates: Partial<Task>): Promise<boolean> => {
       if (
         "title" in updates ||
         "description" in updates ||
         updates.scheduled_time !== undefined
       ) {
         scheduleTaskPersist(taskId, updates);
-        return;
+        return true;
       }
 
       setGroups((prev) =>
@@ -681,11 +681,13 @@ export function WorkplacePageContent({
       try {
         const updated = await updateTask(taskId, updates);
         setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+        return true;
       } catch (err) {
         setError(
           err instanceof TasksError ? err.message : "Failed to update task.",
         );
         void loadWorkplace();
+        return false;
       }
     },
     [loadWorkplace, todayViewDate],
@@ -1026,7 +1028,7 @@ export function WorkplacePageContent({
       onDuplicateTask: (task) => void handleDuplicateTask(task),
       onMoveTask: (taskId, groupId) => void handleMoveTask(taskId, groupId),
       onDeleteTask: (taskId) => void handleDeleteTask(taskId),
-      onUpdateTask: (taskId, updates) => void handleUpdateTask(taskId, updates),
+      onUpdateTask: (taskId, updates) => handleUpdateTask(taskId, updates),
       onSetPlanningState: (taskId, state) =>
         void handleSetPlanningState(taskId, state),
       onRequestCreateGroup: () => {},

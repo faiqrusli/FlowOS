@@ -286,7 +286,7 @@ type TasksBoardViewProps = {
       planningState?: "none" | "later";
     },
   ) => Promise<boolean>;
-  onUpdateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
+  onUpdateTask: (taskId: string, updates: Partial<Task>) => Promise<boolean>;
   onToggleComplete: (task: Task) => Promise<void>;
   onDuplicateTask: (task: Task) => Promise<void>;
   onMoveTask: (taskId: string, groupId: string) => Promise<void>;
@@ -2507,7 +2507,7 @@ function TasksBoardViewContent({
         void onDeleteTask(taskId);
       },
       onUpdateTask: (taskId, updates) => {
-        void onUpdateTask(taskId, updates);
+        return onUpdateTask(taskId, updates);
       },
       onSetPlanningState: onSetPlanningState
         ? (taskId, planningState) => {

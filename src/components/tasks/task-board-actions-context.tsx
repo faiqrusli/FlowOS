@@ -16,7 +16,10 @@ export type TaskBoardActions = {
   onDuplicateTask: (task: Task) => void;
   onMoveTask: (taskId: string, groupId: string) => void;
   onDeleteTask: (taskId: string) => void;
-  onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<Task>,
+  ) => Promise<boolean>;
   onSetPlanningState?: (taskId: string, planningState: PlanningState) => void;
   onRequestCreateGroup: (taskId: string) => void;
   onTaskPointerDragStart: (

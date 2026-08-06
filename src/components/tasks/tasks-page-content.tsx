@@ -333,7 +333,10 @@ export function TasksPageContent() {
     }
   }
 
-  async function handleUpdateTask(taskId: string, updates: Partial<Task>) {
+  async function handleUpdateTask(
+    taskId: string,
+    updates: Partial<Task>,
+  ): Promise<boolean> {
     const normalizedUpdates = normalizeScheduleUpdates(updates);
 
     if (
@@ -342,7 +345,7 @@ export function TasksPageContent() {
       normalizedUpdates.scheduled_time !== undefined
     ) {
       scheduleTaskPersist(taskId, normalizedUpdates);
-      return;
+      return true;
     }
 
     setGroups((prev) =>
@@ -357,11 +360,13 @@ export function TasksPageContent() {
     try {
       const updated = await updateTask(taskId, normalizedUpdates);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      return true;
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
+      return false;
     }
   }
 
