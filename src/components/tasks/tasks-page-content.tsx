@@ -724,7 +724,7 @@ export function TasksPageContent() {
   async function handleUpdateGroupAppearance(
     groupId: string,
     input: { icon: string | null; color: string },
-  ) {
+  ): Promise<boolean> {
     setError(null);
     setGroups((prev) =>
       prev.map((group) =>
@@ -739,6 +739,7 @@ export function TasksPageContent() {
         icon: input.icon,
         color: input.color,
       });
+      return true;
     } catch (err) {
       setError(
         err instanceof TaskGroupsError
@@ -746,6 +747,7 @@ export function TasksPageContent() {
           : "Failed to update group appearance.",
       );
       void loadBoard();
+      return false;
     }
   }
 

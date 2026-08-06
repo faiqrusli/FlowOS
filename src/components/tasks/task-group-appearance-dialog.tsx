@@ -32,7 +32,7 @@ type TaskGroupAppearanceDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   group: Pick<TaskGroup, "id" | "slug" | "title" | "icon" | "color"> | null;
-  onSave: (input: TaskGroupAppearanceInput) => Promise<void>;
+  onSave: (input: TaskGroupAppearanceInput) => Promise<boolean>;
 };
 
 export function TaskGroupAppearanceDialog({
@@ -73,11 +73,11 @@ export function TaskGroupAppearanceDialog({
     setSubmitting(true);
     setError(null);
     try {
-      await onSave({
+      const saved = await onSave({
         icon: icon?.trim() || null,
         color,
       });
-      onOpenChange(false);
+      if (saved) onOpenChange(false);
     } catch {
       setError("Failed to update appearance.");
     } finally {

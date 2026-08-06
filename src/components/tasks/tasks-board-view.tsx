@@ -300,7 +300,7 @@ type TasksBoardViewProps = {
   onUpdateGroupAppearance: (
     groupId: string,
     input: TaskGroupAppearanceInput,
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   onUpdateGroupSortMode: (
     groupId: string,
     sortMode: TaskSortMode,
@@ -2668,8 +2668,8 @@ function TasksBoardViewContent({
             }}
             group={appearanceGroup ?? null}
             onSave={async (input) => {
-              if (!appearanceGroupId) return;
-              await onUpdateGroupAppearance(appearanceGroupId, input);
+              if (!appearanceGroupId) return false;
+              return onUpdateGroupAppearance(appearanceGroupId, input);
             }}
           />
 
