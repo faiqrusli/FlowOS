@@ -155,6 +155,9 @@ export function WorkplacePageContent({
     new Map(),
   );
   const pendingTaskUpdates = useRef<Map<string, Partial<Task>>>(new Map());
+  const pendingTaskUpdateWaiters = useRef<
+    Map<string, Array<(success: boolean) => void>>
+  >(new Map());
 
   /** Open or switch dock panel. Scale animation only when opening from closed. */
   const showDockPanel = useCallback((panel: "tasks" | "habits") => {
@@ -556,75 +559,101 @@ export function WorkplacePageContent({
       for (const timer of updateTimers.current.values()) {
         clearTimeout(timer);
       }
+      for (const waiters of pendingTaskUpdateWaiters.current.values()) {
+        for (const resolve of waiters) resolve(false);
+      }
+      pendingTaskUpdateWaiters.current.clear();
     };
   }, []);
 
-  function scheduleTaskPersist(taskId: string, updates: Partial<Task>) {
-    const merged = {
-      ...(pendingTaskUpdates.current.get(taskId) ?? {}),
-      ...updates,
-    };
-    pendingTaskUpdates.current.set(taskId, merged);
+  function settlePendingTaskUpdateWaiters(taskId: string, success: boolean) {
+    const waiters = pendingTaskUpdateWaiters.current.get(taskId);
+    if (!waiters) return;
+    pendingTaskUpdateWaiters.current.delete(taskId);
+    for (const resolve of waiters) resolve(success);
+  }
 
-    setGroups((prev) =>
-      replaceTaskOnBoard(
-        prev,
+  function scheduleTaskPersist(
+    taskId: string,
+    updates: Partial<Task>,
+  ): Promise<boolean> {
+    return new Promise((resolve) => {
+      const waiters = pendingTaskUpdateWaiters.current.get(taskId) ?? [];
+      waiters.push(resolve);
+      pendingTaskUpdateWaiters.current.set(taskId, waiters);
+
+      const merged = {
+        ...(pendingTaskUpdates.current.get(taskId) ?? {}),
+        ...updates,
+      };
+      pendingTaskUpdates.current.set(taskId, merged);
+
+      setGroups((prev) =>
+        replaceTaskOnBoard(
+          prev,
+          taskId,
+          (task) => ({ ...task, ...merged }),
+          todayViewDate,
+        ),
+      );
+
+      const existing = updateTimers.current.get(taskId);
+      if (existing) clearTimeout(existing);
+
+      updateTimers.current.set(
         taskId,
-        (task) => ({ ...task, ...merged }),
-        todayViewDate,
-      ),
-    );
-
-    const existing = updateTimers.current.get(taskId);
-    if (existing) clearTimeout(existing);
-
-    updateTimers.current.set(
-      taskId,
-      setTimeout(async () => {
-        updateTimers.current.delete(taskId);
-        const payload = pendingTaskUpdates.current.get(taskId);
-        if (!payload) return;
-
-        try {
-          const updated = await updateTask(taskId, payload);
-          const stillPending = pendingTaskUpdates.current.get(taskId);
-          // Drop fields that this request successfully covered when unchanged.
-          if (stillPending) {
-            const remaining: Partial<Task> = { ...stillPending };
-            for (const key of Object.keys(payload) as (keyof Task)[]) {
-              if (remaining[key] === payload[key]) {
-                delete remaining[key];
-              }
-            }
-            if (Object.keys(remaining).length === 0) {
-              pendingTaskUpdates.current.delete(taskId);
-            } else {
-              pendingTaskUpdates.current.set(taskId, remaining);
-            }
+        setTimeout(async () => {
+          updateTimers.current.delete(taskId);
+          const payload = pendingTaskUpdates.current.get(taskId);
+          if (!payload) {
+            settlePendingTaskUpdateWaiters(taskId, false);
+            return;
           }
 
-          setGroups((prev) => {
-            let next = syncTaskOnBoard(prev, updated, todayViewDate);
-            const overlay = pendingTaskUpdates.current.get(taskId);
-            if (overlay && Object.keys(overlay).length > 0) {
-              next = replaceTaskOnBoard(
-                next,
-                taskId,
-                (task) => ({ ...task, ...overlay }),
-                todayViewDate,
-              );
+          try {
+            const updated = await updateTask(taskId, payload);
+            const stillPending = pendingTaskUpdates.current.get(taskId);
+            let hasRemaining = false;
+            if (stillPending) {
+              const remaining: Partial<Task> = { ...stillPending };
+              for (const key of Object.keys(payload) as (keyof Task)[]) {
+                if (remaining[key] === payload[key]) {
+                  delete remaining[key];
+                }
+              }
+              hasRemaining = Object.keys(remaining).length > 0;
+              if (hasRemaining) {
+                pendingTaskUpdates.current.set(taskId, remaining);
+              } else {
+                pendingTaskUpdates.current.delete(taskId);
+              }
             }
-            return next;
-          });
-        } catch (err) {
-          pendingTaskUpdates.current.delete(taskId);
-          setError(
-            err instanceof TasksError ? err.message : "Failed to save task.",
-          );
-          void loadWorkplace();
-        }
-      }, 350),
-    );
+
+            setGroups((prev) => {
+              let next = syncTaskOnBoard(prev, updated, todayViewDate);
+              const overlay = pendingTaskUpdates.current.get(taskId);
+              if (overlay && Object.keys(overlay).length > 0) {
+                next = replaceTaskOnBoard(
+                  next,
+                  taskId,
+                  (task) => ({ ...task, ...overlay }),
+                  todayViewDate,
+                );
+              }
+              return next;
+            });
+            if (!hasRemaining) settlePendingTaskUpdateWaiters(taskId, true);
+          } catch (err) {
+            pendingTaskUpdates.current.delete(taskId);
+            settlePendingTaskUpdateWaiters(taskId, false);
+            setError(
+              err instanceof TasksError ? err.message : "Failed to save task.",
+            );
+            void loadWorkplace();
+          }
+        }, 350),
+      );
+    });
   }
 
   const handleScheduleTask = useCallback(
@@ -665,8 +694,7 @@ export function WorkplacePageContent({
         "description" in updates ||
         updates.scheduled_time !== undefined
       ) {
-        scheduleTaskPersist(taskId, updates);
-        return true;
+        return scheduleTaskPersist(taskId, updates);
       }
 
       setGroups((prev) =>
