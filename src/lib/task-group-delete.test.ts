@@ -21,10 +21,11 @@ describe("task group deletion persistence", () => {
       '.from("task_groups")\n    .delete',
     );
 
-    expect(taskMoveIndex).toBeGreaterThan(-1);
-    expect(groupDeleteIndex).toBeGreaterThan(taskMoveIndex);
-    expect(handler).toContain(".update({ group_id: inbox.id })");
-    expect(handler).toContain('.eq("group_id", groupId)');
-    expect(handler).toContain('.eq("user_id", userId)');
+    expect(handler).toContain(
+      'supabase.rpc(\n    "delete_task_group_with_tasks_to_inbox"',
+    );
+    expect(handler).toContain("p_group_id: groupId");
+    expect(groupDeleteIndex).toBe(-1);
+    expect(taskMoveIndex).toBe(-1);
   });
 });

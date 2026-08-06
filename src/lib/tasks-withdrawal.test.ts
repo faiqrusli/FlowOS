@@ -45,5 +45,10 @@ describe("Tasks withdrawal lifecycle", () => {
     expect(migrationSource).toContain(
       "create or replace function batch_update_task_queue_orders",
     );
+    expect(migrationSource).toContain(
+      "create or replace function delete_task_group_with_tasks_to_inbox",
+    );
+    expect(migrationSource).toContain("update tasks");
+    expect(migrationSource).toContain("delete from task_groups");
   });
 });

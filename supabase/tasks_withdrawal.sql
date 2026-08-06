@@ -42,3 +42,52 @@ end;
 $$;
 
 grant execute on function batch_update_task_queue_orders(jsonb) to authenticated;
+
+create or replace function delete_task_group_with_tasks_to_inbox(
+  p_group_id uuid
+)
+returns void
+language plpgsql
+security invoker
+set search_path = public
+as $$
+declare
+  inbox_id uuid;
+  group_slug text;
+begin
+  select slug
+    into group_slug
+    from task_groups
+   where id = p_group_id
+     and user_id = auth.uid();
+
+  if group_slug is null then
+    raise exception 'Task group not found';
+  end if;
+
+  if group_slug in ('inbox', 'today', 'later') then
+    raise exception 'Default groups cannot be deleted';
+  end if;
+
+  select id
+    into inbox_id
+    from task_groups
+   where user_id = auth.uid()
+     and slug = 'inbox';
+
+  if inbox_id is null then
+    raise exception 'Inbox group is unavailable';
+  end if;
+
+  update tasks
+     set group_id = inbox_id
+   where group_id = p_group_id
+     and user_id = auth.uid();
+
+  delete from task_groups
+   where id = p_group_id
+     and user_id = auth.uid();
+end;
+$$;
+
+grant execute on function delete_task_group_with_tasks_to_inbox(uuid) to authenticated;

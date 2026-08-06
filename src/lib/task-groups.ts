@@ -855,47 +855,11 @@ export async function updateTaskGroup(
 }
 
 export async function deleteTaskGroup(groupId: string): Promise<void> {
-  const userId = await requireUserId();
-
-  const { data: current } = await supabase
-    .from("task_groups")
-    .select("slug")
-    .eq("id", groupId)
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (
-    current?.slug === INBOX_GROUP_SLUG ||
-    current?.slug === TODAY_GROUP_SLUG ||
-    current?.slug === LATER_GROUP_SLUG
-  ) {
-    throw new TaskGroupsError("Default groups cannot be deleted.");
-  }
-
-  const { data: inbox } = await supabase
-    .from("task_groups")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("slug", INBOX_GROUP_SLUG)
-    .maybeSingle();
-
-  if (!inbox) {
-    throw new TaskGroupsError("Inbox group is unavailable.");
-  }
-
-  const { error: taskError } = await supabase
-    .from("tasks")
-    .update({ group_id: inbox.id })
-    .eq("group_id", groupId)
-    .eq("user_id", userId);
-
-  if (taskError) throw new TaskGroupsError(taskError.message);
-
-  const { error } = await supabase
-    .from("task_groups")
-    .delete()
-    .eq("id", groupId)
-    .eq("user_id", userId);
+  await requireUserId();
+  const { error } = await supabase.rpc(
+    "delete_task_group_with_tasks_to_inbox",
+    { p_group_id: groupId },
+  );
 
   if (error) throw new TaskGroupsError(error.message);
 }
