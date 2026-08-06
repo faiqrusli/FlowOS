@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { GrowthAreaIconChooser } from "@/components/notes/growth-area-icon-chooser";
 import { TaskGroupIdentityMark } from "@/components/tasks/task-group-identity-mark";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
@@ -44,7 +44,9 @@ export function TaskGroupDialog({
 }: TaskGroupDialogProps) {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState<string | null>(null);
-  const [color, setColor] = useState<TaskGroupColorKey>("blue");
+  const [color, setColor] = useState<TaskGroupColorKey>(() =>
+    pickRandomGroupColor(),
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [iconChooserOpen, setIconChooserOpen] = useState(false);
@@ -61,14 +63,6 @@ export function TaskGroupDialog({
     [color, icon, name],
   );
 
-  useEffect(() => {
-    if (!open) return;
-    setName("");
-    setIcon(null);
-    setColor(pickRandomGroupColor());
-    setError(null);
-    setIconChooserOpen(false);
-  }, [open]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();

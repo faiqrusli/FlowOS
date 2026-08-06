@@ -7,7 +7,6 @@ import type {
   PlanningState,
   Task,
   TaskGroup,
-  TaskGroupInsert,
   TaskGroupWithTasks,
 } from "@/types/task";
 import {
@@ -981,7 +980,7 @@ export async function persistTaskBoardLayout(
 
     const manualSort = isManualTaskSortMode(getTaskGroupSortMode(group));
 
-    group.tasks.forEach((task, index) => {
+    group.tasks.forEach((task) => {
       if (task.group_id !== group.id) return;
 
       const scheduledDate =

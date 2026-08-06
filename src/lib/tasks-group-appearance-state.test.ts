@@ -11,27 +11,15 @@ const boardSource = readFileSync(
 );
 
 describe("Tasks group appearance draft state", () => {
-  it("resets appearance draft on open rather than object refresh", () => {
-    const resetBodyStart = dialogSource.indexOf(
-      "const currentGroup = groupRef.current",
-    );
-    const effectStart = dialogSource.lastIndexOf(
-      "useEffect(() => {",
-      resetBodyStart,
-    );
-    const effectEnd = dialogSource.indexOf("  }, [", effectStart);
-    const effect = dialogSource.slice(effectStart, effectEnd);
-    const dependencies = dialogSource.slice(
-      effectEnd,
-      dialogSource.indexOf(");", effectEnd) + 2,
-    );
-
-    expect(effect).toContain("setIcon(");
-    expect(effect).toContain("setColor(");
-    expect(dependencies).toMatch(/\[open\]\);/);
+  it("resets appearance draft by remounting on the open transition", () => {
+    expect(dialogSource).not.toContain("useEffect(() => {");
+    expect(dialogSource).toContain("getTaskGroupAppearance(group)");
+    expect(boardSource).toContain("appearanceGroupId !== null ? \"open\" : \"closed\"");
   });
 
   it("remounts when the selected appearance group changes", () => {
-    expect(boardSource).toContain('key={appearanceGroup?.id ?? "none"}');
+    expect(boardSource).toContain(
+      "key={`${appearanceGroup?.id ?? \"none\"}-",
+    );
   });
 });

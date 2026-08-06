@@ -199,14 +199,17 @@ export function TasksPageContent() {
   }, [timelineOpen]);
 
   useEffect(() => {
+    const timers = updateTimers.current;
+    const waitersByTask = pendingTaskUpdateWaiters.current;
     return () => {
-      for (const timer of updateTimers.current.values()) {
+      for (const timer of timers.values()) {
         clearTimeout(timer);
       }
-      for (const waiters of pendingTaskUpdateWaiters.current.values()) {
+      for (const waiters of waitersByTask.values()) {
         for (const resolve of waiters) resolve(false);
       }
-      pendingTaskUpdateWaiters.current.clear();
+      waitersByTask.clear();
+      pendingTaskUpdates.current.clear();
     };
   }, []);
 

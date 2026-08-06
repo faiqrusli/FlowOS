@@ -5,20 +5,15 @@ const dialogSource = readFileSync(
   new URL("../components/tasks/task-group-dialog.tsx", import.meta.url),
   "utf8",
 );
+const boardSource = readFileSync(
+  new URL("../components/tasks/tasks-board-view.tsx", import.meta.url),
+  "utf8",
+);
 
 describe("task group dialog form state", () => {
-  it("resets draft values only when the dialog opens", () => {
-    const resetEffectStart = dialogSource.indexOf("useEffect(() => {");
-    const resetEffectEnd = dialogSource.indexOf("  }, [", resetEffectStart);
-    const resetEffect = dialogSource.slice(resetEffectStart, resetEffectEnd);
-    const dependencies = dialogSource.slice(
-      resetEffectEnd,
-      dialogSource.indexOf(");", resetEffectEnd) + 2,
-    );
-
-    expect(resetEffect).toContain("setName(\"\")");
-    expect(resetEffect).toContain("setIcon(null)");
-    expect(resetEffect).toContain("setColor(pickRandomGroupColor())");
-    expect(dependencies).toMatch(/\[open\]\);/);
+  it("resets draft values by remounting on the open transition", () => {
+    expect(dialogSource).not.toContain("useEffect(() => {");
+    expect(dialogSource).toContain("pickRandomGroupColor()");
+    expect(boardSource).toContain('key={newGroupDialogOpen ? "open" : "closed"}');
   });
 });

@@ -71,7 +71,6 @@ import {
   setQuickScheduleOpen,
 } from "@/lib/timeline-drag";
 import {
-  formatTodayColumnTitle,
   getGroupDisplayTitle,
   canReorderTasksInGroup,
   isInboxGroup,
@@ -183,7 +182,6 @@ import {
   isSameGroupActiveReorderAttempt,
   moveGroupInBoard,
   moveTaskInBoard,
-  partitionGroupTasks,
   taskDragTargetsEqual,
   type TaskDragTarget,
   type TaskDragZone,
@@ -426,7 +424,7 @@ function TasksBoardViewContent({
   const inboxGroupIdRef = useRef<string | null>(null);
   const plannerActiveRef = useRef(plannerActive);
 
-  const [externalTaskDragId, setExternalTaskDragId] = useState<string | null>(
+  const [, setExternalTaskDragId] = useState<string | null>(
     null,
   );
   const selectedTaskIdRef = useRef(selectedTaskId);
@@ -2662,7 +2660,7 @@ function TasksBoardViewContent({
           />
 
           <TaskGroupAppearanceDialog
-            key={appearanceGroup?.id ?? "none"}
+            key={`${appearanceGroup?.id ?? "none"}-${appearanceGroupId !== null ? "open" : "closed"}`}
             open={appearanceGroupId !== null}
             onOpenChange={(open) => {
               if (!open) setAppearanceGroupId(null);
@@ -2675,6 +2673,7 @@ function TasksBoardViewContent({
           />
 
           <TaskGroupDialog
+            key={newGroupDialogOpen ? "open" : "closed"}
             open={newGroupDialogOpen}
             onOpenChange={(open) => {
               setNewGroupDialogOpen(open);

@@ -17,7 +17,7 @@ function getActionSource(startMarker: string, endMarker: string): string {
 describe("Task row update feedback", () => {
   it.each([
     ["Add to Today", "onAddToToday={", "onSetPlanningState="],
-    ["alert updates", "onSetAlertBefore={", "onCloseMenu="],
+    ["alert updates", "onSetAlertBefore={", "onDuplicate="],
   ])("waits for %s persistence before success feedback", (_label, start, end) => {
     const action = getActionSource(start, end);
 
