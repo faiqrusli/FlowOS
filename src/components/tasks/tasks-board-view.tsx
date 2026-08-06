@@ -2671,7 +2671,6 @@ function TasksBoardViewContent({
                 setNewGroupMoveTaskId(null);
               }
             }}
-            existingGroups={groups}
             onSave={handleSaveNewGroup}
           />
         </>

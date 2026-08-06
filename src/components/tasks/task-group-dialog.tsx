@@ -23,7 +23,6 @@ import {
   type TaskGroupColorKey,
 } from "@/lib/task-group-appearance";
 import { cn } from "@/lib/utils";
-import type { TaskGroupWithTasks } from "@/types/task";
 
 export type TaskGroupCreateInput = {
   title: string;
@@ -35,14 +34,12 @@ export type TaskGroupCreateInput = {
 type TaskGroupDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  existingGroups: TaskGroupWithTasks[];
   onSave: (input: TaskGroupCreateInput) => Promise<void>;
 };
 
 export function TaskGroupDialog({
   open,
   onOpenChange,
-  existingGroups,
   onSave,
 }: TaskGroupDialogProps) {
   const [name, setName] = useState("");
@@ -71,7 +68,7 @@ export function TaskGroupDialog({
     setColor(pickRandomGroupColor());
     setError(null);
     setIconChooserOpen(false);
-  }, [open, existingGroups]);
+  }, [open]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
