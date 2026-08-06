@@ -41,5 +41,9 @@ describe("Tasks withdrawal lifecycle", () => {
   it("defines the retained database state", () => {
     expect(migrationSource).toContain("add column if not exists withdrawn_at");
     expect(migrationSource).toContain("where withdrawn_at is null");
+    expect(migrationSource).toContain("and withdrawn_at is null;");
+    expect(migrationSource).toContain(
+      "create or replace function batch_update_task_queue_orders",
+    );
   });
 });
