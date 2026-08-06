@@ -698,7 +698,10 @@ export function TasksPageContent() {
     }
   }
 
-  async function handleRenameGroup(groupId: string, title: string) {
+  async function handleRenameGroup(
+    groupId: string,
+    title: string,
+  ): Promise<boolean> {
     setError(null);
     try {
       await updateTaskGroup(groupId, { title });
@@ -707,12 +710,14 @@ export function TasksPageContent() {
           group.id === groupId ? { ...group, title } : group,
         ),
       );
+      return true;
     } catch (err) {
       setError(
         err instanceof TaskGroupsError
           ? err.message
           : "Failed to rename group.",
       );
+      return false;
     }
   }
 

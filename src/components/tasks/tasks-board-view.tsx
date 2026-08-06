@@ -296,7 +296,7 @@ type TasksBoardViewProps = {
     input: TaskGroupCreateInput,
     taskId: string,
   ) => Promise<string>;
-  onRenameGroup: (groupId: string, title: string) => Promise<void>;
+  onRenameGroup: (groupId: string, title: string) => Promise<boolean>;
   onUpdateGroupAppearance: (
     groupId: string,
     input: TaskGroupAppearanceInput,
@@ -1937,9 +1937,13 @@ function TasksBoardViewContent({
 
   async function saveGroupTitle(groupId: string) {
     const title = groupTitleDraft.trim();
+    if (!title) {
+      setEditingGroupId(null);
+      return;
+    }
+    const saved = await onRenameGroup(groupId, title);
+    if (!saved) return;
     setEditingGroupId(null);
-    if (!title) return;
-    await onRenameGroup(groupId, title);
   }
 
   function openCompose(groupId: string, placement: "top" | "bottom") {
