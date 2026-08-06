@@ -2662,6 +2662,7 @@ function TasksBoardViewContent({
           />
 
           <TaskGroupAppearanceDialog
+            key={appearanceGroup?.id ?? "none"}
             open={appearanceGroupId !== null}
             onOpenChange={(open) => {
               if (!open) setAppearanceGroupId(null);

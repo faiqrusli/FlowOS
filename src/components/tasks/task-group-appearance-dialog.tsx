@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GrowthAreaIconChooser } from "@/components/notes/growth-area-icon-chooser";
 import { TaskGroupIdentityMark } from "@/components/tasks/task-group-identity-mark";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
@@ -46,15 +46,18 @@ export function TaskGroupAppearanceDialog({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [iconChooserOpen, setIconChooserOpen] = useState(false);
+  const groupRef = useRef(group);
+  groupRef.current = group;
 
   useEffect(() => {
-    if (!open || !group) return;
-    const appearance = getTaskGroupAppearance(group);
-    setIcon(group.icon?.trim() || null);
+    const currentGroup = groupRef.current;
+    if (!open || !currentGroup) return;
+    const appearance = getTaskGroupAppearance(currentGroup);
+    setIcon(currentGroup.icon?.trim() || null);
     setColor(appearance.colorKey);
     setError(null);
     setIconChooserOpen(false);
-  }, [open, group]);
+  }, [open]);
 
   const previewAppearance = useMemo(
     () =>
