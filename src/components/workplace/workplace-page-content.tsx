@@ -42,7 +42,8 @@ import {
 } from "@/contexts/workplace-focus-task-context";
 import { NextUpQueueViewProvider } from "@/contexts/next-up-queue-view-context";
 import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
-import { getTodayDateString, getTomorrowDateString } from "@/lib/date-utils";
+import { getTomorrowDateString } from "@/lib/date-utils";
+import { useAppDateKey } from "@/hooks/use-app-date-key";
 import {
   manualOrderForNewTaskAtEnd,
   sortByManualOrder,
@@ -134,7 +135,7 @@ export function WorkplacePageContent({
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [todayViewDate] = useState(getTodayDateString);
+  const todayViewDate = useAppDateKey();
   const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
   const [overlay, setOverlay] = useState<WorkplaceOverlay>(null);
   const [dockPopupEntryKey, setDockPopupEntryKey] = useState(0);
@@ -218,7 +219,7 @@ export function WorkplacePageContent({
 
   useEffect(() => {
     void loadWorkplace();
-  }, [loadWorkplace]);
+  }, [loadWorkplace, todayViewDate]);
 
   useEffect(() => {
     registerWorkplaceTaskHandler((task) => {
