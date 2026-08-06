@@ -451,28 +451,25 @@ export function TasksPageContent() {
     const previousGroupId = snapshot?.group_id ?? null;
     const targetGroup = groups.find((group) => group.id === targetGroupId);
 
-    let nextBoard = groups;
-    setGroups((prev) => {
-      const todayGroup = prev.find(isTodayGroup);
-      const laterGroup = prev.find(isLaterGroup);
-      const inboxGroup = prev.find(isInboxGroup);
-      nextBoard = moveTaskInBoard(
-        prev,
-        taskId,
-        {
-          groupId: targetGroupId,
-          beforeTaskId: null,
-          zone: "active",
-        },
-        {
-          todayGroupId: todayGroup?.id,
-          laterGroupId: laterGroup?.id,
-          inboxGroupId: inboxGroup?.id,
-          todayViewDate,
-        },
-      );
-      return nextBoard;
-    });
+    const todayGroup = groups.find(isTodayGroup);
+    const laterGroup = groups.find(isLaterGroup);
+    const inboxGroup = groups.find(isInboxGroup);
+    const nextBoard = moveTaskInBoard(
+      groups,
+      taskId,
+      {
+        groupId: targetGroupId,
+        beforeTaskId: null,
+        zone: "active",
+      },
+      {
+        todayGroupId: todayGroup?.id,
+        laterGroupId: laterGroup?.id,
+        inboxGroupId: inboxGroup?.id,
+        todayViewDate,
+      },
+    );
+    setGroups(nextBoard);
 
     try {
       await persistTaskBoardLayout(nextBoard, { todayViewDate });
@@ -516,29 +513,26 @@ export function TasksPageContent() {
         color: input.color,
       });
 
-      let nextBoard = groups;
-      setGroups((prev) => {
-        const withNewGroup = orderPinnedTaskGroups([
-          ...prev,
-          { ...created, tasks: [] },
-        ]);
-        nextBoard = moveTaskInBoard(
-          withNewGroup,
-          taskId,
-          {
-            groupId: created.id,
-            beforeTaskId: null,
-            zone: "active",
-          },
-          {
-            todayGroupId: withNewGroup.find(isTodayGroup)?.id,
-            laterGroupId: withNewGroup.find(isLaterGroup)?.id,
-            inboxGroupId: withNewGroup.find(isInboxGroup)?.id,
-            todayViewDate,
-          },
-        );
-        return nextBoard;
-      });
+      const withNewGroup = orderPinnedTaskGroups([
+        ...groups,
+        { ...created, tasks: [] },
+      ]);
+      const nextBoard = moveTaskInBoard(
+        withNewGroup,
+        taskId,
+        {
+          groupId: created.id,
+          beforeTaskId: null,
+          zone: "active",
+        },
+        {
+          todayGroupId: withNewGroup.find(isTodayGroup)?.id,
+          laterGroupId: withNewGroup.find(isLaterGroup)?.id,
+          inboxGroupId: withNewGroup.find(isInboxGroup)?.id,
+          todayViewDate,
+        },
+      );
+      setGroups(nextBoard);
 
       await persistTaskBoardLayout(nextBoard, { todayViewDate });
       return created.id;
