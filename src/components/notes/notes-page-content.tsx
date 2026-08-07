@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { GrowthAreaDialog } from "@/components/notes/growth-area-dialog";
 import { GrowthAreaHeader } from "@/components/notes/growth-area-header";
 import { GrowthAreaSidebar } from "@/components/notes/growth-area-sidebar";
@@ -47,6 +47,7 @@ export function NotesPageContent() {
   );
   const [tab, setTab] = useState<ContentTab>("notes");
   const [tabAnimKey, setTabAnimKey] = useState(0);
+  const areaContentGeneration = useRef(0);
   const [tabSlideFrom, setTabSlideFrom] = useState<"left" | "right">("right");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -83,16 +84,18 @@ export function NotesPageContent() {
     }
   }, []);
 
-  const loadAreaContent = useCallback(async (areaId: string) => {
+  const loadAreaContent = useCallback(async (areaId: string, generation: number) => {
     try {
       const [notesData, boardsData] = await Promise.all([
         fetchNotesByArea(areaId),
         fetchBoardsByArea(areaId),
       ]);
+      if (generation !== areaContentGeneration.current) return;
       setNotes(notesData);
       setBoards(boardsData);
       setActiveBoard(null);
     } catch (err) {
+      if (generation !== areaContentGeneration.current) return;
       setError(
         err instanceof NotesError || err instanceof KanbanError
           ? err.message
@@ -107,12 +110,21 @@ export function NotesPageContent() {
   }, [loadAreas]);
 
   useEffect(() => {
-    if (selectedAreaId) void loadAreaContent(selectedAreaId);
+    const generation = ++areaContentGeneration.current;
+    if (selectedAreaId) void loadAreaContent(selectedAreaId, generation);
   }, [selectedAreaId, loadAreaContent]);
 
   async function refreshAreas() {
-    const areasData = await fetchGrowthAreas();
-    setAreas(areasData);
+    try {
+      const areasData = await fetchGrowthAreas();
+      setAreas(areasData);
+    } catch (err) {
+      setError(
+        err instanceof GrowthAreasError
+          ? err.message
+          : "Failed to refresh growth areas.",
+      );
+    }
   }
 
   async function handleSelectBoard(boardId: string) {
@@ -150,14 +162,22 @@ export function NotesPageContent() {
 
   async function handleDeleteArea(area: GrowthAreaWithCounts) {
     if (!confirm(`Delete "${area.name}" and all its notes and boards?`)) return;
-    await deleteGrowthArea(area.id);
-    const areasData = await fetchGrowthAreas();
-    setAreas(areasData);
-    setSelectedAreaId(areasData[0]?.id ?? null);
-    showActionToast({
-      message: "Growth area deleted",
-      icon: "trash",
-    });
+    try {
+      await deleteGrowthArea(area.id);
+      const areasData = await fetchGrowthAreas();
+      setAreas(areasData);
+      setSelectedAreaId(areasData[0]?.id ?? null);
+      showActionToast({
+        message: "Growth area deleted",
+        icon: "trash",
+      });
+    } catch (err) {
+      setError(
+        err instanceof GrowthAreasError
+          ? err.message
+          : "Failed to delete growth area.",
+      );
+    }
   }
 
   async function handleReorderAreas(next: GrowthAreaWithCounts[]) {
