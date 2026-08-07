@@ -44,6 +44,9 @@ export const DEMO_CLIENT_WIPE_KEYS = [
 
 export const DEMO_CLIENT_WIPE_PREFIXES = [
   "flowos-workplace-module-visibility:",
+  "flowos.focus.active:",
+  "flowos.focus.pending-conclusion:",
+  "flowos.next-up.habit-refs.v1:",
 ] as const;
 
 export const DEMO_SESSION_STORAGE_KEYS = [

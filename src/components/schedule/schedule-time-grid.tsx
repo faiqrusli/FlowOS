@@ -17,7 +17,6 @@ import {
   getNowLineTopPx,
   HOUR_HEIGHT_PX,
   minutesToTopPx,
-  SNAP_MINUTES,
   TIMELINE_HEIGHT_PX,
   topPxToMinutes,
 } from "@/lib/schedule-layout";
@@ -30,7 +29,6 @@ import {
   findCurrentItemIndex,
   mergeFocusIntoScheduleItems,
 } from "@/lib/schedule-utils";
-import { cn } from "@/lib/utils";
 import type { ScheduleItem } from "@/types/schedule";
 
 type ScheduleTimeGridProps = {
@@ -96,7 +94,7 @@ export function ScheduleTimeGrid({
   onResizeItem,
 }: ScheduleTimeGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
-  const { activeSession, tick } = useFocusSessionContext();
+  const { activeSession } = useFocusSessionContext();
   const [nowMinutes, setNowMinutes] = useState(getNowMinutesInAppTimezone);
   const [dropPreview, setDropPreview] = useState<DropPreview | null>(null);
 
@@ -106,7 +104,7 @@ export function ScheduleTimeGrid({
       setNowMinutes(getNowMinutesInAppTimezone());
     }, 30_000);
     return () => window.clearInterval(interval);
-  }, [tick]);
+  }, []);
 
   const mergedItems = useMemo(
     () => mergeFocusIntoScheduleItems(items, activeSession),

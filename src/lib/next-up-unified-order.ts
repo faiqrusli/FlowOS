@@ -7,6 +7,18 @@
 import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
 
 const STORAGE_KEY = "flowos.next-up.unified-order.v1";
+let activeUserId: string | null = null;
+
+export function setUnifiedQueueStorageUserId(userId: string | null): void {
+  activeUserId = userId;
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("flowos:habit-queue-updated"));
+  }
+}
+
+function scopedStorageKey(): string | null {
+  return activeUserId ? `${STORAGE_KEY}:${activeUserId}` : null;
+}
 
 export type UnifiedQueueKey = `task:${string}` | `habit:${string}`;
 
@@ -31,7 +43,9 @@ export function parseUnifiedQueueKey(
 }
 
 function readRaw(): UnifiedQueueKey[] {
-  const parsed = readStorageJson<unknown>(STORAGE_KEY, null);
+  const key = scopedStorageKey();
+  if (!key) return [];
+  const parsed = readStorageJson<unknown>(key, null);
   if (!Array.isArray(parsed)) return [];
   return parsed.filter(
     (item): item is UnifiedQueueKey =>
@@ -45,7 +59,9 @@ export function fetchUnifiedQueueOrder(): UnifiedQueueKey[] {
 }
 
 export function persistUnifiedQueueOrder(keys: UnifiedQueueKey[]): void {
-  writeStorageJson(STORAGE_KEY, keys);
+  const key = scopedStorageKey();
+  if (!key) return;
+  writeStorageJson(key, keys);
 }
 
 /** Keep stored order for live members; append any new tasks then habits. */

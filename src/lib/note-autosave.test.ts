@@ -10,7 +10,6 @@ function note(partial: Partial<Note> & Pick<Note, "id" | "title" | "content">): 
   return {
     user_id: "user",
     growth_area_id: "area",
-    note_date: null,
     created_at: "2026-07-26T00:00:00.000Z",
     updated_at: "2026-07-26T00:00:00.000Z",
     is_pinned: false,

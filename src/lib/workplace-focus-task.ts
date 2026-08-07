@@ -3,10 +3,7 @@ import {
   getTodayDateString,
   parseTimeToMinutes,
 } from "@/lib/date-utils";
-import {
-  DEFAULT_TASK_DURATION,
-  getTaskDurationMinutes,
-} from "@/lib/timeline-layout";
+import { getTaskDurationMinutes } from "@/lib/timeline-layout";
 import type { Task } from "@/types/task";
 
 /** Returns the task whose scheduled window contains `now`, if any. Auto-promotion is gated in `WorkplaceFocusTaskProvider` when Next Up has queue items. */

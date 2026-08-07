@@ -174,7 +174,7 @@ export function useScheduleReminderToasts() {
   if (!ctx) {
     return {
       toasts: [] as ScheduleReminderToast[],
-      dismissToast: (_id: string) => undefined,
+      dismissToast: () => undefined,
     };
   }
   return ctx;

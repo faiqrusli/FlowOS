@@ -32,7 +32,6 @@ import {
   TASK_GROUP_SWATCH_CLASS,
 } from "@/lib/task-group-appearance";
 import type { TaskPriority } from "@/lib/task-priority";
-import { DEFAULT_TASK_SORT_MODE, getTaskGroupSortMode } from "@/lib/task-sort";
 import { cn } from "@/lib/utils";
 import { compactControlTriggerClass } from "@/lib/theme/surface-classes";
 import type { PlanningState, TaskGroupWithTasks } from "@/types/task";
@@ -58,12 +57,6 @@ export function QuickCaptureDialog() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const selectedSortMode = useMemo(() => {
-    const group = groups.find((item) => item.id === selectedGroupId);
-    return group
-      ? (getTaskGroupSortMode(group) ?? DEFAULT_TASK_SORT_MODE)
-      : DEFAULT_TASK_SORT_MODE;
-  }, [groups, selectedGroupId]);
   const selectedGroupAppearance = useMemo(() => {
     const group = groups.find((item) => item.id === selectedGroupId);
     return group ? getTaskGroupAppearance(group) : null;

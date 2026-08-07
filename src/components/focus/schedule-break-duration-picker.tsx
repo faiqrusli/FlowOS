@@ -14,7 +14,6 @@ import {
   BREAK_LENGTH_PRESET_MINUTES,
   formatBreakAtMinutes,
   formatBreakLengthMinutes,
-  MAX_BREAK_LENGTH_MINUTES,
   clampBreakLengthMinutes,
   getBreakAtMenuOptions,
   getMinBreakAtMinutes,

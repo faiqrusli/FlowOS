@@ -33,7 +33,6 @@ import {
 import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
 import {
   kanbanCardClass,
-  kanbanCardEditingClass,
   kanbanColumnBodyClass,
   kanbanColumnHeaderClass,
 } from "@/lib/theme/surface-classes";

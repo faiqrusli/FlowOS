@@ -35,10 +35,14 @@ import {
   setQuickFocusTarget,
   finalizeCurrentTaskFocus,
   writeActiveSession,
+  focusActiveSessionStorageKey,
   type StoredActiveFocusSession,
 } from "@/lib/focus-active-session";
 import { persistFocusSessionEnd } from "@/lib/focus-session-persist";
 import { persistFocusTaskTotals } from "@/lib/focus-task-totals";
+import { getCurrentUserId } from "@/lib/auth";
+import { setQueueStorageUserId } from "@/lib/queue-ref-storage";
+import { setUnifiedQueueStorageUserId } from "@/lib/next-up-unified-order";
 import {
   clearPendingFocusConclusion,
   readPendingFocusConclusion,
@@ -172,27 +176,52 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     sessionRef.current = session;
     focusMinutesRef.current = focusMinutes;
     breakMinutesRef.current = breakMinutes;
-  }, [session, focusMinutes, breakMinutes]);
+    }, [session, focusMinutes, breakMinutes]);
+
+    const [focusUserId, setFocusUserId] = useState<string | null>(null);
+    const focusUserIdRef = useRef<string | null>(null);
 
   const setPendingConclusionState = useCallback(
     (next: PendingFocusConclusion | null) => {
       pendingConclusionRef.current = next;
       setPendingConclusion(next);
-      if (next) writePendingFocusConclusion(next);
-      else clearPendingFocusConclusion();
+      if (next) writePendingFocusConclusion(focusUserIdRef.current, next);
+      else clearPendingFocusConclusion(focusUserIdRef.current);
     },
     [],
   );
 
   useEffect(() => {
-    const storedPending = readPendingFocusConclusion();
+    let active = true;
+    void getCurrentUserId().then((userId) => {
+      if (!active) return;
+      const previousUserId = focusUserIdRef.current;
+      if (previousUserId && previousUserId !== userId) {
+        sessionRef.current = null;
+        setSession(null);
+        setPendingConclusionState(null);
+        clearActiveSession(previousUserId);
+        clearPendingFocusConclusion(previousUserId);
+      }
+      focusUserIdRef.current = userId;
+      setFocusUserId(userId);
+      setQueueStorageUserId(userId);
+      setUnifiedQueueStorageUserId(userId);
+    });
+    return () => {
+      active = false;
+    };
+  }, [setPendingConclusionState]);
+
+  useEffect(() => {
+    const storedPending = readPendingFocusConclusion(focusUserIdRef.current);
     pendingConclusionRef.current = storedPending;
     setPendingConclusion(storedPending);
     if (storedPending && !sessionRef.current) {
       sessionRef.current = storedPending.session;
       setSession(storedPending.session);
     }
-  }, []);
+  }, [focusUserId]);
 
   const updateSession = useCallback(
     (next: StoredActiveFocusSession | null) => {
@@ -210,9 +239,9 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       setSession(next);
 
       if (next) {
-        writeActiveSession(next);
+        writeActiveSession(focusUserIdRef.current, next);
       } else {
-        clearActiveSession();
+        clearActiveSession(focusUserIdRef.current);
       }
     },
     []
@@ -225,7 +254,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     setSession(null);
     setNotification(null);
     setPendingConclusionState(null);
-    clearActiveSession();
+    clearActiveSession(focusUserIdRef.current);
   }, [setPendingConclusionState]);
 
   const endSession = useCallback(
@@ -337,7 +366,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
   }, [endSession, updateSession]);
 
   useEffect(() => {
-    const stored = readActiveSession();
+    const stored = readActiveSession(focusUserId);
     if (stored) {
       sessionRef.current = stored;
       setSession(stored);
@@ -349,15 +378,15 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     }
 
     const onStorage = (event: StorageEvent) => {
-      if (event.key !== "flowos.focus.active") return;
-      const next = readActiveSession();
+      if (event.key !== focusActiveSessionStorageKey(focusUserId ?? "")) return;
+      const next = readActiveSession(focusUserId);
       sessionRef.current = next;
       setSession(next);
     };
 
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
-  }, []);
+  }, [focusUserId]);
 
   useEffect(() => {
     const runTick = () => {

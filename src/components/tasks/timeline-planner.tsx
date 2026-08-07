@@ -135,7 +135,6 @@ import {
   type TimelineEntryKind,
   type TimelineZoom,
 } from "@/lib/timeline-layout";
-import { formatDurationLabel } from "@/lib/schedule-layout";
 import { SCHEDULE_BLOCK_CURRENT_CLASS } from "@/lib/schedule-palette";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { timelineHabitBlockClassNames } from "@/lib/timeline-habit-appearance";
@@ -343,7 +342,6 @@ export function TimelinePlanner({
   const [timelineVisibility, setTimelineVisibility] =
     useState<WorkplaceModuleVisibility>("always");
   const [timelineHovered, setTimelineHovered] = useState(false);
-  const useCompactChrome = isDrawer || isWorkplace;
   const useDrawerTimeline = isDrawer || isWorkplace;
   const showTaskPool = isFullscreen;
   const showHabitTimeline = habits.length > 0 && Boolean(onScheduleHabit);
