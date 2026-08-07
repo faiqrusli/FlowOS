@@ -76,8 +76,13 @@ export async function fetchGrowthAreas(): Promise<GrowthAreaWithCounts[]> {
 
   if (error) throw new GrowthAreasError(error.message);
 
-  if (!areas?.length) {
-    await seedDefaultGrowthAreas(userId);
+  const existingNames = new Set((areas ?? []).map((area) => area.name));
+  const missingDefaults = DEFAULT_GROWTH_AREAS.filter(
+    (area) => !existingNames.has(area.name),
+  );
+
+  if (missingDefaults.length > 0) {
+    await seedDefaultGrowthAreas(userId, missingDefaults);
     return fetchGrowthAreas();
   }
 
@@ -99,9 +104,12 @@ export async function fetchGrowthAreas(): Promise<GrowthAreaWithCounts[]> {
   }));
 }
 
-async function seedDefaultGrowthAreas(userId: string) {
+async function seedDefaultGrowthAreas(
+  userId: string,
+  defaults = DEFAULT_GROWTH_AREAS,
+) {
   const { error } = await supabase.from("growth_areas").insert(
-    DEFAULT_GROWTH_AREAS.map((area) => ({
+    defaults.map((area) => ({
       ...area,
       user_id: userId,
     }))

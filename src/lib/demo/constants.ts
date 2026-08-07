@@ -48,4 +48,5 @@ export const DEMO_CLIENT_WIPE_PREFIXES = [
 
 export const DEMO_SESSION_STORAGE_KEYS = [
   "flowos.sidebar-notes.cache",
+  "flowos.floating-notes",
 ] as const;
