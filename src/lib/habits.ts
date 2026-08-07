@@ -137,15 +137,19 @@ export async function updateHabit(id: string, input: HabitUpdate): Promise<Habit
   return data;
 }
 
-export async function toggleHabitComplete(habit: Habit): Promise<Habit> {
+export async function toggleHabitComplete(
+  habit: Habit,
+  dateKey?: string,
+): Promise<Habit> {
   const today = getTodayDateString();
-  const isComplete = isHabitCompletedToday(habit);
+  const targetDate = dateKey ?? today;
+  const isComplete = isHabitCompletedOnDate(habit, targetDate);
 
   try {
     if (isComplete) {
-      await removeHabitCompletion(habit.id, today);
+      await removeHabitCompletion(habit.id, targetDate);
     } else {
-      await recordHabitCompletion(habit.id, today);
+      await recordHabitCompletion(habit.id, targetDate);
     }
   } catch (error) {
     throw new HabitsError(
@@ -154,6 +158,8 @@ export async function toggleHabitComplete(habit: Habit): Promise<Habit> {
         : "Failed to save the habit completion."
     );
   }
+
+  if (targetDate !== today) return habit;
 
   return updateHabit(habit.id, { completed: !isComplete });
 }
