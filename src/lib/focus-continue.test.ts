@@ -18,6 +18,11 @@ function makeTask(partial: Partial<Task> & Pick<Task, "id" | "title">): Task {
     created_at: "2026-07-17T00:00:00.000Z",
     updated_at: "2026-07-17T00:00:00.000Z",
     ...partial,
+    user_id: partial.user_id ?? null,
+    queue_order: partial.queue_order ?? null,
+    notification_enabled: partial.notification_enabled ?? true,
+    notification_lead_minutes: partial.notification_lead_minutes ?? null,
+    planning_state: partial.planning_state ?? "none",
   };
 }
 

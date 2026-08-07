@@ -1,3 +1,5 @@
+import type { ReflectionKanbanCard } from "@/types/reflection";
+
 /** Custom reflection entry title used for workplace focus notes. */
 export const FOCUS_REFLECTION_ENTRY_TITLE = "Focus";
 export const FOCUS_REFLECTION_KANBAN_TITLE = "Focus";
@@ -13,7 +15,10 @@ export function shouldPromptFocusReflection(focusSeconds: number): boolean {
   return focusSeconds >= MIN_FOCUS_REFLECTION_SECONDS;
 }
 
-export async function saveFocusReflectionEntry(content: string): Promise<void> {
+export async function saveFocusReflectionEntry(
+  content: string,
+  provenance?: ReflectionKanbanCard["provenance"],
+): Promise<void> {
   const { fetchTodayReflection, saveReflection } = await import(
     "@/lib/reflection-storage"
   );
@@ -30,13 +35,13 @@ export async function saveFocusReflectionEntry(content: string): Promise<void> {
         ...focusBoard,
         cards: [
           ...focusBoard.cards,
-          { id: crypto.randomUUID(), content: nextContent },
+          { id: crypto.randomUUID(), content: nextContent, provenance },
         ],
       }
     : {
         id: crypto.randomUUID(),
         title: FOCUS_REFLECTION_KANBAN_TITLE,
-        cards: [{ id: crypto.randomUUID(), content: nextContent }],
+        cards: [{ id: crypto.randomUUID(), content: nextContent, provenance }],
       };
   const nextKanbans = focusBoard
     ? boards.map((board) =>

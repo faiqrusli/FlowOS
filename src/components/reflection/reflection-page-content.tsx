@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CustomEntriesSection } from "@/components/reflection/custom-entries-section";
 import { ReflectionKanbanSection } from "@/components/reflection/reflection-kanban-section";
 import { ReflectionHistory } from "@/components/reflection/reflection-history";
@@ -10,12 +10,19 @@ import { ErrorBanner } from "@/components/shared/error-banner";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { useActionToast } from "@/contexts/action-toast-context";
+import { getCurrentUserId } from "@/lib/auth";
 import { getTodayDateString } from "@/lib/date-utils";
 import {
+  createEmptyCustomEntry,
   fetchReflections,
   fetchTodayReflection,
   saveReflection,
 } from "@/lib/reflection-storage";
+import {
+  clearReflectionDraft,
+  readReflectionDraft,
+  writeReflectionDraft,
+} from "@/lib/reflection-draft-storage";
 import { fetchReflectionDayReview } from "@/lib/reflection-day-review";
 import type { ReflectionDayReview } from "@/lib/reflection-day-review";
 import type { CustomEntry, Reflection, ReflectionKanban } from "@/types/reflection";
@@ -31,6 +38,8 @@ export function ReflectionPageContent() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [draftUserId, setDraftUserId] = useState<string | null>(null);
+  const draftReadyRef = useRef(false);
 
   const today = getTodayDateString();
 
@@ -47,8 +56,18 @@ export function ReflectionPageContent() {
 
       setDayReview(dayReviewData);
       setReflections(allReflections);
+      const userId = await getCurrentUserId();
+      const localDraft = userId
+        ? readReflectionDraft(userId, today)
+        : null;
+      setDraftUserId(userId);
 
-      if (todayReflection) {
+      if (localDraft) {
+        setWentWell(localDraft.went_well);
+        setWentWrong(localDraft.went_wrong);
+        setCustomEntries(localDraft.custom_entries);
+        setCustomKanbans(localDraft.custom_kanbans ?? []);
+      } else if (todayReflection) {
         setWentWell(todayReflection.went_well);
         setWentWrong(todayReflection.went_wrong);
         setCustomEntries(todayReflection.custom_entries);
@@ -57,15 +76,9 @@ export function ReflectionPageContent() {
         setWentWell("");
         setWentWrong("");
         setCustomKanbans([]);
-        setCustomEntries([
-          { id: crypto.randomUUID(), title: "Weight", content: "72.4kg" },
-          {
-            id: crypto.randomUUID(),
-            title: "Daily Insight",
-            content: "",
-          },
-        ]);
+        setCustomEntries([createEmptyCustomEntry()]);
       }
+      draftReadyRef.current = true;
     } catch {
       setError("Failed to load reflection data.");
     } finally {
@@ -76,6 +89,19 @@ export function ReflectionPageContent() {
   useEffect(() => {
     loadPage();
   }, [loadPage]);
+
+  useEffect(() => {
+    if (loading || !draftReadyRef.current || !draftUserId) return;
+    const timer = setTimeout(() => {
+      writeReflectionDraft(draftUserId, today, {
+        went_well: wentWell,
+        went_wrong: wentWrong,
+        custom_entries: customEntries,
+        custom_kanbans: customKanbans,
+      });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [customEntries, customKanbans, draftUserId, loading, today, wentWell, wentWrong]);
 
   async function handleSave() {
     setSaving(true);
@@ -102,6 +128,7 @@ export function ReflectionPageContent() {
           ? saved.custom_entries
           : customEntries.filter((e) => e.title.trim())
       );
+      if (draftUserId) clearReflectionDraft(draftUserId, today);
 
       showActionToast({
         message: "Reflection saved",

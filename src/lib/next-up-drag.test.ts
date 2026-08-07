@@ -11,7 +11,7 @@ function makeDataTransfer(values: Record<string, string>, types: string[]) {
       return values[type] ?? "";
     },
     dropEffect: "none",
-  } as DataTransfer;
+  } as unknown as DataTransfer;
 }
 
 describe("next-up-drag", () => {
