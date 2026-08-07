@@ -8,6 +8,7 @@ import {
   reconcileCompletionsWithHabits,
   removeAllHabitCompletions,
   removeHabitCompletion,
+  wasLastHabitCompletionsRemoteLoadSuccessful,
 } from "@/lib/habit-completions-store";
 import { DAYS_OF_WEEK, type Habit, type HabitInsert, type HabitUpdate } from "@/types/habit";
 
@@ -52,10 +53,6 @@ export function isHabitScheduledToday(habit: Habit, dayAbbrev = getTodayDayAbbre
   return habit.days_of_week.includes(dayAbbrev);
 }
 
-function isHabitCompletedToday(habit: Habit): boolean {
-  const today = getTodayDateString();
-  return isHabitCompletedOnDate(habit, today);
-}
 
 export function isHabitCompletedOnDate(habit: Habit, dateKey: string): boolean {
   if (getHabitCompletionDates(habit.id).includes(dateKey)) {
@@ -68,8 +65,11 @@ export function isHabitCompletedOnDate(habit: Habit, dateKey: string): boolean {
 export async function fetchHabitsWithCompletions(): Promise<Habit[]> {
   const habits = await fetchHabits();
   await loadHabitCompletions();
-  reconcileCompletionsWithHabits(habits);
-  return resetStaleHabitCompletedFlags(habits);
+  const hydratedHabits = wasLastHabitCompletionsRemoteLoadSuccessful()
+    ? await resetStaleHabitCompletedFlags(habits)
+    : habits;
+  reconcileCompletionsWithHabits(hydratedHabits);
+  return hydratedHabits;
 }
 
 async function resetStaleHabitCompletedFlags(habits: Habit[]): Promise<Habit[]> {

@@ -76,6 +76,7 @@ function mergeStores(
 }
 
 let cachedCompletions: HabitCompletionStore | null = null;
+let lastRemoteLoadSucceeded = false;
 
 export function getCachedHabitCompletions(): HabitCompletionStore {
   if (!cachedCompletions) {
@@ -87,11 +88,16 @@ export function getCachedHabitCompletions(): HabitCompletionStore {
 export async function loadHabitCompletions(): Promise<HabitCompletionStore> {
   const local = normalizeStore(readLocalCompletions());
   const remote = await fetchRemoteCompletions();
+  lastRemoteLoadSucceeded = remote !== null;
   const merged = remote ? mergeStores(local, remote) : local;
 
   cachedCompletions = merged;
   writeLocalCompletions(merged);
   return merged;
+}
+
+export function wasLastHabitCompletionsRemoteLoadSuccessful(): boolean {
+  return lastRemoteLoadSucceeded;
 }
 
 export function getHabitCompletionDates(habitId: string): string[] {
@@ -212,11 +218,6 @@ export function reconcileCompletionsWithHabits(
       changed = true;
     }
 
-    if (!habit.completed && dates.has(todayKey)) {
-      dates.delete(todayKey);
-      store[habit.id] = [...dates].sort();
-      changed = true;
-    }
   }
 
   if (changed) {
