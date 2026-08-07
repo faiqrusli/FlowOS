@@ -11,6 +11,7 @@ import { useFocusSessionContext } from "@/contexts/focus-session-context";
 import { useGlobalRightSidebar } from "@/contexts/global-right-sidebar-context";
 import { computeOnTrackStatus } from "@/lib/dashboard-command";
 import { DashboardError, fetchDashboardData } from "@/lib/dashboard";
+import { useAppDateKey } from "@/hooks/use-app-date-key";
 import { getTodayBreakDisplaySeconds, getTodayFocusDisplaySeconds } from "@/lib/focus-active-session";
 import {
   scrollToTodayTarget,
@@ -20,6 +21,7 @@ import type { DashboardData } from "@/types/dashboard";
 
 export function TodayPageContent() {
   const { activeSession, lastSavedSession, tick } = useFocusSessionContext();
+  const appDateKey = useAppDateKey();
   const { openReflection } = useGlobalRightSidebar();
   const tasksTabRef = useRef<WorkplaceTasksCardHandle>(null);
   const habitsTabRef = useRef<WorkplaceHabitsCardHandle>(null);
@@ -47,7 +49,7 @@ export function TodayPageContent() {
 
   useEffect(() => {
     void loadDashboard();
-  }, [loadDashboard]);
+  }, [appDateKey, loadDashboard]);
 
   const displayFocusSeconds = useMemo(() => {
     void tick;

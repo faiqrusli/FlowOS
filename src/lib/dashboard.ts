@@ -4,6 +4,7 @@ import { fetchTodayHabits } from "@/lib/habits";
 import { buildScheduleItems } from "@/lib/schedule";
 import { fetchTodayReflection } from "@/lib/reflections-db";
 import { fetchTodayTasks } from "@/lib/tasks";
+import { isTaskIncludedInTodaySurfaces } from "@/lib/today-task-selection";
 import type { DashboardData, TodayProgress } from "@/types/dashboard";
 import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
@@ -42,18 +43,19 @@ export async function fetchDashboardData(): Promise<DashboardData> {
       fetchTodayReflection(today),
     ]);
 
+    const todayTasks = tasks.filter(isTaskIncludedInTodaySurfaces);
     const focus = computeFocusStatsForDate(focusSessions, today);
     const progress = buildProgress(
-      tasks,
+      todayTasks,
       habits,
       focus.totalFocusSeconds,
       focus.totalBreakSeconds
     );
-    const timeline = buildScheduleItems(tasks, habits, "today");
+    const timeline = buildScheduleItems(todayTasks, habits, "today");
 
     return {
       progress,
-      tasks,
+      tasks: todayTasks,
       habits,
       focus,
       reflection,
