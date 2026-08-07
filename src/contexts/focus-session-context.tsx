@@ -39,6 +39,12 @@ import {
 } from "@/lib/focus-active-session";
 import { persistFocusSessionEnd } from "@/lib/focus-session-persist";
 import { persistFocusTaskTotals } from "@/lib/focus-task-totals";
+import {
+  clearPendingFocusConclusion,
+  readPendingFocusConclusion,
+  writePendingFocusConclusion,
+  type PendingFocusConclusion,
+} from "@/lib/focus-recovery";
 import { trackFeatureUsage } from "@/lib/feature-usage";
 import {
   playAlertSound,
@@ -73,6 +79,9 @@ type FocusSessionContextValue = {
   lastSavedSession: FocusSession | null;
   notification: string | null;
   clearNotification: () => void;
+  pendingConclusion: PendingFocusConclusion | null;
+  retryPendingConclusion: () => void;
+  leavePendingConclusion: () => void;
   /** Drop in-memory + stored active focus (demo restart / exit). */
   hardResetActiveSession: () => void;
   dashboardActive: DashboardActiveFocus;
@@ -145,6 +154,8 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     null
   );
   const [notification, setNotification] = useState<string | null>(null);
+  const [pendingConclusion, setPendingConclusion] =
+    useState<PendingFocusConclusion | null>(null);
 
   const sessionRef = useRef<StoredActiveFocusSession | null>(null);
   const completionHandledRef = useRef(false);
@@ -155,12 +166,33 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
   } | null>(null);
   const focusMinutesRef = useRef(focusMinutes);
   const breakMinutesRef = useRef(breakMinutes);
+  const pendingConclusionRef = useRef<PendingFocusConclusion | null>(null);
 
   useEffect(() => {
     sessionRef.current = session;
     focusMinutesRef.current = focusMinutes;
     breakMinutesRef.current = breakMinutes;
   }, [session, focusMinutes, breakMinutes]);
+
+  const setPendingConclusionState = useCallback(
+    (next: PendingFocusConclusion | null) => {
+      pendingConclusionRef.current = next;
+      setPendingConclusion(next);
+      if (next) writePendingFocusConclusion(next);
+      else clearPendingFocusConclusion();
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const storedPending = readPendingFocusConclusion();
+    pendingConclusionRef.current = storedPending;
+    setPendingConclusion(storedPending);
+    if (storedPending && !sessionRef.current) {
+      sessionRef.current = storedPending.session;
+      setSession(storedPending.session);
+    }
+  }, []);
 
   const updateSession = useCallback(
     (next: StoredActiveFocusSession | null) => {
@@ -179,9 +211,6 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
 
       if (next) {
         writeActiveSession(next);
-        void persistFocusTaskTotals(next).catch((error: unknown) => {
-          console.warn("[focus] task focus totals sync failed", error);
-        });
       } else {
         clearActiveSession();
       }
@@ -195,35 +224,94 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     sessionRef.current = null;
     setSession(null);
     setNotification(null);
+    setPendingConclusionState(null);
     clearActiveSession();
-  }, []);
+  }, [setPendingConclusionState]);
 
   const endSession = useCallback(
     async (
-      payload: Parameters<typeof persistFocusSessionEnd>[0]
+      payload: Parameters<typeof persistFocusSessionEnd>[0],
+      conclusionSession = sessionRef.current,
     ): Promise<void> => {
-      const timerType = sessionRef.current?.timer_type ?? null;
+      if (!conclusionSession) return;
+      const timerType = conclusionSession.timer_type;
       completionHandledRef.current = true;
-      updateSession(null);
+      setPendingConclusionState({
+        payload,
+        session: conclusionSession,
+        requested_at: new Date().toISOString(),
+      });
 
       try {
         const saved = await persistFocusSessionEnd(payload);
         if (saved) {
+          try {
+            await persistFocusTaskTotals(
+              conclusionSession,
+              saved.id,
+            );
+          } catch (error) {
+            console.warn("[focus] task focus totals sync failed", error);
+            setPendingConclusionState({
+              payload,
+              session: conclusionSession,
+              requested_at: new Date().toISOString(),
+              persisted_session_id: saved.id,
+            });
+            setNotification(
+              "Focus session saved; task attribution is pending. Retry to finish saving it."
+            );
+            return;
+          }
+          setPendingConclusionState(null);
+          updateSession(null);
           setLastSavedSession(saved);
           trackFeatureUsage("focus", "stop", {
             timer_type: timerType,
             session_id: saved.id,
           });
+        } else {
+          setNotification("Focus session save is already in progress. Retry when it finishes.");
         }
       } catch (error) {
         console.error("[focus] endSession failed to save", error);
         setNotification(
-          "Focus session could not be saved. Check your connection — this session is missing from your history."
+          "Focus session is pending confirmation. Retry or leave; the local session is preserved."
         );
       }
     },
-    [updateSession]
+    [setPendingConclusionState, updateSession]
   );
+
+  const retryPendingConclusion = useCallback(() => {
+    const pending = pendingConclusionRef.current;
+    if (!pending) return;
+    if (pending.persisted_session_id) {
+      void persistFocusTaskTotals(
+        pending.session,
+        pending.persisted_session_id,
+      )
+        .then(() => {
+          setPendingConclusionState(null);
+          updateSession(null);
+        })
+        .catch((error) => {
+          console.error("[focus] retry task focus totals failed", error);
+          setNotification(
+            "Task attribution is still pending. Keep this session and retry again."
+          );
+        });
+      return;
+    }
+    void endSession(pending.payload, pending.session);
+  }, [endSession, setPendingConclusionState, updateSession]);
+
+  const leavePendingConclusion = useCallback(() => {
+    completionHandledRef.current = false;
+    setPendingConclusionState(null);
+    updateSession(null);
+    setNotification("Focus session left without a confirmed save.");
+  }, [setPendingConclusionState, updateSession]);
 
   const handlePomodoroPhaseExpiry = useCallback(async () => {
     const current = sessionRef.current;
@@ -416,12 +504,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     const current = sessionRef.current;
     if (!current || current.timer_type !== "quick") return;
     const finalized = finalizeCurrentTaskFocus(current);
-    try {
-      await persistFocusTaskTotals(finalized);
-    } catch (error) {
-      console.warn("[focus] final task focus totals sync failed", error);
-    }
-    await endSession(buildStopPayload(finalized));
+    await endSession(buildStopPayload(finalized), finalized);
   }, [endSession]);
 
   const pomodoroStart = useCallback(() => {
@@ -452,7 +535,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
   const pomodoroStop = useCallback(async () => {
     const current = sessionRef.current;
     if (!current || current.timer_type !== "pomodoro") return;
-    await endSession(buildStopPayload(current));
+    await endSession(buildStopPayload(current), current);
   }, [endSession]);
 
   const quickSession =
@@ -530,6 +613,9 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       lastSavedSession,
       notification,
       clearNotification: () => setNotification(null),
+      pendingConclusion,
+      retryPendingConclusion,
+      leavePendingConclusion,
       hardResetActiveSession,
       dashboardActive,
       prepareFocusTarget,
@@ -601,6 +687,9 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
     session,
     lastSavedSession,
     notification,
+    pendingConclusion,
+    retryPendingConclusion,
+    leavePendingConclusion,
     hardResetActiveSession,
     dashboardActive,
     prepareFocusTarget,

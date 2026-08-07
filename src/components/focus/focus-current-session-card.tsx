@@ -28,8 +28,15 @@ function resolveSessionStateLabel(
 }
 
 export function FocusCurrentSessionCard() {
-  const { activeSession, dashboardActive, quick, pomodoro } =
-    useFocusSessionContext();
+  const {
+    activeSession,
+    dashboardActive,
+    pendingConclusion,
+    retryPendingConclusion,
+    leavePendingConclusion,
+    quick,
+    pomodoro,
+  } = useFocusSessionContext();
   const [scheduleBreakOpen, setScheduleBreakOpen] = useState(false);
 
   const isActive = dashboardActive.isActive;
@@ -62,6 +69,35 @@ export function FocusCurrentSessionCard() {
     <>
       <section className="rounded-xl bg-surface-base px-4 py-5 sm:px-5">
         <h2 className={typography.sectionTitle}>Current focus</h2>
+        {pendingConclusion ? (
+          <div
+            role="alert"
+            className="mt-4 rounded-lg border border-amber-400/40 bg-amber-400/10 p-3"
+          >
+            <p className="text-sm font-medium text-foreground">
+              Focus session is waiting to be saved.
+            </p>
+            <p className="mt-1 text-xs text-foreground-secondary">
+              Keep this session and retry, or leave it locally without a confirmed history record.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={retryPendingConclusion}
+                className="inline-flex h-8 items-center justify-center rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+              >
+                Retry save
+              </button>
+              <button
+                type="button"
+                onClick={leavePendingConclusion}
+                className="inline-flex h-8 items-center justify-center rounded-md border border-border px-3 text-xs font-medium text-foreground hover:bg-surface-hover"
+              >
+                Leave locally
+              </button>
+            </div>
+          </div>
+        ) : null}
         <div className="mt-4 space-y-4">
           {isActive ? (
             <>

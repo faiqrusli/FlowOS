@@ -17,11 +17,12 @@ import { supabase } from "@/lib/supabase";
  * failure never interrupts timing or target switching.
  */
 export async function persistFocusTaskTotals(
-  session: StoredActiveFocusSession
+  session: StoredActiveFocusSession,
+  persistedFocusSessionId = session.task_focus_session_id,
 ): Promise<void> {
   if (
     session.timer_type !== "quick" ||
-    !session.task_focus_session_id
+    !persistedFocusSessionId
   ) {
     return;
   }
@@ -33,7 +34,7 @@ export async function persistFocusTaskTotals(
     .filter(([, focusedSeconds]) => focusedSeconds > 0)
     .map(([task_id, focused_seconds]) => ({
       user_id: userId,
-      focus_session_id: session.task_focus_session_id!,
+      focus_session_id: persistedFocusSessionId,
       task_id,
       focused_seconds,
       updated_at: updatedAt,
