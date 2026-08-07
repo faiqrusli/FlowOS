@@ -18,12 +18,14 @@ export function getStorageItem(key: string): string | null {
 }
 
 /** Writes a raw string value. Silently ignores unavailability and errors. */
-export function setStorageItem(key: string, value: string): void {
-  if (typeof window === "undefined") return;
+export function setStorageItem(key: string, value: string): boolean {
+  if (typeof window === "undefined") return false;
   try {
     window.localStorage.setItem(key, value);
+    return true;
   } catch {
     /* private mode / blocked storage / quota */
+    return false;
   }
 }
 
@@ -52,10 +54,11 @@ export function readStorageJson<T>(key: string, fallback: T): T {
 }
 
 /** JSON-stringifies and writes a value. Silently ignores errors. */
-export function writeStorageJson(key: string, value: unknown): void {
+export function writeStorageJson(key: string, value: unknown): boolean {
   try {
-    setStorageItem(key, JSON.stringify(value));
+    return setStorageItem(key, JSON.stringify(value));
   } catch {
     /* value not serialisable */
+    return false;
   }
 }
