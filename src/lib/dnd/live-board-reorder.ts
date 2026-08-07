@@ -1,6 +1,5 @@
 import {
   taskDragTargetsEqual,
-  type MoveTaskInBoardOptions,
   type TaskDragTarget,
 } from "@/lib/task-drag-utils";
 import type { TaskGroupWithTasks } from "@/types/task";
@@ -16,22 +15,15 @@ export type LiveBoardReorderResult = {
  * Live onGroupsChange during drag fights transforms and causes flicker/jumps.
  */
 export function shouldApplyLiveBoardReorder(
-  _board: TaskGroupWithTasks[],
-  _target: TaskDragTarget,
-  _taskId: string
 ): boolean {
   return false;
 }
 
 export function applyLiveBoardReorderIfChanged(
-  _board: TaskGroupWithTasks[],
   target: TaskDragTarget,
-  _taskId: string,
-  _sourceGroupId: string | null,
-  lastAppliedTarget: TaskDragTarget | null,
-  _options: MoveTaskInBoardOptions
+  lastAppliedTarget: TaskDragTarget | null
 ): LiveBoardReorderResult | null {
   if (taskDragTargetsEqual(target, lastAppliedTarget)) return null;
-  if (!shouldApplyLiveBoardReorder(_board, target, _taskId)) return null;
+  if (!shouldApplyLiveBoardReorder()) return null;
   return null;
 }

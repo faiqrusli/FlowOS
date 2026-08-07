@@ -118,9 +118,9 @@ export function WeeklyReflectionPageContent() {
     [allCards],
   );
 
-  function resolvePlacement(
+  const resolvePlacement = useCallback((
     card: WeeklyReflectionBoardCard,
-  ): WeeklyReflectionCardPlacement {
+  ): WeeklyReflectionCardPlacement => {
     const existing = layout.placements.find((item) => item.cardId === card.id);
     if (existing) return existing;
     return {
@@ -129,7 +129,7 @@ export function WeeklyReflectionPageContent() {
       columnKey: card.defaultColumnKey,
       sortOrder: 0,
     };
-  }
+  }, [layout.placements]);
 
   const cardsByColumn = useMemo(() => {
     const map = new Map<string, WeeklyReflectionBoardCard[]>();
@@ -161,7 +161,7 @@ export function WeeklyReflectionPageContent() {
     }
 
     return map;
-  }, [allCards, bundles, layout.placements]);
+  }, [allCards, bundles, layout.placements, resolvePlacement]);
 
   function scheduleSaveLayout(next: WeeklyReflectionLayout) {
     setLayout(next);

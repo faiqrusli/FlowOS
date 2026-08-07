@@ -31,8 +31,13 @@ import {
 } from "@/lib/global-right-sidebar-persistence";
 import type { PlanningState, Task, TaskGroupWithTasks } from "@/types/task";
 import type { Note } from "@/types/notes";
-
-const FLOATING_NOTES_STORAGE_KEY = "flowos.floating-notes";
+import { supabase } from "@/lib/supabase";
+import {
+  clearFloatingNotesCache,
+  getFloatingNotesCache,
+  setFloatingNotesCache,
+} from "@/lib/floating-notes-cache";
+import { clearSidebarNotesCache } from "@/lib/sidebar-notes-cache";
 
 export type TaskDetailSource = {
   groups: TaskGroupWithTasks[];
@@ -86,6 +91,8 @@ type GlobalRightSidebarContextValue = {
   ) => void;
   /** Returns true when Today/workplace handled the create (e.g. toast + board). */
   notifyWorkplaceTaskCreated: (task: Task) => boolean;
+  currentUserId: string | null;
+  authReady: boolean;
 };
 
 const GlobalRightSidebarContext =
@@ -112,6 +119,10 @@ export function GlobalRightSidebarProvider({
   const [notesRefreshKey, setNotesRefreshKey] = useState(0);
   const [quickCaptureOpen, setQuickCaptureOpen] = useState(false);
   const [floatingNotes, setFloatingNotes] = useState<Note[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [floatingHydratedUserId, setFloatingHydratedUserId] =
+    useState<string | null>(null);
   const taskDetailSourceRef = useRef<TaskDetailSource | null>(null);
   const workplaceTaskHandlerRef = useRef<((task: Task) => void) | null>(null);
   const [taskDetailSource, setTaskDetailSource] =
@@ -122,24 +133,47 @@ export function GlobalRightSidebarProvider({
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const raw = window.sessionStorage.getItem(FLOATING_NOTES_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as Note[];
-      if (Array.isArray(parsed)) setFloatingNotes(parsed);
-    } catch {
-      // Ignore corrupt session data.
-    }
+    let active = true;
+    void supabase.auth.getUser().then(({ data }) => {
+      if (!active) return;
+      setCurrentUserId(data.user?.id ?? null);
+      setAuthReady(true);
+    });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUserId(session?.user?.id ?? null);
+      setAuthReady(true);
+    });
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.sessionStorage.setItem(
-      FLOATING_NOTES_STORAGE_KEY,
-      JSON.stringify(floatingNotes)
-    );
-  }, [floatingNotes]);
+    if (!authReady) return;
+    setFloatingNotes([]);
+    setFloatingHydratedUserId(null);
+    clearSidebarNotesCache();
+    if (!currentUserId) {
+      clearFloatingNotesCache();
+      return;
+    }
+    setFloatingNotes(getFloatingNotesCache(currentUserId));
+    setFloatingHydratedUserId(currentUserId);
+  }, [authReady, currentUserId]);
+
+  useEffect(() => {
+    if (
+      !authReady ||
+      !currentUserId ||
+      floatingHydratedUserId !== currentUserId
+    ) {
+      return;
+    }
+    setFloatingNotesCache(currentUserId, floatingNotes);
+  }, [authReady, currentUserId, floatingHydratedUserId, floatingNotes]);
 
   const setExpanded = useCallback((value: boolean) => {
     setExpandedState(value);
@@ -254,19 +288,22 @@ export function GlobalRightSidebarProvider({
   }, []);
 
   const openFloatingNote = useCallback((note: Note) => {
+    if (!authReady || !currentUserId) return;
     setFloatingNotes((current) => {
       if (current.some((item) => item.id === note.id)) {
         return current.map((item) => (item.id === note.id ? note : item));
       }
       return [...current, note];
     });
-  }, []);
+  }, [authReady, currentUserId]);
 
   const closeFloatingNote = useCallback((noteId: string) => {
+    if (!authReady || !currentUserId) return;
     setFloatingNotes((current) => current.filter((note) => note.id !== noteId));
-  }, []);
+  }, [authReady, currentUserId]);
 
   const updateFloatingNote = useCallback((note: Note) => {
+    if (!authReady || !currentUserId) return;
     setFloatingNotes((current) => {
       const index = current.findIndex((item) => item.id === note.id);
       if (index === -1) return current;
@@ -283,7 +320,7 @@ export function GlobalRightSidebarProvider({
 
       return current.map((item) => (item.id === note.id ? note : item));
     });
-  }, []);
+  }, [authReady, currentUserId]);
 
   const openNoteInSidebar = useCallback(
     (noteId: string) => {
@@ -342,13 +379,18 @@ export function GlobalRightSidebarProvider({
       requestQuickCapture,
       quickCaptureOpen,
       setQuickCaptureOpen,
-      floatingNotes,
+      floatingNotes:
+        authReady && floatingHydratedUserId === currentUserId
+          ? floatingNotes
+          : [],
       openFloatingNote,
       closeFloatingNote,
       updateFloatingNote,
       openNoteInSidebar,
       registerWorkplaceTaskHandler,
       notifyWorkplaceTaskCreated,
+      currentUserId,
+      authReady,
     }),
     [
       activePanel,
@@ -377,6 +419,9 @@ export function GlobalRightSidebarProvider({
       requestQuickCapture,
       quickCaptureOpen,
       floatingNotes,
+      floatingHydratedUserId,
+      currentUserId,
+      authReady,
       openFloatingNote,
       closeFloatingNote,
       updateFloatingNote,

@@ -9,11 +9,14 @@ import { useEffect, useRef, useState } from "react";
 export function useWritingField(entityId: string, serverValue: string) {
   const [value, setValue] = useState(serverValue);
   const focusedRef = useRef(false);
+  const entityIdRef = useRef<string | null>(null);
 
   useEffect(() => {
+    if (entityIdRef.current === entityId) return;
+    entityIdRef.current = entityId;
     setValue(serverValue);
     focusedRef.current = false;
-  }, [entityId]);
+  }, [entityId, serverValue]);
 
   useEffect(() => {
     if (!focusedRef.current) {

@@ -265,7 +265,11 @@ function buildTaskTimelineBlocks(
   return tasks
     .filter((task) => task.scheduled_date && task.scheduled_time)
     .map((task) => {
-      const startMinutes = parseTimeToMinutes(task.scheduled_time);
+      const persistedStartMinutes = parseTimeToMinutes(task.scheduled_time);
+      const startMinutes = Math.max(
+        TIMELINE_START_MINUTES,
+        persistedStartMinutes,
+      );
       const duration = getTaskDurationMinutes(task);
       const heightPx = Math.max(
         MIN_BLOCK_HEIGHT_PX,
@@ -290,7 +294,11 @@ function buildHabitTimelineBlocks(
   return habits
     .filter((habit) => habit.scheduled_time)
     .map((habit) => {
-      const startMinutes = parseTimeToMinutes(habit.scheduled_time);
+      const persistedStartMinutes = parseTimeToMinutes(habit.scheduled_time);
+      const startMinutes = Math.max(
+        TIMELINE_START_MINUTES,
+        persistedStartMinutes,
+      );
       const duration = getHabitDurationMinutes(habit.id);
       const heightPx = Math.max(
         MIN_BLOCK_HEIGHT_PX,

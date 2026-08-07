@@ -8,9 +8,23 @@ import { readStorageJson, writeStorageJson } from "@/lib/safe-storage";
 import type { QueueItem } from "@/types/queue-item";
 
 const STORAGE_KEY = "flowos.next-up.habit-refs.v1";
+let activeUserId: string | null = null;
+
+export function setQueueStorageUserId(userId: string | null): void {
+  activeUserId = userId;
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("flowos:habit-queue-updated"));
+  }
+}
+
+function scopedStorageKey(): string | null {
+  return activeUserId ? `${STORAGE_KEY}:${activeUserId}` : null;
+}
 
 function readRaw(): QueueItem[] {
-  const parsed = readStorageJson<unknown>(STORAGE_KEY, null);
+  const key = scopedStorageKey();
+  if (!key) return [];
+  const parsed = readStorageJson<unknown>(key, null);
   if (!Array.isArray(parsed)) return [];
   return parsed.filter(
     (item): item is QueueItem =>
@@ -25,8 +39,10 @@ function readRaw(): QueueItem[] {
 
 function writeRaw(items: QueueItem[]) {
   if (typeof window === "undefined") return;
+  const key = scopedStorageKey();
+  if (!key) return;
   const normalized = items.map((item, index) => ({ ...item, position: index }));
-  writeStorageJson(STORAGE_KEY, normalized);
+  writeStorageJson(key, normalized);
   window.dispatchEvent(new CustomEvent("flowos:habit-queue-updated"));
 }
 
@@ -39,6 +55,7 @@ export function hasHabitQueueRef(habitId: string): boolean {
 }
 
 export function insertHabitQueueRef(habitId: string): QueueItem[] {
+  if (!activeUserId) return [];
   const current = fetchHabitQueueRefs();
   if (current.some((item) => item.sourceId === habitId)) return current;
 
@@ -57,17 +74,20 @@ export function insertHabitQueueRef(habitId: string): QueueItem[] {
 }
 
 export function removeHabitQueueRef(habitId: string): QueueItem[] {
+  if (!activeUserId) return [];
   const next = fetchHabitQueueRefs().filter((item) => item.sourceId !== habitId);
   writeRaw(next);
   return next;
 }
 
 export function clearHabitQueueRefs(): void {
+  if (!activeUserId) return;
   writeRaw([]);
 }
 
 /** Rewrite habit-ref order to match a unified queue sequence. */
 export function reorderHabitQueueRefs(habitIds: string[]): QueueItem[] {
+  if (!activeUserId) return [];
   const byId = new Map(
     fetchHabitQueueRefs().map((item) => [item.sourceId, item])
   );
@@ -90,6 +110,7 @@ export function reorderHabitQueueRefs(habitIds: string[]): QueueItem[] {
 export function pruneHabitQueueRefs(
   habits: Array<{ id: string; completed?: boolean }>
 ): QueueItem[] {
+  if (!activeUserId) return [];
   const byId = new Map(habits.map((habit) => [habit.id, habit]));
   const next = fetchHabitQueueRefs().filter((item) => {
     const habit = byId.get(item.sourceId);

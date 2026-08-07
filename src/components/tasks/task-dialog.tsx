@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,13 +72,13 @@ export function TaskDialog({
 }: TaskDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const {
+    control,
     register,
     handleSubmit,
     reset,
     setValue,
     setError,
     clearErrors,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
@@ -125,9 +125,9 @@ export function TaskDialog({
     }
   }
 
-  const scheduledDate = watch("scheduledDate");
-  const scheduledTime = watch("scheduledTime");
-  const priority = watch("priority");
+  const scheduledDate = useWatch({ control, name: "scheduledDate" });
+  const scheduledTime = useWatch({ control, name: "scheduledTime" });
+  const priority = useWatch({ control, name: "priority" });
 
   const formFields = (
     <form onSubmit={handleSubmit(handleSave)} className="space-y-4">

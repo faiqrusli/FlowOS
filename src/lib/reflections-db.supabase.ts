@@ -1,6 +1,12 @@
 import { supabase } from "@/lib/supabase";
 import { requireUserId } from "@/lib/auth";
-import type { CustomEntry, Reflection, ReflectionDraft, ReflectionKanban } from "@/types/reflection";
+import type {
+  CustomEntry,
+  Reflection,
+  ReflectionCardProvenance,
+  ReflectionDraft,
+  ReflectionKanban,
+} from "@/types/reflection";
 import { ReflectionsError } from "@/lib/reflections-errors";
 
 type ReflectionRow = {
@@ -55,8 +61,25 @@ function normalizeKanbans(value: unknown): ReflectionKanban[] {
       cards: (kanban.cards ?? []).map((card) => ({
         id: card.id,
         content: card.content ?? "",
+        ...(isReflectionCardProvenance(card.provenance)
+          ? { provenance: card.provenance }
+          : {}),
       })),
     }));
+}
+
+function isReflectionCardProvenance(
+  value: unknown,
+): value is ReflectionCardProvenance {
+  if (!value || typeof value !== "object") return false;
+  const provenance = value as Partial<ReflectionCardProvenance>;
+  return (
+    provenance.source === "focus-session" &&
+    typeof provenance.sessionId === "string" &&
+    typeof provenance.startedAt === "string" &&
+    (provenance.endedAt === null || typeof provenance.endedAt === "string") &&
+    typeof provenance.focusSeconds === "number"
+  );
 }
 
 function rowToReflection(row: ReflectionRowWithEntries): Reflection {
@@ -76,36 +99,17 @@ function rowToReflection(row: ReflectionRowWithEntries): Reflection {
 
 async function saveReflectionEntries(
   reflectionId: string,
-  userId: string,
   entries: CustomEntry[]
 ): Promise<CustomEntry[]> {
-  const { error: deleteError } = await supabase
-    .from("reflection_entries")
-    .delete()
-    .eq("reflection_id", reflectionId)
-    .eq("user_id", userId);
-
-  if (deleteError) {
-    throw new ReflectionsError(deleteError.message);
-  }
-
   const filtered = entries.filter((entry) => entry.title.trim());
-  if (filtered.length === 0) {
-    return [];
-  }
-
-  const { data, error } = await supabase
-    .from("reflection_entries")
-    .insert(
-      filtered.map((entry) => ({
-        id: entry.id,
-        reflection_id: reflectionId,
-        user_id: userId,
-        title: entry.title.trim(),
-        content: entry.content,
-      }))
-    )
-    .select();
+  const { data, error } = await supabase.rpc("replace_reflection_entries", {
+    p_reflection_id: reflectionId,
+    p_entries: filtered.map((entry) => ({
+      id: entry.id,
+      title: entry.title.trim(),
+      content: entry.content,
+    })),
+  });
 
   if (error) {
     throw new ReflectionsError(error.message);
@@ -199,7 +203,6 @@ export async function saveReflectionToSupabase(
 
   const custom_entries = await saveReflectionEntries(
     reflectionRow.id,
-    userId,
     draft.custom_entries
   );
 

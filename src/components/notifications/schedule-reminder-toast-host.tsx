@@ -126,15 +126,17 @@ export function ScheduleReminderToastHost() {
   }, [toasts, requestDismiss]);
 
   useEffect(() => {
+    const autoTimers = autoTimersRef.current;
+    const exitTimers = exitTimersRef.current;
     return () => {
-      for (const timer of autoTimersRef.current.values()) {
+      for (const timer of autoTimers.values()) {
         window.clearTimeout(timer);
       }
-      for (const timer of exitTimersRef.current.values()) {
+      for (const timer of exitTimers.values()) {
         window.clearTimeout(timer);
       }
-      autoTimersRef.current.clear();
-      exitTimersRef.current.clear();
+      autoTimers.clear();
+      exitTimers.clear();
     };
   }, []);
 

@@ -41,8 +41,7 @@ export function shiftMonth(
 
 export function getCalendarMonthGrid(
   year: number,
-  month: number,
-  todayKey = getTodayDateString()
+  month: number
 ): CalendarDayCell[] {
   const firstWeekday = new Date(Date.UTC(year, month - 1, 1, 12)).getUTCDay();
   const daysInMonth = new Date(Date.UTC(year, month, 0, 12)).getUTCDate();

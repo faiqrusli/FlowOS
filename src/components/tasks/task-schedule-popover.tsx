@@ -117,11 +117,8 @@ export function TaskSchedulePopover({
 
   if (!mounted) return null;
 
-  const anchorRect = anchorRef.current?.getBoundingClientRect();
-  const top = position?.top ?? anchorRect?.bottom ?? 0;
-  const left =
-    position?.left ??
-    (anchorRect ? anchorRect.right - SCHEDULE_POPOVER_ESTIMATED_WIDTH_PX : 0);
+  const top = position?.top ?? 0;
+  const left = position?.left ?? 0;
 
   return createPortal(
     <div

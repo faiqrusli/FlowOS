@@ -36,14 +36,27 @@ export function WorkplaceFocusInlineReflection({
     setError(null);
 
     try {
-      await saveFocusReflectionEntry(trimmed);
+      await saveFocusReflectionEntry(trimmed, {
+        source: "focus-session",
+        sessionId: session.id,
+        startedAt: session.started_at,
+        endedAt: session.ended_at,
+        focusSeconds,
+      });
       onDismiss();
     } catch {
       setError("Could not save — try again.");
     } finally {
       setSaving(false);
     }
-  }, [content, onDismiss]);
+  }, [
+    content,
+    focusSeconds,
+    onDismiss,
+    session.ended_at,
+    session.id,
+    session.started_at,
+  ]);
 
   if (!shouldPromptFocusReflection(focusSeconds)) {
     return null;

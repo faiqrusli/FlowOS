@@ -57,11 +57,12 @@ import {
 import {
   batchUpdateManualOrders,
   createTask,
-  deleteTask,
   duplicateTask,
+  restoreTask,
   TasksError,
   toggleTaskComplete,
   updateTask,
+  withdrawTask,
 } from "@/lib/tasks";
 import { moveTaskInBoard } from "@/lib/task-drag-utils";
 import {
@@ -113,6 +114,9 @@ export function TasksPageContent() {
     new Map(),
   );
   const pendingTaskUpdates = useRef<Map<string, Partial<Task>>>(new Map());
+  const pendingTaskUpdateWaiters = useRef<
+    Map<string, Array<(success: boolean) => void>>
+  >(new Map());
   const plannerLayoutSnapshotRef = useRef<Map<string, DOMRect> | null>(null);
 
   function setTimelineOpenWithLayoutAnimation(
@@ -195,79 +199,110 @@ export function TasksPageContent() {
   }, [timelineOpen]);
 
   useEffect(() => {
+    const timers = updateTimers.current;
+    const waitersByTask = pendingTaskUpdateWaiters.current;
+    const pending = pendingTaskUpdates.current;
     return () => {
-      for (const timer of updateTimers.current.values()) {
+      for (const timer of timers.values()) {
         clearTimeout(timer);
       }
+      for (const waiters of waitersByTask.values()) {
+        for (const resolve of waiters) resolve(false);
+      }
+      waitersByTask.clear();
+      pending.clear();
     };
   }, []);
 
-  function scheduleTaskPersist(taskId: string, updates: Partial<Task>) {
-    const normalizedUpdates = normalizeScheduleUpdates(updates);
-    const merged = normalizeScheduleUpdates({
-      ...(pendingTaskUpdates.current.get(taskId) ?? {}),
-      ...normalizedUpdates,
-    });
-    pendingTaskUpdates.current.set(taskId, merged);
+  function settlePendingTaskUpdateWaiters(taskId: string, success: boolean) {
+    const waiters = pendingTaskUpdateWaiters.current.get(taskId);
+    if (!waiters) return;
+    pendingTaskUpdateWaiters.current.delete(taskId);
+    for (const resolve of waiters) resolve(success);
+  }
 
-    setGroups((prev) =>
-      replaceTaskOnBoard(
-        prev,
+  function scheduleTaskPersist(
+    taskId: string,
+    updates: Partial<Task>,
+  ): Promise<boolean> {
+    return new Promise((resolve) => {
+      const waiters = pendingTaskUpdateWaiters.current.get(taskId) ?? [];
+      waiters.push(resolve);
+      pendingTaskUpdateWaiters.current.set(taskId, waiters);
+
+      const normalizedUpdates = normalizeScheduleUpdates(updates);
+      const merged = normalizeScheduleUpdates({
+        ...(pendingTaskUpdates.current.get(taskId) ?? {}),
+        ...normalizedUpdates,
+      });
+      pendingTaskUpdates.current.set(taskId, merged);
+
+      setGroups((prev) =>
+        replaceTaskOnBoard(
+          prev,
+          taskId,
+          (task) => ({ ...task, ...merged }),
+          todayViewDate,
+        ),
+      );
+
+      const existing = updateTimers.current.get(taskId);
+      if (existing) clearTimeout(existing);
+
+      updateTimers.current.set(
         taskId,
-        (task) => ({ ...task, ...merged }),
-        todayViewDate,
-      ),
-    );
-
-    const existing = updateTimers.current.get(taskId);
-    if (existing) clearTimeout(existing);
-
-    updateTimers.current.set(
-      taskId,
-      setTimeout(async () => {
-        updateTimers.current.delete(taskId);
-        const payload = pendingTaskUpdates.current.get(taskId);
-        if (!payload) return;
-
-        try {
-          const updated = await updateTask(taskId, payload);
-          const stillPending = pendingTaskUpdates.current.get(taskId);
-          if (stillPending) {
-            const remaining: Partial<Task> = { ...stillPending };
-            for (const key of Object.keys(payload) as (keyof Task)[]) {
-              if (remaining[key] === payload[key]) {
-                delete remaining[key];
-              }
-            }
-            if (Object.keys(remaining).length === 0) {
-              pendingTaskUpdates.current.delete(taskId);
-            } else {
-              pendingTaskUpdates.current.set(taskId, remaining);
-            }
+        setTimeout(async () => {
+          updateTimers.current.delete(taskId);
+          const payload = pendingTaskUpdates.current.get(taskId);
+          if (!payload) {
+            settlePendingTaskUpdateWaiters(taskId, false);
+            return;
           }
 
-          setGroups((prev) => {
-            let next = syncTaskOnBoard(prev, updated, todayViewDate);
-            const overlay = pendingTaskUpdates.current.get(taskId);
-            if (overlay && Object.keys(overlay).length > 0) {
-              next = replaceTaskOnBoard(
-                next,
-                taskId,
-                (task) => ({ ...task, ...overlay }),
-                todayViewDate,
-              );
+          try {
+            const updated = await updateTask(taskId, payload);
+            const stillPending = pendingTaskUpdates.current.get(taskId);
+            let hasRemaining = false;
+            if (stillPending) {
+              const remaining: Partial<Task> = { ...stillPending };
+              for (const key of Object.keys(payload) as (keyof Task)[]) {
+                if (remaining[key] === payload[key]) {
+                  delete remaining[key];
+                }
+              }
+              hasRemaining = Object.keys(remaining).length > 0;
+              if (hasRemaining) {
+                pendingTaskUpdates.current.set(taskId, remaining);
+              } else {
+                pendingTaskUpdates.current.delete(taskId);
+              }
             }
-            return next;
-          });
-        } catch (err) {
-          pendingTaskUpdates.current.delete(taskId);
-          setError(
-            err instanceof TasksError ? err.message : "Failed to save task.",
-          );
-          void loadBoard();
-        }
-      }, 350),
-    );
+
+            setGroups((prev) => {
+              let next = syncTaskOnBoard(prev, updated, todayViewDate);
+              const overlay = pendingTaskUpdates.current.get(taskId);
+              if (overlay && Object.keys(overlay).length > 0) {
+                next = replaceTaskOnBoard(
+                  next,
+                  taskId,
+                  (task) => ({ ...task, ...overlay }),
+                  todayViewDate,
+                );
+              }
+              return next;
+            });
+            if (!hasRemaining) settlePendingTaskUpdateWaiters(taskId, true);
+          } catch (err) {
+            pendingTaskUpdates.current.delete(taskId);
+            settlePendingTaskUpdateWaiters(taskId, false);
+            setError(
+              err instanceof TasksError ? err.message : "Failed to save task.",
+            );
+            void loadBoard();
+          }
+        }, 350),
+      );
+    });
   }
 
   async function handleCreateTask(
@@ -277,7 +312,7 @@ export function TasksPageContent() {
       scheduledDate?: string | null;
       planningState?: "none" | "later";
     },
-  ) {
+  ): Promise<boolean> {
     setError(null);
     const orgGroup = groups.find(
       (item) =>
@@ -324,14 +359,19 @@ export function TasksPageContent() {
           selectTask(created.id);
         },
       });
+      return true;
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to create task.",
       );
+      return false;
     }
   }
 
-  async function handleUpdateTask(taskId: string, updates: Partial<Task>) {
+  async function handleUpdateTask(
+    taskId: string,
+    updates: Partial<Task>,
+  ): Promise<boolean> {
     const normalizedUpdates = normalizeScheduleUpdates(updates);
 
     if (
@@ -339,8 +379,7 @@ export function TasksPageContent() {
       "description" in normalizedUpdates ||
       normalizedUpdates.scheduled_time !== undefined
     ) {
-      scheduleTaskPersist(taskId, normalizedUpdates);
-      return;
+      return scheduleTaskPersist(taskId, normalizedUpdates);
     }
 
     setGroups((prev) =>
@@ -355,11 +394,13 @@ export function TasksPageContent() {
     try {
       const updated = await updateTask(taskId, normalizedUpdates);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      return true;
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
+      return false;
     }
   }
 
@@ -451,28 +492,25 @@ export function TasksPageContent() {
     const previousGroupId = snapshot?.group_id ?? null;
     const targetGroup = groups.find((group) => group.id === targetGroupId);
 
-    let nextBoard = groups;
-    setGroups((prev) => {
-      const todayGroup = prev.find(isTodayGroup);
-      const laterGroup = prev.find(isLaterGroup);
-      const inboxGroup = prev.find(isInboxGroup);
-      nextBoard = moveTaskInBoard(
-        prev,
-        taskId,
-        {
-          groupId: targetGroupId,
-          beforeTaskId: null,
-          zone: "active",
-        },
-        {
-          todayGroupId: todayGroup?.id,
-          laterGroupId: laterGroup?.id,
-          inboxGroupId: inboxGroup?.id,
-          todayViewDate,
-        },
-      );
-      return nextBoard;
-    });
+    const todayGroup = groups.find(isTodayGroup);
+    const laterGroup = groups.find(isLaterGroup);
+    const inboxGroup = groups.find(isInboxGroup);
+    const nextBoard = moveTaskInBoard(
+      groups,
+      taskId,
+      {
+        groupId: targetGroupId,
+        beforeTaskId: null,
+        zone: "active",
+      },
+      {
+        todayGroupId: todayGroup?.id,
+        laterGroupId: laterGroup?.id,
+        inboxGroupId: inboxGroup?.id,
+        todayViewDate,
+      },
+    );
+    setGroups(nextBoard);
 
     try {
       await persistTaskBoardLayout(nextBoard, { todayViewDate });
@@ -510,35 +548,34 @@ export function TasksPageContent() {
     taskId: string,
   ) {
     setError(null);
+    let createdGroupId: string | null = null;
     try {
       const created = await createTaskGroup(input.title, {
         icon: input.icon,
         color: input.color,
       });
+      createdGroupId = created.id;
 
-      let nextBoard = groups;
-      setGroups((prev) => {
-        const withNewGroup = orderPinnedTaskGroups([
-          ...prev,
-          { ...created, tasks: [] },
-        ]);
-        nextBoard = moveTaskInBoard(
-          withNewGroup,
-          taskId,
-          {
-            groupId: created.id,
-            beforeTaskId: null,
-            zone: "active",
-          },
-          {
-            todayGroupId: withNewGroup.find(isTodayGroup)?.id,
-            laterGroupId: withNewGroup.find(isLaterGroup)?.id,
-            inboxGroupId: withNewGroup.find(isInboxGroup)?.id,
-            todayViewDate,
-          },
-        );
-        return nextBoard;
-      });
+      const withNewGroup = orderPinnedTaskGroups([
+        ...groups,
+        { ...created, tasks: [] },
+      ]);
+      const nextBoard = moveTaskInBoard(
+        withNewGroup,
+        taskId,
+        {
+          groupId: created.id,
+          beforeTaskId: null,
+          zone: "active",
+        },
+        {
+          todayGroupId: withNewGroup.find(isTodayGroup)?.id,
+          laterGroupId: withNewGroup.find(isLaterGroup)?.id,
+          inboxGroupId: withNewGroup.find(isInboxGroup)?.id,
+          todayViewDate,
+        },
+      );
+      setGroups(nextBoard);
 
       await persistTaskBoardLayout(nextBoard, { todayViewDate });
       return created.id;
@@ -548,6 +585,19 @@ export function TasksPageContent() {
           ? err.message
           : "Failed to create group.",
       );
+      if (createdGroupId) {
+        try {
+          await persistTaskBoardLayout(groups, { todayViewDate });
+        } catch {
+          // The reload below remains authoritative if compensation also fails.
+        }
+        try {
+          await deleteTaskGroup(createdGroupId);
+        } catch {
+          // Keep the original error visible; the reload reports any remaining state.
+        }
+      }
+      void loadBoard();
       throw err;
     }
   }
@@ -564,29 +614,37 @@ export function TasksPageContent() {
       selectTask(null);
     }
 
-    let committed = false;
-    const commitDelete = () => {
-      if (committed) return;
-      committed = true;
+    try {
       trackFeatureUsage("tasks", "delete", { task_id: taskId });
-      void deleteTask(taskId).catch((err) => {
-        setError(
-          err instanceof TasksError ? err.message : "Failed to delete task.",
-        );
-        void loadBoard();
+      await withdrawTask(taskId);
+      showActionToast({
+        message: "Task withdrawn",
+        icon: "trash",
+        actionLabel: "Restore",
+        onAction: () => {
+          void restoreTask(taskId)
+            .then((restored) => {
+              setGroups((prev) =>
+                addTaskToBoard(prev, restored, todayViewDate),
+              );
+            })
+            .catch((err) => {
+              setError(
+                err instanceof TasksError
+                  ? err.message
+                  : "Failed to restore task.",
+              );
+              void loadBoard();
+            });
+        },
       });
-    };
-
-    showActionToast({
-      message: "Task moved to Trash",
-      icon: "trash",
-      actionLabel: "Undo",
-      onAction: () => {
-        committed = true;
-        setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
-      },
-      onExpire: commitDelete,
-    });
+    } catch (err) {
+      setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
+      setError(
+        err instanceof TasksError ? err.message : "Failed to withdraw task.",
+      );
+      void loadBoard();
+    }
   }
 
   async function handleCreateGroup(input: {
@@ -667,7 +725,10 @@ export function TasksPageContent() {
     }
   }
 
-  async function handleRenameGroup(groupId: string, title: string) {
+  async function handleRenameGroup(
+    groupId: string,
+    title: string,
+  ): Promise<boolean> {
     setError(null);
     try {
       await updateTaskGroup(groupId, { title });
@@ -676,19 +737,21 @@ export function TasksPageContent() {
           group.id === groupId ? { ...group, title } : group,
         ),
       );
+      return true;
     } catch (err) {
       setError(
         err instanceof TaskGroupsError
           ? err.message
           : "Failed to rename group.",
       );
+      return false;
     }
   }
 
   async function handleUpdateGroupAppearance(
     groupId: string,
     input: { icon: string | null; color: string },
-  ) {
+  ): Promise<boolean> {
     setError(null);
     setGroups((prev) =>
       prev.map((group) =>
@@ -703,6 +766,7 @@ export function TasksPageContent() {
         icon: input.icon,
         color: input.color,
       });
+      return true;
     } catch (err) {
       setError(
         err instanceof TaskGroupsError
@@ -710,6 +774,7 @@ export function TasksPageContent() {
           : "Failed to update group appearance.",
       );
       void loadBoard();
+      return false;
     }
   }
 
@@ -801,7 +866,8 @@ export function TasksPageContent() {
     const snapshot = task;
 
     if (planningState === "later") {
-      await handleMoveToLater(taskId);
+      const movedToLater = await handleMoveToLater(taskId);
+      if (!movedToLater) return;
       if (!options?.silent) {
         showActionToast({
           message: "Moved to Later",
@@ -820,7 +886,8 @@ export function TasksPageContent() {
       return;
     }
 
-    await handleClearPlanningState(taskId);
+    const clearedPlanningState = await handleClearPlanningState(taskId);
+    if (!clearedPlanningState) return;
     if (!options?.silent) {
       showActionToast({
         message: "Set to Normal",
@@ -834,7 +901,7 @@ export function TasksPageContent() {
     }
   }
 
-  async function handleMoveToLater(taskId: string) {
+  async function handleMoveToLater(taskId: string): Promise<boolean> {
     setError(null);
 
     const laterUpdates = getLaterPlanningTaskUpdates();
@@ -856,6 +923,7 @@ export function TasksPageContent() {
     try {
       const updated = await updateTask(taskId, laterUpdates);
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      return true;
     } catch (err) {
       setError(
         err instanceof TasksError
@@ -863,10 +931,11 @@ export function TasksPageContent() {
           : "Failed to move task to Later.",
       );
       void loadBoard();
+      return false;
     }
   }
 
-  async function handleClearPlanningState(taskId: string) {
+  async function handleClearPlanningState(taskId: string): Promise<boolean> {
     setError(null);
     setGroups((prev) =>
       replaceTaskOnBoard(
@@ -880,11 +949,13 @@ export function TasksPageContent() {
     try {
       const updated = await updateTask(taskId, { planning_state: "none" });
       setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+      return true;
     } catch (err) {
       setError(
         err instanceof TasksError ? err.message : "Failed to update task.",
       );
       void loadBoard();
+      return false;
     }
   }
 

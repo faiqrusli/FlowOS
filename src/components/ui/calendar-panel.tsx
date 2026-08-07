@@ -47,8 +47,8 @@ export function CalendarPanel({
   }, [value, today]);
 
   const monthCells = useMemo(
-    () => getCalendarMonthGrid(viewYear, viewMonth, today),
-    [viewMonth, viewYear, today],
+    () => getCalendarMonthGrid(viewYear, viewMonth),
+    [viewMonth, viewYear],
   );
 
   function goToMonth(delta: number) {

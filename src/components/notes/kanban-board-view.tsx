@@ -33,7 +33,6 @@ import {
 import { TaskBoardInsertLine } from "@/components/tasks/task-board-insert-line";
 import {
   kanbanCardClass,
-  kanbanCardEditingClass,
   kanbanColumnBodyClass,
   kanbanColumnHeaderClass,
 } from "@/lib/theme/surface-classes";
@@ -230,15 +229,6 @@ export function KanbanBoardView({
     setColumnTitleDraft(column.title);
     onFocusColumnHandled?.();
   }, [focusColumnId, board.columns, onFocusColumnHandled]);
-
-  useEffect(() => {
-    return () => {
-      stopBoardAutoScroll();
-      removeDocumentDragOverListener();
-      detachCardPointerListeners();
-      destroyTaskDragPreview();
-    };
-  }, []);
 
   function removeDocumentDragOverListener() {
     if (!documentDragOverRef.current) return;
@@ -720,6 +710,15 @@ export function KanbanBoardView({
       persistBoardLayoutInBackground(boardToPersist, snapshot);
     }
   }
+
+  useEffect(() => {
+    return () => {
+      stopBoardAutoScroll();
+      removeDocumentDragOverListener();
+      detachCardPointerListeners();
+      destroyTaskDragPreview();
+    };
+  }, []);
 
   function toggleCollapsed(columnId: string) {
     setCollapsed((prev) => {
@@ -1761,7 +1760,7 @@ const KanbanColumnTitle = memo(function KanbanColumnTitle({
 
     const focusField = () => {
       if (editFocus?.mode === "point") {
-        focusInputAtPoint(el, editFocus.x, editFocus.y);
+        focusInputAtPoint(el, editFocus.x);
       } else {
         focusInputAtEnd(el);
       }

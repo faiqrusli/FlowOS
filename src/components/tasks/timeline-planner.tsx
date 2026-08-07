@@ -135,7 +135,6 @@ import {
   type TimelineEntryKind,
   type TimelineZoom,
 } from "@/lib/timeline-layout";
-import { formatDurationLabel } from "@/lib/schedule-layout";
 import { SCHEDULE_BLOCK_CURRENT_CLASS } from "@/lib/schedule-palette";
 import { formatHabitTimeRangeWithDuration } from "@/lib/habit-duration";
 import { timelineHabitBlockClassNames } from "@/lib/timeline-habit-appearance";
@@ -167,6 +166,8 @@ import {
   resolveQuickScheduleInboxDropZoneFromTarget,
   type QuickScheduleInboxDropZone,
 } from "@/lib/timeline-drag";
+import { routeBoardPointerEnd } from "@/lib/timeline-drag-pointer";
+import { activateTimelineEntryFromKeyboard } from "@/lib/timeline-entry-keyboard";
 import {
   closeTaskDetailMenus,
   isEventTargetInside,
@@ -210,7 +211,10 @@ export type TimelinePlannerProps = {
     },
   ) => Promise<void>;
   onToggleComplete: (task: Task) => Promise<void>;
-  onUpdateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<Task>,
+  ) => Promise<void> | Promise<boolean>;
   onDeleteTask: (taskId: string) => Promise<void>;
   onDuplicateTask: (task: Task) => Promise<void>;
   onSetPlanningState?: (
@@ -234,7 +238,10 @@ export type TimelinePlannerProps = {
     updates: { scheduled_time: string | null },
     scheduleDate: string,
   ) => Promise<void>;
-  onToggleHabitComplete?: (habit: Habit) => Promise<void>;
+  onToggleHabitComplete?: (
+    habit: Habit,
+    dateKey: string,
+  ) => Promise<void>;
 };
 
 type DragSource = "pool" | "unscheduled" | "timeline";
@@ -335,7 +342,6 @@ export function TimelinePlanner({
   const [timelineVisibility, setTimelineVisibility] =
     useState<WorkplaceModuleVisibility>("always");
   const [timelineHovered, setTimelineHovered] = useState(false);
-  const useCompactChrome = isDrawer || isWorkplace;
   const useDrawerTimeline = isDrawer || isWorkplace;
   const showTaskPool = isFullscreen;
   const showHabitTimeline = habits.length > 0 && Boolean(onScheduleHabit);
@@ -461,6 +467,7 @@ export function TimelinePlanner({
         : "border-divider";
   const nowHour = useMemo(() => {
     if (!isViewingToday) return null;
+    void nowTick;
     return Math.floor(getNowMinutesInAppTimezone() / 60);
   }, [isViewingToday, nowTick]);
 
@@ -471,6 +478,7 @@ export function TimelinePlanner({
 
   const dayHabits = useMemo(() => {
     if (!showHabitTimeline) return [];
+    void habitScheduleRevision;
     return filterHabitsForViewDate(habits, viewDate).map((habit) => ({
       ...habit,
       scheduled_time: getEffectiveHabitScheduledTime(
@@ -1306,18 +1314,36 @@ export function TimelinePlanner({
       syncBoardPointerDrag(event.clientX, event.clientY);
     };
 
-    const onPointerEnd = (event: globalThis.PointerEvent) => {
-      void commitBoardPointerDrop(event.clientX, event.clientY);
+    const onPointerUp = (event: globalThis.PointerEvent) => {
+      routeBoardPointerEnd(
+        {
+          type: "pointerup",
+          clientX: event.clientX,
+          clientY: event.clientY,
+        },
+        {
+          onCommit: (clientX, clientY) => {
+            void commitBoardPointerDrop(clientX, clientY);
+          },
+          onCancel: () => {},
+        },
+      );
+    };
+    const onPointerCancel = () => {
+      stopTimelineAutoScroll();
+      setDropPreviewMinutes(null);
+      dropPreviewMinutesRef.current = null;
+      clearInboxDropHighlight();
     };
 
     document.addEventListener("pointermove", onPointerMove);
-    document.addEventListener("pointerup", onPointerEnd, true);
-    document.addEventListener("pointercancel", onPointerEnd, true);
+    document.addEventListener("pointerup", onPointerUp, true);
+    document.addEventListener("pointercancel", onPointerCancel, true);
 
     return () => {
       document.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("pointerup", onPointerEnd, true);
-      document.removeEventListener("pointercancel", onPointerEnd, true);
+      document.removeEventListener("pointerup", onPointerUp, true);
+      document.removeEventListener("pointercancel", onPointerCancel, true);
     };
   }, [clearInboxDropHighlight]);
 
@@ -1677,7 +1703,7 @@ export function TimelinePlanner({
                   if (block.kind === "task" && block.task) {
                     void onToggleComplete(block.task);
                   } else if (block.kind === "habit" && block.habit) {
-                    void onToggleHabitComplete?.(block.habit);
+                    void onToggleHabitComplete?.(block.habit, viewDate);
                   }
                 }}
                 onUpdateDuration={(minutes) => {
@@ -2050,7 +2076,7 @@ export function TimelinePlanner({
                               onSelectTask(null);
                             }}
                             onToggleComplete={() =>
-                              void onToggleHabitComplete?.(habit)
+                              void onToggleHabitComplete?.(habit, viewDate)
                             }
                             onContextMenu={(event) => {
                               event.preventDefault();
@@ -2150,7 +2176,7 @@ export function TimelinePlanner({
                                     onSelectTask(null);
                                   }}
                                   onToggleComplete={() =>
-                                    void onToggleHabitComplete?.(habit)
+                                    void onToggleHabitComplete?.(habit, viewDate)
                                   }
                                   onContextMenu={(event) => {
                                     event.preventDefault();
@@ -2627,11 +2653,17 @@ function TimelinePoolChip({
     <div
       data-timeline-entry={task.id}
       data-timeline-kind="task"
+      role="button"
+      tabIndex={0}
+      aria-label={task.title}
       draggable
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onContextMenu={onContextMenu}
       onClick={onSelect}
+      onKeyDown={(event) =>
+        activateTimelineEntryFromKeyboard(event, onSelect)
+      }
       onDoubleClick={(event) => {
         event.preventDefault();
         onOpenDetail();
@@ -2742,6 +2774,9 @@ function TimelineScheduledBlock({
     <div
       data-timeline-entry={block.id}
       data-timeline-kind={block.kind}
+      role="button"
+      tabIndex={0}
+      aria-label={isHabit ? "Scheduled habit" : "Scheduled task"}
       data-timeline-in-focus={inFocus ? "true" : undefined}
       data-focus-softened={focusSoftened ? "true" : undefined}
       draggable={!completed}
@@ -2749,6 +2784,9 @@ function TimelineScheduledBlock({
       onDragEnd={onDragEnd}
       onContextMenu={onContextMenu}
       onClick={onSelect}
+      onKeyDown={(event) =>
+        activateTimelineEntryFromKeyboard(event, onSelect)
+      }
       onDoubleClick={(event) => {
         if (!isHabit) {
           event.preventDefault();
@@ -2913,11 +2951,17 @@ function TimelineHabitChip({
     <div
       data-timeline-entry={habit.id}
       data-timeline-kind="habit"
+      role="button"
+      tabIndex={0}
+      aria-label="Scheduled habit"
       draggable={!completed}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onContextMenu={onContextMenu}
       onClick={onSelect}
+      onKeyDown={(event) =>
+        activateTimelineEntryFromKeyboard(event, onSelect)
+      }
       className={cn(
         "group flex w-full items-center gap-1.5 border-0 transition-[box-shadow] duration-150",
         completed ? "cursor-default" : "cursor-grab active:cursor-grabbing",

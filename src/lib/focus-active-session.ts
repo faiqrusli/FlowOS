@@ -10,6 +10,10 @@ import type { NextUpItem } from "@/types/next-up";
 
 export const FOCUS_ACTIVE_SESSION_KEY = "flowos.focus.active";
 
+export function focusActiveSessionStorageKey(userId: string): string {
+  return `${FOCUS_ACTIVE_SESSION_KEY}:${userId}`;
+}
+
 export type ActiveSessionStatus = "in_progress" | "paused";
 export type ActiveTimerType = "quick" | "pomodoro";
 
@@ -46,9 +50,10 @@ export type StoredActiveFocusSession = {
   nextUpDismissedSuggestions?: Record<string, string> | null;
 };
 
-export function readActiveSession(): StoredActiveFocusSession | null {
+export function readActiveSession(userId: string | null): StoredActiveFocusSession | null {
+  if (!userId) return null;
   const parsed = readStorageJson<StoredActiveFocusSession | null>(
-    FOCUS_ACTIVE_SESSION_KEY,
+    focusActiveSessionStorageKey(userId),
     null
   );
   if (
@@ -66,12 +71,17 @@ export function readActiveSession(): StoredActiveFocusSession | null {
   };
 }
 
-export function writeActiveSession(session: StoredActiveFocusSession): void {
-  writeStorageJson(FOCUS_ACTIVE_SESSION_KEY, session);
+export function writeActiveSession(
+  userId: string | null,
+  session: StoredActiveFocusSession,
+): void {
+  if (!userId) return;
+  writeStorageJson(focusActiveSessionStorageKey(userId), session);
 }
 
-export function clearActiveSession(): void {
-  removeStorageItem(FOCUS_ACTIVE_SESSION_KEY);
+export function clearActiveSession(userId: string | null): void {
+  if (!userId) return;
+  removeStorageItem(focusActiveSessionStorageKey(userId));
 }
 
 export function getSegmentElapsedSeconds(

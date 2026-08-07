@@ -8,6 +8,7 @@ import {
   reconcileCompletionsWithHabits,
   removeAllHabitCompletions,
   removeHabitCompletion,
+  wasLastHabitCompletionsRemoteLoadSuccessful,
 } from "@/lib/habit-completions-store";
 import { DAYS_OF_WEEK, type Habit, type HabitInsert, type HabitUpdate } from "@/types/habit";
 
@@ -52,10 +53,6 @@ export function isHabitScheduledToday(habit: Habit, dayAbbrev = getTodayDayAbbre
   return habit.days_of_week.includes(dayAbbrev);
 }
 
-function isHabitCompletedToday(habit: Habit): boolean {
-  const today = getTodayDateString();
-  return isHabitCompletedOnDate(habit, today);
-}
 
 export function isHabitCompletedOnDate(habit: Habit, dateKey: string): boolean {
   if (getHabitCompletionDates(habit.id).includes(dateKey)) {
@@ -68,8 +65,11 @@ export function isHabitCompletedOnDate(habit: Habit, dateKey: string): boolean {
 export async function fetchHabitsWithCompletions(): Promise<Habit[]> {
   const habits = await fetchHabits();
   await loadHabitCompletions();
-  reconcileCompletionsWithHabits(habits);
-  return resetStaleHabitCompletedFlags(habits);
+  const hydratedHabits = wasLastHabitCompletionsRemoteLoadSuccessful()
+    ? await resetStaleHabitCompletedFlags(habits)
+    : habits;
+  reconcileCompletionsWithHabits(hydratedHabits);
+  return hydratedHabits;
 }
 
 async function resetStaleHabitCompletedFlags(habits: Habit[]): Promise<Habit[]> {
@@ -137,15 +137,19 @@ export async function updateHabit(id: string, input: HabitUpdate): Promise<Habit
   return data;
 }
 
-export async function toggleHabitComplete(habit: Habit): Promise<Habit> {
+export async function toggleHabitComplete(
+  habit: Habit,
+  dateKey?: string,
+): Promise<Habit> {
   const today = getTodayDateString();
-  const isComplete = isHabitCompletedToday(habit);
+  const targetDate = dateKey ?? today;
+  const isComplete = isHabitCompletedOnDate(habit, targetDate);
 
   try {
     if (isComplete) {
-      await removeHabitCompletion(habit.id, today);
+      await removeHabitCompletion(habit.id, targetDate);
     } else {
-      await recordHabitCompletion(habit.id, today);
+      await recordHabitCompletion(habit.id, targetDate);
     }
   } catch (error) {
     throw new HabitsError(
@@ -154,6 +158,8 @@ export async function toggleHabitComplete(habit: Habit): Promise<Habit> {
         : "Failed to save the habit completion."
     );
   }
+
+  if (targetDate !== today) return habit;
 
   return updateHabit(habit.id, { completed: !isComplete });
 }

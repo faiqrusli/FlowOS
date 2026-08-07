@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { GrowthAreaIconChooser } from "@/components/notes/growth-area-icon-chooser";
 import { TaskGroupIdentityMark } from "@/components/tasks/task-group-identity-mark";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
@@ -32,7 +32,7 @@ type TaskGroupAppearanceDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   group: Pick<TaskGroup, "id" | "slug" | "title" | "icon" | "color"> | null;
-  onSave: (input: TaskGroupAppearanceInput) => Promise<void>;
+  onSave: (input: TaskGroupAppearanceInput) => Promise<boolean>;
 };
 
 export function TaskGroupAppearanceDialog({
@@ -41,20 +41,15 @@ export function TaskGroupAppearanceDialog({
   group,
   onSave,
 }: TaskGroupAppearanceDialogProps) {
-  const [icon, setIcon] = useState<string | null>(null);
-  const [color, setColor] = useState<TaskGroupColorKey>("blue");
+  const [icon, setIcon] = useState<string | null>(() =>
+    group?.icon?.trim() || null,
+  );
+  const [color, setColor] = useState<TaskGroupColorKey>(() =>
+    group ? getTaskGroupAppearance(group).colorKey : "blue",
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [iconChooserOpen, setIconChooserOpen] = useState(false);
-
-  useEffect(() => {
-    if (!open || !group) return;
-    const appearance = getTaskGroupAppearance(group);
-    setIcon(group.icon?.trim() || null);
-    setColor(appearance.colorKey);
-    setError(null);
-    setIconChooserOpen(false);
-  }, [open, group]);
 
   const previewAppearance = useMemo(
     () =>
@@ -73,11 +68,11 @@ export function TaskGroupAppearanceDialog({
     setSubmitting(true);
     setError(null);
     try {
-      await onSave({
+      const saved = await onSave({
         icon: icon?.trim() || null,
         color,
       });
-      onOpenChange(false);
+      if (saved) onOpenChange(false);
     } catch {
       setError("Failed to update appearance.");
     } finally {

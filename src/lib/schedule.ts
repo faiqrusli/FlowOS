@@ -16,7 +16,6 @@ import {
 import type { Habit } from "@/types/habit";
 import type { ScheduleData, ScheduleItem } from "@/types/schedule";
 import type { Task } from "@/types/task";
-import type { TaskBuckets } from "@/lib/tasks";
 
 export class ScheduleError extends Error {
   constructor(message: string) {

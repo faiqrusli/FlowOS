@@ -85,8 +85,6 @@ function insertTaskWithManualOrder(
   target: TaskDragTarget,
   todayViewDate: string
 ): TaskGroupWithTasks {
-  const { completed } = partitionGroupTasks(group.tasks);
-
   if (target.zone === "completed") {
     const list = [...getDisplayedCompletedTasks(group, group.tasks, todayViewDate)];
     const insertIndex =

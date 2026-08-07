@@ -65,14 +65,16 @@ export function SidebarNotesPanel() {
     openFloatingNote,
     updateFloatingNote,
     floatingNotes,
+    currentUserId,
+    authReady,
   } = useGlobalRightSidebar();
 
-  const cached = getSidebarNotesCache();
+  const cached = authReady ? getSidebarNotesCache(currentUserId) : null;
   const [areas, setAreas] = useState<GrowthAreaWithCounts[]>(
     cached?.areas ?? [],
   );
   const [notes, setNotes] = useState<Note[]>(cached?.notes ?? []);
-  const [refreshing, setRefreshing] = useState(!cached);
+  const [refreshing, setRefreshing] = useState(true);
   const [search, setSearch] = useState("");
   const [preview, setPreview] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -80,26 +82,44 @@ export function SidebarNotesPanel() {
   const [collapsedAreas, setCollapsedAreas] = useState<Set<string>>(new Set());
   const [openMenuNoteId, setOpenMenuNoteId] = useState<string | null>(null);
   const [moveNoteId, setMoveNoteId] = useState<string | null>(null);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  const retryCounts = useRef(new Map<string, number>());
   const titleInputRef = useRef<HTMLInputElement>(null);
   const pendingPatchById = useRef(new Map<string, NoteTextPatch>());
   const savingIds = useRef(new Set<string>());
+  const loadGenerationRef = useRef(0);
   const notesRef = useRef(notes);
   notesRef.current = notes;
   const todayKey = getTodayDateString();
 
+  useEffect(() => {
+    const timers = saveTimers.current;
+    const pendingPatches = pendingPatchById.current;
+    const saving = savingIds.current;
+    return () => {
+      for (const timer of timers.values()) clearTimeout(timer);
+      timers.clear();
+      pendingPatches.clear();
+      saving.clear();
+    };
+  }, []);
+
   const loadNotes = useCallback(
     async (background = false) => {
+      if (!authReady || !currentUserId) return;
+      const owner = currentUserId;
+      const generation = ++loadGenerationRef.current;
       if (!background) setRefreshing(true);
       try {
         const [data, todayNote] = await Promise.all([
           fetchSidebarNotesData(),
           getDailyNoteByDate(todayKey),
         ]);
+        if (generation !== loadGenerationRef.current) return;
         setAreas(data.areas);
         setNotes((current) => {
           if (pendingPatchById.current.size === 0) {
-            setSidebarNotesCache(data.areas, data.notes);
+            setSidebarNotesCache(owner, data.areas, data.notes);
             return data.notes;
           }
           // Keep in-progress text when a background refresh arrives mid-edit.
@@ -111,7 +131,7 @@ export function SidebarNotesPanel() {
             }
             return remote;
           });
-          setSidebarNotesCache(data.areas, merged);
+          setSidebarNotesCache(owner, data.areas, merged);
           return merged;
         });
         setTodayDailyNoteId(todayNote?.id ?? null);
@@ -119,13 +139,23 @@ export function SidebarNotesPanel() {
         setRefreshing(false);
       }
     },
-    [todayKey],
+    [authReady, currentUserId, todayKey],
   );
 
   useEffect(() => {
-    const snapshot = getSidebarNotesCache();
+    loadGenerationRef.current += 1;
+    for (const timer of saveTimers.current.values()) clearTimeout(timer);
+    saveTimers.current.clear();
+    savingIds.current.clear();
+    retryCounts.current.clear();
+    setAreas([]);
+    setNotes([]);
+    setSaveError(false);
+    pendingPatchById.current.clear();
+    if (!authReady || !currentUserId) return;
+    const snapshot = getSidebarNotesCache(currentUserId);
     void loadNotes(Boolean(snapshot));
-  }, [loadNotes, notesRefreshKey]);
+  }, [authReady, currentUserId, loadNotes, notesRefreshKey]);
 
   const selected = useMemo(
     () => notes.find((note) => note.id === selectedNoteId) ?? null,
@@ -179,6 +209,8 @@ export function SidebarNotesPanel() {
 
   const persistNote = useCallback(
     async (id: string, patch: { title?: string; content?: string }) => {
+      const owner = currentUserId;
+      if (!authReady || !owner) return;
       setSaveError(false);
       savingIds.current.add(id);
       const sentText: NoteTextPatch = {
@@ -193,7 +225,7 @@ export function SidebarNotesPanel() {
               ? mergeNotePreserveLocalText(note, updated)
               : note,
           );
-          setSidebarNotesCache(areas, next);
+          setSidebarNotesCache(owner, areas, next);
           notesRef.current = next;
           return next;
         });
@@ -204,20 +236,28 @@ export function SidebarNotesPanel() {
           scheduleSave(id);
         } else {
           pendingPatchById.current.delete(id);
+          retryCounts.current.delete(id);
         }
       } catch (err) {
         console.error("[notes] autosave failed", err);
         setSaveError(true);
+        const retries = retryCounts.current.get(id) ?? 0;
+        if (retries < 1) {
+          retryCounts.current.set(id, retries + 1);
+          scheduleSave(id, 2_000);
+        }
       } finally {
         savingIds.current.delete(id);
       }
     },
-    [areas, updateFloatingNote],
+    [areas, authReady, currentUserId, scheduleSave, updateFloatingNote],
   );
 
-  function scheduleSave(id: string) {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
+  function scheduleSave(id: string, delay = 800) {
+    const existing = saveTimers.current.get(id);
+    if (existing) clearTimeout(existing);
+    saveTimers.current.set(id, setTimeout(() => {
+      saveTimers.current.delete(id);
       const pending = pendingPatchById.current.get(id);
       if (!pending) return;
       if (savingIds.current.has(id)) {
@@ -225,16 +265,17 @@ export function SidebarNotesPanel() {
         return;
       }
       void persistNote(id, { ...pending });
-    }, 800);
+    }, delay));
   }
 
   function updateLocal(id: string, patch: Partial<Note>) {
+    if (!authReady || !currentUserId) return;
     setSaveError(false);
     setNotes((current) => {
       const next = current.map((note) =>
         note.id === id ? { ...note, ...patch } : note,
       );
-      setSidebarNotesCache(areas, next);
+      setSidebarNotesCache(currentUserId, areas, next);
       notesRef.current = next;
       return next;
     });
@@ -251,8 +292,9 @@ export function SidebarNotesPanel() {
   }
 
   async function handleToggleMenuPin(note: Note) {
+    if (!authReady || !currentUserId) return;
     const updated = await setNoteMenuPinned(note.id, !note.is_menu_pinned);
-    upsertSidebarNoteInCache(updated);
+    if (currentUserId) upsertSidebarNoteInCache(currentUserId, updated);
     setNotes((current) =>
       current.map((item) => (item.id === updated.id ? updated : item)),
     );
@@ -260,15 +302,17 @@ export function SidebarNotesPanel() {
   }
 
   async function handleDelete(note: Note) {
+    if (!authReady || !currentUserId) return;
     await deleteNote(note.id);
-    removeSidebarNoteFromCache(note.id);
+    if (currentUserId) removeSidebarNoteFromCache(currentUserId, note.id);
     setNotes((current) => current.filter((item) => item.id !== note.id));
     if (selectedNoteId === note.id) selectNote(null);
   }
 
   async function handleMove(noteId: string, targetAreaId: string) {
+    if (!authReady || !currentUserId) return;
     const updated = await moveNote(noteId, targetAreaId);
-    upsertSidebarNoteInCache(updated);
+    if (currentUserId) upsertSidebarNoteInCache(currentUserId, updated);
     setNotes((current) =>
       current.map((note) => (note.id === updated.id ? updated : note)),
     );

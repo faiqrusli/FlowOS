@@ -218,7 +218,6 @@ export function WorkplaceFocusCard({
   onToggleHabitComplete,
   onOpenDetail,
   onOpenHabit,
-  onContinueLater,
   onContinueTomorrow,
   onPlanLater,
   onDeleteTask,

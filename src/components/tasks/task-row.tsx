@@ -10,7 +10,6 @@ import {
   useState,
   useSyncExternalStore,
   type MouseEvent,
-  type PointerEvent,
   type ReactNode,
   type RefObject,
 } from "react";
@@ -21,7 +20,6 @@ import {
   Bell,
   CalendarDays,
   CheckCircle2,
-  ChevronDown,
   Circle,
   Copy,
   Trash2,
@@ -39,7 +37,6 @@ import {
 } from "@/lib/task-alert-before-options";
 import { requestBrowserNotificationPermissionIfNeeded } from "@/lib/browser-notifications";
 import { useOptionalActionToast } from "@/contexts/action-toast-context";
-import { getTodayDateString } from "@/lib/date-utils";
 import {
   normalizePlanningState,
   PLANNING_STATE_CONFIG,
@@ -91,6 +88,18 @@ function isTaskTitleTarget(target: EventTarget | null): boolean {
   return Boolean(element?.closest("[data-task-title]"));
 }
 
+const subscribeToNothing = () => () => {};
+const clientMountedSnapshot = () => true;
+const serverMountedSnapshot = () => false;
+
+function useMountedPortal(): boolean {
+  return useSyncExternalStore(
+    subscribeToNothing,
+    clientMountedSnapshot,
+    serverMountedSnapshot,
+  );
+}
+
 type TaskRowProps = {
   task: Task;
   groupId: string;
@@ -106,7 +115,7 @@ type TaskRowProps = {
   onDuplicate?: () => void;
   onMoveToGroup?: (groupId: string) => void;
   onDelete?: () => void;
-  onUpdate?: (updates: Partial<Task>) => void;
+  onUpdate?: (updates: Partial<Task>) => void | Promise<boolean>;
   onSetPlanningState?: (planningState: PlanningState) => void;
   onRequestCreateGroup?: () => void;
 };
@@ -192,7 +201,7 @@ function TaskPriorityMenuPopover({
   popoverRef: RefObject<HTMLDivElement | null>;
   onUpdate: (updates: Partial<Task>) => void;
 }) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMountedPortal();
   const [position, setPosition] = useState<{
     top: number;
     left: number;
@@ -229,10 +238,6 @@ function TaskPriorityMenuPopover({
     setPosition({ top, left });
   }, [anchorRef, popoverRef]);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   useLayoutEffect(() => {
     updatePosition();
     const frame = requestAnimationFrame(updatePosition);
@@ -249,11 +254,10 @@ function TaskPriorityMenuPopover({
     };
   }, [updatePosition]);
 
-  if (!mounted) return null;
+  if (!mounted || !position) return null;
 
-  const anchorRect = anchorRef.current?.getBoundingClientRect();
-  const top = position?.top ?? anchorRect?.top ?? 0;
-  const left = position?.left ?? (anchorRect ? anchorRect.right + 4 : 0);
+  const top = position.top;
+  const left = position.left;
 
   return createPortal(
     <div
@@ -372,7 +376,6 @@ function TaskDetailMenuPopover({
   onAddToToday,
   onSetPlanningState,
   onSetAlertBefore,
-  onCloseMenu,
   onDelete,
   onRequestCreateGroup,
 }: {
@@ -396,12 +399,11 @@ function TaskDetailMenuPopover({
     notification_enabled: boolean;
     notification_lead_minutes: number | null;
   }) => void;
-  onCloseMenu: () => void;
   onDelete: () => void;
   onRequestCreateGroup?: () => void;
 }) {
   const planningState = normalizePlanningState(task.planning_state);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMountedPortal();
   const [position, setPosition] = useState<{
     top: number;
     left: number;
@@ -431,30 +433,43 @@ function TaskDetailMenuPopover({
     },
   });
 
-  menuActionsRef.current = {
-    onDuplicate,
-    onDelete,
-    onMoveToGroup,
+  useEffect(() => {
+    menuActionsRef.current = {
+      onDuplicate,
+      onDelete,
+      onMoveToGroup,
+      onAddToToday,
+      onSetPlanningState,
+      onSetAlertBefore,
+      onRequestCreateGroup,
+      onOpenPlanningSubmenu: () => {
+        onMoveSubmenuOpenChange(false);
+        onAlertSubmenuOpenChange(false);
+        onPlanningSubmenuOpenChange(true);
+      },
+      onOpenMoveSubmenu: () => {
+        onPlanningSubmenuOpenChange(false);
+        onAlertSubmenuOpenChange(false);
+        onMoveSubmenuOpenChange(true);
+      },
+      onOpenAlertSubmenu: () => {
+        onPlanningSubmenuOpenChange(false);
+        onMoveSubmenuOpenChange(false);
+        onAlertSubmenuOpenChange(true);
+      },
+    };
+  }, [
     onAddToToday,
-    onSetPlanningState,
-    onSetAlertBefore,
+    onAlertSubmenuOpenChange,
+    onDelete,
+    onDuplicate,
+    onMoveSubmenuOpenChange,
+    onMoveToGroup,
+    onPlanningSubmenuOpenChange,
     onRequestCreateGroup,
-    onOpenPlanningSubmenu: () => {
-      onMoveSubmenuOpenChange(false);
-      onAlertSubmenuOpenChange(false);
-      onPlanningSubmenuOpenChange(true);
-    },
-    onOpenMoveSubmenu: () => {
-      onPlanningSubmenuOpenChange(false);
-      onAlertSubmenuOpenChange(false);
-      onMoveSubmenuOpenChange(true);
-    },
-    onOpenAlertSubmenu: () => {
-      onPlanningSubmenuOpenChange(false);
-      onMoveSubmenuOpenChange(false);
-      onAlertSubmenuOpenChange(true);
-    },
-  };
+    onSetAlertBefore,
+    onSetPlanningState,
+  ]);
 
   const menuCleanupRef = useRef<(() => void) | null>(null);
 
@@ -527,10 +542,6 @@ function TaskDetailMenuPopover({
     setPosition({ top, left });
   }, [anchorRef, pointerPosition, popoverRef]);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   useLayoutEffect(() => {
     updatePosition();
     const frame = requestAnimationFrame(updatePosition);
@@ -553,14 +564,10 @@ function TaskDetailMenuPopover({
     };
   }, [updatePosition]);
 
-  if (!mounted) return null;
+  if (!mounted || !position) return null;
 
-  const anchorRect = anchorRef.current?.getBoundingClientRect();
-  const top = position?.top ?? pointerPosition?.y ?? anchorRect?.top ?? 0;
-  const left =
-    position?.left ??
-    pointerPosition?.x ??
-    (anchorRect ? anchorRect.right + 6 : 0);
+  const top = position.top;
+  const left = position.left;
 
   return createPortal(
     <div
@@ -594,7 +601,6 @@ function TaskDetailMenuPopover({
           notificationEnabled={task.notification_enabled}
           leadMinutes={task.notification_lead_minutes}
           onCommit={(minutes) => onSetAlertBefore(applyPresetAlert(minutes))}
-          onCommitDone={onCloseMenu}
         />
         <button
           type="button"
@@ -723,7 +729,7 @@ function TaskDetailMenuPopover({
         data-task-menu-action="delete"
         className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive hover:bg-surface-hover"
       >
-        <Trash2 className="size-3.5" /> Delete
+        <Trash2 className="size-3.5" /> Remove
       </button>
     </div>,
     document.body,
@@ -750,7 +756,10 @@ export const TaskRow = memo(function TaskRow({
   onRequestCreateGroup: onRequestCreateGroupProp,
 }: TaskRowProps) {
   const groupsFromBoard = useOptionalTaskBoardGroups();
-  const groups = groupsProp ?? groupsFromBoard ?? [];
+  const groups = useMemo(
+    () => groupsProp ?? groupsFromBoard ?? [],
+    [groupsProp, groupsFromBoard],
+  );
   const boardActions = useOptionalTaskBoardActions();
   const actionToast = useOptionalActionToast();
 
@@ -798,12 +807,11 @@ export const TaskRow = memo(function TaskRow({
   }, [boardActions, onDeleteProp, task.id]);
 
   const onUpdate = useCallback(
-    (updates: Partial<Task>) => {
+    (updates: Partial<Task>): void | Promise<boolean> => {
       if (onUpdateProp) {
-        onUpdateProp(updates);
-        return;
+        return onUpdateProp(updates);
       }
-      boardActions?.onUpdateTask(task.id, updates);
+      return boardActions?.onUpdateTask(task.id, updates);
     },
     [boardActions, onUpdateProp, task.id],
   );
@@ -845,12 +853,16 @@ export const TaskRow = memo(function TaskRow({
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const detailPopoverRef = useRef<HTMLDivElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
-  const contextMenuPointRef = useRef<{ x: number; y: number } | null>(null);
+  const [contextMenuPoint, setContextMenuPoint] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const flagAnchorRef = useRef<HTMLDivElement>(null);
   const flagPopoverRef = useRef<HTMLDivElement>(null);
   const scheduleAnchorRef = useRef<HTMLDivElement>(null);
   const schedulePopoverRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const renameCommitInFlightRef = useRef(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [titleDraft, setTitleDraft] = useState(task.title);
   const priority = normalizeTaskPriority(task.priority);
@@ -874,11 +886,6 @@ export const TaskRow = memo(function TaskRow({
     : null;
   const showMetaRow = Boolean(scheduleLabel);
 
-  useEffect(() => {
-    if (!isRenaming) {
-      setTitleDraft(task.title);
-    }
-  }, [isRenaming, task.title]);
 
   useEffect(() => {
     if (!isRenaming) return;
@@ -919,13 +926,20 @@ export const TaskRow = memo(function TaskRow({
 
   const { cancelPendingOpenDetail, ...rowPointerHandlers } = rowPointerGesture;
 
-  const commitRename = useCallback(() => {
-    setIsRenaming(false);
+  const commitRename = useCallback(async () => {
+    if (renameCommitInFlightRef.current) return;
     const nextTitle = titleDraft.trim() || "Untitled";
-    setTitleDraft(nextTitle);
     if (nextTitle !== task.title) {
-      onUpdate({ title: nextTitle });
+      renameCommitInFlightRef.current = true;
+      try {
+        const updated = await onUpdate({ title: nextTitle });
+        if (updated === false) return;
+      } finally {
+        renameCommitInFlightRef.current = false;
+      }
     }
+    setIsRenaming(false);
+    setTitleDraft(nextTitle);
   }, [onUpdate, task.title, titleDraft]);
 
   const cancelRename = useCallback(() => {
@@ -979,24 +993,23 @@ export const TaskRow = memo(function TaskRow({
 
   const closeDetailMenu = useCallback(() => {
     setActiveTaskDetailMenuAnchor(null);
-  }, []);
-
-  useEffect(() => {
-    if (detailMenuOpen) return;
-    contextMenuPointRef.current = null;
+    setContextMenuPoint(null);
     setMoveSubmenuOpen(false);
     setPlanningSubmenuOpen(false);
     setAlertSubmenuOpen(false);
-  }, [detailMenuOpen]);
+  }, []);
 
   function handleContextMenu(event: MouseEvent<HTMLDivElement>) {
     event.preventDefault();
     setFlagMenuOpen(false);
     setScheduleOpen(false);
-    contextMenuPointRef.current = {
+    setMoveSubmenuOpen(false);
+    setPlanningSubmenuOpen(false);
+    setAlertSubmenuOpen(false);
+    setContextMenuPoint({
       x: event.clientX,
       y: event.clientY,
-    };
+    });
     setActiveTaskDetailMenuAnchor(menuAnchor);
   }
 
@@ -1184,8 +1197,9 @@ export const TaskRow = memo(function TaskRow({
             priority={priority}
             anchorRef={flagAnchorRef}
             popoverRef={flagPopoverRef}
-            onUpdate={(updates) => {
-              onUpdate(updates);
+            onUpdate={async (updates) => {
+              const updated = await onUpdate(updates);
+              if (updated === false) return;
               setFlagMenuOpen(false);
             }}
           />
@@ -1199,15 +1213,16 @@ export const TaskRow = memo(function TaskRow({
           moveTargets={moveTargets}
           anchorRef={rowRef}
           popoverRef={detailPopoverRef}
-          pointerPosition={contextMenuPointRef.current}
+          pointerPosition={contextMenuPoint}
           moveSubmenuOpen={moveSubmenuOpen}
           onMoveSubmenuOpenChange={setMoveSubmenuOpen}
           planningSubmenuOpen={planningSubmenuOpen}
           onPlanningSubmenuOpenChange={setPlanningSubmenuOpen}
           alertSubmenuOpen={alertSubmenuOpen}
           onAlertSubmenuOpenChange={setAlertSubmenuOpen}
-          onSetAlertBefore={(updates) => {
-            onUpdate(updates);
+          onSetAlertBefore={async (updates) => {
+            const updated = await onUpdate(updates);
+            if (updated === false) return;
             if (updates.notification_enabled) {
               void requestBrowserNotificationPermissionIfNeeded();
             }
@@ -1221,18 +1236,18 @@ export const TaskRow = memo(function TaskRow({
             });
             closeDetailMenu();
           }}
-          onCloseMenu={closeDetailMenu}
           onDuplicate={() => {
             onDuplicate();
             closeDetailMenu();
           }}
           onAddToToday={
-            task.scheduled_date !== getTodayDateString()
-              ? () => {
-                  void onUpdate({
-                    scheduled_date: getTodayDateString(),
+            task.scheduled_date !== todayViewDate
+              ? async () => {
+                  const updated = await onUpdate({
+                    scheduled_date: todayViewDate,
                     planning_state: "none",
                   });
+                  if (updated === false) return;
                   actionToast?.showActionToast({
                     message: "Added to Today",
                     tone: "success",

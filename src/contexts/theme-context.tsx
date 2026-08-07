@@ -40,7 +40,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const setTheme = useCallback((_theme: "dark") => {
+  const setTheme = useCallback(() => {
     forceDarkClass();
     saveThemePreference("dark");
   }, []);

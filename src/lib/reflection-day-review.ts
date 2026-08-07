@@ -37,7 +37,7 @@ export async function fetchReflectionDayReview(
   const [tasks, habits, focusSessions] = await Promise.all([
     fetchTodayTasks(dateKey),
     fetchHabitsWithCompletions(),
-    fetchFocusSessions(),
+    fetchFocusSessions(dateKey),
   ]);
 
   const completedTasks = sortTasks(tasks.filter((task) => task.completed));

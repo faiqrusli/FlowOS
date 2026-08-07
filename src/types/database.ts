@@ -19,6 +19,14 @@ import type {
   NoteInsert,
 } from "@/types/notes";
 
+type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
 type HabitCompletionRow = {
   id: string;
   habit_id: string;
@@ -306,6 +314,14 @@ export type Database = {
       batch_update_task_queue_orders: {
         Args: { p_updates: { id: string; queue_order: number | null }[] };
         Returns: undefined;
+      };
+      delete_task_group_with_tasks_to_inbox: {
+        Args: { p_group_id: string };
+        Returns: undefined;
+      };
+      replace_reflection_entries: {
+        Args: { p_entries: Json; p_reflection_id: string };
+        Returns: Database["public"]["Tables"]["reflection_entries"]["Row"][];
       };
     };
     Enums: Record<string, never>;

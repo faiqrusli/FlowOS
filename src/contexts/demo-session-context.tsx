@@ -88,7 +88,7 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
       hardResetActiveSession();
       await restartDemoSession();
       // Full reload remounts focus/schedule providers on clean storage.
-      window.location.assign("/");
+      window.location.replace(new URL("/", window.location.href).toString());
     } catch {
       setBusy(false);
     }
@@ -100,7 +100,9 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
       hardResetActiveSession();
       await exitDemoSession();
       setUser(null);
-      window.location.assign("/login");
+      window.location.replace(
+        new URL("/login", window.location.href).toString(),
+      );
     } catch {
       setBusy(false);
     }

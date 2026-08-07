@@ -7,7 +7,6 @@ import type {
   PlanningState,
   Task,
   TaskGroup,
-  TaskGroupInsert,
   TaskGroupWithTasks,
 } from "@/types/task";
 import {
@@ -210,7 +209,7 @@ export function filterTasksForGroup(
     );
   }
   return tasks.filter((task) =>
-    taskBelongsInOrgGroupView(task, group.id, todayViewDate)
+    taskBelongsInOrgGroupView(task, group.id)
   );
 }
 
@@ -224,8 +223,7 @@ export function taskBelongsInTodayView(
 /** Org columns show tasks assigned to the group, including those also on Today/Later. */
 export function taskBelongsInOrgGroupView(
   task: Pick<Task, "group_id">,
-  groupId: string,
-  _todayViewDate?: string
+  groupId: string
 ): boolean {
   return task.group_id === groupId;
 }
@@ -269,7 +267,7 @@ export function buildBoardFromTasks(
       );
     } else {
       filteredTasks = tasks.filter((task) =>
-        taskBelongsInOrgGroupView(task, group.id, todayViewDate)
+        taskBelongsInOrgGroupView(task, group.id)
       );
     }
 
@@ -665,7 +663,8 @@ export async function fetchTaskBoard(
   const { data: tasks, error: tasksError } = await supabase
     .from("tasks")
     .select("*")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .is("withdrawn_at", null);
 
   if (tasksError) throw new TaskGroupsError(tasksError.message);
 
@@ -689,7 +688,7 @@ export async function fetchTaskBoard(
   );
 
   if (legacyTodayTasks.length > 0 && inboxGroup) {
-    await Promise.all(
+    const migrationResults = await Promise.all(
       legacyTodayTasks.map((task) =>
         supabase
           .from("tasks")
@@ -698,6 +697,10 @@ export async function fetchTaskBoard(
           .eq("user_id", userId)
       )
     );
+    const migrationError = migrationResults.find((result) => result.error)?.error;
+    if (migrationError) {
+      throw new TaskGroupsError(migrationError.message);
+    }
     normalizedTasks = migrateTasksFromTodayGroup(
       normalizedTasks,
       todayGroup?.id,
@@ -851,28 +854,11 @@ export async function updateTaskGroup(
 }
 
 export async function deleteTaskGroup(groupId: string): Promise<void> {
-  const userId = await requireUserId();
-
-  const { data: current } = await supabase
-    .from("task_groups")
-    .select("slug")
-    .eq("id", groupId)
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (
-    current?.slug === INBOX_GROUP_SLUG ||
-    current?.slug === TODAY_GROUP_SLUG ||
-    current?.slug === LATER_GROUP_SLUG
-  ) {
-    throw new TaskGroupsError("Default groups cannot be deleted.");
-  }
-
-  const { error } = await supabase
-    .from("task_groups")
-    .delete()
-    .eq("id", groupId)
-    .eq("user_id", userId);
+  await requireUserId();
+  const { error } = await supabase.rpc(
+    "delete_task_group_with_tasks_to_inbox",
+    { p_group_id: groupId },
+  );
 
   if (error) throw new TaskGroupsError(error.message);
 }
@@ -880,7 +866,7 @@ export async function deleteTaskGroup(groupId: string): Promise<void> {
 export async function reorderTaskGroups(orderedIds: string[]): Promise<void> {
   const userId = await requireUserId();
 
-  await Promise.all(
+  const results = await Promise.all(
     orderedIds.map((id, index) =>
       supabase
         .from("task_groups")
@@ -889,6 +875,10 @@ export async function reorderTaskGroups(orderedIds: string[]): Promise<void> {
         .eq("user_id", userId)
     )
   );
+  const groupOrderError = results.find((result) => result.error)?.error;
+  if (groupOrderError) {
+    throw new TaskGroupsError(groupOrderError.message);
+  }
 }
 
 function persistableGroupOrderIds(groups: TaskGroupWithTasks[]): string[] {
@@ -953,7 +943,7 @@ export async function persistTaskBoardLayout(
 
     const manualSort = isManualTaskSortMode(getTaskGroupSortMode(group));
 
-    group.tasks.forEach((task, index) => {
+    group.tasks.forEach((task) => {
       if (task.group_id !== group.id) return;
 
       const scheduledDate =

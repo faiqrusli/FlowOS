@@ -176,6 +176,7 @@ export async function fetchTodayTasks(
     .from("tasks")
     .select("*")
     .eq("user_id", userId)
+    .is("withdrawn_at", null)
     .eq("scheduled_date", dateKey)
     .order("scheduled_time", { ascending: true, nullsFirst: false });
 
@@ -192,6 +193,7 @@ export async function fetchTasks(): Promise<Task[]> {
     .from("tasks")
     .select("*")
     .eq("user_id", userId)
+    .is("withdrawn_at", null)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -207,6 +209,7 @@ function normalizeTaskFromDb(task: Task): Task {
     notification_lead_minutes: task.notification_lead_minutes ?? null,
     planning_state: normalizePlanningState(task.planning_state),
     queue_order: task.queue_order ?? null,
+    withdrawn_at: task.withdrawn_at ?? null,
     updated_at: task.updated_at ?? task.created_at,
     completed_at: task.completed_at ?? null,
   });
@@ -267,6 +270,7 @@ export async function updateTask(id: string, input: TaskUpdate): Promise<Task> {
   const leavesNextUp =
     payload.completed === true ||
     payload.planning_state === "later" ||
+    (payload.withdrawn_at !== undefined && payload.withdrawn_at !== null) ||
     ("scheduled_date" in payload &&
       payload.scheduled_date !== null &&
       payload.scheduled_date !== getTodayDateString());
@@ -331,17 +335,45 @@ export async function toggleTaskComplete(task: Task): Promise<Task> {
   return updated;
 }
 
-export async function deleteTask(id: string): Promise<void> {
+export async function withdrawTask(id: string): Promise<Task> {
   const userId = await requireUserId();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("tasks")
-    .delete()
+    .update({
+      withdrawn_at: new Date().toISOString(),
+      queue_order: null,
+    })
     .eq("id", id)
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .select()
+    .single();
 
   if (error) {
     throw new TasksError(error.message);
   }
+  notifyNextUpUpdated({ kind: "changed" });
+  return normalizeTaskFromDb(data);
+}
+
+export async function restoreTask(id: string): Promise<Task> {
+  const userId = await requireUserId();
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({ withdrawn_at: null })
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) {
+    throw new TasksError(error.message);
+  }
+  return normalizeTaskFromDb(data);
+}
+
+/** Compatibility name for callers that still use the old destructive verb. */
+export async function deleteTask(id: string): Promise<void> {
+  await withdrawTask(id);
 }
 
 export async function duplicateTask(

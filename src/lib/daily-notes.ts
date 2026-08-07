@@ -1,7 +1,7 @@
 import { requireUserId } from "@/lib/auth";
 import { formatDailyNoteTitle } from "@/lib/date-utils";
 import { fetchGrowthAreas, GrowthAreasError } from "@/lib/growth-areas";
-import { createNote, NotesError, normalizeNoteForClient, updateNote } from "@/lib/notes";
+import { createNote, normalizeNoteForClient, updateNote } from "@/lib/notes";
 import { supabase } from "@/lib/supabase";
 import type { GrowthArea, GrowthAreaWithCounts, Note } from "@/types/notes";
 
@@ -128,7 +128,6 @@ export function groupNotesByArea(
   areas: GrowthAreaWithCounts[],
   notes: Note[]
 ): { area: GrowthAreaWithCounts; notes: Note[] }[] {
-  const areaMap = new Map(areas.map((area) => [area.id, area]));
   const grouped = new Map<string, Note[]>();
 
   for (const note of notes) {

@@ -42,7 +42,8 @@ import {
 } from "@/contexts/workplace-focus-task-context";
 import { NextUpQueueViewProvider } from "@/contexts/next-up-queue-view-context";
 import { useRegisterTaskDetailSource } from "@/hooks/use-register-task-detail-source";
-import { getTodayDateString, getTomorrowDateString } from "@/lib/date-utils";
+import { getTomorrowDateString } from "@/lib/date-utils";
+import { useAppDateKey } from "@/hooks/use-app-date-key";
 import {
   manualOrderForNewTaskAtEnd,
   sortByManualOrder,
@@ -72,7 +73,13 @@ import { normalizePlanningState } from "@/lib/task-planning";
 import { appendTaskToNextUp, removeTaskFromNextUp } from "@/lib/task-next-up";
 import { setQuickScheduleOpen } from "@/lib/timeline-drag";
 import { collectAllBoardTasks } from "@/lib/timeline-layout";
-import { deleteTask, duplicateTask, TasksError, updateTask } from "@/lib/tasks";
+import {
+  duplicateTask,
+  restoreTask,
+  TasksError,
+  updateTask,
+  withdrawTask,
+} from "@/lib/tasks";
 import { toggleHabitComplete, HabitsError } from "@/lib/habits";
 import {
   setHabitDailyScheduleOverride,
@@ -115,6 +122,16 @@ type WorkplacePageContentProps = {
   statusRail?: ReactNode;
 };
 
+type ToggleCompleteHandler = (
+  task: Task,
+  markComplete?: boolean,
+  options?: { silent?: boolean },
+) => Promise<void>;
+type ToggleHabitCompleteHandler = (
+  habit: Habit,
+  options?: { silent?: boolean },
+) => Promise<void>;
+
 export function WorkplacePageContent({
   tasksTabRef,
   habitsTabRef,
@@ -134,14 +151,13 @@ export function WorkplacePageContent({
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [todayViewDate] = useState(getTodayDateString);
+  const todayViewDate = useAppDateKey();
   const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
   const [overlay, setOverlay] = useState<WorkplaceOverlay>(null);
   const [dockPopupEntryKey, setDockPopupEntryKey] = useState(0);
   const [tasksLauncherPulse, setTasksLauncherPulse] = useState(false);
   const pendingViewTaskIdRef = useRef<string | null>(null);
   const overlayRef = useRef(overlay);
-  overlayRef.current = overlay;
   /** While dragging a task/habit, let events pass through the dismiss layer to Next Up. */
   const [scheduleDragActive, setScheduleDragActive] = useState(false);
   const [taskContextMenu, setTaskContextMenu] = useState<{
@@ -155,6 +171,19 @@ export function WorkplacePageContent({
     new Map(),
   );
   const pendingTaskUpdates = useRef<Map<string, Partial<Task>>>(new Map());
+  const toggleCompleteRef = useRef<ToggleCompleteHandler>(() =>
+    Promise.resolve(),
+  );
+  const toggleHabitCompleteRef = useRef<ToggleHabitCompleteHandler>(() =>
+    Promise.resolve(),
+  );
+  const pendingTaskUpdateWaiters = useRef<
+    Map<string, Array<(success: boolean) => void>>
+  >(new Map());
+
+  useEffect(() => {
+    overlayRef.current = overlay;
+  }, [overlay]);
 
   /** Open or switch dock panel. Scale animation only when opening from closed. */
   const showDockPanel = useCallback((panel: "tasks" | "habits") => {
@@ -187,7 +216,10 @@ export function WorkplacePageContent({
   const allTasks = useMemo(() => collectAllBoardTasks(groups), [groups]);
   const habitScheduleRevision = useHabitDailyScheduleStore();
   const todayDisplayHabits = useMemo(
-    () => withHabitScheduleForDate(habits, todayViewDate),
+    () => {
+      void habitScheduleRevision;
+      return withHabitScheduleForDate(habits, todayViewDate);
+    },
     [habits, todayViewDate, habitScheduleRevision],
   );
 
@@ -217,8 +249,14 @@ export function WorkplacePageContent({
   }, []);
 
   useEffect(() => {
-    void loadWorkplace();
-  }, [loadWorkplace]);
+    let active = true;
+    queueMicrotask(() => {
+      if (active) void loadWorkplace();
+    });
+    return () => {
+      active = false;
+    };
+  }, [loadWorkplace, todayViewDate]);
 
   useEffect(() => {
     registerWorkplaceTaskHandler((task) => {
@@ -524,10 +562,7 @@ export function WorkplacePageContent({
   } | null>(null);
 
   useLayoutEffect(() => {
-    if (!overlay) {
-      setDockActivePill(null);
-      return;
-    }
+    if (!overlay) return;
     const shell = launcherShellRef.current;
     const activeBtn =
       overlay === "tasks" ? taskLauncherRef.current : habitLauncherRef.current;
@@ -548,85 +583,120 @@ export function WorkplacePageContent({
   }, [overlay]);
 
   useEffect(() => {
-    setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
+    let active = true;
+    queueMicrotask(() => {
+      if (active) {
+        setGroups((prev) => rebuildTodayColumn(prev, todayViewDate));
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, [todayViewDate]);
 
   useEffect(() => {
+    const timers = updateTimers.current;
+    const waitersByTask = pendingTaskUpdateWaiters.current;
+    const pendingUpdates = pendingTaskUpdates.current;
     return () => {
-      for (const timer of updateTimers.current.values()) {
+      for (const timer of timers.values()) {
         clearTimeout(timer);
       }
+      for (const waiters of waitersByTask.values()) {
+        for (const resolve of waiters) resolve(false);
+      }
+      waitersByTask.clear();
+      pendingUpdates.clear();
     };
   }, []);
 
-  function scheduleTaskPersist(taskId: string, updates: Partial<Task>) {
-    const merged = {
-      ...(pendingTaskUpdates.current.get(taskId) ?? {}),
-      ...updates,
-    };
-    pendingTaskUpdates.current.set(taskId, merged);
-
-    setGroups((prev) =>
-      replaceTaskOnBoard(
-        prev,
-        taskId,
-        (task) => ({ ...task, ...merged }),
-        todayViewDate,
-      ),
-    );
-
-    const existing = updateTimers.current.get(taskId);
-    if (existing) clearTimeout(existing);
-
-    updateTimers.current.set(
-      taskId,
-      setTimeout(async () => {
-        updateTimers.current.delete(taskId);
-        const payload = pendingTaskUpdates.current.get(taskId);
-        if (!payload) return;
-
-        try {
-          const updated = await updateTask(taskId, payload);
-          const stillPending = pendingTaskUpdates.current.get(taskId);
-          // Drop fields that this request successfully covered when unchanged.
-          if (stillPending) {
-            const remaining: Partial<Task> = { ...stillPending };
-            for (const key of Object.keys(payload) as (keyof Task)[]) {
-              if (remaining[key] === payload[key]) {
-                delete remaining[key];
-              }
-            }
-            if (Object.keys(remaining).length === 0) {
-              pendingTaskUpdates.current.delete(taskId);
-            } else {
-              pendingTaskUpdates.current.set(taskId, remaining);
-            }
-          }
-
-          setGroups((prev) => {
-            let next = syncTaskOnBoard(prev, updated, todayViewDate);
-            const overlay = pendingTaskUpdates.current.get(taskId);
-            if (overlay && Object.keys(overlay).length > 0) {
-              next = replaceTaskOnBoard(
-                next,
-                taskId,
-                (task) => ({ ...task, ...overlay }),
-                todayViewDate,
-              );
-            }
-            return next;
-          });
-        } catch (err) {
-          pendingTaskUpdates.current.delete(taskId);
-          setError(
-            err instanceof TasksError ? err.message : "Failed to save task.",
-          );
-          void loadWorkplace();
-        }
-      }, 350),
-    );
+  function settlePendingTaskUpdateWaiters(taskId: string, success: boolean) {
+    const waiters = pendingTaskUpdateWaiters.current.get(taskId);
+    if (!waiters) return;
+    pendingTaskUpdateWaiters.current.delete(taskId);
+    for (const resolve of waiters) resolve(success);
   }
 
+  const scheduleTaskPersist = useCallback(
+    (taskId: string, updates: Partial<Task>): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const waiters = pendingTaskUpdateWaiters.current.get(taskId) ?? [];
+      waiters.push(resolve);
+      pendingTaskUpdateWaiters.current.set(taskId, waiters);
+
+      const merged = {
+        ...(pendingTaskUpdates.current.get(taskId) ?? {}),
+        ...updates,
+      };
+      pendingTaskUpdates.current.set(taskId, merged);
+
+      setGroups((prev) =>
+        replaceTaskOnBoard(
+          prev,
+          taskId,
+          (task) => ({ ...task, ...merged }),
+          todayViewDate,
+        ),
+      );
+
+      const existing = updateTimers.current.get(taskId);
+      if (existing) clearTimeout(existing);
+
+      updateTimers.current.set(
+        taskId,
+        setTimeout(async () => {
+          updateTimers.current.delete(taskId);
+          const payload = pendingTaskUpdates.current.get(taskId);
+          if (!payload) {
+            settlePendingTaskUpdateWaiters(taskId, false);
+            return;
+          }
+
+          try {
+            const updated = await updateTask(taskId, payload);
+            const stillPending = pendingTaskUpdates.current.get(taskId);
+            let hasRemaining = false;
+            if (stillPending) {
+              const remaining: Partial<Task> = { ...stillPending };
+              for (const key of Object.keys(payload) as (keyof Task)[]) {
+                if (remaining[key] === payload[key]) {
+                  delete remaining[key];
+                }
+              }
+              hasRemaining = Object.keys(remaining).length > 0;
+              if (hasRemaining) {
+                pendingTaskUpdates.current.set(taskId, remaining);
+              } else {
+                pendingTaskUpdates.current.delete(taskId);
+              }
+            }
+
+            setGroups((prev) => {
+              let next = syncTaskOnBoard(prev, updated, todayViewDate);
+              const overlay = pendingTaskUpdates.current.get(taskId);
+              if (overlay && Object.keys(overlay).length > 0) {
+                next = replaceTaskOnBoard(
+                  next,
+                  taskId,
+                  (task) => ({ ...task, ...overlay }),
+                  todayViewDate,
+                );
+              }
+              return next;
+            });
+            if (!hasRemaining) settlePendingTaskUpdateWaiters(taskId, true);
+          } catch (err) {
+            pendingTaskUpdates.current.delete(taskId);
+            settlePendingTaskUpdateWaiters(taskId, false);
+            setError(
+              err instanceof TasksError ? err.message : "Failed to save task.",
+            );
+            void loadWorkplace();
+          }
+        }, 350),
+      );
+    });
+  }, [loadWorkplace, todayViewDate]);
   const handleScheduleTask = useCallback(
     async (
       taskId: string,
@@ -659,14 +729,13 @@ export function WorkplacePageContent({
   );
 
   const handleUpdateTask = useCallback(
-    async (taskId: string, updates: Partial<Task>) => {
+    async (taskId: string, updates: Partial<Task>): Promise<boolean> => {
       if (
         "title" in updates ||
         "description" in updates ||
         updates.scheduled_time !== undefined
       ) {
-        scheduleTaskPersist(taskId, updates);
-        return;
+        return scheduleTaskPersist(taskId, updates);
       }
 
       setGroups((prev) =>
@@ -681,14 +750,16 @@ export function WorkplacePageContent({
       try {
         const updated = await updateTask(taskId, updates);
         setGroups((prev) => syncTaskOnBoard(prev, updated, todayViewDate));
+        return true;
       } catch (err) {
         setError(
           err instanceof TasksError ? err.message : "Failed to update task.",
         );
         void loadWorkplace();
+        return false;
       }
     },
-    [loadWorkplace, todayViewDate],
+    [loadWorkplace, scheduleTaskPersist, todayViewDate],
   );
 
   const handleMoveTask = useCallback(
@@ -868,7 +939,7 @@ export function WorkplacePageContent({
             icon: "check",
             actionLabel: "Undo",
             onAction: () => {
-              void handleToggleComplete(updated, !nextCompleted, {
+              void toggleCompleteRef.current(updated, !nextCompleted, {
                 silent: true,
               });
             },
@@ -934,28 +1005,36 @@ export function WorkplacePageContent({
         selectTask(null);
       }
 
-      let committed = false;
-      const commitDelete = () => {
-        if (committed) return;
-        committed = true;
-        void deleteTask(taskId).catch((err) => {
-          setError(
-            err instanceof TasksError ? err.message : "Failed to delete task.",
-          );
-          void loadWorkplace();
+      try {
+        await withdrawTask(taskId);
+        showActionToast({
+          message: "Task withdrawn",
+          icon: "trash",
+          actionLabel: "Restore",
+          onAction: () => {
+            void restoreTask(taskId)
+              .then((restored) => {
+                setGroups((prev) =>
+                  addTaskToBoard(prev, restored, todayViewDate),
+                );
+              })
+              .catch((err) => {
+                setError(
+                  err instanceof TasksError
+                    ? err.message
+                    : "Failed to restore task.",
+                );
+                void loadWorkplace();
+              });
+          },
         });
-      };
-
-      showActionToast({
-        message: "Task moved to Trash",
-        icon: "trash",
-        actionLabel: "Undo",
-        onAction: () => {
-          committed = true;
-          setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
-        },
-        onExpire: commitDelete,
-      });
+      } catch (err) {
+        setGroups((prev) => addTaskToBoard(prev, snapshot, todayViewDate));
+        setError(
+          err instanceof TasksError ? err.message : "Failed to withdraw task.",
+        );
+        void loadWorkplace();
+      }
     },
     [
       allTasks,
@@ -989,7 +1068,7 @@ export function WorkplacePageContent({
             icon: "habit",
             actionLabel: "Undo",
             onAction: () => {
-              void handleToggleHabitComplete(updated, { silent: true });
+              void toggleHabitCompleteRef.current(updated, { silent: true });
             },
           });
         }
@@ -1019,6 +1098,11 @@ export function WorkplacePageContent({
     [],
   );
 
+  useEffect(() => {
+    toggleCompleteRef.current = handleToggleComplete;
+    toggleHabitCompleteRef.current = handleToggleHabitComplete;
+  }, [handleToggleComplete, handleToggleHabitComplete]);
+
   const boardActions = useMemo<TaskBoardActions>(
     () => ({
       onToggleComplete: (task) => void handleToggleComplete(task),
@@ -1026,7 +1110,7 @@ export function WorkplacePageContent({
       onDuplicateTask: (task) => void handleDuplicateTask(task),
       onMoveTask: (taskId, groupId) => void handleMoveTask(taskId, groupId),
       onDeleteTask: (taskId) => void handleDeleteTask(taskId),
-      onUpdateTask: (taskId, updates) => void handleUpdateTask(taskId, updates),
+      onUpdateTask: (taskId, updates) => handleUpdateTask(taskId, updates),
       onSetPlanningState: (taskId, state) =>
         void handleSetPlanningState(taskId, state),
       onRequestCreateGroup: () => {},
@@ -1087,7 +1171,7 @@ export function WorkplacePageContent({
     onScheduleTask: handleScheduleTask,
     onScheduleHabit: handleScheduleHabit,
     onToggleComplete: handleToggleComplete,
-    onToggleHabitComplete: handleToggleHabitComplete,
+    onToggleHabitComplete: (habit: Habit) => handleToggleHabitComplete(habit),
     onUpdateTask: handleUpdateTask,
     onDeleteTask: handleDeleteTask,
     onDuplicateTask: handleDuplicateTask,

@@ -80,7 +80,7 @@ export function showBrowserNotificationIfGranted(
       window.focus();
       // Same-tab navigation when FlowOS is already open.
       if (window.location.pathname !== "/") {
-        window.location.assign("/");
+        window.location.replace(new URL("/", window.location.href).toString());
       }
       notification.close();
     };

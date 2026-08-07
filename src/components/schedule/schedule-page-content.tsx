@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { setQuickScheduleOpen } from "@/lib/timeline-drag";
 import { TimelinePlanner } from "@/components/tasks/timeline-planner";
 import { ErrorBanner } from "@/components/shared/error-banner";
@@ -12,6 +12,7 @@ import { trackFeatureUsage } from "@/lib/feature-usage";
 import {
   fetchHabitsWithCompletions,
   HabitsError,
+  isHabitCompletedOnDate,
   toggleHabitComplete,
 } from "@/lib/habits";
 import { setHabitDailyScheduleOverride } from "@/lib/habit-daily-schedule-store";
@@ -106,8 +107,9 @@ export function SchedulePageContent() {
   }, [todayViewDate]);
 
   useEffect(() => {
+    const timers = updateTimers.current;
     return () => {
-      for (const timer of updateTimers.current.values()) {
+      for (const timer of timers.values()) {
         clearTimeout(timer);
       }
     };
@@ -182,11 +184,14 @@ export function SchedulePageContent() {
     scheduleDate: string,
   ) {
     setError(null);
-    setHabitDailyScheduleOverride(
+    const saved = setHabitDailyScheduleOverride(
       habitId,
       scheduleDate,
       updates.scheduled_time,
     );
+    if (!saved) {
+      setError("Failed to save habit schedule.");
+    }
   }
 
   async function handleUpdateTask(taskId: string, updates: Partial<Task>) {
@@ -398,30 +403,35 @@ export function SchedulePageContent() {
 
   async function handleToggleHabitComplete(
     habit: Habit,
+    dateKey: string,
     options?: { silent?: boolean },
   ) {
     setError(null);
+    const completedBeforeToggle = isHabitCompletedOnDate(habit, dateKey);
+    const updatesToday = dateKey === getTodayDateString();
     setHabits((prev) =>
       prev.map((item) =>
-        item.id === habit.id ? { ...item, completed: !item.completed } : item,
+        item.id === habit.id && updatesToday
+          ? { ...item, completed: !completedBeforeToggle }
+          : item,
       ),
     );
 
     try {
-      const updated = await toggleHabitComplete(habit);
+      const updated = await toggleHabitComplete(habit, dateKey);
       setHabits((prev) =>
         prev.map((item) => (item.id === updated.id ? updated : item)),
       );
       if (!options?.silent) {
         showActionToast({
-          message: updated.completed
+          message: !completedBeforeToggle
             ? "Habit marked complete"
             : "Habit unmarked",
-          tone: updated.completed ? "success" : "neutral",
+          tone: !completedBeforeToggle ? "success" : "neutral",
           icon: "habit",
           actionLabel: "Undo",
           onAction: () => {
-            void handleToggleHabitComplete(updated, { silent: true });
+            void handleToggleHabitComplete(updated, dateKey, { silent: true });
           },
         });
       }

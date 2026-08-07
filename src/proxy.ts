@@ -26,7 +26,7 @@ const PROTECTED_PREFIXES = [
 
 function isAuthRoute(pathname: string): boolean {
   return AUTH_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 }
 
@@ -42,23 +42,21 @@ function isProtectedRoute(pathname: string): boolean {
     return false;
   }
 
-  if (pathname === "/") {
-    return true;
-  }
+  if (pathname === "/") return true;
 
   return PROTECTED_PREFIXES.some(
-    (prefix) => prefix !== "/" && pathname.startsWith(prefix)
+    (prefix) => prefix !== "/" && pathname.startsWith(prefix),
   );
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { supabaseResponse, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
 
   if (
     process.env.NODE_ENV === "production" &&
     PLACEHOLDER_PREFIXES.some(
-      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
     )
   ) {
     return new NextResponse(null, { status: 404 });

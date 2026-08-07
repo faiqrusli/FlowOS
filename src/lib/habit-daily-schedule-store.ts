@@ -24,8 +24,8 @@ function readLocalStore(): HabitDailyScheduleStore {
   return parsed && typeof parsed === "object" ? parsed : {};
 }
 
-function writeLocalStore(store: HabitDailyScheduleStore): void {
-  writeStorageJson(STORAGE_KEY, store);
+function writeLocalStore(store: HabitDailyScheduleStore): boolean {
+  return writeStorageJson(STORAGE_KEY, store);
 }
 
 export function getCachedHabitDailySchedules(): HabitDailyScheduleStore {
@@ -62,21 +62,27 @@ export function setHabitDailyScheduleOverride(
   habitId: string,
   dateKey: string,
   scheduledTime: string | null
-): void {
-  const store = { ...getCachedHabitDailySchedules() };
+): boolean {
+  const previousStore = getCachedHabitDailySchedules();
+  const store = { ...previousStore };
   const dayOverrides = { ...(store[habitId] ?? {}) };
   dayOverrides[dateKey] = scheduledTime;
   store[habitId] = dayOverrides;
+  if (!writeLocalStore(store)) {
+    cachedStore = previousStore;
+    return false;
+  }
   cachedStore = store;
-  writeLocalStore(store);
   notifyListeners();
+  return true;
 }
 
 export function clearHabitDailyScheduleOverride(
   habitId: string,
   dateKey: string
-): void {
-  const store = { ...getCachedHabitDailySchedules() };
+): boolean {
+  const previousStore = getCachedHabitDailySchedules();
+  const store = { ...previousStore };
   const dayOverrides = { ...(store[habitId] ?? {}) };
   delete dayOverrides[dateKey];
 
@@ -86,9 +92,13 @@ export function clearHabitDailyScheduleOverride(
     store[habitId] = dayOverrides;
   }
 
+  if (!writeLocalStore(store)) {
+    cachedStore = previousStore;
+    return false;
+  }
   cachedStore = store;
-  writeLocalStore(store);
   notifyListeners();
+  return true;
 }
 
 export function withHabitScheduleForDate(

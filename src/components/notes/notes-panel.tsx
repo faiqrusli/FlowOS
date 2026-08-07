@@ -81,12 +81,25 @@ export function NotesPanel({
   const [moveNoteId, setMoveNoteId] = useState<string | null>(null);
   const [openMenuNoteId, setOpenMenuNoteId] = useState<string | null>(null);
   const [focusTitleNoteId, setFocusTitleNoteId] = useState<string | null>(null);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  const retryCounts = useRef(new Map<string, number>());
   const titleInputRef = useRef<HTMLInputElement>(null);
   const pendingPatchById = useRef(new Map<string, NoteTextPatch>());
   const savingIds = useRef(new Set<string>());
   const notesRef = useRef(notes);
   notesRef.current = notes;
+
+  useEffect(() => {
+    const timers = saveTimers.current;
+    const pendingPatches = pendingPatchById.current;
+    const saving = savingIds.current;
+    return () => {
+      for (const timer of timers.values()) clearTimeout(timer);
+      timers.clear();
+      pendingPatches.clear();
+      saving.clear();
+    };
+  }, []);
 
   const sortedNotes = useMemo(() => sortNotesForList(notes), [notes]);
   const selected = notes.find((note) => note.id === selectedId) ?? null;
@@ -153,20 +166,28 @@ export function NotesPanel({
           scheduleSave(id);
         } else {
           pendingPatchById.current.delete(id);
+          retryCounts.current.delete(id);
         }
       } catch (err) {
         console.error("[notes] autosave failed", err);
         setSaveError(true);
+        const retries = retryCounts.current.get(id) ?? 0;
+        if (retries < 1) {
+          retryCounts.current.set(id, retries + 1);
+          scheduleSave(id, 2_000);
+        }
       } finally {
         savingIds.current.delete(id);
       }
     },
-    [onNotesChange],
+    [onNotesChange, scheduleSave],
   );
 
-  function scheduleSave(id: string) {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
+  function scheduleSave(id: string, delay = 800) {
+    const existing = saveTimers.current.get(id);
+    if (existing) clearTimeout(existing);
+    saveTimers.current.set(id, setTimeout(() => {
+      saveTimers.current.delete(id);
       const pending = pendingPatchById.current.get(id);
       if (!pending) return;
       if (savingIds.current.has(id)) {
@@ -174,7 +195,7 @@ export function NotesPanel({
         return;
       }
       void persistNote(id, { ...pending });
-    }, 800);
+    }, delay));
   }
 
   function updateLocal(id: string, patch: Partial<Note>) {
@@ -295,6 +316,10 @@ export function NotesPanel({
     setRenamingId(null);
     onNotesChange(
       notes.map((note) => (note.id === noteId ? { ...note, title } : note)),
+    );
+    pendingPatchById.current.set(
+      noteId,
+      mergeNoteTextPatch(pendingPatchById.current.get(noteId), { title }),
     );
     await persistNote(noteId, { title });
   }
