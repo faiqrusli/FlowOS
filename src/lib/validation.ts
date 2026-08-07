@@ -61,6 +61,7 @@ const taskFields = {
   notification_enabled: z.boolean().optional(),
   notification_lead_minutes: z.number().int().nonnegative().nullable().optional(),
   planning_state: z.enum(["none", "later"]).optional(),
+  withdrawn_at: z.string().datetime().nullable().optional(),
 } satisfies Record<keyof TaskInsert, z.ZodTypeAny>;
 
 export const taskInsertSchema = z.object(taskFields);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { GrowthAreaIconChooser } from "@/components/notes/growth-area-icon-chooser";
 import { TaskGroupIdentityMark } from "@/components/tasks/task-group-identity-mark";
 import { TaskGroupPill } from "@/components/tasks/task-group-pill";
@@ -23,7 +23,6 @@ import {
   type TaskGroupColorKey,
 } from "@/lib/task-group-appearance";
 import { cn } from "@/lib/utils";
-import type { TaskGroupWithTasks } from "@/types/task";
 
 export type TaskGroupCreateInput = {
   title: string;
@@ -35,19 +34,19 @@ export type TaskGroupCreateInput = {
 type TaskGroupDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  existingGroups: TaskGroupWithTasks[];
   onSave: (input: TaskGroupCreateInput) => Promise<void>;
 };
 
 export function TaskGroupDialog({
   open,
   onOpenChange,
-  existingGroups,
   onSave,
 }: TaskGroupDialogProps) {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState<string | null>(null);
-  const [color, setColor] = useState<TaskGroupColorKey>("blue");
+  const [color, setColor] = useState<TaskGroupColorKey>(() =>
+    pickRandomGroupColor(),
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [iconChooserOpen, setIconChooserOpen] = useState(false);
@@ -64,14 +63,6 @@ export function TaskGroupDialog({
     [color, icon, name],
   );
 
-  useEffect(() => {
-    if (!open) return;
-    setName("");
-    setIcon(null);
-    setColor(pickRandomGroupColor());
-    setError(null);
-    setIconChooserOpen(false);
-  }, [open, existingGroups]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();

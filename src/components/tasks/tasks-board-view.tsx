@@ -71,7 +71,6 @@ import {
   setQuickScheduleOpen,
 } from "@/lib/timeline-drag";
 import {
-  formatTodayColumnTitle,
   getGroupDisplayTitle,
   canReorderTasksInGroup,
   isInboxGroup,
@@ -183,7 +182,6 @@ import {
   isSameGroupActiveReorderAttempt,
   moveGroupInBoard,
   moveTaskInBoard,
-  partitionGroupTasks,
   taskDragTargetsEqual,
   type TaskDragTarget,
   type TaskDragZone,
@@ -285,8 +283,8 @@ type TasksBoardViewProps = {
       scheduledDate?: string | null;
       planningState?: "none" | "later";
     },
-  ) => Promise<void>;
-  onUpdateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
+  ) => Promise<boolean>;
+  onUpdateTask: (taskId: string, updates: Partial<Task>) => Promise<boolean>;
   onToggleComplete: (task: Task) => Promise<void>;
   onDuplicateTask: (task: Task) => Promise<void>;
   onMoveTask: (taskId: string, groupId: string) => Promise<void>;
@@ -296,11 +294,11 @@ type TasksBoardViewProps = {
     input: TaskGroupCreateInput,
     taskId: string,
   ) => Promise<string>;
-  onRenameGroup: (groupId: string, title: string) => Promise<void>;
+  onRenameGroup: (groupId: string, title: string) => Promise<boolean>;
   onUpdateGroupAppearance: (
     groupId: string,
     input: TaskGroupAppearanceInput,
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   onUpdateGroupSortMode: (
     groupId: string,
     sortMode: TaskSortMode,
@@ -426,7 +424,7 @@ function TasksBoardViewContent({
   const inboxGroupIdRef = useRef<string | null>(null);
   const plannerActiveRef = useRef(plannerActive);
 
-  const [externalTaskDragId, setExternalTaskDragId] = useState<string | null>(
+  const [, setExternalTaskDragId] = useState<string | null>(
     null,
   );
   const selectedTaskIdRef = useRef(selectedTaskId);
@@ -468,6 +466,8 @@ function TasksBoardViewContent({
     y: number;
     message: string;
   } | null>(null);
+  const [planningQueueBlockedGroupId, setPlanningQueueBlockedGroupId] =
+    useState<string | null>(null);
   const [taskReorderBlockedDragTooltip, setTaskReorderBlockedDragTooltip] =
     useState<{ x: number; y: number } | null>(null);
   const groupReorderBlockedRef = useRef(false);
@@ -508,6 +508,38 @@ function TasksBoardViewContent({
   const laterGroup = groups.find((group) => isLaterGroup(group));
   const inboxGroup = groups.find((group) => isInboxGroup(group));
 
+  const finishCompose = useCallback(
+    async (groupId: string, text: string): Promise<boolean> => {
+      const title = text.trim();
+      if (title) {
+        const creatingInToday = todayGroup?.id === groupId;
+        const creatingInLater = laterGroup?.id === groupId;
+        const orgGroupId =
+          creatingInToday || creatingInLater
+            ? (inboxGroup?.id ?? groupId)
+            : groupId;
+        const options = creatingInLater
+          ? { planningState: "later" as const }
+          : creatingInToday
+            ? { scheduledDate: todayViewDate }
+            : undefined;
+        const created = await onCreateTask(orgGroupId, title, options);
+        if (!created) return false;
+      }
+      setComposeText("");
+      setComposingGroupId(null);
+      return true;
+    },
+    [
+      inboxGroup?.id,
+      laterGroup?.id,
+      onCreateTask,
+      todayGroup?.id,
+      todayViewDate,
+    ],
+  );
+
+
   useEffect(() => {
     setBoardSelectedTaskId(selectedTaskId);
   }, [selectedTaskId]);
@@ -518,7 +550,7 @@ function TasksBoardViewContent({
 
   useEffect(() => {
     composingGroupIdRef.current = composingGroupId;
-  }, [composingGroupId]);
+  }, [composingGroupId, finishCompose]);
 
   useEffect(() => {
     composePlacementRef.current = composePlacement;
@@ -557,14 +589,6 @@ function TasksBoardViewContent({
     todayViewDateRef.current = todayViewDate;
   }, [todayViewDate]);
 
-  useEffect(() => {
-    plannerActiveRef.current = plannerActive;
-    setQuickScheduleOpen(plannerActive);
-    if (plannerActive) {
-      stopBoardAutoScroll();
-      setTaskDropIfChanged(null);
-    }
-  }, [plannerActive]);
 
   useEffect(() => {
     if (composingGroupId && composeRef.current) {
@@ -585,15 +609,8 @@ function TasksBoardViewContent({
 
     document.addEventListener("mousedown", handlePointerDown);
     return () => document.removeEventListener("mousedown", handlePointerDown);
-  }, [composingGroupId]);
+  }, [composingGroupId, finishCompose]);
 
-  useEffect(() => {
-    return () => {
-      stopBoardAutoScroll();
-      detachPointerDragListeners();
-      unblockDragTextSelection();
-    };
-  }, []);
 
   function detachPointerDragListeners() {
     pointerDragCleanupRef.current?.();
@@ -812,6 +829,13 @@ function TasksBoardViewContent({
     );
   }
 
+  function isPlanningQueueDropBlockedForGroup(groupId: string): boolean {
+    if (!isLaterOriginatedTaskDrag() && !isTodayOriginatedTaskDrag()) {
+      return false;
+    }
+    return !isAllowedPlanningQueueTarget(groupId);
+  }
+
   function isBlockedPlanningQueueDrop(
     clientX: number,
     clientY: number,
@@ -849,11 +873,14 @@ function TasksBoardViewContent({
     clientY: number,
     groupId?: string,
   ): boolean {
-    if (isBlockedPlanningQueueDrop(clientX, clientY, groupId)) {
+    const targetGroupId = groupId ?? targetGroupIdAtPoint(clientX, clientY);
+    if (isBlockedPlanningQueueDrop(clientX, clientY, targetGroupId ?? undefined)) {
+      setPlanningQueueBlockedGroupId(targetGroupId);
       showPlanningQueueDragTooltip(clientX, clientY);
       return true;
     }
 
+    setPlanningQueueBlockedGroupId(null);
     setPlanningQueueDragTooltip(null);
     return false;
   }
@@ -870,12 +897,6 @@ function TasksBoardViewContent({
     );
   }
 
-  function isPlanningQueueDropBlockedForGroup(groupId: string): boolean {
-    if (!isLaterOriginatedTaskDrag() && !isTodayOriginatedTaskDrag()) {
-      return false;
-    }
-    return !isAllowedPlanningQueueTarget(groupId);
-  }
 
   function setTaskReorderBlockedState(
     blocked: boolean,
@@ -911,6 +932,12 @@ function TasksBoardViewContent({
       columnStickyDropRef.current = null;
     }
     taskDropTargetRef.current = target;
+  }
+
+  function setTaskDropIfChanged(target: TaskDragTarget | null) {
+    if (taskDragTargetsEqual(taskDropTargetRef.current, target)) return;
+    commitDropTargetRefs(target);
+    setTaskDragDropTarget(target);
   }
 
   function isPlanningColumnTarget(groupId: string): boolean {
@@ -976,11 +1003,6 @@ function TasksBoardViewContent({
     return frozen;
   }
 
-  function setTaskDropIfChanged(target: TaskDragTarget | null) {
-    if (taskDragTargetsEqual(taskDropTargetRef.current, target)) return;
-    commitDropTargetRefs(target);
-    setTaskDragDropTarget(target);
-  }
 
   function applyTaskDropTarget(target: TaskDragTarget | null) {
     setTaskDropIfChanged(target);
@@ -1000,18 +1022,6 @@ function TasksBoardViewContent({
     pendingPointerRef.current = null;
   }
 
-  function scheduleBoardTaskDropTargetSync(clientX: number, clientY: number) {
-    pointerXRef.current = clientX;
-    pointerYRef.current = clientY;
-    pendingPointerRef.current = { x: clientX, y: clientY };
-    if (pointerSyncRafRef.current !== null) return;
-    pointerSyncRafRef.current = requestAnimationFrame(() => {
-      pointerSyncRafRef.current = null;
-      const pending = pendingPointerRef.current;
-      if (!pending) return;
-      syncBoardTaskDropTargetFromPointer(pending.x, pending.y);
-    });
-  }
 
   function ensureCompletedVisible(groupId: string) {
     if (completedExpandedRef.current.has(groupId)) return;
@@ -1228,6 +1238,46 @@ function TasksBoardViewContent({
     autoScrollRafRef.current = requestAnimationFrame(tickBoardAutoScroll);
   }
 
+  function updateGroupDragFeedback(clientX: number, clientY: number) {
+    if (!dragIdRef.current || !boardRef.current) return;
+
+    const beforeId = resolveDropBeforeId(
+      boardGroupIds(groupsRef.current),
+      boardRef.current,
+      "data-task-group-column",
+      clientX,
+      "x",
+      dragIdRef.current,
+    );
+    const { blocked, pinnedTargetId } = resolveGroupReorderBlockState(
+      groupsRef.current,
+      boardRef.current,
+      clientX,
+      clientY,
+      beforeId,
+    );
+
+    groupReorderBlockedRef.current = blocked;
+    dropBeforeGroupIdRef.current = beforeId;
+    setGroupDragFeedback({
+      dropBeforeGroupId: beforeId,
+      reorderBlocked: blocked,
+      reorderBlockedTargetId: blocked ? pinnedTargetId : null,
+      blockedTooltip: blocked ? { x: clientX, y: clientY } : null,
+    });
+  }
+
+  function scheduleGroupDragFeedback(clientX: number, clientY: number) {
+    pendingGroupFeedbackRef.current = { x: clientX, y: clientY };
+    if (groupFeedbackRafRef.current !== null) return;
+    groupFeedbackRafRef.current = requestAnimationFrame(() => {
+      groupFeedbackRafRef.current = null;
+      const pending = pendingGroupFeedbackRef.current;
+      if (!pending) return;
+      updateGroupDragFeedback(pending.x, pending.y);
+    });
+  }
+
   useEffect(() => {
     const onDocumentDragOver = (event: globalThis.DragEvent) => {
       const externalTaskId = getActiveTaskDragId();
@@ -1319,46 +1369,6 @@ function TasksBoardViewContent({
     pendingGroupFeedbackRef.current = null;
   }
 
-  function updateGroupDragFeedback(clientX: number, clientY: number) {
-    if (!dragIdRef.current || !boardRef.current) return;
-
-    const beforeId = resolveDropBeforeId(
-      boardGroupIds(groupsRef.current),
-      boardRef.current,
-      "data-task-group-column",
-      clientX,
-      "x",
-      dragIdRef.current,
-    );
-    const { blocked, pinnedTargetId } = resolveGroupReorderBlockState(
-      groupsRef.current,
-      boardRef.current,
-      clientX,
-      clientY,
-      beforeId,
-    );
-
-    groupReorderBlockedRef.current = blocked;
-    dropBeforeGroupIdRef.current = beforeId;
-
-    setGroupDragFeedback({
-      dropBeforeGroupId: beforeId,
-      reorderBlocked: blocked,
-      reorderBlockedTargetId: blocked ? pinnedTargetId : null,
-      blockedTooltip: blocked ? { x: clientX, y: clientY } : null,
-    });
-  }
-
-  function scheduleGroupDragFeedback(clientX: number, clientY: number) {
-    pendingGroupFeedbackRef.current = { x: clientX, y: clientY };
-    if (groupFeedbackRafRef.current !== null) return;
-    groupFeedbackRafRef.current = requestAnimationFrame(() => {
-      groupFeedbackRafRef.current = null;
-      const pending = pendingGroupFeedbackRef.current;
-      if (!pending) return;
-      updateGroupDragFeedback(pending.x, pending.y);
-    });
-  }
 
   function detachGroupDragKeyListener() {
     groupDragKeyCleanupRef.current?.();
@@ -1416,6 +1426,7 @@ function TasksBoardViewContent({
     dragSourceGroupIdRef.current = null;
     dragOriginalSourceGroupIdRef.current = null;
     setPlanningQueueDragTooltip(null);
+    setPlanningQueueBlockedGroupId(null);
     setTaskReorderBlockedState(false);
     groupReorderBlockedRef.current = false;
     endGroupDragSession();
@@ -1937,9 +1948,13 @@ function TasksBoardViewContent({
 
   async function saveGroupTitle(groupId: string) {
     const title = groupTitleDraft.trim();
+    if (!title) {
+      setEditingGroupId(null);
+      return;
+    }
+    const saved = await onRenameGroup(groupId, title);
+    if (!saved) return;
     setEditingGroupId(null);
-    if (!title) return;
-    await onRenameGroup(groupId, title);
   }
 
   function openCompose(groupId: string, placement: "top" | "bottom") {
@@ -1962,7 +1977,8 @@ function TasksBoardViewContent({
         return;
       }
 
-      void finishCompose(currentGroupId, composeTextRef.current).then(() => {
+      void finishCompose(currentGroupId, composeTextRef.current).then((created) => {
+        if (!created) return;
         setComposingGroupId(groupId);
         setComposePlacement(placement);
         setComposeText("");
@@ -1975,29 +1991,11 @@ function TasksBoardViewContent({
     setComposeText("");
   }
 
-  async function finishCompose(groupId: string, text: string) {
-    const title = text.trim();
-    if (title) {
-      const creatingInToday = todayGroup && groupId === todayGroup.id;
-      const creatingInLater = laterGroup && groupId === laterGroup.id;
-      const orgGroupId =
-        creatingInToday || creatingInLater
-          ? (inboxGroup?.id ?? groupId)
-          : groupId;
-      const options = creatingInLater
-        ? { planningState: "later" as const }
-        : creatingInToday
-          ? { scheduledDate: todayViewDate }
-          : undefined;
-      await onCreateTask(orgGroupId, title, options);
-    }
-    setComposeText("");
-    setComposingGroupId(null);
-  }
 
   async function submitCompose(groupId: string) {
     const placement = composePlacementRef.current;
-    await finishCompose(groupId, composeText);
+    const created = await finishCompose(groupId, composeText);
+    if (!created) return;
     setComposingGroupId(groupId);
     setComposePlacement(placement);
   }
@@ -2350,14 +2348,8 @@ function TasksBoardViewContent({
             <TaskGroupActiveBody
               group={group}
               className="flex flex-col gap-0.5 transition-[opacity,transform] duration-300 ease-out"
-              onDragOver={
-                isTimelineTaskDrag()
-                  ? (event) => handleActiveBodyDragOver(event, group.id)
-                  : undefined
-              }
-              onDrop={
-                isTimelineTaskDrag() ? handleGroupDropZoneDrop : undefined
-              }
+              onDragOver={(event) => handleActiveBodyDragOver(event, group.id)}
+              onDrop={handleGroupDropZoneDrop}
             >
               <ColumnEmptyDragStretch isEmpty={active.length === 0} />
               {isLater ? (
@@ -2369,7 +2361,7 @@ function TasksBoardViewContent({
               {active.length === 0 && (
                 <ActiveEmptyDropPlaceholder
                   groupId={group.id}
-                  blocked={isPlanningQueueDropBlockedForGroup(group.id)}
+                  blocked={planningQueueBlockedGroupId === group.id}
                 />
               )}
               {isComposingTop ? composeInput : null}
@@ -2402,24 +2394,21 @@ function TasksBoardViewContent({
                 <button
                   type="button"
                   onClick={() => toggleCompletedSection(group.id)}
-                  onDragOver={
-                    isTimelineTaskDrag()
-                      ? (event) => {
-                          event.preventDefault();
-                          setCompletedExpanded((prev) => {
-                            if (prev.has(group.id)) return prev;
-                            const next = new Set(prev);
-                            next.add(group.id);
-                            return next;
-                          });
-                          syncBoardTaskDropTargetFromPointer(
-                            event.clientX,
-                            event.clientY,
-                          );
-                          event.dataTransfer.dropEffect = "move";
-                        }
-                      : undefined
-                  }
+                  onDragOver={(event) => {
+                    if (!isTimelineTaskDrag()) return;
+                    event.preventDefault();
+                    setCompletedExpanded((prev) => {
+                      if (prev.has(group.id)) return prev;
+                      const next = new Set(prev);
+                      next.add(group.id);
+                      return next;
+                    });
+                    syncBoardTaskDropTargetFromPointer(
+                      event.clientX,
+                      event.clientY,
+                    );
+                    event.dataTransfer.dropEffect = "move";
+                  }}
                   className="flex w-full items-center gap-1 rounded-md px-1 py-1.5 text-xs font-medium text-muted-foreground/85 transition-colors hover:bg-surface-hover hover:text-foreground"
                 >
                   {isCompletedOpen ? (
@@ -2500,7 +2489,7 @@ function TasksBoardViewContent({
         void onDeleteTask(taskId);
       },
       onUpdateTask: (taskId, updates) => {
-        void onUpdateTask(taskId, updates);
+        return onUpdateTask(taskId, updates);
       },
       onSetPlanningState: onSetPlanningState
         ? (taskId, planningState) => {
@@ -2520,10 +2509,41 @@ function TasksBoardViewContent({
       onDeleteTask,
       onUpdateTask,
       onSetPlanningState,
+      handleTaskPointerDragStart,
+      handleTaskPointerDragEnd,
     ],
   );
 
   const pinActionsOutside = actionsHost !== undefined;
+
+  useEffect(() => {
+    plannerActiveRef.current = plannerActive;
+    setQuickScheduleOpen(plannerActive);
+    if (!plannerActive) return;
+
+    if (autoScrollRafRef.current !== null) {
+      cancelAnimationFrame(autoScrollRafRef.current);
+      autoScrollRafRef.current = null;
+    }
+    if (!taskDragTargetsEqual(taskDropTargetRef.current, null)) {
+      columnStickyDropRef.current = null;
+      taskDropTargetRef.current = null;
+      setTaskDragDropTarget(null);
+    }
+  }, [plannerActive]);
+
+  useEffect(() => {
+    return () => {
+      if (autoScrollRafRef.current !== null) {
+        cancelAnimationFrame(autoScrollRafRef.current);
+        autoScrollRafRef.current = null;
+      }
+      pointerDragCleanupRef.current?.();
+      pointerDragCleanupRef.current = null;
+      unblockDragTextSelection();
+    };
+  }, []);
+
   const renderHeaderActions = () => (
     <>
       <Button
@@ -2651,18 +2671,20 @@ function TasksBoardViewContent({
           />
 
           <TaskGroupAppearanceDialog
+            key={`${appearanceGroup?.id ?? "none"}-${appearanceGroupId !== null ? "open" : "closed"}`}
             open={appearanceGroupId !== null}
             onOpenChange={(open) => {
               if (!open) setAppearanceGroupId(null);
             }}
             group={appearanceGroup ?? null}
             onSave={async (input) => {
-              if (!appearanceGroupId) return;
-              await onUpdateGroupAppearance(appearanceGroupId, input);
+              if (!appearanceGroupId) return false;
+              return onUpdateGroupAppearance(appearanceGroupId, input);
             }}
           />
 
           <TaskGroupDialog
+            key={newGroupDialogOpen ? "open" : "closed"}
             open={newGroupDialogOpen}
             onOpenChange={(open) => {
               setNewGroupDialogOpen(open);
@@ -2671,7 +2693,6 @@ function TasksBoardViewContent({
                 setNewGroupMoveTaskId(null);
               }
             }}
-            existingGroups={groups}
             onSave={handleSaveNewGroup}
           />
         </>

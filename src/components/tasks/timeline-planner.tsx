@@ -210,7 +210,10 @@ export type TimelinePlannerProps = {
     },
   ) => Promise<void>;
   onToggleComplete: (task: Task) => Promise<void>;
-  onUpdateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<Task>,
+  ) => Promise<void> | Promise<boolean>;
   onDeleteTask: (taskId: string) => Promise<void>;
   onDuplicateTask: (task: Task) => Promise<void>;
   onSetPlanningState?: (

@@ -307,6 +307,10 @@ export type Database = {
         Args: { p_updates: { id: string; queue_order: number | null }[] };
         Returns: undefined;
       };
+      delete_task_group_with_tasks_to_inbox: {
+        Args: { p_group_id: string };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

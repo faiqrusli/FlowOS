@@ -41,6 +41,7 @@ export async function fetchNextUpTasks(
     .from("tasks")
     .select("*")
     .eq("user_id", userId)
+    .is("withdrawn_at", null)
     .eq("completed", false)
     .neq("planning_state", "later")
     .not("queue_order", "is", null)
@@ -64,6 +65,7 @@ export async function insertTaskToNextUp(
     .select("*")
     .eq("id", taskId)
     .eq("user_id", userId)
+    .is("withdrawn_at", null)
     .single();
   if (taskError) throw new TasksError(taskError.message);
   if (!isEligibleForNextUp(normalizeQueuedTask(task))) {

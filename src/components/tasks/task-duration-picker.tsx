@@ -32,7 +32,10 @@ const TASK_DURATION_DETAIL_MENU_CLASS =
 
 type TaskDurationPickerProps = {
   durationMinutes: number | null;
-  onChange: (minutes: number | null) => void;
+  onChange: (minutes: number | null) =>
+    | void
+    | Promise<void>
+    | Promise<boolean>;
   compact?: boolean;
   variant?: "inline" | "task-row" | "timeline" | "detail";
   className?: string;
@@ -70,15 +73,17 @@ export function TaskDurationPicker({
   const timelineDurationLabel =
     isTimeline && hasDuration ? formatDurationMinutes(durationMinutes!) : null;
 
-  function tryCommitCustomValue() {
-    if (!customDirtyRef.current) return;
+  async function tryCommitCustomValue(): Promise<boolean> {
+    if (!customDirtyRef.current) return true;
 
     const parsed = parseDurationTimeInput(customValue);
-    if (parsed === null) return;
+    if (parsed === null) return false;
     if (parsed !== durationMinutes) {
-      onChange(parsed);
+      const updated = await onChange(parsed);
+      if (updated === false) return false;
     }
     customDirtyRef.current = false;
+    return true;
   }
 
   function handleOpenChange(nextOpen: boolean) {
@@ -94,14 +99,15 @@ export function TaskDurationPicker({
     onOpenChange?.(nextOpen);
   }
 
-  function commitCustom() {
-    tryCommitCustomValue();
-    setOpen(false);
+  async function commitCustom() {
+    const committed = await tryCommitCustomValue();
+    if (committed) setOpen(false);
   }
 
-  function applyDuration(minutes: number | null) {
+  async function applyDuration(minutes: number | null) {
+    const updated = await onChange(minutes);
+    if (updated === false) return;
     customDirtyRef.current = false;
-    onChange(minutes);
     setOpen(false);
   }
 
@@ -226,7 +232,7 @@ export function TaskDurationPicker({
               event.stopPropagation();
               if (event.key === "Enter") {
                 event.preventDefault();
-                commitCustom();
+                void commitCustom();
               }
             }}
             onClick={(event) => event.stopPropagation()}
@@ -242,7 +248,7 @@ export function TaskDurationPicker({
               onPointerDown={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
-                applyDuration(option.minutes);
+                void applyDuration(option.minutes);
               }}
               className={cn(
                 "text-xs tabular-nums",
@@ -258,7 +264,7 @@ export function TaskDurationPicker({
             onPointerDown={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              applyDuration(null);
+              void applyDuration(null);
             }}
             className="text-xs text-muted-foreground"
           >
