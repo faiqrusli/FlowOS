@@ -7,6 +7,15 @@ export type CustomEntry = {
 export type ReflectionKanbanCard = {
   id: string;
   content: string;
+  provenance?: ReflectionCardProvenance;
+};
+
+export type ReflectionCardProvenance = {
+  source: "focus-session";
+  sessionId: string;
+  startedAt: string;
+  endedAt: string | null;
+  focusSeconds: number;
 };
 
 export type ReflectionKanban = {

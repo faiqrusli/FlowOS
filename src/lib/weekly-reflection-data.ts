@@ -1,7 +1,7 @@
 import { formatDuration } from "@/lib/focus-utils";
 import { formatSummaryLine } from "@/lib/reflection-storage";
 import type { ReflectionDayReview } from "@/lib/reflection-day-review";
-import type { Reflection } from "@/types/reflection";
+import type { Reflection, ReflectionCardProvenance } from "@/types/reflection";
 
 export type WeeklyReflectionBoardCard = {
   id: string;
@@ -9,6 +9,7 @@ export type WeeklyReflectionBoardCard = {
   content: string;
   dayDateKey: string;
   defaultColumnKey: string;
+  provenance?: ReflectionCardProvenance;
 };
 
 export type WeeklyReflectionBoardColumn = {
@@ -138,6 +139,7 @@ export function buildWeeklyReflectionDayBundle(
           content: card.content,
           dayDateKey: dateKey,
           defaultColumnKey: columnKey,
+          provenance: card.provenance,
         });
       }
     }
