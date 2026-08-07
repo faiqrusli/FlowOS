@@ -16,14 +16,12 @@ import { normalizeTaskPriority } from "@/lib/task-priority";
 import { cn } from "@/lib/utils";
 import type { Habit } from "@/types/habit";
 import type { Task } from "@/types/task";
-import type { TaskBuckets } from "@/lib/tasks";
 
 type SidebarFilter = "all" | "tasks" | "habits";
 
 type ScheduleTaskSidebarProps = {
   tasks: Task[];
   habits: Habit[];
-  buckets: TaskBuckets;
   onAutoscheduleTask?: (taskId: string) => void;
   onAutoscheduleHabit?: (habitId: string) => void;
   onAutoscheduleAll?: () => void;
@@ -193,7 +191,6 @@ const FILTER_TABS: { id: SidebarFilter; label: string }[] = [
 export function ScheduleTaskSidebar({
   tasks,
   habits,
-  buckets,
   onAutoscheduleTask,
   onAutoscheduleHabit,
   onAutoscheduleAll,
@@ -202,8 +199,8 @@ export function ScheduleTaskSidebar({
   const [search, setSearch] = useState("");
 
   const inbox = useMemo(
-    () => buildScheduleInbox(tasks, habits, buckets),
-    [tasks, habits, buckets],
+    () => buildScheduleInbox(tasks, habits),
+    [tasks, habits],
   );
 
   const matchesSearch = (title: string) =>

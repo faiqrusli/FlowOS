@@ -93,11 +93,14 @@ export function SidebarNotesPanel() {
   const todayKey = getTodayDateString();
 
   useEffect(() => {
+    const timers = saveTimers.current;
+    const pendingPatches = pendingPatchById.current;
+    const saving = savingIds.current;
     return () => {
-      for (const timer of saveTimers.current.values()) clearTimeout(timer);
-      saveTimers.current.clear();
-      pendingPatchById.current.clear();
-      savingIds.current.clear();
+      for (const timer of timers.values()) clearTimeout(timer);
+      timers.clear();
+      pendingPatches.clear();
+      saving.clear();
     };
   }, []);
 
@@ -247,7 +250,7 @@ export function SidebarNotesPanel() {
         savingIds.current.delete(id);
       }
     },
-    [areas, authReady, currentUserId, updateFloatingNote],
+    [areas, authReady, currentUserId, scheduleSave, updateFloatingNote],
   );
 
   function scheduleSave(id: string, delay = 800) {

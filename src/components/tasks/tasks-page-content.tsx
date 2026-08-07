@@ -201,6 +201,7 @@ export function TasksPageContent() {
   useEffect(() => {
     const timers = updateTimers.current;
     const waitersByTask = pendingTaskUpdateWaiters.current;
+    const pending = pendingTaskUpdates.current;
     return () => {
       for (const timer of timers.values()) {
         clearTimeout(timer);
@@ -209,7 +210,7 @@ export function TasksPageContent() {
         for (const resolve of waiters) resolve(false);
       }
       waitersByTask.clear();
-      pendingTaskUpdates.current.clear();
+      pending.clear();
     };
   }, []);
 

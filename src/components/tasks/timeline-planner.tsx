@@ -467,6 +467,7 @@ export function TimelinePlanner({
         : "border-divider";
   const nowHour = useMemo(() => {
     if (!isViewingToday) return null;
+    void nowTick;
     return Math.floor(getNowMinutesInAppTimezone() / 60);
   }, [isViewingToday, nowTick]);
 
@@ -477,6 +478,7 @@ export function TimelinePlanner({
 
   const dayHabits = useMemo(() => {
     if (!showHabitTimeline) return [];
+    void habitScheduleRevision;
     return filterHabitsForViewDate(habits, viewDate).map((habit) => ({
       ...habit,
       scheduled_time: getEffectiveHabitScheduledTime(

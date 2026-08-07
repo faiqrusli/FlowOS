@@ -116,8 +116,7 @@ export function useColumnDragPreviewDropTarget(
 
 export function shouldPublishDropTargetPreview(
   prev: TaskDragTarget | null,
-  next: TaskDragTarget | null,
-  sourceGroupId: string | null
+  next: TaskDragTarget | null
 ): boolean {
   if (!next) return prev !== null;
   if (!prev) return true;

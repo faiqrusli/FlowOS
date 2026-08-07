@@ -57,8 +57,7 @@ export function focusTextareaAtEnd(textarea: HTMLTextAreaElement) {
 
 export function getInputCaretIndexFromPoint(
   input: HTMLInputElement,
-  clientX: number,
-  _clientY: number,
+  clientX: number
 ): number {
   const text = input.value;
   if (!text.length) return 0;
@@ -95,10 +94,9 @@ export function getInputCaretIndexFromPoint(
 export function focusInputAtPoint(
   input: HTMLInputElement,
   clientX: number,
-  clientY: number,
 ) {
   input.focus();
-  const index = getInputCaretIndexFromPoint(input, clientX, clientY);
+  const index = getInputCaretIndexFromPoint(input, clientX);
   input.setSelectionRange(index, index);
 }
 

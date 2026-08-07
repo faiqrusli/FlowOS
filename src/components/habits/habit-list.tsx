@@ -39,7 +39,10 @@ export function HabitList({
   const habitScheduleRevision = useHabitDailyScheduleStore();
   const todayKey = getTodayDateString();
   const statsMap = useMemo(
-    () => computeHabitStatsMap(habits, getCachedHabitCompletions()),
+    () => {
+      void completionsVersion;
+      return computeHabitStatsMap(habits, getCachedHabitCompletions());
+    },
     [habits, completionsVersion]
   );
   const dueToday = useMemo(
@@ -47,7 +50,10 @@ export function HabitList({
     [habits]
   );
   const dueTodayDisplay = useMemo(
-    () => withHabitScheduleForDate(dueToday, todayKey),
+    () => {
+      void habitScheduleRevision;
+      return withHabitScheduleForDate(dueToday, todayKey);
+    },
     [dueToday, todayKey, habitScheduleRevision]
   );
 

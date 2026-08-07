@@ -90,11 +90,14 @@ export function NotesPanel({
   notesRef.current = notes;
 
   useEffect(() => {
+    const timers = saveTimers.current;
+    const pendingPatches = pendingPatchById.current;
+    const saving = savingIds.current;
     return () => {
-      for (const timer of saveTimers.current.values()) clearTimeout(timer);
-      saveTimers.current.clear();
-      pendingPatchById.current.clear();
-      savingIds.current.clear();
+      for (const timer of timers.values()) clearTimeout(timer);
+      timers.clear();
+      pendingPatches.clear();
+      saving.clear();
     };
   }, []);
 
@@ -177,7 +180,7 @@ export function NotesPanel({
         savingIds.current.delete(id);
       }
     },
-    [onNotesChange],
+    [onNotesChange, scheduleSave],
   );
 
   function scheduleSave(id: string, delay = 800) {

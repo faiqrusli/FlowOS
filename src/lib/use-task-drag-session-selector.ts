@@ -12,32 +12,30 @@ export function useTaskDragSessionSelector<T>(
   selector: (snapshot: TaskDragSessionSnapshot) => T,
   isEqual: (previous: T, next: T) => boolean = Object.is
 ): T {
-  const selectorRef = useRef(selector);
-  const isEqualRef = useRef(isEqual);
-  selectorRef.current = selector;
-  isEqualRef.current = isEqual;
-
   const sliceRef = useRef<T>(selector(getTaskDragSessionSnapshot()));
 
   const subscribe = useCallback((onStoreChange: () => void) => {
     return subscribeTaskDragSession(() => {
-      const next = selectorRef.current(getTaskDragSessionSnapshot());
-      if (!isEqualRef.current(sliceRef.current, next)) {
+      const next = selector(getTaskDragSessionSnapshot());
+      if (!isEqual(sliceRef.current, next)) {
         sliceRef.current = next;
         onStoreChange();
       }
     });
-  }, []);
+  }, [isEqual, selector]);
 
   const getSnapshot = useCallback(() => {
-    const next = selectorRef.current(getTaskDragSessionSnapshot());
-    if (!isEqualRef.current(sliceRef.current, next)) {
+    const next = selector(getTaskDragSessionSnapshot());
+    if (!isEqual(sliceRef.current, next)) {
       sliceRef.current = next;
     }
     return sliceRef.current;
-  }, []);
+  }, [isEqual, selector]);
 
-  const getServerSnapshot = useCallback(() => selectorRef.current(getTaskDragSessionSnapshot()), []);
+  const getServerSnapshot = useCallback(
+    () => selector(getTaskDragSessionSnapshot()),
+    [selector],
+  );
 
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

@@ -230,15 +230,6 @@ export function KanbanBoardView({
     onFocusColumnHandled?.();
   }, [focusColumnId, board.columns, onFocusColumnHandled]);
 
-  useEffect(() => {
-    return () => {
-      stopBoardAutoScroll();
-      removeDocumentDragOverListener();
-      detachCardPointerListeners();
-      destroyTaskDragPreview();
-    };
-  }, []);
-
   function removeDocumentDragOverListener() {
     if (!documentDragOverRef.current) return;
     document.removeEventListener("dragover", documentDragOverRef.current);
@@ -719,6 +710,15 @@ export function KanbanBoardView({
       persistBoardLayoutInBackground(boardToPersist, snapshot);
     }
   }
+
+  useEffect(() => {
+    return () => {
+      stopBoardAutoScroll();
+      removeDocumentDragOverListener();
+      detachCardPointerListeners();
+      destroyTaskDragPreview();
+    };
+  }, []);
 
   function toggleCollapsed(columnId: string) {
     setCollapsed((prev) => {
@@ -1760,7 +1760,7 @@ const KanbanColumnTitle = memo(function KanbanColumnTitle({
 
     const focusField = () => {
       if (editFocus?.mode === "point") {
-        focusInputAtPoint(el, editFocus.x, editFocus.y);
+        focusInputAtPoint(el, editFocus.x);
       } else {
         focusInputAtEnd(el);
       }

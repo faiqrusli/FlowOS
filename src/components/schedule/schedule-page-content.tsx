@@ -107,8 +107,9 @@ export function SchedulePageContent() {
   }, [todayViewDate]);
 
   useEffect(() => {
+    const timers = updateTimers.current;
     return () => {
-      for (const timer of updateTimers.current.values()) {
+      for (const timer of timers.values()) {
         clearTimeout(timer);
       }
     };

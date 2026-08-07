@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from "vitest";
 import {
   clearActiveSession,
   readActiveSession,
-  writeActiveSession,
 } from "@/lib/focus-active-session";
 
 describe("Focus local storage ownership", () => {

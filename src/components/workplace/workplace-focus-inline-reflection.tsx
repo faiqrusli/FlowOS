@@ -49,7 +49,14 @@ export function WorkplaceFocusInlineReflection({
     } finally {
       setSaving(false);
     }
-  }, [content, onDismiss]);
+  }, [
+    content,
+    focusSeconds,
+    onDismiss,
+    session.ended_at,
+    session.id,
+    session.started_at,
+  ]);
 
   if (!shouldPromptFocusReflection(focusSeconds)) {
     return null;

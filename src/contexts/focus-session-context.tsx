@@ -579,12 +579,16 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
   const quickElapsed = quickSession
     ? getQuickClockSeconds(quickSession)
     : 0;
-  const quickTotals = quickSession
-    ? computeQuickFocusSeconds(quickSession)
-    : { focus: 0, break: 0 };
+  const quickTotals = useMemo(() => {
+    void tick;
+    return quickSession
+      ? computeQuickFocusSeconds(quickSession)
+      : { focus: 0, break: 0 };
+  }, [quickSession, tick]);
 
   const quickBreakPrompt: BreakPrompt = useMemo(() => {
     if (!quickSession) return null;
+    void tick;
     // INVARIANT: mode gates which threshold applies — never derive both "ready" and
     // "finished" simultaneously ("ready" requires active focus; "finished" requires break).
     if (quickPhase === "focus" && isBreakReady(quickSession)) return "ready";
@@ -612,6 +616,7 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       : 0;
 
   const dashboardActive = useMemo((): DashboardActiveFocus => {
+    void tick;
     if (!session) {
       return {
         isActive: false,

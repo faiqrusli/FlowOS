@@ -112,12 +112,16 @@ export function ScheduleTimeGrid({
   );
 
   const blockLayouts = useMemo(
-    () => buildScheduleBlockLayouts(mergedItems),
+    () => {
+      void durationRevision;
+      return buildScheduleBlockLayouts(mergedItems);
+    },
     [mergedItems, durationRevision]
   );
 
   const projectionLayouts = useMemo(() => {
     if (!showProjections) return [];
+    void durationRevision;
     return buildProjectionLayouts(mergedItems, unscheduledItems);
   }, [mergedItems, unscheduledItems, showProjections, durationRevision]);
 

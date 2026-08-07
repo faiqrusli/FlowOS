@@ -3,6 +3,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   type ReactNode,
@@ -54,7 +55,10 @@ export function TaskBoardActionsProvider({
   actions,
 }: TaskBoardActionsProviderProps) {
   const actionsRef = useRef(actions);
-  actionsRef.current = actions;
+
+  useEffect(() => {
+    actionsRef.current = actions;
+  }, [actions]);
 
   const stable = useMemo<TaskBoardActions>(
     () => ({
@@ -66,10 +70,8 @@ export function TaskBoardActionsProvider({
       onDeleteTask: (taskId) => actionsRef.current.onDeleteTask(taskId),
       onUpdateTask: (taskId, updates) =>
         actionsRef.current.onUpdateTask(taskId, updates),
-      onSetPlanningState: actionsRef.current.onSetPlanningState
-        ? (taskId, planningState) =>
-            actionsRef.current.onSetPlanningState?.(taskId, planningState)
-        : undefined,
+      onSetPlanningState: (taskId, planningState) =>
+        actionsRef.current.onSetPlanningState?.(taskId, planningState),
       onRequestCreateGroup: (taskId) =>
         actionsRef.current.onRequestCreateGroup(taskId),
       onTaskPointerDragStart: (taskId, groupId, coords) =>

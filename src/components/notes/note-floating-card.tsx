@@ -130,10 +130,7 @@ export function NoteFloatingCard({
     <div
       ref={cardRef}
       className="fixed z-[100] flex w-[min(92vw,360px)] flex-col overflow-hidden rounded-xl border border-border-strong bg-surface-raised shadow-lg will-change-[left,top]"
-      style={{
-        left: positionRef.current.x,
-        top: positionRef.current.y,
-      }}
+      style={{ left: 120 + offsetIndex * 24, top: 120 + offsetIndex * 24 }}
     >
       <div
         className="flex h-11 items-center gap-1 border-b border-border/30 px-2"

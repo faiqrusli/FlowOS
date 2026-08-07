@@ -66,11 +66,19 @@ export function useTaskRowPointerGesture({
   const onPointerDragEndRef = useRef(onPointerDragEnd);
   const isDoubleClickTargetRef = useRef(isDoubleClickTarget);
 
-  onOpenDetailRef.current = onOpenDetail;
-  onDoubleClickRef.current = onDoubleClick;
-  onPointerDragStartRef.current = onPointerDragStart;
-  onPointerDragEndRef.current = onPointerDragEnd;
-  isDoubleClickTargetRef.current = isDoubleClickTarget;
+  useEffect(() => {
+    onOpenDetailRef.current = onOpenDetail;
+    onDoubleClickRef.current = onDoubleClick;
+    onPointerDragStartRef.current = onPointerDragStart;
+    onPointerDragEndRef.current = onPointerDragEnd;
+    isDoubleClickTargetRef.current = isDoubleClickTarget;
+  }, [
+    isDoubleClickTarget,
+    onDoubleClick,
+    onOpenDetail,
+    onPointerDragEnd,
+    onPointerDragStart,
+  ]);
 
   const cancelPendingOpenDetail = useCallback(() => {
     if (pendingOpenDetailRef.current !== null) {
