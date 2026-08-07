@@ -39,7 +39,7 @@ export async function fetchDashboardData(): Promise<DashboardData> {
     const [tasks, habits, focusSessions, reflection] = await Promise.all([
       fetchTodayTasks(today),
       fetchTodayHabits(),
-      fetchFocusSessions(),
+      fetchFocusSessions(today),
       fetchTodayReflection(today),
     ]);
 

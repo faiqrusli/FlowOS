@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { requireUserId } from "@/lib/auth";
-import { isSameDay, parseTimestamp } from "@/lib/date-utils";
+import { isSameDay, parseTimestamp, shiftDateKey } from "@/lib/date-utils";
 import {
   getSessionBreakSeconds,
   getSessionFocusSeconds,
@@ -69,13 +69,35 @@ export function mergeFocusSessions(
   );
 }
 
-export async function fetchFocusSessions(): Promise<FocusSession[]> {
+export function getFocusSessionDateBounds(dateKey: string): {
+  start: string;
+  end: string;
+} {
+  return {
+    start: new Date(`${dateKey}T00:00:00+08:00`).toISOString(),
+    end: new Date(`${shiftDateKey(dateKey, 1)}T00:00:00+08:00`).toISOString(),
+  };
+}
+
+export async function fetchFocusSessions(
+  dateKey?: string,
+): Promise<FocusSession[]> {
   const userId = await requireUserId();
-  const { data, error } = await supabase
+  let query = supabase
     .from("focus_sessions")
     .select("*")
-    .eq("user_id", userId)
-    .order("started_at", { ascending: false });
+    .eq("user_id", userId);
+
+  if (dateKey) {
+    const bounds = getFocusSessionDateBounds(dateKey);
+    query = query
+      .gte("started_at", bounds.start)
+      .lt("started_at", bounds.end);
+  }
+
+  const { data, error } = await query.order("started_at", {
+    ascending: false,
+  });
 
   if (error) {
     throw new FocusSessionsError(error.message);
