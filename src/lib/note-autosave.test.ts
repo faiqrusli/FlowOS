@@ -15,6 +15,7 @@ function note(partial: Partial<Note> & Pick<Note, "id" | "title" | "content">): 
     is_pinned: false,
     is_menu_pinned: false,
     ...partial,
+    note_date: partial.note_date ?? null,
   };
 }
 

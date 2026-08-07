@@ -1,6 +1,7 @@
 import type { GrowthAreaWithCounts, Note } from "@/types/notes";
 
 export type SidebarNotesCache = {
+  userId: string;
   areas: GrowthAreaWithCounts[];
   notes: Note[];
   fetchedAt: number;
@@ -16,7 +17,7 @@ function readStorageCache(): SidebarNotesCache | null {
     const raw = window.sessionStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as SidebarNotesCache;
-    if (!parsed?.notes || !parsed?.areas) return null;
+    if (!parsed?.userId || !parsed?.notes || !parsed?.areas) return null;
     return parsed;
   } catch {
     return null;
@@ -32,15 +33,21 @@ function writeStorageCache(cache: SidebarNotesCache): void {
   }
 }
 
-export function getSidebarNotesCache(): SidebarNotesCache | null {
-  return memoryCache ?? readStorageCache();
+export function getSidebarNotesCache(userId: string | null): SidebarNotesCache | null {
+  if (!userId) return null;
+  const cache = memoryCache ?? readStorageCache();
+  if (!cache || cache.userId !== userId) return null;
+  memoryCache = cache;
+  return cache;
 }
 
 export function setSidebarNotesCache(
+  userId: string,
   areas: GrowthAreaWithCounts[],
   notes: Note[]
 ): SidebarNotesCache {
   const cache: SidebarNotesCache = {
+    userId,
     areas,
     notes,
     fetchedAt: Date.now(),
@@ -51,15 +58,16 @@ export function setSidebarNotesCache(
 }
 
 export function patchSidebarNotesCache(
+  userId: string,
   updater: (notes: Note[]) => Note[]
 ): SidebarNotesCache | null {
-  const current = getSidebarNotesCache();
+  const current = getSidebarNotesCache(userId);
   if (!current) return null;
-  return setSidebarNotesCache(current.areas, updater(current.notes));
+  return setSidebarNotesCache(userId, current.areas, updater(current.notes));
 }
 
-export function upsertSidebarNoteInCache(note: Note): void {
-  patchSidebarNotesCache((notes) => {
+export function upsertSidebarNoteInCache(userId: string, note: Note): void {
+  patchSidebarNotesCache(userId, (notes) => {
     const index = notes.findIndex((item) => item.id === note.id);
     if (index === -1) return [note, ...notes];
     const next = [...notes];
@@ -68,6 +76,16 @@ export function upsertSidebarNoteInCache(note: Note): void {
   });
 }
 
-export function removeSidebarNoteFromCache(noteId: string): void {
-  patchSidebarNotesCache((notes) => notes.filter((note) => note.id !== noteId));
+export function removeSidebarNoteFromCache(userId: string, noteId: string): void {
+  patchSidebarNotesCache(userId, (notes) => notes.filter((note) => note.id !== noteId));
+}
+
+export function clearSidebarNotesCache(): void {
+  memoryCache = null;
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Ignore storage errors during auth transitions.
+  }
 }
